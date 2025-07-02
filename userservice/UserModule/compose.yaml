@@ -1,0 +1,7 @@
+﻿services:
+  usermodule:
+    image: usermodule
+    build:
+      context: .
+      dockerfile: UserModule/Dockerfile
+
