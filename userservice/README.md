@@ -8,6 +8,7 @@ This module provides comprehensive administration functionalities for the system
 - **User Access Creation:** Admins can create new user accounts and assign initial access rights.
 - **Permission Assignment:** Users can be granted specific permissions based on roles or individual needs.
 - **Password Management:** Users can change their passwords securely.
+-**Password Policy** Can be set 
 - **Audit Trails:** All user activities are logged and can be retrieved for auditing purposes.
 - **User & Role Management:** Admins can create, update, and manage users and roles.
 - **User Deactivation:** Users can be deactivated, restricting their access without deleting their data.
@@ -107,6 +108,7 @@ This module provides comprehensive administration functionalities for the system
 **Requirement:**
 - The system supports scheduled and on-demand backups of user data and audit logs.
 - Backups must be restorable.
+- Increamental backup/ Fullbackup
 
 **User Stories:**
 - As an admin, I want to back up the system to prevent data loss.
@@ -136,6 +138,8 @@ This module provides comprehensive administration functionalities for the system
 ### 6. **System Maintenance**
 - **Backup Service:** Scheduled and on-demand backups of user data and audit logs.
 
+### 7. **Reporting**
+
 ---
 
 ## High-Level Component Diagram
@@ -162,12 +166,15 @@ This module provides comprehensive administration functionalities for the system
 ---
 
 ## Technology Recommendations
-- **Backend:** Node.js/Express, Python/Django, or Java/Spring Boot
+- **Backend:** C#
 - **Frontend:** React, Angular, or Vue.js
-- **Database:** PostgreSQL or MySQL
-- **Authentication:** JWT, OAuth2
-- **Logging:** ELK Stack or similar
+- **Database:** PostgreSQL
+- **Authentication:** JWT
+- **Logging:** ELK Stack or similar //
 - **Backup:** Automated scripts or managed DB backups
+- **Containerization** -Docker
+- **Unit Testing**
+
 
 ---
 
