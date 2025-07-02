@@ -209,18 +209,24 @@ This module provides comprehensive administration functionalities for the system
 
 ## Timeline
 Activities and Timeline
+
 Week 1: Core Backend Setup
+
 Day 1: Finalize requirements, set up .NET project, PostgreSQL database, and schema.
 Day 2: Implement authentication endpoints with JWT and bcrypt.
 Day 3: Develop user creation  and permission assignment  endpoints.
 Day 4: Implement password management  and user/role management endpoints.
 Day 5: Add user deactivation  and basic audit logging functionality.
+
 Week 2: Additional Features
+
 Day 6-7: Implement shift assignment  with specific start/end times and user shift retrieval (/api/shifts/user).
 Day 8: Enhance audit logging with retrieval  and CSV export .
 Day 9: Develop user list report  and user activity report  endpoints.
 Day 10: Set up full and incremental backups using pg_dump with secure storage.
+
 Week 3: Testing & Deployment
+
 Day 11: Implement backup restoration with pg_restore .
 Day 12-13: Conduct unit and integration testing for all endpoints, focusing on authentication, user management, and backup/restore.
 Day 14: Perform security testing (e.g., JWT validation, SQL injection prevention).
