@@ -1,0 +1,2 @@
+# This directory will contain microservices
+# Each service should have its own subdirectory with package.json
