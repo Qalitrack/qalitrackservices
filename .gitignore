@@ -194,3 +194,9 @@ Thumbs.db
 .cache/
 .parcel-cache/
 .turbo/
+
+# AI Development Planning
+todo/
+
+# Temporary AI automation scripts
+_*

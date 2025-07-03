@@ -1,0 +1,153 @@
+@baseUrl = https://localhost:7000
+@contentType = application/json
+
+### Health Check
+GET {{baseUrl}}/swagger
+
+### Get all transporters
+GET {{baseUrl}}/api/transporters
+
+### Get active transporters
+GET {{baseUrl}}/api/transporters/active
+
+### Search transporters
+GET {{baseUrl}}/api/transporters/search?searchTerm=test
+
+### Get available transporters
+GET {{baseUrl}}/api/transporters/available?date=2024-07-10
+
+### Register a new transporter
+POST {{baseUrl}}/api/transporters
+Content-Type: {{contentType}}
+
+{
+  "name": "Express Logistics Ltd",
+  "registrationNumber": "TRP001",
+  "taxNumber": "TAX123456",
+  "contactEmail": "contact@expresslogistics.com",
+  "contactPhone": "+1234567890",
+  "address": "123 Transport Street",
+  "city": "Transport City",
+  "state": "TS",
+  "country": "Transportland",
+  "postalCode": "12345",
+  "transporterType": "Company",
+  "fleetSize": 25,
+  "operatingLicense": "OL2024001",
+  "licenseExpiryDate": "2025-12-31T00:00:00Z",
+  "website": "https://expresslogistics.com",
+  "description": "Premier logistics and transportation services"
+}
+
+### Get transporter by ID (replace with actual ID)
+GET {{baseUrl}}/api/transporters/{transporterId}
+
+### Update transporter (replace with actual ID)
+PUT {{baseUrl}}/api/transporters/{transporterId}
+Content-Type: {{contentType}}
+
+{
+  "name": "Express Logistics Ltd - Updated",
+  "contactEmail": "updated@expresslogistics.com",
+  "contactPhone": "+1234567891",
+  "address": "456 New Transport Street",
+  "city": "New Transport City",
+  "state": "NTS",
+  "country": "Transportland",
+  "postalCode": "54321",
+  "fleetSize": 30,
+  "operatingLicense": "OL2024001",
+  "status": "Active",
+  "website": "https://expresslogistics.com",
+  "description": "Premier logistics and transportation services - Updated"
+}
+
+### Get transporter contacts
+GET {{baseUrl}}/api/transporters/{transporterId}/contacts
+
+### Add transporter contact
+POST {{baseUrl}}/api/transporters/{transporterId}/contacts
+Content-Type: {{contentType}}
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@expresslogistics.com",
+  "phone": "+1234567890",
+  "alternatePhone": "+1234567891",
+  "contactType": "Primary",
+  "position": "Operations Manager",
+  "department": "Operations",
+  "isPrimary": true
+}
+
+### Get primary contact
+GET {{baseUrl}}/api/transporters/{transporterId}/contacts/primary
+
+### Get transporter fleet
+GET {{baseUrl}}/api/transporters/{transporterId}/fleet
+
+### Get available vehicles
+GET {{baseUrl}}/api/transporters/{transporterId}/fleet/available
+
+### Add fleet vehicle
+POST {{baseUrl}}/api/transporters/{transporterId}/fleet
+Content-Type: {{contentType}}
+
+{
+  "vehicleNumber": "VH001",
+  "registrationNumber": "ABC123",
+  "vehicleType": "Truck",
+  "make": "Volvo",
+  "model": "FH16",
+  "year": 2023,
+  "color": "Blue",
+  "chassisNumber": "CH123456789",
+  "engineNumber": "EN987654321",
+  "loadCapacity": 25.5,
+  "fuelCapacity": 500.0,
+  "insuranceExpiryDate": "2025-06-30T00:00:00Z",
+  "registrationExpiryDate": "2025-12-31T00:00:00Z",
+  "notes": "Primary delivery truck"
+}
+
+### Get transporter drivers
+GET {{baseUrl}}/api/transporters/{transporterId}/drivers
+
+### Get active drivers
+GET {{baseUrl}}/api/transporters/{transporterId}/drivers/active
+
+### Assign driver
+POST {{baseUrl}}/api/transporters/{transporterId}/drivers
+Content-Type: {{contentType}}
+
+{
+  "driverId": "DRV001",
+  "firstName": "Mike",
+  "lastName": "Wilson",
+  "licenseNumber": "DL123456789",
+  "phone": "+1234567890",
+  "email": "mike.wilson@expresslogistics.com",
+  "dateOfBirth": "1985-03-15T00:00:00Z",
+  "hireDate": "2024-01-15T00:00:00Z",
+  "emergencyContactName": "Jane Wilson",
+  "emergencyContactPhone": "+1234567891",
+  "address": "789 Driver Street, Driver City, DC 98765",
+  "salary": 55000.00,
+  "assignedVehicleId": "VH001"
+}
+
+### Get performance summary
+GET {{baseUrl}}/api/transporters/{transporterId}/performance
+
+### Delete transporter (replace with actual ID)
+DELETE {{baseUrl}}/api/transporters/{transporterId}
+
+### Delete contact (replace with actual IDs)
+DELETE {{baseUrl}}/api/transporters/{transporterId}/contacts/{contactId}
+
+### Delete fleet vehicle (replace with actual IDs)
+DELETE {{baseUrl}}/api/transporters/{transporterId}/fleet/{vehicleId}
+
+### Unassign driver (replace with actual IDs)
+DELETE {{baseUrl}}/api/transporters/{transporterId}/drivers/{driverId}

@@ -187,6 +187,33 @@ Detailed schema specifications for all entities including:
 - Phased integration approach
 - Comprehensive data validation procedures
 
+## Definitions and Terminology
+
+### Operator
+An **operator** is a frontline user who manages day-to-day weighing operations and needs vehicle information for operational planning. The specific role varies by deployment context:
+
+**National Weighing (KENHA):**
+- Weighbridge inspectors/officials who oversee vehicle compliance checking
+- Traffic control officers managing vehicle flow at checkpoints  
+- Data entry clerks recording vehicle and cargo information
+
+**Factory Weighing (e.g., Bamburi Cement):**
+- Logistics coordinators managing inbound/outbound shipments
+- Warehouse supervisors overseeing supply and delivery operations
+- Gate security personnel conducting initial vehicle checks
+
+**QalibratedSystems Internal:**
+- Field technicians maintaining weighbridge equipment
+- System administrators monitoring operations across multiple sites
+- Customer support personnel assisting client operations
+
+**Key Operator Responsibilities:**
+- Monitor real-time vehicle weighing processes
+- Access vehicle history for pattern analysis
+- Generate operational reports for planning
+- Manage daily weighing schedules and capacity
+- Ensure compliance with weight regulations
+
 ---
 
 *This document serves as the comprehensive business requirements specification for the Master Data Service, defining all functional, non-functional, and technical requirements necessary for successful implementation.*
