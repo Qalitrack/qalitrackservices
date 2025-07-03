@@ -1,0 +1,170 @@
+graph TB
+    subgraph "External Systems"
+        GATEWAY[API Gateway<br/>User Context & Auth]
+        USER_SVC[User Service<br/>Identity & Roles]
+        HARDWARE[Weighbridge Hardware<br/>Load Cells & Sensors]
+        ERP[Factory ERP Systems<br/>SAP/Oracle Integration]
+    end
+
+    subgraph "Master Data Services"
+        VEHICLE_SVC[Vehicle Service<br/>Registration & Specs]
+        DRIVER_SVC[Driver Service<br/>Profiles & Licenses]
+        SUPPLIER_SVC[Supplier Service<br/>Vendor Management]
+        CUSTOMER_SVC[Customer Service<br/>Client Management]
+        TRANSPORTER_SVC[Transporter Service<br/>Fleet Companies]
+        PRODUCT_SVC[Product Service<br/>Catalog & Specifications]
+        ROUTE_SVC[Route Service<br/>Transport Paths]
+        WEIGHBRIDGE_SVC[Weighbridge Service<br/>Location Management]
+        ORG_SVC[Organization Service<br/>Multi-tenant Context]
+        SACCO_SVC[Sacco Service<br/>Cooperative Organizations]
+    end
+
+    subgraph "DataManager Service Domain"
+        subgraph "Core Services"
+            WEIGHT[Weight Data Service<br/>C# .NET 8<br/>Real-time Capture<br/>+ Weighbridge Validation]
+            TRANSACTION[Transaction Service<br/>C# .NET 8<br/>Multi-entity Lifecycle<br/>+ Full Entity Linking]
+            COMPLIANCE[Compliance Service<br/>C# .NET 8<br/>Regulatory Engine<br/>+ License Monitoring]
+            ANALYTICS[Analytics Service<br/>C# .NET 8<br/>Performance Metrics<br/>+ Multi-entity Analytics]
+        end
+        
+        subgraph "Enhanced Services"
+            OPERATIONAL[Operational Data Service<br/>C# .NET 8<br/>Product & Route Management<br/>+ Weighbridge Orchestration]
+            SYNC[Data Sync Service<br/>Go<br/>Multi-site Sync<br/>+ Master Data Replication]
+            ARCHIVE[Archive Service<br/>C# .NET 8<br/>Long-term Storage<br/>+ Full Entity History]
+        end
+    end
+
+    subgraph "Message Queue Layer"
+        KAFKA[Apache Kafka Cluster<br/>Event Streaming<br/>Master Data Events]
+        RABBIT[RabbitMQ<br/>Command Processing<br/>License Expiry Alerts]
+    end
+
+    subgraph "Database Layer"
+        POSTGRES[(PostgreSQL 15+<br/>Primary Database<br/>Multi-entity Relations<br/>Partitioned by Org)]
+        INFLUX[(InfluxDB<br/>Time-Series Data<br/>Performance Metrics<br/>Route Analytics)]
+        REDIS[(Redis Cluster<br/>Cache Layer<br/>Master Data Cache<br/>Session Context)]
+        ELASTIC[(Elasticsearch<br/>Search Engine<br/>Cross-entity Search<br/>Audit Trails)]
+    end
+
+    %% External System Connections
+    GATEWAY --> WEIGHT
+    GATEWAY --> TRANSACTION
+    GATEWAY --> COMPLIANCE
+    GATEWAY --> ANALYTICS
+    GATEWAY --> OPERATIONAL
+    
+    USER_SVC --> GATEWAY
+    HARDWARE --> WEIGHT
+    ERP --> OPERATIONAL
+
+    %% Master Data Service Connections
+    VEHICLE_SVC --> TRANSACTION
+    VEHICLE_SVC --> COMPLIANCE
+    VEHICLE_SVC --> ANALYTICS
+    
+    DRIVER_SVC --> TRANSACTION
+    DRIVER_SVC --> COMPLIANCE
+    DRIVER_SVC --> ANALYTICS
+    
+    SUPPLIER_SVC --> TRANSACTION
+    SUPPLIER_SVC --> ANALYTICS
+    SUPPLIER_SVC --> OPERATIONAL
+    
+    CUSTOMER_SVC --> TRANSACTION
+    CUSTOMER_SVC --> ANALYTICS
+    CUSTOMER_SVC --> OPERATIONAL
+    
+    TRANSPORTER_SVC --> TRANSACTION
+    TRANSPORTER_SVC --> ANALYTICS
+    TRANSPORTER_SVC --> OPERATIONAL
+    
+    PRODUCT_SVC --> TRANSACTION
+    PRODUCT_SVC --> COMPLIANCE
+    PRODUCT_SVC --> OPERATIONAL
+    PRODUCT_SVC --> ANALYTICS
+    
+    ROUTE_SVC --> TRANSACTION
+    ROUTE_SVC --> COMPLIANCE
+    ROUTE_SVC --> OPERATIONAL
+    ROUTE_SVC --> ANALYTICS
+    
+    WEIGHBRIDGE_SVC --> WEIGHT
+    WEIGHBRIDGE_SVC --> OPERATIONAL
+    WEIGHBRIDGE_SVC --> ANALYTICS
+    
+    ORG_SVC --> TRANSACTION
+    ORG_SVC --> COMPLIANCE
+    ORG_SVC --> OPERATIONAL
+    
+    SACCO_SVC --> TRANSACTION
+    SACCO_SVC --> ANALYTICS
+
+    %% Inter-Service Communication
+    WEIGHT --> KAFKA
+    TRANSACTION --> KAFKA
+    COMPLIANCE --> KAFKA
+    ANALYTICS --> KAFKA
+    OPERATIONAL --> KAFKA
+    
+    WEIGHT --> RABBIT
+    TRANSACTION --> RABBIT
+    COMPLIANCE --> RABBIT
+    OPERATIONAL --> RABBIT
+    
+    KAFKA --> SYNC
+    KAFKA --> ANALYTICS
+    KAFKA --> ARCHIVE
+    
+    RABBIT --> SYNC
+    RABBIT --> COMPLIANCE
+
+    %% Database Connections
+    WEIGHT --> POSTGRES
+    WEIGHT --> INFLUX
+    WEIGHT --> REDIS
+    
+    TRANSACTION --> POSTGRES
+    TRANSACTION --> REDIS
+    
+    COMPLIANCE --> POSTGRES
+    COMPLIANCE --> ELASTIC
+    COMPLIANCE --> REDIS
+    
+    ANALYTICS --> INFLUX
+    ANALYTICS --> REDIS
+    ANALYTICS --> POSTGRES
+    
+    OPERATIONAL --> POSTGRES
+    OPERATIONAL --> REDIS
+    OPERATIONAL --> INFLUX
+    
+    SYNC --> POSTGRES
+    SYNC --> REDIS
+    
+    ARCHIVE --> POSTGRES
+    ARCHIVE --> ELASTIC
+
+    %% Service Interactions
+    WEIGHT -.->|User Context| USER_SVC
+    TRANSACTION -.->|Multi-entity Data| VEHICLE_SVC
+    TRANSACTION -.->|Driver Validation| DRIVER_SVC
+    TRANSACTION -.->|Supplier/Customer| SUPPLIER_SVC
+    COMPLIANCE -.->|License Expiry| DRIVER_SVC
+    COMPLIANCE -.->|Route Regulations| ROUTE_SVC
+    ANALYTICS -.->|Performance Data| SUPPLIER_SVC
+    OPERATIONAL -.->|Product Catalog| PRODUCT_SVC
+    OPERATIONAL -.->|Route Optimization| ROUTE_SVC
+    SYNC -.->|Master Data Sync| VEHICLE_SVC
+
+    %% Styling
+    classDef service fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff
+    classDef masterdata fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+    classDef database fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
+    classDef queue fill:#f39c12,stroke:#e67e22,stroke-width:2px,color:#fff
+    classDef external fill:#27ae60,stroke:#229954,stroke-width:2px,color:#fff
+    
+    class WEIGHT,TRANSACTION,COMPLIANCE,ANALYTICS,OPERATIONAL,SYNC,ARCHIVE service
+    class VEHICLE_SVC,DRIVER_SVC,SUPPLIER_SVC,CUSTOMER_SVC,TRANSPORTER_SVC,PRODUCT_SVC,ROUTE_SVC,WEIGHBRIDGE_SVC,ORG_SVC,SACCO_SVC masterdata
+    class POSTGRES,INFLUX,REDIS,ELASTIC database
+    class KAFKA,RABBIT queue
+    class GATEWAY,USER_SVC,HARDWARE,ERP external
