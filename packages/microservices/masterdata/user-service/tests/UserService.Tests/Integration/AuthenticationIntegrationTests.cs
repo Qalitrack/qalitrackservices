@@ -51,7 +51,7 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task POST_Register_WithValidData_ShouldCreateUserAndReturnSuccess()
     {
         // Arrange
-        var request = new RegisterUserDto
+        var request = new RegisterRequestDto
         {
             Username = "integrationtest",
             Email = "integration@test.com",
@@ -88,7 +88,7 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task POST_Register_WithDuplicateUsername_ShouldReturnBadRequest()
     {
         // Arrange - Create user first
-        var firstRequest = new RegisterUserDto
+        var firstRequest = new RegisterRequestDto
         {
             Username = "duplicate",
             Email = "first@test.com",
@@ -99,7 +99,7 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
         await _client.PostAsJsonAsync("/api/auth/register", firstRequest);
 
         // Second registration with same username
-        var secondRequest = new RegisterUserDto
+        var secondRequest = new RegisterRequestDto
         {
             Username = "duplicate",
             Email = "second@test.com",
@@ -132,7 +132,7 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task POST_Login_WithValidCredentials_ShouldReturnTokens()
     {
         // Arrange - Register user first
-        var registerRequest = new RegisterUserDto
+        var registerRequest = new RegisterRequestDto
         {
             Username = "logintest",
             Email = "login@test.com",
@@ -195,7 +195,7 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task POST_Login_WithUnconfirmedEmail_ShouldReturnUnauthorized()
     {
         // Arrange - Register user but don't confirm email
-        var registerRequest = new RegisterUserDto
+        var registerRequest = new RegisterRequestDto
         {
             Username = "unconfirmed",
             Email = "unconfirmed@test.com",
@@ -344,7 +344,7 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task POST_ConfirmEmail_WithValidToken_ShouldActivateUser()
     {
         // Arrange - Register user
-        var registerRequest = new RegisterUserDto
+        var registerRequest = new RegisterRequestDto
         {
             Username = "confirmtest",
             Email = "confirm@test.com",
@@ -375,7 +375,7 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task POST_ResendEmailConfirmation_WithValidEmail_ShouldGenerateNewToken()
     {
         // Arrange - Register user
-        var registerRequest = new RegisterUserDto
+        var registerRequest = new RegisterRequestDto
         {
             Username = "resendtest",
             Email = "resend@test.com",
@@ -404,10 +404,10 @@ public class AuthenticationIntegrationTests : IClassFixture<WebApplicationFactor
 
     #region Helper Methods
 
-    private async Task<AuthResponseDto> RegisterAndLoginUser(string username, string email, string password)
+    private async Task<LoginResponseDto> RegisterAndLoginUser(string username, string email, string password)
     {
         // Register
-        var registerRequest = new RegisterUserDto
+        var registerRequest = new RegisterRequestDto
         {
             Username = username,
             Email = email,

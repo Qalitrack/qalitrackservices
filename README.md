@@ -4,7 +4,7 @@ A comprehensive weighbridge management system built with .NET 8 microservices ar
 
 ## 🏗️ Architecture Overview
 
-QaliTrack consists of 19 microservices organized into two main categories:
+QaliTrack consists of 19 microservices (so far) organized into two main categories:
 
 ### Master Data Services (11 services)
 - **User Service** (Port 7001) - Authentication and user management
@@ -30,6 +30,93 @@ QaliTrack consists of 19 microservices organized into two main categories:
 
 ### API Gateway
 - **Gateway Service** (Port 7000) - Central entry point with authentication
+
+## 🔐 Authorization System
+
+QaliTrack implements a sophisticated role-based access control (RBAC) system that operates at the API Gateway level, providing centralized security enforcement across all microservices.
+
+### Authorization Architecture
+
+The system uses a **hybrid authorization model**:
+- **Coarse-grained control** at the gateway (service-level access) eg: "User must be Operator+ to access /api/vehicles/*"
+- **Fine-grained control** within services (endpoint-level permissions) eg: "User can only view vehicles assigned to their site" 
+- **Role hierarchy** with inheritance (User < Operator < SiteManager < Admin < SuperAdmin)
+
+### Role Hierarchy
+
+```
+SuperAdmin (Level 5) - System-wide administrative access
+    ↓
+Admin (Level 4) - Full organizational administrative access  
+    ↓
+SiteManager (Level 3) - Site-level management access
+    ↓
+Operator (Level 2) - Daily operational tasks
+Auditor (Level 2) - Read-only compliance access
+ClientAdmin (Level 2) - Organization-specific admin
+    ↓
+User (Level 1) - Basic authenticated access
+```
+
+### Authorization Configuration
+
+The authorization system is managed through YAML configuration files that define:
+- Service port mappings
+- Role requirements for each service endpoint
+- Public endpoints (no authentication required)
+- Environment-specific overrides
+
+#### Generate Gateway Authorization Configuration
+
+```bash
+# Generate authorization config from YAML rules
+make auth-config-generate
+
+# Apply configuration directly to gateway
+make auth-config-apply
+
+# Validate existing gateway configuration
+make auth-config-validate
+
+# Run authorization generator tests
+make auth-config-test
+```
+
+#### Authorization Rules Example
+
+```yaml
+# configs/auth/auth-rules-template.yml
+authorization_rules:
+  user-service:
+    rules:
+      - path: "/api/users/{everything}"
+        roles: ["User"]
+        description: "Basic user operations"
+      - path: "/api/users/admin/{everything}"
+        roles: ["Admin"]
+        description: "Administrative user operations"
+```
+
+### Client-Specific Authorization
+
+Generate client-specific authorization configurations:
+
+```bash
+# Generate auth config for specific client
+make cloud-auth-gen
+
+# List available client configurations
+make cloud-auth-list
+```
+
+### Security Features
+
+- **JWT Token Authentication** - Secure token-based authentication
+- **Role-Based Access Control** - Hierarchical role enforcement
+- **Gateway-Level Security** - Centralized authorization before routing
+- **User Context Forwarding** - User information passed to downstream services
+- **Environment-Specific Rules** - Different access levels per environment
+- **Automatic Configuration** - Generate gateway configs from YAML rules
 
 ## 🚀 Quick Start
 

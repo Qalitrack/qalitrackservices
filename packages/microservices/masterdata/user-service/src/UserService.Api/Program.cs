@@ -194,3 +194,6 @@ using (var scope = app.Services.CreateScope())
 
 Log.Information("User Service starting up...");
 app.Run();
+
+// Make Program class accessible for testing
+public partial class Program { }

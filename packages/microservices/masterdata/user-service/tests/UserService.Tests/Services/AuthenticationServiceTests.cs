@@ -47,7 +47,7 @@ public class AuthenticationServiceTests : IDisposable
     public async Task RegisterAsync_WithValidData_ShouldCreateUser()
     {
         // Arrange
-        var request = new RegisterUserDto
+        var request = new RegisterRequestDto
         {
             Username = "testuser",
             Email = "test@example.com",
@@ -88,7 +88,7 @@ public class AuthenticationServiceTests : IDisposable
         });
         await _context.SaveChangesAsync();
 
-        var request = new RegisterUserDto
+        var request = new RegisterRequestDto
         {
             Username = "existinguser",
             Email = "new@example.com",
@@ -115,7 +115,7 @@ public class AuthenticationServiceTests : IDisposable
         });
         await _context.SaveChangesAsync();
 
-        var request = new RegisterUserDto
+        var request = new RegisterRequestDto
         {
             Username = "user2",
             Email = "existing@example.com",
