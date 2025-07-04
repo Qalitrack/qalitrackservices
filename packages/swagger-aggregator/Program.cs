@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Text;
 using YamlDotNet.Serialization;
 
@@ -246,32 +247,48 @@ async Task MergeSwaggerAsync(HttpClient httpClient, string swaggerUrl, string se
         if (!response.IsSuccessStatusCode) return;
         
         var content = await response.Content.ReadAsStringAsync();
-        var serviceSwagger = JsonConvert.DeserializeObject<dynamic>(content);
+        var serviceSwaggerJson = JObject.Parse(content);
         
-        if (serviceSwagger?.paths != null)
+        if (serviceSwaggerJson["paths"] != null)
         {
-            // Add enhanced service tag with endpoint count info
-            var pathCount = serviceSwagger.paths?.Count ?? 0;
+            // Add enhanced service tag
+            var pathCount = serviceSwaggerJson["paths"]?.Count() ?? 0;
             var serviceTag = new { 
                 name = serviceName, 
                 description = $"{FormatServiceTitle(serviceName)} API - {pathCount} endpoints from {FormatServiceTitle(serviceName)}"
             };
             ((List<object>)aggregatedSwagger.tags).Add(serviceTag);
             
-            foreach (var path in serviceSwagger.paths)
+            // Process each path and modify tags
+            foreach (var pathProperty in serviceSwaggerJson["paths"].Cast<JProperty>())
             {
-                // Simply add all paths without modifying tags to avoid serialization issues
-                aggregatedSwagger.paths[path.Name] = path.Value;
+                var pathObject = pathProperty.Value as JObject;
+                if (pathObject != null)
+                {
+                    // Modify tags for each HTTP method in this path
+                    foreach (var methodProperty in pathObject.Properties())
+                    {
+                        var methodObject = methodProperty.Value as JObject;
+                        if (methodObject != null && methodObject["tags"] != null)
+                        {
+                            // Replace tags with service name
+                            methodObject["tags"] = new JArray(serviceName);
+                        }
+                    }
+                }
+                
+                // Add the modified path to aggregated swagger
+                aggregatedSwagger.paths[pathProperty.Name] = JsonConvert.DeserializeObject<dynamic>(pathProperty.Value.ToString());
             }
         }
         
         // Merge schemas with service prefix to avoid conflicts
-        if (serviceSwagger?.components?.schemas != null)
+        if (serviceSwaggerJson["components"]?["schemas"] != null)
         {
-            foreach (var schema in serviceSwagger.components.schemas)
+            foreach (var schemaProperty in serviceSwaggerJson["components"]["schemas"].Cast<JProperty>())
             {
-                var prefixedSchema = $"{serviceName.Replace("-", "")}{schema.Name}";
-                ((Dictionary<string, object>)aggregatedSwagger.components.schemas)[prefixedSchema] = schema.Value;
+                var prefixedSchema = $"{serviceName.Replace("-", "")}{schemaProperty.Name}";
+                ((Dictionary<string, object>)aggregatedSwagger.components.schemas)[prefixedSchema] = JsonConvert.DeserializeObject<dynamic>(schemaProperty.Value.ToString());
             }
         }
     }
