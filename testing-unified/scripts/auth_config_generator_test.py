@@ -10,7 +10,7 @@ Tests the auth-config-generator.py script functionality including:
 - Configuration validation
 
 Usage:
-    python -m pytest tests/auth_config_generator_test.py -v
+    python -m pytest testing-unified/scripts/auth_config_generator_test.py -v
 """
 
 import pytest
