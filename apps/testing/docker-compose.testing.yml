@@ -19,7 +19,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -27,6 +27,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    volumes:
+    - ../../configs/clients/testing.yml:/app/configs/clients/testing.yml:ro
     depends_on:
       user-service:
         condition: service_healthy
@@ -50,7 +52,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -78,7 +80,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -89,9 +91,67 @@ services:
     volumes:
     - service_discovery_data:/data
     - ./service-discovery/logs:/app/logs
+  swagger-aggregator:
+    build:
+      context: ../../packages/swagger-aggregator
+      dockerfile: Dockerfile
+    ports:
+    - 8000:80
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    networks:
+    - qalitrack-testing
+    restart: unless-stopped
+    healthcheck:
+      test:
+      - CMD
+      - wget
+      - --quiet
+      - --tries=1
+      - --spider
+      - http://localhost:80/health
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+    - ../../configs/clients/testing.yml:/app/configs/clients/testing.yml:ro
+  customer-service:
+    build:
+      context: ../../packages/microservices/masterdata/customer-service
+      dockerfile: Dockerfile
+    ports:
+    - 7003:80
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    - ConnectionStrings__DefaultConnection=Data Source=/data/customerservice.db
+    networks:
+    - qalitrack-testing
+    restart: unless-stopped
+    healthcheck:
+      test:
+      - CMD
+      - wget
+      - --quiet
+      - --tries=1
+      - --spider
+      - http://localhost:80/health
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+    - customer_service_data:/data
+    - ./customer-service/logs:/app/logs
+    depends_on:
+      user-service:
+        condition: service_healthy
 volumes:
   user_service_data: null
   service_discovery_data: null
+  customer_service_data: null
 networks:
   qalitrack-testing:
     driver: bridge

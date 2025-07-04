@@ -30,7 +30,7 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-print_status "Starting 3 services for QaliTrack Testing Environment..."
+print_status "Starting 5 services for QaliTrack Testing Environment..."
 
 # Set client configuration
 export CLIENT_CODE=testing
@@ -47,13 +47,17 @@ if docker compose -f docker-compose.testing.yml up -d --build; then
     echo "  🔧 Gateway: http://localhost:7000"
     echo "  🔧 User Service: http://localhost:7001"
     echo "  🔧 Service Discovery: http://localhost:7019"
+    echo "  🔧 Swagger Aggregator: http://localhost:8000"
+    echo "  🔧 Customer Service: http://localhost:7003"
 
     
     echo ""
-    print_status "Enabled Services (3):"
+    print_status "Enabled Services (5):"
     echo "  ✅ gateway"
     echo "  ✅ user-service"
     echo "  ✅ service-discovery"
+    echo "  ✅ swagger-aggregator"
+    echo "  ✅ customer-service"
 
     
     echo ""
