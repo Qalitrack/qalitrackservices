@@ -11,7 +11,15 @@
       ],
       "UpstreamPathTemplate": "/api/users/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
       "RouteClaimsRequirement": {},
+      "Metadata": {
+        "RequiredRoles": ["User"],
+        "Description": "User management endpoints - requires basic authentication",
+        "ServiceName": "UserService"
+      },
       "Key": "user-service"
     },
     {
@@ -54,6 +62,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["Admin"],
+        "Description": "Organization management - requires Admin+ role",
+        "ServiceName": "OrganizationService"
+      },
       "Key": "organization-service"
     },
     {
@@ -82,6 +95,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Vehicle management - requires Operator+ role",
+        "ServiceName": "VehicleService"
       },
       "Key": "vehicle-service"
     },
@@ -112,6 +130,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Driver management - requires Operator+ role",
+        "ServiceName": "DriverService"
+      },
       "Key": "driver-service"
     },
     {
@@ -140,6 +163,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Product management - requires Operator+ role",
+        "ServiceName": "ProductService"
       },
       "Key": "product-service"
     },
@@ -170,6 +198,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["SiteManager"],
+        "Description": "Route management - requires SiteManager+ role",
+        "ServiceName": "RouteService"
+      },
       "Key": "route-service"
     },
     {
@@ -198,6 +231,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Weighbridge operations - requires Operator+ role",
+        "ServiceName": "WeighbridgeService"
       },
       "Key": "weighbridge-service"
     },
@@ -228,6 +266,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Customer management - requires Operator+ role",
+        "ServiceName": "CustomerService"
+      },
       "Key": "customer-service"
     },
     {
@@ -256,6 +299,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Supplier management - requires Operator+ role",
+        "ServiceName": "SupplierService"
       },
       "Key": "supplier-service"
     },
@@ -286,6 +334,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Transporter management - requires Operator+ role",
+        "ServiceName": "TransporterService"
+      },
       "Key": "transporter-service"
     },
     {
@@ -314,6 +367,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["SiteManager"],
+        "Description": "SACCO management - requires SiteManager+ role",
+        "ServiceName": "SaccoService"
       },
       "Key": "sacco-service"
     },
@@ -344,6 +402,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Weight data operations - requires Operator+ role",
+        "ServiceName": "WeightDataService"
+      },
       "Key": "weight-data-service"
     },
     {
@@ -372,6 +435,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Compliance monitoring - requires Operator+ role",
+        "ServiceName": "ComplianceService"
       },
       "Key": "compliance-service"
     },
@@ -402,6 +470,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["SiteManager"],
+        "Description": "Operational data management - requires SiteManager+ role",
+        "ServiceName": "OperationalDataService"
+      },
       "Key": "operational-data-service"
     },
     {
@@ -430,6 +503,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Operator"],
+        "Description": "Transaction processing - requires Operator+ role",
+        "ServiceName": "TransactionService"
       },
       "Key": "transaction-service"
     },
@@ -460,6 +538,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["SiteManager"],
+        "Description": "Analytics and reporting - requires SiteManager+ role",
+        "ServiceName": "AnalyticsService"
+      },
       "Key": "analytics-service"
     },
     {
@@ -489,6 +572,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "Metadata": {
+        "RequiredRoles": ["Admin"],
+        "Description": "Data synchronization - requires Admin+ role",
+        "ServiceName": "DataSyncService"
+      },
       "Key": "data-sync-service"
     },
     {
@@ -517,6 +605,11 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Admin"],
+        "Description": "Data archival and retention - requires Admin+ role",
+        "ServiceName": "ArchiveService"
       },
       "Key": "archive-service"
     },
