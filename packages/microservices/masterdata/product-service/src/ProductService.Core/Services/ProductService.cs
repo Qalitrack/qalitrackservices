@@ -156,7 +156,7 @@ public class ProductService : IProductService
     public async Task<List<ProductSpecificationDto>> GetProductSpecificationsAsync(string productId)
     {
         var specifications = await _specificationRepository.GetAllAsync();
-        var productSpecs = specifications.Where(s => s.Id == productId);
+        var productSpecs = specifications.Where(s => s.ProductId == productId);
         return _mapper.Map<List<ProductSpecificationDto>>(productSpecs);
     }
 
@@ -189,7 +189,7 @@ public class ProductService : IProductService
     public async Task<List<ProductPricingDto>> GetProductPricingAsync(string productId)
     {
         var pricing = await _pricingRepository.GetAllAsync();
-        var productPricing = pricing.Where(p => p.Id == productId);
+        var productPricing = pricing.Where(p => p.ProductId == productId);
         return _mapper.Map<List<ProductPricingDto>>(productPricing);
     }
 
