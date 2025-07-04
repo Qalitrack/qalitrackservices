@@ -413,7 +413,7 @@ auth-config-test:
 	@echo "🧪 Running Authorization Config Generator Tests"
 	@echo "==============================================="
 	@echo ""
-	@python -m pytest tests/auth_config_generator_test.py -v --tb=short
+	@python -m pytest testing-unified/scripts/auth_config_generator_test.py -v --tb=short
 	@echo ""
 	@echo "✅ Authorization Config Generator Tests Complete!"
 
