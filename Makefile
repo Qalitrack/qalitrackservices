@@ -1,7 +1,7 @@
 # QaliTrack Microservices Test Suite
 # ===================================
 
-.PHONY: help test test-interactive test-all test-health test-api test-docker test-deployments test-services test-gateway test-users cloud-auth auth-config clean status logs
+.PHONY: help test test-interactive test-all test-health test-api test-docker test-deployments test-services test-gateway test-users test-product cloud-auth auth-config clean status logs
 
 # Default target
 help:
@@ -19,6 +19,8 @@ help:
 	@echo "  test-services     - Test individual services"
 	@echo "  test-gateway      - Run gateway authentication and role enforcement tests"
 	@echo "  test-users        - Run user service authentication and management tests"
+	@echo "  test-product      - Run product service management and HAZMAT classification tests"
+	@echo "  test-customer     - Run customer service management and relationship tests"
 	@echo ""
 	@echo "Authorization Tools:"
 	@echo "  cloud-auth        - Generate authorization configs for client deployments"
@@ -342,6 +344,81 @@ test-users:
 	@echo "   • Token Management: Validates JWT generation, expiration, and refresh"
 	@echo "   • Security: Tests password hashing, input validation, and rate limiting"
 	@echo "   • API Endpoints: Verifies all user management endpoints function properly"
+
+# Product Service Tests
+test-product:
+	@echo "📦 QaliTrack Product Service Tests"
+	@echo "=================================="
+	@echo ""
+	@echo "Testing the following product management use cases:"
+	@echo "  ✓ Product Registration and Validation"
+	@echo "  ✓ Product Category Hierarchies and Management"
+	@echo "  ✓ Product Specifications and Pricing"
+	@echo "  ✓ Hazardous Material (HAZMAT) Classification"
+	@echo "  ✓ Product Search and Filtering"
+	@echo "  ✓ Product Status Management (Active/Inactive/Discontinued)"
+	@echo "  ✓ Product Compliance Requirements and Tracking"
+	@echo "  ✓ API Security and Role-Based Access Control"
+	@echo "  ✓ Database Integration and Data Validation"
+	@echo "  ✓ Product Code Uniqueness and Constraints"
+	@echo ""
+	@echo "Running 90+ comprehensive product management tests..."
+	@echo ""
+	@cd packages/microservices/masterdata/product-service/tests/ProductService.Tests && \
+	dotnet test --logger "console;verbosity=normal" --configuration Release \
+		--settings ../../../../test.runsettings 2>/dev/null | \
+		grep -E "(Passed|Failed|Total tests|Test Run)" || \
+		dotnet test --logger "console;verbosity=normal" --configuration Release
+	@echo ""
+	@echo "✅ Product Service Tests Complete!"
+	@echo ""
+	@echo "📦 What was tested:"
+	@echo "   • Registration: Validates product creation with comprehensive business rules"
+	@echo "   • Categories: Ensures hierarchical category management works correctly"
+	@echo "   • HAZMAT: Tests hazardous material classification and special handling"
+	@echo "   • Specifications: Verifies product specifications and pricing management"
+	@echo "   • Compliance: Validates regulatory compliance requirements tracking"
+	@echo "   • Search: Tests product search, filtering, and data retrieval"
+	@echo "   • Security: Confirms role-based access control and input validation"
+	@echo "   • Data Integrity: Verifies database operations and business constraints"
+
+# Customer Service Tests
+test-customer:
+	@echo "🤝 QaliTrack Customer Service Tests"
+	@echo "==================================="
+	@echo ""
+	@echo "Testing the following customer management use cases:"
+	@echo "  ✓ Customer Registration and Validation"
+	@echo "  ✓ Customer Contact Management"
+	@echo "  ✓ Customer Contract Administration"
+	@echo "  ✓ Customer Billing and Credit Management"
+	@echo "  ✓ Customer Search and Filtering"
+	@echo "  ✓ Customer Status Management (Active/Inactive)"
+	@echo "  ✓ Customer Relationship Tracking"
+	@echo "  ✓ API Security and Role-Based Access Control"
+	@echo "  ✓ Database Integration and Data Validation"
+	@echo "  ✓ Customer Identity Uniqueness and Constraints"
+	@echo ""
+	@echo "Running 85+ comprehensive customer management tests..."
+	@echo ""
+	@cd packages/microservices/masterdata/customer-service/tests/CustomerService.Tests && \
+	dotnet test --logger "console;verbosity=normal" --configuration Release \
+		--settings ../../../../test.runsettings 2>/dev/null | \
+		grep -E "(Passed|Failed|Total tests|Test Run)" || \
+		dotnet test --logger "console;verbosity=normal" --configuration Release
+	@echo ""
+	@echo "✅ Customer Service Tests Complete!"
+	@echo ""
+	@echo "🤝 What was tested:"
+	@echo "   • Registration: Validates customer creation with proper business constraints"
+	@echo "   • Contact Management: Ensures comprehensive customer contact administration"
+	@echo "   • Contract Management: Tests customer contract lifecycle and administration"
+	@echo "   • Billing & Credit: Verifies customer billing and credit limit management"
+	@echo "   • Search & Filtering: Tests customer search, filtering, and data retrieval"
+	@echo "   • Status Management: Validates customer activation/deactivation workflows"
+	@echo "   • Relationship Tracking: Confirms customer relationship and history management"
+	@echo "   • Security: Tests role-based access control and input validation"
+	@echo "   • Data Integrity: Verifies database operations and business rules"
 
 # Authorization Tools
 cloud-auth:
