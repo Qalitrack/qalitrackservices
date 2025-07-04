@@ -1,0 +1,253 @@
+# QaliTrack Authorization Rules Template
+# This file defines the authorization rules that will be applied to gateway routes
+
+metadata:
+  name: "QaliTrack Authorization Rules"
+  version: "1.0.0"
+  description: "Central authorization configuration for QaliTrack gateway"
+
+# Service port mappings
+services:
+  user-service: 7001
+  organization-service: 7002
+  vehicle-service: 7003
+  driver-service: 7004
+  product-service: 7005
+  customer-service: 7006
+  supplier-service: 7007
+  transporter-service: 7008
+  route-service: 7009
+  weighbridge-service: 7010
+  sacco-service: 7011
+  weight-data-service: 7012
+  compliance-service: 7013
+  operational-data-service: 7014
+  transaction-service: 7015
+  analytics-service: 7016
+  data-sync-service: 7017
+  archive-service: 7018
+  service-discovery: 7019
+
+# Role hierarchy (higher number = more privileges)
+roles:
+  hierarchy:
+    SuperAdmin: 5
+    Admin: 4
+    SiteManager: 3
+    Operator: 2
+    Auditor: 2
+    ClientAdmin: 2
+    User: 1
+  
+  descriptions:
+    SuperAdmin: "System-wide administrative access"
+    Admin: "Full administrative access to organization"
+    SiteManager: "Management access to assigned sites"
+    Operator: "Operational access for daily tasks"
+    Auditor: "Read-only access for compliance and auditing"
+    ClientAdmin: "Organization-specific administrative access"
+    User: "Basic user access"
+
+# Public endpoints (no authentication required)
+public_endpoints:
+  - "/api/auth/*"
+  - "/health"
+  - "/services/*/health"
+  - "/api/swagger"
+  - "/swagger"
+
+# Authorization rules for services
+authorization_rules:
+  
+  # User Service - Basic user management
+  user-service:
+    base_path: "/api/users"
+    service_name: "UserService"
+    description: "User management and authentication service"
+    rules:
+      - path: "/api/users/{everything}"
+        roles: ["User"]
+        description: "Basic user operations"
+      - path: "/api/users/admin/{everything}"
+        roles: ["Admin"]
+        description: "Administrative user operations"
+      - path: "/api/users/roles/{everything}"
+        roles: ["Admin"]
+        description: "Role management operations"
+
+  # Organization Service - Organization management
+  organization-service:
+    base_path: "/api/organizations"
+    service_name: "OrganizationService"
+    description: "Multi-tenant organization management"
+    rules:
+      - path: "/api/organizations/{everything}"
+        roles: ["Admin"]
+        description: "Organization management - admin only"
+      - path: "/api/organizations/sites/{everything}"
+        roles: ["SiteManager"]
+        description: "Site management operations"
+
+  # Vehicle Service - Fleet management
+  vehicle-service:
+    base_path: "/api/vehicles"
+    service_name: "VehicleService"
+    description: "Vehicle registration and fleet management"
+    rules:
+      - path: "/api/vehicles/{everything}"
+        roles: ["Operator"]
+        description: "Vehicle operations and management"
+      - path: "/api/vehicles/admin/{everything}"
+        roles: ["Admin"]
+        description: "Vehicle administrative operations"
+
+  # Driver Service - Driver management
+  driver-service:
+    base_path: "/api/drivers"
+    service_name: "DriverService"
+    description: "Driver certification and management"
+    rules:
+      - path: "/api/drivers/{everything}"
+        roles: ["Operator"]
+        description: "Driver operations and management"
+      - path: "/api/drivers/licenses/{everything}"
+        roles: ["SiteManager"]
+        description: "Driver license management"
+
+  # Product Service - Product catalog
+  product-service:
+    base_path: "/api/products"
+    service_name: "ProductService"
+    description: "Product catalog and specifications"
+    rules:
+      - path: "/api/products/{everything}"
+        roles: ["User"]
+        description: "Product catalog access"
+      - path: "/api/products/admin/{everything}"
+        roles: ["Admin"]
+        description: "Product administrative operations"
+
+  # Customer Service - Customer management
+  customer-service:
+    base_path: "/api/customers"
+    service_name: "CustomerService"
+    description: "Customer relationship management"
+    rules:
+      - path: "/api/customers/{everything}"
+        roles: ["Operator"]
+        description: "Customer operations"
+      - path: "/api/customers/contracts/{everything}"
+        roles: ["SiteManager"]
+        description: "Customer contract management"
+
+  # Supplier Service - Supplier management
+  supplier-service:
+    base_path: "/api/suppliers"
+    service_name: "SupplierService"
+    description: "Supplier relationship management"
+    rules:
+      - path: "/api/suppliers/{everything}"
+        roles: ["Operator"]
+        description: "Supplier operations"
+      - path: "/api/suppliers/contracts/{everything}"
+        roles: ["SiteManager"]
+        description: "Supplier contract management"
+
+  # Weight Data Service - Weighbridge operations
+  weight-data-service:
+    base_path: "/api/weight"
+    service_name: "WeightDataService"
+    description: "Weight measurement and data management"
+    rules:
+      - path: "/api/weight/measurements/{everything}"
+        roles: ["Operator"]
+        description: "Weight measurement operations"
+      - path: "/api/weight/corrections/{everything}"
+        roles: ["SiteManager"]
+        description: "Weight correction and calibration"
+      - path: "/api/weight/analytics/{everything}"
+        roles: ["SiteManager"]
+        description: "Weight data analytics"
+
+  # Compliance Service - Regulatory compliance
+  compliance-service:
+    base_path: "/api/compliance"
+    service_name: "ComplianceService"
+    description: "Regulatory compliance and monitoring"
+    rules:
+      - path: "/api/compliance/checks/{everything}"
+        roles: ["Auditor"]
+        description: "Compliance checking and validation"
+      - path: "/api/compliance/reports/{everything}"
+        roles: ["Auditor"]
+        description: "Compliance reporting"
+      - path: "/api/compliance/admin/{everything}"
+        roles: ["Admin"]
+        description: "Compliance administration"
+
+  # Transaction Service - Business transactions
+  transaction-service:
+    base_path: "/api/transactions"
+    service_name: "TransactionService"
+    description: "Business transaction processing"
+    rules:
+      - path: "/api/transactions/{everything}"
+        roles: ["Operator"]
+        description: "Transaction processing"
+      - path: "/api/transactions/reports/{everything}"
+        roles: ["Auditor"]
+        description: "Transaction reporting"
+
+  # Analytics Service - Business intelligence
+  analytics-service:
+    base_path: "/api/analytics"
+    service_name: "AnalyticsService"
+    description: "Business analytics and reporting"
+    rules:
+      - path: "/api/analytics/dashboard/{everything}"
+        roles: ["SiteManager"]
+        description: "Analytics dashboard access"
+      - path: "/api/analytics/reports/{everything}"
+        roles: ["SiteManager"]
+        description: "Analytics reporting"
+
+  # Archive Service - Data archival
+  archive-service:
+    base_path: "/api/archive"
+    service_name: "ArchiveService"
+    description: "Data archival and retention"
+    rules:
+      - path: "/api/archive/{everything}"
+        roles: ["Admin"]
+        description: "Archive management - admin only"
+      - path: "/api/archive/search/{everything}"
+        roles: ["Auditor"]
+        description: "Archive search and retrieval"
+
+  # Data Sync Service - Multi-site synchronization
+  data-sync-service:
+    base_path: "/api/sync"
+    service_name: "DataSyncService"
+    description: "Multi-site data synchronization"
+    rules:
+      - path: "/api/sync/sessions/{everything}"
+        roles: ["Admin"]
+        description: "Sync session management"
+      - path: "/api/sync/sites/{everything}"
+        roles: ["SiteManager"]
+        description: "Site synchronization"
+
+# Environment-specific overrides
+environments:
+  development:
+    # More permissive roles for development
+    overrides:
+      - path: "/api/*/admin/*"
+        roles: ["SiteManager"] # Allow SiteManager in dev
+        
+  production:
+    # Stricter rules for production
+    additional_rules:
+      - path: "/api/system/*"
+        roles: ["SuperAdmin"]
+        description: "System administration - super admin only"

@@ -28,7 +28,7 @@ public class AuthControllerTests
     public async Task Register_WithValidRequest_ShouldReturnOk()
     {
         // Arrange
-        var request = new RegisterUserDto
+        var request = new RegisterRequestDto
         {
             Username = "testuser",
             Email = "test@example.com",
@@ -48,7 +48,7 @@ public class AuthControllerTests
             }
         };
 
-        _authServiceMock.Setup(x => x.RegisterAsync(It.IsAny<RegisterUserDto>()))
+        _authServiceMock.Setup(x => x.RegisterAsync(It.IsAny<RegisterRequestDto>()))
             .ReturnsAsync(response);
 
         // Act
@@ -64,7 +64,7 @@ public class AuthControllerTests
     public async Task Register_WithInvalidRequest_ShouldReturnBadRequest()
     {
         // Arrange
-        var request = new RegisterUserDto
+        var request = new RegisterRequestDto
         {
             Username = "testuser",
             Email = "invalid-email",
@@ -77,7 +77,7 @@ public class AuthControllerTests
             Message = "Validation failed"
         };
 
-        _authServiceMock.Setup(x => x.RegisterAsync(It.IsAny<RegisterUserDto>()))
+        _authServiceMock.Setup(x => x.RegisterAsync(It.IsAny<RegisterRequestDto>()))
             .ReturnsAsync(response);
 
         // Act
@@ -93,14 +93,14 @@ public class AuthControllerTests
     public async Task Register_WithException_ShouldReturnInternalServerError()
     {
         // Arrange
-        var request = new RegisterUserDto
+        var request = new RegisterRequestDto
         {
             Username = "testuser",
             Email = "test@example.com",
             Password = "Password123!"
         };
 
-        _authServiceMock.Setup(x => x.RegisterAsync(It.IsAny<RegisterUserDto>()))
+        _authServiceMock.Setup(x => x.RegisterAsync(It.IsAny<RegisterRequestDto>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act

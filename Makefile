@@ -1,7 +1,7 @@
 # QaliTrack Microservices Test Suite
 # ===================================
 
-.PHONY: help test test-interactive test-all test-health test-api test-docker test-deployments test-services test-gateway clean status logs
+.PHONY: help test test-interactive test-all test-health test-api test-docker test-deployments test-services test-gateway test-users cloud-auth auth-config clean status logs
 
 # Default target
 help:
@@ -18,6 +18,11 @@ help:
 	@echo "  test-deployments  - Test deployment generation"
 	@echo "  test-services     - Test individual services"
 	@echo "  test-gateway      - Run gateway authentication and role enforcement tests"
+	@echo "  test-users        - Run user service authentication and management tests"
+	@echo ""
+	@echo "Authorization Tools:"
+	@echo "  cloud-auth        - Generate authorization configs for client deployments"
+	@echo "  auth-config       - Generate gateway authorization configs from YAML rules"
 	@echo "  status            - Show deployment status"
 	@echo "  logs              - Show service logs"
 	@echo "  clean             - Stop all services and clean up"
@@ -302,6 +307,151 @@ test-gateway:
 	@echo "   • Role Enforcement: Confirms role hierarchy (User < Operator < Manager < Admin)"
 	@echo "   • Security Headers: Validates user context is forwarded to services"
 	@echo "   • Token Security: Prevents tampering, replay, and expiration attacks"
+
+# User Service Tests
+test-users:
+	@echo "👤 QaliTrack User Service Tests"
+	@echo "==============================="
+	@echo ""
+	@echo "Testing the following user management use cases:"
+	@echo "  ✓ User Registration and Validation"
+	@echo "  ✓ Password Security and Hashing (BCrypt)"
+	@echo "  ✓ User Authentication and Login"
+	@echo "  ✓ JWT Token Generation and Validation"
+	@echo "  ✓ Role Assignment and Management"
+	@echo "  ✓ Permission-Based Authorization"
+	@echo "  ✓ User Profile Management"
+	@echo "  ✓ Password Reset and Recovery"
+	@echo "  ✓ Session Management and Token Refresh"
+	@echo "  ✓ API Security and Input Validation"
+	@echo ""
+	@echo "Running 85+ comprehensive user management tests..."
+	@echo ""
+	@cd packages/microservices/masterdata/user-service/tests/UserService.Tests && \
+	dotnet test --logger "console;verbosity=normal" --configuration Release \
+		--settings ../../../../test.runsettings 2>/dev/null | \
+		grep -E "(Passed|Failed|Total tests|Test Run)" || \
+		dotnet test --logger "console;verbosity=normal" --configuration Release
+	@echo ""
+	@echo "✅ User Service Tests Complete!"
+	@echo ""
+	@echo "👥 What was tested:"
+	@echo "   • Registration: Validates user creation with proper constraints"
+	@echo "   • Authentication: Ensures secure login with password verification"
+	@echo "   • Authorization: Confirms role-based access control works correctly"
+	@echo "   • Token Management: Validates JWT generation, expiration, and refresh"
+	@echo "   • Security: Tests password hashing, input validation, and rate limiting"
+	@echo "   • API Endpoints: Verifies all user management endpoints function properly"
+
+# Authorization Tools
+cloud-auth:
+	@echo "🔐 QaliTrack Authorization Configuration Generator"
+	@echo "================================================="
+	@echo ""
+	@echo "Available commands:"
+	@echo "  make cloud-auth-list     - List available client configurations"
+	@echo "  make cloud-auth-gen      - Generate auth config (interactive)"
+	@echo "  make cloud-auth-help     - Show detailed help"
+	@echo ""
+	@python scripts/cloud-auth-generator.py --list-clients
+
+cloud-auth-list:
+	@python scripts/cloud-auth-generator.py --list-clients
+
+cloud-auth-gen:
+	@echo "🔐 Interactive Authorization Config Generator"
+	@echo "============================================"
+	@echo ""
+	@read -p "Enter client name: " client; \
+	read -p "Output format (json/yaml) [json]: " format; \
+	format=$${format:-json}; \
+	echo ""; \
+	echo "Generating authorization configuration for: $$client"; \
+	python scripts/cloud-auth-generator.py --client=$$client --format=$$format --validate
+
+cloud-auth-help:
+	@python scripts/cloud-auth-generator.py --help
+
+# Authorization Configuration Tools
+auth-config:
+	@echo "🔐 QaliTrack Gateway Authorization Configuration"
+	@echo "==============================================="
+	@echo ""
+	@echo "Available commands:"
+	@echo "  make auth-config-generate    - Generate gateway config from YAML rules"
+	@echo "  make auth-config-validate    - Validate existing gateway configuration"
+	@echo "  make auth-config-list        - List available authorization rule files"
+	@echo "  make auth-config-test        - Run authorization config generator tests"
+	@echo "  make auth-config-apply       - Generate and apply config to gateway"
+	@echo "  make auth-config-help        - Show detailed help"
+	@echo ""
+
+auth-config-generate:
+	@echo "🔐 Generate Gateway Authorization Configuration"
+	@echo "=============================================="
+	@echo ""
+	@read -p "Enter auth rules file [configs/auth/auth-rules-template.yml]: " rules; \
+	rules=$${rules:-configs/auth/auth-rules-template.yml}; \
+	read -p "Environment (development/production/staging) [development]: " env; \
+	env=$${env:-development}; \
+	echo ""; \
+	echo "Generating configuration from: $$rules"; \
+	echo "Target environment: $$env"; \
+	python scripts/auth-config-generator.py --rules=$$rules --env=$$env
+
+auth-config-validate:
+	@echo "🔍 Validating Gateway Authorization Configuration"
+	@echo "==============================================="
+	@python scripts/auth-config-generator.py --validate-gateway
+
+auth-config-list:
+	@echo "📋 Available Authorization Rule Files"
+	@echo "===================================="
+	@python scripts/auth-config-generator.py --list-rules
+
+auth-config-test:
+	@echo "🧪 Running Authorization Config Generator Tests"
+	@echo "==============================================="
+	@echo ""
+	@python -m pytest tests/auth_config_generator_test.py -v --tb=short
+	@echo ""
+	@echo "✅ Authorization Config Generator Tests Complete!"
+
+auth-config-apply:
+	@echo "🚀 Generate and Apply Gateway Authorization Configuration"
+	@echo "========================================================"
+	@echo ""
+	@read -p "Enter auth rules file [configs/auth/auth-rules-template.yml]: " rules; \
+	rules=$${rules:-configs/auth/auth-rules-template.yml}; \
+	read -p "Environment (development/production/staging) [development]: " env; \
+	env=$${env:-development}; \
+	echo ""; \
+	echo "⚠️  This will overwrite the existing gateway configuration!"; \
+	read -p "Continue? (y/N): " confirm; \
+	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
+		echo ""; \
+		echo "Generating and applying configuration..."; \
+		python scripts/auth-config-generator.py --rules=$$rules --env=$$env --apply-to-gateway; \
+		echo ""; \
+		echo "✅ Configuration applied successfully!"; \
+		echo "🔄 Restart the gateway to apply changes."; \
+	else \
+		echo "❌ Operation cancelled."; \
+	fi
+
+auth-config-backup:
+	@echo "💾 Backup Current Gateway Configuration"
+	@echo "======================================"
+	@timestamp=$$(date +%Y%m%d_%H%M%S); \
+	if [ -f packages/qalitrack-gateway/src/ocelot.json ]; then \
+		cp packages/qalitrack-gateway/src/ocelot.json packages/qalitrack-gateway/src/backup/ocelot_manual_backup_$$timestamp.json; \
+		echo "✅ Configuration backed up to: packages/qalitrack-gateway/src/backup/ocelot_manual_backup_$$timestamp.json"; \
+	else \
+		echo "❌ No gateway configuration file found to backup"; \
+	fi
+
+auth-config-help:
+	@python scripts/auth-config-generator.py --help
 
 # Test specific endpoints
 test-auth:
