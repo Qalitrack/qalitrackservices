@@ -1,25 +1,331 @@
-# QaliTrack Services Monorepo
+# QaliTrack Microservices
 
-A Turborepo-powered monorepo for QaliTrack microservices and applications, providing a comprehensive platform for industrial weighbridge operations, logistics management, and regulatory compliance.
+A comprehensive weighbridge management system built with .NET 8 microservices architecture.
 
-## What is QaliTrack?
+## 🏗️ Architecture Overview
 
-QaliTrack is an integrated platform that manages:
-- **Master Data Management**: Centralized data for vehicles, suppliers, drivers, products, routes, and weighbridges
-- **User Administration**: Comprehensive user management, authentication, and role-based access control
-- **Operational Workflows**: End-to-end logistics and compliance processes
-- **Regulatory Compliance**: Audit trails, reporting, and regulatory data management
+QaliTrack consists of 19 microservices (so far) organized into two main categories:
 
-## Technology Stack
+### Master Data Services (11 services)
+- **User Service** (Port 7001) - Authentication and user management
+- **Organization Service** (Port 7002) - Multi-tenant organization management
+- **Vehicle Service** (Port 7003) - Vehicle master data
+- **Driver Service** (Port 7004) - Driver master data
+- **Product Service** (Port 7005) - Product master data
+- **Route Service** (Port 7006) - Route master data
+- **Weighbridge Service** (Port 7007) - Weighbridge master data
+- **Customer Service** (Port 7008) - Customer master data
+- **Supplier Service** (Port 7009) - Supplier master data
+- **Transporter Service** (Port 7010) - Transporter master data
+- **Sacco Service** (Port 7011) - Sacco master data
 
-- **Monorepo**: Turborepo for build orchestration and caching
-- **Package Manager**: pnpm with workspaces
-- **Backend Services**: C#/.NET microservices
-- **Database**: PostgreSQL
-- **Authentication**: JWT-based security
-- **Frontend**: React/Next.js applications
-- **Containerization**: Docker
-- **Documentation**: Comprehensive docs with technical and user guides
+### Data Management Services (8 services)
+- **Weight Data Service** (Port 7012) - Weight measurements
+- **Compliance Service** (Port 7013) - Compliance monitoring
+- **Operational Data Service** (Port 7014) - Operational data management
+- **Transaction Service** (Port 7015) - Transaction processing
+- **Analytics Service** (Port 7016) - Analytics and reporting
+- **Data Sync Service** (Port 7017) - Data synchronization
+- **Archive Service** (Port 7018) - Data archival
+
+### API Gateway
+- **Gateway Service** (Port 7000) - Central entry point with authentication
+
+## 🔐 Authorization System
+
+QaliTrack implements a sophisticated role-based access control (RBAC) system that operates at the API Gateway level, providing centralized security enforcement across all microservices.
+
+### Authorization Architecture
+
+The system uses a **hybrid authorization model**:
+- **Coarse-grained control** at the gateway (service-level access) eg: "User must be Operator+ to access /api/vehicles/*"
+- **Fine-grained control** within services (endpoint-level permissions) eg: "User can only view vehicles assigned to their site" 
+- **Role hierarchy** with inheritance (User < Operator < SiteManager < Admin < SuperAdmin)
+
+### Role Hierarchy
+
+```
+SuperAdmin (Level 5) - System-wide administrative access
+    ↓
+Admin (Level 4) - Full organizational administrative access  
+    ↓
+SiteManager (Level 3) - Site-level management access
+    ↓
+Operator (Level 2) - Daily operational tasks
+Auditor (Level 2) - Read-only compliance access
+ClientAdmin (Level 2) - Organization-specific admin
+    ↓
+User (Level 1) - Basic authenticated access
+```
+
+### Authorization Configuration
+
+The authorization system is managed through YAML configuration files that define:
+- Service port mappings
+- Role requirements for each service endpoint
+- Public endpoints (no authentication required)
+- Environment-specific overrides
+
+#### Generate Gateway Authorization Configuration
+
+```bash
+# Generate authorization config from YAML rules
+make auth-config-generate
+
+# Apply configuration directly to gateway
+make auth-config-apply
+
+# Validate existing gateway configuration
+make auth-config-validate
+
+# Run authorization generator tests
+make auth-config-test
+```
+
+#### Authorization Rules Example
+
+```yaml
+# configs/auth/auth-rules-template.yml
+authorization_rules:
+  user-service:
+    rules:
+      - path: "/api/users/{everything}"
+        roles: ["User"]
+        description: "Basic user operations"
+      - path: "/api/users/admin/{everything}"
+        roles: ["Admin"]
+        description: "Administrative user operations"
+```
+
+### Client-Specific Authorization
+
+Generate client-specific authorization configurations:
+
+```bash
+# Generate auth config for specific client
+make cloud-auth-gen
+
+# List available client configurations
+make cloud-auth-list
+```
+
+### Security Features
+
+- **JWT Token Authentication** - Secure token-based authentication
+- **Role-Based Access Control** - Hierarchical role enforcement
+- **Gateway-Level Security** - Centralized authorization before routing
+- **User Context Forwarding** - User information passed to downstream services
+- **Environment-Specific Rules** - Different access levels per environment
+- **Automatic Configuration** - Generate gateway configs from YAML rules
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Docker and Docker Compose
+- .NET 8 SDK (for development)
+- Git
+
+### Option 1: Docker Compose (Recommended)
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd qalitrackservices
+
+# Start all services
+./scripts/start-services.sh
+
+# Access the API Gateway
+open https://localhost:7000
+
+# View API documentation
+open https://localhost:7000/swagger
+```
+
+### Option 2: Manual Build and Run
+
+```bash
+# Build all services
+./scripts/build-all.sh
+
+# Or run individual services
+cd apps/masterdata/user-service
+dotnet run --project src/UserService.Api
+```
+
+## 📊 Service URLs
+
+| Service | URL | Documentation |
+|---------|-----|---------------|
+| API Gateway | https://localhost:7000 | https://localhost:7000/swagger |
+| User Service | https://localhost:7001 | https://localhost:7001/swagger |
+| Organization Service | https://localhost:7002 | https://localhost:7002/swagger |
+| Vehicle Service | https://localhost:7003 | https://localhost:7003/swagger |
+| Driver Service | https://localhost:7004 | https://localhost:7004/swagger |
+| Product Service | https://localhost:7005 | https://localhost:7005/swagger |
+| Route Service | https://localhost:7006 | https://localhost:7006/swagger |
+| Weighbridge Service | https://localhost:7007 | https://localhost:7007/swagger |
+| Customer Service | https://localhost:7008 | https://localhost:7008/swagger |
+| Supplier Service | https://localhost:7009 | https://localhost:7009/swagger |
+| Transporter Service | https://localhost:7010 | https://localhost:7010/swagger |
+| Sacco Service | https://localhost:7011 | https://localhost:7011/swagger |
+| Weight Data Service | https://localhost:7012 | https://localhost:7012/swagger |
+| Compliance Service | https://localhost:7013 | https://localhost:7013/swagger |
+| Operational Data Service | https://localhost:7014 | https://localhost:7014/swagger |
+| Transaction Service | https://localhost:7015 | https://localhost:7015/swagger |
+| Analytics Service | https://localhost:7016 | https://localhost:7016/swagger |
+| Data Sync Service | https://localhost:7017 | https://localhost:7017/swagger |
+| Archive Service | https://localhost:7018 | https://localhost:7018/swagger |
+
+## 🔒 Authentication
+
+The system uses JWT-based authentication through the User Service. To access protected endpoints:
+
+1. Register a user: `POST /api/auth/register`
+2. Login: `POST /api/auth/login`
+3. Use the returned JWT token in the Authorization header: `Bearer <token>`
+
+## 📋 Management Commands
+
+### Multi-Client Manager
+
+```bash
+# List available client configurations
+./scripts/qalitrack-manager.sh list
+
+# Generate deployment for a client
+./scripts/qalitrack-manager.sh generate testing
+
+# Start services for a client
+./scripts/qalitrack-manager.sh start testing
+
+# Stop services (preserve data)
+./scripts/qalitrack-manager.sh stop testing
+
+# Stop services and remove data
+./scripts/qalitrack-manager.sh stop testing --remove-data
+
+# View service status
+./scripts/qalitrack-manager.sh status testing
+
+# View logs
+./scripts/qalitrack-manager.sh logs testing
+./scripts/qalitrack-manager.sh logs testing user-service
+```
+
+### Docker Commands
+
+```bash
+# Build and start services
+docker compose -f apps/testing/docker-compose.testing.yml up --build
+
+# View logs for all services
+docker compose -f apps/testing/docker-compose.testing.yml logs -f
+
+# View logs for specific service
+docker compose -f apps/testing/docker-compose.testing.yml logs -f user-service
+
+# Restart a specific service
+docker compose -f apps/testing/docker-compose.testing.yml restart user-service
+```
+
+## 🏥 Health Monitoring
+
+- **Gateway Health**: http://localhost:7000/health
+- **Aggregated Swagger**: http://localhost:7000/api/swagger (integrated into gateway)
+- **Individual Service Health**: http://localhost:700X/health (where X is service port)
+- **Service Discovery**: http://localhost:7000/api/gateway/services
+- **Available Services**: http://localhost:7000/api/swagger/services
+
+## 🛠️ Development
+
+### Technology Stack
+
+- **.NET 8** - Framework
+- **Entity Framework Core** - ORM
+- **SQLite** - Development database
+- **JWT** - Authentication
+- **AutoMapper** - Object mapping
+- **FluentValidation** - Input validation
+- **Serilog** - Logging
+- **Swagger/OpenAPI** - API documentation
+- **Docker** - Containerization
+- **Ocelot** - API Gateway
+- **YamlDotNet** - Configuration management
+
+## 🏗️ Project Structure
+
+```
+qalitrackservices/
+├── packages/                      # Reusable Components & Services
+│   ├── qalitrack-gateway/         # API Gateway with integrated Swagger aggregator
+│   └── microservices/             # All microservice implementations
+│       ├── masterdata/            # Master data services
+│       │   ├── user-service/      # Authentication and user management
+│       │   ├── organization-service/ # Multi-tenant organizations
+│       │   ├── vehicle-service/   # Vehicle master data
+│       │   ├── driver-service/    # Driver master data
+│       │   ├── product-service/   # Product catalog
+│       │   ├── route-service/     # Route management
+│       │   ├── weighbridge-service/ # Weighbridge configuration
+│       │   ├── customer-service/  # Customer management
+│       │   ├── supplier-service/  # Supplier management
+│       │   ├── transporter-service/ # Transporter management
+│       │   └── sacco-service/     # SACCO management
+│       └── datamanager/           # Data management services
+│           ├── weight-data-service/ # Weight measurements
+│           ├── compliance-service/ # Regulatory compliance
+│           ├── operational-data-service/ # Operational metrics
+│           ├── transaction-service/ # Business transactions
+│           ├── analytics-service/ # Analytics and reporting
+│           ├── data-sync-service/ # Data synchronization
+│           └── archive-service/   # Data archival
+├── apps/                          # Client Application Deployments
+│   ├── testing/                   # Testing deployment
+│   ├── babumri/                   # Babumri Cement deployment
+│   ├── kungu/                     # Kungu Cement deployment
+│   └── national-weighing/         # National Weighing Authority deployment
+├── configs/                       # Configuration Management
+│   └── clients/                   # Client-specific configurations
+│       ├── testing.yml            # Testing environment
+│       ├── babumri-cement.yml     # Babumri Cement factory
+│       ├── kungu-cement.yml       # Kungu Cement factory
+│       └── national-weighing.yml  # National Weighing Authority
+├── scripts/                       # Management & Build Scripts
+│   ├── generate-deployment.py     # Deployment generator
+│   ├── qalitrack-manager.sh       # Multi-client manager
+│   ├── build-all.sh              # Build all services
+│   ├── create-dockerfiles.sh     # Generate Dockerfiles
+│   ├── start-services.sh         # Start all services
+│   └── stop-services.sh          # Stop services
+├── testing/                       # Testing Resources
+│   └── gateway-user-test.http     # REST client tests
+└── docs/                         # Documentation
+    ├── IMPLEMENTATION_SUMMARY.md
+    └── ...
+```
+
+## 🌟 Multi-Client Configuration
+
+QaliTrack supports different client configurations with varying service compositions:
+
+### Configuration Examples
+
+**Testing Environment** (2 services):
+- Gateway + User Service only
+- Perfect for development
+
+**Babumri Cement** (15+ services):
+- Full factory operations
+- Advanced analytics and compliance
+
+**Kungu Cement** (8 services):
+- Essential weighbridge operations
+- Cost-effective deployment
+
+**National Weighing Authority** (Regulatory):
+- Compliance monitoring focus
+- Read-only operational access
 
 ## Repository Structure
 

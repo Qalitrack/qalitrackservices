@@ -1,0 +1,173 @@
+@gateway = http://localhost:7000
+@userService = http://localhost:7001
+@baseUrl = {{gateway}}/api
+
+### Variables for testing
+@username = testuser
+@email = test@example.com
+@password = TestPassword123!
+
+###
+# Gateway Tests
+###
+
+### Gateway Health Check
+GET {{gateway}}/health
+
+### Gateway Info
+GET {{gateway}}/api/gateway/info
+
+### Gateway Services Discovery
+GET {{gateway}}/api/gateway/services
+
+###
+# Direct User Service Tests (for comparison)
+###
+
+### User Service Health Check (Direct)
+GET {{userService}}/health
+
+### User Service Swagger (Direct)
+GET {{userService}}/swagger/index.html
+
+###
+# Authentication Tests (Through Gateway)
+###
+
+### Register a new user (Through Gateway)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "confirmPassword": "{{password}}",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "+1234567890"
+}
+
+### Login (Through Gateway)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}",
+  "rememberMe": false
+}
+
+### Extract token from login response
+@accessToken = {{login.response.body.$.data.accessToken}}
+@refreshToken = {{login.response.body.$.data.refreshToken}}
+
+### Check Username Availability (Through Gateway)
+GET {{baseUrl}}/users/check-username/newuser123
+
+### Check Email Availability (Through Gateway)
+GET {{baseUrl}}/users/check-email/newuser@example.com
+
+###
+# Authenticated User Tests (Through Gateway)
+###
+
+### Get User Profile (Through Gateway)
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{accessToken}}
+
+### Get User Roles (Through Gateway)
+GET {{baseUrl}}/users/roles
+Authorization: Bearer {{accessToken}}
+
+### Get User Sessions (Through Gateway)
+GET {{baseUrl}}/users/sessions
+Authorization: Bearer {{accessToken}}
+
+### Update User Profile (Through Gateway)
+PUT {{baseUrl}}/users/profile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "firstName": "John Updated",
+  "lastName": "Doe Updated",
+  "phoneNumber": "+1234567891",
+  "dateOfBirth": "1990-01-01"
+}
+
+### Change Password (Through Gateway)
+POST {{baseUrl}}/auth/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "{{password}}",
+  "newPassword": "NewTestPassword123!",
+  "confirmNewPassword": "NewTestPassword123!"
+}
+
+### Refresh Token (Through Gateway)
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Logout (Through Gateway)
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+# Gateway Routing Tests
+###
+
+### User Service Health through Gateway
+GET {{gateway}}/services/users/health
+
+### Test Invalid Route (should return 404)
+GET {{gateway}}/api/invalid/endpoint
+
+###
+# Error Handling Tests
+###
+
+### Test Authentication Required
+GET {{baseUrl}}/users/profile
+
+### Test Invalid Credentials
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "invaliduser",
+  "password": "invalidpassword"
+}
+
+### Test Invalid Registration (missing fields)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser2"
+}
+
+### Test Duplicate User Registration
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "confirmPassword": "{{password}}",
+  "firstName": "Jane",
+  "lastName": "Doe"
+}

@@ -1,0 +1,24 @@
+{
+  "SwaggerEndPoints": [
+    {
+      "Key": "user-service",
+      "Config": [
+        {
+          "Name": "User Service API",
+          "Version": "v1",
+          "Url": "http://user-service/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "gateway",
+      "Config": [
+        {
+          "Name": "API Gateway",
+          "Version": "v1",
+          "Url": "http://localhost/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}

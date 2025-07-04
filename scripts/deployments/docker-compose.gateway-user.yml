@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # User Service - Foundation service with authentication
+  user-service:
+    build:
+      context: ./apps/masterdata/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "7001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Data Source=/data/userservice.db
+      - Jwt__SecretKey=DevelopmentSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
+      - Jwt__Issuer=UserService
+      - Jwt__Audience=UserService
+      - Jwt__AccessTokenExpirationMinutes=60
+      - Jwt__RefreshTokenExpirationDays=7
+    volumes:
+      - user-data:/data
+      - ./apps/masterdata/user-service/logs:/app/logs
+    networks:
+      - qalitrack-test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # API Gateway - Routes to User Service
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "7000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Jwt__SecretKey=DevelopmentSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
+      - Jwt__Issuer=UserService
+      - Jwt__Audience=UserService
+    depends_on:
+      user-service:
+        condition: service_healthy
+    networks:
+      - qalitrack-test-network
+    restart: unless-stopped
+    volumes:
+      - ./gateway/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  user-data:
+
+networks:
+  qalitrack-test-network:
+    driver: bridge

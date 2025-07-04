@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  weight-data-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: weight-data-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/weightdata.db
+    ports:
+      - "8080:8080"
+    volumes:
+      - weight_data:/app/data
+      - weight_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - weight-data-network
+
+  # Optional: Database container for production (PostgreSQL)
+  weight-database:
+    image: postgres:15-alpine
+    container_name: weight-database
+    environment:
+      - POSTGRES_DB=weightdata
+      - POSTGRES_USER=weightuser
+      - POSTGRES_PASSWORD=weightpass123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U weightuser -d weightdata"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - weight-data-network
+
+volumes:
+  weight_data:
+    driver: local
+  weight_logs:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  weight-data-network:
+    driver: bridge

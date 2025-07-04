@@ -1,0 +1,39 @@
+sequenceDiagram
+    participant C as Client App
+    participant G as API Gateway
+    participant U as User Service
+    participant R as Report Service
+    participant DB as Database
+
+    Note over C,DB: Authentication & Authorization Flow
+
+    C->>G: 1. Login Request (credentials)
+    G->>U: 2. Validate Credentials
+    U->>DB: 3. Query User & Roles
+    DB-->>U: 4. User Data & Permissions
+    U-->>G: 5. User Context + JWT
+    G-->>C: 6. JWT Token
+
+    Note over C,DB: API Request with RBAC
+
+    C->>G: 7. API Request + JWT
+    G->>G: 8. Validate JWT
+    G->>U: 9. Get Current Permissions (cached)
+    U-->>G: 10. User Roles & Permissions
+    G->>R: 11. Forward Request + User Context
+    Note right of G: Headers: X-User-ID, X-User-Roles, X-User-Permissions
+    R->>R: 12. Check RBAC for Report Type
+    alt Permission Granted
+        R->>DB: 13. Generate Report
+        DB-->>R: 14. Report Data
+        R-->>G: 15. Report Response
+        G-->>C: 16. Success Response
+    else Permission Denied
+        R-->>G: 17. 403 Forbidden
+        G-->>C: 18. Access Denied
+    end
+
+    Note over C,DB: Role-Based Report Access Examples
+    Note over R: Operator: Vehicle Logs Only
+    Note over R: Manager: All Site Reports
+    Note over R: Admin: System-wide Access
