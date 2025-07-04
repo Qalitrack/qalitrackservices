@@ -1,0 +1,134 @@
+# Kungu Cement Configuration
+client:
+  name: "Kungu Cement"
+  code: "kungu"
+  description: "Kungu Cement Factory - Simplified weighbridge operations"
+
+deployment:
+  environment: "production"
+  domain: "kungu.qalitrack.com"
+  ports:
+    gateway: 7000
+    swagger_aggregator: 8000
+
+services:
+  # Core services (always required)
+  gateway:
+    enabled: true
+    port: 7000
+    image: "qalitrack/gateway:latest"
+    replicas: 1
+    
+  user-service:
+    enabled: true
+    port: 7001
+    image: "qalitrack/user-service:latest"
+    replicas: 1
+    
+  # swagger-aggregator integrated into gateway
+
+  # Essential master data services
+  organization-service:
+    enabled: true
+    port: 7002
+    image: "qalitrack/organization-service:latest"
+    replicas: 1
+    
+  vehicle-service:
+    enabled: true
+    port: 7003
+    image: "qalitrack/vehicle-service:latest"
+    replicas: 1
+    
+  driver-service:
+    enabled: true
+    port: 7004
+    image: "qalitrack/driver-service:latest"
+    replicas: 1
+    
+  product-service:
+    enabled: true
+    port: 7005
+    image: "qalitrack/product-service:latest"
+    replicas: 1
+    
+  weighbridge-service:
+    enabled: true
+    port: 7007
+    image: "qalitrack/weighbridge-service:latest"
+    replicas: 1
+    
+  customer-service:
+    enabled: true
+    port: 7008
+    image: "qalitrack/customer-service:latest"
+    replicas: 1
+
+  # Essential business services
+  weight-data-service:
+    enabled: true
+    port: 7012
+    image: "qalitrack/weight-data-service:latest"
+    replicas: 1
+    
+  transaction-service:
+    enabled: true
+    port: 7015
+    image: "qalitrack/transaction-service:latest"
+    replicas: 1
+
+  # Disabled services (not needed for simplified operations)
+  route-service:
+    enabled: false
+    reason: "Simple local operations, no complex routing"
+    
+  supplier-service:
+    enabled: false
+    reason: "Limited supplier relationships"
+    
+  transporter-service:
+    enabled: false
+    reason: "No external transporters managed"
+    
+  sacco-service:
+    enabled: false
+    reason: "Not applicable for cement factory"
+    
+  compliance-service:
+    enabled: false
+    reason: "Manual compliance processes"
+    
+  operational-data-service:
+    enabled: false
+    reason: "Basic operations only"
+    
+  analytics-service:
+    enabled: false
+    reason: "Basic reporting sufficient"
+    
+  data-sync-service:
+    enabled: false
+    reason: "Single location, no sync needed"
+    
+  archive-service:
+    enabled: false
+    reason: "Manual archival process"
+
+features:
+  multi_tenant: false
+  advanced_analytics: false
+  compliance_monitoring: false
+  real_time_weighing: true
+  automated_reporting: false
+  mobile_access: false
+  
+database:
+  type: "sqlite"
+  local_storage: true
+  backup_enabled: true
+
+monitoring:
+  metrics: false
+  logging: true
+  alerting: false
+  health_checks: true

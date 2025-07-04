@@ -1,0 +1,358 @@
+version: '3.8'
+
+services:
+  # API Gateway
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "7000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
+      - Jwt__Issuer=UserService
+      - Jwt__Audience=UserService
+    depends_on:
+      - user-service
+      - organization-service
+      - vehicle-service
+      - driver-service
+      - product-service
+      - route-service
+      - weighbridge-service
+      - customer-service
+      - supplier-service
+      - transporter-service
+      - sacco-service
+      - weight-data-service
+      - compliance-service
+      - operational-data-service
+      - transaction-service
+      - analytics-service
+      - data-sync-service
+      - archive-service
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+    volumes:
+      - ./gateway/logs:/app/logs
+
+  # Master Data Services
+  user-service:
+    build:
+      context: ./apps/masterdata/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "7001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/userservice.db
+      - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
+      - Jwt__Issuer=UserService
+      - Jwt__Audience=UserService
+      - Jwt__AccessTokenExpirationMinutes=60
+      - Jwt__RefreshTokenExpirationDays=7
+    volumes:
+      - user-data:/data
+      - ./apps/masterdata/user-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  organization-service:
+    build:
+      context: ./apps/masterdata/organization-service
+      dockerfile: Dockerfile
+    ports:
+      - "7002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/organization.db
+    volumes:
+      - organization-data:/data
+      - ./apps/masterdata/organization-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  vehicle-service:
+    build:
+      context: ./apps/masterdata/vehicle-service
+      dockerfile: Dockerfile
+    ports:
+      - "7003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/vehicle.db
+    volumes:
+      - vehicle-data:/data
+      - ./apps/masterdata/vehicle-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  driver-service:
+    build:
+      context: ./apps/masterdata/driver-service
+      dockerfile: Dockerfile
+    ports:
+      - "7004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/driver.db
+    volumes:
+      - driver-data:/data
+      - ./apps/masterdata/driver-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  product-service:
+    build:
+      context: ./apps/masterdata/product-service
+      dockerfile: Dockerfile
+    ports:
+      - "7005:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/product.db
+    volumes:
+      - product-data:/data
+      - ./apps/masterdata/product-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  route-service:
+    build:
+      context: ./apps/masterdata/route-service
+      dockerfile: Dockerfile
+    ports:
+      - "7006:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/route.db
+    volumes:
+      - route-data:/data
+      - ./apps/masterdata/route-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  weighbridge-service:
+    build:
+      context: ./apps/masterdata/weighbridge-service
+      dockerfile: Dockerfile
+    ports:
+      - "7007:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/weighbridge.db
+    volumes:
+      - weighbridge-data:/data
+      - ./apps/masterdata/weighbridge-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  customer-service:
+    build:
+      context: ./apps/masterdata/customer-service
+      dockerfile: Dockerfile
+    ports:
+      - "7008:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/customer.db
+    volumes:
+      - customer-data:/data
+      - ./apps/masterdata/customer-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  supplier-service:
+    build:
+      context: ./apps/masterdata/supplier-service
+      dockerfile: Dockerfile
+    ports:
+      - "7009:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/supplier.db
+    volumes:
+      - supplier-data:/data
+      - ./apps/masterdata/supplier-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  transporter-service:
+    build:
+      context: ./apps/masterdata/transporter-service
+      dockerfile: Dockerfile
+    ports:
+      - "7010:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/transporter.db
+    volumes:
+      - transporter-data:/data
+      - ./apps/masterdata/transporter-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  sacco-service:
+    build:
+      context: ./apps/masterdata/sacco-service
+      dockerfile: Dockerfile
+    ports:
+      - "7011:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/sacco.db
+    volumes:
+      - sacco-data:/data
+      - ./apps/masterdata/sacco-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  # Data Management Services
+  weight-data-service:
+    build:
+      context: ./apps/datamanager/weight-data-service
+      dockerfile: Dockerfile
+    ports:
+      - "7012:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/weightdata.db
+    volumes:
+      - weight-data:/data
+      - ./apps/datamanager/weight-data-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  compliance-service:
+    build:
+      context: ./apps/datamanager/compliance-service
+      dockerfile: Dockerfile
+    ports:
+      - "7013:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/compliance.db
+    volumes:
+      - compliance-data:/data
+      - ./apps/datamanager/compliance-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  operational-data-service:
+    build:
+      context: ./apps/datamanager/operational-data-service
+      dockerfile: Dockerfile
+    ports:
+      - "7014:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/operationaldata.db
+    volumes:
+      - operational-data:/data
+      - ./apps/datamanager/operational-data-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  transaction-service:
+    build:
+      context: ./apps/datamanager/transaction-service
+      dockerfile: Dockerfile
+    ports:
+      - "7015:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/transaction.db
+    volumes:
+      - transaction-data:/data
+      - ./apps/datamanager/transaction-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  analytics-service:
+    build:
+      context: ./apps/datamanager/analytics-service
+      dockerfile: Dockerfile
+    ports:
+      - "7016:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/analytics.db
+    volumes:
+      - analytics-data:/data
+      - ./apps/datamanager/analytics-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  data-sync-service:
+    build:
+      context: ./apps/datamanager/data-sync-service
+      dockerfile: Dockerfile
+    ports:
+      - "7017:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/datasync.db
+    volumes:
+      - data-sync-data:/data
+      - ./apps/datamanager/data-sync-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+  archive-service:
+    build:
+      context: ./apps/datamanager/archive-service
+      dockerfile: Dockerfile
+    ports:
+      - "7018:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/archive.db
+    volumes:
+      - archive-data:/data
+      - ./apps/datamanager/archive-service/logs:/app/logs
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+
+volumes:
+  user-data:
+  organization-data:
+  vehicle-data:
+  driver-data:
+  product-data:
+  route-data:
+  weighbridge-data:
+  customer-data:
+  supplier-data:
+  transporter-data:
+  sacco-data:
+  weight-data:
+  compliance-data:
+  operational-data:
+  transaction-data:
+  analytics-data:
+  data-sync-data:
+  archive-data:
+
+networks:
+  qalitrack-network:
+    driver: bridge
