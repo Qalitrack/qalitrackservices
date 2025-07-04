@@ -29,9 +29,10 @@ qalitrackservices/
 │   └── UserService.Tests/             # User management and authentication tests
 ├── packages/microservices/datamanager/*/tests/
 │   └── *Service.Tests/                # Data management service tests
-├── tests/                             # Root-level testing utilities
-│   ├── auth_config_generator_test.py  # Authorization configuration tests
-│   └── shared/                        # Shared test utilities and helpers
+├── testing-unified/                   # Unified testing infrastructure
+│   ├── docs/TESTING.md               # This comprehensive testing guide
+│   ├── scripts/auth_config_generator_test.py  # Authorization configuration tests
+│   └── http-tests/gateway-user-test.http      # HTTP API test scenarios
 └── .claude/commands/                  # Test generation and execution commands
     ├── create-service-test.md         # Generate comprehensive test suites
     ├── test-all-services.md          # Execute full ecosystem testing
