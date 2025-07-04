@@ -143,4 +143,62 @@ POST /auth/refresh             # Refresh access tokens
 
 ---
 
+## Gateway Authentication Dependencies
+
+### Visual Architecture Representations
+
+The QaliTrack system architecture is documented with comprehensive visual diagrams:
+
+**🏗️ System Architecture Overview**
+- **File**: `system-architecture.png` / `system-architecture.mmd`
+- **Shows**: Three-layer architecture (Client → Gateway → Core Services)
+- **Highlights**: Critical authentication dependencies at gateway layer
+- **Demonstrates**: How User Service is required for all gateway endpoints
+
+**🔄 Gateway Authentication Flow**
+- **File**: `gateway-auth-flow.png` / `gateway-auth-flow.mmd` 
+- **Shows**: Detailed authentication flow through gateway endpoints
+- **Highlights**: Role-based access control for different endpoint types
+- **Demonstrates**: How JWT tokens and user context flow through the system
+
+### Gateway Endpoint Authentication Matrix
+
+All API Gateway endpoints require authentication except for specific public endpoints:
+
+| Endpoint Pattern | Access Level | Required Role | Authentication |
+|------------------|--------------|---------------|----------------|
+| `/api/auth/*` | 🔓 **PUBLIC** | None | No JWT required |
+| `/health` | 🔓 **PUBLIC** | None | No JWT required |
+| `/api/swagger` | 🔓 **PUBLIC** | None | No JWT required |
+| `/api/users/*` | 🔒 **AUTHENTICATED** | Any valid user | JWT required |
+| `/api/vehicles/*` | 🔒 **OPERATOR+** | Operator or above | JWT + Role check |
+| `/api/weight/*` | 🔒 **OPERATOR+** | Operator or above | JWT + Role check |
+| `/api/reports/*` | 🔒 **AUDITOR+** | Auditor or above | JWT + Role check |
+| `/api/compliance/*` | 🔒 **AUDITOR+** | Auditor or above | JWT + Role check |
+| `/api/analytics/*` | 🔒 **MANAGER+** | Manager or above | JWT + Role check |
+| `/api/organizations/*` | 🔒 **ADMIN+** | Admin or above | JWT + Role check |
+| `/api/archive/*` | 🔒 **ADMIN+** | Admin or above | JWT + Role check |
+
+### Critical System Dependencies
+
+**⚠️ User Service is a Critical Dependency**
+- **All authenticated endpoints** depend on the User Service being operational
+- **Gateway cannot function** without User Service for authentication
+- **No fallback authentication** - User Service is the single source of truth
+- **Service startup order** must ensure User Service is available before Gateway
+
+**Authentication Flow Requirements**
+1. **Client Authentication**: All requests must include valid JWT tokens (except public endpoints)
+2. **Gateway Validation**: Gateway validates tokens with User Service before forwarding
+3. **Role Enforcement**: Gateway checks user roles against endpoint requirements
+4. **Context Forwarding**: Gateway adds user context headers to downstream service requests
+
+### Service Port Configuration
+
+The gateway routes to 19 microservices with the following authentication requirements:
+
+- **Port 7001**: User Service (Authentication hub - always required)
+- **Ports 7002-7018**: Business services (receive pre-authenticated context)
+- **Port 7000**: Gateway (validates all authentication)
+
 *This architecture provides a scalable, secure, and maintainable authentication system suitable for diverse weighbridge management scenarios while maintaining consistent security standards across all deployment contexts.*

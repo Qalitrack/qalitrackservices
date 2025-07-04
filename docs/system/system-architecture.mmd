@@ -1,0 +1,125 @@
+flowchart TB
+    %% Client Applications Layer
+    subgraph CLIENT_LAYER ["🖥️ Client Applications Layer"]
+        WEB_PORTAL[📊 Web Portal<br/>Dashboard & Reports]
+        MOBILE_APP[📱 Mobile App<br/>Field Operations]
+        ADMIN_PANEL[⚙️ Admin Panel<br/>System Management]
+    end
+    
+    %% Gateway Layer
+    subgraph GATEWAY_LAYER ["🚪 Gateway Layer (Port 7000)"]
+        subgraph API_GATEWAY ["API Gateway"]
+            AUTH_MIDDLEWARE[🔐 Authentication Middleware]
+            RATE_LIMITING[⚡ Rate Limiting & Monitoring]
+            REQUEST_ROUTING[🗺️ Request Routing]
+        end
+        
+        subgraph USER_SERVICE_DEP ["⚠️ CRITICAL DEPENDENCY"]
+            USER_SERVICE["👤 User Service<br/>🔒 Authentication Required<br/>- User Authentication & Authorization<br/>- Role-Based Access Control RBAC<br/>- JWT Token Management<br/>- Permission Validation"]
+        end
+        
+        subgraph HYBRID_AUTH ["🔀 Hybrid Authorization Model"]
+            GATEWAY_COARSE["🏰 Gateway Level - Coarse-Grained<br/>Role-based service access control<br/>Example: User must be Operator+ to access /api/vehicles/*"]
+            SERVICE_FINE["🏭 Service Level - Fine-Grained<br/>Resource-specific business rules<br/>Example: User can only view vehicles assigned to their site"]
+        end
+    end
+    
+    %% Core Services Layer
+    subgraph CORE_LAYER ["🏗️ Core Services Layer"]
+        subgraph GENERIC_SERVICES ["Generic Services<br/>(Representing all microservices)"]
+            DATA_MGMT["📊 Data Management Services<br/>- Weight Data - Vehicle - Driver<br/>- Customer - Supplier - Product"]
+            BUSINESS_LOGIC["🏭 Business Logic Services<br/>- Transaction - Compliance<br/>- Operational Data - Analytics"]
+            INTEGRATION["🔗 Integration Services<br/>- Data Sync - Archive<br/>- Organization - Route"]
+            REPORTING["📈 Reporting Services<br/>- Dashboards - Analytics<br/>- Compliance Reports - Audit Trails"]
+            MONITORING["📡 Monitoring Services<br/>- Health Checks - Performance<br/>- System Metrics - Alerts"]
+        end
+    end
+    
+    %% Authentication Flow with Role Enforcement
+    CLIENT_LAYER --> AUTH_MIDDLEWARE
+    AUTH_MIDDLEWARE --> RATE_LIMITING
+    RATE_LIMITING --> REQUEST_ROUTING
+    
+    %% Critical Dependencies
+    AUTH_MIDDLEWARE -.->|"JWT VALIDATION"| USER_SERVICE
+    AUTH_MIDDLEWARE -.->|"ROLE EXTRACTION"| GATEWAY_COARSE
+    REQUEST_ROUTING -.->|"ENDPOINT MAPPING"| GATEWAY_COARSE
+    
+    %% Hybrid Authorization Flow
+    GATEWAY_COARSE -.->|"COARSE AUTHORIZATION"| SERVICE_FINE
+    REQUEST_ROUTING -.->|"USER CONTEXT HEADERS"| SERVICE_FINE
+    
+    %% Service Communication
+    REQUEST_ROUTING --> DATA_MGMT
+    REQUEST_ROUTING --> BUSINESS_LOGIC
+    REQUEST_ROUTING --> INTEGRATION
+    REQUEST_ROUTING --> REPORTING
+    REQUEST_ROUTING --> MONITORING
+    
+    %% User Context Flow
+    USER_SERVICE -.->|"User Context Headers<br/>X-User-ID, X-User-Roles<br/>X-User-Permissions"| DATA_MGMT
+    USER_SERVICE -.->|"Pre-validated<br/>Authentication"| BUSINESS_LOGIC
+    USER_SERVICE -.->|"Trusted User<br/>Context"| INTEGRATION
+    USER_SERVICE -.->|"Role-based<br/>Access Control"| REPORTING
+    USER_SERVICE -.->|"Security<br/>Context"| MONITORING
+    
+    %% Authentication & Authorization Requirements
+    subgraph AUTH_REQUIREMENTS ["🔐 Authentication & Authorization Requirements"]
+        NO_ANON["❌ No Anonymous Access<br/>All protected endpoints require authentication"]
+        JWT_REQUIRED["🎫 JWT Token Required<br/>Every request must include valid JWT token"]
+        RBAC_ENFORCED["🛡️ Role-Based Authorization<br/>Gateway enforces role hierarchy"]
+        HYBRID_ENFORCEMENT["🔀 Hybrid Model Enforcement<br/>Gateway: Service access | Service: Resource access"]
+        ROLE_CACHE["💾 Role Caching<br/>In-memory cache for performance"]
+    end
+    
+    %% Role Hierarchy
+    subgraph ROLE_HIERARCHY ["👥 User Role Hierarchy"]
+        SUPER_ADMIN["👑 SUPER_ADMIN<br/>System-wide access, all operations"]
+        ADMIN["🔧 ADMIN<br/>Administrative operations"]
+        SITE_MANAGER["👨‍💼 SITE_MANAGER<br/>All operations for assigned sites"]
+        OPERATOR["👷 OPERATOR<br/>Operational tasks for shifts"]
+        AUDITOR["📋 AUDITOR<br/>Read-only compliance reports"]
+        CLIENT_ADMIN["🏢 CLIENT_ADMIN<br/>Organization-specific access"]
+    end
+    
+    %% Security Benefits
+    subgraph SECURITY_BENEFITS ["🛡️ Architecture Benefits"]
+        SINGLE_AUTH["🎯 Single Authentication Point<br/>Reduced attack surface"]
+        CENTRALIZED["🏛️ Centralized Authorization<br/>Consistent security policies"]
+        PERFORMANCE["⚡ Performance Optimized<br/>Gateway-level caching"]
+        AUDIT_TRAIL["📝 Comprehensive Audit<br/>All access attempts logged"]
+    end
+    
+    %% Dependencies
+    AUTH_MIDDLEWARE -.-> NO_ANON
+    AUTH_MIDDLEWARE -.-> JWT_REQUIRED
+    AUTH_MIDDLEWARE -.-> RBAC_ENFORCED
+    
+    USER_SERVICE -.-> SUPER_ADMIN
+    USER_SERVICE -.-> ADMIN
+    USER_SERVICE -.-> SITE_MANAGER
+    USER_SERVICE -.-> OPERATOR
+    USER_SERVICE -.-> AUDITOR
+    USER_SERVICE -.-> CLIENT_ADMIN
+    
+    GATEWAY_LAYER -.-> SINGLE_AUTH
+    GATEWAY_LAYER -.-> CENTRALIZED
+    GATEWAY_LAYER -.-> PERFORMANCE
+    GATEWAY_LAYER -.-> AUDIT_TRAIL
+    
+    %% Styling
+    classDef clientLayer fill:#e3f2fd
+    classDef gatewayLayer fill:#fff3e0
+    classDef userService fill:#ffebee,stroke:#d32f2f,stroke-width:3px
+    classDef coreLayer fill:#f3e5f5
+    classDef authReq fill:#e8f5e8
+    classDef roleHierarchy fill:#fce4ec
+    classDef benefits fill:#e0f2f1
+    
+    class CLIENT_LAYER clientLayer
+    class GATEWAY_LAYER gatewayLayer
+    class USER_SERVICE_DEP,USER_SERVICE userService
+    class CORE_LAYER coreLayer
+    class AUTH_REQUIREMENTS authReq
+    class ROLE_HIERARCHY roleHierarchy
+    class SECURITY_BENEFITS benefits

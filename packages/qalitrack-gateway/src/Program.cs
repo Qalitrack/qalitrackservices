@@ -10,6 +10,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using QaliTrack.Gateway.Services;
 using MMLib.SwaggerForOcelot.DependencyInjection;
 using MMLib.SwaggerForOcelot.Middleware;
+using QaliTrackGateway.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,9 @@ builder.Host.UseSerilog();
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Add memory cache for role authorization
+builder.Services.AddMemoryCache();
 
 // Add HTTP client factory and configuration service
 builder.Services.AddHttpClient();
@@ -202,6 +206,9 @@ app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Add role-based authorization middleware
+app.UseRoleAuthorization();
+
 // Add health check middleware before Ocelot
 app.UseHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
 {
@@ -227,3 +234,6 @@ app.MapControllers();
 await app.UseOcelot();
 
 app.Run();
+
+// Make Program class accessible for testing
+public partial class Program { }

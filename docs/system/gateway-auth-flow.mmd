@@ -1,0 +1,170 @@
+flowchart TD
+    %% Client Applications
+    WEB[📱 Web Portal]
+    MOBILE[📱 Mobile App]
+    ADMIN[📱 Admin Panel]
+    
+    %% API Gateway Layer
+    subgraph GATEWAY ["🚪 API Gateway (Port 7000)"]
+        AUTH_MW[🔐 Authentication Middleware<br/>JWT Token Validation]
+        ROLE_MW[🛡️ Role Authorization Middleware<br/>Hybrid Model Implementation]
+        RATE_MW[⚡ Rate Limiting & Monitoring]
+        ROUTE_MW[🗺️ Request Routing & Load Balancing]
+        
+        %% Gateway Endpoints with Role Enforcement
+        subgraph ENDPOINTS ["Gateway Endpoints with Role Enforcement"]
+            AUTH_EP["/api/auth/*<br/>🔓 PUBLIC<br/>No authentication required"]
+            USERS_EP["/api/users/*<br/>🔒 USER+<br/>Basic authenticated access"]
+            ORGS_EP["/api/organizations/*<br/>🔒 ADMIN+<br/>Administrative access only"]
+            VEHICLES_EP["/api/vehicles/*<br/>🔒 OPERATOR+<br/>Operational role required"]
+            REPORTS_EP["/api/reports/*<br/>🔒 AUDITOR+<br/>Audit role required"]
+            WEIGHT_EP["/api/weight/*<br/>🔒 OPERATOR+<br/>Operational role required"]
+            COMPLIANCE_EP["/api/compliance/*<br/>🔒 AUDITOR+<br/>Audit role required"]
+            ANALYTICS_EP["/api/analytics/*<br/>🔒 SITEMANAGER+<br/>Management role required"]
+            ARCHIVE_EP["/api/archive/*<br/>🔒 ADMIN+<br/>Administrative access only"]
+            HEALTH_EP["/health<br/>🔓 PUBLIC<br/>System health check"]
+            SWAGGER_EP["/api/swagger<br/>🔓 PUBLIC<br/>API documentation"]
+        end
+        
+        %% Role Cache for Performance
+        ROLE_CACHE[💾 Role Cache Service<br/>In-Memory Caching<br/>15min TTL]
+    end
+    
+    %% User Service (Authentication Hub)
+    subgraph USER_SERVICE ["👤 User Service (Port 7001)"]
+        LOGIN[POST /api/auth/login]
+        REGISTER[POST /api/auth/register]
+        REFRESH[POST /api/auth/refresh]
+        VALIDATE[POST /api/auth/validate]
+        ROLES[GET /api/users/roles]
+        PERMISSIONS[GET /api/users/permissions]
+    end
+    
+    %% Core Services
+    subgraph CORE_SERVICES ["🏗️ Core Services (Ports 7002-7018)"]
+        VEHICLE_SVC[🚗 Vehicle Service]
+        WEIGHT_SVC[⚖️ Weight Data Service]
+        COMPLIANCE_SVC[📋 Compliance Service]
+        ANALYTICS_SVC[📊 Analytics Service]
+        ARCHIVE_SVC[🗄️ Archive Service]
+        OTHER_SVC[... 14 Other Services]
+    end
+    
+    %% Hybrid Authorization Model
+    subgraph HYBRID_MODEL ["🔀 Hybrid Authorization Model"]
+        GATEWAY_AUTH["🏰 Gateway Level (Coarse-Grained)<br/>Role-based service access<br/>Example: User must be Operator+ to access /api/vehicles/*"]
+        SERVICE_AUTH["🏭 Service Level (Fine-Grained)<br/>Resource-specific permissions<br/>Example: User can only view vehicles assigned to their site"]
+    end
+    
+    %% Authentication Flow
+    WEB --> AUTH_MW
+    MOBILE --> AUTH_MW
+    ADMIN --> AUTH_MW
+    
+    AUTH_MW --> ROLE_MW
+    ROLE_MW --> RATE_MW
+    RATE_MW --> ROUTE_MW
+    
+    %% Role Enforcement Flow
+    ROLE_MW -.-> ROLE_CACHE
+    ROLE_MW -.-> GATEWAY_AUTH
+    ROUTE_MW -.-> SERVICE_AUTH
+    
+    %% Public Endpoints (No Auth Required)
+    ROUTE_MW -.-> AUTH_EP
+    ROUTE_MW -.-> HEALTH_EP
+    ROUTE_MW -.-> SWAGGER_EP
+    
+    %% Protected Endpoints (Auth Required)
+    ROUTE_MW --> USERS_EP
+    ROUTE_MW --> ORGS_EP
+    ROUTE_MW --> VEHICLES_EP
+    ROUTE_MW --> REPORTS_EP
+    ROUTE_MW --> WEIGHT_EP
+    ROUTE_MW --> COMPLIANCE_EP
+    ROUTE_MW --> ANALYTICS_EP
+    ROUTE_MW --> ARCHIVE_EP
+    
+    %% Gateway to User Service Authentication
+    AUTH_MW <--> USER_SERVICE
+    AUTH_EP --> LOGIN
+    AUTH_EP --> REGISTER
+    AUTH_EP --> REFRESH
+    
+    %% Gateway to Core Services (with User Context)
+    USERS_EP --> USER_SERVICE
+    ORGS_EP --> USER_SERVICE
+    VEHICLES_EP --> VEHICLE_SVC
+    WEIGHT_EP --> WEIGHT_SVC
+    COMPLIANCE_EP --> COMPLIANCE_SVC
+    ANALYTICS_EP --> ANALYTICS_SVC
+    ARCHIVE_EP --> ARCHIVE_SVC
+    
+    %% Role Hierarchy & Access Control
+    subgraph RBAC ["🛡️ Role Hierarchy & Access Control"]
+        SUPER_ADMIN["👑 SUPER_ADMIN (Level 5)<br/>🔓 All endpoints + Cross-org access"]
+        ADMIN["🔧 ADMIN (Level 4)<br/>🔓 Organizations + Archive + Analytics + All below"]
+        SITE_MANAGER["👨‍💼 SITE_MANAGER (Level 3)<br/>🔓 Analytics + Reports + Compliance + All below"]
+        OPERATOR["👷 OPERATOR (Level 2)<br/>🔓 Vehicles + Weight + Users"]
+        AUDITOR["📋 AUDITOR (Level 2)<br/>🔓 Compliance + Reports + Users"]
+        CLIENT_ADMIN["🏢 CLIENT_ADMIN (Level 2)<br/>🔓 Org-specific + Users"]
+        USER["👤 USER (Level 1)<br/>🔓 Basic user management only"]
+    end
+    
+    %% Role Enforcement Examples
+    subgraph EXAMPLES ["📋 Role Enforcement Examples"]
+        EX1["✅ Admin accessing /api/vehicles<br/>Level 4 ≥ Level 2 (Operator+)"]
+        EX2["❌ Operator accessing /api/analytics<br/>Level 2 < Level 3 (SiteManager+)"]
+        EX3["✅ SiteManager accessing /api/compliance<br/>Level 3 ≥ Level 2 (Auditor+)"]
+        EX4["❌ User accessing /api/organizations<br/>Level 1 < Level 4 (Admin+)"]
+    end
+    
+    %% Role Enforcement Process
+    subgraph ENFORCEMENT ["⚙️ Role Enforcement Process"]
+        STEP1["1️⃣ Extract JWT Token"]
+        STEP2["2️⃣ Validate Token Signature"]
+        STEP3["3️⃣ Extract User Roles from Claims"]
+        STEP4["4️⃣ Get Required Roles for Endpoint"]
+        STEP5["5️⃣ Check Role Hierarchy"]
+        STEP6["6️⃣ Allow/Deny Access"]
+        STEP7["7️⃣ Add User Context Headers"]
+    end
+    
+    %% Authentication Dependencies
+    subgraph AUTH_DEPS ["🔗 Authentication Dependencies"]
+        JWT_TOKEN["🎫 JWT Token Required<br/>15min expiry"]
+        ROLE_CHECK["🔍 Role Hierarchy Validation<br/>Cached lookups"]
+        ENDPOINT_MAP["🗺️ Endpoint Role Mapping<br/>Static configuration"]
+        USER_CONTEXT["📝 User Context Headers<br/>X-User-ID, X-User-Roles, X-User-Permissions"]
+    end
+    
+    %% Role Enforcement Flow
+    AUTH_MW --> STEP1
+    STEP1 --> STEP2
+    STEP2 --> STEP3
+    STEP3 --> STEP4
+    STEP4 -.-> ROLE_CACHE
+    STEP4 -.-> ENDPOINT_MAP
+    STEP5 --> STEP6
+    STEP6 --> STEP7
+    STEP7 --> USER_CONTEXT
+    
+    %% User Context to Services
+    USER_CONTEXT --> VEHICLE_SVC
+    USER_CONTEXT --> WEIGHT_SVC
+    USER_CONTEXT --> COMPLIANCE_SVC
+    USER_CONTEXT --> ANALYTICS_SVC
+    USER_CONTEXT --> ARCHIVE_SVC
+    
+    %% Styling
+    classDef public fill:#e1f5fe
+    classDef protected fill:#fff3e0
+    classDef admin fill:#fce4ec
+    classDef service fill:#f3e5f5
+    classDef auth fill:#e8f5e8
+    
+    class AUTH_EP,HEALTH_EP,SWAGGER_EP public
+    class USERS_EP,VEHICLES_EP,WEIGHT_EP,REPORTS_EP protected
+    class ORGS_EP,ANALYTICS_EP,ARCHIVE_EP admin
+    class USER_SERVICE,CORE_SERVICES service
+    class AUTH_MW,RBAC,AUTH_DEPS auth
