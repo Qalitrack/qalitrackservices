@@ -102,13 +102,56 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization();
 
-// Add Health Checks (conditional based on environment)
+// Add Health Checks (dynamic based on enabled services)
 var healthChecksBuilder = builder.Services.AddHealthChecks();
 
-if (builder.Environment.IsDevelopment())
+// Get enabled services dynamically from client configuration or environment
+var clientCode = builder.Configuration["CLIENT_CODE"] ?? "testing";
+var configPath = Path.Combine("configs", "clients", $"{clientCode}.yml");
+
+if (File.Exists(configPath))
 {
-    // In development, only check services that are actually running
-    healthChecksBuilder.AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded);
+    try
+    {
+        var deserializer = new YamlDotNet.Serialization.Deserializer();
+        var configContent = File.ReadAllText(configPath);
+        var config = deserializer.Deserialize<dynamic>(configContent);
+        
+        // Add health checks for enabled services
+        if (config.services != null)
+        {
+            var services = config.services as IDictionary<object, object>;
+            if (services != null)
+            {
+                foreach (var service in services)
+                {
+                    var serviceName = service.Key.ToString();
+                    var serviceConfig = service.Value as IDictionary<object, object>;
+                    
+                    if (serviceConfig != null && serviceConfig.ContainsKey("enabled") && 
+                        serviceConfig["enabled"].ToString().ToLower() == "true")
+                    {
+                        var healthUrl = $"http://{serviceName}/health";
+                        healthChecksBuilder.AddUrlGroup(new Uri(healthUrl), serviceName, HealthStatus.Degraded);
+                    }
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        // Fallback to hardcoded services for development
+        healthChecksBuilder
+            .AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded)
+            .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded);
+    }
+}
+else if (builder.Environment.IsDevelopment())
+{
+    // Fallback for development when config file is not available
+    healthChecksBuilder
+        .AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded)
+        .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded);
 }
 else
 {

@@ -27,6 +27,9 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService.Core.Services.CustomerService>();
 
+// Add Health Checks
+builder.Services.AddHealthChecks();
+
 // Add CORS
 builder.Services.AddCors(options =>
 {
@@ -52,6 +55,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 // Ensure database is created (skip in test environment)
 if (!app.Environment.IsEnvironment("Testing"))
