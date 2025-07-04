@@ -256,18 +256,7 @@ async Task MergeSwaggerAsync(HttpClient httpClient, string swaggerUrl, string se
             
             foreach (var path in serviceSwagger.paths)
             {
-                // Add service tag to all operations
-                if (path.Value != null)
-                {
-                    foreach (var operation in path.Value)
-                    {
-                        if (operation.Value?.tags == null)
-                        {
-                            operation.Value.tags = new[] { serviceName };
-                        }
-                    }
-                }
-                
+                // Simply add all paths without modifying tags for now
                 aggregatedSwagger.paths[path.Name] = path.Value;
             }
         }
@@ -310,8 +299,12 @@ string GenerateSwaggerUI()
     <script src=""https://unpkg.com/swagger-ui-dist@3.52.5/swagger-ui-standalone-preset.js""></script>
     <script>
         window.onload = function() {
+            const currentPath = window.location.pathname.endsWith('/') 
+                ? window.location.pathname 
+                : window.location.pathname + '/';
+            
             const ui = SwaggerUIBundle({
-                url: '/swagger.json',
+                url: currentPath + 'swagger.json',
                 dom_id: '#swagger-ui',
                 deepLinking: true,
                 presets: [
