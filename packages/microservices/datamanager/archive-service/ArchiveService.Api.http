@@ -1,0 +1,83 @@
+### Archive Service API Tests
+
+@baseUrl = http://localhost:5000
+
+### Archive Transactions
+POST {{baseUrl}}/api/archive/transactions
+Content-Type: application/json
+
+{
+  "entityType": "TRANSACTIONS",
+  "startDate": "2024-01-01T00:00:00Z",
+  "endDate": "2024-03-31T23:59:59Z",
+  "description": "Q1 2024 transaction archive",
+  "storageTier": "HOT",
+  "compressionType": "GZIP",
+  "tags": ["Q1", "2024", "transactions"],
+  "deleteAfterArchive": true,
+  "createIndex": true,
+  "priority": "MEDIUM"
+}
+
+### Archive Weight Measurements
+POST {{baseUrl}}/api/archive/measurements
+Content-Type: application/json
+
+{
+  "entityType": "WEIGHT_MEASUREMENTS",
+  "startDate": "2024-01-01T00:00:00Z",
+  "endDate": "2024-03-31T23:59:59Z",
+  "description": "Q1 2024 weight measurements archive",
+  "storageTier": "WARM",
+  "compressionType": "GZIP",
+  "tags": ["Q1", "2024", "measurements"],
+  "deleteAfterArchive": true,
+  "createIndex": true,
+  "priority": "MEDIUM"
+}
+
+### Archive Compliance Records
+POST {{baseUrl}}/api/archive/compliance
+Content-Type: application/json
+
+{
+  "entityType": "COMPLIANCE_RECORDS",
+  "startDate": "2024-01-01T00:00:00Z",
+  "endDate": "2024-03-31T23:59:59Z",
+  "description": "Q1 2024 compliance records archive",
+  "storageTier": "HOT",
+  "compressionType": "GZIP",
+  "tags": ["Q1", "2024", "compliance"],
+  "deleteAfterArchive": false,
+  "createIndex": true,
+  "priority": "HIGH"
+}
+
+### Get Archive History
+GET {{baseUrl}}/api/archive/history?entityType=TRANSACTIONS&startDate=2024-01-01&endDate=2024-12-31
+
+### Search Archived Data
+POST {{baseUrl}}/api/search
+Content-Type: application/json
+
+{
+  "searchTerm": "transaction",
+  "entityTypes": ["TRANSACTIONS"],
+  "startDate": "2024-01-01T00:00:00Z",
+  "endDate": "2024-12-31T23:59:59Z",
+  "sortBy": "ArchivedDate",
+  "sortOrder": "DESC",
+  "pageNumber": 1,
+  "pageSize": 20,
+  "includeMetadata": true,
+  "highlightResults": true
+}
+
+### Search Suggestions
+GET {{baseUrl}}/api/search/suggestions?query=trans&entityType=TRANSACTIONS&maxSuggestions=10
+
+### Storage Report
+GET {{baseUrl}}/api/reports/storage
+
+### Activity Report
+GET {{baseUrl}}/api/reports/activity

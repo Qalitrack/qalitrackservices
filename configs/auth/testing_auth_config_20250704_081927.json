@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "client": "QaliTrack Testing Environment",
+    "client_code": "testing",
+    "generated_at": "2025-07-04T08:19:27.352455Z",
+    "generator_version": "1.0.0"
+  },
+  "jwt": {
+    "issuer": "QaliTrack-testing",
+    "audience": "QaliTrack-testing",
+    "secret_key": "${TESTING_JWT_SECRET}",
+    "expiry_minutes": 15,
+    "refresh_expiry_days": 7,
+    "algorithm": "HS256"
+  },
+  "roles": {
+    "hierarchy": {
+      "SuperAdmin": 5,
+      "Admin": 4,
+      "SiteManager": 3,
+      "Operator": 2,
+      "Auditor": 2,
+      "ClientAdmin": 2,
+      "User": 1
+    },
+    "descriptions": {
+      "SuperAdmin": "System-wide administrative access",
+      "Admin": "Full administrative access to organization",
+      "SiteManager": "Management access to assigned sites",
+      "Operator": "Operational access for daily tasks",
+      "Auditor": "Read-only access for compliance and auditing",
+      "ClientAdmin": "Organization-specific administrative access",
+      "User": "Basic user access"
+    }
+  },
+  "services": {
+    "enabled": [
+      "gateway",
+      "user-service",
+      "service-discovery"
+    ],
+    "permissions": {
+      "user-service": {
+        "/api/users/profile": [
+          "User"
+        ],
+        "/api/users": [
+          "User"
+        ],
+        "/api/users/admin": [
+          "Admin"
+        ],
+        "/api/users/roles": [
+          "Admin"
+        ],
+        "/api/users/permissions": [
+          "Admin"
+        ]
+      }
+    }
+  },
+  "gateway": {
+    "routes": [
+      {
+        "UpstreamPathTemplate": "/api/users/{everything}",
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 7001
+          }
+        ],
+        "DownstreamScheme": "http",
+        "Metadata": {
+          "ServiceName": "UserService",
+          "RequiredRoles": [
+            "User",
+            "Admin"
+          ],
+          "Description": "Routes to UserService microservice"
+        }
+      }
+    ],
+    "public_endpoints": [
+      "/api/auth/*",
+      "/health",
+      "/api/swagger",
+      "/swagger"
+    ]
+  }
+}

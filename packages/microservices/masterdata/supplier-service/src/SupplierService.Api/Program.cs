@@ -1,0 +1,64 @@
+using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using SupplierService.Core.Interfaces;
+using SupplierService.Core.Mappings;
+using SupplierService.Core.Validators;
+using SupplierService.Infrastructure.Data;
+using SupplierService.Infrastructure.Repositories;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container
+builder.Services.AddControllers();
+
+// Database Configuration
+builder.Services.AddDbContext<SupplierDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=supplier.db"));
+
+// AutoMapper Configuration
+builder.Services.AddAutoMapper(typeof(SupplierProfile));
+
+// FluentValidation Configuration
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterSupplierValidator>();
+
+// Repository Registration
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<ISupplierContactRepository, SupplierContactRepository>();
+builder.Services.AddScoped<ISupplierContractRepository, SupplierContractRepository>();
+builder.Services.AddScoped<ISupplierProductRepository, SupplierProductRepository>();
+builder.Services.AddScoped<ISupplierPerformanceRepository, SupplierPerformanceRepository>();
+builder.Services.AddScoped<ISupplierFinancialRepository, SupplierFinancialRepository>();
+
+// Service Registration
+builder.Services.AddScoped<ISupplierService, SupplierService.Core.Services.SupplierService>();
+
+// API Documentation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "Supplier Service API", Version = "v1" });
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Supplier Service API v1"));
+}
+
+app.UseHttpsRedirection();
+app.UseRouting();
+app.MapControllers();
+
+// Database Migration and Seeding
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<SupplierDbContext>();
+    context.Database.EnsureCreated();
+}
+
+app.Run();

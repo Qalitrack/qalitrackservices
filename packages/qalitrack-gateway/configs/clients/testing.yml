@@ -1,0 +1,116 @@
+# Testing Configuration
+client:
+  name: "QaliTrack Testing Environment"
+  code: "testing"
+  description: "Development and testing environment with minimal services"
+
+deployment:
+  environment: "development"
+  domain: "localhost"
+  ports:
+    gateway: 7000
+    swagger_aggregator: 8000
+
+services:
+  # Core services for testing
+  gateway:
+    enabled: true
+    port: 7000
+    image: "qalitrack/gateway:latest"
+    replicas: 1
+    
+  user-service:
+    enabled: true
+    port: 7001
+    image: "qalitrack/user-service:latest"
+    replicas: 1
+    
+
+  # Test with minimal master data
+  organization-service:
+    enabled: false
+    test_mode: true
+    
+  vehicle-service:
+    enabled: false
+    test_mode: true
+    
+  driver-service:
+    enabled: false
+    test_mode: true
+    
+  product-service:
+    enabled: false
+    test_mode: true
+    
+  route-service:
+    enabled: false
+    test_mode: true
+    
+  weighbridge-service:
+    enabled: false
+    test_mode: true
+    
+  customer-service:
+    enabled: false
+    test_mode: true
+    
+  supplier-service:
+    enabled: false
+    test_mode: true
+    
+  transporter-service:
+    enabled: false
+    test_mode: true
+    
+  sacco-service:
+    enabled: false
+    test_mode: true
+    
+  weight-data-service:
+    enabled: false
+    test_mode: true
+    
+  compliance-service:
+    enabled: false
+    test_mode: true
+    
+  operational-data-service:
+    enabled: false
+    test_mode: true
+    
+  transaction-service:
+    enabled: false
+    test_mode: true
+    
+  analytics-service:
+    enabled: false
+    test_mode: true
+    
+  data-sync-service:
+    enabled: false
+    test_mode: true
+    
+  archive-service:
+    enabled: false
+    test_mode: true
+
+features:
+  multi_tenant: false
+  advanced_analytics: false
+  compliance_monitoring: false
+  real_time_weighing: false
+  automated_reporting: false
+  mobile_access: false
+  testing_mode: true
+  
+database:
+  type: "sqlite"
+  in_memory: true
+  persist: false
+
+monitoring:
+  metrics: false
+  logging: true
+  alerting: false
+  health_checks: true

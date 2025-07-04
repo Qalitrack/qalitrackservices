@@ -1,0 +1,182 @@
+@SupplierService_HostAddress = https://localhost:7147
+
+### Get all suppliers
+GET {{SupplierService_HostAddress}}/api/suppliers
+Accept: application/json
+
+### Register a new supplier
+POST {{SupplierService_HostAddress}}/api/suppliers
+Content-Type: application/json
+
+{
+  "name": "ABC Manufacturing Co.",
+  "taxNumber": "123456789",
+  "registrationNumber": "REG123456",
+  "contactEmail": "contact@abcmanufacturing.com",
+  "contactPhone": "+1-555-0123",
+  "address": "123 Industrial Blvd, Manufacturing City, MC 12345",
+  "supplierType": 0,
+  "website": "https://www.abcmanufacturing.com",
+  "description": "Leading manufacturer of industrial components",
+  "industry": "Manufacturing",
+  "employeeCount": 250,
+  "establishedDate": "1995-06-15T00:00:00Z"
+}
+
+### Get supplier by ID (replace with actual ID)
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}
+Accept: application/json
+
+### Update supplier
+PUT {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}
+Content-Type: application/json
+
+{
+  "name": "ABC Manufacturing Co. Ltd.",
+  "taxNumber": "123456789",
+  "registrationNumber": "REG123456",
+  "contactEmail": "contact@abcmanufacturing.com",
+  "contactPhone": "+1-555-0123",
+  "address": "123 Industrial Blvd, Manufacturing City, MC 12345",
+  "supplierType": 0,
+  "status": 0,
+  "website": "https://www.abcmanufacturing.com",
+  "description": "Leading manufacturer of industrial components and solutions",
+  "industry": "Manufacturing",
+  "employeeCount": 275
+}
+
+### Search suppliers
+GET {{SupplierService_HostAddress}}/api/suppliers/search?term=ABC
+Accept: application/json
+
+### Get suppliers by status
+GET {{SupplierService_HostAddress}}/api/suppliers/status/0
+Accept: application/json
+
+### Get suppliers by type
+GET {{SupplierService_HostAddress}}/api/suppliers/type/0
+Accept: application/json
+
+### Create supplier contact
+POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "email": "john.smith@abcmanufacturing.com",
+  "phone": "+1-555-0124",
+  "mobile": "+1-555-0125",
+  "jobTitle": "Sales Manager",
+  "department": "Sales",
+  "contactType": 1,
+  "isPrimary": true
+}
+
+### Get supplier contacts
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contacts
+Accept: application/json
+
+### Create supplier contract
+POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contracts
+Content-Type: application/json
+
+{
+  "contractNumber": "CNT-2024-001",
+  "title": "Industrial Components Supply Agreement",
+  "description": "Long-term agreement for supply of industrial components",
+  "contractType": 1,
+  "startDate": "2024-01-01T00:00:00Z",
+  "endDate": "2026-12-31T23:59:59Z",
+  "contractValue": 500000.00,
+  "currency": "USD",
+  "paymentTerms": 1,
+  "paymentDays": 30,
+  "autoRenewal": true,
+  "renewalPeriodMonths": 12
+}
+
+### Get supplier contracts
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contracts
+Accept: application/json
+
+### Create supplier product
+POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/products
+Content-Type: application/json
+
+{
+  "productId": "PROD-001",
+  "productName": "Industrial Bearing Type A",
+  "supplierProductCode": "IBA-001",
+  "description": "High-quality industrial bearing for heavy machinery",
+  "category": "Bearings",
+  "unitPrice": 45.99,
+  "currency": "USD",
+  "unitOfMeasure": "piece",
+  "minimumOrderQuantity": 100,
+  "leadTimeDays": 14,
+  "specifications": "Material: Steel, Size: 50mm diameter",
+  "qualityCertifications": "ISO 9001",
+  "complianceStandards": "ANSI B3.20"
+}
+
+### Get supplier products
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/products
+Accept: application/json
+
+### Create supplier performance record
+POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/performance
+Content-Type: application/json
+
+{
+  "year": 2024,
+  "month": 1,
+  "qualityRating": 8.5,
+  "deliveryRating": 9.0,
+  "serviceRating": 8.7,
+  "overallRating": 8.7,
+  "totalOrders": 25,
+  "onTimeDeliveries": 23,
+  "lateDeliveries": 2,
+  "defectiveDeliveries": 1,
+  "averageLeadTime": 12.5,
+  "totalOrderValue": 125000.00,
+  "currency": "USD",
+  "complaintCount": 1,
+  "resolvedComplaints": 1,
+  "customerSatisfactionScore": 8.8,
+  "comments": "Good performance overall, minor delays in January",
+  "evaluatedBy": "Quality Manager"
+}
+
+### Get supplier performance
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/performance
+Accept: application/json
+
+### Update supplier financial information
+PUT {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/financial
+Content-Type: application/json
+
+{
+  "annualRevenue": 5000000.00,
+  "currency": "USD",
+  "creditRating": 1,
+  "creditLimit": 100000.00,
+  "preferredPaymentTerms": 1,
+  "bankName": "First National Bank",
+  "taxId": "12-3456789",
+  "vatNumber": "VAT123456",
+  "taxExempt": false
+}
+
+### Get supplier financial information
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/financial
+Accept: application/json
+
+### Get expiring contracts
+GET {{SupplierService_HostAddress}}/api/suppliercontracts/expiring?date=2024-12-31
+Accept: application/json
+
+### Delete supplier
+DELETE {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}

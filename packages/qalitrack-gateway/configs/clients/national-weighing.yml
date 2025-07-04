@@ -1,0 +1,148 @@
+# National Weighing Authority Configuration
+client:
+  name: "National Weighing Authority"
+  code: "nwa"
+  description: "National Weighing Authority - Regulatory oversight and compliance"
+
+deployment:
+  environment: "government"
+  domain: "weighing.gov"
+  ports:
+    gateway: 7000
+    swagger_aggregator: 8000
+
+services:
+  # Core services (always required)
+  gateway:
+    enabled: true
+    port: 7000
+    image: "qalitrack/gateway:latest"
+    replicas: 3
+    
+  user-service:
+    enabled: true
+    port: 7001
+    image: "qalitrack/user-service:latest"
+    replicas: 2
+    
+  swagger-aggregator:
+    enabled: true
+    port: 8000
+    image: "qalitrack/swagger-aggregator:latest"
+    replicas: 1
+
+  # Regulatory master data
+  organization-service:
+    enabled: true
+    port: 7002
+    image: "qalitrack/organization-service:latest"
+    replicas: 2
+    
+  weighbridge-service:
+    enabled: true
+    port: 7007
+    image: "qalitrack/weighbridge-service:latest"
+    replicas: 2
+
+  # Compliance and oversight services
+  compliance-service:
+    enabled: true
+    port: 7013
+    image: "qalitrack/compliance-service:latest"
+    replicas: 3
+    
+  analytics-service:
+    enabled: true
+    port: 7016
+    image: "qalitrack/analytics-service:latest"
+    replicas: 2
+    
+  data-sync-service:
+    enabled: true
+    port: 7017
+    image: "qalitrack/data-sync-service:latest"
+    replicas: 2
+    
+  archive-service:
+    enabled: true
+    port: 7018
+    image: "qalitrack/archive-service:latest"
+    replicas: 2
+
+  # Limited operational services (oversight only)
+  weight-data-service:
+    enabled: true
+    port: 7012
+    image: "qalitrack/weight-data-service:latest"
+    replicas: 2
+    read_only: true
+    
+  transaction-service:
+    enabled: true
+    port: 7015
+    image: "qalitrack/transaction-service:latest"
+    replicas: 1
+    read_only: true
+
+  # Disabled operational services (not regulatory responsibility)
+  vehicle-service:
+    enabled: false
+    reason: "Not within regulatory scope"
+    
+  driver-service:
+    enabled: false
+    reason: "Not within regulatory scope"
+    
+  product-service:
+    enabled: false
+    reason: "Product classification only, not management"
+    
+  route-service:
+    enabled: false
+    reason: "Not within regulatory scope"
+    
+  customer-service:
+    enabled: false
+    reason: "Not within regulatory scope"
+    
+  supplier-service:
+    enabled: false
+    reason: "Not within regulatory scope"
+    
+  transporter-service:
+    enabled: false
+    reason: "Not within regulatory scope"
+    
+  sacco-service:
+    enabled: false
+    reason: "Not within regulatory scope"
+    
+  operational-data-service:
+    enabled: false
+    reason: "Oversight only, not operations"
+
+features:
+  multi_tenant: true
+  advanced_analytics: true
+  compliance_monitoring: true
+  real_time_weighing: false
+  automated_reporting: true
+  mobile_access: true
+  regulatory_dashboard: true
+  audit_trails: true
+  data_aggregation: true
+  
+database:
+  type: "postgresql"
+  cluster: true
+  encryption: true
+  backup: "continuous"
+  retention: "permanent"
+
+monitoring:
+  metrics: true
+  logging: true
+  alerting: true
+  health_checks: true
+  audit_logging: true
+  compliance_reporting: true
