@@ -250,13 +250,17 @@ async Task MergeSwaggerAsync(HttpClient httpClient, string swaggerUrl, string se
         
         if (serviceSwagger?.paths != null)
         {
-            // Add service tag
-            var serviceTag = new { name = serviceName, description = $"{FormatServiceTitle(serviceName)} API" };
+            // Add enhanced service tag with endpoint count info
+            var pathCount = serviceSwagger.paths?.Count ?? 0;
+            var serviceTag = new { 
+                name = serviceName, 
+                description = $"{FormatServiceTitle(serviceName)} API - {pathCount} endpoints from {FormatServiceTitle(serviceName)}"
+            };
             ((List<object>)aggregatedSwagger.tags).Add(serviceTag);
             
             foreach (var path in serviceSwagger.paths)
             {
-                // Simply add all paths without modifying tags for now
+                // Simply add all paths without modifying tags to avoid serialization issues
                 aggregatedSwagger.paths[path.Name] = path.Value;
             }
         }
