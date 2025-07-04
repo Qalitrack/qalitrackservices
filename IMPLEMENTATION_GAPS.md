@@ -234,6 +234,8 @@ python scripts/generate-deployment.py configs/clients/babumri-cement.yml --dry-r
 # Validate monitoring implementation
 python scripts/generate-deployment.py configs/clients/babumri-cement.yml --dry-run | grep -i monitoring
 ```
+---
+Some endpoints can be accessed without authentication
 
 ---
 
