@@ -14,7 +14,7 @@ public class ProductComplianceRepository : Repository<ProductCompliance>, IProdu
     public async Task<IEnumerable<ProductCompliance>> GetByProductIdAsync(string productId)
     {
         return await _dbSet
-            .Where(c => c.ProductId == productId)
+            .Where(c => c.ProductId == productId && !c.IsDeleted)
             .Include(c => c.Product)
             .ToListAsync();
     }
@@ -22,7 +22,7 @@ public class ProductComplianceRepository : Repository<ProductCompliance>, IProdu
     public async Task<IEnumerable<ProductCompliance>> GetExpiringComplianceAsync(DateTime beforeDate)
     {
         return await _dbSet
-            .Where(c => c.ExpiryDate.HasValue && c.ExpiryDate.Value <= beforeDate)
+            .Where(c => c.ExpiryDate.HasValue && c.ExpiryDate.Value <= beforeDate && !c.IsDeleted)
             .Include(c => c.Product)
             .ToListAsync();
     }
@@ -30,7 +30,7 @@ public class ProductComplianceRepository : Repository<ProductCompliance>, IProdu
     public async Task<IEnumerable<ProductCompliance>> GetByComplianceTypeAsync(string complianceType)
     {
         return await _dbSet
-            .Where(c => c.ComplianceType == complianceType)
+            .Where(c => c.ComplianceType == complianceType && !c.IsDeleted)
             .Include(c => c.Product)
             .ToListAsync();
     }

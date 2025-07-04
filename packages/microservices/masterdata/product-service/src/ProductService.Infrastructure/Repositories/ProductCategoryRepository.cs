@@ -14,7 +14,7 @@ public class ProductCategoryRepository : Repository<ProductCategory>, IProductCa
     public async Task<IEnumerable<ProductCategory>> GetRootCategoriesAsync()
     {
         return await _dbSet
-            .Where(c => c.ParentCategoryId == null || c.ParentCategoryId == "")
+            .Where(c => (c.ParentCategoryId == null || c.ParentCategoryId == "") && !c.IsDeleted)
             .OrderBy(c => c.SortOrder)
             .ThenBy(c => c.Name)
             .ToListAsync();
@@ -22,8 +22,13 @@ public class ProductCategoryRepository : Repository<ProductCategory>, IProductCa
 
     public async Task<IEnumerable<ProductCategory>> GetSubCategoriesAsync(string parentCategoryId)
     {
+        if (string.IsNullOrWhiteSpace(parentCategoryId))
+        {
+            return Enumerable.Empty<ProductCategory>();
+        }
+        
         return await _dbSet
-            .Where(c => c.ParentCategoryId == parentCategoryId)
+            .Where(c => c.ParentCategoryId == parentCategoryId && !c.IsDeleted)
             .Include(c => c.ParentCategory)
             .OrderBy(c => c.SortOrder)
             .ThenBy(c => c.Name)
@@ -34,13 +39,13 @@ public class ProductCategoryRepository : Repository<ProductCategory>, IProductCa
     {
         return await _dbSet
             .Include(c => c.ParentCategory)
-            .FirstOrDefaultAsync(c => c.Code == code);
+            .FirstOrDefaultAsync(c => c.Code == code && !c.IsDeleted);
     }
 
     public async Task<IEnumerable<ProductCategory>> GetActiveCategoriesAsync()
     {
         return await _dbSet
-            .Where(c => c.IsActive)
+            .Where(c => c.IsActive && !c.IsDeleted)
             .Include(c => c.ParentCategory)
             .OrderBy(c => c.SortOrder)
             .ThenBy(c => c.Name)
@@ -52,6 +57,6 @@ public class ProductCategoryRepository : Repository<ProductCategory>, IProductCa
         return await _dbSet
             .Include(c => c.ParentCategory)
             .Include(c => c.SubCategories)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
     }
 }

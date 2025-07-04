@@ -75,7 +75,7 @@ class DeploymentGenerator:
         
         # Add health check
         service_def['healthcheck'] = {
-            'test': ['CMD', 'curl', '-f', 'http://localhost:80/health'],
+            'test': ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:80/health'],
             'interval': '30s',
             'timeout': '10s',
             'retries': 3,
@@ -83,12 +83,21 @@ class DeploymentGenerator:
         }
         
         # Add volume mounts if needed
+        volumes = []
         if self._service_needs_volume(service_name):
             volume_name = f"{service_name.replace('-', '_')}_data"
-            service_def['volumes'] = [
+            volumes.extend([
                 f"{volume_name}:/data",
                 f"./{service_name}/logs:/app/logs"
-            ]
+            ])
+        
+        # Add config file mounting for services that need client configuration
+        if service_name in ['gateway', 'swagger-aggregator']:
+            client_code = self.config['client']['code']
+            volumes.append(f"../../configs/clients/{client_code}.yml:/app/configs/clients/{client_code}.yml:ro")
+        
+        if volumes:
+            service_def['volumes'] = volumes
         
         # Add dependencies
         dependencies = self._get_service_dependencies(service_name)
@@ -110,6 +119,10 @@ class DeploymentGenerator:
         """Get build context path for service (relative to project root)"""
         if service_name == 'gateway':
             return '../../packages/qalitrack-gateway'
+        elif service_name == 'service-discovery':
+            return '../../packages/service-discovery'
+        elif service_name == 'swagger-aggregator':
+            return '../../packages/swagger-aggregator'
         elif service_name in ['organization-service', 'user-service', 'vehicle-service', 
                             'driver-service', 'product-service', 'route-service', 
                             'weighbridge-service', 'customer-service', 'supplier-service', 
@@ -124,6 +137,13 @@ class DeploymentGenerator:
             f'ASPNETCORE_ENVIRONMENT={environment.title()}',
             f'CLIENT_CODE={self.config["client"]["code"]}'
         ]
+        
+        # Override port binding for .NET 8 services
+        if service_name == 'swagger-aggregator':
+            env_vars.extend([
+                'ASPNETCORE_URLS=http://+:80',
+                'ASPNETCORE_HTTP_PORTS=80'
+            ])
         
         # Database connection
         if self._service_needs_database(service_name):

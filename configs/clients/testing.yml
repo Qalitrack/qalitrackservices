@@ -30,10 +30,20 @@ services:
     port: 7019
     image: "qalitrack/service-discovery:latest"
     replicas: 1
+    
+  swagger-aggregator:
+    enabled: true
+    port: 8000
+    image: "qalitrack/swagger-aggregator:latest"
+    replicas: 1
+    health_check: true
 
   # Test with minimal master data
   organization-service:
     enabled: false
+    port: 7002
+    image: "qalitrack/organization-service:latest"
+    replicas: 1
     test_mode: true
     
   vehicle-service:
@@ -57,7 +67,10 @@ services:
     test_mode: true
     
   customer-service:
-    enabled: false
+    enabled: true
+    port: 7003
+    image: "qalitrack/customer-service:latest"
+    replicas: 1
     test_mode: true
     
   supplier-service:
