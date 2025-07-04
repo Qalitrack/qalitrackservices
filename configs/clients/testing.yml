@@ -36,6 +36,7 @@ services:
     port: 8000
     image: "qalitrack/swagger-aggregator:latest"
     replicas: 1
+    health_check: true
 
   # Test with minimal master data
   organization-service:

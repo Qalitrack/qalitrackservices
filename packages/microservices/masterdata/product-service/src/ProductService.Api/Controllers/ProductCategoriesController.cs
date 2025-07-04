@@ -4,9 +4,8 @@ using ProductService.Core.Interfaces;
 
 namespace ProductService.Api.Controllers;
 
-[ApiController]
 [Route("api/products/categories")]
-public class ProductCategoriesController : ControllerBase
+public class ProductCategoriesController : BaseController
 {
     private readonly IProductService _productService;
 
