@@ -109,30 +109,50 @@ var healthChecksBuilder = builder.Services.AddHealthChecks();
 var clientCode = builder.Configuration["CLIENT_CODE"] ?? "testing";
 var configPath = Path.Combine("configs", "clients", $"{clientCode}.yml");
 
+Console.WriteLine($"Looking for config at: {configPath}");
+Console.WriteLine($"Config exists: {File.Exists(configPath)}");
+
 if (File.Exists(configPath))
 {
     try
     {
         var deserializer = new YamlDotNet.Serialization.Deserializer();
         var configContent = File.ReadAllText(configPath);
-        var config = deserializer.Deserialize<dynamic>(configContent);
+        Console.WriteLine($"Config content loaded, length: {configContent.Length}");
+        
+        dynamic config;
+        try 
+        {
+            config = deserializer.Deserialize<dynamic>(configContent);
+            Console.WriteLine($"Config parsed successfully: {config != null}");
+            Console.WriteLine($"Config has services: {config.services != null}");
+        }
+        catch (Exception parseEx)
+        {
+            Console.WriteLine($"YAML parsing error: {parseEx.Message}");
+            throw;
+        }
         
         // Add health checks for enabled services
         if (config.services != null)
         {
+            Console.WriteLine("Found services in config");
             var services = config.services as IDictionary<object, object>;
+            Console.WriteLine($"Services cast successful: {services != null}");
             if (services != null)
             {
+                Console.WriteLine($"Services count: {services.Count}");
                 foreach (var service in services)
                 {
                     var serviceName = service.Key.ToString();
                     var serviceConfig = service.Value as IDictionary<object, object>;
                     
                     if (serviceConfig != null && serviceConfig.ContainsKey("enabled") && 
-                        serviceConfig["enabled"].ToString().ToLower() == "true")
+                        serviceConfig["enabled"].ToString().ToLower() == "true" && serviceName != "gateway")
                     {
                         var healthUrl = $"http://{serviceName}/health";
                         healthChecksBuilder.AddUrlGroup(new Uri(healthUrl), serviceName, HealthStatus.Degraded);
+                        Console.WriteLine($"Added health check for {serviceName} at {healthUrl}");
                     }
                 }
             }
@@ -143,7 +163,8 @@ if (File.Exists(configPath))
         // Fallback to hardcoded services for development
         healthChecksBuilder
             .AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded)
-            .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded);
+            .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded)
+            .AddUrlGroup(new Uri("http://swagger-aggregator/health"), "swagger-aggregator", HealthStatus.Degraded);
     }
 }
 else if (builder.Environment.IsDevelopment())
@@ -151,7 +172,8 @@ else if (builder.Environment.IsDevelopment())
     // Fallback for development when config file is not available
     healthChecksBuilder
         .AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded)
-        .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded);
+        .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded)
+        .AddUrlGroup(new Uri("http://swagger-aggregator/health"), "swagger-aggregator", HealthStatus.Degraded);
 }
 else
 {

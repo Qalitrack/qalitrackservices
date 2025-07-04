@@ -146,6 +146,19 @@
       "UpstreamPathTemplate": "/docs",
       "UpstreamHttpMethod": [ "GET" ],
       "Key": "swagger-aggregator-root"
+    },
+    {
+      "DownstreamPathTemplate": "/",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "swagger-aggregator",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/docs/",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "swagger-aggregator-root-slash"
     }
   ],
   "GlobalConfiguration": {
