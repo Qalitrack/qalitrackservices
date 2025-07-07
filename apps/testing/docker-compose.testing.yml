@@ -148,10 +148,42 @@ services:
     depends_on:
       user-service:
         condition: service_healthy
+  product-service:
+    build:
+      context: ../../packages/microservices/masterdata/product-service
+      dockerfile: Dockerfile
+    ports:
+    - 7005:80
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    - ConnectionStrings__DefaultConnection=Data Source=/data/productservice.db
+    networks:
+    - qalitrack-testing
+    restart: unless-stopped
+    healthcheck:
+      test:
+      - CMD
+      - wget
+      - --quiet
+      - --tries=1
+      - --spider
+      - http://localhost:80/health
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+    - product_service_data:/data
+    - ./product-service/logs:/app/logs
+    depends_on:
+      user-service:
+        condition: service_healthy
 volumes:
   user_service_data: null
   service_discovery_data: null
   customer_service_data: null
+  product_service_data: null
 networks:
   qalitrack-testing:
     driver: bridge
