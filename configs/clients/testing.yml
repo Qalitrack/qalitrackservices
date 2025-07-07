@@ -55,7 +55,10 @@ services:
     test_mode: true
     
   product-service:
-    enabled: false
+    enabled: true
+    port: 7005
+    image: "qalitrack/product-service:latest"
+    replicas: 1
     test_mode: true
     
   route-service:
@@ -72,6 +75,7 @@ services:
     image: "qalitrack/customer-service:latest"
     replicas: 1
     test_mode: true
+    api_root: "/customers"
     
   supplier-service:
     enabled: false

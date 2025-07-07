@@ -28,6 +28,9 @@ builder.Services.AddScoped<IOrganizationLocationRepository, OrganizationLocation
 // Add services
 builder.Services.AddScoped<IOrganizationService, OrganizationService.Core.Services.OrganizationService>();
 
+// Add Health Checks
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Ensure database is created
@@ -47,5 +50,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

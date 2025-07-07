@@ -93,13 +93,13 @@ app.MapGet("/swagger.json", async (HttpContext context, IHttpClientFactory httpC
     httpClient.Timeout = TimeSpan.FromSeconds(10);
 
     // Add gateway swagger first
-    await MergeSwaggerAsync(httpClient, "http://gateway/swagger/v1/swagger.json", "Gateway", aggregatedSwagger);
+    await MergeSwaggerAsync(httpClient, "http://gateway/swagger/v1/swagger.json", "Gateway", "", aggregatedSwagger);
     
     // Add enabled service swagger docs
-    foreach (var service in enabledServices)
+    foreach (var (serviceName, apiRoot) in enabledServices)
     {
-        var swaggerUrl = $"http://{service}/swagger/v1/swagger.json";
-        await MergeSwaggerAsync(httpClient, swaggerUrl, service, aggregatedSwagger);
+        var swaggerUrl = $"http://{serviceName}/swagger/v1/swagger.json";
+        await MergeSwaggerAsync(httpClient, swaggerUrl, serviceName, apiRoot, aggregatedSwagger);
     }
 
     context.Response.ContentType = "application/json";
@@ -164,12 +164,12 @@ app.MapGet("/services", async (IHttpClientFactory httpClientFactory) =>
     var httpClient = httpClientFactory.CreateClient();
     httpClient.Timeout = TimeSpan.FromSeconds(5);
     
-    foreach (var service in enabledServices)
+    foreach (var (serviceName, apiRoot) in enabledServices)
     {
-        var isHealthy = await CheckServiceHealthAsync(httpClient, service);
+        var isHealthy = await CheckServiceHealthAsync(httpClient, serviceName);
         services.Add(new { 
-            name = service, 
-            title = FormatServiceTitle(service),
+            name = serviceName, 
+            title = FormatServiceTitle(serviceName),
             available = isHealthy 
         });
     }
@@ -177,9 +177,9 @@ app.MapGet("/services", async (IHttpClientFactory httpClientFactory) =>
     return services;
 });
 
-async Task<List<string>> GetEnabledServicesAsync(string configPath)
+async Task<List<(string serviceName, string apiRoot)>> GetEnabledServicesAsync(string configPath)
 {
-    var services = new List<string>();
+    var services = new List<(string serviceName, string apiRoot)>();
     
     if (File.Exists(configPath))
     {
@@ -187,18 +187,28 @@ async Task<List<string>> GetEnabledServicesAsync(string configPath)
         {
             var deserializer = new Deserializer();
             var configContent = await File.ReadAllTextAsync(configPath);
-            var config = deserializer.Deserialize<dynamic>(configContent);
+            var config = deserializer.Deserialize<Dictionary<string, object>>(configContent);
             
-            if (config.services != null)
+            if (config.ContainsKey("services") && config["services"] is Dictionary<object, object> servicesDict)
             {
-                foreach (var service in config.services)
+                foreach (var service in servicesDict)
                 {
-                    var serviceName = service.Key;
-                    var serviceConfig = service.Value;
+                    var serviceName = service.Key.ToString();
                     
-                    if (serviceConfig.enabled == true && serviceName != "gateway")
+                    if (service.Value is Dictionary<object, object> serviceConfig)
                     {
-                        services.Add(serviceName);
+                        bool isEnabled = serviceConfig.ContainsKey("enabled") && 
+                                       serviceConfig["enabled"].ToString().ToLower() == "true";
+                        
+                        if (isEnabled && serviceName != "gateway")
+                        {
+                            string apiRoot = "";
+                            if (serviceConfig.ContainsKey("api_root"))
+                            {
+                                apiRoot = serviceConfig["api_root"].ToString();
+                            }
+                            services.Add((serviceName, apiRoot));
+                        }
                     }
                 }
             }
@@ -207,13 +217,13 @@ async Task<List<string>> GetEnabledServicesAsync(string configPath)
         {
             // Fallback to known services
             Console.WriteLine($"Error reading config: {ex.Message}");
-            services.AddRange(new[] { "user-service", "customer-service" });
+            services.AddRange(new[] { ("user-service", ""), ("customer-service", "/customers"), ("product-service", "") });
         }
     }
     else
     {
         // Fallback services
-        services.AddRange(new[] { "user-service", "customer-service" });
+        services.AddRange(new[] { ("user-service", ""), ("customer-service", "/customers"), ("product-service", "") });
     }
     
     return services;
@@ -239,7 +249,7 @@ string FormatServiceTitle(string serviceName)
         .Select(word => char.ToUpper(word[0]) + word.Substring(1).ToLower()));
 }
 
-async Task MergeSwaggerAsync(HttpClient httpClient, string swaggerUrl, string serviceName, dynamic aggregatedSwagger)
+async Task MergeSwaggerAsync(HttpClient httpClient, string swaggerUrl, string serviceName, string apiRoot, dynamic aggregatedSwagger)
 {
     try
     {
@@ -277,8 +287,16 @@ async Task MergeSwaggerAsync(HttpClient httpClient, string swaggerUrl, string se
                     }
                 }
                 
+                // Apply API root prefix if configured
+                var finalPath = pathProperty.Name;
+                if (!string.IsNullOrEmpty(apiRoot))
+                {
+                    // Add api_root prefix to the path
+                    finalPath = $"/api{apiRoot}{pathProperty.Name.Replace("/api", "")}";
+                }
+                
                 // Add the modified path to aggregated swagger
-                aggregatedSwagger.paths[pathProperty.Name] = JsonConvert.DeserializeObject<dynamic>(pathProperty.Value.ToString());
+                aggregatedSwagger.paths[finalPath] = JsonConvert.DeserializeObject<dynamic>(pathProperty.Value.ToString());
             }
         }
         
