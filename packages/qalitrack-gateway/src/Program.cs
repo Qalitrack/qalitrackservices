@@ -232,15 +232,20 @@ builder.Services.AddCors(options =>
 });
 
 // Add Ocelot configuration based on environment
-if (builder.Environment.IsDevelopment())
+if (builder.Environment.EnvironmentName == "Testing")
 {
-    builder.Configuration.AddJsonFile("ocelot.development.json", optional: false, reloadOnChange: true);
-    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: true);
+    // For testing environment, use in-memory configuration provided by tests
+    // Do not load file-based Ocelot configurations to avoid route duplicates
+}
+else if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("ocelot.development.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: false);
 }
 else
 {
-    builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
-    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: true);
+    builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: false);
 }
 builder.Services.AddOcelot().AddConsul();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
