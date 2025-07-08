@@ -47,8 +47,9 @@ public class DeployedServiceTests : IClassFixture<DeployedServiceFixture>
         var json = JsonSerializer.Serialize(loginRequest);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        // Act
-        var response = await _client.PostAsync("/api/MockAuth/mock-login", content);
+        // Act - Connect directly to user service since MockAuth is not routed through gateway
+        using var userServiceClient = new HttpClient();
+        var response = await userServiceClient.PostAsync("http://localhost:7001/api/MockAuth/mock-login", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -75,8 +76,9 @@ public class DeployedServiceTests : IClassFixture<DeployedServiceFixture>
         var json = JsonSerializer.Serialize(loginRequest);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        // Act
-        var response = await _client.PostAsync("/api/MockAuth/mock-login", content);
+        // Act - Connect directly to user service since MockAuth is not routed through gateway
+        using var userServiceClient = new HttpClient();
+        var response = await userServiceClient.PostAsync("http://localhost:7001/api/MockAuth/mock-login", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -266,7 +268,9 @@ public class DeployedServiceTests : IClassFixture<DeployedServiceFixture>
         var json = JsonSerializer.Serialize(loginRequest);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _client.PostAsync("/api/MockAuth/mock-login", content);
+        // Connect directly to user service for token generation since MockAuth is not routed through gateway
+        using var userServiceClient = new HttpClient();
+        var response = await userServiceClient.PostAsync("http://localhost:7001/api/MockAuth/mock-login", content);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -278,7 +282,9 @@ public class DeployedServiceTests : IClassFixture<DeployedServiceFixture>
     {
         try
         {
-            var response = await _client.GetAsync("/api/MockAuth/roles");
+            // Check user service directly since MockAuth is not routed through gateway
+            using var userServiceClient = new HttpClient();
+            var response = await userServiceClient.GetAsync("http://localhost:7001/api/MockAuth/roles");
             return response.StatusCode == HttpStatusCode.OK;
         }
         catch
