@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
 using Serilog;
 using System.Text;
 using HealthChecks.UI.Client;
@@ -73,10 +74,27 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Add JWT Authentication
+// Add JWT Authentication - Support both mock and real services
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+var issuer = jwtSettings["Issuer"] ?? "UserService";
+var audience = jwtSettings["Audience"] ?? "UserService";
 var key = Encoding.UTF8.GetBytes(secretKey);
+
+// Check if using mock services
+var useMockServices = builder.Configuration.GetValue<bool>("USE_MOCK_SERVICES");
+if (useMockServices)
+{
+    Console.WriteLine("🧪 Using MOCK services for authentication");
+    Console.WriteLine($"   JWT Issuer: {issuer}");
+    Console.WriteLine($"   JWT Audience: {audience}");
+}
+else
+{
+    Console.WriteLine("🔐 Using REAL services for authentication");
+    Console.WriteLine($"   JWT Issuer: {issuer}");
+    Console.WriteLine($"   JWT Audience: {audience}");
+}
 
 builder.Services.AddAuthentication(x =>
 {
@@ -92,9 +110,9 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = true,
-        ValidIssuer = jwtSettings["Issuer"],
+        ValidIssuer = issuer,
         ValidateAudience = true,
-        ValidAudience = jwtSettings["Audience"],
+        ValidAudience = audience,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
@@ -221,7 +239,7 @@ else
     builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
     builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: true);
 }
-builder.Services.AddOcelot();
+builder.Services.AddOcelot().AddConsul();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 var app = builder.Build();

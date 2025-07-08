@@ -11,6 +11,7 @@ namespace QaliTrack.Gateway.Tests.Authorization;
 /// Tests for Phase 1 Role Enforcement implementation
 /// Validates the hybrid authorization model with static configuration
 /// </summary>
+[Trait("Category", "Unit")]
 public class RoleEnforcementTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
