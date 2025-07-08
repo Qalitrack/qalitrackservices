@@ -7,7 +7,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "user-service",
-          "Port": 8080
+          "Port": 80
         }
       ],
       "Metadata": {
@@ -28,7 +28,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "user-service",
-          "Port": 8080
+          "Port": 80
         }
       ],
       "Metadata": {
@@ -49,7 +49,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "user-service",
-          "Port": 8080
+          "Port": 80
         }
       ],
       "Metadata": {
@@ -64,8 +64,8 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/products/{everything}",
-      "DownstreamPathTemplate": "/api/products/{everything}",
+      "UpstreamPathTemplate": "/api/products",
+      "DownstreamPathTemplate": "/api/Products",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -73,6 +73,7 @@
           "Port": 80
         }
       ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "Metadata": {
         "RequiredRoles": [
           "User"
@@ -82,11 +83,35 @@
       },
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
-      }
+      },
+      "Key": "product-service-list"
+    },
+    {
+      "UpstreamPathTemplate": "/api/products/{everything}",
+      "DownstreamPathTemplate": "/api/Products/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "product-service",
+        "Description": "Product catalog access"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "product-service-detail"
     },
     {
       "UpstreamPathTemplate": "/api/products/admin/{everything}",
-      "DownstreamPathTemplate": "/api/products/admin/{everything}",
+      "DownstreamPathTemplate": "/api/Products/admin/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -106,8 +131,8 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/customers/{everything}",
-      "DownstreamPathTemplate": "/api/customers/{everything}",
+      "UpstreamPathTemplate": "/api/customers",
+      "DownstreamPathTemplate": "/api/customers",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -115,6 +140,7 @@
           "Port": 80
         }
       ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "Metadata": {
         "RequiredRoles": [
           "Operator"
@@ -124,7 +150,31 @@
       },
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
-      }
+      },
+      "Key": "customer-service-list"
+    },
+    {
+      "UpstreamPathTemplate": "/api/customers/{everything}",
+      "DownstreamPathTemplate": "/api/customers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Operator"
+        ],
+        "ServiceName": "customer-service",
+        "Description": "Customer operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "customer-service-detail"
     },
     {
       "UpstreamPathTemplate": "/api/customers/contracts/{everything}",
@@ -149,10 +199,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:7000",
-    "ServiceDiscoveryProvider": {
-      "Type": "ConfigurationServiceProvider",
-      "PollingInterval": 1000
-    }
+    "BaseUrl": "http://localhost:7000"
   }
 }

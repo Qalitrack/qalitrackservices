@@ -12,28 +12,30 @@ services:
     - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
     - Jwt__Issuer=UserService
     - Jwt__Audience=UserService
+    - USE_MOCK_SERVICES=false
     networks:
     - qalitrack-testing
     restart: unless-stopped
     volumes:
     - ../../configs/clients/testing.yml:/app/configs/clients/testing.yml:ro
-    - ../../configs/auth/testing-ocelot.json:/app/ocelot.json:ro
+    - ../../configs/auth/testing-ocelot.json:/app/ocelot.development.json:ro
     depends_on:
       user-service:
         condition: service_started
   user-service:
+    # Default to real user service - override with compose files
     build:
       context: ../../packages/microservices/masterdata/user-service
-      dockerfile: UserModule/Dockerfile
+      dockerfile: Dockerfile
     ports:
     - 7001:80
     environment:
     - ASPNETCORE_ENVIRONMENT=Development
     - CLIENT_CODE=testing
-    - ConnectionStrings__DefaultConnection=Data Source=/data/userservice.db
     - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
     - Jwt__Issuer=UserService
     - Jwt__Audience=UserService
+    - ConnectionStrings__DefaultConnection=Data Source=/data/userservice.db
     networks:
     - qalitrack-testing
     restart: unless-stopped

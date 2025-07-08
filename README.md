@@ -203,6 +203,105 @@ open https://localhost:7000
 open https://localhost:7000/swagger
 ```
 
+## 🧪 Testing Architecture
+
+QaliTrack provides comprehensive testing capabilities with both **mock** and **real** service modes for flexible development and integration testing.
+
+### Mock vs Real Services
+
+| Mode | Use Case | Startup Time | Authentication | Database | Best For |
+|------|----------|--------------|----------------|----------|----------|
+| **Mock** | Development & Testing | Fast (~10s) | Instant JWT generation | None (stateless) | Role testing, rapid development |
+| **Real** | Integration Testing | Slower (~30s) | Full user registration/login | Database-backed | End-to-end testing, production simulation |
+
+### Mock Service Testing
+
+Mock services provide instant authentication and role-based testing without database overhead:
+
+```bash
+# Start mock environment
+make start-mock
+
+# Test all roles instantly
+make test-mock-auth          # Generate tokens for all roles
+make test-role-matrix        # Test authorization across all endpoints
+
+# Service-specific mock testing
+make test-users-mock         # User service with mock auth
+make test-product-mock       # Product service with mock auth
+make test-customer-mock      # Customer service with mock auth
+```
+
+**Mock Service Features:**
+- **Instant JWT tokens** for all roles (Guest, User, Operator, Admin, SuperAdmin)
+- **Role-based authorization testing** without user accounts
+- **Stateless authentication** - no database required
+- **Fast startup** - perfect for CI/CD pipelines
+- **Role switching** - test different permissions instantly
+
+### Real Service Testing
+
+Real services provide full database-backed authentication with complete user management:
+
+```bash
+# Start real environment
+make start-real
+
+# Test with actual user accounts
+make test-real-auth          # User registration and login
+make test-role-matrix        # Authorization with real users
+
+# Service-specific real testing
+make test-users-real         # Full user service functionality
+make test-product-real       # Product service with real auth
+make test-customer-real      # Customer service with real auth
+```
+
+**Real Service Features:**
+- **Database-backed authentication** with persistent user accounts
+- **Full user registration/login flow** 
+- **Production-like testing** with complete service functionality
+- **User management** - create, update, delete users with roles
+- **Integration testing** - verify end-to-end workflows
+
+### Service Switching
+
+Switch between mock and real modes without code changes:
+
+```bash
+# Check current environment
+make test-env-status
+
+# Switch modes
+make switch-to-mock          # Enable mock services
+make switch-to-real          # Enable real services
+
+# Test switching capability
+make test-auth-switch        # Automated switching test
+```
+
+### Testing Commands
+
+```bash
+# Interactive test selector
+make test-interactive        # Choose from all available tests
+
+# Core testing
+make test-health            # Service health checks
+make test-api               # API endpoint validation
+make test-gateway           # Gateway authorization testing
+
+# Role-based authorization
+make test-role-matrix       # Comprehensive role testing across all endpoints
+make test-mock-auth         # Mock authentication and role generation
+make test-real-auth         # Real user registration and authentication
+
+# Environment management
+make test-env-status        # Check current service mode
+make stop-testing           # Stop all testing services
+make logs                   # View service logs
+```
+
 ### Option 2: Manual Build and Run
 
 ```bash
