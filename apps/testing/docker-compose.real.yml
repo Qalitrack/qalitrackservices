@@ -1,0 +1,27 @@
+version: '3.8'
+
+# Real services overlay - use with: docker-compose -f docker-compose.testing.yml -f docker-compose.real.yml up
+services:
+  user-service:
+    build:
+      context: ../../packages/microservices/masterdata/user-service
+      dockerfile: Dockerfile
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
+    - Jwt__Issuer=UserService
+    - Jwt__Audience=UserService
+    - ConnectionStrings__DefaultConnection=Data Source=/data/userservice.db
+    volumes:
+    - user_service_data:/data
+    - ./user-service/logs:/app/logs
+
+  gateway:
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
+    - Jwt__Issuer=UserService
+    - Jwt__Audience=UserService
+    - USE_MOCK_SERVICES=false

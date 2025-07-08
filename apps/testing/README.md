@@ -7,20 +7,20 @@
 - **Environment**: development
 - **Domain**: localhost
 
-## Services (5 enabled)
+## Services (6 enabled)
 
 ### Enabled Services
 - **gateway** (Port 7000)
 - **user-service** (Port 7001)
 - **service-discovery** (Port 7019)
 - **swagger-aggregator** (Port 8000)
+- **product-service** (Port 7005)
 - **customer-service** (Port 7003)
 
-### Disabled Services (16)
+### Disabled Services (15)
 - **organization-service** - Not required for this deployment
 - **vehicle-service** - Not required for this deployment
 - **driver-service** - Not required for this deployment
-- **product-service** - Not required for this deployment
 - **route-service** - Not required for this deployment
 - **weighbridge-service** - Not required for this deployment
 - **supplier-service** - Not required for this deployment
