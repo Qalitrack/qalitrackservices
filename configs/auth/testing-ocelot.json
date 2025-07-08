@@ -6,8 +6,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7001
+          "Host": "user-service",
+          "Port": 8080
         }
       ],
       "Metadata": {
@@ -27,8 +27,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7001
+          "Host": "user-service",
+          "Port": 8080
         }
       ],
       "Metadata": {
@@ -48,8 +48,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7001
+          "Host": "user-service",
+          "Port": 8080
         }
       ],
       "Metadata": {
@@ -69,8 +69,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7005
+          "Host": "product-service",
+          "Port": 80
         }
       ],
       "Metadata": {
@@ -90,8 +90,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7005
+          "Host": "product-service",
+          "Port": 80
         }
       ],
       "Metadata": {
@@ -111,8 +111,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7003
+          "Host": "customer-service",
+          "Port": 80
         }
       ],
       "Metadata": {
@@ -132,8 +132,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7003
+          "Host": "customer-service",
+          "Port": 80
         }
       ],
       "Metadata": {
