@@ -1,0 +1,536 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7001
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "user-service",
+        "Description": "Basic user operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/users/admin/{everything}",
+      "DownstreamPathTemplate": "/api/users/admin/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7001
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Admin"
+        ],
+        "ServiceName": "user-service",
+        "Description": "Administrative user operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/users/roles/{everything}",
+      "DownstreamPathTemplate": "/api/users/roles/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7001
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Admin"
+        ],
+        "ServiceName": "user-service",
+        "Description": "Role management operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/organizations/{everything}",
+      "DownstreamPathTemplate": "/api/organizations/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7002
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Admin"
+        ],
+        "ServiceName": "organization-service",
+        "Description": "Organization management - admin only"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/organizations/sites/{everything}",
+      "DownstreamPathTemplate": "/api/organizations/sites/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7002
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "organization-service",
+        "Description": "Site management operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/vehicles/{everything}",
+      "DownstreamPathTemplate": "/api/vehicles/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Operator"
+        ],
+        "ServiceName": "vehicle-service",
+        "Description": "Vehicle operations and management"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/vehicles/admin/{everything}",
+      "DownstreamPathTemplate": "/api/vehicles/admin/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Admin"
+        ],
+        "ServiceName": "vehicle-service",
+        "Description": "Vehicle administrative operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/drivers/{everything}",
+      "DownstreamPathTemplate": "/api/drivers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7004
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Operator"
+        ],
+        "ServiceName": "driver-service",
+        "Description": "Driver operations and management"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/drivers/licenses/{everything}",
+      "DownstreamPathTemplate": "/api/drivers/licenses/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7004
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "driver-service",
+        "Description": "Driver license management"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/products/{everything}",
+      "DownstreamPathTemplate": "/api/products/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7005
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "product-service",
+        "Description": "Product catalog access"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/products/admin/{everything}",
+      "DownstreamPathTemplate": "/api/products/admin/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7005
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Admin"
+        ],
+        "ServiceName": "product-service",
+        "Description": "Product administrative operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/customers/{everything}",
+      "DownstreamPathTemplate": "/api/customers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7008
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Operator"
+        ],
+        "ServiceName": "customer-service",
+        "Description": "Customer operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/customers/contracts/{everything}",
+      "DownstreamPathTemplate": "/api/customers/contracts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7008
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "customer-service",
+        "Description": "Customer contract management"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/suppliers/{everything}",
+      "DownstreamPathTemplate": "/api/suppliers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7009
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Operator"
+        ],
+        "ServiceName": "supplier-service",
+        "Description": "Supplier operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/suppliers/contracts/{everything}",
+      "DownstreamPathTemplate": "/api/suppliers/contracts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7009
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "supplier-service",
+        "Description": "Supplier contract management"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/weight/measurements/{everything}",
+      "DownstreamPathTemplate": "/api/weight/measurements/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7012
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Operator"
+        ],
+        "ServiceName": "weight-data-service",
+        "Description": "Weight measurement operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/weight/corrections/{everything}",
+      "DownstreamPathTemplate": "/api/weight/corrections/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7012
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "weight-data-service",
+        "Description": "Weight correction and calibration"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/weight/analytics/{everything}",
+      "DownstreamPathTemplate": "/api/weight/analytics/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7012
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "weight-data-service",
+        "Description": "Weight data analytics"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/compliance/checks/{everything}",
+      "DownstreamPathTemplate": "/api/compliance/checks/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7013
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Auditor"
+        ],
+        "ServiceName": "compliance-service",
+        "Description": "Compliance checking and validation"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/compliance/reports/{everything}",
+      "DownstreamPathTemplate": "/api/compliance/reports/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7013
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Auditor"
+        ],
+        "ServiceName": "compliance-service",
+        "Description": "Compliance reporting"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/compliance/admin/{everything}",
+      "DownstreamPathTemplate": "/api/compliance/admin/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7013
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Admin"
+        ],
+        "ServiceName": "compliance-service",
+        "Description": "Compliance administration"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/transactions/{everything}",
+      "DownstreamPathTemplate": "/api/transactions/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7015
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Operator"
+        ],
+        "ServiceName": "transaction-service",
+        "Description": "Transaction processing"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/transactions/reports/{everything}",
+      "DownstreamPathTemplate": "/api/transactions/reports/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7015
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "Auditor"
+        ],
+        "ServiceName": "transaction-service",
+        "Description": "Transaction reporting"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/analytics/dashboard/{everything}",
+      "DownstreamPathTemplate": "/api/analytics/dashboard/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7016
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "analytics-service",
+        "Description": "Analytics dashboard access"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/analytics/reports/{everything}",
+      "DownstreamPathTemplate": "/api/analytics/reports/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7016
+        }
+      ],
+      "Metadata": {
+        "RequiredRoles": [
+          "SiteManager"
+        ],
+        "ServiceName": "analytics-service",
+        "Description": "Analytics reporting"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:7000",
+    "ServiceDiscoveryProvider": {
+      "Type": "ConfigurationServiceProvider",
+      "PollingInterval": 1000
+    }
+  }
+}

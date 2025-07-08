@@ -113,17 +113,62 @@ authorization_rules:
         description: "Administrative user operations"
 ```
 
-### Client-Specific Authorization
+### Adding Authorization Rules for New Microservices
 
-Generate client-specific authorization configurations:
+When creating a new microservice, add its authorization rules to the master template:
+
+#### 1. Add Rules to Template
+Edit `configs/auth/auth-rules-template.yml`:
+
+```yaml
+authorization_rules:
+  # Existing services...
+  user-service:
+    rules:
+      - path: "/api/users/{everything}"
+        roles: ["User"]
+  
+  # Add your new service:
+  inventory-service:
+    rules:
+      - path: "/api/inventory/{everything}"
+        roles: ["Operator"]
+      - path: "/api/inventory/admin/{everything}"
+        roles: ["Admin"]
+    port: 7019
+    description: "Inventory management service"
+```
+
+#### 2. Automatic Client-Specific Configuration Generation
+
+**New Enhanced Process (Automatic)**: Authorization configurations are now **automatically generated** during deployment creation:
 
 ```bash
-# Generate auth config for specific client
-make cloud-auth-gen
+# Authorization configs are automatically created when generating deployments
+python scripts/generate-deployment.py configs/clients/testing.yml
+# → Creates configs/auth/testing-ocelot.json automatically
+
+# Or use the qalitrack manager (recommended)
+./scripts/qalitrack-manager.sh generate testing
+# → Automatically generates both deployment AND auth config
+```
+
+**What happens automatically**:
+1. Client-specific Ocelot configuration generated (`configs/auth/{client}-ocelot.json`)
+2. Only includes services enabled for that specific client
+3. Docker compose configured to mount auth config as volume
+4. Gateway uses client-specific authorization rules
+
+**Manual Generation (if needed)**:
+```bash
+# Generate auth config for specific client (manual)
+make cloud-auth-gen CLIENT=testing
 
 # List available client configurations
 make cloud-auth-list
 ```
+
+**Important**: Authorization generation is now automatic during deployment creation. No manual steps required!
 
 ### Security Features
 
