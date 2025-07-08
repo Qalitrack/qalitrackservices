@@ -19,7 +19,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -27,6 +27,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    volumes:
+    - ../../configs/clients/kungu.yml:/app/configs/clients/kungu.yml:ro
+    - ../../configs/auth/kungu-ocelot.json:/app/ocelot.json:ro
     depends_on:
       user-service:
         condition: service_healthy
@@ -50,7 +53,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -78,7 +81,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -109,7 +112,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -142,7 +145,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -175,7 +178,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -208,7 +211,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -241,7 +244,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -274,7 +277,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
@@ -309,7 +312,7 @@ services:
       test:
       - CMD
       - wget
-      - --no-verbose
+      - --quiet
       - --tries=1
       - --spider
       - http://localhost:80/health
