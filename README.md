@@ -280,6 +280,133 @@ make switch-to-real          # Enable real services
 make test-auth-switch        # Automated switching test
 ```
 
+### Role Switching & Environment Detection
+
+QaliTrack provides dynamic role switching capabilities for comprehensive authorization testing:
+
+#### Environment Switching Architecture
+
+The system uses **Docker Compose overlays** to seamlessly switch between service modes:
+
+```bash
+# MOCK MODE - Fast testing with stateless authentication
+docker-compose -f docker-compose.testing.yml -f docker-compose.mock.yml up
+
+# REAL MODE - Production-like with database-backed authentication  
+docker-compose -f docker-compose.testing.yml -f docker-compose.real.yml up
+```
+
+**Environment Detection:**
+- **Automatic Detection**: Gateway automatically detects which mode is running
+- **JWT Configuration**: Different issuers (`MockUserService` vs `UserService`)
+- **Service Implementation**: Different containers provide mock vs real functionality
+- **Test Adaptation**: Integration tests automatically adapt based on environment
+
+| Aspect | Mock Mode | Real Mode |
+|--------|-----------|-----------|
+| **User Service** | `mock-user-service` (stateless) | `user-service` (database-backed) |
+| **JWT Issuer** | `MockUserService` | `UserService` |
+| **Database** | None | SQLite database with volumes |
+| **Authentication** | `/api/MockAuth/mock-login` | `/api/auth/login` |
+| **Startup Time** | ~5 seconds | ~15-30 seconds |
+| **Use Case** | Role testing, unit tests | Integration tests, production-like |
+
+#### Dynamic Role Switching
+
+**Mock Mode Role Switching (Instant):**
+```bash
+# Switch to any role instantly by changing the request
+curl -X POST http://localhost:7001/api/MockAuth/mock-login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "testuser", "role": "Admin"}'
+
+# Test different role immediately
+curl -X POST http://localhost:7001/api/MockAuth/mock-login \
+  -H "Content-Type: application/json" \  
+  -d '{"username": "testuser", "role": "User"}'
+
+# Available roles: Guest, User, Operator, Admin, SuperAdmin
+```
+
+**Real Mode Role Management:**
+```bash
+# Create users with specific roles in database
+curl -X POST http://localhost:7001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin_user", "password": "secure123", "role": "Admin"}'
+
+# Login with created user
+curl -X POST http://localhost:7001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin_user", "password": "secure123"}'
+```
+
+#### Role-Based Authorization Testing
+
+**Automatic Role Matrix Testing:**
+```bash
+# Test all roles against all endpoints automatically
+make test-gateway              # Unit tests - all role combinations
+make test-gateway-integration  # Integration tests - with deployed services
+
+# Role-specific testing
+make test-role-matrix         # Comprehensive role vs endpoint matrix
+```
+
+**Integration Test Role Switching:**
+The integration tests automatically cycle through all roles to validate the authorization matrix:
+
+```csharp
+[Theory]
+[InlineData("Guest")]     // Tests Guest role access patterns
+[InlineData("User")]      // Tests User role access patterns  
+[InlineData("Operator")]  // Tests Operator role access patterns
+[InlineData("Admin")]     // Tests Admin role access patterns
+[InlineData("SuperAdmin")] // Tests SuperAdmin role access patterns
+public async Task MockAuth_ShouldGenerateTokensForAllRoles(string role)
+{
+    // Dynamically generates token for each role and tests authorization
+}
+```
+
+**Role Hierarchy & Permissions:**
+- **Guest** (Level 0): `read:public`
+- **User** (Level 1): `read:public`, `read:products`, `read:profile`
+- **Operator** (Level 2): User permissions + `write:products`, `read:orders`, operational data
+- **Admin** (Level 4): Operator permissions + `manage:users`, `delete:products`, system management
+- **SuperAdmin** (Level 5): All permissions + `manage:system`, `delete:orders`, global control
+
+**Smart Test Execution:**
+```csharp
+[Fact]
+public async Task RealUserService_ShouldSupportUserRegistration()
+{
+    // Skip if mock services are running
+    if (await IsUsingMockServices())
+    {
+        return; // Skip this test - it's for real mode only
+    }
+    
+    // Only run if in REAL mode - test actual database operations
+}
+```
+
+#### Benefits of Role Switching Architecture
+
+**Development Benefits:**
+- **No Code Changes**: Switch environments and roles without modifying application code
+- **Consistent Interface**: Both mock and real services expose identical APIs
+- **Rapid Testing**: Instant role switching in mock mode for fast iteration
+- **Production Readiness**: Real mode provides production-like validation
+
+**Testing Benefits:**
+- **Comprehensive Coverage**: All role combinations tested automatically
+- **Environment Validation**: Tests prove both mock and real modes work correctly
+- **Dynamic Adaptation**: Tests automatically adapt based on running environment
+- **Authorization Matrix**: Complete validation of role-based access control
+
+This architecture enables **flexible, comprehensive testing** where you can instantly switch between roles for rapid authorization testing while also validating production-like scenarios with real user management.
+
 ### Testing Commands
 
 ```bash
