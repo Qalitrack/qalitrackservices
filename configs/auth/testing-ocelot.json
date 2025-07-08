@@ -14,6 +14,9 @@
         "RequiredRoles": [
           "User"
         ],
+        "RequiredPermissions": [
+          "read:profile"
+        ],
         "ServiceName": "user-service",
         "Description": "Basic user operations"
       },
@@ -34,6 +37,9 @@
       "Metadata": {
         "RequiredRoles": [
           "Admin"
+        ],
+        "RequiredPermissions": [
+          "manage:users"
         ],
         "ServiceName": "user-service",
         "Description": "Administrative user operations"
@@ -78,6 +84,9 @@
         "RequiredRoles": [
           "User"
         ],
+        "RequiredPermissions": [
+          "read:products"
+        ],
         "ServiceName": "product-service",
         "Description": "Product catalog access"
       },
@@ -101,6 +110,9 @@
         "RequiredRoles": [
           "User"
         ],
+        "RequiredPermissions": [
+          "read:products"
+        ],
         "ServiceName": "product-service",
         "Description": "Product catalog access"
       },
@@ -123,6 +135,9 @@
         "RequiredRoles": [
           "Admin"
         ],
+        "RequiredPermissions": [
+          "write:products"
+        ],
         "ServiceName": "product-service",
         "Description": "Product administrative operations"
       },
@@ -144,6 +159,9 @@
       "Metadata": {
         "RequiredRoles": [
           "Operator"
+        ],
+        "RequiredPermissions": [
+          "read:customers"
         ],
         "ServiceName": "customer-service",
         "Description": "Customer operations"

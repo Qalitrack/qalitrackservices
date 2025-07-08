@@ -34,7 +34,7 @@ public class MockAuthController : ControllerBase
                 return BadRequest($"Invalid role. Allowed roles: {string.Join(", ", MockRoles.AllRoles)}");
             }
 
-            // Generate user info
+            // Generate user info with roles hierarchy and permissions
             var user = new UserInfo
             {
                 Id = Guid.NewGuid().ToString(),
@@ -42,8 +42,9 @@ public class MockAuthController : ControllerBase
                 Email = $"{request.Username}@example.com",
                 FirstName = "Test",
                 LastName = "User",
-                Role = request.Role,
-                Permissions = MockRoles.GetPermissions(request.Role)
+                Role = request.Role,  // Primary role (backward compatibility)
+                Roles = MockRoles.GetRolesHierarchy(request.Role),  // All roles in hierarchy
+                Permissions = MockRoles.GetPermissions(request.Role)  // All permissions for the role
             };
 
             // Generate JWT token
@@ -53,7 +54,8 @@ public class MockAuthController : ControllerBase
             var response = new MockLoginResponse
             {
                 Token = token,
-                Role = request.Role,
+                Role = request.Role,  // Primary role (backward compatibility)
+                Roles = user.Roles,  // All roles in hierarchy
                 Username = request.Username,
                 ExpiresAt = expiresAt,
                 User = user
@@ -91,6 +93,8 @@ public class MockAuthController : ControllerBase
             
             var username = principal.FindFirst(ClaimTypes.Name)?.Value ?? "";
             var role = principal.FindFirst(ClaimTypes.Role)?.Value ?? "";
+            var rolesClaim = principal.FindFirst("roles")?.Value ?? "";
+            var roles = string.IsNullOrEmpty(rolesClaim) ? new List<string>() : rolesClaim.Split(',').ToList();
             var permissionsClaim = principal.FindFirst("permissions")?.Value ?? "";
             var permissions = string.IsNullOrEmpty(permissionsClaim) ? new List<string>() : permissionsClaim.Split(',').ToList();
 
@@ -101,7 +105,8 @@ public class MockAuthController : ControllerBase
             {
                 IsValid = true,
                 Username = username,
-                Role = role,
+                Role = role,  // Primary role (backward compatibility)
+                Roles = roles,  // All roles in hierarchy
                 Permissions = permissions,
                 ExpiresAt = expiresAt
             };
@@ -155,8 +160,9 @@ public class MockAuthController : ControllerBase
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role),
-            new Claim("permissions", string.Join(",", user.Permissions)),
+            new Claim(ClaimTypes.Role, user.Role),  // Primary role (backward compatibility)
+            new Claim("roles", string.Join(",", user.Roles)),  // All roles in hierarchy
+            new Claim("permissions", string.Join(",", user.Permissions)),  // All permissions
             new Claim("first_name", user.FirstName),
             new Claim("last_name", user.LastName)
         };

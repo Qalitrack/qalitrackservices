@@ -32,6 +32,9 @@ builder.Services.AddEndpointsApiExplorer();
 // Add memory cache for role authorization
 builder.Services.AddMemoryCache();
 
+// Register authorization cache service
+builder.Services.AddSingleton<QaliTrackGateway.Services.IAuthorizationCacheService, QaliTrackGateway.Services.AuthorizationCacheService>();
+
 // Add HTTP client factory and configuration service
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
