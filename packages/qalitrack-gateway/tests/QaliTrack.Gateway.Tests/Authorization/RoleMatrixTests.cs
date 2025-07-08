@@ -304,12 +304,36 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
         {
             "Guest" => new[] { "read:public" },
             "User" => new[] { "read:public", "read:products", "read:profile" },
-            "Operator" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "read:customers", "read:vehicles", "read:drivers" },
+            "Operator" => new[] { 
+                "read:public", "read:products", "read:profile", "write:products", 
+                "read:customers", "write:customers", "read:vehicles", "write:vehicles",
+                "read:drivers", "write:drivers", "read:suppliers", "write:suppliers",
+                "read:weight-data", "write:weight-data"
+            },
             "Auditor" => new[] { "read:public", "read:compliance", "read:analytics", "read:reports" },
-            "ClientAdmin" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "manage:organization" },
-            "SiteManager" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "write:orders", "read:analytics", "manage:site" },
-            "Admin" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "write:orders", "delete:products", "manage:users", "read:analytics", "manage:system" },
-            "SuperAdmin" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "write:orders", "delete:products", "manage:users", "read:analytics", "manage:system", "delete:orders", "manage:global" },
+            "ClientAdmin" => new[] { "read:public", "read:products", "read:profile", "write:products", "manage:organization" },
+            "SiteManager" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:analytics", "manage:site" },
+            "Admin" => new[] { 
+                "read:public", "read:products", "read:profile", "write:products", "delete:products",
+                "read:customers", "write:customers", "delete:customers",
+                "read:vehicles", "write:vehicles", "delete:vehicles",
+                "read:drivers", "write:drivers", "delete:drivers",
+                "read:suppliers", "write:suppliers", "delete:suppliers",
+                "read:weight-data", "write:weight-data", "delete:weight-data",
+                "read:users", "write:users", "manage:users",
+                "read:organizations", "write:organizations"
+            },
+            "SuperAdmin" => new[] { 
+                "read:public", "read:products", "read:profile", "write:products", "delete:products",
+                "read:customers", "write:customers", "delete:customers",
+                "read:vehicles", "write:vehicles", "delete:vehicles",
+                "read:drivers", "write:drivers", "delete:drivers",
+                "read:suppliers", "write:suppliers", "delete:suppliers",
+                "read:weight-data", "write:weight-data", "delete:weight-data",
+                "read:users", "write:users", "manage:users", "delete:users",
+                "read:organizations", "write:organizations", "manage:organizations", "delete:organizations",
+                "manage:system", "read:analytics", "read:compliance", "manage:compliance"
+            },
             _ => new[] { "read:public" }
         };
     }
@@ -322,24 +346,15 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
         
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new("username", username),
-            new(JwtRegisteredClaimNames.Email, email)
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new(ClaimTypes.Name, username),
+            new(ClaimTypes.Email, email),
+            new(ClaimTypes.Role, roles.FirstOrDefault() ?? "Guest"), // Primary role (backward compatibility)
+            new("roles", string.Join(",", roles)), // All roles (comma-separated)
+            new("permissions", string.Join(",", permissions)), // All permissions (comma-separated)
+            new("first_name", "Test"),
+            new("last_name", "User")
         };
-
-        // Add roles
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-            claims.Add(new Claim("role", role)); // Both formats for compatibility
-        }
-
-        // Add permissions
-        foreach (var permission in permissions)
-        {
-            claims.Add(new Claim("permissions", permission));
-        }
 
         var now = DateTime.UtcNow;
         var tokenDescriptor = new SecurityTokenDescriptor

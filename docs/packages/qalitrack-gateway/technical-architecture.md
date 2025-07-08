@@ -175,7 +175,11 @@ public interface IConfigurationService
 
 ## Authentication & Authorization
 
-### JWT Authentication Flow
+### Hybrid Authorization Model
+
+The gateway implements a **hybrid authorization model** that enforces both role-based and permission-based access control for comprehensive security.
+
+#### Authorization Flow Diagram
 
 ```mermaid
 sequenceDiagram
@@ -186,15 +190,31 @@ sequenceDiagram
 
     C->>G: POST /api/auth/login {credentials}
     G->>U: Forward login request
-    U->>G: JWT token + user info
-    G->>C: JWT token
+    U->>G: JWT token + user info + permissions
+    G->>C: JWT token with roles + permissions
 
     C->>G: GET /api/products (Bearer token)
     G->>G: Validate JWT signature
-    G->>G: Check role authorization
-    G->>S: Forward request + user headers
+    G->>G: Extract roles + permissions
+    G->>G: Check role hierarchy (User >= User ✓)
+    G->>G: Check required permissions (read:products ✓)
+    G->>G: Both checks pass → AUTHORIZED
+    G->>S: Forward request + user/permission headers
     S->>G: Response
     G->>C: Response
+```
+
+#### Access Control Logic
+
+```
+FOR EACH REQUEST:
+  1. Validate JWT Token
+  2. Extract user role and permissions from token
+  3. Check endpoint requirements from configuration
+  4. Evaluate: (User Role Level >= Required Role Level) AND 
+              (User Permissions ∩ Required Permissions ≠ ∅)
+  5. If BOTH conditions TRUE → AUTHORIZE
+  6. Else → DENY (403 Forbidden)
 ```
 
 ### JWT Token Structure
@@ -210,7 +230,10 @@ sequenceDiagram
     "name": "john.doe",
     "email": "john.doe@example.com",
     "role": "Operator",
-    "permissions": ["read:products", "write:products"],
+    "roles": "Operator,User",
+    "permissions": "read:products,write:products,read:customers,write:customers",
+    "first_name": "John",
+    "last_name": "Doe",
     "iss": "UserService",
     "aud": "UserService", 
     "exp": 1625745600,
@@ -219,10 +242,15 @@ sequenceDiagram
 }
 ```
 
+**Token Claims**:
+- `role` - Primary role (backward compatibility)
+- `roles` - Comma-separated list of all roles (future multi-role support)  
+- `permissions` - Comma-separated list of all permissions derived from roles
+
 ### Authorization Configuration Loading
 
 ```csharp
-// Route role requirements loaded from Ocelot configuration
+// Enhanced route requirements with hybrid authorization support
 private Dictionary<string, RouteRoleRequirement> LoadRouteRoleRequirements(IConfiguration config)
 {
     var ocelotConfig = configuration.GetSection("Routes");
@@ -231,25 +259,112 @@ private Dictionary<string, RouteRoleRequirement> LoadRouteRoleRequirements(IConf
     {
         var pathPattern = route["UpstreamPathTemplate"];
         var metadata = route.GetSection("Metadata");
-        var requiredRoles = metadata.GetSection("RequiredRoles");
         
-        // Create route role requirement mapping
+        // Load both role and permission requirements
+        var requiredRoles = metadata.GetSection("RequiredRoles")
+            .Get<List<string>>() ?? new List<string>();
+        var requiredPermissions = metadata.GetSection("RequiredPermissions")
+            .Get<List<string>>() ?? new List<string>();
+        var serviceName = metadata["ServiceName"];
+        
+        var requirement = new RouteRoleRequirement
+        {
+            PathPattern = pathPattern,
+            RequiredRoles = requiredRoles,
+            RequiredPermissions = requiredPermissions, // NEW: Permission support
+            ServiceName = serviceName,
+            Description = metadata["Description"]
+        };
+        
+        _routeRequirements[pathPattern] = requirement;
+    }
+}
+```
+
+### Role Authorization Middleware Enhancement
+
+```csharp
+public class RoleAuthorizationMiddleware
+{
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // Skip public endpoints
+        if (IsPublicEndpoint(context.Request.Path)) 
+        {
+            await _next(context);
+            return;
+        }
+
+        // Extract user claims from JWT
+        var userRole = context.User.FindFirst(ClaimTypes.Role)?.Value;
+        var userPermissions = context.User.FindFirst("permissions")?.Value
+            ?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+
+        // Find route requirements
+        var requirement = FindMatchingRouteRequirement(context.Request.Path);
+        if (requirement == null)
+        {
+            await _next(context);
+            return;
+        }
+
+        // HYBRID AUTHORIZATION CHECK
+        var roleAuthorized = CheckRoleAccess(userRole, requirement.RequiredRoles);
+        var permissionAuthorized = CheckPermissionAccess(userPermissions, requirement.RequiredPermissions);
+
+        if (roleAuthorized && permissionAuthorized)
+        {
+            // Forward user context to downstream services
+            AddUserContextHeaders(context, userRole, userPermissions);
+            await _next(context);
+        }
+        else
+        {
+            // Return detailed authorization error
+            await HandleAuthorizationFailure(context, requirement, userRole, userPermissions);
+        }
+    }
+
+    private bool CheckRoleAccess(string userRole, List<string> requiredRoles)
+    {
+        if (!requiredRoles.Any()) return true;
+        
+        var userLevel = GetRoleLevel(userRole);
+        var requiredLevel = requiredRoles.Min(role => GetRoleLevel(role));
+        
+        return userLevel >= requiredLevel;
+    }
+
+    private bool CheckPermissionAccess(string[] userPermissions, List<string> requiredPermissions)
+    {
+        if (!requiredPermissions.Any()) return true;
+        
+        return requiredPermissions.Any(required => userPermissions.Contains(required));
     }
 }
 ```
 
 ### User Context Headers
 
-The gateway adds user context to downstream requests:
+The gateway adds enhanced user context to downstream requests:
 
 ```http
 X-User-ID: user-uuid
 X-User-Name: john.doe
 X-User-Email: john.doe@example.com
+X-User-Role: Operator
 X-User-Roles: Operator,User
+X-User-Permissions: read:products,write:products,read:customers,write:customers
 X-Service-Name: ProductService
 X-Gateway-Authorized: true
+X-Authorization-Method: hybrid
 ```
+
+**Header Details**:
+- `X-User-Role` - Primary role (backward compatibility)
+- `X-User-Roles` - All roles for multi-role support
+- `X-User-Permissions` - All computed permissions for the user
+- `X-Authorization-Method` - Indicates hybrid role+permission authorization used
 
 ## Request Processing Pipeline
 
@@ -263,7 +378,7 @@ app.UseSwaggerUI();
 app.UseSerilogRequestLogging();
 app.UseAuthentication();           // JWT validation
 app.UseAuthorization();           // Basic ASP.NET Core auth
-app.UseRoleAuthorization();       // Custom role middleware
+app.UseRoleAuthorization();       // Custom hybrid role+permission middleware
 app.UseHealthChecks("/health");   // Health check endpoints
 app.MapControllers();             // Gateway controllers
 await app.UseOcelot();            // Ocelot routing (terminal)
@@ -303,7 +418,8 @@ await app.UseOcelot();            // Ocelot routing (terminal)
        │
        ▼
 ┌─────────────┐
-│    Role     │
+│   Hybrid    │
+│ Role+Perm   │
 │Authorization│
 └──────┬──────┘
        │
