@@ -6,6 +6,22 @@ A comprehensive weighbridge management system built with .NET 8 microservices ar
 
 QaliTrack consists of 19 microservices (so far) organized into two main categories:
 
+## 🎯 Service Categories: WHO vs HOW
+
+**Master Data Services** = **WHO, WHAT, WHERE** (The Entities)
+- Defines the **foundational entities** and **static reference data**
+- **WHO**: Drivers, Customers, Suppliers, Organizations
+- **WHAT**: Products, Vehicles, Routes, Weighbridges  
+- **WHERE**: Sites, Organizations, Routes
+- Provides the **nouns** of the system - the things that exist
+
+**DataManager Services** = **WHY, HOW, WHEN** (The Processes)
+- Handles the **operational workflows** and **business processes**
+- **WHY**: Compliance monitoring, Analytics for business insights
+- **HOW**: Transaction processing, Weight data capture, Data synchronization
+- **WHEN**: Real-time operations, Archive management, Operational scheduling
+- Manages the **verbs/actions** of the system - the things that happen
+
 ### Master Data Services (11 services)
 - **User Service** (Port 7001) - Authentication and user management
 - **Organization Service** (Port 7002) - Multi-tenant organization management
