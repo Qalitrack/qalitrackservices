@@ -1,0 +1,64 @@
+# Get all users
+GET {{UserModule_HostAddress}}/api/users
+Accept: application/json
+
+###
+
+# Get a user by ID (replace {id} with a real GUID)
+GET {{UserModule_HostAddress}}/api/users/{id}
+Authorization: Bearer {{jwt_token}}
+Accept: application/json
+
+###
+
+# Create a new user (admin only)
+POST {{UserModule_HostAddress}}/api/users
+Authorization: Bearer {{admin_jwt_token}}
+Content-Type: application/json
+
+{
+  "username": "newuser",
+  "email": "newuser@example.com",@UserModule_HostAddress = http://localhost:5146
+
+GET {{UserModule_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+  "password": "Password123!",
+  "firstName": "New",
+  "lastName": "User",
+  "department": "IT"
+}
+
+###
+
+# User login
+POST {{UserModule_HostAddress}}/api/users/login
+Content-Type: application/json
+
+{
+  "email": "newuser@example.com",
+  "password": "Password123!"
+}
+
+###
+
+# Update user (replace {id} with a real GUID)
+PUT {{UserModule_HostAddress}}/api/users/{id}
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "User"
+}
+
+###
+
+# Delete user (replace {id} with a real GUID)
+DELETE {{UserModule_HostAddress}}/api/users/{id}
+Authorization: Bearer {{jwt_token}}
+Accept: application/json
+
+###
