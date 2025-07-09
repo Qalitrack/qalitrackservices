@@ -2,9 +2,52 @@
 
 A comprehensive weighbridge management system built with .NET 8 microservices architecture.
 
+## Table of Contents
+
+- [Architecture Overview](#-architecture-overview)
+- [Service Categories](#-service-categories-who-vs-how)
+- [Authorization System](#-authorization-system)
+- [Service Template System](#️-service-template-system)
+- [Quick Start](#-quick-start)
+- [Testing Architecture](#-testing-architecture)
+- [Service URLs](#-service-urls)
+- [Authentication](#-authentication)
+- [Management Commands](#-management-commands)
+- [Health Monitoring](#-health-monitoring)
+- [Development](#-development)
+- [Project Structure](#-project-structure)
+- [Multi-Client Configuration](#-multi-client-configuration)
+- [Repository Structure](#repository-structure)
+- [Development Process](#development-process)
+- [Getting Started](#getting-started)
+- [Turborepo Usage](#turborepo-usage)
+- [Workspace Management](#workspace-management)
+- [Documentation Structure](#documentation-structure)
+- [Development Standards](#development-standards)
+- [Deployment](#deployment)
+- [Support and Contribution](#support-and-contribution)
+
+[↑ Back to Top](#table-of-contents)
+
 ## 🏗️ Architecture Overview
 
 QaliTrack consists of 19 microservices (so far) organized into two main categories:
+
+## 🎯 Service Categories: WHO vs HOW
+
+**Master Data Services** = **WHO, WHAT, WHERE** (The Entities)
+- Defines the **foundational entities** and **static reference data**
+- **WHO**: Drivers, Customers, Suppliers, Organizations
+- **WHAT**: Products, Vehicles, Routes, Weighbridges  
+- **WHERE**: Sites, Organizations, Routes
+- Provides the **nouns** of the system - the things that exist
+
+**DataManager Services** = **WHY, HOW, WHEN** (The Processes)
+- Handles the **operational workflows** and **business processes**
+- **WHY**: Compliance monitoring, Analytics for business insights
+- **HOW**: Transaction processing, Weight data capture, Data synchronization
+- **WHEN**: Real-time operations, Archive management, Operational scheduling
+- Manages the **verbs/actions** of the system - the things that happen
 
 ### Master Data Services (11 services)
 - **User Service** (Port 7001) - Authentication and user management
@@ -30,6 +73,8 @@ QaliTrack consists of 19 microservices (so far) organized into two main categori
 
 ### API Gateway
 - **Gateway Service** (Port 7000) - Central entry point with authentication
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🔐 Authorization System
 
@@ -97,17 +142,62 @@ authorization_rules:
         description: "Administrative user operations"
 ```
 
-### Client-Specific Authorization
+### Adding Authorization Rules for New Microservices
 
-Generate client-specific authorization configurations:
+When creating a new microservice, add its authorization rules to the master template:
+
+#### 1. Add Rules to Template
+Edit `configs/auth/auth-rules-template.yml`:
+
+```yaml
+authorization_rules:
+  # Existing services...
+  user-service:
+    rules:
+      - path: "/api/users/{everything}"
+        roles: ["User"]
+  
+  # Add your new service:
+  inventory-service:
+    rules:
+      - path: "/api/inventory/{everything}"
+        roles: ["Operator"]
+      - path: "/api/inventory/admin/{everything}"
+        roles: ["Admin"]
+    port: 7019
+    description: "Inventory management service"
+```
+
+#### 2. Automatic Client-Specific Configuration Generation
+
+**New Enhanced Process (Automatic)**: Authorization configurations are now **automatically generated** during deployment creation:
 
 ```bash
-# Generate auth config for specific client
-make cloud-auth-gen
+# Authorization configs are automatically created when generating deployments
+python scripts/generate-deployment.py configs/clients/testing.yml
+# → Creates configs/auth/testing-ocelot.json automatically
+
+# Or use the qalitrack manager (recommended)
+./scripts/qalitrack-manager.sh generate testing
+# → Automatically generates both deployment AND auth config
+```
+
+**What happens automatically**:
+1. Client-specific Ocelot configuration generated (`configs/auth/{client}-ocelot.json`)
+2. Only includes services enabled for that specific client
+3. Docker compose configured to mount auth config as volume
+4. Gateway uses client-specific authorization rules
+
+**Manual Generation (if needed)**:
+```bash
+# Generate auth config for specific client (manual)
+make cloud-auth-gen CLIENT=testing
 
 # List available client configurations
 make cloud-auth-list
 ```
+
+**Important**: Authorization generation is now automatic during deployment creation. No manual steps required!
 
 ### Security Features
 
@@ -117,6 +207,8 @@ make cloud-auth-list
 - **User Context Forwarding** - User information passed to downstream services
 - **Environment-Specific Rules** - Different access levels per environment
 - **Automatic Configuration** - Generate gateway configs from YAML rules
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🚀 Quick Start
 
@@ -142,6 +234,295 @@ open https://localhost:7000
 open https://localhost:7000/swagger
 ```
 
+[↑ Back to Top](#table-of-contents)
+
+## 🧪 Testing Architecture
+
+QaliTrack provides comprehensive testing capabilities with both **mock** and **real** service modes for flexible development and integration testing.
+
+### Mock vs Real Services
+
+| Mode | Use Case | Startup Time | Authentication | Database | Best For |
+|------|----------|--------------|----------------|----------|----------|
+| **Mock** | Development & Testing | Fast (~10s) | Instant JWT generation | None (stateless) | Role testing, rapid development |
+| **Real** | Integration Testing | Slower (~30s) | Full user registration/login | Database-backed | End-to-end testing, production simulation |
+
+### Mock Service Testing
+
+Mock services provide instant authentication and role-based testing without database overhead:
+
+```bash
+# Start mock environment
+make start-mock
+
+# Test all roles instantly
+make test-mock-auth          # Generate tokens for all roles
+make test-role-matrix        # Test authorization across all endpoints
+
+# Service-specific mock testing
+make test-users-mock         # User service with mock auth
+make test-product-mock       # Product service with mock auth
+make test-customer-mock      # Customer service with mock auth
+```
+
+**Mock Service Features:**
+- **Instant JWT tokens** for all roles (Guest, User, Operator, Admin, SuperAdmin)
+- **Role-based authorization testing** without user accounts
+- **Stateless authentication** - no database required
+- **Fast startup** - perfect for CI/CD pipelines
+- **Role switching** - test different permissions instantly
+
+### Real Service Testing
+
+Real services provide full database-backed authentication with complete user management:
+
+```bash
+# Start real environment
+make start-real
+
+# Test with actual user accounts
+make test-real-auth          # User registration and login
+make test-role-matrix        # Authorization with real users
+
+# Service-specific real testing
+make test-users-real         # Full user service functionality
+make test-product-real       # Product service with real auth
+make test-customer-real      # Customer service with real auth
+```
+
+**Real Service Features:**
+- **Database-backed authentication** with persistent user accounts
+- **Full user registration/login flow** 
+- **Production-like testing** with complete service functionality
+- **User management** - create, update, delete users with roles
+- **Integration testing** - verify end-to-end workflows
+
+### Service Switching
+
+Switch between mock and real modes without code changes:
+
+```bash
+# Check current environment
+make test-env-status
+
+# Switch modes
+make switch-to-mock          # Enable mock services
+make switch-to-real          # Enable real services
+
+# Test switching capability
+make test-auth-switch        # Automated switching test
+```
+
+### Role Switching & Environment Detection
+
+QaliTrack provides dynamic role switching capabilities for comprehensive authorization testing:
+
+#### Environment Switching Architecture
+
+The system uses **Docker Compose overlays** to seamlessly switch between service modes:
+
+```bash
+# MOCK MODE - Fast testing with stateless authentication
+docker-compose -f docker-compose.testing.yml -f docker-compose.mock.yml up
+
+# REAL MODE - Production-like with database-backed authentication  
+docker-compose -f docker-compose.testing.yml -f docker-compose.real.yml up
+```
+
+**Environment Detection:**
+- **Automatic Detection**: Gateway automatically detects which mode is running
+- **JWT Configuration**: Different issuers (`MockUserService` vs `UserService`)
+- **Service Implementation**: Different containers provide mock vs real functionality
+- **Test Adaptation**: Integration tests automatically adapt based on environment
+
+| Aspect | Mock Mode | Real Mode |
+|--------|-----------|-----------|
+| **User Service** | `mock-user-service` (stateless) | `user-service` (database-backed) |
+| **JWT Issuer** | `MockUserService` | `UserService` |
+| **Database** | None | SQLite database with volumes |
+| **Authentication** | `/api/MockAuth/mock-login` | `/api/auth/login` |
+| **Startup Time** | ~5 seconds | ~15-30 seconds |
+| **Use Case** | Role testing, unit tests | Integration tests, production-like |
+
+#### Dynamic Role Switching
+
+**Mock Mode Role Switching (Instant):**
+```bash
+# Switch to any role instantly by changing the request
+curl -X POST http://localhost:7001/api/MockAuth/mock-login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "testuser", "role": "Admin"}'
+
+# Test different role immediately
+curl -X POST http://localhost:7001/api/MockAuth/mock-login \
+  -H "Content-Type: application/json" \  
+  -d '{"username": "testuser", "role": "User"}'
+
+# Available roles: Guest, User, Operator, Admin, SuperAdmin
+```
+
+**Real Mode Role Management:**
+```bash
+# Create users with specific roles in database
+curl -X POST http://localhost:7001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin_user", "password": "secure123", "role": "Admin"}'
+
+# Login with created user
+curl -X POST http://localhost:7001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin_user", "password": "secure123"}'
+```
+
+#### Role-Based Authorization Testing
+
+**Automatic Role Matrix Testing:**
+```bash
+# Test all roles against all endpoints automatically
+make test-gateway              # Unit tests - all role combinations
+make test-gateway-integration  # Integration tests - with deployed services
+
+# Role-specific testing
+make test-role-matrix         # Comprehensive role vs endpoint matrix
+```
+
+**Integration Test Role Switching:**
+The integration tests automatically cycle through all roles to validate the authorization matrix:
+
+```csharp
+[Theory]
+[InlineData("Guest")]     // Tests Guest role access patterns
+[InlineData("User")]      // Tests User role access patterns  
+[InlineData("Operator")]  // Tests Operator role access patterns
+[InlineData("Admin")]     // Tests Admin role access patterns
+[InlineData("SuperAdmin")] // Tests SuperAdmin role access patterns
+public async Task MockAuth_ShouldGenerateTokensForAllRoles(string role)
+{
+    // Dynamically generates token for each role and tests authorization
+}
+```
+
+**Role Hierarchy & Permissions:**
+- **Guest** (Level 0): `read:public`
+- **User** (Level 1): `read:public`, `read:products`, `read:profile`
+- **Operator** (Level 2): User permissions + `write:products`, `read:orders`, operational data
+- **Admin** (Level 4): Operator permissions + `manage:users`, `delete:products`, system management
+- **SuperAdmin** (Level 5): All permissions + `manage:system`, `delete:orders`, global control
+
+**Smart Test Execution:**
+```csharp
+[Fact]
+public async Task RealUserService_ShouldSupportUserRegistration()
+{
+    // Skip if mock services are running
+    if (await IsUsingMockServices())
+    {
+        return; // Skip this test - it's for real mode only
+    }
+    
+    // Only run if in REAL mode - test actual database operations
+}
+```
+
+#### Benefits of Role Switching Architecture
+
+**Development Benefits:**
+- **No Code Changes**: Switch environments and roles without modifying application code
+- **Consistent Interface**: Both mock and real services expose identical APIs
+- **Rapid Testing**: Instant role switching in mock mode for fast iteration
+- **Production Readiness**: Real mode provides production-like validation
+
+**Testing Benefits:**
+- **Comprehensive Coverage**: All role combinations tested automatically
+- **Environment Validation**: Tests prove both mock and real modes work correctly
+- **Dynamic Adaptation**: Tests automatically adapt based on running environment
+- **Authorization Matrix**: Complete validation of role-based access control
+
+This architecture enables **flexible, comprehensive testing** where you can instantly switch between roles for rapid authorization testing while also validating production-like scenarios with real user management.
+
+[↑ Back to Top](#table-of-contents)
+
+## 🛠️ Service Template System
+
+QaliTrack provides a powerful service template system for rapid microservice generation with consistent architecture and best practices.
+
+### Quick Service Generation
+
+```bash
+# Generate a new service
+python3 scripts/generate-service.py masterdata inventory-service inventory "Inventory Management Service"
+
+# Using Make targets
+make generate-service TYPE=masterdata SERVICE=inventory-service ENTITY=inventory DESC="Inventory Management Service"
+
+# Interactive generation
+make generate-masterdata    # For masterdata services
+make generate-datamanager   # For datamanager services
+```
+
+### What's Generated
+
+Each service includes:
+- **Clean Architecture** (API, Core, Infrastructure layers)
+- **Entity Framework** with SQLite database
+- **AutoMapper** configurations
+- **Unit Tests** with xUnit and FluentAssertions
+- **Swagger/OpenAPI** documentation
+- **Docker** containerization
+- **Make targets** for automation
+- **Executable scripts** (`run.sh`, `run.cmd`)
+
+### Template Features
+
+- **Automatic Namespace Resolution**: Handles edge cases like same service/entity names
+- **Fully Qualified Types**: Prevents compilation conflicts
+- **Make Integration**: Auto-generates build, test, and run targets
+- **Service Removal**: Clean removal of services and make targets
+- **Cross-Platform**: Works on Windows, macOS, and Linux
+
+### Service Types
+
+| Type | Purpose | Examples |
+|------|---------|----------|
+| **masterdata** | Core business entities | user-service, product-service, customer-service |
+| **datamanager** | Operational workflows | analytics-service, compliance-service, transaction-service |
+
+### Comprehensive Documentation
+
+For detailed usage, customization, and best practices, see:
+**[📚 Service Template System Documentation](./docs/system/service-template-system.md)**
+
+The documentation covers:
+- Template architecture and structure
+- Customization and extension guide
+- Best practices and troubleshooting
+- Advanced usage scenarios
+- Contributing guidelines
+
+### Testing Commands
+
+```bash
+# Interactive test selector
+make test-interactive        # Choose from all available tests
+
+# Core testing
+make test-health            # Service health checks
+make test-api               # API endpoint validation
+make test-gateway           # Gateway authorization testing
+
+# Role-based authorization
+make test-role-matrix       # Comprehensive role testing across all endpoints
+make test-mock-auth         # Mock authentication and role generation
+make test-real-auth         # Real user registration and authentication
+
+# Environment management
+make test-env-status        # Check current service mode
+make stop-testing           # Stop all testing services
+make logs                   # View service logs
+```
+
+[↑ Back to Top](#table-of-contents)
+
 ### Option 2: Manual Build and Run
 
 ```bash
@@ -152,6 +533,8 @@ open https://localhost:7000/swagger
 cd apps/masterdata/user-service
 dotnet run --project src/UserService.Api
 ```
+
+[↑ Back to Top](#table-of-contents)
 
 ## 📊 Service URLs
 
@@ -177,6 +560,8 @@ dotnet run --project src/UserService.Api
 | Data Sync Service | https://localhost:7017 | https://localhost:7017/swagger |
 | Archive Service | https://localhost:7018 | https://localhost:7018/swagger |
 
+[↑ Back to Top](#table-of-contents)
+
 ## 🔒 Authentication
 
 The system uses JWT-based authentication through the User Service. To access protected endpoints:
@@ -184,6 +569,8 @@ The system uses JWT-based authentication through the User Service. To access pro
 1. Register a user: `POST /api/auth/register`
 2. Login: `POST /api/auth/login`
 3. Use the returned JWT token in the Authorization header: `Bearer <token>`
+
+[↑ Back to Top](#table-of-contents)
 
 ## 📋 Management Commands
 
@@ -229,6 +616,8 @@ docker compose -f apps/testing/docker-compose.testing.yml logs -f user-service
 docker compose -f apps/testing/docker-compose.testing.yml restart user-service
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## 🏥 Health Monitoring
 
 - **Gateway Health**: http://localhost:7000/health
@@ -236,6 +625,8 @@ docker compose -f apps/testing/docker-compose.testing.yml restart user-service
 - **Individual Service Health**: http://localhost:700X/health (where X is service port)
 - **Service Discovery**: http://localhost:7000/api/gateway/services
 - **Available Services**: http://localhost:7000/api/swagger/services
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🛠️ Development
 
@@ -252,6 +643,8 @@ docker compose -f apps/testing/docker-compose.testing.yml restart user-service
 - **Docker** - Containerization
 - **Ocelot** - API Gateway
 - **YamlDotNet** - Configuration management
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🏗️ Project Structure
 
@@ -305,6 +698,8 @@ qalitrackservices/
     └── ...
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## 🌟 Multi-Client Configuration
 
 QaliTrack supports different client configurations with varying service compositions:
@@ -326,6 +721,8 @@ QaliTrack supports different client configurations with varying service composit
 **National Weighing Authority** (Regulatory):
 - Compliance monitoring focus
 - Read-only operational access
+
+[↑ Back to Top](#table-of-contents)
 
 ## Repository Structure
 
@@ -350,6 +747,8 @@ QaliTrack supports different client configurations with varying service composit
 └── pnpm-workspace.yaml    # pnpm workspace configuration
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## Development Process
 
 ### 1. Requirements Phase
@@ -371,6 +770,8 @@ QaliTrack supports different client configurations with varying service composit
 - **Technical Docs**: `/docs/apps/technical/` for developers
 - **User Docs**: `/docs/apps/end-users/` for application users
 - **Service Docs**: `/docs/services/` for microservice documentation
+
+[↑ Back to Top](#table-of-contents)
 
 ## Getting Started
 
@@ -410,6 +811,8 @@ pnpm type-check
 # Format code
 pnpm format
 ```
+
+[↑ Back to Top](#table-of-contents)
 
 ## Turborepo Usage
 
@@ -455,6 +858,8 @@ The `turbo.json` file defines the build pipeline:
 }
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## Workspace Management
 
 ### Adding New Microservices
@@ -494,6 +899,8 @@ pnpm init
 # Add dependencies and configure package.json
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## Documentation Structure
 
 ### Requirements Documentation (`/docs/requirements/`)
@@ -522,6 +929,8 @@ pnpm init
 - Functional specifications and user stories
 - Technical requirements and acceptance criteria
 
+[↑ Back to Top](#table-of-contents)
+
 ## Development Standards
 
 ### Code Quality
@@ -542,6 +951,8 @@ pnpm init
 - Provide step-by-step procedures
 - Update README files for new packages
 
+[↑ Back to Top](#table-of-contents)
+
 ## Deployment
 
 ### Docker Support
@@ -560,6 +971,8 @@ docker-compose up -d
 - Staging: `.env.staging`
 - Production: `.env.production`
 
+[↑ Back to Top](#table-of-contents)
+
 ## Support and Contribution
 
 ### Getting Help
@@ -572,6 +985,8 @@ docker-compose up -d
 2. Follow development standards and conventions
 3. Update documentation for new features
 4. Ensure tests pass before submitting pull requests
+
+[↑ Back to Top](#table-of-contents)
 
 ---
 

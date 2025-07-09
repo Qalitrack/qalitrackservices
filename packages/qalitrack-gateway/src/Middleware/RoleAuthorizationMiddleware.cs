@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
 using System.Text.Json;
+using QaliTrackGateway.Services;
 
 namespace QaliTrackGateway.Middleware;
 
@@ -13,6 +14,7 @@ public class RoleAuthorizationMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IMemoryCache _cache;
+    private readonly IAuthorizationCacheService _cacheService;
     private readonly ILogger<RoleAuthorizationMiddleware> _logger;
     private readonly Dictionary<string, int> _roleHierarchy;
     private readonly Dictionary<string, RouteRoleRequirement> _routeRoleRequirements;
@@ -20,16 +22,19 @@ public class RoleAuthorizationMiddleware
     public RoleAuthorizationMiddleware(
         RequestDelegate next,
         IMemoryCache cache,
+        IAuthorizationCacheService cacheService,
         ILogger<RoleAuthorizationMiddleware> logger,
         IConfiguration configuration)
     {
         _next = next;
         _cache = cache;
+        _cacheService = cacheService;
         _logger = logger;
         
         // Initialize role hierarchy (higher number = higher privileges)
         _roleHierarchy = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
+            ["Guest"] = 0,
             ["User"] = 1,
             ["Operator"] = 2,
             ["SiteManager"] = 3,
@@ -71,19 +76,25 @@ public class RoleAuthorizationMiddleware
             return;
         }
 
-        // Extract and validate user roles
+        // Extract user roles and permissions
         var userRoles = GetUserRoles(context.User);
-        var hasRequiredRole = await CheckRoleAccess(userRoles, roleRequirement, context.User);
+        var userPermissions = GetUserPermissions(context.User);
+        
+        // Check hybrid authorization (both roles and permissions must be satisfied)
+        var hasRequiredAccess = await CheckHybridAccess(userRoles, userPermissions, roleRequirement, context.User);
 
-        if (!hasRequiredRole)
+        if (!hasRequiredAccess)
         {
             var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
             _logger.LogWarning(
-                "Access denied for user {UserId} to {Path}. Required: {RequiredRole}, User roles: {UserRoles}",
-                userId, path, string.Join(",", roleRequirement.RequiredRoles), string.Join(",", userRoles));
+                "Access denied for user {UserId} to {Path}. Required roles: {RequiredRoles}, Required permissions: {RequiredPermissions}, " +
+                "User roles: {UserRoles}, User permissions: {UserPermissions}",
+                userId, path, 
+                string.Join(",", roleRequirement.RequiredRoles), string.Join(",", roleRequirement.RequiredPermissions),
+                string.Join(",", userRoles), string.Join(",", userPermissions));
             
             context.Response.StatusCode = 403;
-            await context.Response.WriteAsync("Forbidden: Insufficient role privileges");
+            await context.Response.WriteAsync("Forbidden: Insufficient role or permission privileges");
             return;
         }
 
@@ -154,19 +165,95 @@ public class RoleAuthorizationMiddleware
 
     private List<string> GetUserRoles(ClaimsPrincipal user)
     {
-        return user.FindAll(ClaimTypes.Role)
-            .Select(c => c.Value)
-            .ToList();
+        // Get roles from both role claim and roles claim for hybrid support
+        var roleClaims = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+        var rolesClaim = user.FindFirst("roles")?.Value ?? "";
+        
+        if (!string.IsNullOrEmpty(rolesClaim))
+        {
+            var rolesFromClaim = rolesClaim.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(r => r.Trim()).ToList();
+            roleClaims.AddRange(rolesFromClaim);
+        }
+        
+        return roleClaims.Distinct().ToList();
     }
 
-    private async Task<bool> CheckRoleAccess(
+    private List<string> GetUserPermissions(ClaimsPrincipal user)
+    {
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
+        
+        // Try to get from cache first using the cache service
+        var cachedPermissions = _cacheService.GetUserPermissions(userId);
+        if (cachedPermissions != null)
+        {
+            return cachedPermissions;
+        }
+        
+        var permissionsClaim = user.FindFirst("permissions")?.Value ?? "";
+        if (string.IsNullOrEmpty(permissionsClaim))
+        {
+            return new List<string>();
+        }
+        
+        var permissions = permissionsClaim.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(p => p.Trim())
+            .ToList();
+            
+        // Cache permissions for 10 minutes to reduce JWT parsing overhead
+        _cacheService.SetUserPermissions(userId, permissions, TimeSpan.FromMinutes(10));
+        
+        return permissions;
+    }
+
+    private async Task<bool> CheckHybridAccess(
+        List<string> userRoles,
+        List<string> userPermissions, 
+        RouteRoleRequirement requirement, 
+        ClaimsPrincipal user)
+    {
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
+        
+        // Check if we have a cached authorization decision using the cache service
+        var cachedDecision = _cacheService.GetAuthorizationDecision(userId, requirement.PathPattern);
+        if (cachedDecision.HasValue)
+        {
+            return cachedDecision.Value;
+        }
+        
+        // 1. Check role-based access (existing logic - maintained for backward compatibility)
+        var roleAccess = await CheckRoleAccess(userRoles, requirement, user);
+        
+        // 2. Check permission-based access (new logic)
+        var permissionAccess = CheckPermissionAccess(userPermissions, requirement, user);
+        
+        // 3. For hybrid authorization: both role AND permission must be satisfied
+        // If no permissions are required, only check roles (backward compatibility)
+        bool authDecision;
+        if (!requirement.RequiredPermissions.Any())
+        {
+            authDecision = roleAccess;
+        }
+        else
+        {
+            // Both role and permission requirements must be met
+            authDecision = roleAccess && permissionAccess;
+        }
+        
+        // Cache the authorization decision for 5 minutes to improve performance
+        _cacheService.SetAuthorizationDecision(userId, requirement.PathPattern, authDecision, TimeSpan.FromMinutes(5));
+        
+        return authDecision;
+    }
+
+    private Task<bool> CheckRoleAccess(
         List<string> userRoles, 
         RouteRoleRequirement requirement, 
         ClaimsPrincipal user)
     {
         if (!requirement.RequiredRoles.Any())
         {
-            return true; // No specific role required
+            return Task.FromResult(true); // No specific role required
         }
 
         // Get the highest role level the user has
@@ -175,7 +262,7 @@ public class RoleAuthorizationMiddleware
         // If user has no valid roles, deny access
         if (!validUserRoles.Any())
         {
-            return false;
+            return Task.FromResult(false);
         }
         
         var userHighestLevel = validUserRoles.Max(role => _roleHierarchy[role]);
@@ -191,14 +278,43 @@ public class RoleAuthorizationMiddleware
         var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
         var userName = user.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown";
         
-        _logger.LogInformation(
+        _logger.LogDebug(
             "Role authorization check - User: {UserId} ({UserName}), Service: {ServiceName}, " +
             "Required: {RequiredRoles}, User Level: {UserLevel}, Result: {Authorized}",
             userId, userName, requirement.ServiceName,
             string.Join(",", requirement.RequiredRoles), userHighestLevel, hasRequiredLevel);
 
-        return hasRequiredLevel;
+        return Task.FromResult(hasRequiredLevel);
     }
+
+    private bool CheckPermissionAccess(
+        List<string> userPermissions,
+        RouteRoleRequirement requirement,
+        ClaimsPrincipal user)
+    {
+        if (!requirement.RequiredPermissions.Any())
+        {
+            return true; // No specific permissions required
+        }
+
+        // Check if user has any of the required permissions
+        var hasRequiredPermission = requirement.RequiredPermissions.Any(requiredPerm =>
+            userPermissions.Contains(requiredPerm, StringComparer.OrdinalIgnoreCase));
+
+        // Log permission check for audit
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
+        var userName = user.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown";
+        
+        _logger.LogDebug(
+            "Permission authorization check - User: {UserId} ({UserName}), Service: {ServiceName}, " +
+            "Required: {RequiredPermissions}, User Permissions: {UserPermissions}, Result: {Authorized}",
+            userId, userName, requirement.ServiceName,
+            string.Join(",", requirement.RequiredPermissions), 
+            string.Join(",", userPermissions), hasRequiredPermission);
+
+        return hasRequiredPermission;
+    }
+
 
     private void AddUserContextHeaders(HttpContext context, RouteRoleRequirement requirement)
     {
@@ -209,6 +325,7 @@ public class RoleAuthorizationMiddleware
         var userName = user.FindFirst(ClaimTypes.Name)?.Value;
         var userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
         var userRoles = GetUserRoles(user);
+        var userPermissions = GetUserPermissions(user);
 
         if (!string.IsNullOrEmpty(userId))
             context.Request.Headers["X-User-ID"] = userId;
@@ -221,14 +338,17 @@ public class RoleAuthorizationMiddleware
         
         if (userRoles.Any())
             context.Request.Headers["X-User-Roles"] = string.Join(",", userRoles);
+        
+        if (userPermissions.Any())
+            context.Request.Headers["X-User-Permissions"] = string.Join(",", userPermissions);
 
         // Add service context
         context.Request.Headers["X-Service-Name"] = requirement.ServiceName;
         context.Request.Headers["X-Gateway-Authorized"] = "true";
         
         _logger.LogDebug(
-            "Added user context headers for {ServiceName}: User={UserId}, Roles={Roles}",
-            requirement.ServiceName, userId, string.Join(",", userRoles));
+            "Added user context headers for {ServiceName}: User={UserId}, Roles={Roles}, Permissions={Permissions}",
+            requirement.ServiceName, userId, string.Join(",", userRoles), string.Join(",", userPermissions));
     }
 
     private Dictionary<string, RouteRoleRequirement> LoadRouteRoleRequirements(IConfiguration configuration)
@@ -253,12 +373,19 @@ public class RoleAuthorizationMiddleware
                         .Where(x => !string.IsNullOrEmpty(x))
                         .ToList();
 
-                    if (requiredRoles.Any())
+                    var requiredPermissions = metadata.GetSection("RequiredPermissions")
+                        .GetChildren()
+                        .Select(x => x.Value ?? string.Empty)
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToList();
+
+                    if (requiredRoles.Any() || requiredPermissions.Any())
                     {
                         var requirement = new RouteRoleRequirement
                         {
                             PathPattern = upstreamPath,
                             RequiredRoles = requiredRoles,
+                            RequiredPermissions = requiredPermissions,
                             ServiceName = metadata["ServiceName"] ?? "Unknown",
                             Description = metadata["Description"] ?? string.Empty
                         };
@@ -282,12 +409,13 @@ public class RoleAuthorizationMiddleware
 }
 
 /// <summary>
-/// Represents role requirements for a specific route
+/// Represents role and permission requirements for a specific route
 /// </summary>
 public class RouteRoleRequirement
 {
     public string PathPattern { get; set; } = string.Empty;
     public List<string> RequiredRoles { get; set; } = new();
+    public List<string> RequiredPermissions { get; set; } = new();  // New: permission requirements
     public string ServiceName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
 }

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
 using Serilog;
 using System.Text;
 using HealthChecks.UI.Client;
@@ -30,6 +31,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Add memory cache for role authorization
 builder.Services.AddMemoryCache();
+
+// Register authorization cache service
+builder.Services.AddSingleton<QaliTrackGateway.Services.IAuthorizationCacheService, QaliTrackGateway.Services.AuthorizationCacheService>();
 
 // Add HTTP client factory and configuration service
 builder.Services.AddHttpClient();
@@ -73,10 +77,27 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Add JWT Authentication
+// Add JWT Authentication - Support both mock and real services
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+var issuer = jwtSettings["Issuer"] ?? "UserService";
+var audience = jwtSettings["Audience"] ?? "UserService";
 var key = Encoding.UTF8.GetBytes(secretKey);
+
+// Check if using mock services
+var useMockServices = builder.Configuration.GetValue<bool>("USE_MOCK_SERVICES");
+if (useMockServices)
+{
+    Console.WriteLine("🧪 Using MOCK services for authentication");
+    Console.WriteLine($"   JWT Issuer: {issuer}");
+    Console.WriteLine($"   JWT Audience: {audience}");
+}
+else
+{
+    Console.WriteLine("🔐 Using REAL services for authentication");
+    Console.WriteLine($"   JWT Issuer: {issuer}");
+    Console.WriteLine($"   JWT Audience: {audience}");
+}
 
 builder.Services.AddAuthentication(x =>
 {
@@ -92,9 +113,9 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = true,
-        ValidIssuer = jwtSettings["Issuer"],
+        ValidIssuer = issuer,
         ValidateAudience = true,
-        ValidAudience = jwtSettings["Audience"],
+        ValidAudience = audience,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
@@ -102,13 +123,68 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization();
 
-// Add Health Checks (conditional based on environment)
+// Add Health Checks (dynamic based on enabled services)
 var healthChecksBuilder = builder.Services.AddHealthChecks();
 
-if (builder.Environment.IsDevelopment())
+// Get enabled services dynamically from client configuration or environment
+var clientCode = builder.Configuration["CLIENT_CODE"] ?? "testing";
+var configPath = Path.Combine("configs", "clients", $"{clientCode}.yml");
+
+Console.WriteLine($"Looking for config at: {configPath}");
+Console.WriteLine($"Config exists: {File.Exists(configPath)}");
+
+if (File.Exists(configPath))
 {
-    // In development, only check services that are actually running
-    healthChecksBuilder.AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded);
+    try
+    {
+        var deserializer = new YamlDotNet.Serialization.Deserializer();
+        var configContent = File.ReadAllText(configPath);
+        Console.WriteLine($"Config content loaded, length: {configContent.Length}");
+        
+        var config = deserializer.Deserialize<Dictionary<string, object>>(configContent);
+        Console.WriteLine($"Config parsed successfully: {config != null}");
+        
+        // Add health checks for enabled services
+        if (config.ContainsKey("services") && config["services"] is Dictionary<object, object> servicesDict)
+        {
+            Console.WriteLine($"Found services in config, count: {servicesDict.Count}");
+            foreach (var service in servicesDict)
+            {
+                var serviceName = service.Key.ToString();
+                
+                if (service.Value is Dictionary<object, object> serviceConfig)
+                {
+                    bool isEnabled = serviceConfig.ContainsKey("enabled") && 
+                                   serviceConfig["enabled"].ToString().ToLower() == "true";
+                    
+                    if (isEnabled && serviceName != "gateway")
+                    {
+                        var healthUrl = $"http://{serviceName}/health";
+                        healthChecksBuilder.AddUrlGroup(new Uri(healthUrl), serviceName, HealthStatus.Degraded);
+                        Console.WriteLine($"Added health check for {serviceName} at {healthUrl}");
+                    }
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        // Fallback to hardcoded services for development
+        healthChecksBuilder
+            .AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded)
+            .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded)
+            .AddUrlGroup(new Uri("http://swagger-aggregator/health"), "swagger-aggregator", HealthStatus.Degraded)
+            .AddUrlGroup(new Uri("http://product-service/health"), "product-service", HealthStatus.Degraded);
+    }
+}
+else if (builder.Environment.IsDevelopment())
+{
+    // Fallback for development when config file is not available
+    healthChecksBuilder
+        .AddUrlGroup(new Uri("http://user-service/health"), "user-service", HealthStatus.Degraded)
+        .AddUrlGroup(new Uri("http://customer-service/health"), "customer-service", HealthStatus.Degraded)
+        .AddUrlGroup(new Uri("http://swagger-aggregator/health"), "swagger-aggregator", HealthStatus.Degraded)
+        .AddUrlGroup(new Uri("http://product-service/health"), "product-service", HealthStatus.Degraded);
 }
 else
 {
@@ -156,17 +232,22 @@ builder.Services.AddCors(options =>
 });
 
 // Add Ocelot configuration based on environment
-if (builder.Environment.IsDevelopment())
+if (builder.Environment.EnvironmentName == "Testing")
 {
-    builder.Configuration.AddJsonFile("ocelot.development.json", optional: false, reloadOnChange: true);
-    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: true);
+    // For testing environment, use in-memory configuration provided by tests
+    // Do not load file-based Ocelot configurations to avoid route duplicates
+}
+else if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("ocelot.development.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: false);
 }
 else
 {
-    builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
-    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: true);
+    builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: false);
+    builder.Configuration.AddJsonFile("ocelot.SwaggerEndPoints.json", optional: false, reloadOnChange: false);
 }
-builder.Services.AddOcelot();
+builder.Services.AddOcelot().AddConsul();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 var app = builder.Build();

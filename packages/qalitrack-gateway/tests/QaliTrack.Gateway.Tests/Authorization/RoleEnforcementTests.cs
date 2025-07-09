@@ -11,6 +11,7 @@ namespace QaliTrack.Gateway.Tests.Authorization;
 /// Tests for Phase 1 Role Enforcement implementation
 /// Validates the hybrid authorization model with static configuration
 /// </summary>
+[Trait("Category", "Unit")]
 public class RoleEnforcementTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
@@ -32,6 +33,52 @@ public class RoleEnforcementTests : IClassFixture<WebApplicationFactory<Program>
                     ["Jwt:SecretKey"] = _secretKey,
                     ["Jwt:Issuer"] = _issuer,
                     ["Jwt:Audience"] = _audience
+                });
+                
+                // Add test-specific Ocelot configuration
+                config.AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    // Organization Service routes - requires Admin+ role
+                    ["Routes:0:UpstreamPathTemplate"] = "/api/organizations/{everything}",
+                    ["Routes:0:DownstreamPathTemplate"] = "/api/{everything}",
+                    ["Routes:0:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:0:DownstreamHostAndPorts:0:Port"] = "7002",
+                    ["Routes:0:DownstreamScheme"] = "http",
+                    ["Routes:0:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+                    ["Routes:0:Metadata:RequiredRoles:0"] = "Admin",
+                    ["Routes:0:Metadata:ServiceName"] = "OrganizationService",
+                    
+                    // Analytics Service routes - requires SiteManager+ role
+                    ["Routes:1:UpstreamPathTemplate"] = "/api/analytics/{everything}",
+                    ["Routes:1:DownstreamPathTemplate"] = "/api/{everything}",
+                    ["Routes:1:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:1:DownstreamHostAndPorts:0:Port"] = "7016",
+                    ["Routes:1:DownstreamScheme"] = "http",
+                    ["Routes:1:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+                    ["Routes:1:Metadata:RequiredRoles:0"] = "SiteManager",
+                    ["Routes:1:Metadata:ServiceName"] = "AnalyticsService",
+                    
+                    // Basic operator-level routes for testing
+                    ["Routes:2:UpstreamPathTemplate"] = "/api/vehicles/{everything}",
+                    ["Routes:2:DownstreamPathTemplate"] = "/api/{everything}",
+                    ["Routes:2:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:2:DownstreamHostAndPorts:0:Port"] = "7003",
+                    ["Routes:2:DownstreamScheme"] = "http",
+                    ["Routes:2:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+                    ["Routes:2:Metadata:RequiredRoles:0"] = "Operator",
+                    ["Routes:2:Metadata:ServiceName"] = "VehicleService",
+                    
+                    ["Routes:3:UpstreamPathTemplate"] = "/api/users/{everything}",
+                    ["Routes:3:DownstreamPathTemplate"] = "/api/{everything}",
+                    ["Routes:3:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:3:DownstreamHostAndPorts:0:Port"] = "7001",
+                    ["Routes:3:DownstreamScheme"] = "http",
+                    ["Routes:3:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+                    ["Routes:3:Metadata:RequiredRoles:0"] = "User",
+                    ["Routes:3:Metadata:ServiceName"] = "UserService",
+                    
+                    // Global Configuration
+                    ["GlobalConfiguration:BaseUrl"] = "http://localhost:7000"
                 });
             });
         });

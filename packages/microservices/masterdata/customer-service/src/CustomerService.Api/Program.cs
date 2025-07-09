@@ -23,9 +23,14 @@ builder.Services.AddDbContext<CustomerDbContext>(options =>
 // Add repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService.Core.Services.CustomerService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+// Add Health Checks
+builder.Services.AddHealthChecks();
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -52,12 +57,19 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
+// Ensure database is created (skip in test environment)
+if (!app.Environment.IsEnvironment("Testing"))
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<CustomerDbContext>();
-    dbContext.Database.EnsureCreated();
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<CustomerDbContext>();
+        dbContext.Database.EnsureCreated();
+    }
 }
 
 app.Run();
+
+// Make Program class accessible for integration testing
+public partial class Program { }
