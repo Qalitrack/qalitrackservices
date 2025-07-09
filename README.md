@@ -7,7 +7,7 @@ A comprehensive weighbridge management system built with .NET 8 microservices ar
 - [Architecture Overview](#-architecture-overview)
 - [Service Categories](#-service-categories-who-vs-how)
 - [Authorization System](#-authorization-system)
-- [Service Template System](#-service-template-system)
+- [Service Template System](#️-service-template-system)
 - [Quick Start](#-quick-start)
 - [Testing Architecture](#-testing-architecture)
 - [Service URLs](#-service-urls)
@@ -73,6 +73,8 @@ QaliTrack consists of 19 microservices (so far) organized into two main categori
 
 ### API Gateway
 - **Gateway Service** (Port 7000) - Central entry point with authentication
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🔐 Authorization System
 
@@ -696,6 +698,8 @@ qalitrackservices/
     └── ...
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## 🌟 Multi-Client Configuration
 
 QaliTrack supports different client configurations with varying service compositions:
@@ -717,6 +721,8 @@ QaliTrack supports different client configurations with varying service composit
 **National Weighing Authority** (Regulatory):
 - Compliance monitoring focus
 - Read-only operational access
+
+[↑ Back to Top](#table-of-contents)
 
 ## Repository Structure
 
@@ -741,6 +747,8 @@ QaliTrack supports different client configurations with varying service composit
 └── pnpm-workspace.yaml    # pnpm workspace configuration
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## Development Process
 
 ### 1. Requirements Phase
@@ -762,6 +770,8 @@ QaliTrack supports different client configurations with varying service composit
 - **Technical Docs**: `/docs/apps/technical/` for developers
 - **User Docs**: `/docs/apps/end-users/` for application users
 - **Service Docs**: `/docs/services/` for microservice documentation
+
+[↑ Back to Top](#table-of-contents)
 
 ## Getting Started
 
@@ -801,6 +811,8 @@ pnpm type-check
 # Format code
 pnpm format
 ```
+
+[↑ Back to Top](#table-of-contents)
 
 ## Turborepo Usage
 
@@ -846,6 +858,8 @@ The `turbo.json` file defines the build pipeline:
 }
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## Workspace Management
 
 ### Adding New Microservices
@@ -885,6 +899,8 @@ pnpm init
 # Add dependencies and configure package.json
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## Documentation Structure
 
 ### Requirements Documentation (`/docs/requirements/`)
@@ -913,6 +929,8 @@ pnpm init
 - Functional specifications and user stories
 - Technical requirements and acceptance criteria
 
+[↑ Back to Top](#table-of-contents)
+
 ## Development Standards
 
 ### Code Quality
@@ -933,6 +951,8 @@ pnpm init
 - Provide step-by-step procedures
 - Update README files for new packages
 
+[↑ Back to Top](#table-of-contents)
+
 ## Deployment
 
 ### Docker Support
@@ -951,6 +971,8 @@ docker-compose up -d
 - Staging: `.env.staging`
 - Production: `.env.production`
 
+[↑ Back to Top](#table-of-contents)
+
 ## Support and Contribution
 
 ### Getting Help
@@ -963,6 +985,8 @@ docker-compose up -d
 2. Follow development standards and conventions
 3. Update documentation for new features
 4. Ensure tests pass before submitting pull requests
+
+[↑ Back to Top](#table-of-contents)
 
 ---
 
