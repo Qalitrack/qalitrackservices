@@ -1270,9 +1270,6 @@ docker-run-test-service-v3:
 	@echo "Running Docker container for TestServiceV3 service..."
 	@docker run -p 5000:80 test-service-v3
 
-# TestServiceV4 Service Targets (Auto-generated)
-.PHONY: build-test-service-v4 run-test-service-v4 test-test-service-v4 docker-build-test-service-v4 docker-run-test-service-v4
-
 build-test-service-v4:
 	@echo "Building TestServiceV4 service..."
 	@cd packages/microservices/masterdata/test-service-v4 && dotnet build
@@ -1292,9 +1289,6 @@ docker-build-test-service-v4:
 docker-run-test-service-v4:
 	@echo "Running Docker container for TestServiceV4 service..."
 	@docker run -p 5000:80 test-service-v4
-
-# TestService Service Targets (Auto-generated)
-.PHONY: build-test-service run-test-service test-test-service docker-build-test-service docker-run-test-service
 
 build-test-service:
 	@echo "Building TestService service..."
@@ -1524,9 +1518,6 @@ docker-build-abuso:
 docker-run-abuso:
 	@echo "Running Docker container for Abuso service..."
 	@docker run -p 5000:80 abuso
-
-# Abuso Service Targets (Auto-generated)
-.PHONY: build-abuso run-abuso test-abuso
 
 build-abuso:
 	@echo "Building Abuso service..."
