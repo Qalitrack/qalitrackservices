@@ -383,6 +383,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:0:DownstreamHostAndPorts:0:Port"] = "7005",
             ["Routes:0:DownstreamScheme"] = "http",
             ["Routes:0:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:0:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:0:Metadata:ServiceName"] = "ProductService",
             
             ["Routes:1:UpstreamPathTemplate"] = "/api/products",
             ["Routes:1:DownstreamPathTemplate"] = "/api/products",
@@ -390,6 +392,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:1:DownstreamHostAndPorts:0:Port"] = "7005",
             ["Routes:1:DownstreamScheme"] = "http",
             ["Routes:1:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:1:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:1:Metadata:ServiceName"] = "ProductService",
 
             // Customer Service
             ["Routes:2:UpstreamPathTemplate"] = "/api/customers/{everything}",
@@ -398,6 +402,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:2:DownstreamHostAndPorts:0:Port"] = "7008",
             ["Routes:2:DownstreamScheme"] = "http",
             ["Routes:2:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:2:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:2:Metadata:ServiceName"] = "CustomerService",
 
             ["Routes:3:UpstreamPathTemplate"] = "/api/customers",
             ["Routes:3:DownstreamPathTemplate"] = "/api/customers",
@@ -405,6 +411,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:3:DownstreamHostAndPorts:0:Port"] = "7008",
             ["Routes:3:DownstreamScheme"] = "http",
             ["Routes:3:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:3:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:3:Metadata:ServiceName"] = "CustomerService",
 
             // User Service
             ["Routes:4:UpstreamPathTemplate"] = "/api/users/{everything}",
@@ -413,6 +421,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:4:DownstreamHostAndPorts:0:Port"] = "7001",
             ["Routes:4:DownstreamScheme"] = "http",
             ["Routes:4:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:4:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:4:Metadata:ServiceName"] = "UserService",
 
             ["Routes:5:UpstreamPathTemplate"] = "/api/users",
             ["Routes:5:DownstreamPathTemplate"] = "/api/users",
@@ -420,6 +430,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:5:DownstreamHostAndPorts:0:Port"] = "7001",
             ["Routes:5:DownstreamScheme"] = "http",
             ["Routes:5:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:5:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:5:Metadata:ServiceName"] = "UserService",
 
             // Vehicle Service
             ["Routes:6:UpstreamPathTemplate"] = "/api/vehicles/{everything}",
@@ -428,6 +440,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:6:DownstreamHostAndPorts:0:Port"] = "7003",
             ["Routes:6:DownstreamScheme"] = "http",
             ["Routes:6:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:6:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:6:Metadata:ServiceName"] = "VehicleService",
 
             // Driver Service
             ["Routes:7:UpstreamPathTemplate"] = "/api/drivers/{everything}",
@@ -436,6 +450,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:7:DownstreamHostAndPorts:0:Port"] = "7004",
             ["Routes:7:DownstreamScheme"] = "http",
             ["Routes:7:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:7:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:7:Metadata:ServiceName"] = "DriverService",
 
             // Supplier Service
             ["Routes:8:UpstreamPathTemplate"] = "/api/suppliers/{everything}",
@@ -444,6 +460,104 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:8:DownstreamHostAndPorts:0:Port"] = "7009",
             ["Routes:8:DownstreamScheme"] = "http",
             ["Routes:8:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:8:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:8:Metadata:ServiceName"] = "SupplierService",
+
+            ["Routes:9:UpstreamPathTemplate"] = "/api/suppliers",
+            ["Routes:9:DownstreamPathTemplate"] = "/api/suppliers",
+            ["Routes:9:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:9:DownstreamHostAndPorts:0:Port"] = "7009",
+            ["Routes:9:DownstreamScheme"] = "http",
+            ["Routes:9:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:9:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:9:Metadata:ServiceName"] = "SupplierService",
+
+            // Vehicles Service
+            ["Routes:10:UpstreamPathTemplate"] = "/api/vehicles",
+            ["Routes:10:DownstreamPathTemplate"] = "/api/vehicles",
+            ["Routes:10:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:10:DownstreamHostAndPorts:0:Port"] = "7003",
+            ["Routes:10:DownstreamScheme"] = "http",
+            ["Routes:10:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:10:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:10:Metadata:ServiceName"] = "VehicleService",
+
+            // Drivers Service
+            ["Routes:11:UpstreamPathTemplate"] = "/api/drivers",
+            ["Routes:11:DownstreamPathTemplate"] = "/api/drivers",
+            ["Routes:11:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:11:DownstreamHostAndPorts:0:Port"] = "7004",
+            ["Routes:11:DownstreamScheme"] = "http",
+            ["Routes:11:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:11:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:11:Metadata:ServiceName"] = "DriverService",
+
+            // Compliance Service
+            ["Routes:12:UpstreamPathTemplate"] = "/api/compliance",
+            ["Routes:12:DownstreamPathTemplate"] = "/api/compliance",
+            ["Routes:12:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:12:DownstreamHostAndPorts:0:Port"] = "7013",
+            ["Routes:12:DownstreamScheme"] = "http",
+            ["Routes:12:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:12:Metadata:RequiredRoles:0"] = "Auditor",
+            ["Routes:12:Metadata:ServiceName"] = "ComplianceService",
+
+            // Analytics Service
+            ["Routes:13:UpstreamPathTemplate"] = "/api/analytics",
+            ["Routes:13:DownstreamPathTemplate"] = "/api/analytics",
+            ["Routes:13:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:13:DownstreamHostAndPorts:0:Port"] = "7016",
+            ["Routes:13:DownstreamScheme"] = "http",
+            ["Routes:13:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:13:Metadata:RequiredRoles:0"] = "SiteManager",
+            ["Routes:13:Metadata:ServiceName"] = "AnalyticsService",
+
+            // Organizations Service
+            ["Routes:14:UpstreamPathTemplate"] = "/api/organizations",
+            ["Routes:14:DownstreamPathTemplate"] = "/api/organizations",
+            ["Routes:14:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:14:DownstreamHostAndPorts:0:Port"] = "7002",
+            ["Routes:14:DownstreamScheme"] = "http",
+            ["Routes:14:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:14:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:14:Metadata:ServiceName"] = "OrganizationService",
+
+            // Admin endpoint routes
+            ["Routes:15:UpstreamPathTemplate"] = "/api/products/admin",
+            ["Routes:15:DownstreamPathTemplate"] = "/api/products/admin",
+            ["Routes:15:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:15:DownstreamHostAndPorts:0:Port"] = "7005",
+            ["Routes:15:DownstreamScheme"] = "http",
+            ["Routes:15:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:15:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:15:Metadata:ServiceName"] = "ProductService",
+
+            ["Routes:16:UpstreamPathTemplate"] = "/api/customers/admin",
+            ["Routes:16:DownstreamPathTemplate"] = "/api/customers/admin",
+            ["Routes:16:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:16:DownstreamHostAndPorts:0:Port"] = "7008",
+            ["Routes:16:DownstreamScheme"] = "http",
+            ["Routes:16:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:16:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:16:Metadata:ServiceName"] = "CustomerService",
+
+            ["Routes:17:UpstreamPathTemplate"] = "/api/users/admin",
+            ["Routes:17:DownstreamPathTemplate"] = "/api/users/admin",
+            ["Routes:17:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:17:DownstreamHostAndPorts:0:Port"] = "7001",
+            ["Routes:17:DownstreamScheme"] = "http",
+            ["Routes:17:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:17:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:17:Metadata:ServiceName"] = "UserService",
+
+            ["Routes:18:UpstreamPathTemplate"] = "/api/vehicles/admin",
+            ["Routes:18:DownstreamPathTemplate"] = "/api/vehicles/admin",
+            ["Routes:18:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:18:DownstreamHostAndPorts:0:Port"] = "7003",
+            ["Routes:18:DownstreamScheme"] = "http",
+            ["Routes:18:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:18:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:18:Metadata:ServiceName"] = "VehicleService",
 
             // Global Configuration
             ["GlobalConfiguration:BaseUrl"] = "http://localhost:7000"
