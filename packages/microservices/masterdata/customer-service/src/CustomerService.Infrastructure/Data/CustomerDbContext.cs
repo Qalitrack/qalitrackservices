@@ -18,6 +18,8 @@ public class CustomerDbContext : DbContext
     public DbSet<CustomerDocument> CustomerDocuments { get; set; }
     public DbSet<CustomerPreference> CustomerPreferences { get; set; }
     public DbSet<CustomerCredit> CustomerCredit { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -175,6 +177,61 @@ public class CustomerDbContext : DbContext
                   .WithOne(c => c.Credit)
                   .HasForeignKey<CustomerCredit>(e => e.CustomerId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.OrderNumber).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.CustomerId).IsRequired();
+            entity.Property(e => e.ProductId).IsRequired();
+            entity.Property(e => e.ProductName).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.UnitOfMeasure).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Quantity).HasPrecision(18, 4);
+            entity.Property(e => e.UnitPrice).HasPrecision(18, 4);
+            entity.Property(e => e.TotalAmount).HasPrecision(18, 4);
+            entity.Property(e => e.Currency).HasMaxLength(3);
+            entity.Property(e => e.OriginLocation).HasMaxLength(500);
+            entity.Property(e => e.DestinationLocation).HasMaxLength(500);
+            entity.Property(e => e.QualitySpecifications).HasMaxLength(2000);
+            entity.Property(e => e.SpecialInstructions).HasMaxLength(2000);
+            entity.Property(e => e.TolerancePercentage).HasPrecision(5, 2);
+            entity.Property(e => e.CustomerOrderReference).HasMaxLength(100);
+            entity.Property(e => e.SupplierOrderReference).HasMaxLength(100);
+            entity.Property(e => e.Notes).HasMaxLength(2000);
+            entity.Property(e => e.CancellationReason).HasMaxLength(1000);
+
+            entity.HasOne(e => e.Customer)
+                  .WithMany(c => c.CustomerOrders)
+                  .HasForeignKey(e => e.CustomerId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Supplier)
+                  .WithMany(c => c.SupplierOrders)
+                  .HasForeignKey(e => e.SupplierId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(e => e.OrderNumber).IsUnique();
+            entity.HasIndex(e => e.CustomerId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.OrderDate);
+        });
+
+        modelBuilder.Entity<OrderStatusHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.OrderId).IsRequired();
+            entity.Property(e => e.ChangedBy).HasMaxLength(100);
+            entity.Property(e => e.Reason).HasMaxLength(500);
+            entity.Property(e => e.Notes).HasMaxLength(1000);
+
+            entity.HasOne(e => e.Order)
+                  .WithMany(o => o.StatusHistory)
+                  .HasForeignKey(e => e.OrderId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.OrderId);
+            entity.HasIndex(e => e.ChangedAt);
         });
     }
 }
