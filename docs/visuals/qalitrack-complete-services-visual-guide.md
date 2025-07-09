@@ -183,6 +183,78 @@ graph LR
     class D1,D2,D3,D4,SM1,SM2,SM3,SM4 driverBox
 ```
 
+![SACCO Integration Details](sacco-integration-details.png)
+
+### **Customer Integration Details**
+```mermaid
+graph TB
+    subgraph "Customer Service Hub"
+        CS[Customer Service :7008<br/>• Order Management<br/>• Customer Profiles<br/>• Business Relationships]
+    end
+    
+    subgraph "Core Business Integration"
+        PS[Product Service :7005<br/>• Product Catalog<br/>• Pricing Management<br/>• Validation]
+        SS[Supplier Service :7009<br/>• Vendor Management<br/>• Procurement<br/>• Dual-Role Companies]
+    end
+    
+    subgraph "Transport Integration"
+        TS[Transporter Service :7010<br/>• Fleet Management<br/>• Transport Assignments<br/>• Capacity Planning]
+        RS[Route Service :7006<br/>• Route Planning<br/>• Delivery Optimization<br/>• Gate Management]
+    end
+    
+    subgraph "Authentication & User Management"
+        US[User Service :7001<br/>• Customer User Auth<br/>• Profile Management<br/>• Access Control]
+    end
+    
+    subgraph "Sample Business Scenarios"
+        ORDER[Order Processing Flow<br/>• Customer places order<br/>• Product validation<br/>• Transport assignment]
+        DUAL[Dual-Role Companies<br/>• Customer: Bamburi Cement<br/>• Supplier: Bamburi Cement<br/>• Different contexts]
+        TRANSPORT[Transport Management<br/>• Preferred transporters<br/>• Route assignments<br/>• Delivery tracking]
+    end
+    
+    %% Customer Service Core Flows
+    CS -->|"Validates ProductId<br/>Gets pricing & availability"| PS
+    CS -->|"References SupplierId<br/>Procurement orders"| SS
+    CS -->|"Assigns TransporterId<br/>Transport coordination"| TS
+    CS -->|"Plans RouteId<br/>Delivery routing"| RS
+    CS -->|"Authenticates<br/>customer users"| US
+    
+    %% Reverse Integration Flows
+    PS -->|"Product sourcing<br/>Supplier validation"| SS
+    PS <-->|"Product availability<br/>Pricing updates"| CS
+    SS -->|"Dual-role management<br/>Customer-supplier mapping"| CS
+    TS <-->|"Transport requests<br/>Capacity planning"| CS
+    RS <-->|"Delivery routes<br/>Customer locations"| CS
+    US -->|"User management<br/>Customer access"| CS
+    
+    %% Business Scenario Connections
+    ORDER -->|"Initiated by"| CS
+    ORDER -->|"Validates through"| PS
+    ORDER -->|"Assigned via"| TS
+    ORDER -->|"Routed through"| RS
+    
+    DUAL -->|"Customer role"| CS
+    DUAL -->|"Supplier role"| SS
+    DUAL -->|"Same company, different context"| PS
+    
+    TRANSPORT -->|"Managed by"| CS
+    TRANSPORT -->|"Executed by"| TS
+    TRANSPORT -->|"Optimized by"| RS
+    
+    %% Styling
+    classDef customerBox fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef coreBusinessBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef transportBox fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef authBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef scenarioBox fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    
+    class CS customerBox
+    class PS,SS coreBusinessBox
+    class TS,RS transportBox
+    class US authBox
+    class ORDER,DUAL,TRANSPORT scenarioBox
+```
+
 ### **SACCO Integration Relationships**
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
