@@ -271,17 +271,17 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
     #region Permission-Based Tests
 
     [Theory]
-    [InlineData("read:public", "/api/products")]
-    [InlineData("read:products", "/api/products")]
-    [InlineData("read:customers", "/api/customers")]
-    [InlineData("read:vehicles", "/api/vehicles")]
-    [InlineData("read:compliance", "/api/compliance")]
-    [InlineData("read:analytics", "/api/analytics")]
-    public async Task Permissions_ShouldAllowAccessToCorrespondingEndpoints(string permission, string endpoint)
+    [InlineData("read:public", "/api/products", "User")]
+    [InlineData("read:products", "/api/products", "User")]
+    [InlineData("read:customers", "/api/customers", "Operator")]
+    [InlineData("read:vehicles", "/api/vehicles", "Operator")]
+    [InlineData("read:compliance", "/api/compliance", "Auditor")]
+    [InlineData("read:analytics", "/api/analytics", "SiteManager")]
+    public async Task Permissions_ShouldAllowAccessToCorrespondingEndpoints(string permission, string endpoint, string role)
     {
         // Arrange
         var token = GenerateJwtToken(Guid.NewGuid(), "testuser", "test@example.com", 
-            new[] { "User" }, new[] { permission });
+            new[] { role }, new[] { permission });
 
         _client.DefaultRequestHeaders.Authorization = 
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -291,7 +291,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
 
         // Assert
         response.StatusCode.Should().NotBe(HttpStatusCode.Forbidden,
-            $"User with permission '{permission}' should access {endpoint}");
+            $"User with role '{role}' and permission '{permission}' should access {endpoint}");
     }
 
     #endregion
@@ -384,6 +384,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:0:DownstreamScheme"] = "http",
             ["Routes:0:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:0:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:0:Metadata:RequiredPermissions:0"] = "read:products",
             ["Routes:0:Metadata:ServiceName"] = "ProductService",
             
             ["Routes:1:UpstreamPathTemplate"] = "/api/products",
@@ -393,6 +394,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:1:DownstreamScheme"] = "http",
             ["Routes:1:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:1:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:1:Metadata:RequiredPermissions:0"] = "read:products",
             ["Routes:1:Metadata:ServiceName"] = "ProductService",
 
             // Customer Service
@@ -403,6 +405,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:2:DownstreamScheme"] = "http",
             ["Routes:2:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:2:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:2:Metadata:RequiredPermissions:0"] = "read:customers",
             ["Routes:2:Metadata:ServiceName"] = "CustomerService",
 
             ["Routes:3:UpstreamPathTemplate"] = "/api/customers",
@@ -412,6 +415,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:3:DownstreamScheme"] = "http",
             ["Routes:3:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:3:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:3:Metadata:RequiredPermissions:0"] = "read:customers",
             ["Routes:3:Metadata:ServiceName"] = "CustomerService",
 
             // User Service
@@ -441,6 +445,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:6:DownstreamScheme"] = "http",
             ["Routes:6:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:6:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:6:Metadata:RequiredPermissions:0"] = "read:vehicles",
             ["Routes:6:Metadata:ServiceName"] = "VehicleService",
 
             // Driver Service
@@ -480,6 +485,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:10:DownstreamScheme"] = "http",
             ["Routes:10:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:10:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:10:Metadata:RequiredPermissions:0"] = "read:vehicles",
             ["Routes:10:Metadata:ServiceName"] = "VehicleService",
 
             // Drivers Service
@@ -500,6 +506,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:12:DownstreamScheme"] = "http",
             ["Routes:12:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:12:Metadata:RequiredRoles:0"] = "Auditor",
+            ["Routes:12:Metadata:RequiredPermissions:0"] = "read:compliance",
             ["Routes:12:Metadata:ServiceName"] = "ComplianceService",
 
             // Analytics Service
@@ -510,6 +517,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:13:DownstreamScheme"] = "http",
             ["Routes:13:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:13:Metadata:RequiredRoles:0"] = "SiteManager",
+            ["Routes:13:Metadata:RequiredPermissions:0"] = "read:analytics",
             ["Routes:13:Metadata:ServiceName"] = "AnalyticsService",
 
             // Organizations Service
@@ -521,6 +529,47 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:14:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:14:Metadata:RequiredRoles:0"] = "Admin",
             ["Routes:14:Metadata:ServiceName"] = "OrganizationService",
+
+            // Organizations Service with {everything} pattern
+            ["Routes:22:UpstreamPathTemplate"] = "/api/organizations/{everything}",
+            ["Routes:22:DownstreamPathTemplate"] = "/api/{everything}",
+            ["Routes:22:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:22:DownstreamHostAndPorts:0:Port"] = "7002",
+            ["Routes:22:DownstreamScheme"] = "http",
+            ["Routes:22:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:22:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:22:Metadata:ServiceName"] = "OrganizationService",
+
+            // Analytics Service with {everything} pattern
+            ["Routes:23:UpstreamPathTemplate"] = "/api/analytics/{everything}",
+            ["Routes:23:DownstreamPathTemplate"] = "/api/{everything}",
+            ["Routes:23:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:23:DownstreamHostAndPorts:0:Port"] = "7016",
+            ["Routes:23:DownstreamScheme"] = "http",
+            ["Routes:23:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:23:Metadata:RequiredRoles:0"] = "SiteManager",
+            ["Routes:23:Metadata:RequiredPermissions:0"] = "read:analytics",
+            ["Routes:23:Metadata:ServiceName"] = "AnalyticsService",
+
+            // Archive Service (for SiteManager tests)
+            ["Routes:24:UpstreamPathTemplate"] = "/api/archive",
+            ["Routes:24:DownstreamPathTemplate"] = "/api/archive",
+            ["Routes:24:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:24:DownstreamHostAndPorts:0:Port"] = "7018",
+            ["Routes:24:DownstreamScheme"] = "http",
+            ["Routes:24:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:24:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:24:Metadata:ServiceName"] = "ArchiveService",
+
+            // Archive Service with {everything} pattern
+            ["Routes:25:UpstreamPathTemplate"] = "/api/archive/{everything}",
+            ["Routes:25:DownstreamPathTemplate"] = "/api/{everything}",
+            ["Routes:25:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:25:DownstreamHostAndPorts:0:Port"] = "7018",
+            ["Routes:25:DownstreamScheme"] = "http",
+            ["Routes:25:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:25:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:25:Metadata:ServiceName"] = "ArchiveService",
 
             // Admin endpoint routes
             ["Routes:15:UpstreamPathTemplate"] = "/api/products/admin",
@@ -558,6 +607,25 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:18:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
             ["Routes:18:Metadata:RequiredRoles:0"] = "Admin",
             ["Routes:18:Metadata:ServiceName"] = "VehicleService",
+
+            // Public endpoints (no authentication required)
+            ["Routes:19:UpstreamPathTemplate"] = "/health",
+            ["Routes:19:DownstreamPathTemplate"] = "/health",
+            ["Routes:19:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:19:DownstreamHostAndPorts:0:Port"] = "7000",
+            ["Routes:19:DownstreamScheme"] = "http",
+
+            ["Routes:20:UpstreamPathTemplate"] = "/swagger",
+            ["Routes:20:DownstreamPathTemplate"] = "/swagger",
+            ["Routes:20:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:20:DownstreamHostAndPorts:0:Port"] = "7000",
+            ["Routes:20:DownstreamScheme"] = "http",
+
+            ["Routes:21:UpstreamPathTemplate"] = "/api/gateway/services",
+            ["Routes:21:DownstreamPathTemplate"] = "/api/gateway/services",
+            ["Routes:21:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:21:DownstreamHostAndPorts:0:Port"] = "7000",
+            ["Routes:21:DownstreamScheme"] = "http",
 
             // Global Configuration
             ["GlobalConfiguration:BaseUrl"] = "http://localhost:7000"
