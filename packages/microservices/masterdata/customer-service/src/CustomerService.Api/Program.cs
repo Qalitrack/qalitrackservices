@@ -23,9 +23,11 @@ builder.Services.AddDbContext<CustomerDbContext>(options =>
 // Add repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService.Core.Services.CustomerService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Add Health Checks
 builder.Services.AddHealthChecks();

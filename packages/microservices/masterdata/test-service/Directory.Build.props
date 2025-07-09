@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <RunWorkingDirectory>$(MSBuildProjectDirectory)</RunWorkingDirectory>
+    <StartupObject />
+  </PropertyGroup>
+  
+  <!-- Set the default startup project -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'TestService.Api'">
+    <IsRunnableProject>true</IsRunnableProject>
+  </PropertyGroup>
+</Project>
