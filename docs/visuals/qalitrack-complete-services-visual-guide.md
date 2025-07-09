@@ -193,53 +193,69 @@ graph TB
     end
     
     subgraph "Core Business Integration"
-        PS[Product Service :7005<br/>• Product Catalog<br/>• Pricing Management<br/>• Validation]
-        SS[Supplier Service :7009<br/>• Vendor Management<br/>• Procurement<br/>• Dual-Role Companies]
+        PS[Product Service :7005<br/>• Product Catalog<br/>• Pricing Management<br/>• Internal Production<br/>• Validation]
+        SS[Supplier Service :7009<br/>• Vendor Management<br/>• Procurement<br/>• Internal Supplier Role<br/>• Dual-Role Companies]
     end
     
     subgraph "Transport Integration"
-        TS[Transporter Service :7010<br/>• Fleet Management<br/>• Transport Assignments<br/>• Capacity Planning]
-        RS[Route Service :7006<br/>• Route Planning<br/>• Delivery Optimization<br/>• Gate Management]
+        TS[Transporter Service :7010<br/>• Fleet Management<br/>• Internal Transport<br/>• External Transport<br/>• Capacity Planning]
+        RS[Route Service :7006<br/>• Route Planning<br/>• Plant-to-Plant Routes<br/>• External Delivery<br/>• Gate Management]
     end
     
     subgraph "Authentication & User Management"
         US[User Service :7001<br/>• Customer User Auth<br/>• Profile Management<br/>• Access Control]
     end
     
-    subgraph "Sample Business Scenarios"
-        ORDER[Order Processing Flow<br/>• Customer places order<br/>• Product validation<br/>• Transport assignment]
-        DUAL[Dual-Role Companies<br/>• Customer: Bamburi Cement<br/>• Supplier: Bamburi Cement<br/>• Different contexts]
-        TRANSPORT[Transport Management<br/>• Preferred transporters<br/>• Route assignments<br/>• Delivery tracking]
+    subgraph "Business Scenarios"
+        EXT_ORDER[External Order Processing<br/>• Customer places order<br/>• External product procurement<br/>• External transport assignment]
+        INT_PROD[Internal Production<br/>• We produce the product<br/>• Internal supply chain<br/>• Quality control]
+        PLANT_TRANSPORT[Plant-to-Plant Transport<br/>• Mombasa Plant → Nairobi Plant<br/>• Internal route management<br/>• Internal fleet coordination]
+        DUAL[Dual-Role Operations<br/>• Customer: Bamburi Cement<br/>• Supplier: Bamburi Cement<br/>• Different business contexts]
     end
     
-    %% Customer Service Core Flows
-    CS -->|"Validates ProductId<br/>Gets pricing & availability"| PS
-    CS -->|"References SupplierId<br/>Procurement orders"| SS
-    CS -->|"Assigns TransporterId<br/>Transport coordination"| TS
-    CS -->|"Plans RouteId<br/>Delivery routing"| RS
-    CS -->|"Authenticates<br/>customer users"| US
+    %% External Order Processing Flow (1-6)
+    CS -->|"1️⃣ Validates ProductId<br/>Gets pricing & availability"| PS
+    PS -->|"2️⃣ Product sourcing<br/>External supplier validation"| SS
+    CS -->|"3️⃣ References SupplierId<br/>Procurement orders"| SS
+    CS -->|"4️⃣ Assigns TransporterId<br/>External transport coordination"| TS
+    CS -->|"5️⃣ Plans RouteId<br/>Customer delivery routing"| RS
+    US -->|"6️⃣ Authenticates & authorizes<br/>Customer user access"| CS
+    
+    %% Internal Production Flow (7-11)
+    CS -->|"7️⃣ Internal product check<br/>Production validation"| PS
+    PS -->|"8️⃣ We are the supplier<br/>Internal production role"| SS
+    SS -->|"9️⃣ Internal supply confirmation<br/>Production scheduling"| CS
+    CS -->|"🔟 Internal transport assignment<br/>Company fleet coordination"| TS
+    CS -->|"1️⃣1️⃣ Internal route planning<br/>Plant-to-customer delivery"| RS
+    
+    %% Plant-to-Plant Transport Flow (12-15)
+    CS -->|"1️⃣2️⃣ Plant transfer request<br/>Inter-plant coordination"| TS
+    TS -->|"1️⃣3️⃣ Internal fleet assignment<br/>Plant-to-plant transport"| RS
+    RS -->|"1️⃣4️⃣ Mombasa→Nairobi route<br/>Internal route optimization"| PS
+    PS -->|"1️⃣5️⃣ Product transfer tracking<br/>Inter-plant inventory"| CS
     
     %% Reverse Integration Flows
-    PS -->|"Product sourcing<br/>Supplier validation"| SS
-    PS <-->|"Product availability<br/>Pricing updates"| CS
+    PS <-->|"Product availability updates<br/>Production status sync"| CS
     SS -->|"Dual-role management<br/>Customer-supplier mapping"| CS
-    TS <-->|"Transport requests<br/>Capacity planning"| CS
-    RS <-->|"Delivery routes<br/>Customer locations"| CS
-    US -->|"User management<br/>Customer access"| CS
+    TS <-->|"Transport capacity updates<br/>Fleet availability sync"| CS
+    RS <-->|"Route status updates<br/>Delivery progress tracking"| CS
     
     %% Business Scenario Connections
-    ORDER -->|"Initiated by"| CS
-    ORDER -->|"Validates through"| PS
-    ORDER -->|"Assigned via"| TS
-    ORDER -->|"Routed through"| RS
+    EXT_ORDER -->|"Managed by"| CS
+    EXT_ORDER -->|"Validated through"| PS
+    EXT_ORDER -->|"Sourced via"| SS
     
-    DUAL -->|"Customer role"| CS
-    DUAL -->|"Supplier role"| SS
-    DUAL -->|"Same company, different context"| PS
+    INT_PROD -->|"Coordinated by"| CS
+    INT_PROD -->|"Produced via"| PS
+    INT_PROD -->|"Supplied by"| SS
     
-    TRANSPORT -->|"Managed by"| CS
-    TRANSPORT -->|"Executed by"| TS
-    TRANSPORT -->|"Optimized by"| RS
+    PLANT_TRANSPORT -->|"Coordinated by"| CS
+    PLANT_TRANSPORT -->|"Transported via"| TS
+    PLANT_TRANSPORT -->|"Routed through"| RS
+    
+    DUAL -->|"Customer operations"| CS
+    DUAL -->|"Supplier operations"| SS
+    DUAL -->|"Product management"| PS
     
     %% Styling
     classDef customerBox fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
@@ -252,7 +268,7 @@ graph TB
     class PS,SS coreBusinessBox
     class TS,RS transportBox
     class US authBox
-    class ORDER,DUAL,TRANSPORT scenarioBox
+    class EXT_ORDER,INT_PROD,PLANT_TRANSPORT,DUAL scenarioBox
 ```
 
 ### **SACCO Integration Relationships**
