@@ -26,18 +26,18 @@ This comprehensive guide combines all QaliTrack microservices visuals, showing s
 │           └───────────────────────┼───────────────────────┘             │
 │                                   │                                     │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐      │
-│  │ Supplier Service│    │ Transporter     │    │ SACCO Service   │      │
+│  │ Supplier Service│    │ Transporter     │◄──►│ SACCO Service   │      │
 │  │ :7009 ✅        │    │ Service :7010 ✅│    │ :7011 ✅        │      │
 │  │ • Vendor Mgmt   │    │ • Fleet Mgmt    │    │ • Cooperatives  │      │
 │  │ • Procurement   │    │ • Assignments   │    │ • Memberships   │      │
 │  │ • Contracts     │    │ • Performance   │    │ • Fleet Mgmt    │      │
 │  │ • Performance   │    │ • Capacity      │    │ • Governance    │      │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘      │
-│           │                       │                       │             │
-│           └───────────────────────┼───────────────────────┘             │
-│                                   │                                     │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐      │
-│  │ Route Service   │    │ Vehicle Service │    │ Driver Service  │      │
+│           │                       │ ▲                     │ ▲           │
+│           └───────────────────────┼─┘                     │ ║           │
+│                                   │                       │ ║           │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐ ║     │
+│  │ Route Service   │    │ Vehicle Service │◄──►│ Driver Service  │◄╝     │
 │  │ :7006 ✅        │    │ :7003 ✅        │    │ :7004 ✅        │      │
 │  │ • Route Planning│    │ • Registration  │    │ • Licenses      │      │
 │  │ • Optimization  │    │ • Maintenance   │    │ • Certifications│      │
@@ -55,6 +55,48 @@ This comprehensive guide combines all QaliTrack microservices visuals, showing s
 │                         │ • Operators     │                             │
 │                         │ • Maintenance   │                             │
 │                         └─────────────────┘                             │
+│                                                                         │
+│  Legend:                                                                │
+│  ◄──► Multiple Vehicle Ownership (Transporter ↔ SACCO)                 │
+│  ║     Driver Membership (Driver → SACCO)                               │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### **SACCO Integration Relationships**
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        SACCO INTEGRATION PATTERNS                       │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  1. Multiple Vehicle Ownership (Transporter ↔ SACCO):                  │
+│     ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐   │
+│     │ Transporter A   │    │ SACCO Nairobi   │    │ SACCO Mombasa   │   │
+│     │ • Vehicle KBC   │◄──►│ • Vehicle KBC   │    │ • Vehicle KBD   │   │
+│     │ • Vehicle KBD   │    │ • Vehicle KBE   │◄──►│ • Vehicle KBF   │   │
+│     │ • Vehicle KBE   │    │ • Vehicle KBG   │    │ • Vehicle KBH   │   │
+│     │ • Vehicle KBF   │    └─────────────────┘    └─────────────────┘   │
+│     └─────────────────┘                                                 │
+│                                                                         │
+│  2. Driver SACCO Membership (Driver → SACCO):                          │
+│     ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐   │
+│     │ Driver John     │    │ SACCO Nairobi   │    │ SACCO Mombasa   │   │
+│     │ • Member#: 001  │───►│ • Member: John  │    │ • Member: Mary  │   │
+│     │ • SACCO: NBC    │    │ • Member: Jane  │◄───│ • Member: Paul  │   │
+│     └─────────────────┘    │ • Member: Bob   │    │ • Member: Lisa  │   │
+│                            └─────────────────┘    └─────────────────┘   │
+│     ┌─────────────────┐           ▲                                      │
+│     │ Driver Mary     │           │                                      │
+│     │ • Member#: 002  │───────────┘                                      │
+│     │ • SACCO: MSC    │                                                  │
+│     └─────────────────┘                                                  │
+│                                                                         │
+│  3. Business Benefits:                                                  │
+│     • Cooperative vehicle ownership reduces individual investment       │
+│     • Shared maintenance costs and insurance                            │
+│     • Driver membership provides financial services                     │
+│     • SACCO governance ensures democratic management                    │
+│     • Multiple SACCO participation allows regional operations           │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
