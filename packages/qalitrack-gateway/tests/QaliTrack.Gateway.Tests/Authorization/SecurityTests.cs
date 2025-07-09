@@ -14,8 +14,8 @@ public class SecurityTests : IClassFixture<WebApplicationFactory<Program>>
     private readonly WebApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
     private readonly string _secretKey = "YourSuperSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!";
-    private readonly string _issuer = "MockUserService";
-    private readonly string _audience = "MockUserService";
+    private readonly string _issuer = "UserService";
+    private readonly string _audience = "UserService";
 
     public SecurityTests(WebApplicationFactory<Program> factory)
     {
