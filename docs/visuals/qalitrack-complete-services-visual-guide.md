@@ -8,59 +8,179 @@ This comprehensive guide combines all QaliTrack microservices visuals, showing s
 
 ## 🔄 **Service Integration Map**
 
-### **Master Data Services Integration**
+### **Complete Master Data Services Integration**
+
+```mermaid
+graph TB
+    subgraph "Authentication Layer"
+        US[User Service :7001 ✅<br/>• Authentication<br/>• Authorization<br/>• JWT Tokens<br/>• Role Mgmt]
+    end
+    
+    subgraph "Core Business Services"
+        CS[Customer Service :7008 ✅<br/>• Orders<br/>• Relationships<br/>• TransporterId<br/>• ProductId]
+        PS[Product Service :7005 ✅<br/>• Catalog<br/>• Pricing<br/>• Validation<br/>• Categories]
+        SS[Supplier Service :7009 ✅<br/>• Vendor Mgmt<br/>• Procurement<br/>• Contracts<br/>• Performance]
+    end
+    
+    subgraph "Transport & Cooperative Services"
+        TS[Transporter Service :7010 ✅<br/>• Fleet Mgmt<br/>• Assignments<br/>• Performance<br/>• Capacity]
+        SACCO[SACCO Service :7011 ✅<br/>• Cooperatives<br/>• Memberships<br/>• Fleet Mgmt<br/>• Governance]
+    end
+    
+    subgraph "Operational Services"
+        RS[Route Service :7006 ✅<br/>• Route Planning<br/>• Optimization<br/>• Scheduling<br/>• Gates]
+        VS[Vehicle Service :7003 ✅<br/>• Registration<br/>• Maintenance<br/>• Compliance<br/>• SACCO Links]
+        DS[Driver Service :7004 ✅<br/>• Licenses<br/>• Certifications<br/>• Performance<br/>• SACCO Members]
+    end
+    
+    subgraph "Equipment Services"
+        WS[Weighbridge Service :7007 ✅<br/>• Equipment<br/>• Calibration<br/>• Operators<br/>• Maintenance]
+    end
+    
+    %% ========== AUTHENTICATION FLOWS ==========
+    US -->|"Authenticates<br/>customer users"| CS
+    US -->|"Authenticates<br/>product managers"| PS
+    US -->|"Authenticates<br/>supplier users"| SS
+    US -->|"Authenticates<br/>fleet managers"| TS
+    US -->|"Authenticates<br/>SACCO admins"| SACCO
+    US -->|"Authenticates<br/>route planners"| RS
+    US -->|"Authenticates<br/>vehicle managers"| VS
+    US -->|"Authenticates<br/>driver managers"| DS
+    US -->|"Authenticates<br/>weighbridge operators"| WS
+    
+    %% ========== CUSTOMER SERVICE FLOWS ==========
+    CS -->|"Validates ProductId<br/>Gets pricing info"| PS
+    CS -->|"References SupplierId<br/>Procurement orders"| SS
+    CS -->|"References TransporterId<br/>Transport assignments"| TS
+    CS -->|"References RouteId<br/>Delivery routing"| RS
+    
+    %% ========== PRODUCT SERVICE FLOWS ==========
+    PS -->|"Product sourcing<br/>Supplier validation"| SS
+    PS <-->|"Product availability<br/>Pricing updates"| CS
+    
+    %% ========== SUPPLIER SERVICE FLOWS ==========
+    SS -->|"Supplier products<br/>Procurement catalog"| PS
+    SS -->|"Supplier orders<br/>Dual-role companies"| CS
+    SS -->|"Supplier transport<br/>Delivery logistics"| TS
+    
+    %% ========== TRANSPORTER SERVICE FLOWS ==========
+    TS -->|"Fleet assignments<br/>Vehicle allocation"| VS
+    TS -->|"Driver assignments<br/>Personnel allocation"| DS
+    TS -->|"Route assignments<br/>Transport planning"| RS
+    TS <-->|"Multiple vehicle<br/>ownership"| SACCO
+    TS <-->|"Transport requests<br/>Capacity planning"| CS
+    
+    %% ========== SACCO SERVICE FLOWS ==========
+    SACCO <-->|"Cooperative vehicle<br/>ownership"| VS
+    SACCO <-->|"Driver membership<br/>Cooperative benefits"| DS
+    SACCO <-->|"Fleet management<br/>Vehicle assignments"| TS
+    
+    %% ========== ROUTE SERVICE FLOWS ==========
+    RS -->|"Route optimization<br/>Vehicle-route matching"| VS
+    RS -->|"Route assignments<br/>Driver scheduling"| DS
+    RS -->|"Gate management<br/>Weighbridge routing"| WS
+    RS <-->|"Route planning<br/>Transport coordination"| TS
+    RS <-->|"Delivery routes<br/>Customer locations"| CS
+    
+    %% ========== VEHICLE SERVICE FLOWS ==========
+    VS -->|"Vehicle assignments<br/>Driver pairing"| DS
+    VS <-->|"Fleet management<br/>Vehicle availability"| TS
+    VS <-->|"Route compatibility<br/>Vehicle specifications"| RS
+    VS -->|"SACCO registration<br/>Cooperative ownership"| SACCO
+    
+    %% ========== DRIVER SERVICE FLOWS ==========
+    DS <-->|"Driver assignments<br/>Vehicle pairing"| VS
+    DS <-->|"Route assignments<br/>Driver scheduling"| RS
+    DS <-->|"Employment<br/>Driver management"| TS
+    DS -->|"SACCO membership<br/>Cooperative benefits"| SACCO
+    
+    %% ========== WEIGHBRIDGE SERVICE FLOWS ==========
+    WS <-->|"Equipment availability<br/>Gate integration"| RS
+    WS -->|"Operator certification<br/>Equipment management"| US
+    
+    %% ========== STYLING ==========
+    classDef serviceBox fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef saccoBox fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    classDef authBox fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef coreBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef operationalBox fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef equipmentBox fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    
+    class US authBox
+    class SACCO saccoBox
+    class CS,PS,SS coreBox
+    class TS serviceBox
+    class RS,VS,DS operationalBox
+    class WS equipmentBox
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    MASTER DATA SERVICES INTEGRATION                     │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐      │
-│  │ User Service    │    │ Customer Service│    │ Product Service │      │
-│  │ :7001 ✅        │    │ :7008 ✅        │    │ :7005 ✅        │      │
-│  │ • Authentication│    │ • Orders        │    │ • Catalog       │      │
-│  │ • Authorization │    │ • Relationships │    │ • Pricing       │      │
-│  │ • JWT Tokens    │    │ • TransporterId │    │ • Validation    │      │
-│  │ • Role Mgmt     │    │ • ProductId     │    │ • Categories    │      │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘      │
-│           │                       │                       │             │
-│           └───────────────────────┼───────────────────────┘             │
-│                                   │                                     │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐      │
-│  │ Supplier Service│    │ Transporter     │◄──►│ SACCO Service   │      │
-│  │ :7009 ✅        │    │ Service :7010 ✅│    │ :7011 ✅        │      │
-│  │ • Vendor Mgmt   │    │ • Fleet Mgmt    │    │ • Cooperatives  │      │
-│  │ • Procurement   │    │ • Assignments   │    │ • Memberships   │      │
-│  │ • Contracts     │    │ • Performance   │    │ • Fleet Mgmt    │      │
-│  │ • Performance   │    │ • Capacity      │    │ • Governance    │      │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘      │
-│           │                       │ ▲                     │ ▲           │
-│           └───────────────────────┼─┘                     │ ║           │
-│                                   │                       │ ║           │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐ ║     │
-│  │ Route Service   │    │ Vehicle Service │◄──►│ Driver Service  │◄╝     │
-│  │ :7006 ✅        │    │ :7003 ✅        │    │ :7004 ✅        │      │
-│  │ • Route Planning│    │ • Registration  │    │ • Licenses      │      │
-│  │ • Optimization  │    │ • Maintenance   │    │ • Certifications│      │
-│  │ • Scheduling    │    │ • Compliance    │    │ • Performance   │      │
-│  │ • Gates         │    │ • SACCO Links   │    │ • SACCO Members │      │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘      │
-│           │                       │                       │             │
-│           └───────────────────────┼───────────────────────┘             │
-│                                   │                                     │
-│                         ┌─────────────────┐                             │
-│                         │ Weighbridge     │                             │
-│                         │ Service :7007 ✅│                             │
-│                         │ • Equipment     │                             │
-│                         │ • Calibration   │                             │
-│                         │ • Operators     │                             │
-│                         │ • Maintenance   │                             │
-│                         └─────────────────┘                             │
-│                                                                         │
-│  Legend:                                                                │
-│  ◄──► Multiple Vehicle Ownership (Transporter ↔ SACCO)                 │
-│  ║     Driver Membership (Driver → SACCO)                               │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
+
+### **SACCO Integration Details**
+```mermaid
+graph LR
+    subgraph "Transporter Company"
+        T1[Transporter ABC Ltd]
+        V1[Vehicle KBC 001A]
+        V2[Vehicle KBC 002B]
+        V3[Vehicle KBC 003C]
+        V4[Vehicle KBC 004D]
+    end
+    
+    subgraph "SACCO Nairobi"
+        S1[SACCO NBC]
+        SV1[Vehicle KBC 001A]
+        SV2[Vehicle KBC 003C]
+        SM1[Member: John Doe]
+        SM2[Member: Jane Smith]
+    end
+    
+    subgraph "SACCO Mombasa"
+        S2[SACCO MSC]
+        SV3[Vehicle KBC 002B]
+        SV4[Vehicle KBC 004D]
+        SM3[Member: Mary Johnson]
+        SM4[Member: Paul Wilson]
+    end
+    
+    subgraph "Individual Drivers"
+        D1[Driver: John Doe<br/>License: DL001]
+        D2[Driver: Jane Smith<br/>License: DL002]
+        D3[Driver: Mary Johnson<br/>License: DL003]
+        D4[Driver: Paul Wilson<br/>License: DL004]
+    end
+    
+    %% Multiple Vehicle Ownership
+    T1 -->|"Owns multiple vehicles"| V1
+    T1 --> V2
+    T1 --> V3
+    T1 --> V4
+    
+    %% Vehicles registered in different SACCOs
+    V1 -->|"Registered in"| S1
+    V2 -->|"Registered in"| S2
+    V3 -->|"Registered in"| S1
+    V4 -->|"Registered in"| S2
+    
+    %% Driver SACCO Membership
+    D1 -->|"Member of"| S1
+    D2 -->|"Member of"| S1
+    D3 -->|"Member of"| S2
+    D4 -->|"Member of"| S2
+    
+    %% Vehicle-Driver Assignments
+    V1 -.->|"Assigned to"| D1
+    V2 -.->|"Assigned to"| D3
+    V3 -.->|"Assigned to"| D2
+    V4 -.->|"Assigned to"| D4
+    
+    classDef transporterBox fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef saccoBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef vehicleBox fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+    classDef driverBox fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class T1 transporterBox
+    class S1,S2 saccoBox
+    class V1,V2,V3,V4,SV1,SV2,SV3,SV4 vehicleBox
+    class D1,D2,D3,D4,SM1,SM2,SM3,SM4 driverBox
 ```
 
 ### **SACCO Integration Relationships**
@@ -303,29 +423,83 @@ This comprehensive guide combines all QaliTrack microservices visuals, showing s
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2. **Organization Service** (:7002) ✅ **COMPLETED**
+### 2. **SACCO Service** (:7011) ✅ **COMPLETED**
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        ORGANIZATION SERVICE                             │
+│                           SACCO SERVICE                                 │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  Core Functions:                                                        │
-│  • Multi-tenant Organization Management                                 │
-│  • Site & Department Hierarchy                                          │
-│  • Company Registration & Configuration                                 │
-│  • Organizational Structure Management                                  │
+│  • SACCO (Savings & Credit Cooperative) Management                      │
+│  • Cooperative Membership Management                                    │
+│  • Vehicle Ownership & Fleet Management                                 │
+│  • Democratic Governance & Leadership                                   │
 │                                                                         │
-│  Key Entities:                                                          │
-│  • Organization - Company/tenant information                           │
-│  • Site - Physical locations and facilities                            │
-│  • Department - Organizational units                                   │
-│  • OrganizationUser - User-organization relationships                  │
+│  Key Entity Models:                                                     │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │ SACCO {                                                         │    │
+│  │   Id: string,                                                   │    │
+│  │   Name: string,                                                 │    │
+│  │   RegistrationNumber: string,                                   │    │
+│  │   Location: string,                                             │    │
+│  │   ContactEmail: string,                                         │    │
+│  │   ContactPhone: string,                                         │    │
+│  │   EstablishedDate: DateTime,                                    │    │
+│  │   TotalMembers: int,                                            │    │
+│  │   TotalVehicles: int,                                           │    │
+│  │   Status: SACCOStatus,                                          │    │
+│  │   IsActive: boolean,                                            │    │
+│  │   Members: Collection<SACCOMember>,                            │    │
+│  │   Vehicles: Collection<SACCOVehicle>,                          │    │
+│  │   Governance: Collection<SACCOGovernance>                      │    │
+│  │ }                                                               │    │
+│  │                                                                 │    │
+│  │ SACCOMember {                                                   │    │
+│  │   Id: string,                                                   │    │
+│  │   SACCOId: string,                                              │    │
+│  │   MemberNumber: string,                                         │    │
+│  │   PersonType: PersonType,                                       │    │
+│  │   PersonId: string,             // → Driver or Transporter     │    │
+│  │   JoinDate: DateTime,                                           │    │
+│  │   ShareContribution: decimal,                                   │    │
+│  │   MembershipType: MembershipType,                               │    │
+│  │   Status: MemberStatus,                                         │    │
+│  │   IsActive: boolean                                             │    │
+│  │ }                                                               │    │
+│  │                                                                 │    │
+│  │ SACCOVehicle {                                                  │    │
+│  │   Id: string,                                                   │    │
+│  │   SACCOId: string,                                              │    │
+│  │   VehicleId: string,            // → Vehicle Service           │    │
+│  │   TransporterId: string,        // → Transporter Service       │    │
+│  │   OwnershipType: VehicleOwnershipType,                         │    │
+│  │   OwnershipPercentage: decimal,                                 │    │
+│  │   AcquisitionDate: DateTime,                                    │    │
+│  │   ContributionAmount: decimal,                                  │    │
+│  │   Status: VehicleStatus,                                        │    │
+│  │   IsActive: boolean                                             │    │
+│  │ }                                                               │    │
+│  │                                                                 │    │
+│  │ SACCOGovernance {                                               │    │
+│  │   Id: string,                                                   │    │
+│  │   SACCOId: string,                                              │    │
+│  │   Position: GovernancePosition,                                 │    │
+│  │   MemberId: string,                                             │    │
+│  │   ElectedDate: DateTime,                                        │    │
+│  │   TermEndDate: DateTime,                                        │    │
+│  │   Status: GovernanceStatus,                                     │    │
+│  │   IsActive: boolean,                                            │    │
+│  │   Responsibilities: string                                      │    │
+│  │ }                                                               │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
 │                                                                         │
 │  Integration Points:                                                    │
-│  • User Service for organization-user mapping                          │
-│  • All services for multi-tenant data isolation                        │
-│  • Customer Service for organization-customer relationships            │
+│  • Vehicle Service for cooperative fleet management                    │
+│  • Driver Service for member registration                              │
+│  • Transporter Service for multiple vehicle ownership                  │
+│  • User Service for SACCO administrator authentication                 │
 │                                                                         │
-│  Status: ✅ COMPLETED                                                   │
+│  Status: ✅ COMPLETED VISUAL - Ready for Implementation                 │
+│  Priority: MEDIUM (Cooperative integration)                             │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -997,8 +1171,8 @@ This comprehensive guide combines all QaliTrack microservices visuals, showing s
 
 ### **✅ COMPLETED SERVICES** (3/11)
 1. **User Service** :7001 - Authentication & Authorization ✅
-2. **Organization Service** :7002 - Multi-tenant Management ✅  
-3. **Customer Service** :7008 - CRM & Order Management ✅
+2. **Customer Service** :7008 - CRM & Order Management ✅
+3. **SACCO Service** :7011 - Cooperative Management ✅
 
 ### **📋 VISUAL COMPLETED - READY FOR IMPLEMENTATION** (7/11)
 4. **Product Service** :7005 - 🥇 **NEXT PRIORITY** (Month 1)
@@ -1009,8 +1183,8 @@ This comprehensive guide combines all QaliTrack microservices visuals, showing s
 9. **Weighbridge Service** :7007 - **LOW PRIORITY** (Month 7)
 10. **Supplier Service** :7009 - **LOW PRIORITY** (Month 8)
 
-### **❌ NOT IMPLEMENTED** (1/11)
-11. **Sacco Service** :7011 - **DROPPED** (External management)
+### **❌ REMOVED FROM SCOPE** (1/11)
+11. **Organization Service** :7002 - **REMOVED** (Replaced by SACCO Service)
 
 ---
 
