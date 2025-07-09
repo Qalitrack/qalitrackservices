@@ -2,6 +2,33 @@
 
 A comprehensive weighbridge management system built with .NET 8 microservices architecture.
 
+## Table of Contents
+
+- [Architecture Overview](#-architecture-overview)
+- [Service Categories](#-service-categories-who-vs-how)
+- [Authorization System](#-authorization-system)
+- [Service Template System](#-service-template-system)
+- [Quick Start](#-quick-start)
+- [Testing Architecture](#-testing-architecture)
+- [Service URLs](#-service-urls)
+- [Authentication](#-authentication)
+- [Management Commands](#-management-commands)
+- [Health Monitoring](#-health-monitoring)
+- [Development](#-development)
+- [Project Structure](#-project-structure)
+- [Multi-Client Configuration](#-multi-client-configuration)
+- [Repository Structure](#repository-structure)
+- [Development Process](#development-process)
+- [Getting Started](#getting-started)
+- [Turborepo Usage](#turborepo-usage)
+- [Workspace Management](#workspace-management)
+- [Documentation Structure](#documentation-structure)
+- [Development Standards](#development-standards)
+- [Deployment](#deployment)
+- [Support and Contribution](#support-and-contribution)
+
+[↑ Back to Top](#table-of-contents)
+
 ## 🏗️ Architecture Overview
 
 QaliTrack consists of 19 microservices (so far) organized into two main categories:
@@ -179,6 +206,8 @@ make cloud-auth-list
 - **Environment-Specific Rules** - Different access levels per environment
 - **Automatic Configuration** - Generate gateway configs from YAML rules
 
+[↑ Back to Top](#table-of-contents)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -202,6 +231,8 @@ open https://localhost:7000
 # View API documentation
 open https://localhost:7000/swagger
 ```
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🧪 Testing Architecture
 
@@ -407,6 +438,65 @@ public async Task RealUserService_ShouldSupportUserRegistration()
 
 This architecture enables **flexible, comprehensive testing** where you can instantly switch between roles for rapid authorization testing while also validating production-like scenarios with real user management.
 
+[↑ Back to Top](#table-of-contents)
+
+## 🛠️ Service Template System
+
+QaliTrack provides a powerful service template system for rapid microservice generation with consistent architecture and best practices.
+
+### Quick Service Generation
+
+```bash
+# Generate a new service
+python3 scripts/generate-service.py masterdata inventory-service inventory "Inventory Management Service"
+
+# Using Make targets
+make generate-service TYPE=masterdata SERVICE=inventory-service ENTITY=inventory DESC="Inventory Management Service"
+
+# Interactive generation
+make generate-masterdata    # For masterdata services
+make generate-datamanager   # For datamanager services
+```
+
+### What's Generated
+
+Each service includes:
+- **Clean Architecture** (API, Core, Infrastructure layers)
+- **Entity Framework** with SQLite database
+- **AutoMapper** configurations
+- **Unit Tests** with xUnit and FluentAssertions
+- **Swagger/OpenAPI** documentation
+- **Docker** containerization
+- **Make targets** for automation
+- **Executable scripts** (`run.sh`, `run.cmd`)
+
+### Template Features
+
+- **Automatic Namespace Resolution**: Handles edge cases like same service/entity names
+- **Fully Qualified Types**: Prevents compilation conflicts
+- **Make Integration**: Auto-generates build, test, and run targets
+- **Service Removal**: Clean removal of services and make targets
+- **Cross-Platform**: Works on Windows, macOS, and Linux
+
+### Service Types
+
+| Type | Purpose | Examples |
+|------|---------|----------|
+| **masterdata** | Core business entities | user-service, product-service, customer-service |
+| **datamanager** | Operational workflows | analytics-service, compliance-service, transaction-service |
+
+### Comprehensive Documentation
+
+For detailed usage, customization, and best practices, see:
+**[📚 Service Template System Documentation](./docs/system/service-template-system.md)**
+
+The documentation covers:
+- Template architecture and structure
+- Customization and extension guide
+- Best practices and troubleshooting
+- Advanced usage scenarios
+- Contributing guidelines
+
 ### Testing Commands
 
 ```bash
@@ -429,6 +519,8 @@ make stop-testing           # Stop all testing services
 make logs                   # View service logs
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ### Option 2: Manual Build and Run
 
 ```bash
@@ -439,6 +531,8 @@ make logs                   # View service logs
 cd apps/masterdata/user-service
 dotnet run --project src/UserService.Api
 ```
+
+[↑ Back to Top](#table-of-contents)
 
 ## 📊 Service URLs
 
@@ -464,6 +558,8 @@ dotnet run --project src/UserService.Api
 | Data Sync Service | https://localhost:7017 | https://localhost:7017/swagger |
 | Archive Service | https://localhost:7018 | https://localhost:7018/swagger |
 
+[↑ Back to Top](#table-of-contents)
+
 ## 🔒 Authentication
 
 The system uses JWT-based authentication through the User Service. To access protected endpoints:
@@ -471,6 +567,8 @@ The system uses JWT-based authentication through the User Service. To access pro
 1. Register a user: `POST /api/auth/register`
 2. Login: `POST /api/auth/login`
 3. Use the returned JWT token in the Authorization header: `Bearer <token>`
+
+[↑ Back to Top](#table-of-contents)
 
 ## 📋 Management Commands
 
@@ -516,6 +614,8 @@ docker compose -f apps/testing/docker-compose.testing.yml logs -f user-service
 docker compose -f apps/testing/docker-compose.testing.yml restart user-service
 ```
 
+[↑ Back to Top](#table-of-contents)
+
 ## 🏥 Health Monitoring
 
 - **Gateway Health**: http://localhost:7000/health
@@ -523,6 +623,8 @@ docker compose -f apps/testing/docker-compose.testing.yml restart user-service
 - **Individual Service Health**: http://localhost:700X/health (where X is service port)
 - **Service Discovery**: http://localhost:7000/api/gateway/services
 - **Available Services**: http://localhost:7000/api/swagger/services
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🛠️ Development
 
@@ -539,6 +641,8 @@ docker compose -f apps/testing/docker-compose.testing.yml restart user-service
 - **Docker** - Containerization
 - **Ocelot** - API Gateway
 - **YamlDotNet** - Configuration management
+
+[↑ Back to Top](#table-of-contents)
 
 ## 🏗️ Project Structure
 
