@@ -319,7 +319,7 @@ test-vehicles:
 
 ### Authorization Config Generator Tests
 
-Location: `tests/auth_config_generator_test.py`
+Location: `testing-unified/scripts/auth_config_generator_test.py`
 
 **What it tests:**
 - YAML authorization rule loading

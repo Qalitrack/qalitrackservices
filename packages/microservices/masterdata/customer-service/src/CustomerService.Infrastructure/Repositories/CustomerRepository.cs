@@ -31,16 +31,31 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
 
     public async Task<Customer?> GetWithContactsAsync(string id)
     {
-        return await _dbSet
-            .Include(c => c.Contacts.Where(ct => !ct.IsDeleted))
+        var customer = await _dbSet
+            .Include(c => c.Contacts)
             .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
+            
+        if (customer != null)
+        {
+            // Filter out deleted contacts manually since EF Core in-memory may not support filtered includes
+            customer.Contacts = customer.Contacts.Where(ct => !ct.IsDeleted).ToList();
+        }
+        
+        return customer;
     }
 
     public async Task<Customer?> GetWithContractsAsync(string id)
     {
-        return await _dbSet
-            .Include(c => c.Contracts.Where(ct => !ct.IsDeleted))
+        var customer = await _dbSet
+            .Include(c => c.Contracts)
             .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
+            
+        if (customer != null)
+        {
+            customer.Contracts = customer.Contracts.Where(ct => !ct.IsDeleted).ToList();
+        }
+        
+        return customer;
     }
 
     public async Task<Customer?> GetWithBillingAsync(string id)
@@ -59,14 +74,23 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
 
     public async Task<Customer?> GetWithAllDetailsAsync(string id)
     {
-        return await _dbSet
-            .Include(c => c.Contacts.Where(ct => !ct.IsDeleted))
-            .Include(c => c.Contracts.Where(ct => !ct.IsDeleted))
-            .Include(c => c.Locations.Where(l => !l.IsDeleted))
+        var customer = await _dbSet
+            .Include(c => c.Contacts)
+            .Include(c => c.Contracts)
+            .Include(c => c.Locations)
             .Include(c => c.Billing)
             .Include(c => c.Credit)
             .Include(c => c.Preferences)
             .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
+            
+        if (customer != null)
+        {
+            customer.Contacts = customer.Contacts.Where(ct => !ct.IsDeleted).ToList();
+            customer.Contracts = customer.Contracts.Where(ct => !ct.IsDeleted).ToList();
+            customer.Locations = customer.Locations.Where(l => !l.IsDeleted).ToList();
+        }
+        
+        return customer;
     }
 
     public async Task<IEnumerable<Customer>> GetByStatusAsync(CustomerStatus status)

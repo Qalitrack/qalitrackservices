@@ -12,25 +12,18 @@ services:
     - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
     - Jwt__Issuer=UserService
     - Jwt__Audience=UserService
+    - USE_MOCK_SERVICES=false
     networks:
     - qalitrack-testing
     restart: unless-stopped
-    healthcheck:
-      test:
-      - CMD
-      - wget
-      - --no-verbose
-      - --tries=1
-      - --spider
-      - http://localhost:80/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    volumes:
+    - ../../configs/clients/testing.yml:/app/configs/clients/testing.yml:ro
+    - ../../configs/auth/testing-ocelot.json:/app/ocelot.development.json:ro
     depends_on:
       user-service:
-        condition: service_healthy
+        condition: service_started
   user-service:
+    # Default to real user service - override with compose files
     build:
       context: ../../packages/microservices/masterdata/user-service
       dockerfile: Dockerfile
@@ -39,25 +32,13 @@ services:
     environment:
     - ASPNETCORE_ENVIRONMENT=Development
     - CLIENT_CODE=testing
-    - ConnectionStrings__DefaultConnection=Data Source=/data/userservice.db
     - Jwt__SecretKey=ProductionSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
     - Jwt__Issuer=UserService
     - Jwt__Audience=UserService
+    - ConnectionStrings__DefaultConnection=Data Source=/data/userservice.db
     networks:
     - qalitrack-testing
     restart: unless-stopped
-    healthcheck:
-      test:
-      - CMD
-      - wget
-      - --no-verbose
-      - --tries=1
-      - --spider
-      - http://localhost:80/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     volumes:
     - user_service_data:/data
     - ./user-service/logs:/app/logs
@@ -74,24 +55,68 @@ services:
     networks:
     - qalitrack-testing
     restart: unless-stopped
-    healthcheck:
-      test:
-      - CMD
-      - wget
-      - --no-verbose
-      - --tries=1
-      - --spider
-      - http://localhost:80/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     volumes:
     - service_discovery_data:/data
     - ./service-discovery/logs:/app/logs
+  swagger-aggregator:
+    build:
+      context: ../../packages/swagger-aggregator
+      dockerfile: Dockerfile
+    ports:
+    - 8000:80
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    - ASPNETCORE_URLS=http://+:80
+    - ASPNETCORE_HTTP_PORTS=80
+    networks:
+    - qalitrack-testing
+    restart: unless-stopped
+    volumes:
+    - ../../configs/clients/testing.yml:/app/configs/clients/testing.yml:ro
+  product-service:
+    build:
+      context: ../../packages/microservices/masterdata/product-service
+      dockerfile: Dockerfile
+    ports:
+    - 7005:80
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    - ConnectionStrings__DefaultConnection=Data Source=/data/productservice.db
+    networks:
+    - qalitrack-testing
+    restart: unless-stopped
+    volumes:
+    - product_service_data:/data
+    - ./product-service/logs:/app/logs
+    depends_on:
+      user-service:
+        condition: service_started
+  customer-service:
+    build:
+      context: ../../packages/microservices/masterdata/customer-service
+      dockerfile: Dockerfile
+    ports:
+    - 7003:80
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - CLIENT_CODE=testing
+    - ConnectionStrings__DefaultConnection=Data Source=/data/customerservice.db
+    networks:
+    - qalitrack-testing
+    restart: unless-stopped
+    volumes:
+    - customer_service_data:/data
+    - ./customer-service/logs:/app/logs
+    depends_on:
+      user-service:
+        condition: service_started
 volumes:
   user_service_data: null
   service_discovery_data: null
+  product_service_data: null
+  customer_service_data: null
 networks:
   qalitrack-testing:
     driver: bridge

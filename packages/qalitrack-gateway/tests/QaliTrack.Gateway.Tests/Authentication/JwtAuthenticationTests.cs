@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,6 +11,7 @@ using System.Text.Json;
 
 namespace QaliTrack.Gateway.Tests.Authentication;
 
+[Trait("Category", "Unit")]
 public class JwtAuthenticationTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
@@ -29,11 +31,22 @@ public class JwtAuthenticationTests : IClassFixture<WebApplicationFactory<Progra
                 {
                     ["Jwt:SecretKey"] = _secretKey,
                     ["Jwt:Issuer"] = _issuer,
-                    ["Jwt:Audience"] = _audience
+                    ["Jwt:Audience"] = _audience,
+                    ["Urls"] = "http://localhost:0",
+                    ["Kestrel:EndPoints:Http:Url"] = "http://localhost:0"
                 });
                 
                 // Add test-specific Ocelot configuration
                 config.AddInMemoryCollection(CreateTestOcelotConfiguration());
+            });
+            // Disable HTTPS redirection for tests
+            builder.ConfigureServices(services =>
+            {
+                services.Configure<Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionOptions>(options =>
+                {
+                    options.RedirectStatusCode = 200;
+                    options.HttpsPort = null;
+                });
             });
         });
 
@@ -193,7 +206,7 @@ public class JwtAuthenticationTests : IClassFixture<WebApplicationFactory<Progra
     [Theory]
     [InlineData("Operator", "read:weight", "/api/users")]
     [InlineData("Auditor", "read:compliance", "/api/auth/profile")]
-    [InlineData("Manager", "read:analytics", "/api/users")]
+    [InlineData("SiteManager", "read:analytics", "/api/users")]
     [InlineData("Admin", "read:admin", "/api/auth/admin")]
     public async Task GET_RoleBasedEndpoint_WithCorrectRole_ShouldAllowAccess(
         string role, string permission, string endpoint)
@@ -449,18 +462,43 @@ public class JwtAuthenticationTests : IClassFixture<WebApplicationFactory<Progra
             ["Routes:0:DownstreamHostAndPorts:0:Host"] = "localhost",
             ["Routes:0:DownstreamHostAndPorts:0:Port"] = "7001",
             ["Routes:0:DownstreamScheme"] = "http",
+            ["Routes:0:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:0:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:0:Metadata:RequiredPermissions:0"] = "read:profile",
+            ["Routes:0:Metadata:ServiceName"] = "UserService",
             
             ["Routes:1:UpstreamPathTemplate"] = "/api/users",
             ["Routes:1:DownstreamPathTemplate"] = "/api/users",
             ["Routes:1:DownstreamHostAndPorts:0:Host"] = "localhost",
             ["Routes:1:DownstreamHostAndPorts:0:Port"] = "7001",
             ["Routes:1:DownstreamScheme"] = "http",
+            ["Routes:1:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:1:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:1:Metadata:RequiredRoles:1"] = "SiteManager",
+            ["Routes:1:Metadata:RequiredPermissions:0"] = "read:profile",
+            ["Routes:1:Metadata:RequiredPermissions:1"] = "read:weight",
+            ["Routes:1:Metadata:RequiredPermissions:2"] = "read:analytics",
+            ["Routes:1:Metadata:ServiceName"] = "UserService",
             
             ["Routes:2:UpstreamPathTemplate"] = "/api/auth/{everything}",
             ["Routes:2:DownstreamPathTemplate"] = "/api/{everything}",
             ["Routes:2:DownstreamHostAndPorts:0:Host"] = "localhost",
             ["Routes:2:DownstreamHostAndPorts:0:Port"] = "7001",
             ["Routes:2:DownstreamScheme"] = "http",
+            ["Routes:2:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:2:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:2:Metadata:RequiredPermissions:0"] = "read:compliance",
+            ["Routes:2:Metadata:ServiceName"] = "AuthService",
+            
+            ["Routes:3:UpstreamPathTemplate"] = "/api/auth/admin",
+            ["Routes:3:DownstreamPathTemplate"] = "/api/auth/admin",
+            ["Routes:3:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:3:DownstreamHostAndPorts:0:Port"] = "7001",
+            ["Routes:3:DownstreamScheme"] = "http",
+            ["Routes:3:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:3:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:3:Metadata:RequiredPermissions:0"] = "read:admin",
+            ["Routes:3:Metadata:ServiceName"] = "AuthService",
             
             ["GlobalConfiguration:BaseUrl"] = "http://localhost:7000"
         };

@@ -55,6 +55,79 @@
       "Key": "user-service-health"
     },
     {
+      "DownstreamPathTemplate": "/api/customers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customers/customers",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "RouteClaimsRequirement": {},
+      "Priority": 1,
+      "Key": "customer-service-list"
+    },
+    {
+      "DownstreamPathTemplate": "/api/customers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customers/customers/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "RouteClaimsRequirement": {},
+      "Priority": 0,
+      "Key": "customer-service-detail"
+    },
+    {
+      "DownstreamPathTemplate": "/api/contacts",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customers/contacts",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "RouteClaimsRequirement": {},
+      "Priority": 1,
+      "Key": "customer-service-contacts-list"
+    },
+    {
+      "DownstreamPathTemplate": "/api/contacts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customers/contacts/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "RouteClaimsRequirement": {},
+      "Priority": 0,
+      "Key": "customer-service-contacts-detail"
+    },
+    {
+      "DownstreamPathTemplate": "/health",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/services/customers/health",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "customer-service-health"
+    },
+    {
       "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -66,6 +139,58 @@
       "UpstreamPathTemplate": "/user-docs/{everything}",
       "UpstreamHttpMethod": [ "GET" ],
       "Key": "user-service-docs"
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/customer-docs/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "customer-service-docs"
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "swagger-aggregator",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/docs/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "Key": "swagger-aggregator-docs"
+    },
+    {
+      "DownstreamPathTemplate": "/",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "swagger-aggregator",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/docs",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "swagger-aggregator-root"
+    },
+    {
+      "DownstreamPathTemplate": "/",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "swagger-aggregator",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/docs/",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "swagger-aggregator-root-slash"
     }
   ],
   "GlobalConfiguration": {
