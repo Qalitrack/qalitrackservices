@@ -43,10 +43,8 @@ builder.Services.AddScoped<IPermissionsService, PermissionsService>();
 builder.Services.AddScoped<IUserService, UserService.Core.Services.UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
-builder.Services.AddScoped<IPermissionsRepository, PermissionsRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
@@ -145,7 +143,7 @@ Log.Information("Health checks have been configured.");
 var app = builder.Build();
 
 // Run migrations and seed the database
-using (var scope = app.Services.CreateScope())
+ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<UserServiceDbContext>();
     try

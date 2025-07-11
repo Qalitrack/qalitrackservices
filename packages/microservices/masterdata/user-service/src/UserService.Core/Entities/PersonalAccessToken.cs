@@ -26,7 +26,7 @@ public class PersonalAccessToken : BaseEntity
     }
 
     // Enum to represent Shift Modes (Strict vs Open)
-    internal enum ShiftMode
+    public enum ShiftMode
     {
         Strict = 0,
         Open = 1
