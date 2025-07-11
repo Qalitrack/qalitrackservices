@@ -1,20 +1,25 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserService.Core.Interfaces;
-using UserService.Core.Services;
-using UserService.Core.DTOs;
-// using UserService.Core.Validators;
-using UserService.Core.Mappings;
 using UserService.Infrastructure.Data;
 using UserService.Infrastructure.Repositories;
-// using UserService.Infrastructure.Services;
+using UserService.Core.Services;
+using UserService.Core.Mappings;
+using Microsoft.OpenApi.Models;
+using UserService.Core.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Log debug messages at different points in the program startup
+Log.Information("Starting application...");
+
+// Configure to listen on port 8080
+builder.WebHost.UseUrls("http://localhost:8080");
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -26,9 +31,59 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+// Log that Serilog has been set up
+Log.Information("Serilog has been configured.");
+
 // Add services to the container
 builder.Services.AddControllers();
+Log.Information("Controllers have been added to the DI container.");
+
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IPermissionsService, PermissionsService>();
+builder.Services.AddScoped<IUserService, UserService.Core.Services.UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IShiftService, ShiftService>();
+builder.Services.AddScoped<IPermissionsRepository, PermissionsRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+
+Log.Information("Services and repositories have been registered.");
+
+// Add DbContext
+builder.Services.AddDbContext<UserServiceDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+                      "Data Source=user-service.db", 
+        b => b.MigrationsAssembly("UserService.Infrastructure")));
+
+// Configure JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"] ?? "your-super-secret-key-here-minimum-32-characters");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings["Issuer"] ?? "UserService",
+        ValidateAudience = true,
+        ValidAudience = jwtSettings["Audience"] ?? "UserService",
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
+Log.Information("JWT Authentication has been configured.");
 
 // Configure Swagger with JWT authentication
 builder.Services.AddSwaggerGen(c =>
@@ -36,20 +91,10 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo 
     { 
         Title = "UserService API", 
-        Version = "v1",
-        Description = @"QaliTrack UserService - UserService Management API
-
-🌐 **Gateway Information:**
-- **Gateway URL**: http://localhost:7000
-- **Gateway Health**: http://localhost:7000/health  
-- **Gateway Service Discovery**: http://localhost:7000/api/gateway/services
-- **Gateway Info**: http://localhost:7000/api/gateway/info
-
-📋 **Available Routes via Gateway:**
-- All UserService endpoints are also available via Gateway at http://localhost:7000/api/users/*
-- Gateway provides centralized routing to 18+ microservices including analytics, compliance, transactions, and more"
+        Version = "v1"
     });
     
+    // Add JWT Authentication to Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -59,7 +104,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
     
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -68,73 +113,18 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
+                }
             },
-            new List<string>()
+            new string[] {}
         }
     });
+    
+    Log.Information("Swagger has been configured with JWT authentication.");
 });
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(UserProfile));
-
-// Add FluentValidation
-// builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();
-
-// Add Entity Framework
-builder.Services.AddDbContext<UserServiceDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-    "Data Source=user-service.db"));
-
-// TODO: Add authentication if needed for this service
-// For authentication services, uncomment and configure JWT
-/*
-// Add JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
-var key = Encoding.UTF8.GetBytes(secretKey);
-
-builder.Services.AddAuthentication(x =>
-{
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(x =>
-{
-    x.RequireHttpsMetadata = false;
-    x.SaveToken = true;
-    x.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidateAudience = true,
-        ValidAudience = jwtSettings["Audience"],
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
-});
-
-builder.Services.AddAuthorization();
-*/
-
-// Add repositories
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-// TODO: Add additional repositories as needed
-// builder.Services.AddScoped<IAnotherRepository, AnotherRepository>();
-
-// Add services
-builder.Services.AddScoped<IUserService, UserService.Core.Services.UserService>();
-// TODO: Add additional services as needed
-// builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-// builder.Services.AddScoped<IJwtService, JwtService>();
-// builder.Services.AddScoped<IPasswordService, PasswordService>();
-// builder.Services.AddScoped<IEmailService, EmailService>();
+Log.Information("AutoMapper has been configured.");
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -147,53 +137,56 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
+Log.Information("CORS has been configured.");
 
-// Add Health Checks
 builder.Services.AddHealthChecks();
+Log.Information("Health checks have been configured.");
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
-        c.SwaggerEndpoint("http://localhost:7000/swagger/v1/swagger.json", "API Gateway V1");
-        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
-        c.DocumentTitle = "QaliTrack Services - UserService & Gateway Discovery";
-    });
-}
-
-app.UseHttpsRedirection();
-app.UseCors("AllowAll");
-
-// Use Serilog request logging
-app.UseSerilogRequestLogging();
-
-// TODO: Uncomment if authentication is needed
-// app.UseAuthentication();
-// app.UseAuthorization();
-
-app.MapControllers();
-app.MapHealthChecks("/health");
-
-// Ensure database is created and seeded
+// Run migrations and seed the database
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<UserServiceDbContext>();
     try
     {
-        dbContext.Database.EnsureCreated();
-        Log.Information("Database ensured created successfully");
+        // Apply migrations
+        dbContext.Database.Migrate();
+        Log.Information("Migrations applied successfully.");
+        
+        // Seed the data (you can replace this with your custom seed method if needed)
+        await PrepDb.PrepPopulation(app, isProduction: false);
+        Log.Information("Database seeded successfully.");
     }
     catch (Exception ex)
     {
-        Log.Error(ex, "Error creating database");
+        Log.Error(ex, "An error occurred while applying migrations or seeding the database.");
         throw;
     }
 }
+
+// Configure the HTTP request pipeline
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
+    c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+});
+Log.Information("Swagger UI has been set up.");
+
+app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+app.UseSerilogRequestLogging();
+
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Map controllers and health check endpoints
+app.MapControllers();
+app.MapHealthChecks("/health");
+
+Log.Information("Application is now running...");
 
 Log.Information("UserService starting up...");
 app.Run();
