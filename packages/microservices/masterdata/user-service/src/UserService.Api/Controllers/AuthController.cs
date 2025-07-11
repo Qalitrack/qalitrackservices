@@ -53,9 +53,6 @@ public class AuthController : BaseController
             var response = new LoginResponseDto
             {
                 Token = personalAccessToken.Token,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
                 Id = user.Id.ToString(),
                 Role = user.UserRoles?.FirstOrDefault()?.Role?.Name ?? "User",
             };
@@ -95,9 +92,7 @@ public class AuthController : BaseController
             {
                 return BadRequest(new { message = "Unable to identify user from token" });
             }
-
-            Log.Information($"Extracted token: {token}");
-            Log.Information($"User ID from token: {userId}");
+            
 
             var revoked = await _tokenRepository.RevokeTokenAsync(userId.Value);
             
