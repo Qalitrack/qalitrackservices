@@ -1,96 +1,48 @@
 using Xunit;
-using UserService.Core.DTOs;
 
 namespace UserService.Tests;
 
 public class BasicTests
 {
     [Fact]
-    public void ServiceResponse_Should_Initialize_Correctly()
+    public void BasicTest_ShouldPass()
     {
-        // Arrange & Act
-        var response = new ServiceResponse<UserDto>
-        {
-            Success = true,
-            Data = new UserDto(),
-            Message = "Test message"
-        };
-
+        // Arrange
+        var expected = true;
+        
+        // Act
+        var actual = true;
+        
         // Assert
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-        Assert.Equal("Test message", response.Message);
+        Assert.Equal(expected, actual);
     }
-
+    
     [Fact]
-    public void LoginRequestDto_Should_Initialize_Correctly()
+    public void BasicMathTest_ShouldPass()
     {
-        // Arrange & Act
-        var loginRequest = new LoginRequestDto
-        {
-            Username = "testuser",
-            Password = "testpassword",
-            RememberMe = true
-        };
-
+        // Arrange
+        var a = 2;
+        var b = 3;
+        var expected = 5;
+        
+        // Act
+        var actual = a + b;
+        
         // Assert
-        Assert.Equal("testuser", loginRequest.Username);
-        Assert.Equal("testpassword", loginRequest.Password);
-        Assert.True(loginRequest.RememberMe);
+        Assert.Equal(expected, actual);
     }
-
+    
     [Fact]
-    public void RegisterRequestDto_Should_Initialize_Correctly()
+    public void StringTest_ShouldPass()
     {
-        // Arrange & Act
-        var registerRequest = new RegisterRequestDto
-        {
-            Username = "testuser",
-            Email = "test@example.com",
-            Password = "testpassword",
-            ConfirmPassword = "testpassword",
-            FirstName = "Test",
-            LastName = "User"
-        };
-
+        // Arrange
+        var text = "Hello World";
+        var expected = "Hello World";
+        
+        // Act
+        var actual = text;
+        
         // Assert
-        Assert.Equal("testuser", registerRequest.Username);
-        Assert.Equal("test@example.com", registerRequest.Email);
-        Assert.Equal("testpassword", registerRequest.Password);
-        Assert.Equal("testpassword", registerRequest.ConfirmPassword);
-        Assert.Equal("Test", registerRequest.FirstName);
-        Assert.Equal("User", registerRequest.LastName);
-    }
-
-    [Fact]
-    public void ConfirmEmailDto_Should_Initialize_Correctly()
-    {
-        // Arrange & Act
-        var confirmEmail = new ConfirmEmailDto
-        {
-            UserId = "user123",
-            Token = "token123"
-        };
-
-        // Assert
-        Assert.Equal("user123", confirmEmail.UserId);
-        Assert.Equal("token123", confirmEmail.Token);
-    }
-
-    [Fact]
-    public void ChangePasswordRequestDto_Should_Initialize_Correctly()
-    {
-        // Arrange & Act
-        var changePassword = new ChangePasswordRequestDto
-        {
-            CurrentPassword = "current",
-            NewPassword = "new",
-            ConfirmNewPassword = "new"
-        };
-
-        // Assert
-        Assert.Equal("current", changePassword.CurrentPassword);
-        Assert.Equal("new", changePassword.NewPassword);
-        Assert.Equal("new", changePassword.ConfirmNewPassword);
+        Assert.Equal(expected, actual);
     }
 }

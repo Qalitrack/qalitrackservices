@@ -1,7 +1,7 @@
 # QaliTrack Microservices Test Suite
 # ===================================
 
-.PHONY: help test test-interactive test-all test-health test-api test-docker test-deployments test-services test-gateway test-gateway-integration test-users test-product test-customer cloud-auth auth-config clean status logs test-users-mock test-users-real start-users-mock start-users-real test-product-mock test-product-real test-customer-mock test-customer-real
+.PHONY: help test test-interactive test-all test-health test-api test-docker test-deployments test-services test-gateway test-gateway-integration test-users test-product test-customer cloud-auth auth-config clean status logs test-users-mock test-users-real start-users-mock start-users-real test-product-mock test-product-real test-customer-mock test-customer-real generate-service generate-masterdata generate-datamanager build-test-service-v2 run-test-service-v2 test-test-service-v2 docker-build-test-service-v2 docker-run-test-service-v2 build-test-service-v3 run-test-service-v3 test-test-service-v3 docker-build-test-service-v3 docker-run-test-service-v3 build-test-service-v4 run-test-service-v4 test-test-service-v4 docker-build-test-service-v4 docker-run-test-service-v4 build-test-service run-test-service test-test-service docker-build-test-service docker-run-test-service build-inventory-service run-inventory-service test-inventory-service docker-build-inventory-service docker-run-inventory-service build-abuso run-abuso test-abuso docker-build-abuso docker-run-abuso
 
 # Default target
 help:
@@ -47,6 +47,15 @@ help:
 	@echo "  status            - Show deployment status"
 	@echo "  logs              - Show service logs"
 	@echo "  clean             - Stop all services and clean up"
+	@echo ""
+	@echo "Service Generation:"
+	@echo "  generate-service TYPE=<masterdata|datamanager> SERVICE=<name> ENTITY=<name> [DESC=<description>]"
+	@echo "                    - Generate new microservice from template"
+	@echo "  generate-masterdata - Generate masterdata service (interactive)"
+	@echo "  generate-datamanager - Generate datamanager service (interactive)"
+	@echo "  remove-service TYPE=<masterdata|datamanager> SERVICE=<name>"
+	@echo "                    - Remove service and its make targets"
+	@echo "                      See docs/SERVICE-TEMPLATE-GUIDE.md for details"
 	@echo ""
 	@echo "Client Management:"
 	@echo "  start-testing     - Start testing deployment"
@@ -1122,3 +1131,410 @@ test-env-status:
 	else \
 		echo "Current mode: ❓ UNKNOWN or services not responding"; \
 	fi
+
+# Service Generation Targets
+# ==========================
+
+# Generate new microservice from template
+generate-service:
+	@echo "🛠️  QaliTrack Service Generator"
+	@echo "=============================="
+	@echo ""
+	@echo "This will generate a new microservice from the service template."
+	@echo ""
+	@echo "Usage: make generate-service TYPE=<masterdata < /dev/null | datamanager> SERVICE=<service-name> ENTITY=<entity-name> [DESC=<description>]"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make generate-service TYPE=masterdata SERVICE=inventory-service ENTITY=inventory"
+	@echo "  make generate-service TYPE=datamanager SERVICE=analytics-service ENTITY=analytics DESC='Analytics Processing Service'"
+	@echo ""
+	@if [ -z "$(TYPE)" ] || [ -z "$(SERVICE)" ] || [ -z "$(ENTITY)" ]; then \
+		echo "❌ Error: Missing required parameters"; \
+		echo "   TYPE, SERVICE, and ENTITY are required"; \
+		echo ""; \
+		echo "Try: make generate-masterdata or make generate-datamanager for interactive mode"; \
+		exit 1; \
+	fi
+	@if [ "$(TYPE)" \!= "masterdata" ] && [ "$(TYPE)" \!= "datamanager" ]; then \
+		echo "❌ Error: TYPE must be 'masterdata' or 'datamanager'"; \
+		exit 1; \
+	fi
+	@echo "Generating $(TYPE) service: $(SERVICE) with entity: $(ENTITY)"
+	@python3 scripts/generate-service.py $(TYPE) $(SERVICE) $(ENTITY) "$(DESC)"
+
+# Interactive masterdata service generation
+generate-masterdata:
+	@echo "🏗️  Generate Masterdata Service"
+	@echo "=============================="
+	@echo ""
+	@echo "Masterdata services manage core business entities like:"
+	@echo "  • Users, Customers, Products"
+	@echo "  • Drivers, Vehicles, Routes"
+	@echo "  • Organizations, Suppliers"
+	@echo ""
+	@read -p "Enter service name (e.g., inventory-service): " service_name; \
+	read -p "Enter main entity name (e.g., inventory): " entity_name; \
+	read -p "Enter description (optional): " description; \
+	echo ""; \
+	echo "Generating masterdata service: $$service_name"; \
+	python3 scripts/generate-service.py masterdata "$$service_name" "$$entity_name" "$$description"
+
+# Interactive datamanager service generation
+generate-datamanager:
+	@echo "📊 Generate Datamanager Service"
+	@echo "=============================="
+	@echo ""
+	@echo "Datamanager services handle data processing and analytics:"
+	@echo "  • Analytics, Compliance, Transactions"
+	@echo "  • Data Sync, Operational Data"
+	@echo "  • Weight Data, Archive Management"
+	@echo ""
+	@read -p "Enter service name (e.g., analytics-service): " service_name; \
+	read -p "Enter main entity name (e.g., analytics): " entity_name; \
+	read -p "Enter description (optional): " description; \
+	echo ""; \
+	echo "Generating datamanager service: $$service_name"; \
+	python3 scripts/generate-service.py datamanager "$$service_name" "$$entity_name" "$$description"
+
+# Service Removal
+.PHONY: remove-service
+remove-service:
+	@echo "🗑️  QaliTrack Service Removal"
+	@echo "============================"
+	@echo ""
+	@echo "This will remove a microservice and its make targets."
+	@echo ""
+	@echo "Usage: make remove-service TYPE=<masterdata|datamanager> SERVICE=<service-name>"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make remove-service TYPE=masterdata SERVICE=inventory-service"
+	@echo "  make remove-service TYPE=datamanager SERVICE=analytics-service"
+	@echo ""
+	@if [ -z "$(TYPE)" ] || [ -z "$(SERVICE)" ]; then \
+		echo "❌ Error: Missing required parameters"; \
+		echo "   TYPE and SERVICE are required"; \
+		exit 1; \
+	fi
+	@if [ "$(TYPE)" \!= "masterdata" ] && [ "$(TYPE)" \!= "datamanager" ]; then \
+		echo "❌ Error: TYPE must be 'masterdata' or 'datamanager'"; \
+		exit 1; \
+	fi
+	@python3 scripts/remove-service.py $(TYPE) $(SERVICE)
+
+# Service Targets (Auto-generated)
+# ================================
+
+# TestServiceV2 Service Targets (Auto-generated)
+.PHONY: build-test-service-v2 run-test-service-v2 test-test-service-v2 docker-build-test-service-v2 docker-run-test-service-v2
+
+build-test-service-v2:
+	@echo "Building TestServiceV2 service..."
+	@cd packages/microservices/masterdata/test-service-v2 && dotnet build
+
+run-test-service-v2:
+	@echo "Running TestServiceV2 service..."
+	@cd packages/microservices/masterdata/test-service-v2 && dotnet run --project src/TestServiceV2.Api
+
+test-test-service-v2:
+	@echo "Testing TestServiceV2 service..."
+	@cd packages/microservices/masterdata/test-service-v2 && dotnet test tests/TestServiceV2.Tests --verbosity normal
+
+docker-build-test-service-v2:
+	@echo "Building Docker image for TestServiceV2 service..."
+	@cd packages/microservices/masterdata/test-service-v2 && docker build -t test-service-v2 .
+
+docker-run-test-service-v2:
+	@echo "Running Docker container for TestServiceV2 service..."
+	@docker run -p 5000:80 test-service-v2
+
+# TestServiceV3 Service Targets (Auto-generated)
+.PHONY: build-test-service-v3 run-test-service-v3 test-test-service-v3 docker-build-test-service-v3 docker-run-test-service-v3
+
+build-test-service-v3:
+	@echo "Building TestServiceV3 service..."
+	@cd packages/microservices/masterdata/test-service-v3 && dotnet build
+
+run-test-service-v3:
+	@echo "Running TestServiceV3 service..."
+	@cd packages/microservices/masterdata/test-service-v3 && dotnet run --project src/TestServiceV3.Api
+
+test-test-service-v3:
+	@echo "Testing TestServiceV3 service..."
+	@cd packages/microservices/masterdata/test-service-v3 && dotnet test tests/TestServiceV3.Tests --verbosity normal
+
+docker-build-test-service-v3:
+	@echo "Building Docker image for TestServiceV3 service..."
+	@cd packages/microservices/masterdata/test-service-v3 && docker build -t test-service-v3 .
+
+docker-run-test-service-v3:
+	@echo "Running Docker container for TestServiceV3 service..."
+	@docker run -p 5000:80 test-service-v3
+
+build-test-service-v4:
+	@echo "Building TestServiceV4 service..."
+	@cd packages/microservices/masterdata/test-service-v4 && dotnet build
+
+run-test-service-v4:
+	@echo "Running TestServiceV4 service..."
+	@cd packages/microservices/masterdata/test-service-v4 && dotnet run --project src/TestServiceV4.Api
+
+test-test-service-v4:
+	@echo "Testing TestServiceV4 service..."
+	@cd packages/microservices/masterdata/test-service-v4 && dotnet test tests/TestServiceV4.Tests --verbosity normal
+
+docker-build-test-service-v4:
+	@echo "Building Docker image for TestServiceV4 service..."
+	@cd packages/microservices/masterdata/test-service-v4 && docker build -t test-service-v4 .
+
+docker-run-test-service-v4:
+	@echo "Running Docker container for TestServiceV4 service..."
+	@docker run -p 5000:80 test-service-v4
+
+build-test-service:
+	@echo "Building TestService service..."
+	@cd packages/microservices/masterdata/test-service && dotnet build
+
+run-test-service:
+	@echo "Running TestService service..."
+	@cd packages/microservices/masterdata/test-service && dotnet run --project src/TestService.Api
+
+test-test-service:
+	@echo "Testing TestService service..."
+	@cd packages/microservices/masterdata/test-service && dotnet test tests/TestService.Tests --verbosity normal
+
+docker-build-test-service:
+	@echo "Building Docker image for TestService service..."
+	@cd packages/microservices/masterdata/test-service && docker build -t test-service .
+
+docker-run-test-service:
+	@echo "Running Docker container for TestService service..."
+	@docker run -p 5000:80 test-service
+
+# InventoryService Service Targets (Auto-generated)
+.PHONY: build-inventory-service run-inventory-service test-inventory-service docker-build-inventory-service docker-run-inventory-service
+
+build-inventory-service:
+	@echo "Building InventoryService service..."
+	@cd packages/microservices/masterdata/inventory-service && dotnet build
+
+run-inventory-service:
+	@echo "Running InventoryService service..."
+	@cd packages/microservices/masterdata/inventory-service && dotnet run --project src/InventoryService.Api
+
+test-inventory-service:
+	@echo "Testing InventoryService service..."
+	@cd packages/microservices/masterdata/inventory-service && dotnet test tests/InventoryService.Tests --verbosity normal
+
+docker-build-inventory-service:
+	@echo "Building Docker image for InventoryService service..."
+	@cd packages/microservices/masterdata/inventory-service && docker build -t inventory-service .
+
+docker-run-inventory-service:
+	@echo "Running Docker container for InventoryService service..."
+	@docker run -p 5000:80 inventory-service
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso
+
+# ReportService Service Targets (Auto-generated)
+.PHONY: build-report-service run-report-service test-report-service
+
+build-report-service:
+	@echo "Building ReportService service..."
+	@cd packages/microservices/masterdata/report-service && dotnet build
+
+run-report-service:
+	@echo "Running ReportService service..."
+	@cd packages/microservices/masterdata/report-service && dotnet run --project src/ReportService.Api
+
+test-report-service:
+	@echo "Testing ReportService service..."
+	@cd packages/microservices/masterdata/report-service && dotnet test tests/ReportService.Tests --verbosity normal
+
+docker-build-report-service:
+	@echo "Building Docker image for ReportService service..."
+	@cd packages/microservices/masterdata/report-service && docker build -t report-service .
+
+docker-run-report-service:
+	@echo "Running Docker container for ReportService service..."
+	@docker run -p 5000:80 report-service
+
+# ReportService Service Targets (Auto-generated)
+.PHONY: build-report-service run-report-service test-report-service
+
+build-report-service:
+	@echo "Building ReportService service..."
+	@cd packages/microservices/masterdata/report-service && dotnet build
+
+run-report-service:
+	@echo "Running ReportService service..."
+	@cd packages/microservices/masterdata/report-service && dotnet run --project src/ReportService.Api
+
+test-report-service:
+	@echo "Testing ReportService service..."
+	@cd packages/microservices/masterdata/report-service && dotnet test tests/ReportService.Tests --verbosity normal
+
+docker-build-report-service:
+	@echo "Building Docker image for ReportService service..."
+	@cd packages/microservices/masterdata/report-service && docker build -t report-service .
+
+docker-run-report-service:
+	@echo "Running Docker container for ReportService service..."
+	@docker run -p 5000:80 report-service
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso
+
+build-abuso:
+	@echo "Building Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet build
+
+run-abuso:
+	@echo "Running Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet run --project src/Abuso.Api
+
+test-abuso:
+	@echo "Testing Abuso service..."
+	@cd packages/microservices/masterdata/abuso && dotnet test tests/Abuso.Tests --verbosity normal
+
+docker-build-abuso:
+	@echo "Building Docker image for Abuso service..."
+	@cd packages/microservices/masterdata/abuso && docker build -t abuso .
+
+docker-run-abuso:
+	@echo "Running Docker container for Abuso service..."
+	@docker run -p 5000:80 abuso

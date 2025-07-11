@@ -97,9 +97,117 @@ make test-role-matrix         # Authorization matrix validation
 
 Unit tests focus on testing individual components in isolation using `WebApplicationFactory<Program>`.
 
-### 1. Role Matrix Testing
+### 1. Hybrid Authorization Testing
 
-The core authorization testing validates 104+ role vs endpoint combinations:
+The core authorization testing validates 200+ role+permission vs endpoint combinations using the hybrid authorization model:
+
+#### Permission Matrix Testing
+
+```csharp
+// PermissionMatrixTests.cs - Permission-based authorization testing
+[Trait("Category", "Unit")]
+public class PermissionMatrixTests : IClassFixture<WebApplicationFactory<Program>>
+{
+    [Theory]
+    [MemberData(nameof(PermissionMatrixTestData))]
+    public async Task PermissionMatrix_EndpointAccess_ShouldEnforceHybridAuthorization(
+        string endpoint, string requiredRole, string requiredPermission, string service, 
+        string userRole, string[] userPermissions, bool shouldHaveAccess)
+    {
+        // Arrange
+        var token = GenerateJwtTokenWithPermissions("test-user", userRole, userPermissions);
+        _client.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await _client.GetAsync(endpoint);
+
+        // Assert
+        if (shouldHaveAccess)
+        {
+            response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized, 
+                $"User with role '{userRole}' and permissions [{string.Join(", ", userPermissions)}] should pass authentication");
+            response.StatusCode.Should().NotBe(HttpStatusCode.Forbidden,
+                $"User with role '{userRole}' and permission '{requiredPermission}' should have access");
+        }
+        else
+        {
+            response.StatusCode.Should().BeOneOf(
+                HttpStatusCode.Unauthorized, 
+                HttpStatusCode.Forbidden,
+                HttpStatusCode.NotFound,
+                HttpStatusCode.BadGateway);
+        }
+    }
+
+    public static IEnumerable<object[]> PermissionMatrixTestData()
+    {
+        var permissionEndpoints = new[]
+        {
+            new { Path = "/api/products", RequiredRole = "User", RequiredPermission = "read:products", Service = "ProductService" },
+            new { Path = "/api/products/admin/123", RequiredRole = "Admin", RequiredPermission = "write:products", Service = "ProductService" },
+            new { Path = "/api/customers", RequiredRole = "Operator", RequiredPermission = "read:customers", Service = "CustomerService" },
+            new { Path = "/api/users/admin/123", RequiredRole = "Admin", RequiredPermission = "manage:users", Service = "UserService" },
+            new { Path = "/api/compliance/reports", RequiredRole = "Auditor", RequiredPermission = "read:compliance", Service = "ComplianceService" }
+        };
+
+        var testRoles = new[]
+        {
+            new { Name = "Guest", Permissions = new[] { "read:public" } },
+            new { Name = "User", Permissions = new[] { "read:public", "read:products", "read:profile" } },
+            new { Name = "Operator", Permissions = new[] { 
+                "read:public", "read:products", "read:profile", "write:products", 
+                "read:customers", "write:customers", "read:vehicles", "write:vehicles",
+                "read:drivers", "write:drivers", "read:suppliers", "write:suppliers",
+                "read:weight-data", "write:weight-data", "read:transactions", "write:transactions"
+            }},
+            new { Name = "Admin", Permissions = new[] { 
+                "read:public", "read:products", "read:profile", "write:products", "delete:products",
+                "read:customers", "write:customers", "delete:customers",
+                "read:users", "write:users", "manage:users",
+                "read:organizations", "write:organizations", "manage:organizations"
+            }}
+        };
+
+        var roleHierarchy = new Dictionary<string, int>
+        {
+            ["Guest"] = 0, ["User"] = 1, ["Operator"] = 2, ["Admin"] = 4, ["SuperAdmin"] = 5
+        };
+
+        foreach (var endpoint in permissionEndpoints)
+        {
+            foreach (var role in testRoles)
+            {
+                // Check if role meets minimum requirement
+                var requiredLevel = roleHierarchy.GetValueOrDefault(endpoint.RequiredRole, 0);
+                var userLevel = roleHierarchy.GetValueOrDefault(role.Name, 0);
+                var roleAccess = userLevel >= requiredLevel;
+                
+                // Check if user has required permission
+                var permissionAccess = role.Permissions.Contains(endpoint.RequiredPermission);
+                
+                // Both role AND permission must be satisfied for hybrid authorization
+                var shouldHaveAccess = roleAccess && permissionAccess;
+
+                yield return new object[] 
+                { 
+                    endpoint.Path, 
+                    endpoint.RequiredRole,
+                    endpoint.RequiredPermission,
+                    endpoint.Service,
+                    role.Name, 
+                    role.Permissions,
+                    shouldHaveAccess 
+                };
+            }
+        }
+    }
+}
+```
+
+#### Role Matrix Testing
+
+The core role authorization testing validates 104+ role vs endpoint combinations:
 
 ```csharp
 // RoleMatrixTests.cs - Core authorization logic testing
@@ -801,10 +909,10 @@ export default function() {
 
 ## Security Testing
 
-### 1. Authorization Matrix Validation
+### 1. Hybrid Authorization Security Testing
 
 ```csharp
-// SecurityTests.cs - Comprehensive security validation
+// SecurityTests.cs - Comprehensive security validation with permissions
 [Trait("Category", "Security")]
 public class SecurityTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -834,6 +942,90 @@ public class SecurityTests : IClassFixture<WebApplicationFactory<Program>>
                 HttpStatusCode.Unauthorized
             );
         }
+    }
+
+    [Fact]
+    public async Task PermissionEscalation_UserToAdmin_ShouldBeDenied()
+    {
+        // Arrange - User tries to access admin endpoint
+        var token = GenerateJwtToken("user", "user@example.com", 
+            "User", new[] { "read:public", "read:products", "read:profile" });
+
+        _client.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        // Act - Try to access admin endpoint
+        var response = await _client.GetAsync("/api/users/admin/123");
+
+        // Assert
+        response.StatusCode.Should().BeOneOf(
+            HttpStatusCode.Forbidden,
+            HttpStatusCode.Unauthorized)
+            .And.Subject.Should().NotBe(HttpStatusCode.OK,
+            "User should not be able to escalate to admin endpoint");
+    }
+
+    [Theory]
+    [InlineData("Guest", new[] { "read:public" }, "/api/products")]
+    [InlineData("User", new[] { "read:public", "read:profile" }, "/api/customers")]
+    [InlineData("Operator", new[] { "read:customers" }, "/api/users/admin/123")]
+    public async Task PermissionBypass_MissingRequiredPermission_ShouldBeDenied(
+        string userRole, string[] userPermissions, string endpoint)
+    {
+        // Arrange
+        var token = GenerateJwtToken("testuser", "test@example.com", 
+            userRole, userPermissions);
+
+        _client.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await _client.GetAsync(endpoint);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden,
+            $"User with role '{userRole}' and limited permissions should be denied access to {endpoint}");
+    }
+
+    [Fact]
+    public async Task PermissionInjection_ExtraPermissionsInClaim_ShouldNotGrantAccess()
+    {
+        // Arrange - Try to inject extra permissions via custom token
+        var extraPermissions = new[] { "read:public", "read:products", "manage:system", "delete:everything" };
+        var token = GenerateJwtToken("user", "user@example.com", 
+            "User", extraPermissions); // User role but with admin permissions
+
+        _client.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        // Act - Try to access admin endpoint with injected permissions
+        var response = await _client.GetAsync("/api/users/admin/123");
+
+        // Assert - Should still be denied due to insufficient role
+        response.StatusCode.Should().BeOneOf(
+            HttpStatusCode.Forbidden,
+            HttpStatusCode.Unauthorized)
+            .And.Subject.Should().NotBe(HttpStatusCode.OK,
+            "User role should not grant access even with injected admin permissions");
+    }
+
+    [Fact]
+    public async Task CrossServicePermission_ShouldNotGrantAccess()
+    {
+        // Arrange - User with product permissions trying to access customer service
+        var permissions = new[] { "read:public", "read:products", "write:products" };
+        var token = GenerateJwtToken("testuser", "test@example.com", 
+            "Operator", permissions); // Has role but wrong permissions
+
+        _client.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await _client.GetAsync("/api/customers");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden,
+            "User with product permissions should not access customer service");
     }
 
     public static IEnumerable<object[]> GetSecurityTestMatrix()

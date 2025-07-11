@@ -18,11 +18,13 @@ This guide provides comprehensive instructions for business users, system admini
 The QaliTrack API Gateway is your central access point to all weighbridge management services. It provides:
 
 - **Unified Authentication** - Single login for all services
-- **Role-Based Security** - Appropriate access levels for different user types
-- **Service Discovery** - Automatic routing to available services
+- **Hybrid Authorization** - Role-based + permission-based security
+- **Service Discovery** - Automatic routing to available services  
 - **Health Monitoring** - Real-time service status information
 
 ## User Roles and Permissions
+
+The gateway uses a **hybrid authorization model** that combines role-based access control with fine-grained permissions. Your access to services depends on both your role level and specific permissions granted to that role.
 
 ### Role Hierarchy
 
@@ -30,41 +32,48 @@ Understanding your role determines what services and data you can access:
 
 #### 🔴 Guest (Level 0)
 - **Access**: Public information only
+- **Permissions**: `read:public`
 - **Use Cases**: Product catalogs, public documentation
 - **Limitations**: Cannot access operational data
 
 #### 🟡 User (Level 1) 
 - **Access**: Basic authenticated services
+- **Permissions**: `read:public`, `read:products`, `read:profile`
 - **Services**: Products, personal profile
 - **Use Cases**: Viewing product information, updating personal details
 - **Business Context**: General system users, customers
 
 #### 🟠 Operator (Level 2)
 - **Access**: Daily operational tasks
-- **Services**: Products, customers, vehicles, drivers, suppliers
+- **Permissions**: User permissions + `write:products`, `read:customers`, `write:customers`, `read:vehicles`, `write:vehicles`, `read:drivers`, `write:drivers`, `read:suppliers`, `write:suppliers`, `read:weight-data`, `write:weight-data`, `read:transactions`, `write:transactions`
+- **Services**: Products, customers, vehicles, drivers, suppliers, weight data, transactions
 - **Use Cases**: Creating transactions, managing master data
 - **Business Context**: Weighbridge operators, data entry staff
 
 #### 🔵 Auditor (Level 2)
 - **Access**: Read-only compliance and analytics
+- **Permissions**: `read:public`, `read:compliance`, `read:analytics`, `read:reports`, `read:transactions`, `read:archive`
 - **Services**: Compliance monitoring, analytics reports
 - **Use Cases**: Compliance verification, audit reporting
 - **Business Context**: Compliance officers, auditors
 
 #### 🟢 Site Manager (Level 3)
 - **Access**: Site-level management
-- **Services**: All operational services + analytics
+- **Permissions**: Operator permissions + `read:analytics`, `read:compliance`, `manage:site`
+- **Services**: All operational services + analytics + site management
 - **Use Cases**: Site performance monitoring, operational oversight
 - **Business Context**: Site supervisors, regional managers
 
 #### 🟣 Admin (Level 4)
 - **Access**: Organizational administration
+- **Permissions**: Operator permissions + all delete permissions + `read:users`, `write:users`, `manage:users`, `read:organizations`, `write:organizations`, `manage:organizations`, `read:compliance`, `manage:compliance`, `read:analytics`, `read:archive`, `write:archive`
 - **Services**: All services including user management
 - **Use Cases**: User administration, system configuration
 - **Business Context**: IT administrators, business managers
 
 #### ⚫ SuperAdmin (Level 5)
 - **Access**: System-wide control
+- **Permissions**: All Admin permissions + `delete:users`, `delete:organizations`, `delete:transactions`, `delete:archive`, `manage:system`, `admin:system`
 - **Services**: Complete system access
 - **Use Cases**: System maintenance, multi-organization management
 - **Business Context**: System administrators, technical support
@@ -431,6 +440,135 @@ Monitor gateway performance:
 1. Review role hierarchy documentation
 2. Check user role assignment
 3. Contact administrator for clarification
+
+## Permission Management Workflows
+
+### Understanding Your Permissions
+
+#### Checking Your Current Permissions
+
+When you authenticate, your JWT token contains your role and permissions:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "Operator",
+  "roles": ["Operator"],
+  "user": {
+    "role": "Operator",
+    "roles": ["Operator"],
+    "permissions": [
+      "read:public", "read:products", "read:profile",
+      "write:products", "read:customers", "write:customers",
+      "read:vehicles", "write:vehicles", "read:drivers",
+      "write:drivers", "read:suppliers", "write:suppliers",
+      "read:weight-data", "write:weight-data",
+      "read:transactions", "write:transactions"
+    ]
+  }
+}
+```
+
+#### Verifying Access to Services
+
+Use the gateway info endpoint to check which services you can access:
+
+```bash
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  https://localhost:7000/api/gateway/info
+```
+
+### Access Control Scenarios
+
+#### Scenario 1: User Trying to Access Customer Data
+
+**User Role**: User (Level 1)
+**Attempting**: `GET /api/customers`
+**Required**: Role `Operator` + Permission `read:customers`
+**Result**: ❌ **403 Forbidden** - Insufficient role and missing permission
+
+**Error Response**:
+```json
+{
+  "error": {
+    "code": "INSUFFICIENT_PRIVILEGES",
+    "message": "User does not meet both role and permission requirements",
+    "details": {
+      "roleCheck": {
+        "userRole": "User",
+        "requiredRole": "Operator", 
+        "passed": false
+      },
+      "permissionCheck": {
+        "userPermissions": ["read:products", "read:profile"],
+        "requiredPermissions": ["read:customers"],
+        "passed": false
+      }
+    }
+  }
+}
+```
+
+#### Scenario 2: Operator Accessing Product Management
+
+**User Role**: Operator (Level 2)
+**Attempting**: `POST /api/products`
+**Required**: Role `Operator` + Permission `write:products`
+**Result**: ✅ **200 OK** - Both role and permission requirements met
+
+#### Scenario 3: Auditor Accessing Analytics
+
+**User Role**: Auditor (Level 2)
+**Attempting**: `GET /api/analytics/reports`
+**Required**: Role `SiteManager` + Permission `read:analytics`
+**Result**: ❌ **403 Forbidden** - Has permission but insufficient role level
+
+### Permission Best Practices
+
+#### For Users
+1. **Know Your Role**: Understand what permissions your role includes
+2. **Request Appropriately**: Don't attempt to access services outside your permissions
+3. **Report Issues**: If you need access to something, contact your administrator
+4. **Security Awareness**: Never share your authentication tokens
+
+#### For Administrators
+1. **Principle of Least Privilege**: Assign minimum required permissions
+2. **Regular Audits**: Review user roles and permissions quarterly
+3. **Permission Documentation**: Keep role-permission mappings up to date
+4. **Access Requests**: Establish clear process for permission escalation
+
+#### For Developers
+1. **Handle Authorization Errors**: Implement proper error handling for 403 responses
+2. **Permission Checking**: Validate permissions before making requests
+3. **Token Inspection**: Parse JWT tokens to understand user permissions
+4. **Graceful Degradation**: Hide unavailable features based on user permissions
+
+### Permission Escalation Process
+
+If you need additional permissions:
+
+1. **Identify Required Permission**: Determine exactly what permission you need
+2. **Business Justification**: Prepare justification for the access request
+3. **Contact Administrator**: Submit request through proper channels
+4. **Temporary vs Permanent**: Specify if access is temporary or permanent
+5. **Verification**: Test new permissions once granted
+
+### Troubleshooting Permission Issues
+
+#### Common Permission Errors
+
+| Error Code | Meaning | Solution |
+|------------|---------|----------|
+| `INSUFFICIENT_ROLE` | Role level too low | Contact admin for role upgrade |
+| `MISSING_PERMISSIONS` | Specific permission missing | Request specific permission |
+| `INSUFFICIENT_PRIVILEGES` | Both role and permission issues | Need both role and permission updates |
+
+#### Permission Debugging
+
+1. **Check JWT Token**: Verify your current permissions in the token
+2. **Test with Mock Services**: Use mock endpoints to verify permission logic
+3. **Review Documentation**: Confirm required permissions for endpoints
+4. **Contact Support**: Escalate complex permission issues
 
 ## Best Practices
 

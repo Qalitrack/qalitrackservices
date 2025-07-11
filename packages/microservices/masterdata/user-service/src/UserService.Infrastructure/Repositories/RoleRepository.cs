@@ -1,167 +1,165 @@
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Infrastructure.Data;
 
-namespace UserService.Infrastructure.Repositories;
-
-public class RoleRepository : Repository<Role>, IRoleRepository
+namespace UserService.Core.Services
 {
-    public RoleRepository(UserDbContext context) : base(context)
+    public class RoleRepository : IRoleRepository
     {
-    }
+        private readonly UserServiceDbContext _context;
 
-    public async Task<Role?> GetByNameAsync(string name)
-    {
-        return await _dbSet.FirstOrDefaultAsync(r => r.Name == name);
-    }
-
-    public async Task<Role?> GetWithPermissionsAsync(string roleId)
-    {
-        return await _dbSet
-            .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-            .FirstOrDefaultAsync(r => r.Id == roleId);
-    }
-
-    public async Task<IEnumerable<Role>> GetByOrganizationAsync(string organizationId)
-    {
-        return await _dbSet
-            .Where(r => r.OrganizationId == organizationId || r.Type == RoleType.System)
-            .OrderBy(r => r.Name)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Role>> GetSystemRolesAsync()
-    {
-        return await _dbSet
-            .Where(r => r.Type == RoleType.System && r.IsActive)
-            .OrderBy(r => r.Name)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Role>> GetDefaultRolesAsync()
-    {
-        return await _dbSet
-            .Where(r => r.IsDefault && r.IsActive)
-            .OrderBy(r => r.Name)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Role>> GetActiveRolesAsync()
-    {
-        return await _dbSet
-            .Where(r => r.IsActive)
-            .OrderBy(r => r.Name)
-            .ToListAsync();
-    }
-
-    public async Task<bool> IsRoleNameAvailableAsync(string name, string? organizationId)
-    {
-        var query = _dbSet.Where(r => r.Name == name);
-        
-        if (organizationId != null)
+        public RoleRepository(UserServiceDbContext context)
         {
-            query = query.Where(r => r.OrganizationId == organizationId);
-        }
-        else
-        {
-            query = query.Where(r => r.Type == RoleType.System);
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        return !await query.AnyAsync();
-    }
-
-    public async Task<IEnumerable<Permission>> GetRolePermissionsAsync(string roleId)
-    {
-        return await _context.RolePermissions
-            .Where(rp => rp.RoleId == roleId && rp.IsActive)
-            .Include(rp => rp.Permission)
-            .Select(rp => rp.Permission)
-            .ToListAsync();
-    }
-
-    public async Task AddRolePermissionAsync(string roleId, string permissionId)
-    {
-        var existingRolePermission = await _context.RolePermissions
-            .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-        if (existingRolePermission == null)
+        // CRUD Operations (inherited from IRepository<Role>)
+        public async Task<IEnumerable<Role>> GetAllAsync()
         {
+            return await _context.Roles.Where(r => !r.IsDeleted).ToListAsync();
+        }
+
+        public async Task<Role?> GetByIdAsync(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException("Role ID cannot be null or empty", nameof(id));
+                
+            return await _context.Roles.FirstOrDefaultAsync(r => r.Id == id && !r.IsDeleted);
+        }
+
+        public async Task<Role> CreateAsync(Role role)
+        {
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+
+            _context.Roles.Add(role);
+            await _context.SaveChangesAsync();
+            return role;
+        }
+
+        public async Task<Role?> UpdateAsync(Role role)
+        {
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+
+            var existingRole = await _context.Roles.FindAsync(role.Id);
+            if (existingRole != null)
+            {
+                existingRole.Name = role.Name;
+                existingRole.Description = role.Description;
+                existingRole.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return existingRole;
+            }
+
+            return null;
+        }
+
+        public async Task<bool> DeleteAsync(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException("Role ID cannot be null or empty", nameof(id));
+
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == id);
+            if (role != null)
+            {
+                role.IsDeleted = true;
+                role.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        // Role-Specific Methods
+        public async Task<Role?> GetByNameAsync(string roleName)
+        {
+            if (string.IsNullOrWhiteSpace(roleName))
+                throw new ArgumentException("Role name cannot be null or whitespace", nameof(roleName));
+
+            return await _context.Roles
+                .FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.ToLower() && !r.IsDeleted);
+        }
+
+        public async Task<bool> DoesRoleExistAsync(string roleName)
+        {
+            if (string.IsNullOrWhiteSpace(roleName))
+                throw new ArgumentException("Role name cannot be null or whitespace", nameof(roleName));
+
+            return await _context.Roles
+                .AnyAsync(r => r.Name.ToLower() == roleName.ToLower() && !r.IsDeleted);
+        }
+
+        public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
+        {
+            if (string.IsNullOrEmpty(roleId))
+                throw new ArgumentException("Role ID cannot be null or empty", nameof(roleId));
+
+            return await _context.RolePermissions
+                .Where(rp => rp.RoleId == roleId)
+                .Select(rp => rp.Permission)
+                .ToListAsync();
+        }
+
+        public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
+        {
+            if (string.IsNullOrEmpty(roleId))
+                throw new ArgumentException("Role ID cannot be null or empty", nameof(roleId));
+            if (string.IsNullOrEmpty(permissionId))
+                throw new ArgumentException("Permission ID cannot be null or empty", nameof(permissionId));
+
+            // Check if the role exists and is not deleted
+            var roleExists = await _context.Roles.AnyAsync(r => r.Id == roleId && !r.IsDeleted);
+            if (!roleExists)
+                return false;
+
+            // Check if the permission exists
+            var permissionExists = await _context.Permissions.AnyAsync(p => p.Id == permissionId);
+            if (!permissionExists)
+                return false;
+
+            // Check if the role already has this permission
+            var existingAssignment = await _context.RolePermissions
+                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+
+            if (existingAssignment != null)
+                return true; // Already assigned
+
             var rolePermission = new RolePermission
             {
-                Id = Guid.NewGuid().ToString(),
                 RoleId = roleId,
                 PermissionId = permissionId,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
-            await _context.RolePermissions.AddAsync(rolePermission);
-        }
-        else if (!existingRolePermission.IsActive)
-        {
-            existingRolePermission.IsActive = true;
-            existingRolePermission.UpdatedAt = DateTime.UtcNow;
-            _context.RolePermissions.Update(existingRolePermission);
-        }
-    }
-
-    public async Task RemoveRolePermissionAsync(string roleId, string permissionId)
-    {
-        var rolePermission = await _context.RolePermissions
-            .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-        if (rolePermission != null)
-        {
-            rolePermission.IsActive = false;
-            rolePermission.UpdatedAt = DateTime.UtcNow;
-            _context.RolePermissions.Update(rolePermission);
-        }
-    }
-
-    public async Task UpdateRolePermissionsAsync(string roleId, IEnumerable<string> permissionIds)
-    {
-        // Get current role permissions
-        var currentRolePermissions = await _context.RolePermissions
-            .Where(rp => rp.RoleId == roleId)
-            .ToListAsync();
-
-        // Deactivate all current permissions
-        foreach (var rp in currentRolePermissions)
-        {
-            rp.IsActive = false;
-            rp.UpdatedAt = DateTime.UtcNow;
+            _context.RolePermissions.Add(rolePermission);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        // Add or reactivate specified permissions
-        foreach (var permissionId in permissionIds)
+        public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
         {
-            var existingRolePermission = currentRolePermissions
-                .FirstOrDefault(rp => rp.PermissionId == permissionId);
+            if (string.IsNullOrEmpty(roleId))
+                throw new ArgumentException("Role ID cannot be null or empty", nameof(roleId));
+            if (string.IsNullOrEmpty(permissionId))
+                throw new ArgumentException("Permission ID cannot be null or empty", nameof(permissionId));
 
-            if (existingRolePermission != null)
+            var rolePermission = await _context.RolePermissions
+                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+
+            if (rolePermission != null)
             {
-                existingRolePermission.IsActive = true;
-                existingRolePermission.UpdatedAt = DateTime.UtcNow;
+                _context.RolePermissions.Remove(rolePermission);
+                await _context.SaveChangesAsync();
+                return true;
             }
-            else
-            {
-                var newRolePermission = new RolePermission
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    RoleId = roleId,
-                    PermissionId = permissionId,
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
 
-                await _context.RolePermissions.AddAsync(newRolePermission);
-            }
+            return false;
         }
-
-        _context.RolePermissions.UpdateRange(currentRolePermissions);
     }
 }

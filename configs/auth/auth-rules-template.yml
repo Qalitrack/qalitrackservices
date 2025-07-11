@@ -38,6 +38,7 @@ roles:
     Auditor: 2
     ClientAdmin: 2
     User: 1
+    Guest: 0
   
   descriptions:
     SuperAdmin: "System-wide administrative access"
@@ -47,6 +48,160 @@ roles:
     Auditor: "Read-only access for compliance and auditing"
     ClientAdmin: "Organization-specific administrative access"
     User: "Basic user access"
+    Guest: "Public access only"
+
+# Permission categories and definitions
+permissions:
+  categories:
+    read: "Read access to resources"
+    write: "Create and update resources"
+    delete: "Delete resources"
+    manage: "Full management capabilities"
+    admin: "Administrative operations"
+    system: "System-level operations"
+  
+  # Permission mappings by role
+  role_mappings:
+    Guest:
+      - "read:public"
+    
+    User:
+      - "read:public"
+      - "read:products"
+      - "read:profile"
+    
+    Operator:
+      - "read:public"
+      - "read:products"
+      - "read:profile"
+      - "write:products"
+      - "read:customers"
+      - "write:customers"
+      - "read:vehicles"
+      - "write:vehicles"
+      - "read:drivers"
+      - "write:drivers"
+      - "read:suppliers"
+      - "write:suppliers"
+      - "read:weight-data"
+      - "write:weight-data"
+      - "read:transactions"
+      - "write:transactions"
+    
+    Auditor:
+      - "read:public"
+      - "read:compliance"
+      - "read:analytics"
+      - "read:reports"
+      - "read:transactions"
+      - "read:archive"
+    
+    ClientAdmin:
+      - "read:public"
+      - "read:products"
+      - "read:profile"
+      - "write:products"
+      - "read:organizations"
+      - "write:organizations"
+      - "manage:organization"
+    
+    SiteManager:
+      - "read:public"
+      - "read:products"
+      - "read:profile"
+      - "write:products"
+      - "read:customers"
+      - "write:customers"
+      - "read:vehicles"
+      - "write:vehicles"
+      - "read:drivers"
+      - "write:drivers"
+      - "read:suppliers"
+      - "write:suppliers"
+      - "read:weight-data"
+      - "write:weight-data"
+      - "read:analytics"
+      - "read:compliance"
+      - "manage:site"
+      - "read:transactions"
+      - "write:transactions"
+    
+    Admin:
+      - "read:public"
+      - "read:products"
+      - "read:profile"
+      - "write:products"
+      - "delete:products"
+      - "read:customers"
+      - "write:customers"
+      - "delete:customers"
+      - "read:vehicles"
+      - "write:vehicles"
+      - "delete:vehicles"
+      - "read:drivers"
+      - "write:drivers"
+      - "delete:drivers"
+      - "read:suppliers"
+      - "write:suppliers"
+      - "delete:suppliers"
+      - "read:weight-data"
+      - "write:weight-data"
+      - "delete:weight-data"
+      - "read:users"
+      - "write:users"
+      - "manage:users"
+      - "read:organizations"
+      - "write:organizations"
+      - "manage:organizations"
+      - "read:compliance"
+      - "manage:compliance"
+      - "read:analytics"
+      - "read:transactions"
+      - "write:transactions"
+      - "read:archive"
+      - "write:archive"
+    
+    SuperAdmin:
+      - "read:public"
+      - "read:products"
+      - "read:profile"
+      - "write:products"
+      - "delete:products"
+      - "read:customers"
+      - "write:customers"
+      - "delete:customers"
+      - "read:vehicles"
+      - "write:vehicles"
+      - "delete:vehicles"
+      - "read:drivers"
+      - "write:drivers"
+      - "delete:drivers"
+      - "read:suppliers"
+      - "write:suppliers"
+      - "delete:suppliers"
+      - "read:weight-data"
+      - "write:weight-data"
+      - "delete:weight-data"
+      - "read:users"
+      - "write:users"
+      - "manage:users"
+      - "delete:users"
+      - "read:organizations"
+      - "write:organizations"
+      - "manage:organizations"
+      - "delete:organizations"
+      - "read:compliance"
+      - "manage:compliance"
+      - "read:analytics"
+      - "manage:analytics"
+      - "read:transactions"
+      - "write:transactions"
+      - "delete:transactions"
+      - "read:archive"
+      - "write:archive"
+      - "delete:archive"
+      - "manage:system"
+      - "admin:system"
 
 # Public endpoints (no authentication required)
 public_endpoints:
@@ -67,12 +222,15 @@ authorization_rules:
     rules:
       - path: "/api/users/{everything}"
         roles: ["User"]
+        permissions: ["read:profile"]
         description: "Basic user operations"
       - path: "/api/users/admin/{everything}"
         roles: ["Admin"]
+        permissions: ["manage:users"]
         description: "Administrative user operations"
       - path: "/api/users/roles/{everything}"
         roles: ["Admin"]
+        permissions: ["manage:users"]
         description: "Role management operations"
 
   # Organization Service - Organization management
@@ -83,9 +241,11 @@ authorization_rules:
     rules:
       - path: "/api/organizations/{everything}"
         roles: ["Admin"]
+        permissions: ["manage:organizations"]
         description: "Organization management - admin only"
       - path: "/api/organizations/sites/{everything}"
         roles: ["SiteManager"]
+        permissions: ["manage:site"]
         description: "Site management operations"
 
   # Vehicle Service - Fleet management
@@ -96,9 +256,11 @@ authorization_rules:
     rules:
       - path: "/api/vehicles/{everything}"
         roles: ["Operator"]
+        permissions: ["read:vehicles", "write:vehicles"]
         description: "Vehicle operations and management"
       - path: "/api/vehicles/admin/{everything}"
         roles: ["Admin"]
+        permissions: ["delete:vehicles"]
         description: "Vehicle administrative operations"
 
   # Driver Service - Driver management
@@ -109,9 +271,11 @@ authorization_rules:
     rules:
       - path: "/api/drivers/{everything}"
         roles: ["Operator"]
+        permissions: ["read:drivers", "write:drivers"]
         description: "Driver operations and management"
       - path: "/api/drivers/licenses/{everything}"
         roles: ["SiteManager"]
+        permissions: ["manage:site"]
         description: "Driver license management"
 
   # Product Service - Product catalog
@@ -122,9 +286,11 @@ authorization_rules:
     rules:
       - path: "/api/products/{everything}"
         roles: ["User"]
+        permissions: ["read:products"]
         description: "Product catalog access"
       - path: "/api/products/admin/{everything}"
         roles: ["Admin"]
+        permissions: ["write:products", "delete:products"]
         description: "Product administrative operations"
 
   # Customer Service - Customer management
@@ -135,9 +301,11 @@ authorization_rules:
     rules:
       - path: "/api/customers/{everything}"
         roles: ["Operator"]
+        permissions: ["read:customers", "write:customers"]
         description: "Customer operations"
       - path: "/api/customers/contracts/{everything}"
         roles: ["SiteManager"]
+        permissions: ["manage:site"]
         description: "Customer contract management"
 
   # Supplier Service - Supplier management
@@ -148,9 +316,11 @@ authorization_rules:
     rules:
       - path: "/api/suppliers/{everything}"
         roles: ["Operator"]
+        permissions: ["read:suppliers", "write:suppliers"]
         description: "Supplier operations"
       - path: "/api/suppliers/contracts/{everything}"
         roles: ["SiteManager"]
+        permissions: ["manage:site"]
         description: "Supplier contract management"
 
   # Weight Data Service - Weighbridge operations
@@ -161,12 +331,15 @@ authorization_rules:
     rules:
       - path: "/api/weight/measurements/{everything}"
         roles: ["Operator"]
+        permissions: ["read:weight-data", "write:weight-data"]
         description: "Weight measurement operations"
       - path: "/api/weight/corrections/{everything}"
         roles: ["SiteManager"]
+        permissions: ["manage:site"]
         description: "Weight correction and calibration"
       - path: "/api/weight/analytics/{everything}"
         roles: ["SiteManager"]
+        permissions: ["read:analytics"]
         description: "Weight data analytics"
 
   # Compliance Service - Regulatory compliance
@@ -177,12 +350,15 @@ authorization_rules:
     rules:
       - path: "/api/compliance/checks/{everything}"
         roles: ["Auditor"]
+        permissions: ["read:compliance"]
         description: "Compliance checking and validation"
       - path: "/api/compliance/reports/{everything}"
         roles: ["Auditor"]
+        permissions: ["read:reports"]
         description: "Compliance reporting"
       - path: "/api/compliance/admin/{everything}"
         roles: ["Admin"]
+        permissions: ["manage:compliance"]
         description: "Compliance administration"
 
   # Transaction Service - Business transactions
@@ -193,9 +369,11 @@ authorization_rules:
     rules:
       - path: "/api/transactions/{everything}"
         roles: ["Operator"]
+        permissions: ["read:transactions", "write:transactions"]
         description: "Transaction processing"
       - path: "/api/transactions/reports/{everything}"
         roles: ["Auditor"]
+        permissions: ["read:transactions"]
         description: "Transaction reporting"
 
   # Analytics Service - Business intelligence
@@ -206,9 +384,11 @@ authorization_rules:
     rules:
       - path: "/api/analytics/dashboard/{everything}"
         roles: ["SiteManager"]
+        permissions: ["read:analytics"]
         description: "Analytics dashboard access"
       - path: "/api/analytics/reports/{everything}"
         roles: ["SiteManager"]
+        permissions: ["read:analytics"]
         description: "Analytics reporting"
 
   # Archive Service - Data archival
@@ -219,9 +399,11 @@ authorization_rules:
     rules:
       - path: "/api/archive/{everything}"
         roles: ["Admin"]
+        permissions: ["read:archive", "write:archive"]
         description: "Archive management - admin only"
       - path: "/api/archive/search/{everything}"
         roles: ["Auditor"]
+        permissions: ["read:archive"]
         description: "Archive search and retrieval"
 
   # Data Sync Service - Multi-site synchronization
@@ -232,9 +414,11 @@ authorization_rules:
     rules:
       - path: "/api/sync/sessions/{everything}"
         roles: ["Admin"]
+        permissions: ["manage:system"]
         description: "Sync session management"
       - path: "/api/sync/sites/{everything}"
         roles: ["SiteManager"]
+        permissions: ["manage:site"]
         description: "Site synchronization"
 
 # Environment-specific overrides
@@ -244,10 +428,12 @@ environments:
     overrides:
       - path: "/api/*/admin/*"
         roles: ["SiteManager"] # Allow SiteManager in dev
+        permissions: ["manage:site"] # But still require appropriate permissions
         
   production:
     # Stricter rules for production
     additional_rules:
       - path: "/api/system/*"
         roles: ["SuperAdmin"]
+        permissions: ["admin:system"]
         description: "System administration - super admin only"
