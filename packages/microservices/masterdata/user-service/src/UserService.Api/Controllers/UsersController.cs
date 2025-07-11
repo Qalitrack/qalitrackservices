@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using UserService.Core.DTOs;
+using UserService.Core.DTOs.User;
 using UserService.Core.Interfaces;
 
 namespace UserService.Api.Controllers;
@@ -124,18 +124,5 @@ public class UsersController : BaseController
     /// <summary>
     /// Check if user name is available
     /// </summary>
-    [HttpGet("check-name/{name}")]
-    public async Task<IActionResult> CheckName(string name)
-    {
-        try
-        {
-            var available = await _userService.IsNameAvailableAsync(name);
-            return Ok(new { available }, available ? "Name is available" : "Name is not available");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error checking user name availability");
-            return InternalServerError("An error occurred while checking name");
-        }
-    }
+    
 }
