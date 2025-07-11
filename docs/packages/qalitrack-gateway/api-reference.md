@@ -43,14 +43,17 @@ Content-Type: application/json
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "Admin",
+  "roles": ["Admin"],
   "user": {
     "id": "user-uuid",
     "username": "admin",
     "email": "admin@example.com",
     "firstName": "John",
     "lastName": "Doe",
+    "role": "Admin",
     "roles": ["Admin"],
-    "permissions": ["manage:users", "read:products", "write:products"]
+    "permissions": ["manage:users", "read:products", "write:products", "delete:products", "read:customers", "write:customers"]
   },
   "expiresAt": "2025-07-08T15:30:00Z"
 }
@@ -68,6 +71,93 @@ Content-Type: application/json
 ```
 
 **Available Mock Roles**: `Guest`, `User`, `Operator`, `Auditor`, `SiteManager`, `Admin`, `SuperAdmin`
+
+## Authorization & Permissions
+
+The gateway implements a hybrid authorization model that enforces both **role-based** and **permission-based** access control.
+
+### Role Hierarchy
+
+| Role | Level | Description |
+|------|-------|-------------|
+| Guest | 0 | Public access only |
+| User | 1 | Basic user access |
+| Operator | 2 | Operational access for daily tasks |
+| Auditor | 2 | Read-only access for compliance |
+| ClientAdmin | 2 | Organization-specific admin access |
+| SiteManager | 3 | Management access to assigned sites |
+| Admin | 4 | Full administrative access |
+| SuperAdmin | 5 | System-wide administrative access |
+
+### Permission System
+
+Each role includes specific permissions that grant access to operations:
+
+#### Guest Permissions
+- `read:public` - Access to public information
+
+#### User Permissions  
+- `read:public` - Access to public information
+- `read:products` - View product catalog
+- `read:profile` - View own profile
+
+#### Operator Permissions
+- All User permissions plus:
+- `write:products` - Modify products
+- `read:customers`, `write:customers` - Customer management
+- `read:vehicles`, `write:vehicles` - Vehicle management
+- `read:drivers`, `write:drivers` - Driver management
+- `read:suppliers`, `write:suppliers` - Supplier management
+- `read:weight-data`, `write:weight-data` - Weight data operations
+- `read:transactions`, `write:transactions` - Transaction processing
+
+#### Admin Permissions
+- All Operator permissions plus:
+- `delete:products`, `delete:customers`, `delete:vehicles`, `delete:drivers`, `delete:suppliers`, `delete:weight-data` - Delete operations
+- `read:users`, `write:users`, `manage:users` - User management
+- `read:organizations`, `write:organizations`, `manage:organizations` - Organization management
+- `read:compliance`, `manage:compliance` - Compliance management
+- `read:analytics` - Analytics access
+- `read:archive`, `write:archive` - Archive management
+
+#### SuperAdmin Permissions
+- All Admin permissions plus:
+- `delete:users`, `delete:organizations`, `delete:transactions`, `delete:archive` - System-level deletions
+- `manage:system`, `admin:system` - System administration
+
+### Authorization Headers
+
+When making requests, the gateway forwards user information to downstream services via headers:
+
+```http
+Authorization: Bearer <jwt-token>
+X-User-Id: user-uuid
+X-User-Role: Admin
+X-User-Roles: Admin,User
+X-User-Permissions: manage:users,read:products,write:products
+```
+
+### Endpoint Access Control
+
+Each endpoint requires both a minimum role level AND specific permissions:
+
+```json
+{
+  "endpoint": "/api/products",
+  "requiredRole": "User",
+  "requiredPermissions": ["read:products"],
+  "description": "User role + read:products permission required"
+}
+```
+
+```json
+{
+  "endpoint": "/api/users/admin/123",
+  "requiredRole": "Admin", 
+  "requiredPermissions": ["manage:users"],
+  "description": "Admin role + manage:users permission required"
+}
+```
 
 ## Gateway Endpoints
 
@@ -228,9 +318,9 @@ PUT /api/users/{id}               → http://user-service:7001/api/users/{id}
 DELETE /api/users/{id}            → http://user-service:7001/api/users/{id}
 ```
 
-**Required Role**: 
-- GET: `User`
-- POST, PUT, DELETE: `Admin`
+**Required Authorization**: 
+- GET: Role `User` + Permission `read:profile`
+- POST, PUT, DELETE: Role `Admin` + Permission `manage:users`
 
 ### Master Data Services
 
@@ -244,10 +334,10 @@ PUT /api/products/{id}            → http://product-service:7005/api/products/{
 DELETE /api/products/{id}         → http://product-service:7005/api/products/{id}
 ```
 
-**Required Role**:
-- GET: `User`
-- POST, PUT: `Operator`
-- DELETE: `Admin`
+**Required Authorization**:
+- GET: Role `User` + Permission `read:products`
+- POST, PUT: Role `Operator` + Permission `write:products`
+- DELETE: Role `Admin` + Permission `delete:products`
 
 #### Customer Management
 ```http
@@ -259,7 +349,7 @@ PUT /api/customers/{id}           → http://customer-service:7008/api/customers
 DELETE /api/customers/{id}        → http://customer-service:7008/api/customers/{id}
 ```
 
-**Required Role**: `Operator`
+**Required Authorization**: Role `Operator` + Permission `read:customers`, `write:customers`
 
 #### Vehicle Management
 ```http
@@ -270,7 +360,7 @@ PUT /api/vehicles/{id}            → http://vehicle-service:7003/api/vehicles/{
 DELETE /api/vehicles/{id}         → http://vehicle-service:7003/api/vehicles/{id}
 ```
 
-**Required Role**: `Operator`
+**Required Authorization**: Role `Operator` + Permission `read:vehicles`, `write:vehicles`
 
 ### Operational Services
 
@@ -283,7 +373,7 @@ GET /api/weight-data/{id}         → http://weight-data-service:7012/api/weight
 PUT /api/weight-data/{id}         → http://weight-data-service:7012/api/weight-data/{id}
 ```
 
-**Required Role**: `Operator`
+**Required Authorization**: Role `Operator` + Permission `read:weight-data`, `write:weight-data`
 
 #### Transaction Processing
 ```http
@@ -294,7 +384,7 @@ GET /api/transactions/{id}        → http://transaction-service:7015/api/transa
 PUT /api/transactions/{id}        → http://transaction-service:7015/api/transactions/{id}
 ```
 
-**Required Role**: `Operator`
+**Required Authorization**: Role `Operator` + Permission `read:transactions`, `write:transactions`
 
 ### Analytics and Reporting
 
@@ -306,7 +396,7 @@ GET /api/compliance/status        → http://compliance-service:7013/api/complia
 GET /api/compliance/violations    → http://compliance-service:7013/api/compliance/violations
 ```
 
-**Required Role**: `Auditor`
+**Required Authorization**: Role `Auditor` + Permission `read:compliance`
 
 #### Business Analytics
 ```http
@@ -316,7 +406,7 @@ GET /api/analytics/operations     → http://analytics-service:7016/api/analytic
 GET /api/analytics/performance    → http://analytics-service:7016/api/analytics/performance
 ```
 
-**Required Role**: `SiteManager`
+**Required Authorization**: Role `SiteManager` + Permission `read:analytics`
 
 ### Organization Management
 ```http
@@ -327,7 +417,7 @@ PUT /api/organizations/{id}       → http://organization-service:7002/api/organ
 DELETE /api/organizations/{id}    → http://organization-service:7002/api/organizations/{id}
 ```
 
-**Required Role**: `Admin`
+**Required Authorization**: Role `Admin` + Permission `manage:organizations`
 
 ## Status Codes
 
@@ -343,7 +433,7 @@ DELETE /api/organizations/{id}    → http://organization-service:7002/api/organ
 |------|-------------|---------------|
 | **400** | Bad Request | Invalid request format, missing fields |
 | **401** | Unauthorized | Missing/invalid JWT token, token expired |
-| **403** | Forbidden | Insufficient role privileges |
+| **403** | Forbidden | Insufficient role or missing permissions |
 | **404** | Not Found | Service unavailable, invalid endpoint |
 | **409** | Conflict | Duplicate data, business rule violation |
 | **422** | Unprocessable Entity | Validation errors |
@@ -364,10 +454,12 @@ DELETE /api/organizations/{id}    → http://organization-service:7002/api/organ
 {
   "error": {
     "code": "INSUFFICIENT_PRIVILEGES",
-    "message": "User does not have required role for this operation",
+    "message": "User does not have required permissions for this operation",
     "details": {
       "requiredRole": "Admin",
-      "userRoles": ["User"],
+      "requiredPermissions": ["manage:users"],
+      "userRole": "User",
+      "userPermissions": ["read:profile", "read:products"],
       "endpoint": "/api/users/admin"
     },
     "timestamp": "2025-07-08T10:30:00Z",
@@ -393,15 +485,58 @@ DELETE /api/organizations/{id}    → http://organization-service:7002/api/organ
 ```
 
 #### Authorization Errors
+
+**Role-based Authorization Error:**
 ```json
 {
   "error": {
-    "code": "INSUFFICIENT_PRIVILEGES", 
+    "code": "INSUFFICIENT_ROLE", 
     "message": "User role 'User' does not meet minimum requirement 'Operator'",
     "details": {
+      "userRole": "User",
       "userLevel": 1,
+      "requiredRole": "Operator",
       "requiredLevel": 2,
       "service": "CustomerService"
+    }
+  }
+}
+```
+
+**Permission-based Authorization Error:**
+```json
+{
+  "error": {
+    "code": "MISSING_PERMISSIONS",
+    "message": "User lacks required permissions for this operation",
+    "details": {
+      "requiredPermissions": ["read:customers", "write:customers"],
+      "userPermissions": ["read:products", "read:profile"],
+      "missingPermissions": ["read:customers", "write:customers"],
+      "endpoint": "/api/customers"
+    }
+  }
+}
+```
+
+**Hybrid Authorization Error (Role + Permission):**
+```json
+{
+  "error": {
+    "code": "INSUFFICIENT_PRIVILEGES",
+    "message": "User does not meet both role and permission requirements",
+    "details": {
+      "roleCheck": {
+        "userRole": "User",
+        "requiredRole": "Operator", 
+        "passed": false
+      },
+      "permissionCheck": {
+        "userPermissions": ["read:products"],
+        "requiredPermissions": ["read:customers"],
+        "passed": false
+      },
+      "endpoint": "/api/customers"
     }
   }
 }

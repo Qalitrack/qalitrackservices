@@ -271,17 +271,17 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
     #region Permission-Based Tests
 
     [Theory]
-    [InlineData("read:public", "/api/products")]
-    [InlineData("read:products", "/api/products")]
-    [InlineData("read:customers", "/api/customers")]
-    [InlineData("read:vehicles", "/api/vehicles")]
-    [InlineData("read:compliance", "/api/compliance")]
-    [InlineData("read:analytics", "/api/analytics")]
-    public async Task Permissions_ShouldAllowAccessToCorrespondingEndpoints(string permission, string endpoint)
+    [InlineData("read:public", "/api/products", "User")]
+    [InlineData("read:products", "/api/products", "User")]
+    [InlineData("read:customers", "/api/customers", "Operator")]
+    [InlineData("read:vehicles", "/api/vehicles", "Operator")]
+    [InlineData("read:compliance", "/api/compliance", "Auditor")]
+    [InlineData("read:analytics", "/api/analytics", "SiteManager")]
+    public async Task Permissions_ShouldAllowAccessToCorrespondingEndpoints(string permission, string endpoint, string role)
     {
         // Arrange
         var token = GenerateJwtToken(Guid.NewGuid(), "testuser", "test@example.com", 
-            new[] { "User" }, new[] { permission });
+            new[] { role }, new[] { permission });
 
         _client.DefaultRequestHeaders.Authorization = 
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -291,7 +291,7 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
 
         // Assert
         response.StatusCode.Should().NotBe(HttpStatusCode.Forbidden,
-            $"User with permission '{permission}' should access {endpoint}");
+            $"User with role '{role}' and permission '{permission}' should access {endpoint}");
     }
 
     #endregion
@@ -304,12 +304,36 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
         {
             "Guest" => new[] { "read:public" },
             "User" => new[] { "read:public", "read:products", "read:profile" },
-            "Operator" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "read:customers", "read:vehicles", "read:drivers" },
+            "Operator" => new[] { 
+                "read:public", "read:products", "read:profile", "write:products", 
+                "read:customers", "write:customers", "read:vehicles", "write:vehicles",
+                "read:drivers", "write:drivers", "read:suppliers", "write:suppliers",
+                "read:weight-data", "write:weight-data"
+            },
             "Auditor" => new[] { "read:public", "read:compliance", "read:analytics", "read:reports" },
-            "ClientAdmin" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "manage:organization" },
-            "SiteManager" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "write:orders", "read:analytics", "manage:site" },
-            "Admin" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "write:orders", "delete:products", "manage:users", "read:analytics", "manage:system" },
-            "SuperAdmin" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:orders", "write:orders", "delete:products", "manage:users", "read:analytics", "manage:system", "delete:orders", "manage:global" },
+            "ClientAdmin" => new[] { "read:public", "read:products", "read:profile", "write:products", "manage:organization" },
+            "SiteManager" => new[] { "read:public", "read:products", "read:profile", "write:products", "read:analytics", "manage:site" },
+            "Admin" => new[] { 
+                "read:public", "read:products", "read:profile", "write:products", "delete:products",
+                "read:customers", "write:customers", "delete:customers",
+                "read:vehicles", "write:vehicles", "delete:vehicles",
+                "read:drivers", "write:drivers", "delete:drivers",
+                "read:suppliers", "write:suppliers", "delete:suppliers",
+                "read:weight-data", "write:weight-data", "delete:weight-data",
+                "read:users", "write:users", "manage:users",
+                "read:organizations", "write:organizations"
+            },
+            "SuperAdmin" => new[] { 
+                "read:public", "read:products", "read:profile", "write:products", "delete:products",
+                "read:customers", "write:customers", "delete:customers",
+                "read:vehicles", "write:vehicles", "delete:vehicles",
+                "read:drivers", "write:drivers", "delete:drivers",
+                "read:suppliers", "write:suppliers", "delete:suppliers",
+                "read:weight-data", "write:weight-data", "delete:weight-data",
+                "read:users", "write:users", "manage:users", "delete:users",
+                "read:organizations", "write:organizations", "manage:organizations", "delete:organizations",
+                "manage:system", "read:analytics", "read:compliance", "manage:compliance"
+            },
             _ => new[] { "read:public" }
         };
     }
@@ -322,24 +346,15 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
         
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new("username", username),
-            new(JwtRegisteredClaimNames.Email, email)
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new(ClaimTypes.Name, username),
+            new(ClaimTypes.Email, email),
+            new(ClaimTypes.Role, roles.FirstOrDefault() ?? "Guest"), // Primary role (backward compatibility)
+            new("roles", string.Join(",", roles)), // All roles (comma-separated)
+            new("permissions", string.Join(",", permissions)), // All permissions (comma-separated)
+            new("first_name", "Test"),
+            new("last_name", "User")
         };
-
-        // Add roles
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-            claims.Add(new Claim("role", role)); // Both formats for compatibility
-        }
-
-        // Add permissions
-        foreach (var permission in permissions)
-        {
-            claims.Add(new Claim("permissions", permission));
-        }
 
         var now = DateTime.UtcNow;
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -368,6 +383,9 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:0:DownstreamHostAndPorts:0:Port"] = "7005",
             ["Routes:0:DownstreamScheme"] = "http",
             ["Routes:0:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:0:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:0:Metadata:RequiredPermissions:0"] = "read:products",
+            ["Routes:0:Metadata:ServiceName"] = "ProductService",
             
             ["Routes:1:UpstreamPathTemplate"] = "/api/products",
             ["Routes:1:DownstreamPathTemplate"] = "/api/products",
@@ -375,6 +393,9 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:1:DownstreamHostAndPorts:0:Port"] = "7005",
             ["Routes:1:DownstreamScheme"] = "http",
             ["Routes:1:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:1:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:1:Metadata:RequiredPermissions:0"] = "read:products",
+            ["Routes:1:Metadata:ServiceName"] = "ProductService",
 
             // Customer Service
             ["Routes:2:UpstreamPathTemplate"] = "/api/customers/{everything}",
@@ -383,6 +404,9 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:2:DownstreamHostAndPorts:0:Port"] = "7008",
             ["Routes:2:DownstreamScheme"] = "http",
             ["Routes:2:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:2:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:2:Metadata:RequiredPermissions:0"] = "read:customers",
+            ["Routes:2:Metadata:ServiceName"] = "CustomerService",
 
             ["Routes:3:UpstreamPathTemplate"] = "/api/customers",
             ["Routes:3:DownstreamPathTemplate"] = "/api/customers",
@@ -390,6 +414,9 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:3:DownstreamHostAndPorts:0:Port"] = "7008",
             ["Routes:3:DownstreamScheme"] = "http",
             ["Routes:3:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:3:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:3:Metadata:RequiredPermissions:0"] = "read:customers",
+            ["Routes:3:Metadata:ServiceName"] = "CustomerService",
 
             // User Service
             ["Routes:4:UpstreamPathTemplate"] = "/api/users/{everything}",
@@ -398,6 +425,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:4:DownstreamHostAndPorts:0:Port"] = "7001",
             ["Routes:4:DownstreamScheme"] = "http",
             ["Routes:4:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:4:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:4:Metadata:ServiceName"] = "UserService",
 
             ["Routes:5:UpstreamPathTemplate"] = "/api/users",
             ["Routes:5:DownstreamPathTemplate"] = "/api/users",
@@ -405,6 +434,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:5:DownstreamHostAndPorts:0:Port"] = "7001",
             ["Routes:5:DownstreamScheme"] = "http",
             ["Routes:5:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:5:Metadata:RequiredRoles:0"] = "User",
+            ["Routes:5:Metadata:ServiceName"] = "UserService",
 
             // Vehicle Service
             ["Routes:6:UpstreamPathTemplate"] = "/api/vehicles/{everything}",
@@ -413,6 +444,9 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:6:DownstreamHostAndPorts:0:Port"] = "7003",
             ["Routes:6:DownstreamScheme"] = "http",
             ["Routes:6:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:6:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:6:Metadata:RequiredPermissions:0"] = "read:vehicles",
+            ["Routes:6:Metadata:ServiceName"] = "VehicleService",
 
             // Driver Service
             ["Routes:7:UpstreamPathTemplate"] = "/api/drivers/{everything}",
@@ -421,6 +455,8 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:7:DownstreamHostAndPorts:0:Port"] = "7004",
             ["Routes:7:DownstreamScheme"] = "http",
             ["Routes:7:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:7:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:7:Metadata:ServiceName"] = "DriverService",
 
             // Supplier Service
             ["Routes:8:UpstreamPathTemplate"] = "/api/suppliers/{everything}",
@@ -429,6 +465,167 @@ public class RoleMatrixTests : IClassFixture<WebApplicationFactory<Program>>
             ["Routes:8:DownstreamHostAndPorts:0:Port"] = "7009",
             ["Routes:8:DownstreamScheme"] = "http",
             ["Routes:8:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:8:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:8:Metadata:ServiceName"] = "SupplierService",
+
+            ["Routes:9:UpstreamPathTemplate"] = "/api/suppliers",
+            ["Routes:9:DownstreamPathTemplate"] = "/api/suppliers",
+            ["Routes:9:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:9:DownstreamHostAndPorts:0:Port"] = "7009",
+            ["Routes:9:DownstreamScheme"] = "http",
+            ["Routes:9:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:9:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:9:Metadata:ServiceName"] = "SupplierService",
+
+            // Vehicles Service
+            ["Routes:10:UpstreamPathTemplate"] = "/api/vehicles",
+            ["Routes:10:DownstreamPathTemplate"] = "/api/vehicles",
+            ["Routes:10:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:10:DownstreamHostAndPorts:0:Port"] = "7003",
+            ["Routes:10:DownstreamScheme"] = "http",
+            ["Routes:10:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:10:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:10:Metadata:RequiredPermissions:0"] = "read:vehicles",
+            ["Routes:10:Metadata:ServiceName"] = "VehicleService",
+
+            // Drivers Service
+            ["Routes:11:UpstreamPathTemplate"] = "/api/drivers",
+            ["Routes:11:DownstreamPathTemplate"] = "/api/drivers",
+            ["Routes:11:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:11:DownstreamHostAndPorts:0:Port"] = "7004",
+            ["Routes:11:DownstreamScheme"] = "http",
+            ["Routes:11:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:11:Metadata:RequiredRoles:0"] = "Operator",
+            ["Routes:11:Metadata:ServiceName"] = "DriverService",
+
+            // Compliance Service
+            ["Routes:12:UpstreamPathTemplate"] = "/api/compliance",
+            ["Routes:12:DownstreamPathTemplate"] = "/api/compliance",
+            ["Routes:12:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:12:DownstreamHostAndPorts:0:Port"] = "7013",
+            ["Routes:12:DownstreamScheme"] = "http",
+            ["Routes:12:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:12:Metadata:RequiredRoles:0"] = "Auditor",
+            ["Routes:12:Metadata:RequiredPermissions:0"] = "read:compliance",
+            ["Routes:12:Metadata:ServiceName"] = "ComplianceService",
+
+            // Analytics Service
+            ["Routes:13:UpstreamPathTemplate"] = "/api/analytics",
+            ["Routes:13:DownstreamPathTemplate"] = "/api/analytics",
+            ["Routes:13:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:13:DownstreamHostAndPorts:0:Port"] = "7016",
+            ["Routes:13:DownstreamScheme"] = "http",
+            ["Routes:13:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:13:Metadata:RequiredRoles:0"] = "SiteManager",
+            ["Routes:13:Metadata:RequiredPermissions:0"] = "read:analytics",
+            ["Routes:13:Metadata:ServiceName"] = "AnalyticsService",
+
+            // Organizations Service
+            ["Routes:14:UpstreamPathTemplate"] = "/api/organizations",
+            ["Routes:14:DownstreamPathTemplate"] = "/api/organizations",
+            ["Routes:14:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:14:DownstreamHostAndPorts:0:Port"] = "7002",
+            ["Routes:14:DownstreamScheme"] = "http",
+            ["Routes:14:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:14:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:14:Metadata:ServiceName"] = "OrganizationService",
+
+            // Organizations Service with {everything} pattern
+            ["Routes:22:UpstreamPathTemplate"] = "/api/organizations/{everything}",
+            ["Routes:22:DownstreamPathTemplate"] = "/api/{everything}",
+            ["Routes:22:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:22:DownstreamHostAndPorts:0:Port"] = "7002",
+            ["Routes:22:DownstreamScheme"] = "http",
+            ["Routes:22:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:22:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:22:Metadata:ServiceName"] = "OrganizationService",
+
+            // Analytics Service with {everything} pattern
+            ["Routes:23:UpstreamPathTemplate"] = "/api/analytics/{everything}",
+            ["Routes:23:DownstreamPathTemplate"] = "/api/{everything}",
+            ["Routes:23:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:23:DownstreamHostAndPorts:0:Port"] = "7016",
+            ["Routes:23:DownstreamScheme"] = "http",
+            ["Routes:23:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:23:Metadata:RequiredRoles:0"] = "SiteManager",
+            ["Routes:23:Metadata:RequiredPermissions:0"] = "read:analytics",
+            ["Routes:23:Metadata:ServiceName"] = "AnalyticsService",
+
+            // Archive Service (for SiteManager tests)
+            ["Routes:24:UpstreamPathTemplate"] = "/api/archive",
+            ["Routes:24:DownstreamPathTemplate"] = "/api/archive",
+            ["Routes:24:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:24:DownstreamHostAndPorts:0:Port"] = "7018",
+            ["Routes:24:DownstreamScheme"] = "http",
+            ["Routes:24:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:24:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:24:Metadata:ServiceName"] = "ArchiveService",
+
+            // Archive Service with {everything} pattern
+            ["Routes:25:UpstreamPathTemplate"] = "/api/archive/{everything}",
+            ["Routes:25:DownstreamPathTemplate"] = "/api/{everything}",
+            ["Routes:25:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:25:DownstreamHostAndPorts:0:Port"] = "7018",
+            ["Routes:25:DownstreamScheme"] = "http",
+            ["Routes:25:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:25:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:25:Metadata:ServiceName"] = "ArchiveService",
+
+            // Admin endpoint routes
+            ["Routes:15:UpstreamPathTemplate"] = "/api/products/admin",
+            ["Routes:15:DownstreamPathTemplate"] = "/api/products/admin",
+            ["Routes:15:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:15:DownstreamHostAndPorts:0:Port"] = "7005",
+            ["Routes:15:DownstreamScheme"] = "http",
+            ["Routes:15:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:15:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:15:Metadata:ServiceName"] = "ProductService",
+
+            ["Routes:16:UpstreamPathTemplate"] = "/api/customers/admin",
+            ["Routes:16:DownstreamPathTemplate"] = "/api/customers/admin",
+            ["Routes:16:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:16:DownstreamHostAndPorts:0:Port"] = "7008",
+            ["Routes:16:DownstreamScheme"] = "http",
+            ["Routes:16:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:16:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:16:Metadata:ServiceName"] = "CustomerService",
+
+            ["Routes:17:UpstreamPathTemplate"] = "/api/users/admin",
+            ["Routes:17:DownstreamPathTemplate"] = "/api/users/admin",
+            ["Routes:17:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:17:DownstreamHostAndPorts:0:Port"] = "7001",
+            ["Routes:17:DownstreamScheme"] = "http",
+            ["Routes:17:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:17:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:17:Metadata:ServiceName"] = "UserService",
+
+            ["Routes:18:UpstreamPathTemplate"] = "/api/vehicles/admin",
+            ["Routes:18:DownstreamPathTemplate"] = "/api/vehicles/admin",
+            ["Routes:18:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:18:DownstreamHostAndPorts:0:Port"] = "7003",
+            ["Routes:18:DownstreamScheme"] = "http",
+            ["Routes:18:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+            ["Routes:18:Metadata:RequiredRoles:0"] = "Admin",
+            ["Routes:18:Metadata:ServiceName"] = "VehicleService",
+
+            // Public endpoints (no authentication required)
+            ["Routes:19:UpstreamPathTemplate"] = "/health",
+            ["Routes:19:DownstreamPathTemplate"] = "/health",
+            ["Routes:19:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:19:DownstreamHostAndPorts:0:Port"] = "7000",
+            ["Routes:19:DownstreamScheme"] = "http",
+
+            ["Routes:20:UpstreamPathTemplate"] = "/swagger",
+            ["Routes:20:DownstreamPathTemplate"] = "/swagger",
+            ["Routes:20:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:20:DownstreamHostAndPorts:0:Port"] = "7000",
+            ["Routes:20:DownstreamScheme"] = "http",
+
+            ["Routes:21:UpstreamPathTemplate"] = "/api/gateway/services",
+            ["Routes:21:DownstreamPathTemplate"] = "/api/gateway/services",
+            ["Routes:21:DownstreamHostAndPorts:0:Host"] = "localhost",
+            ["Routes:21:DownstreamHostAndPorts:0:Port"] = "7000",
+            ["Routes:21:DownstreamScheme"] = "http",
 
             // Global Configuration
             ["GlobalConfiguration:BaseUrl"] = "http://localhost:7000"

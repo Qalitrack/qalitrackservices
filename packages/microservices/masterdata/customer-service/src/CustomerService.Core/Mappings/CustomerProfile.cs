@@ -126,5 +126,35 @@ public class CustomerProfile : Profile
         CreateMap<CustomerPreference, CustomerPreferenceDto>();
         CreateMap<NotificationSettings, NotificationSettingsDto>();
         CreateMap<CommunicationPreferences, CommunicationPreferencesDto>();
+
+        // Order mappings
+        CreateMap<Order, OrderDto>()
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : ""))
+            .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Supplier != null ? src.Supplier.Name : ""))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.OrderType.ToString()));
+
+        CreateMap<Order, OrderSummaryDto>()
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : ""))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+        CreateMap<OrderStatusHistory, OrderStatusHistoryDto>()
+            .ForMember(dest => dest.FromStatus, opt => opt.MapFrom(src => src.FromStatus.ToString()))
+            .ForMember(dest => dest.ToStatus, opt => opt.MapFrom(src => src.ToStatus.ToString()));
+
+        CreateMap<CreateOrderDto, Order>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.OrderNumber, opt => opt.Ignore())
+            .ForMember(dest => dest.TotalAmount, opt => opt.Ignore())
+            .ForMember(dest => dest.OrderDate, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+            .ForMember(dest => dest.Customer, opt => opt.Ignore())
+            .ForMember(dest => dest.Supplier, opt => opt.Ignore())
+            .ForMember(dest => dest.StatusHistory, opt => opt.Ignore());
     }
 }

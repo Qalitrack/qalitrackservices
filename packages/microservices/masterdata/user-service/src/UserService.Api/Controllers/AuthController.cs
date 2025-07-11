@@ -1,275 +1,137 @@
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Core.DTOs;
 using UserService.Core.Interfaces;
+using UserService.Core.DTOs.Auth;
+using UserService.Core.DTOs.User;
+using UserService.Core.Entities;
+using System.Linq;
+using Serilog;
 
-namespace UserService.Api.Controllers;
-
+namespace UserService.Api.Controllers
+{
+    [ApiController]
 [Route("api/[controller]")]
 public class AuthController : BaseController
 {
-    private readonly IAuthenticationService _authService;
-    private readonly IValidator<RegisterRequestDto> _registerValidator;
-    private readonly IValidator<LoginRequestDto> _loginValidator;
-    private readonly ILogger<AuthController> _logger;
+    private readonly ITokenService _tokenService;
+    private readonly IUserService _userService;
+    private readonly ITokenRepository _tokenRepository;
 
     public AuthController(
-        IAuthenticationService authService,
-        IValidator<RegisterRequestDto> registerValidator,
-        IValidator<LoginRequestDto> loginValidator,
-        ILogger<AuthController> logger)
+        ITokenService tokenService, 
+        IUserService userService,
+        ITokenRepository tokenRepository)
     {
-        _authService = authService;
-        _registerValidator = registerValidator;
-        _loginValidator = loginValidator;
-        _logger = logger;
+        _tokenService = tokenService;
+        _userService = userService;
+        _tokenRepository = tokenRepository;
     }
 
-    /// <summary>
-    /// Authenticate user and return JWT tokens
-    /// </summary>
     [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         try
         {
-            var validationResult = await _loginValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Validation failed", validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+                return BadRequest(ModelState);
             }
 
-            var result = await _authService.LoginAsync(request);
-            return Ok(result, "Login successful");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(ex.Message);
+            var user = await _userService.ValidateUserCredentials(loginDto.Email, loginDto.Password);
+            
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Invalid email or password" });
+            }
+
+            if (user.Status != UserStatus.Active)
+            {
+                return Unauthorized(new { message = "Account is not active" });
+            }
+
+            var personalAccessToken = await _tokenService.GenerateTokenAsync(loginDto.Email, loginDto.Password);
+
+            var response = new LoginResponseDto
+            {
+                Token = personalAccessToken.Token,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Id = user.Id.ToString(),
+                Role = user.UserRoles?.FirstOrDefault()?.Role?.Name ?? "User",
+            };
+
+            return Ok(response);
+
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during login");
-            return InternalServerError("An error occurred during login");
+            Log.Error("An error occurred during login: " + ex.Message);
+            return StatusCode(500, new { message = "An error occurred during login", error = ex.Message });
         }
     }
 
-    /// <summary>
-    /// Register a new user account
-    /// </summary>
-    [HttpPost("register")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
-    {
-        try
-        {
-            var validationResult = await _registerValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest("Validation failed", validationResult.Errors.Select(e => e.ErrorMessage).ToList());
-            }
-
-            var result = await _authService.RegisterAsync(request);
-            return Created(result, "Registration successful");
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during registration");
-            return InternalServerError("An error occurred during registration");
-        }
-    }
-
-    /// <summary>
-    /// Refresh access token using refresh token
-    /// </summary>
-    [HttpPost("refresh")]
-    [AllowAnonymous]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto request)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(request.RefreshToken))
-            {
-                return BadRequest("Refresh token is required");
-            }
-
-            var result = await _authService.RefreshTokenAsync(request);
-            return Ok(result, "Token refreshed successfully");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during token refresh");
-            return InternalServerError("An error occurred during token refresh");
-        }
-    }
-
-    /// <summary>
-    /// Logout user and invalidate refresh token
-    /// </summary>
     [HttpPost("logout")]
-    [Authorize]
-    public async Task<IActionResult> Logout([FromBody] LogoutRequestDto request)
+    public async Task<ActionResult> Logout()
     {
         try
         {
-            await _authService.LogoutAsync(request);
-            return Ok<object?>(null, "Logout successful");
+            var token = ExtractTokenFromHeader();
+                
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { message = "No token provided" });
+            }
+
+            var isValidToken = await _tokenService.ValidateTokenAsync(token);
+            
+            if (!isValidToken)
+            {
+                return Unauthorized(new { message = "Invalid or expired token" });
+            }
+
+            var userId = await _tokenService.GetUserIdFromTokenAsync(token);
+                
+            if (userId == null)
+            {
+                return BadRequest(new { message = "Unable to identify user from token" });
+            }
+
+            Log.Information($"Extracted token: {token}");
+            Log.Information($"User ID from token: {userId}");
+
+            var revoked = await _tokenRepository.RevokeTokenAsync(userId.Value);
+            
+            if (revoked)
+            {
+                return (ActionResult)Ok(new { message = "Successfully logged out" });
+            }
+            else
+            {
+                return BadRequest(new { message = "Failed to revoke token" });
+            }
+
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during logout");
-            return InternalServerError("An error occurred during logout");
+            Log.Error("An error occurred during logout: " + ex.Message);
+            return StatusCode(500, new { message = "An error occurred during logout", error = ex.Message });
         }
     }
 
-    /// <summary>
-    /// Change user password
-    /// </summary>
-    [HttpPost("change-password")]
-    [Authorize]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto request)
+    private string? ExtractTokenFromHeader()
     {
-        try
+        var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+
+        if (!string.IsNullOrEmpty(authHeader))
         {
-            var userId = GetCurrentUserId();
-            if (string.IsNullOrEmpty(userId))
+            if (authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
             {
-                return Unauthorized("User not authenticated");
+                return authHeader.Substring("Bearer ".Length).Trim();
             }
-
-            if (request.NewPassword != request.ConfirmNewPassword)
-            {
-                return BadRequest("New passwords do not match");
-            }
-
-            var result = await _authService.ChangePasswordAsync(userId, request);
-            if (!result)
-            {
-                return BadRequest("Failed to change password. Please check your current password.");
-            }
-
-            return Ok<object?>(null, "Password changed successfully");
+            return authHeader.Trim();
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during password change");
-            return InternalServerError("An error occurred while changing password");
-        }
+
+        return null;
     }
-
-    /// <summary>
-    /// Request password reset
-    /// </summary>
-    [HttpPost("reset-password")]
-    [AllowAnonymous]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(request.Email))
-            {
-                return BadRequest("Email is required");
-            }
-
-            await _authService.ResetPasswordAsync(request);
-            return Ok<object?>(null, "Password reset email sent successfully");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during password reset request");
-            return InternalServerError("An error occurred while processing password reset");
-        }
-    }
-
-    /// <summary>
-    /// Confirm password reset with token
-    /// </summary>
-    [HttpPost("reset-password/confirm")]
-    [AllowAnonymous]
-    public async Task<IActionResult> ResetPasswordConfirm([FromBody] ResetPasswordConfirmDto request)
-    {
-        try
-        {
-            if (request.NewPassword != request.ConfirmNewPassword)
-            {
-                return BadRequest("Passwords do not match");
-            }
-
-            var result = await _authService.ResetPasswordConfirmAsync(request);
-            if (!result)
-            {
-                return BadRequest("Invalid or expired reset token");
-            }
-
-            return Ok<object?>(null, "Password reset successful");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during password reset confirmation");
-            return InternalServerError("An error occurred while resetting password");
-        }
-    }
-
-    /// <summary>
-    /// Confirm email address
-    /// </summary>
-    [HttpPost("confirm-email")]
-    [AllowAnonymous]
-    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto request)
-    {
-        try
-        {
-            var result = await _authService.ConfirmEmailAsync(request);
-            if (!result)
-            {
-                return BadRequest("Invalid confirmation token");
-            }
-
-            return Ok<object?>(null, "Email confirmed successfully");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during email confirmation");
-            return InternalServerError("An error occurred while confirming email");
-        }
-    }
-
-    /// <summary>
-    /// Resend email confirmation
-    /// </summary>
-    [HttpPost("resend-confirmation")]
-    [Authorize]
-    public async Task<IActionResult> ResendEmailConfirmation()
-    {
-        try
-        {
-            var userId = GetCurrentUserId();
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User not authenticated");
-            }
-
-            var result = await _authService.SendEmailConfirmationAsync(userId);
-            if (!result)
-            {
-                return BadRequest("Failed to send confirmation email");
-            }
-
-            return Ok<object?>(null, "Confirmation email sent successfully");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while resending email confirmation");
-            return InternalServerError("An error occurred while sending confirmation email");
-        }
-    }
+}
 }

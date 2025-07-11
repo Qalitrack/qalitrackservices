@@ -1,172 +1,109 @@
-# User Service
+# UserService
 
-The User Service is a comprehensive authentication and user management service for the QaliTrack system. It provides JWT-based authentication, role-based access control, and user management capabilities.
+UserService microservice for the QaliTrack platform.
+
+## Service Type: Masterdata
+
+This service was generated from the QaliTrack service template and follows clean architecture principles.
 
 ## Features
 
-- **Authentication & Authorization**
-  - JWT token-based authentication
-  - Refresh token mechanism
-  - Role-based access control (RBAC)
-  - Permission-based authorization
-  - Multi-factor authentication support
+- **Clean Architecture**: API, Core, and Infrastructure layers
+- **Entity Framework**: SQLite database with EF Core
+- **AutoMapper**: Object-to-object mapping
+- **Swagger/OpenAPI**: API documentation
+- **Logging**: Structured logging with Serilog
+- **Health Checks**: Built-in monitoring
 
-- **User Management**
-  - User registration and profile management
-  - Email confirmation and password reset
-  - Account lockout and security features
-  - User sessions management
+## Main Entity
 
-- **Organization Integration**
-  - Multi-tenant user management
-  - Organization-scoped roles and permissions
-  - User invitation system
-  - Organization membership management
+The primary entity for this service is `User`.
 
-- **Security Features**
-  - Password hashing with BCrypt
-  - Account lockout after failed login attempts
-  - Secure password requirements
-  - Session management and revocation
+## Getting Started
 
-## Technology Stack
+### Prerequisites
 
-- **.NET 8** - Framework
-- **Entity Framework Core** - ORM
-- **SQLite** - Development database
-- **JWT** - Authentication tokens
-- **AutoMapper** - Object mapping
-- **FluentValidation** - Input validation
-- **Serilog** - Logging
-- **Swagger/OpenAPI** - API documentation
+- .NET 8.0 SDK
+- SQLite (included)
+
+### Running the Service
+
+```bash
+# Build the service
+dotnet build
+
+# Run the service
+dotnet run --project src/UserService.Api
+
+# Access the API
+# Swagger UI: http://localhost:5000
+# Health Check: http://localhost:5000/health
+```
+
+### Development
+
+1. **Customize Entities**: Update entities in `src/UserService.Core/Entities/`
+2. **Add Business Logic**: Implement services in `src/UserService.Core/Services/`
+3. **Configure Database**: Modify `src/UserService.Infrastructure/Data/UserServiceDbContext.cs`
+4. **Add Controllers**: Create API endpoints in `src/UserService.Api/Controllers/`
+
+### API Endpoints
+
+The service provides RESTful endpoints for User management:
+
+- `GET /api/users` - Get all users
+- `GET /api/users/{id}` - Get user by ID
+- `POST /api/users` - Create new user
+- `PUT /api/users/{id}` - Update user
+- `DELETE /api/users/{id}` - Delete user
+
+### Integration with Gateway
+
+This service is designed to work with the QaliTrack API Gateway:
+
+- Routes are automatically configured
+- Health checks are exposed for monitoring
+- CORS is configured for cross-origin requests
 
 ## Project Structure
 
 ```
-src/
-├── UserService.Api/          # Web API controllers and configuration
-├── UserService.Core/         # Domain entities, DTOs, interfaces, and business logic
-└── UserService.Infrastructure/ # Data access, repositories, and external services
-
-tests/
-└── UserService.Tests/        # Unit and integration tests
+UserService/
+├── src/
+│   ├── UserService.Api/           # Web API layer
+│   ├── UserService.Core/          # Business logic
+│   └── UserService.Infrastructure/ # Data access
+├── tests/
+│   └── UserService.Tests/         # Unit & integration tests
+├── Dockerfile                          # Container configuration
+└── UserService.sln               # Solution file
 ```
-
-## Core Entities
-
-- **User** - Core user entity with authentication details
-- **Role** - System and organization roles
-- **Permission** - Granular permissions for resources and actions
-- **UserRole** - User-role assignments with organization scope
-- **UserSession** - Authentication session management
-- **UserProfile** - Extended user profile information
-- **OrganizationUser** - Organization membership details
-- **UserInvitation** - User invitation system
-
-## Key API Endpoints
-
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/refresh` - Token refresh
-- `POST /api/auth/logout` - User logout
-- `POST /api/auth/change-password` - Change password
-- `POST /api/auth/reset-password` - Password reset request
-- `POST /api/auth/confirm-email` - Email confirmation
-
-### User Management
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update user profile
-- `GET /api/users/roles` - Get user roles
-- `GET /api/users/sessions` - Get user sessions
-- `DELETE /api/users/sessions/{id}` - Revoke session
-
-### Utilities
-- `GET /api/users/check-username/{username}` - Check username availability
-- `GET /api/users/check-email/{email}` - Check email availability
-- `GET /health` - Health check endpoint
-
-## Configuration
-
-### JWT Settings
-```json
-{
-  "Jwt": {
-    "SecretKey": "YourSecretKeyHere",
-    "Issuer": "UserService",
-    "Audience": "UserService",
-    "AccessTokenExpirationMinutes": "60",
-    "RefreshTokenExpirationDays": "7"
-  }
-}
-```
-
-### Security Settings
-```json
-{
-  "Security": {
-    "MaxFailedAttempts": "5",
-    "LockoutMinutes": "30"
-  }
-}
-```
-
-## Running the Service
-
-1. **Development Environment:**
-   ```bash
-   dotnet run --project src/UserService.Api
-   ```
-
-2. **Access Swagger UI:**
-   Navigate to `https://localhost:7001` for API documentation
-
-3. **Health Check:**
-   Navigate to `https://localhost:7001/health`
-
-## Database
-
-The service uses SQLite for development and can be configured for PostgreSQL in production. The database is automatically created and seeded with default roles and permissions on startup.
-
-## Default Roles
-
-- **System Administrator** - Full system access
-- **User** - Basic user access (default)
-- **Organization Administrator** - Organization management
-- **Organization User** - Standard organization access (default)
-
-## Integration
-
-This service integrates with:
-- **Organization Service** - For organization management
-- **All Data Services** - For authentication context
-- **Audit Systems** - For user action tracking
-
-## Security Considerations
-
-- JWT tokens have configurable expiration times
-- Refresh tokens provide secure token renewal
-- Password requirements enforce strong passwords
-- Account lockout prevents brute force attacks
-- Session management allows centralized logout
-- All sensitive operations are logged
-
-## Development
-
-To extend the service:
-
-1. Add new entities to `UserService.Core/Entities/`
-2. Create corresponding DTOs in `UserService.Core/DTOs/`
-3. Implement repositories in `UserService.Infrastructure/Repositories/`
-4. Add business logic to `UserService.Core/Services/`
-5. Create API endpoints in `UserService.Api/Controllers/`
-6. Update AutoMapper profiles for new mappings
 
 ## Testing
 
-Run tests with:
 ```bash
+# Run all tests
 dotnet test
+
+# Run specific test project
+dotnet test tests/UserService.Tests
 ```
 
-Use the provided `UserService.Api.http` file for manual API testing.
+## Docker
+
+```bash
+# Build Docker image
+docker build -t userservice .
+
+# Run container
+docker run -p 5000:8080 userservice
+```
+
+## Contributing
+
+1. Follow clean architecture principles
+2. Add comprehensive tests
+3. Update documentation
+4. Follow naming conventions
+
+Generated with QaliTrack Service Template 🚀

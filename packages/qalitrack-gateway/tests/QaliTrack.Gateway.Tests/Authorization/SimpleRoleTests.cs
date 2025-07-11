@@ -33,6 +33,31 @@ public class SimpleRoleTests : IClassFixture<WebApplicationFactory<Program>>
                     ["Urls"] = "http://localhost:0", // Use dynamic port allocation
                     ["Kestrel:EndPoints:Http:Url"] = "http://localhost:0"
                 });
+                
+                // Add basic route configuration for testing
+                config.AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    // Product Service routes for testing
+                    ["Routes:0:UpstreamPathTemplate"] = "/api/products",
+                    ["Routes:0:DownstreamPathTemplate"] = "/api/products",
+                    ["Routes:0:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:0:DownstreamHostAndPorts:0:Port"] = "7005",
+                    ["Routes:0:DownstreamScheme"] = "http",
+                    ["Routes:0:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+                    ["Routes:0:Metadata:RequiredRoles:0"] = "User",
+                    ["Routes:0:Metadata:RequiredPermissions:0"] = "read:products",
+                    ["Routes:0:Metadata:ServiceName"] = "ProductService",
+                    
+                    // Health endpoint (public)
+                    ["Routes:1:UpstreamPathTemplate"] = "/health",
+                    ["Routes:1:DownstreamPathTemplate"] = "/health",
+                    ["Routes:1:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:1:DownstreamHostAndPorts:0:Port"] = "7000",
+                    ["Routes:1:DownstreamScheme"] = "http",
+                    
+                    // Global Configuration
+                    ["GlobalConfiguration:BaseUrl"] = "http://localhost:7000"
+                });
             });
             // Disable HTTPS redirection for tests
             builder.ConfigureServices(services =>

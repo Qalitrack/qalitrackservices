@@ -79,28 +79,15 @@ public abstract class BaseController : ControllerBase
         });
     }
 
-    protected string? GetCurrentUserId()
-    {
-        return User?.FindFirst("user_id")?.Value;
-    }
-
-    protected string? GetCurrentUserName()
-    {
-        return User?.FindFirst("username")?.Value;
-    }
-
-    protected List<string> GetCurrentUserRoles()
-    {
-        return User?.FindAll("role")?.Select(c => c.Value).ToList() ?? new List<string>();
-    }
-
-    protected List<string> GetCurrentUserOrganizations()
-    {
-        return User?.FindAll("organization")?.Select(c => c.Value).ToList() ?? new List<string>();
-    }
-
-    protected string? GetCurrentOrganization()
-    {
-        return User?.FindFirst("current_organization")?.Value;
-    }
+    // TODO: Add authentication-related helper methods if needed
+    // Example methods for JWT claims:
+    // protected string? GetCurrentUserId()
+    // {
+    //     return User?.FindFirst("user_id")?.Value;
+    // }
+    //
+    // protected string? GetCurrentUserName()
+    // {
+    //     return User?.FindFirst("username")?.Value;
+    // }
 }

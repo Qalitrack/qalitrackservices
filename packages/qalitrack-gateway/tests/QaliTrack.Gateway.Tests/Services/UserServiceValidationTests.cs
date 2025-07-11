@@ -31,6 +31,31 @@ public class UserServiceValidationTests : IClassFixture<WebApplicationFactory<Pr
                     ["Jwt:Audience"] = "UserService",
                     ["UserService:BaseUrl"] = "http://localhost:7001"
                 });
+                
+                // Add basic route configuration for testing
+                config.AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    // User Service routes for testing
+                    ["Routes:0:UpstreamPathTemplate"] = "/api/users/profile",
+                    ["Routes:0:DownstreamPathTemplate"] = "/api/users/profile",
+                    ["Routes:0:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:0:DownstreamHostAndPorts:0:Port"] = "7001",
+                    ["Routes:0:DownstreamScheme"] = "http",
+                    ["Routes:0:AuthenticationOptions:AuthenticationProviderKey"] = "Bearer",
+                    ["Routes:0:Metadata:RequiredRoles:0"] = "User",
+                    ["Routes:0:Metadata:RequiredPermissions:0"] = "read:profile",
+                    ["Routes:0:Metadata:ServiceName"] = "UserService",
+                    
+                    // Mock Auth routes for testing
+                    ["Routes:1:UpstreamPathTemplate"] = "/api/MockAuth/{everything}",
+                    ["Routes:1:DownstreamPathTemplate"] = "/api/MockAuth/{everything}",
+                    ["Routes:1:DownstreamHostAndPorts:0:Host"] = "localhost",
+                    ["Routes:1:DownstreamHostAndPorts:0:Port"] = "7001",
+                    ["Routes:1:DownstreamScheme"] = "http",
+                    
+                    // Global Configuration
+                    ["GlobalConfiguration:BaseUrl"] = "http://localhost:7000"
+                });
             });
         });
 
