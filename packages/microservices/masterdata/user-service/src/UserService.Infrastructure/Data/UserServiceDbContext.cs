@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using UserService.Core.Entities;
+using UserService.Core.Interfaces;
 
 namespace UserService.Infrastructure.Data;
 
@@ -9,36 +11,161 @@ public class UserServiceDbContext : DbContext
     {
     }
 
-    public DbSet<UserService.Core.Entities.User> Users { get; set; }
-    // TODO: Add additional DbSets for other entities
+    // DbSet properties
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Shift> Shifts { get; set; } = null!;
+    public DbSet<Permission> Permissions { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<RolePermission> RolePermissions { get; set; } = null!;
+    public DbSet<UserRole> UserRoles { get; set; } = null!;
+    public DbSet<UserShift> UserShifts { get; set; } = null!;
+    public DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure User entity
-        modelBuilder.Entity<UserService.Core.Entities.User>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Description).HasMaxLength(1000);
+        // Apply all configurations from the current assembly
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            entity.HasIndex(e => e.Name).IsUnique();
-        });
-
-        // TODO: Configure additional entities here
+        // Configure entity relationships and constraints
+        ConfigureUser(modelBuilder);
+        ConfigureRole(modelBuilder);
+        ConfigurePermission(modelBuilder);
+        ConfigureRolePermission(modelBuilder);
+        ConfigureUserRole(modelBuilder);
+        ConfigureShift(modelBuilder);
+        ConfigureUserShift(modelBuilder);
+        ConfigurePersonalAccessToken(modelBuilder);
 
         // Add global query filter for soft deletes
-        modelBuilder.Entity<UserService.Core.Entities.User>().HasQueryFilter(e => !e.IsDeleted);
-        // TODO: Add query filters for additional entities
-
-        // Seed default data if needed
-        // SeedData(modelBuilder);
+        modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Role>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Permission>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Shift>().HasQueryFilter(e => !e.IsDeleted);
     }
 
-    // TODO: Implement SeedData method if needed
-    // private void SeedData(ModelBuilder modelBuilder)
-    // {
-    //     // Add seed data here
-    // }
+    private static void ConfigureUser(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+            entity.HasIndex(e => e.Email).IsUnique();
+            entity.Property(e => e.Password).IsRequired();
+            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Status).HasDefaultValue(UserStatus.Active);
+        });
+    }
+
+    private static void ConfigureRole(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.Description).HasMaxLength(500);
+        });
+    }
+
+    private static void ConfigurePermission(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Permission>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.Description).HasMaxLength(500);
+        });
+    }
+
+    private static void ConfigureRolePermission(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.HasKey(rp => new { rp.RoleId, rp.PermissionId });
+            
+            entity.HasOne(rp => rp.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(rp => rp.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(rp => rp.Permission)
+                .WithMany(p => p.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureUserRole(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(ur => new { ur.UserId, ur.RoleId });
+            
+            entity.HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.Property(ur => ur.AssignedAt).HasDefaultValueSql("GETUTCDATE()");
+        });
+    }
+
+    private static void ConfigureShift(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Shift>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Mode).HasDefaultValue(ShiftMode.Open);
+            
+            // Configure IsActive as a computed property (not mapped to database)
+            entity.Ignore(e => e.IsActive);
+        });
+    }
+
+    private static void ConfigureUserShift(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<UserShift>(entity =>
+        {
+            entity.HasKey(us => new { us.UserId, us.ShiftId });
+            
+            entity.HasOne(us => us.User)
+                .WithMany(u => u.UserShifts)
+                .HasForeignKey(us => us.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(us => us.Shift)
+                .WithMany(s => s.UserShifts)
+                .HasForeignKey(us => us.ShiftId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.Property(us => us.AssignedAt).HasDefaultValueSql("GETUTCDATE()");
+        });
+    }
+
+    private static void ConfigurePersonalAccessToken(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PersonalAccessToken>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Token).IsRequired().HasMaxLength(255);
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.Property(e => e.IsRevoked).HasDefaultValue(false);
+            
+            entity.HasOne(pat => pat.User)
+                .WithMany(u => u.PersonalAccessTokens)
+                .HasForeignKey(pat => pat.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
 }

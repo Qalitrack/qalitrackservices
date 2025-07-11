@@ -9,5 +9,4 @@ public interface IRepository<T> where T : BaseEntity
     Task<T> CreateAsync(T entity);
     Task<T?> UpdateAsync(T entity);
     Task<bool> DeleteAsync(string id);
-    Task<bool> ExistsAsync(string id);
 }

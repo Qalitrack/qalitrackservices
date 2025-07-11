@@ -1,19 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+using UserService.Core.Interfaces;
+
 namespace UserService.Core.Entities;
 
 public class User : BaseEntity
-{
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+{   [Required]
+    public string FirstName { get; set; } = string.Empty;
+    [Required]
+    public string LastName { get; set; } = string.Empty;
+    [Required]
+    public string MobileNumber { get; set; } = string.Empty;
+    [Required]
+    public string Email { get; set; } = string.Empty;
+    [Required]
+    public string Password { get; set; } = string.Empty;
+    
     public UserStatus Status { get; set; } = UserStatus.Active;
-    
-    // TODO: Add domain-specific properties here
-    // Example properties (remove/modify as needed):
-    // public string Code { get; set; } = string.Empty;
-    // public DateTime? ValidFrom { get; set; }
-    // public DateTime? ValidTo { get; set; }
-    
-    // Navigation properties (modify as needed)
-    // public virtual ICollection<RelatedUser> RelatedUsers { get; set; } = new List<RelatedUser>();
+
+    // Navigation properties
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public virtual ICollection<UserShift> UserShifts { get; set; } = new List<UserShift>();  // New addition
+    public virtual ICollection<PersonalAccessToken> PersonalAccessTokens { get; set; } = new List<PersonalAccessToken>();
+
+
 }
 
 public enum UserStatus
