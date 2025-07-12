@@ -21,8 +21,7 @@ public class User : BaseEntity
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public virtual ICollection<UserShift> UserShifts { get; set; } = new List<UserShift>();  // New addition
     public virtual ICollection<PersonalAccessToken> PersonalAccessTokens { get; set; } = new List<PersonalAccessToken>();
-
-
+    public virtual ICollection<UserPermissions> UserPermissions { get; set; } = new List<UserPermissions>();
 }
 
 public enum UserStatus

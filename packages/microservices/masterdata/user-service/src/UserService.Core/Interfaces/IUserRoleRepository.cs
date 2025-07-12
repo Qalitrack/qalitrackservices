@@ -13,5 +13,12 @@ namespace UserService.Core.Interfaces
         Task<bool> DeleteAsync(string id);
         Task<bool> AssignRoleToUserAsync(string userId, string roleId);  // Assign role to user
         Task<bool> RemoveRoleFromUserAsync(string userId, string roleId);  // Remove role from user
+        // In IUserRepository.cs
+        public interface IUserRepository
+        {
+            // ... other methods ...
+            Task<IEnumerable<Permission>> GetUserPermissionsAsync(string userId);
+        }
+        
     }
 }

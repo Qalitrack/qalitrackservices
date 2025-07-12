@@ -1,3 +1,4 @@
+using System.Collections;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
@@ -14,4 +15,6 @@ public interface IUserService
     
     // TODO: Add domain-specific service methods here
     Task<User?> ValidateUserCredentials(string email, string password);
+    Task<bool> HasPermissionAsync(string userId, string permissionName);
+    Task<IEnumerable> GetUserPermissionsAsync(string? toString);
 }

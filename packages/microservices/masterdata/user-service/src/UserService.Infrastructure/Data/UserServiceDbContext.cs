@@ -20,6 +20,7 @@ public class UserServiceDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; } = null!;
     public DbSet<UserShift> UserShifts { get; set; } = null!;
     public DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; } = null!;
+    public DbSet<UserPermissions> UserPermissions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -165,6 +166,22 @@ public class UserServiceDbContext : DbContext
             entity.HasOne(pat => pat.User)
                 .WithMany(u => u.PersonalAccessTokens)
                 .HasForeignKey(pat => pat.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+    
+    public static void ConfigureUserPermissions(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<UserPermissions>(entity =>
+        {
+            entity.HasKey(up => new { up.UserId, up.Id });
+            entity.HasOne(up => up.User)
+                .WithMany(u => u.UserPermissions)
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(up => up.Permission)
+                .WithMany(p => p.UserPermissions)
+                .HasForeignKey(up => up.Id)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

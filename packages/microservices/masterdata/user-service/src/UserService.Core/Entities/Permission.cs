@@ -7,5 +7,6 @@ namespace UserService.Core.Entities
         
         // Navigation property for RolePermissions
         public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();  // Many-to-many relationship with Role
+        public virtual ICollection<UserPermissions> UserPermissions { get; set; } = new List<UserPermissions>();  // Many-to-many relationship with User
     }
 }
