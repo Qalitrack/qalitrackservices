@@ -1,3 +1,4 @@
+using System.Collections;
 using Microsoft.EntityFrameworkCore;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
@@ -13,7 +14,17 @@ namespace UserService.Infrastructure.Repositories
         {
             _context = context;
         }
-
+        // In IUserRepository.cs
+        // In UserRepository.cs
+        async Task<IEnumerable> IUserRepository.GetUserPermissionsAsync(string userId)
+        {
+            return await _context.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .SelectMany(ur => ur.Role.RolePermissions)
+                .Select(rp => rp.Permission)
+                .Distinct()
+                .ToListAsync();
+        }
 
         public async Task<User?> GetByFirstNameAsync(string firstName)
         {
@@ -58,6 +69,19 @@ namespace UserService.Infrastructure.Repositories
         {
             return await _context.UserShifts
                 .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId);
+        }
+
+        public async Task<bool> HasPermissionAsync(string userId, string permissionName)
+        {
+            return await _context.UserPermissions
+                .AnyAsync(up => up.UserId == userId && up.PermissionName == permissionName);
+        }
+
+        public async Task<IEnumerable> GetUserPermissionsAsync(string? toString)
+        {
+            return await _context.UserPermissions
+                .Where(up => up.UserId == toString)
+                .ToListAsync(); 
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()

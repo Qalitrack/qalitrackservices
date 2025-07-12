@@ -54,7 +54,11 @@ namespace UserService.Infrastructure.Data
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "CreateUser", Description = "Permission to create users", CreatedAt = DateTime.UtcNow },
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "EditUser", Description = "Permission to edit users", CreatedAt = DateTime.UtcNow },
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "DeleteUser", Description = "Permission to delete users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "ViewReports", Description = "Permission to view reports", CreatedAt = DateTime.UtcNow }
+                    new Permission { Id = Guid.NewGuid().ToString(), Name = "ViewReports", Description = "Permission to view reports", CreatedAt = DateTime.UtcNow },
+                    //shiftpermissions
+                    new Permission { Id = Guid.NewGuid().ToString(), Name = "shifts.view", Description = "Permission to view shifts", CreatedAt = DateTime.UtcNow },
+                    new Permission { Id = Guid.NewGuid().ToString(), Name = "shifts.manage", Description = "Permission to manage shifts", CreatedAt = DateTime.UtcNow },
+                    new Permission { Id = Guid.NewGuid().ToString(), Name = "shifts.assign", Description = "Permission to assign shifts", CreatedAt = DateTime.UtcNow }
                 };
                 await context.Permissions.AddRangeAsync(permissions);
                 await context.SaveChangesAsync();
@@ -103,7 +107,9 @@ namespace UserService.Infrastructure.Data
                         StartTime = new TimeSpan(8, 0, 0), 
                         EndTime = new TimeSpan(16, 0, 0), 
                         CreatedAt = DateTime.UtcNow ,
-                        Mode=ShiftMode.Strict
+                        Mode = ShiftMode.Open,
+
+                         
                     },
                     new Shift { Id = Guid.NewGuid().ToString(), Name = "Evening Shift", StartTime = new TimeSpan(16, 0, 0), EndTime = new TimeSpan(0, 0, 0), CreatedAt = DateTime.UtcNow }
                 };

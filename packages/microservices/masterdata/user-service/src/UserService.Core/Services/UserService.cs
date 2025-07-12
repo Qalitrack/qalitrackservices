@@ -1,3 +1,4 @@
+using System.Collections;
 using AutoMapper;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Shift;
@@ -96,6 +97,16 @@ namespace UserService.Core.Services
             await _userRepository.UpdateAsync(user);
 
             return user;
+        }
+
+        public async Task<bool> HasPermissionAsync(string userId, string permissionName)
+        {
+            return await _userRepository.HasPermissionAsync(userId, permissionName);
+        }
+
+        public async Task<IEnumerable> GetUserPermissionsAsync(string? toString)
+        {
+            return await _userRepository.GetUserPermissionsAsync(toString);
         }
 
 

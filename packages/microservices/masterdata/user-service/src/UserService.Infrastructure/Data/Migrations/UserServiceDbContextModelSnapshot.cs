@@ -230,6 +230,47 @@ namespace UserService.Infrastructure.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("UserService.Core.Entities.UserPermissions", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PermissionId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PermissionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPermissions");
+                });
+
             modelBuilder.Entity("UserService.Core.Entities.UserRole", b =>
                 {
                     b.Property<string>("UserId")
@@ -375,6 +416,25 @@ namespace UserService.Infrastructure.Data.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("UserService.Core.Entities.UserPermissions", b =>
+                {
+                    b.HasOne("UserService.Core.Entities.Permission", "Permission")
+                        .WithMany("UserPermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UserService.Core.Entities.User", "User")
+                        .WithMany("UserPermissions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("UserService.Core.Entities.UserRole", b =>
                 {
                     b.HasOne("UserService.Core.Entities.Role", "Role")
@@ -427,6 +487,8 @@ namespace UserService.Infrastructure.Data.Migrations
             modelBuilder.Entity("UserService.Core.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
+
+                    b.Navigation("UserPermissions");
                 });
 
             modelBuilder.Entity("UserService.Core.Entities.Role", b =>
@@ -444,6 +506,8 @@ namespace UserService.Infrastructure.Data.Migrations
             modelBuilder.Entity("UserService.Core.Entities.User", b =>
                 {
                     b.Navigation("PersonalAccessTokens");
+
+                    b.Navigation("UserPermissions");
 
                     b.Navigation("UserRoles");
 
