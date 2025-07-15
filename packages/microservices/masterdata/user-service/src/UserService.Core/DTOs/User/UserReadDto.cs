@@ -20,8 +20,14 @@ public class UserReadDto
     [JsonPropertyName("email")]
     public string Email { get; set; } = string.Empty;
 
-    [JsonPropertyName("status")]
-    public UserStatus Status { get; set; } = UserStatus.Active;
+    [JsonPropertyName("isActive")]
+    public bool IsActive { get; set; } = true;
+
+    [JsonPropertyName("isFirstLogin")]
+    public bool IsFirstLogin { get; set; } = false;
+
+    [JsonPropertyName("isDeleted")]
+    public bool IsDeleted { get; set; } = false;
 
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

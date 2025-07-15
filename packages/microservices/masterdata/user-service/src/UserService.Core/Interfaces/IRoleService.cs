@@ -1,6 +1,7 @@
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Permissions;
 using UserService.Core.DTOs.Roles;
+using UserService.Core.Entities;
 
 namespace UserService.Core.Interfaces
 {
@@ -9,8 +10,8 @@ namespace UserService.Core.Interfaces
         // CRUD Operations for Role
         Task<IEnumerable<RoleDto>> GetAllAsync();  // Get all roles
         Task<RoleDto?> GetByIdAsync(string id);   // Get role by ID
-        Task<RoleDto> CreateAsync(CreateRoleDto dto);  // Create a new role
-        Task<RoleDto?> UpdateAsync(string id, UpdateRoleDto dto);  // Update an existing role
+        Task<RoleDto> CreateAsync(DTOs.Roles.CreateRoleDto dto);  // Create a new role
+        Task<RoleDto?> UpdateAsync(string id, DTOs.Roles.UpdateRoleDto dto);  // Update an existing role
         Task<bool> DeleteAsync(string id);  // Soft delete a role (set IsDeleted = true)
 
         // Role-Specific Operations
@@ -18,5 +19,6 @@ namespace UserService.Core.Interfaces
         Task<IEnumerable<PermissionDto>> GetPermissionsForRoleAsync(string roleId);  // Get all permissions assigned to a role
         Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId);  // Assign a permission to a role
         Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);  // Remove a permission from a role
+        Task<IEnumerable<Role>> GetRolesByUserIdAsync(string userDtoId);
     }
 }

@@ -8,10 +8,10 @@ using UserService.Infrastructure.Data;
 
 #nullable disable
 
-namespace UserService.Infrastructure.Data.Migrations
+namespace UserService.Infrastructure.Migrations
 {
     [DbContext(typeof(UserServiceDbContext))]
-    [Migration("20250711230734_InitialCreate")]
+    [Migration("20250714073447_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -72,6 +72,9 @@ namespace UserService.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");

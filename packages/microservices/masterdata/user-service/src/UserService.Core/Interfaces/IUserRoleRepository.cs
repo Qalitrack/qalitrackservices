@@ -1,24 +1,23 @@
-using UserService.Core.Entities;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using UserService.Core.Entities;
 
 namespace UserService.Core.Interfaces
 {
     public interface IUserRoleRepository
     {
-        Task<IEnumerable<UserRole>> GetAllAsync();
-        Task<UserRole?> GetByIdAsync(string id);
-        Task<UserRole> CreateAsync(UserRole userRole);
-        Task<UserRole?> UpdateAsync(UserRole userRole);
-        Task<bool> DeleteAsync(string id);
-        Task<bool> AssignRoleToUserAsync(string userId, string roleId);  // Assign role to user
-        Task<bool> RemoveRoleFromUserAsync(string userId, string roleId);  // Remove role from user
-        // In IUserRepository.cs
-        public interface IUserRepository
-        {
-            // ... other methods ...
-            Task<IEnumerable<Permission>> GetUserPermissionsAsync(string userId);
-        }
-        
+     
+        Task<IEnumerable<UserRole>> GetAllAsync(CancellationToken cancellationToken = default); 
+        Task<UserRole?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+        Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default); Task<bool> AssignRoleToUserAsync(
+            string userId, 
+            string roleId, 
+            CancellationToken cancellationToken = default);
+        Task<bool> RemoveRoleFromUserAsync(
+            string userId, 
+            string roleId, 
+            CancellationToken cancellationToken = default);
     }
 }
