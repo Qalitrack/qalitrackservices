@@ -37,7 +37,7 @@ C4Context
         System_Ext(hardware_weighbridge, "Weighbridge Hardware", "Load cells, sensors, weight measurement")
         System_Ext(hardware_gates, "Gate Control Systems", "Access control, RFID vehicle detection, barriers")
         System_Ext(anpr_camera, "ANPR Camera System", "Automatic Number Plate Recognition for vehicle identification")
-        System_Ext(kiosk_system, "Self-Service Kiosk", "Unmanned weighing points, driver authorization via phase detection")
+        System_Ext(kiosk_system, "Self-Service Kiosk", "Unmanned weighing points, driver authorization via face detection")
         System_Ext(regulatory_kebs, "KEBS (Regulatory)", "Kenya Bureau of Standards - compliance")
         System_Ext(regulatory_ntsa, "NTSA (Regulatory)", "National Transport & Safety Authority")
         System_Ext(payment_mpesa, "M-Pesa Payment", "Mobile payment processing")
@@ -65,7 +65,7 @@ C4Context
     Rel_Back(hardware_weighbridge, qalitrack, "Sends weight data", "Serial/TCP - Real-time measurements")
     Rel_Back(hardware_gates, qalitrack, "Reports vehicle presence", "TCP/HTTP - RFID vehicle detection, access control")
     Rel_Back(anpr_camera, qalitrack, "Sends plate data", "HTTP/TCP - License plate recognition")
-    Rel_Back(kiosk_system, qalitrack, "Processes transactions", "HTTPS/REST - Unmanned weighing, phase detection auth")
+    Rel_Back(kiosk_system, qalitrack, "Processes transactions", "HTTPS/REST - Unmanned weighing, face detection auth")
     Rel(qalitrack, regulatory_kebs, "Submits compliance reports", "HTTPS - Monthly compliance data")
     Rel(qalitrack, regulatory_ntsa, "Validates vehicle licenses", "HTTPS - Vehicle registration checks")
     Rel(qalitrack, payment_mpesa, "Processes payments", "HTTPS API - Fee collection, invoices")
@@ -125,7 +125,7 @@ flowchart TB
         weighbridge["⚖️ Weighbridge Hardware<br/>Load cells, sensors<br/>Weight measurement"]
         gates["🚪 Gate Control Systems<br/>Access control, RFID vehicle detection<br/>Barrier systems"]
         anpr["📷 ANPR Camera<br/>License plate recognition<br/>Vehicle identification"]
-        kiosk["🖥️ Self-Service Kiosk<br/>Unmanned weighing<br/>Phase detection authorization"]
+        kiosk["🖥️ Self-Service Kiosk<br/>Unmanned weighing<br/>Face detection authorization"]
     end
     
     %% Bottom right - Communication Systems
@@ -160,7 +160,7 @@ flowchart TB
     weighbridge -->|"Sends weight data<br/>Serial/TCP"| qalitrack
     gates -->|"Reports vehicle presence<br/>TCP/HTTP - RFID detection"| qalitrack
     anpr -->|"Sends plate data<br/>HTTP/TCP"| qalitrack
-    kiosk -->|"Processes transactions<br/>HTTPS/REST - Phase detection auth"| qalitrack
+    kiosk -->|"Processes transactions<br/>HTTPS/REST - Face detection auth"| qalitrack
     
     %% Communication Integrations - Bottom Right
     qalitrack -->|"Processes payments<br/>HTTPS API"| mpesa
@@ -270,8 +270,8 @@ flowchart TB
 
 #### **🖥️ Self-Service Kiosk**
 - **Purpose**: Unmanned weighing points for automated transactions with driver authorization
-- **Integration**: Touch interface, phase detection authorization, payment processing, receipt printing
-- **Data Flow**: Driver input → Phase detection → Kiosk system → QaliTrack transaction processing
+- **Integration**: Touch interface, face detection authorization, payment processing, receipt printing
+- **Data Flow**: Driver input → Face detection → Kiosk system → QaliTrack transaction processing
 
 ### **Regulatory Systems**
 

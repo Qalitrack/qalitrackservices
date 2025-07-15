@@ -18,7 +18,7 @@ C4Container
     Container_Boundary(client_layer, "Client Applications") {
         Container(web_portal, "Web Portal", "React/TypeScript", "Main dashboard for operators and managers with real-time monitoring")
         Container(mobile_app, "Mobile App", "React Native", "Driver-focused app for vehicle registration and status updates")
-        Container(kiosk_app, "Self-Service Kiosk", "React/TypeScript", "Unmanned weighing with phase detection authorization")
+        Container(kiosk_app, "Self-Service Kiosk", "React/TypeScript", "Unmanned weighing with face detection authorization")
         Container(admin_panel, "Admin Panel", "React/TypeScript", "System administration, user management, and configuration")
     }
 
@@ -58,7 +58,7 @@ C4Container
         ContainerQueue(command_queue, "Command Queue", "RabbitMQ", "Command processing, background jobs, notifications")
     }
 
-    System_Ext(external_systems, "External Systems", "ERP (SAP ECC, S/4HANA), Hardware (Gate Control Systems with RFID vehicle detection, Self-Service Kiosk with phase detection authorization, ANPR Camera System with automatic number plate recognition), Regulatory, Payment systems")
+    System_Ext(external_systems, "External Systems", "ERP (SAP ECC, S/4HANA), Hardware (Gate Control Systems with RFID vehicle detection, Self-Service Kiosk with face detection authorization, ANPR Camera System with automatic number plate recognition), Regulatory, Payment systems")
 
     %% Client Layer Relationships
     Rel(user, web_portal, "Uses", "HTTPS")
@@ -139,14 +139,14 @@ C4Container
 ### **📱 Client Applications Layer**
 
 #### **Web Portal** (React/TypeScript)
-- **Purpose**: Primary interface for operators and managers
+- **Purpose**: Primary interface for operational users
 - **Features**: Real-time dashboards, transaction monitoring, reporting
-- **Users**: Weighbridge operators, site managers, administrators, vehicle inspectors
+- **Users**: Weighbridge operators, site managers, vehicle inspectors, compliance auditors
 - **Key Capabilities**: 
   - Live transaction tracking
   - Equipment status monitoring  
   - Performance analytics
-  - User management
+  - Operational reporting
 
 #### **Mobile App** (React Native)
 - **Purpose**: Driver-focused mobile experience
@@ -163,7 +163,7 @@ C4Container
 - **Features**: Phase detection authorization, driver authentication, transaction processing
 - **Users**: Truck drivers, vehicle inspectors
 - **Key Capabilities**:
-  - Automated driver authentication via phase detection
+  - Automated driver authentication via face detection
   - Self-service transaction initiation
   - Digital documentation generation
   - Multi-language support
@@ -171,11 +171,12 @@ C4Container
 #### **Admin Panel** (React/TypeScript)
 - **Purpose**: System administration and configuration
 - **Features**: User management, system configuration, security settings
-- **Users**: System administrators, IT personnel, SACCO administrators
+- **Users**: System administrators, IT personnel, SACCO administrators, customer representatives
 - **Key Capabilities**:
   - User role management
   - System configuration
   - Security administration
+  - Organization management
   - Audit trail review
 
 ### **🚪 API Gateway Layer**
