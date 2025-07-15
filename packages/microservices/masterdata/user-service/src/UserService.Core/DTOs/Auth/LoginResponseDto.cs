@@ -7,10 +7,8 @@ public class LoginResponseDto
     [JsonPropertyName("token")]
     public string Token { get; set; }
     
-    [JsonPropertyName("role")]
-    public string Role { get; set; }
-    
     [JsonPropertyName("id")]
-    public string Id { get; set; }  
-    
+    public string Id { get; set; }
+
+    public string Email { get; set; }
 }

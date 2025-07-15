@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace UserService.Infrastructure.Data.Migrations
+namespace UserService.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -36,6 +36,7 @@ namespace UserService.Infrastructure.Data.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: true),

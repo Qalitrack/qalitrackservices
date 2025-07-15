@@ -26,6 +26,27 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable> GetUsersByRoleAsync(string roleId)
+        {
+            return await _context.Users
+                .Where(u => u.UserRoles.Any(ur => ur.RoleId == roleId))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserRole>> GetUserRolesAsync(string userId)
+        {
+            return await _context.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds)
+        {
+            return await _context.Roles
+                .Where(r => roleIds.Contains(r.Id))
+                .ToListAsync();
+        }
+
         public async Task<User?> GetByFirstNameAsync(string firstName)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.FirstName == firstName);
@@ -38,7 +59,10 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
         }
 
         public async Task<User?> GetByMobileNumberAsync(string mobileNumber)
@@ -84,25 +108,72 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync(); 
         }
 
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await _context.Users.ToListAsync();  
+            return await _context.Users
+                .Where(u => !u.IsDeleted)
+                .ToListAsync(); 
         }
 
-        public async Task<User?> GetByIdAsync(string id)
+        public async Task<IEnumerable<User>> GetDeletedAsync()
         {
             return await _context.Users
+                .IgnoreQueryFilters()
+                .Where(u => u.IsDeleted)
+                .ToListAsync(); 
+        }
+
+        public async Task<bool> RestoreAsync(string id)
+        {
+            // First check if user exists (without filter)
+            var user = await _context.Users
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return false; // User doesn't exist
+            }
+
+            if (!user.IsDeleted)
+            {
+                return false; // User is already active
+            }
+
+            // Check if password hash is valid
+            if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2a$"))
+            {
+                // If password hash is invalid, set a default password that needs to be changed
+                user.Password = BCrypt.Net.BCrypt.HashPassword("ChangeMe123!");
+                user.IsFirstLogin = true;
+            }
+
+            user.IsDeleted = false;
+            user.IsActive = true;  // Ensure user is active after restoration
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<User?> GetByIdAsync(string id, bool b)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
             var user = await _context.Users
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null) return false;
 
-            _context.Users.Remove(user);
+            if (user.IsDeleted) return false; // Already deleted
+
+            user.IsDeleted = true;
+            user.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return true;    
         }

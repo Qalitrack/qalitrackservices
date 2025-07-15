@@ -3,57 +3,83 @@ using AutoMapper;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.DTOs.User;
+using UserService.Core.DTOs.Role;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 
-namespace UserService.Core.Services
-{
+namespace UserService.Core.Services;
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IRoleService roleService, IMapper mapper)
         {
             _userRepository = userRepository;
+            _roleService = roleService;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<UserReadDto>> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<UserReadDto>>(users);
+            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(users);
+
+            foreach (var userDto in userDtos)
+            {
+                var roles = await _roleService.GetRolesByUserIdAsync(userDto.Id);
+                userDto.Roles = roles.Select(r => r.Name).ToList();
+            }
+
+            return userDtos;
+        }
+
+        public async Task<bool> RestoreAsync(string id)
+        {
+            return await _userRepository.RestoreAsync(id);  
+        }
+
+        public async Task<IEnumerable<UserReadDto>> GetDeletedAsync()
+        {
+            var users = await _userRepository.GetDeletedAsync();
+            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(users);
+
+            foreach (var userDto in userDtos)
+            {
+                var roles = await _roleService.GetRolesByUserIdAsync(userDto.Id);
+                userDto.Roles = roles.Select(r => r.Name).ToList();
+            }
+
+            return userDtos;
         }
 
         public async Task<UserReadDto?> GetByIdAsync(string id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _userRepository.GetByIdAsync(id,true);
             return user == null ? null : _mapper.Map<UserReadDto>(user);
         }
 
         public async Task<UserReadDto> CreateAsync(CreateUserDto dto)
         {
-            // Check if email already exists
-            var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
-            if (existingUser != null)
+            var user = new User
             {
-                throw new InvalidOperationException("A user with this email already exists.");
-            }
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                MobileNumber = dto.MobileNumber,
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                IsFirstLogin = true,
+                IsActive = false
+            };
 
-            var user = _mapper.Map<User>(dto);
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
-            
-            // Set the hashed password
-            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            
-            var createdUser = await _userRepository.CreateAsync(user);
-            return _mapper.Map<UserReadDto>(createdUser);
+            await _userRepository.CreateAsync(user);
+            return _mapper.Map<UserReadDto>(user);
         }
 
         public async Task<UserReadDto?> UpdateAsync(string id, UpdateUserDto dto)
         {
-            var existingUser = await _userRepository.GetByIdAsync(id);
+            var existingUser = await _userRepository.GetByIdAsync(id,true);
             if (existingUser == null)
             {
                 return null;
@@ -86,11 +112,26 @@ namespace UserService.Core.Services
                 return null;
             }
 
+            // Check if user is deleted
+            if (user.IsDeleted)
+            {
+                return null;
+            }
+
             // Verify password using the User entity's method
             if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 // Invalid password
                 return null;
+            }
+
+            // Handle FirstLogin status
+            if (user.IsFirstLogin)
+            {
+                user.IsFirstLogin = false;
+                user.IsActive = true;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _userRepository.UpdateAsync(user);
             }
 
             // Update last login time
@@ -134,4 +175,4 @@ namespace UserService.Core.Services
             return await _userRepository.RemoveShiftFromUserAsync(userId, shiftId);
         }
     }
-}
+

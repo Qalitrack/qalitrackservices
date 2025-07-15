@@ -19,7 +19,12 @@ public class ShiftRepository : Repository<Shift>, IShiftRepository
         return await _context.Shifts.ToListAsync();
     }
 
-    public new async Task<Shift?> GetByIdAsync(string id)
+    public async Task<Shift?> GetByIdAsync(string id)
+    {
+        return await _context.Shifts.FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public new async Task<Shift?> GetByIdAsync(string id, bool b)
     {
         return await _context.Shifts.FirstOrDefaultAsync(s => s.Id == id);
     }

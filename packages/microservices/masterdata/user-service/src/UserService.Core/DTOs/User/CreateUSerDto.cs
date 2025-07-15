@@ -21,10 +21,7 @@ public class CreateUserDto
     [StringLength(255, ErrorMessage = "Email must not exceed 255 characters")]
     public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Password is required")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters long")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$", 
-        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character")]
+    
     [DataType(DataType.Password)]
     public string Password { get; set; } = string.Empty;
 
