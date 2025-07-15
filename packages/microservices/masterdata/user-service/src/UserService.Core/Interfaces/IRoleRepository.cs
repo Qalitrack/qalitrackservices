@@ -14,5 +14,9 @@ namespace UserService.Core.Interfaces
         Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId);
         Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId);
         Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);
+        Task<object> AddAsync(Role role);
+        Task SaveChangesAsync();
+        Task GetByIdWithPermissionsAsync(string roleId);
+        Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> select);
     }
 }

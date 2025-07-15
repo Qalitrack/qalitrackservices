@@ -18,6 +18,6 @@ namespace UserService.Core.Interfaces
 
         // Remove permission from a role
         Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);
-        Task<object> GetRolesForPermissionAsync(string permissionId);
+        Task<IEnumerable<Role>> GetRolesForPermissionAsync(string permissionId);
     }
 }

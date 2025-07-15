@@ -78,16 +78,55 @@ public abstract class BaseController : ControllerBase
             StatusCode = 500
         });
     }
-
-    // TODO: Add authentication-related helper methods if needed
-    // Example methods for JWT claims:
-    // protected string? GetCurrentUserId()
-    // {
-    //     return User?.FindFirst("user_id")?.Value;
-    // }
-    //
-    // protected string? GetCurrentUserName()
-    // {
-    //     return User?.FindFirst("username")?.Value;
-    // }
+    
+    protected IActionResult Conflict(string message = "Conflict")
+    {
+        return StatusCode(409, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 409
+        });
+    }
+    
+    protected IActionResult NotImplemented(string message = "Not implemented")
+    {
+        return StatusCode(501, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 501
+        });
+    }
+    
+    protected IActionResult ServiceUnavailable(string message = "Service unavailable")
+    {
+        return StatusCode(503, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 503
+        });
+    }
+    
+    protected IActionResult GatewayTimeout(string message = "Gateway timeout")
+    {
+        return StatusCode(504, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 504
+        });
+    }
+    
+    protected IActionResult TooManyRequests(string message = "Too many requests")
+    {
+        return StatusCode(429, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 429
+        });
+    }
+    
 }

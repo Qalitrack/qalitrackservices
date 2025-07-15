@@ -33,7 +33,7 @@ namespace UserService.Infrastructure.Repositories
         }
 
         // Create a new token and save to the database
-        public async Task<PersonalAccessToken?> GetByIdAsync(string id)
+        public async Task<PersonalAccessToken?> GetByIdAsync(string id, bool b)
         {
             return await _dbContext.PersonalAccessTokens
                 .FirstOrDefaultAsync(t => t.Id == id);  

@@ -9,12 +9,14 @@ public interface IUserService
 {
     Task<IEnumerable<UserReadDto>> GetAllAsync();
     Task<UserReadDto?> GetByIdAsync(string id);
-    Task<UserReadDto> CreateAsync(CreateUserDto dto);
-    Task<UserReadDto?> UpdateAsync(string id, UpdateUserDto dto);
+    Task<UserReadDto> CreateAsync(DTOs.User.CreateUserDto dto);
+    Task<UserReadDto?> UpdateAsync(string id, DTOs.User.UpdateUserDto dto);
     Task<bool> DeleteAsync(string id);
     
     // TODO: Add domain-specific service methods here
     Task<User?> ValidateUserCredentials(string email, string password);
     Task<bool> HasPermissionAsync(string userId, string permissionName);
     Task<IEnumerable> GetUserPermissionsAsync(string? toString);
+    Task<bool> RestoreAsync(string id);
+    Task<IEnumerable<UserReadDto>> GetDeletedAsync();
 }

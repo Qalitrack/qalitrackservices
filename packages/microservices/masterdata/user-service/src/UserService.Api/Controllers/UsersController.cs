@@ -1,128 +1,126 @@
-// using Microsoft.AspNetCore.Mvc;
-// using UserService.Core.DTOs.User;
-// using UserService.Core.Interfaces;
-//
-// namespace UserService.Api.Controllers;
-//
-// [Route("api/[controller]")]
-// public class UsersController : BaseController
-// {
-//     private readonly IUserService _userService;
-//     private readonly ILogger<UsersController> _logger;
-//
-//     public UsersController(IUserService userService, ILogger<UsersController> logger)
-//     {
-//         _userService = userService;
-//         _logger = logger;
-//     }
-//
-//     /// <summary>
-//     /// Get all users
-//     /// </summary>
-//     [HttpGet]
-//     public async Task<IActionResult> GetAll()
-//     {
-//         try
-//         {
-//             var users = await _userService.GetAllAsync();
-//             return Ok(users);
-//         }
-//         catch (Exception ex)
-//         {
-//             _logger.LogError(ex, "Error getting all users");
-//             return InternalServerError("An error occurred while retrieving users");
-//         }
-//     }
-//
-//     /// <summary>
-//     /// Get user by ID
-//     /// </summary>
-//     [HttpGet("{id}")]
-//     public async Task<IActionResult> GetById(string id)
-//     {
-//         try
-//         {
-//             var user = await _userService.GetByIdAsync(id);
-//             if (user == null)
-//             {
-//                 return NotFound("User not found");
-//             }
-//
-//             return Ok(user);
-//         }
-//         catch (Exception ex)
-//         {
-//             _logger.LogError(ex, "Error getting user with id {Id}", id);
-//             return InternalServerError("An error occurred while retrieving user");
-//         }
-//     }
-//
-//     /// <summary>
-//     /// Create a new user
-//     /// </summary>
-//     [HttpPost]
-//     public async Task<IActionResult> Create([FromBody] CreateUserDto request)
-//     {
-//         try
-//         {
-//             var user = await _userService.CreateAsync(request);
-//             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-//         }
-//         catch (Exception ex)
-//         {
-//             _logger.LogError(ex, "Error creating user");
-//             return InternalServerError("An error occurred while creating user");
-//         }
-//     }
-//
-//     /// <summary>
-//     /// Update an existing user
-//     /// </summary>
-//     [HttpPut("{id}")]
-//     public async Task<IActionResult> Update(string id, [FromBody] UpdateUserDto request)
-//     {
-//         try
-//         {
-//             var user = await _userService.UpdateAsync(id, request);
-//             if (user == null)
-//             {
-//                 return NotFound("User not found");
-//             }
-//
-//             return Ok(user, "User updated successfully");
-//         }
-//         catch (Exception ex)
-//         {
-//             _logger.LogError(ex, "Error updating user with id {Id}", id);
-//             return InternalServerError("An error occurred while updating user");
-//         }
-//     }
-//
-//     /// <summary>
-//     /// Delete a user
-//     /// </summary>
-//     [HttpDelete("{id}")]
-//     public async Task<IActionResult> Delete(string id)
-//     {
-//         try
-//         {
-//             var result = await _userService.DeleteAsync(id);
-//             if (!result)
-//             {
-//                 return NotFound("User not found");
-//             }
-//
-//             return Ok<object?>(null, "User deleted successfully");
-//         }
-//         catch (Exception ex)
-//         {
-//             _logger.LogError(ex, "Error deleting user with id {Id}", id);
-//             return InternalServerError("An error occurred while deleting user");
-//         }
-//     }
-//
-//     /// <summary>
-//     /// Check if user name is available
-//     /// </summary>
-//     
-// }
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using UserService.Core.DTOs.User;
+using UserService.Core.Entities;
+using UserService.Core.Interfaces;
+using Microsoft.Extensions.Logging;
+
+namespace UserService.Api.Controllers
+{
+    [Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
+    {
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        private readonly ILogger<UsersController> _logger;
+        private readonly IUserRoleService _userRoleService;
+
+        public UsersController(
+            IUserService userService, 
+            IUserRoleService userRoleService,
+            IMapper mapper, 
+            ILogger<UsersController> logger)
+        {
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _userRoleService = userRoleService ?? throw new ArgumentNullException(nameof(userRoleService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "users.view")]
+        public async Task<IEnumerable<UserReadDto>> GetAll()
+        {
+            try
+            {
+                return (IEnumerable<UserReadDto>)await _userService.GetAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all users");
+                throw;
+            }
+        }
+
+        [HttpGet("deleted")]
+        [Authorize(Policy = "users.manage")]
+        public async Task<IEnumerable<UserReadDto>> GetDeleted()
+        {
+            try
+            {
+                return (IEnumerable<UserReadDto>)await _userService.GetDeletedAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting deleted users");
+                throw;
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Policy = "users.view")]
+        public async Task<UserReadDto> GetById(string id)
+        {
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID {id} not found");
+            }
+            return user;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<UserReadDto> Create([FromBody] CreateUserDto createUserDto)
+        {
+            return await _userService.CreateAsync(createUserDto);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "users.manage")]
+        public async Task<UserReadDto> Update(string id, [FromBody] UpdateUserDto updateUserDto)
+        {
+            UserReadDto result = await _userService.UpdateAsync(id, updateUserDto);
+            if (result == null)
+            {
+                throw new KeyNotFoundException($"User with ID {id} not found");
+            }
+            return result;
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "users.manage")]
+        public async Task Delete(string id)
+        {
+            var result = await _userService.DeleteAsync(id);
+            if (!result)
+            {
+                throw new KeyNotFoundException($"User with ID {id} not found");
+            }
+        }
+
+        [HttpPatch("{id}/restore")]
+        [Authorize(Policy = "users.manage")]
+        public async Task Restore(string id)
+        {
+            var result = await _userService.RestoreAsync(id);
+            if (!result)
+            {
+                throw new KeyNotFoundException($"Deleted user with ID {id} not found");
+            }
+        }
+
+        [HttpGet("{userId}/permissions")]
+        [Authorize(Policy = "users.view")]
+        public async Task<IEnumerable<string>> GetUserPermissions(string userId)
+        {
+            return (IEnumerable<string>)await _userService.GetUserPermissionsAsync(userId);
+        }
+    }
+}

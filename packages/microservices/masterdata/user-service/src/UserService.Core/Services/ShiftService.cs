@@ -1,33 +1,25 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 
 namespace UserService.Core.Services
 {
-    public class ShiftService : IShiftService
+    public class ShiftService(
+        IShiftRepository shiftRepository,
+        IUserShiftRepository userShiftRepository,
+        IUserRepository userRepository,
+        IMapper mapper,
+        ILogger<ShiftService> logger)
+        : IShiftService
     {
-        private readonly IShiftRepository _shiftRepository;
-        private readonly IUserShiftRepository _userShiftRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-
-        public ShiftService(
-            IShiftRepository shiftRepository,
-            IUserShiftRepository userShiftRepository,
-            IUserRepository userRepository,
-            IMapper mapper)
-        {
-            _shiftRepository = shiftRepository ?? throw new ArgumentNullException(nameof(shiftRepository));
-            _userShiftRepository = userShiftRepository ?? throw new ArgumentNullException(nameof(userShiftRepository));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+        private readonly IShiftRepository _shiftRepository = shiftRepository ?? throw new ArgumentNullException(nameof(shiftRepository));
+        private readonly IUserShiftRepository _userShiftRepository = userShiftRepository ?? throw new ArgumentNullException(nameof(userShiftRepository));
+        private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        private readonly ILogger<ShiftService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         public async Task<IEnumerable<ShiftDto>> GetAllAsync()
         {
@@ -35,7 +27,7 @@ namespace UserService.Core.Services
             return _mapper.Map<IEnumerable<ShiftDto>>(shifts);
         }
 
-        public async Task<ShiftDto> GetByIdAsync(string id)
+        public async Task<ShiftDto?> GetByIdAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("Shift ID is required", nameof(id));
@@ -47,7 +39,7 @@ namespace UserService.Core.Services
             return _mapper.Map<ShiftDto>(shift);
         }
 
-        public async Task<ShiftDto> CreateAsync(CreateShiftDto dto)
+        public async Task<ShiftDto> CreateAsync(DTOs.Shift.CreateShiftDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -61,7 +53,7 @@ namespace UserService.Core.Services
             return _mapper.Map<ShiftDto>(createdShift);
         }
 
-        public async Task<ShiftDto?> UpdateAsync(string id, UpdateShiftDto dto)
+        public async Task<ShiftDto?> UpdateAsync(string id, DTOs.Shift.UpdateShiftDto dto)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("Shift ID is required", nameof(id));
@@ -77,12 +69,22 @@ namespace UserService.Core.Services
             if (existingShift == null)
                 throw new Exception("Shift not found");
 
-            // Update properties
-            existingShift.Name = dto.Name;
-            existingShift.Description = dto.Description;
-            existingShift.StartTime = dto.StartTime.TimeOfDay;
-            existingShift.EndTime = dto.EndTime.TimeOfDay;
-            existingShift.Mode = dto.Mode; // dto.Mode;
+            // Update properties only if they are provided in the DTO
+            if (!string.IsNullOrEmpty(dto.Name))
+                existingShift.Name = dto.Name;
+                
+            if (!string.IsNullOrEmpty(dto.Description))
+                existingShift.Description = dto.Description;
+                
+            if (dto.StartTime != default)
+                existingShift.StartTime = dto.StartTime.TimeOfDay;
+                
+            if (dto.EndTime != default)
+                existingShift.EndTime = dto.EndTime.TimeOfDay;
+                
+            if (dto.Mode.HasValue)
+                existingShift.Mode = dto.Mode.Value;
+                
             existingShift.UpdatedAt = DateTime.UtcNow;
 
             var updatedShift = await _shiftRepository.UpdateAsync(existingShift);
@@ -99,9 +101,12 @@ namespace UserService.Core.Services
             if (shift == null)
                 throw new Exception("Shift not found");
 
-            // Check if any users are assigned to this shift
-            var userShifts = await _userShiftRepository.GetShiftsForUserAsync(id);
-            if (userShifts.Any())
+            // Check if any users are assigned to this shift by getting all user shifts
+            // and filtering by the shift ID
+            var allUserShifts = await _userShiftRepository.GetAllAsync();
+            var hasUsers = allUserShifts.Any(us => us.ShiftId == id);
+            
+            if (hasUsers)
                 throw new ValidationException("Cannot delete shift with assigned users");
 
             return await _shiftRepository.DeleteAsync(id);
@@ -123,26 +128,37 @@ namespace UserService.Core.Services
         {
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentException("User ID is required", nameof(userId));
-                
+
             if (string.IsNullOrEmpty(shiftId))
                 throw new ArgumentException("Shift ID is required", nameof(shiftId));
 
-            // Check if user exists
-            var user = await _userRepository.GetByIdAsync(userId);
+            // Check if the user exists
+            var user = await _userRepository.GetByIdAsync(userId, true);
             if (user == null)
                 throw new Exception("User not found");
 
-            // Check if shift exists
+            // Check if the shift exists
             var shift = await _shiftRepository.GetByIdAsync(shiftId);
             if (shift == null)
                 throw new Exception("Shift not found");
 
-            // Check if user is already assigned to this shift
-            var existingAssignment = (await _userShiftRepository.GetShiftsForUserAsync(userId))
+            // Check if the user is already assigned to this shift
+            var existingAssignment = (await _userShiftRepository.GetShiftsForUserAsync(userId, shiftId))
                 .FirstOrDefault(us => us.ShiftId == shiftId);
-                
+
             if (existingAssignment != null)
                 throw new ValidationException("User is already assigned to this shift");
+
+            // Check if the user has overlapping shifts
+            var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId, shiftId: null); // Get all shifts for the user
+            foreach (var existingShift in userShifts)
+            {
+                // Check if the shift times overlap
+                if (shift.StartTime < existingShift.Shift.EndTime && shift.EndTime > existingShift.Shift.StartTime)
+                {
+                    throw new ValidationException("User already has an overlapping shift.");
+                }
+            }
 
             // Create new user-shift assignment
             var userShift = new UserShift
@@ -153,7 +169,7 @@ namespace UserService.Core.Services
             };
 
             var result = await _userShiftRepository.CreateAsync(userShift);
-            return result != null;
+            return true;
         }
 
         public async Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId)
@@ -165,13 +181,95 @@ namespace UserService.Core.Services
                 throw new ArgumentException("Shift ID is required", nameof(shiftId));
 
             // Check if the assignment exists
-            var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId);
+            var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId, shiftId);
             var userShift = userShifts.FirstOrDefault(us => us.ShiftId == shiftId);
             
             if (userShift == null)
                 throw new Exception("User is not assigned to this shift");
 
-            return await _userShiftRepository.DeleteAsync(userShift.Id);
+            return await _userShiftRepository.DeleteAsync(userId, shiftId);
+        }
+
+        public async Task<bool> HasActiveStrictShiftAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Checking for any active strict shifts");
+                var shifts = await _shiftRepository.GetAllAsync();
+                
+                // Find any shift that is currently active and either in strict mode or open mode
+                var enumerable = shifts as Shift[] ?? shifts.ToArray();
+                var activeStrictShifts = enumerable
+                    .Where(s => (s.Mode == ShiftMode.Strict || s.IsActive) && s.IsActive)
+                    .ToList();
+                    
+                _logger.LogDebug("All shifts status: {Shifts}", 
+                    string.Join(", ", enumerable.Select(s => $"ID: {s.Id}, Name: {s.Name}, Mode: {s.Mode}, IsActive: {s.IsActive}")));
+                
+                if (activeStrictShifts.Any())
+                {
+                    _logger.LogInformation("Found {Count} active strict shift(s): {Shifts}", 
+                        activeStrictShifts.Count,
+                        string.Join(", ", activeStrictShifts.Select(s => $"ID: {s.Id}, Name: {s.Name}, Start: {s.StartTime}, End: {s.EndTime}")));
+                }
+                else
+                {
+                    _logger.LogInformation("No active strict shifts found at {CurrentTime}", DateTime.UtcNow.TimeOfDay);
+                }
+                
+                return activeStrictShifts.Any();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking for active strict shifts");
+                return false; // Default to allowing login if there's an error
+            }
+        }
+
+        public async Task<bool> HasActiveStrictShiftForUserAsync(string userId)
+        {
+            try
+            {
+                _logger.LogInformation("Checking for active strict shifts for user {UserId}", userId);
+                
+                // Get all user shifts for the specified user
+                var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId,shiftId: null);
+
+                var enumerable = userShifts as UserShift[] ?? userShifts.ToArray();
+                _logger.LogInformation("User {UserId} is assigned to {ShiftCount} shifts", userId, enumerable.Count());
+                
+                // Check if any of the user's shifts are active and in strict mode
+                foreach (var userShift in enumerable)
+                {
+                    if (true)
+                    {
+                        _logger.LogDebug("Checking shift {ShiftId} ({ShiftName}) for user {UserId}. Mode: {Mode}, Start: {StartTime}, End: {EndTime}, IsActive: {IsActive}",
+                            userShift.Shift.Id, 
+                            userShift.Shift.Name, 
+                            userId, 
+                            userShift.Shift.Mode,
+                            userShift.Shift.StartTime,
+                            userShift.Shift.EndTime,
+                            userShift.Shift.IsActive);
+                            
+                        // Check if the shift is currently active and either in strict mode or open mode
+                        if ((userShift.Shift.Mode == ShiftMode.Strict || userShift.Shift.IsActive) && userShift.Shift.IsActive)
+                        {
+                            _logger.LogInformation("User {UserId} has an active strict shift (ID: {ShiftId}, Name: {ShiftName}) assigned",
+                                userId, userShift.Shift.Id, userShift.Shift.Name);
+                            return true;
+                        }
+                    }
+                }
+                
+                _logger.LogInformation("No active strict shifts found for user {UserId}", userId);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking for active strict shifts for user {UserId}", userId);
+                return false; // Default to allowing login if there's an error
+            }
         }
 
         public async Task<User?> ValidateUserCredentials(string email, string password)
@@ -197,7 +295,7 @@ namespace UserService.Core.Services
             }
 
             // Check if user is assigned to any active shift
-            var userShifts = await _userShiftRepository.GetShiftsForUserAsync(user.Id);
+            var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId:null,shiftId: null);
             var hasActiveShift = userShifts.Any(us => 
             {
                 var shift = _shiftRepository.GetByIdAsync(us.ShiftId).Result;
@@ -210,6 +308,219 @@ namespace UserService.Core.Services
             }
 
             return user;
+        }
+
+        public async Task<object?> IsUserAssignedToShiftAsync(string userId, string shiftId)
+        {
+            return await _userShiftRepository.IsUserAssignedToShiftAsync(userId, shiftId);
+        }
+
+        public async Task<MassAssignShiftResultDto> MassAssignShiftToRoleAsync(string roleId, string shiftId)
+{
+        if (string.IsNullOrEmpty(roleId))
+            throw new ArgumentException("Role ID is required", nameof(roleId));
+                    
+        if (string.IsNullOrEmpty(shiftId))
+            throw new ArgumentException("Shift ID is required", nameof(shiftId));
+
+        var result = new MassAssignShiftResultDto
+        {
+            Success = false,
+            Message = "Mass assignment started",
+            TotalUsersProcessed = 0,
+            UsersAssigned = 0,
+            UsersFailed = 0,
+            FailedUserIds = new List<string>(),
+            FailedUserMessages = new Dictionary<string, string>()
+        };
+
+        try
+        {
+            // Get all users with the specified role
+            var users = (await _userRepository.GetUsersByRoleAsync(roleId)).Cast<User>().ToList();
+            result.TotalUsersProcessed = users.Count;
+
+            foreach (var user in users)
+            {
+                try
+                {
+                    // Get the shift details
+                    var shift = await _shiftRepository.GetByIdAsync(shiftId);
+                    if (shift == null)
+                    {
+                        throw new Exception($"Shift with ID {shiftId} not found");
+                    }
+
+                    // Check if user already has this shift assigned
+                    var isAssigned = await _userShiftRepository.IsUserAssignedToShiftAsync(user.Id, shiftId);
+                    if (isAssigned)
+                    {
+                        continue;  // Skip user if already assigned to this shift
+                    }
+
+                    // Check if the user has overlapping shifts
+                    var userShifts = await _userShiftRepository.GetShiftsForUserAsync(user.Id, shiftId: null); // Get all shifts for the user
+                    foreach (var existingShift in userShifts)
+                    {
+                        // Check if the shift times overlap
+                        if (existingShift.Shift.StartTime < shift.StartTime && existingShift.Shift.EndTime > shift.StartTime ||
+                            existingShift.Shift.StartTime < shift.EndTime && existingShift.Shift.EndTime > shift.EndTime ||
+                            shift.StartTime < existingShift.Shift.EndTime && shift.EndTime > existingShift.Shift.StartTime)
+                        {
+                            // Skip this user if there is an overlap
+                            result.UsersFailed++;
+                            result.FailedUserIds.Add(user.Id);
+                            result.FailedUserMessages[user.Id] = $"User has overlapping shift with shift {shiftId}";
+                            break;  // No need to assign this user to the shift
+                        }
+                    }
+
+                    // If no overlapping shift found, proceed with assignment
+                    var success = await AssignUserToShiftAsync(user.Id, shiftId);
+                    if (success)
+                    {
+                        result.UsersAssigned++;
+                    }
+                    else
+                    {
+                        result.UsersFailed++;
+                        result.FailedUserIds.Add(user.Id);
+                        result.FailedUserMessages[user.Id] = "Failed to assign shift";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.UsersFailed++;
+                    result.FailedUserIds.Add(user.Id);
+                    result.FailedUserMessages[user.Id] = ex.Message;
+                }
+            }
+
+            // Update final success status based on results
+            result.Success = result.UsersFailed == 0;
+            result.Message = result.UsersFailed == 0 
+                ? $"Successfully assigned shift to {result.UsersAssigned} users"
+                : $"Partially successful - Assigned to {result.UsersAssigned} users, failed for {result.UsersFailed} users";
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in mass assigning shift {ShiftId} to role {RoleId}", shiftId, roleId);
+            throw;
+        }
+}
+
+
+        public async Task<MassAssignShiftResultDto> MassRemoveUsersFromShiftByRoleAsync(string roleId, string shiftId)
+        {
+            if (string.IsNullOrEmpty(roleId))
+                throw new ArgumentException("Role ID is required", nameof(roleId));
+                
+            if (string.IsNullOrEmpty(shiftId))
+                throw new ArgumentException("Shift ID is required", nameof(shiftId));
+
+            var result = new MassAssignShiftResultDto
+            {
+                Success = false,
+                Message = "Mass removal started",
+                TotalUsersProcessed = 0,
+                UsersAssigned = 0,
+                UsersFailed = 0
+            };
+
+            try
+            {
+                // Get all users with the specified role
+                var users = (await _userRepository.GetUsersByRoleAsync(roleId)).Cast<User>().ToList();
+                result.TotalUsersProcessed = users.Count;
+
+                foreach (var user in users)
+                {
+                    try
+                    {
+                        // Check if user has this shift assigned
+                        var isAssigned = await _userShiftRepository.IsUserAssignedToShiftAsync(user.Id, shiftId);
+                        if (!isAssigned)
+                        {
+                            continue;
+                        }
+
+                        // Try to remove the shift
+                        var success = await RemoveUserFromShiftAsync(user.Id, shiftId);
+                        if (success)
+                        {
+                            result.UsersAssigned++;
+                        }
+                        else
+                        {
+                            result.UsersFailed++;
+                            result.FailedUserIds.Add(user.Id);
+                            result.FailedUserMessages[user.Id] = "Failed to remove shift";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        result.UsersFailed++;
+                        result.FailedUserIds.Add(user.Id);
+                        result.FailedUserMessages[user.Id] = ex.Message;
+                    }
+                }
+
+                // Update final success status based on results
+                result.Success = result.UsersFailed == 0;
+                result.Message = result.UsersFailed == 0 
+                    ? $"Successfully removed shift from {result.UsersAssigned} users"
+                    : $"Partially successful - Removed from {result.UsersAssigned} users, failed for {result.UsersFailed} users";
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in mass removing shift {ShiftId} from role {RoleId}", shiftId, roleId);
+                throw;
+            }
+        }
+
+        public async Task<UsersAssignedToShiftDto> GetUsersAssignedToShiftAsync(string shiftId)
+        {
+            if (string.IsNullOrEmpty(shiftId))
+                throw new ArgumentException("Shift ID is required", nameof(shiftId));
+
+            try
+            {
+                // Get all users assigned to this shift
+                var userShifts = await _userShiftRepository.GetUsersAssignedToShiftAsync(shiftId);
+                
+                // Get the shift details
+                var shift = await _shiftRepository.GetByIdAsync(shiftId);
+                if (shift == null)
+                {
+                    throw new Exception($"Shift with ID {shiftId} not found");
+                }
+
+                // Extract user details from user shifts
+                var users = userShifts.Select(us => new UserDetailsDto
+                {
+                    Id = us.User.Id,
+                    Email = us.User.Email,
+                    FirstName = us.User.FirstName,
+                    LastName = us.User.LastName
+                }).ToList();
+
+                return new UsersAssignedToShiftDto
+                {
+                    ShiftId = shiftId,
+                    ShiftName = shift.Name,
+                    Users = users,
+                    TotalUsers = users.Count
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting users assigned to shift {ShiftId}", shiftId);
+                throw;
+            }
         }
     }
 }

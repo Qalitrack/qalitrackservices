@@ -56,7 +56,9 @@ public class UserServiceDbContext : DbContext
             entity.Property(e => e.Password).IsRequired();
             entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Status).HasDefaultValue(UserStatus.Active);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.IsFirstLogin).HasDefaultValue(false);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
         });
     }
 
