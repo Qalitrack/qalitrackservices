@@ -242,6 +242,8 @@ flowchart TB
 - **Purpose**: Synchronize production data, inventory, financial transactions
 - **Integration**: REST API, scheduled batch jobs, real-time updates
 - **Data Flow**: Production orders → QaliTrack, Weight data → ERP
+
+**System Types:**
 - **SAP ECC**: Legacy factory management, batch processing
 - **S/4HANA**: Real-time analytics, digital core operations
 - **Oracle**: Financial management, procurement workflows
