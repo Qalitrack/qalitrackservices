@@ -51,10 +51,8 @@ C4Container
     }
 
     Container_Boundary(infrastructure_layer, "Infrastructure Layer") {
-        ContainerDb(primary_db, "Primary Database", "PostgreSQL 15+", "Transactional data with multi-tenant partitioning")
+        ContainerDb(primary_db, "Primary Database", "PostgreSQL 15+ with Extensions", "Transactional data, time-series (TimescaleDB), full-text search, JSON documents")
         ContainerDb(cache_layer, "Cache Layer", "Redis Cluster", "Session management, master data caching, performance optimization")
-        ContainerDb(timeseries_db, "Time-Series Database", "InfluxDB", "Performance metrics, analytics data, sensor readings")
-        ContainerDb(search_engine, "Search Engine", "Elasticsearch", "Audit trails, cross-entity search, compliance reports")
         ContainerQueue(message_streaming, "Message Streaming", "Apache Kafka", "Event sourcing, real-time data streaming")
         ContainerQueue(command_queue, "Command Queue", "RabbitMQ", "Command processing, background jobs, notifications")
     }
@@ -107,9 +105,9 @@ C4Container
     Rel(user_service, primary_db, "User data", "SQL")
     Rel(customer_service, primary_db, "Customer data", "SQL")
     Rel(transaction_service, primary_db, "Transaction data", "SQL")
-    Rel(weight_data_service, timeseries_db, "Weight measurements", "InfluxQL")
-    Rel(analytics_service, timeseries_db, "Analytics data", "InfluxQL")
-    Rel(compliance_service, search_engine, "Audit trails", "HTTP/JSON")
+    Rel(weight_data_service, primary_db, "Weight measurements", "SQL/TimescaleDB")
+    Rel(analytics_service, primary_db, "Analytics data", "SQL/TimescaleDB")
+    Rel(compliance_service, primary_db, "Audit trails", "SQL/Full-text search")
 
     %% Cache Relationships
     Rel(user_service, cache_layer, "Session cache", "Redis Protocol")
@@ -234,10 +232,12 @@ C4Container
 ### **🗃️ Infrastructure Layer**
 
 #### **Database Layer**
-- **PostgreSQL 15+**: Primary transactional database with multi-tenant partitioning
+- **PostgreSQL 15+ with Extensions**: 
+  - **Core Database**: ACID-compliant transactional data with multi-tenant partitioning
+  - **TimescaleDB Extension**: High-performance time-series data for weight measurements and analytics
+  - **Full-Text Search**: Built-in search capabilities for audit trails and complex queries
+  - **JSONB Support**: Flexible document storage for metadata and configurations
 - **Redis Cluster**: High-performance caching and session management
-- **InfluxDB**: Time-series database for analytics and sensor data
-- **Elasticsearch**: Search engine for audit trails and complex queries
 
 #### **Message Processing**
 - **Apache Kafka**: Event streaming for real-time data processing
@@ -257,13 +257,14 @@ C4Container
 - **Synchronous**: HTTP/REST for real-time operations
 - **Asynchronous**: Kafka events for eventual consistency
 - **Cache**: Redis for frequently accessed master data
-- **Search**: Elasticsearch for complex queries and audit trails
+- **Search**: PostgreSQL full-text search for complex queries and audit trails
 
 ### **Data Persistence Strategy**
 - **Transactional Data**: PostgreSQL with ACID compliance
 - **Cache Data**: Redis for performance optimization
-- **Time-Series Data**: InfluxDB for analytics and metrics
-- **Search Data**: Elasticsearch for full-text search and aggregations
+- **Time-Series Data**: PostgreSQL with TimescaleDB extension for analytics and metrics
+- **Search Data**: PostgreSQL full-text search for audit trails and complex queries
+- **Document Data**: PostgreSQL JSONB for flexible schemas and metadata
 
 ## 🔐 **Security Architecture**
 
@@ -278,7 +279,7 @@ C4Container
 - **API Security**: Rate limiting, input validation, output sanitization
 
 ### **Audit & Compliance**
-- **Comprehensive Logging**: All transactions logged to Elasticsearch
+- **Comprehensive Logging**: All transactions logged to PostgreSQL audit tables
 - **Audit Trails**: Immutable record of all system changes
 - **Compliance Monitoring**: Automated regulatory compliance checking
 
@@ -296,9 +297,14 @@ C4Container
 - **Benefits**: Superior concurrency, low memory footprint, fast compilation
 - **Use Case**: High-throughput data synchronization across multiple sites
 
-### **PostgreSQL as Primary Database**
-- **Benefits**: ACID compliance, advanced features, proven reliability
-- **Features**: Partitioning, JSON support, full-text search
+### **PostgreSQL as Unified Database**
+- **Benefits**: ACID compliance, advanced features, proven reliability, cost-effective
+- **Core Features**: Partitioning, advanced indexing, concurrent connections
+- **Extensions**: 
+  - **TimescaleDB**: Time-series optimization for weight data and metrics
+  - **Full-Text Search**: Built-in search capabilities replacing Elasticsearch
+  - **JSONB**: Document storage for flexible schemas and metadata
+  - **PostGIS**: Geospatial data for routes and locations (if needed)
 
 ### **Redis for Caching**
 - **Benefits**: In-memory performance, data structures, clustering

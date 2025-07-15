@@ -94,7 +94,7 @@ This directory contains comprehensive system architecture documentation using th
 - **API Gateway** :7000 - Request routing & authentication
 - **Service Discovery** - Service registration & health
 - **Message Queue** - Event streaming & commands
-- **Database Layer** - PostgreSQL, Redis, InfluxDB, Elasticsearch
+- **Database Layer** - PostgreSQL (with TimescaleDB), Redis
 
 ## 📊 **Diagram Standards**
 

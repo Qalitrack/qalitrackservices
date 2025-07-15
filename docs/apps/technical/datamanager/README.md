@@ -25,10 +25,11 @@ The DataManager service handles all weighing data operations, transaction manage
 - **Message Queue**: In-memory events (Development), Kafka/RabbitMQ (Production)
 
 ### Production Environment
-- **Primary Database**: PostgreSQL 15+ with partitioning
-- **Time-Series Database**: InfluxDB for analytics
+- **Primary Database**: PostgreSQL 15+ with partitioning and TimescaleDB extension
+- **Time-Series Data**: PostgreSQL with TimescaleDB for analytics and weight measurements
 - **Cache Layer**: Redis Cluster
-- **Search Engine**: Elasticsearch for audit trails
+- **Full-Text Search**: PostgreSQL built-in search for audit trails
+- **Document Storage**: PostgreSQL JSONB for flexible schemas
 - **Message Streaming**: Apache Kafka
 - **Command Processing**: RabbitMQ
 
