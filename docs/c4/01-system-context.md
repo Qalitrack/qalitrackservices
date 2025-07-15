@@ -170,10 +170,6 @@ flowchart TB
 
 ### **PNG Exports**
 
-![System Context - C4 Format](assets/system-context-c4.png)
-
-![System Context - Flowchart Format](assets/system-context-flowchart.png)
-
 > **Note**: To generate the PNG files, use the Mermaid CLI or online tools as described in [assets/README.md](assets/README.md)
 
 ## 👥 **System Users & Their Goals**

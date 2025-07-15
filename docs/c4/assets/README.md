@@ -44,8 +44,4 @@ After conversion, this directory should contain:
 
 ## 🔗 **Usage in Documentation**
 
-Once converted, reference the PNG files in markdown:
-```markdown
-![System Context - C4Format](assets/system-context-c4.png)
-![System Context - Flowchart](assets/system-context-flowchart.png)
-```
+Once converted, the PNG files can be referenced in markdown or used in presentations.
