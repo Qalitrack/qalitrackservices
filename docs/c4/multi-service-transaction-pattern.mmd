@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant Client as Client
+    participant Transaction as Transaction Service
+    participant Customer as Customer Service
+    participant Product as Product Service
+    participant Vehicle as Vehicle Service
+    participant Events as Event Store
+    participant Compensation as Compensation Handler
+
+    Client->>Transaction: Create weighing transaction
+    Transaction->>Events: Start transaction saga
+    
+    Transaction->>Customer: Reserve customer allocation
+    Customer->>Transaction: Allocation reserved
+    Transaction->>Events: Log customer reservation
+    
+    Transaction->>Product: Reserve product quantity
+    Product->>Transaction: Quantity reserved
+    Transaction->>Events: Log product reservation
+    
+    Transaction->>Vehicle: Assign vehicle
+    alt Vehicle assignment fails
+        Vehicle->>Transaction: Assignment failed
+        Transaction->>Compensation: Trigger compensation
+        Compensation->>Customer: Release customer allocation
+        Compensation->>Product: Release product quantity
+        Transaction->>Client: Transaction failed
+    else Vehicle assignment succeeds
+        Vehicle->>Transaction: Vehicle assigned
+        Transaction->>Events: Log vehicle assignment
+        Transaction->>Events: Commit transaction saga
+        Transaction->>Client: Transaction successful
+    end

@@ -1,0 +1,44 @@
+flowchart TD
+    subgraph "Start of Shift"
+        SOS1[System Health Check]
+        SOS2[Equipment Calibration Verification]
+        SOS3[Staff Authentication]
+        SOS4[Previous Shift Handover]
+    end
+    
+    subgraph "Ongoing Operations"
+        OO1[Process Weighing Transactions]
+        OO2[Monitor Equipment Performance]
+        OO3[Handle Compliance Alerts]
+        OO4[Manage Queue & Traffic]
+        OO5[Update Transaction Status]
+    end
+    
+    subgraph "End of Shift"
+        EOS1[Complete Pending Transactions]
+        EOS2[Generate Shift Reports]
+        EOS3[System Backup Verification]
+        EOS4[Next Shift Handover]
+        EOS5[Equipment Shutdown Procedures]
+    end
+    
+    subgraph "Exception Handling"
+        EH1[Equipment Malfunction Response]
+        EH2[Compliance Violation Resolution]
+        EH3[System Downtime Procedures]
+        EH4[Emergency Contact Protocols]
+    end
+
+    SOS1 --> SOS2 --> SOS3 --> SOS4
+    SOS4 --> OO1
+    
+    OO1 --> OO2 --> OO3 --> OO4 --> OO5
+    OO5 --> OO1
+    
+    OO1 --> EOS1
+    EOS1 --> EOS2 --> EOS3 --> EOS4 --> EOS5
+    
+    OO1 --> EH1
+    OO2 --> EH2
+    OO3 --> EH3
+    OO4 --> EH4

@@ -1,0 +1,37 @@
+flowchart TD
+    Start([Start Development])
+    
+    subgraph "Morning Setup"
+        A1[Pull latest changes]
+        A2[Start development services]
+        A3[Check service health]
+        A4[Review today's tasks]
+    end
+    
+    subgraph "Development Cycle"
+        B1[Write failing test]
+        B2[Implement feature]
+        B3[Make test pass]
+        B4[Refactor code]
+        B5[Update documentation]
+    end
+    
+    subgraph "Integration"
+        C1[Test with other services]
+        C2[Run integration tests]
+        C3[Update API documentation]
+        C4[Create pull request]
+    end
+    
+    subgraph "End of Day"
+        D1[Commit all changes]
+        D2[Update task status]
+        D3[Document blockers]
+        D4[Plan tomorrow's work]
+    end
+
+    Start --> A1 --> A2 --> A3 --> A4
+    A4 --> B1 --> B2 --> B3 --> B4 --> B5
+    B5 --> B1
+    B5 --> C1 --> C2 --> C3 --> C4
+    C4 --> D1 --> D2 --> D3 --> D4

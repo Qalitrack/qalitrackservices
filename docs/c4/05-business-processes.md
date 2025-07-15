@@ -7,7 +7,7 @@ This document illustrates the complete business processes that flow through the 
 ## 🚛 **Complete Weighing Transaction Process**
 
 ### **Process Overview**
-A complete weighing transaction involves multiple stages from initial vehicle registration through final delivery confirmation, spanning both masterdata and DataManager services.
+A complete weighing transaction involves multiple stages from initial vehicle registration through final delivery confirmation, spanning both masterdata and masterdata services.
 
 ```mermaid
 flowchart TD
@@ -64,6 +64,7 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     participant Driver as Driver Mobile App
+    participant Inspector as Vehicle Inspector App
     participant Gateway as API Gateway
     participant User as User Service
     participant Vehicle as Vehicle Service
@@ -92,6 +93,11 @@ sequenceDiagram
     Compliance->>Compliance: Check vehicle-driver compatibility
     Compliance->>Compliance: Verify regulatory requirements
     Compliance->>Gateway: Compliance validation result
+    
+    alt Inspection required
+        Gateway->>Inspector: Request vehicle inspection
+        Inspector->>Gateway: Inspection completed
+    end
     
     alt All validations successful
         Gateway->>Events: Publish VehicleRegistered event
@@ -224,6 +230,7 @@ flowchart TD
         D2[Cooperative Benefits]
         D3[Democratic Governance]
         D4[Financial Services]
+        D5[SACCO Administrator Operations]
     end
     
     subgraph "Shared QaliTrack Services"
@@ -252,6 +259,7 @@ flowchart TD
     D2 --> S2
     D3 --> S3
     D4 --> S4
+    D5 --> S1
 ```
 
 ### **Cross-Organization Collaboration Flow**
@@ -261,12 +269,15 @@ sequenceDiagram
     participant Cement_Co as Cement Company
     participant Transport_Co as Transport Company
     participant SACCO as SACCO Cooperative
+    participant SACCO_Admin as SACCO Administrator
     participant QaliTrack as QaliTrack Platform
     participant Regulatory as Regulatory Bodies
 
     Cement_Co->>QaliTrack: Create production order
     QaliTrack->>Transport_Co: Request transport services
     Transport_Co->>SACCO: Check vehicle availability
+    SACCO->>SACCO_Admin: Validate member assignments
+    SACCO_Admin->>SACCO: Approve vehicle assignment
     SACCO->>Transport_Co: Confirm vehicle assignment
     Transport_Co->>QaliTrack: Accept transport request
     
@@ -287,6 +298,7 @@ sequenceDiagram
     QaliTrack->>Cement_Co: Final delivery confirmation
     QaliTrack->>Transport_Co: Performance metrics
     QaliTrack->>SACCO: Member activity summary
+    QaliTrack->>SACCO_Admin: Member performance reports
 ```
 
 ## 📊 **Analytics & Reporting Business Processes**

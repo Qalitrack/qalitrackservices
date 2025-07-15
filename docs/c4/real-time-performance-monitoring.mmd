@@ -1,0 +1,50 @@
+flowchart LR
+    subgraph "Data Sources"
+        DS1[Weight Transactions]
+        DS2[Vehicle Performance]
+        DS3[Driver Activities]
+        DS4[Compliance Events]
+        DS5[Customer Orders]
+    end
+    
+    subgraph "Analytics Processing"
+        AP1[Data Aggregation]
+        AP2[KPI Calculation]
+        AP3[Trend Analysis]
+        AP4[Anomaly Detection]
+        AP5[Predictive Modeling]
+    end
+    
+    subgraph "Business Intelligence"
+        BI1[Executive Dashboards]
+        BI2[Operational Metrics]
+        BI3[Compliance Reports]
+        BI4[Performance Scorecards]
+        BI5[Predictive Insights]
+    end
+    
+    subgraph "Stakeholder Delivery"
+        SD1[Site Managers]
+        SD2[Fleet Operators]
+        SD3[Compliance Officers]
+        SD4[Executive Leadership]
+        SD5[External Auditors]
+    end
+
+    DS1 --> AP1
+    DS2 --> AP1
+    DS3 --> AP2
+    DS4 --> AP3
+    DS5 --> AP4
+    
+    AP1 --> BI1
+    AP2 --> BI2
+    AP3 --> BI3
+    AP4 --> BI4
+    AP5 --> BI5
+    
+    BI1 --> SD1
+    BI2 --> SD2
+    BI3 --> SD3
+    BI4 --> SD4
+    BI5 --> SD5

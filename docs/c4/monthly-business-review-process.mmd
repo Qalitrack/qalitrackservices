@@ -1,0 +1,23 @@
+gantt
+    title Monthly Business Review Cycle
+    dateFormat  YYYY-MM-DD
+    
+    section Data Collection
+    Transaction Data Aggregation    :done, data1, 2024-01-01, 3d
+    Performance Metrics Compilation :done, data2, after data1, 2d
+    Compliance Report Generation    :done, data3, after data2, 2d
+    
+    section Analysis Phase
+    Trend Analysis                  :active, analysis1, after data3, 3d
+    Performance Benchmarking       :analysis2, after analysis1, 2d
+    Compliance Assessment          :analysis3, after analysis2, 2d
+    
+    section Reporting
+    Executive Dashboard Preparation :report1, after analysis3, 2d
+    Stakeholder Report Generation  :report2, after report1, 1d
+    Regulatory Submission         :report3, after report2, 1d
+    
+    section Review & Planning
+    Management Review Meeting      :review1, after report3, 1d
+    Action Plan Development       :review2, after review1, 2d
+    Next Month Planning          :review3, after review2, 1d

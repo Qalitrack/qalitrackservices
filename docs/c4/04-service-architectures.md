@@ -204,7 +204,7 @@ classDiagram
     CustomerService --> ITransporterServiceClient
 ```
 
-## ⚙️ **DataManager Service Architectures**
+## ⚙️ **masterdata Service Architectures**
 
 ### **Weight Data Service Architecture**
 

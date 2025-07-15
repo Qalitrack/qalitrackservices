@@ -1,0 +1,34 @@
+sequenceDiagram
+    participant Cement_Co as Cement Company
+    participant Transport_Co as Transport Company
+    participant SACCO as SACCO Cooperative
+    participant SACCO_Admin as SACCO Administrator
+    participant QaliTrack as QaliTrack Platform
+    participant Regulatory as Regulatory Bodies
+
+    Cement_Co->>QaliTrack: Create production order
+    QaliTrack->>Transport_Co: Request transport services
+    Transport_Co->>SACCO: Check vehicle availability
+    SACCO->>SACCO_Admin: Validate member assignments
+    SACCO_Admin->>SACCO: Approve vehicle assignment
+    SACCO->>Transport_Co: Confirm vehicle assignment
+    Transport_Co->>QaliTrack: Accept transport request
+    
+    QaliTrack->>QaliTrack: Schedule weighing operations
+    QaliTrack->>Cement_Co: Confirm order processing
+    QaliTrack->>Transport_Co: Provide delivery details
+    QaliTrack->>SACCO: Update member activity
+    
+    loop Delivery Execution
+        QaliTrack->>QaliTrack: Process weighing transactions
+        QaliTrack->>Cement_Co: Provide delivery updates
+        QaliTrack->>Transport_Co: Track vehicle performance
+        QaliTrack->>SACCO: Update member earnings
+    end
+    
+    QaliTrack->>Regulatory: Submit compliance reports
+    Regulatory->>QaliTrack: Compliance confirmation
+    QaliTrack->>Cement_Co: Final delivery confirmation
+    QaliTrack->>Transport_Co: Performance metrics
+    QaliTrack->>SACCO: Member activity summary
+    QaliTrack->>SACCO_Admin: Member performance reports

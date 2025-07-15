@@ -17,11 +17,13 @@ flowchart LR
         Drivers[Truck Drivers]
         Operators[Weighbridge Operators]
         Managers[Site Managers]
+        Inspectors[Vehicle Inspectors]
+        SaccoAdmins[SACCO Administrators]
     end
     
     subgraph "🏗️ QaliTrack Platform"
         masterdata[masterdata Services<br/>📋 Master Data Management]
-        DataManager[DataManager Services<br/>⚙️ Operational Processing]
+        operational[masterdata Services<br/>⚙️ Operational Processing]
         Gateway[API Gateway<br/>🚪 Single Entry Point]
     end
     
@@ -34,19 +36,21 @@ flowchart LR
     Drivers --> Gateway
     Operators --> Gateway
     Managers --> Gateway
+    Inspectors --> Gateway
+    SaccoAdmins --> Gateway
     
     Gateway --> masterdata
-    Gateway --> DataManager
+    Gateway --> operational
     
     masterdata --> Databases
-    DataManager --> Databases
-    DataManager --> Hardware
+    operational --> Databases
+    operational --> Hardware
     masterdata --> Cloud
 ```
 
 ### **Key System Numbers**
-- **18 Microservices**: 11 masterdata + 7 DataManager services
-- **3 Client Applications**: Web Portal, Mobile App, Admin Panel
+- **18 Microservices**: 11 masterdata + 7 masterdata services
+- **4 Client Applications**: Web Portal, Mobile App, Self-Service Kiosk, Admin Panel
 - **3 Infrastructure Components**: PostgreSQL (with TimescaleDB), Redis, Kafka
 - **1 API Gateway**: Central routing and authentication
 

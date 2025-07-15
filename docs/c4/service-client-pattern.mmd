@@ -1,0 +1,60 @@
+classDiagram
+    class IServiceClient {
+        <<interface>>
+        +GetAsync~T~(endpoint)
+        +PostAsync~T~(endpoint, data)
+        +PutAsync~T~(endpoint, data)
+        +DeleteAsync(endpoint)
+    }
+    
+    class BaseServiceClient {
+        <<abstract>>
+        #HttpClient httpClient
+        #ILogger logger
+        #string baseUrl
+        +GetAsync~T~(endpoint)
+        +PostAsync~T~(endpoint, data)
+        +HandleHttpErrorAsync(response)
+        #SerializeRequest~T~(data)
+        #DeserializeResponse~T~(content)
+    }
+    
+    class ICustomerServiceClient {
+        <<interface>>
+        +ValidateCustomerAsync(customerId)
+        +GetCustomerDetailsAsync(customerId)
+        +GetCustomerOrdersAsync(customerId)
+    }
+    
+    class CustomerServiceClient {
+        +ValidateCustomerAsync(customerId)
+        +GetCustomerDetailsAsync(customerId)
+        +GetCustomerOrdersAsync(customerId)
+    }
+    
+    class IProductServiceClient {
+        <<interface>>
+        +ValidateProductAsync(productId)
+        +GetProductPricingAsync(productId)
+        +GetProductSpecificationsAsync(productId)
+    }
+    
+    class ProductServiceClient {
+        +ValidateProductAsync(productId)
+        +GetProductPricingAsync(productId)
+        +GetProductSpecificationsAsync(productId)
+    }
+    
+    class ServiceClientException {
+        +StatusCode: HttpStatusCode
+        +ServiceName: string
+        +ErrorMessage: string
+        +RequestId: string
+    }
+
+    IServiceClient <|-- BaseServiceClient
+    BaseServiceClient <|-- CustomerServiceClient
+    BaseServiceClient <|-- ProductServiceClient
+    ICustomerServiceClient <|-- CustomerServiceClient
+    IProductServiceClient <|-- ProductServiceClient
+    BaseServiceClient --> ServiceClientException

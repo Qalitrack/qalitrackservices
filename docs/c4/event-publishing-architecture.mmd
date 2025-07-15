@@ -1,0 +1,61 @@
+classDiagram
+    class IEventPublisher {
+        <<interface>>
+        +PublishAsync~T~(event)
+        +PublishBatchAsync~T~(events)
+    }
+    
+    class KafkaEventPublisher {
+        -IProducer~string, string~ producer
+        -ILogger logger
+        +PublishAsync~T~(event)
+        +PublishBatchAsync~T~(events)
+        -SerializeEvent~T~(event)
+        -GetTopicName~T~()
+    }
+    
+    class IEventHandler~T~ {
+        <<interface>>
+        +HandleAsync(event)
+    }
+    
+    class WeightDataEventHandler {
+        -IAnalyticsService analyticsService
+        -IComplianceService complianceService
+        +HandleAsync(weightDataEvent)
+    }
+    
+    class TransactionEventHandler {
+        -INotificationService notificationService
+        -IAuditService auditService
+        +HandleAsync(transactionEvent)
+    }
+    
+    class DomainEvent {
+        <<abstract>>
+        +Id: Guid
+        +Timestamp: DateTime
+        +EventType: string
+        +Version: int
+        +CorrelationId: Guid?
+    }
+    
+    class WeightDataEvent {
+        +WeighbridgeId: Guid
+        +Weight: decimal
+        +IsStable: bool
+        +SessionId: Guid?
+    }
+    
+    class TransactionEvent {
+        +TransactionId: Guid
+        +Status: TransactionStatus
+        +CustomerId: Guid
+        +NetWeight: decimal?
+    }
+
+    IEventPublisher <|-- KafkaEventPublisher
+    IEventHandler <|-- WeightDataEventHandler
+    IEventHandler <|-- TransactionEventHandler
+    DomainEvent <|-- WeightDataEvent
+    DomainEvent <|-- TransactionEvent

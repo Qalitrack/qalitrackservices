@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph "Command Side"
+        Command[Business Command]
+        Aggregate[Business Aggregate]
+        EventGen[Event Generator]
+    end
+    
+    subgraph "Event Store"
+        EventStream[Event Stream]
+        Snapshots[Aggregate Snapshots]
+    end
+    
+    subgraph "Query Side"
+        EventHandler[Event Handler]
+        ReadModel[Read Model]
+        Projections[View Projections]
+    end
+    
+    subgraph "Infrastructure"
+        Kafka[Event Stream]
+        PostgreSQL[(Read Database)]
+        Redis[(Query Cache)]
+    end
+
+    Command -->|Execute| Aggregate
+    Aggregate -->|Generate| EventGen
+    EventGen -->|Append| EventStream
+    EventStream -->|Snapshot| Snapshots
+    
+    EventStream -->|Stream Events| Kafka
+    Kafka -->|Event Processing| EventHandler
+    EventHandler -->|Update| ReadModel
+    ReadModel -->|Create| Projections
+    
+    Projections -->|Store| PostgreSQL
+    Projections -->|Cache| Redis

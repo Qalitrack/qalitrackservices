@@ -1,0 +1,40 @@
+flowchart TD
+    subgraph "Authentication Components"
+        JWTValidator[JWT Validator]
+        TokenCache[Token Cache]
+        UserContext[User Context Builder]
+    end
+    
+    subgraph "Authorization Components"
+        RoleResolver[Role Resolver]
+        PermissionEngine[Permission Engine]
+        ResourceGuard[Resource Guard]
+    end
+    
+    subgraph "Service Components"
+        ServiceAuth[Service Authorization]
+        BusinessLogic[Business Logic]
+        DataAccess[Data Access Layer]
+    end
+    
+    subgraph "User Store"
+        UserDB[(User Database)]
+        RoleDB[(Role Database)]
+        PermissionDB[(Permission Database)]
+    end
+
+    Request[Incoming Request] -->|JWT Token| JWTValidator
+    JWTValidator -->|Valid Token| TokenCache
+    TokenCache -->|User Info| UserContext
+    
+    UserContext -->|User Roles| RoleResolver
+    RoleResolver -->|Role Details| UserDB
+    RoleResolver -->|Role Permissions| PermissionEngine
+    
+    PermissionEngine -->|Permission Check| ResourceGuard
+    ResourceGuard -->|Authorized Request| ServiceAuth
+    
+    ServiceAuth -->|Validated Request| BusinessLogic
+    BusinessLogic -->|Data Operations| DataAccess
+    DataAccess -->|Query Results| UserDB
+    DataAccess -->|Filtered Data| BusinessLogic

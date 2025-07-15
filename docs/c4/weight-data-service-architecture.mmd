@@ -1,0 +1,91 @@
+classDiagram
+    class WeightDataController {
+        +GetCurrentWeightAsync(weighbridgeId)
+        +GetWeightHistoryAsync(weighbridgeId, timeRange)
+        +StartWeighingSessionAsync(sessionRequest)
+        +EndWeighingSessionAsync(sessionId)
+        +CalibrateWeighbridgeAsync(weighbridgeId, calibrationData)
+    }
+    
+    class IWeightDataService {
+        <<interface>>
+        +GetCurrentWeightAsync(weighbridgeId)
+        +StartWeighingSessionAsync(sessionData)
+        +ProcessWeightDataAsync(weightReading)
+        +ValidateWeightDataAsync(weightData)
+    }
+    
+    class WeightDataService {
+        -IWeightDataRepository repository
+        -IHardwareInterface hardwareInterface
+        -ICalibrationService calibrationService
+        -IEventPublisher eventPublisher
+        +ProcessWeightDataAsync(weightReading)
+        +ValidateWeightDataAsync(weightData)
+        +PublishWeightEventAsync(weightEvent)
+    }
+    
+    class IHardwareInterface {
+        <<interface>>
+        +ReadWeightAsync(weighbridgeId)
+        +CalibrateAsync(weighbridgeId, calibrationData)
+        +GetHardwareStatusAsync(weighbridgeId)
+    }
+    
+    class SerialHardwareInterface {
+        -SerialPort serialPort
+        -ILogger logger
+        +ReadWeightAsync(weighbridgeId)
+        +ParseWeightData(rawData)
+        +CalibrateAsync(weighbridgeId, calibrationData)
+    }
+    
+    class WeightReading {
+        +Id: Guid
+        +WeighbridgeId: Guid
+        +Weight: decimal
+        +Unit: WeightUnit
+        +Timestamp: DateTime
+        +IsStable: bool
+        +Confidence: decimal
+        +RawData: string
+        +CalibrationFactor: decimal
+        +Temperature: decimal?
+        +Humidity: decimal?
+    }
+    
+    class WeighingSession {
+        +Id: Guid
+        +WeighbridgeId: Guid
+        +VehicleId: Guid?
+        +DriverId: Guid?
+        +StartTime: DateTime
+        +EndTime: DateTime?
+        +TareWeight: decimal?
+        +GrossWeight: decimal?
+        +NetWeight: decimal?
+        +Status: SessionStatus
+        +WeightReadings: ICollection~WeightReading~
+    }
+    
+    class ICalibrationService {
+        <<interface>>
+        +ApplyCalibrationAsync(rawWeight, weighbridgeId)
+        +ValidateCalibrationAsync(weighbridgeId)
+        +GetCalibrationFactorAsync(weighbridgeId)
+    }
+    
+    class IEventPublisher {
+        <<interface>>
+        +PublishWeightEventAsync(weightEvent)
+        +PublishSessionEventAsync(sessionEvent)
+    }
+
+    WeightDataController --> IWeightDataService
+    IWeightDataService <|-- WeightDataService
+    WeightDataService --> IHardwareInterface
+    WeightDataService --> ICalibrationService
+    WeightDataService --> IEventPublisher
+    IHardwareInterface <|-- SerialHardwareInterface
+    WeightDataService --> WeightReading
+    WeightDataService --> WeighingSession

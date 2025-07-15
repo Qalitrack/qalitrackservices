@@ -1,0 +1,42 @@
+flowchart TD
+    subgraph "Event Producers"
+        WeightEvents[Weight Data Events]
+        TransactionEvents[Transaction Events]
+        ComplianceEvents[Compliance Events]
+        UserEvents[User Activity Events]
+    end
+    
+    subgraph "Message Streaming"
+        Kafka[Apache Kafka Cluster]
+        Topics[Event Topics]
+    end
+    
+    subgraph "Event Consumers"
+        Analytics[Analytics Service]
+        Compliance[Compliance Service]
+        DataSync[Data Sync Service]
+        Archive[Archive Service]
+        Notifications[Notification Service]
+    end
+    
+    subgraph "Event Processing"
+        StreamProcessor[Stream Processor]
+        EventStore[Event Store]
+        Replay[Event Replay]
+    end
+
+    WeightEvents -->|Weight measurements| Kafka
+    TransactionEvents -->|Business transactions| Kafka
+    ComplianceEvents -->|Regulatory events| Kafka
+    UserEvents -->|User actions| Kafka
+    
+    Kafka -->|Real-time streams| Topics
+    Topics -->|Event consumption| Analytics
+    Topics -->|Compliance monitoring| Compliance
+    Topics -->|Multi-site sync| DataSync
+    Topics -->|Long-term storage| Archive
+    Topics -->|User notifications| Notifications
+    
+    Topics -->|Stream processing| StreamProcessor
+    StreamProcessor -->|Processed events| EventStore
+    EventStore -->|Historical replay| Replay

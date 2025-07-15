@@ -1,0 +1,87 @@
+flowchart TD
+    subgraph "Client Layer"
+        Driver[Driver Mobile App]
+        Operator[Operator Web Portal]
+        Inspector[Vehicle Inspector App]
+        SaccoAdmin[SACCO Administrator Portal]
+    end
+    
+    subgraph "Gateway & Auth"
+        Gateway[API Gateway :7000]
+        UserSvc[User Service :7001]
+    end
+    
+    subgraph "masterdata Services"
+        VehicleSvc[Vehicle Service :7003]
+        DriverSvc[Driver Service :7004]
+        CustomerSvc[Customer Service :7008]
+        ProductSvc[Product Service :7005]
+        TransporterSvc[Transporter Service :7010]
+        RouteSvc[Route Service :7006]
+    end
+    
+    subgraph "masterdata Services"
+        WeightSvc[Weight Data Service]
+        TransactionSvc[Transaction Service]
+        ComplianceSvc[Compliance Service]
+        AnalyticsSvc[Analytics Service]
+    end
+    
+    subgraph "Infrastructure"
+        PostgreSQL[(PostgreSQL with TimescaleDB)]
+        Kafka[Apache Kafka]
+        Redis[(Redis Cache)]
+    end
+    
+    subgraph "External"
+        Hardware[Weighbridge Hardware]
+    end
+
+    %% Driver Registration Flow
+    Driver -->|1. Vehicle Registration| Gateway
+    Gateway -->|Auth Check| UserSvc
+    Gateway -->|2. Validate Vehicle| VehicleSvc
+    VehicleSvc -->|Check Vehicle DB| PostgreSQL
+    Gateway -->|3. Validate Driver| DriverSvc
+    DriverSvc -->|Check License Status| PostgreSQL
+    Gateway -->|4. Check Transport Assignment| TransporterSvc
+    
+    %% Weight Capture Flow
+    Hardware -->|5. Raw Weight Data| WeightSvc
+    WeightSvc -->|Store Time-Series Data| PostgreSQL
+    WeightSvc -->|6. Weight Event| Kafka
+    
+    %% Transaction Processing
+    Operator -->|7. Create Transaction| Gateway
+    Gateway -->|8. Process Transaction| TransactionSvc
+    TransactionSvc -->|9. Validate Customer| CustomerSvc
+    TransactionSvc -->|10. Validate Product| ProductSvc
+    TransactionSvc -->|11. Get Route Info| RouteSvc
+    TransactionSvc -->|12. Get Weight Data| WeightSvc
+    TransactionSvc -->|13. Store Transaction| PostgreSQL
+    TransactionSvc -->|14. Transaction Event| Kafka
+    
+    %% Compliance & Analytics
+    Kafka -->|15. Compliance Check| ComplianceSvc
+    ComplianceSvc -->|Validate Regulations| PostgreSQL
+    Kafka -->|16. Analytics Processing| AnalyticsSvc
+    AnalyticsSvc -->|Update Metrics| PostgreSQL
+    
+    %% Response Flow
+    TransactionSvc -->|17. Transaction Complete| Gateway
+    Gateway -->|18. Success Response| Operator
+    Gateway -->|19. Notification| Driver
+
+    classDef client fill:#e3f2fd
+    classDef gateway fill:#fff3e0
+    classDef datamaster fill:#f3e5f5
+    classDef datamanager fill:#fff3e0
+    classDef infrastructure fill:#fce4ec
+    classDef external fill:#e8f5e8
+    
+    class Driver,Operator,Inspector,SaccoAdmin client
+    class Gateway,UserSvc gateway
+    class VehicleSvc,DriverSvc,CustomerSvc,ProductSvc,TransporterSvc,RouteSvc datamaster
+    class WeightSvc,TransactionSvc,ComplianceSvc,AnalyticsSvc datamanager
+    class PostgreSQL,Kafka,Redis infrastructure
+    class Hardware external
