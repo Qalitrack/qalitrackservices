@@ -9,17 +9,23 @@ QaliTrack is a comprehensive weighbridge management system that digitizes and au
 
 ## 📊 **System Context Diagram**
 
+### **Option 1: C4Context (Auto-positioned with grouping hints)**
+
 ```mermaid
 C4Context
     title QaliTrack Weighbridge Management System - System Context
 
+    %% Primary Users (Left side)
     Person(driver, "Truck Driver", "Transports goods, requires weighing services")
     Person(operator, "Weighbridge Operator", "Operates weighing equipment, validates transactions")
     Person(manager, "Site Manager", "Monitors operations, reviews reports")
+    
+    %% Administrative Users (Right side)
     Person(admin, "System Administrator", "Manages users, configures system")
     Person(auditor, "Compliance Auditor", "Reviews compliance reports, validates adherence")
     Person(customer, "Customer Representative", "Tracks orders, monitors deliveries")
     
+    %% Central System
     System(qalitrack, "QaliTrack Platform", "Comprehensive weighbridge management system for real-time weighing, transactions, compliance, and analytics")
     
     Enterprise_Boundary(external_systems, "External Systems") {
@@ -37,10 +43,12 @@ C4Context
         System_Ext(backup_cloud, "Cloud Backup", "Automated data backup and recovery")
     }
     
-    %% User Interactions
+    %% Primary User Interactions (Left to Center)
     Rel(driver, qalitrack, "Uses mobile app", "HTTPS/Mobile - Vehicle registration, status checks")
     Rel(operator, qalitrack, "Uses web portal", "HTTPS/Web - Weight capture, transaction validation")
     Rel(manager, qalitrack, "Uses dashboard", "HTTPS/Web - Performance monitoring, reports")
+    
+    %% Administrative User Interactions (Right to Center)
     Rel(admin, qalitrack, "Uses admin panel", "HTTPS/Web - User management, system configuration")
     Rel(auditor, qalitrack, "Reviews reports", "HTTPS/Web - Compliance verification, audit trails")
     Rel(customer, qalitrack, "Tracks orders", "HTTPS/Web - Delivery status, weight confirmations")
@@ -67,6 +75,139 @@ C4Context
     UpdateElementStyle(auditor, $bgColor="#4A90E2", $fontColor="#FFFFFF")
     UpdateElementStyle(customer, $bgColor="#4A90E2", $fontColor="#FFFFFF")
 ```
+
+### **Option 2: Flowchart with Explicit Positioning Control**
+
+```mermaid
+flowchart TB
+    %% Top row - Regulatory and External Systems
+    subgraph "🏛️ Regulatory & External Systems"
+        direction LR
+        KEBS["🏛️ KEBS<br/>Kenya Bureau of Standards<br/>Compliance reporting"]
+        NTSA["🚗 NTSA<br/>Transport & Safety Authority<br/>Vehicle compliance"]
+        ERP_SAP["🏭 ERP SAP<br/>Factory management<br/>Production planning"]
+        ERP_ORACLE["💼 ERP Oracle<br/>Financial management<br/>Procurement"]
+    end
+    
+    %% Left side - Operational Users
+    subgraph "👷 Operational Users"
+        direction TB
+        driver["🚛 Truck Driver<br/>Transports goods<br/>Requires weighing services"]
+        operator["⚖️ Weighbridge Operator<br/>Operates equipment<br/>Validates transactions"]
+        manager["👨‍💼 Site Manager<br/>Monitors operations<br/>Reviews reports"]
+    end
+    
+    %% Center - QaliTrack Platform
+    qalitrack["🏗️ QaliTrack Platform<br/>Comprehensive weighbridge management<br/>Real-time weighing, transactions, compliance"]
+    
+    %% Right side - Administrative Users
+    subgraph "👨‍💻 Administrative Users"
+        direction TB
+        admin["🔧 System Administrator<br/>Manages users<br/>Configures system"]
+        auditor["📋 Compliance Auditor<br/>Reviews compliance reports<br/>Validates adherence"]
+        customer["🏢 Customer Representative<br/>Tracks orders<br/>Monitors deliveries"]
+    end
+    
+    %% Bottom left - Hardware Systems
+    subgraph "🔧 Hardware Systems"
+        direction LR
+        weighbridge["⚖️ Weighbridge Hardware<br/>Load cells, sensors<br/>Weight measurement"]
+        gates["🚪 Gate Control Systems<br/>Access control, RFID<br/>Barrier systems"]
+        anpr["📷 ANPR Camera<br/>License plate recognition<br/>Vehicle identification"]
+        kiosk["🖥️ Self-Service Kiosk<br/>Unmanned weighing<br/>Automated transactions"]
+    end
+    
+    %% Bottom right - Communication Systems
+    subgraph "📡 Communication Systems"
+        direction LR
+        mpesa["💳 M-Pesa Payment<br/>Mobile payments<br/>Fee collection"]
+        sms["📱 SMS Gateway<br/>Notifications<br/>Alerts"]
+        email["📧 Email Service<br/>Reports<br/>Notifications"]
+        backup["☁️ Cloud Backup<br/>Data backup<br/>Disaster recovery"]
+    end
+    
+    %% User Interactions - Operational (Left to Center)
+    driver -->|"Uses mobile app<br/>HTTPS/Mobile"| qalitrack
+    operator -->|"Uses web portal<br/>HTTPS/Web"| qalitrack
+    manager -->|"Uses dashboard<br/>HTTPS/Web"| qalitrack
+    
+    %% User Interactions - Administrative (Right to Center)
+    admin -->|"Uses admin panel<br/>HTTPS/Web"| qalitrack
+    auditor -->|"Reviews reports<br/>HTTPS/Web"| qalitrack
+    customer -->|"Tracks orders<br/>HTTPS/Web"| qalitrack
+    
+    %% External System Integrations - Top
+    qalitrack -->|"Submits compliance<br/>HTTPS"| KEBS
+    qalitrack -->|"Validates licenses<br/>HTTPS"| NTSA
+    qalitrack -->|"Synchronizes data<br/>HTTPS/REST"| ERP_SAP
+    qalitrack -->|"Exchanges transactions<br/>HTTPS/REST"| ERP_ORACLE
+    
+    %% Hardware Integrations - Bottom Left
+    weighbridge -->|"Sends weight data<br/>Serial/TCP"| qalitrack
+    gates -->|"Reports presence<br/>TCP/HTTP"| qalitrack
+    anpr -->|"Sends plate data<br/>HTTP/TCP"| qalitrack
+    kiosk -->|"Processes transactions<br/>HTTPS/REST"| qalitrack
+    
+    %% Communication Integrations - Bottom Right
+    qalitrack -->|"Processes payments<br/>HTTPS API"| mpesa
+    qalitrack -->|"Sends notifications<br/>HTTPS API"| sms
+    qalitrack -->|"Sends reports<br/>SMTP"| email
+    qalitrack -->|"Backs up data<br/>HTTPS"| backup
+    
+    %% Styling
+    classDef platformStyle fill:#2E8B57,stroke:#1F5F3F,stroke-width:3px,color:#FFFFFF
+    classDef userStyle fill:#4A90E2,stroke:#2E5A87,stroke-width:2px,color:#FFFFFF
+    classDef externalStyle fill:#E67E22,stroke:#A0522D,stroke-width:2px,color:#FFFFFF
+    classDef hardwareStyle fill:#8E44AD,stroke:#6A1B9A,stroke-width:2px,color:#FFFFFF
+    classDef commStyle fill:#16A085,stroke:#0D7A6B,stroke-width:2px,color:#FFFFFF
+    
+    class qalitrack platformStyle
+    class driver,operator,manager,admin,auditor,customer userStyle
+    class KEBS,NTSA,ERP_SAP,ERP_ORACLE externalStyle
+    class weighbridge,gates,anpr,kiosk hardwareStyle
+    class mpesa,sms,email,backup commStyle
+```
+
+## 🎯 **Diagram Comparison**
+
+### **C4Context Approach (Option 1)**
+**Pros:**
+- ✅ Standard C4 model format
+- ✅ Clean, professional appearance
+- ✅ Follows architectural documentation standards
+- ✅ Automatic layout optimization
+- ✅ Consistent with other C4 diagrams
+
+**Cons:**
+- ❌ Limited control over element positioning
+- ❌ May not place elements exactly where you want
+- ❌ Relationship lines can overlap
+- ❌ Less visual grouping of related elements
+
+### **Flowchart Approach (Option 2)**
+**Pros:**
+- ✅ Explicit positioning control through subgraphs
+- ✅ Clear visual grouping of related systems
+- ✅ Better organization of different system types
+- ✅ More detailed descriptions with icons
+- ✅ Cleaner separation of concerns
+
+**Cons:**
+- ❌ Not standard C4 format
+- ❌ May be more complex to maintain
+- ❌ Requires more manual layout management
+- ❌ Different style from other C4 diagrams
+
+### **Recommendation**
+For the **system context level**, I recommend **Option 2 (Flowchart)** because:
+1. **Better organization** - Clear grouping of users, systems, and hardware
+2. **Improved readability** - Icons and structured layout
+3. **Explicit positioning** - You control where each element appears
+4. **Scalability** - Easy to add new systems in appropriate groups
+
+For **lower-level C4 diagrams** (container, component), stick with standard C4 format.
+
+---
 
 ## 👥 **System Users & Their Goals**
 
