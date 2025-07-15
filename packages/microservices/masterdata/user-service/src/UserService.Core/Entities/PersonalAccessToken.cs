@@ -1,0 +1,24 @@
+using System.ComponentModel.DataAnnotations;
+using UserService.Core.Entities;
+
+namespace UserService.Core.Interfaces;
+
+public class PersonalAccessToken : BaseEntity
+{
+
+    [Required]
+    public string UserId { get; set; }
+    [Required]
+    public User User { get; set; }
+
+    [Required]
+    [StringLength(255)]
+    public string Token { get; set; }
+    
+    public DateTime? LastUsedAt { get; set; }
+
+    [Required]
+    public bool IsRevoked { get; set; } = false;
+        
+    public Entities.ShiftMode ShiftMode { get; set; }  
+}
