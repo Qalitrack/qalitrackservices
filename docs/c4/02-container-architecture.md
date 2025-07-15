@@ -5,7 +5,7 @@
 This diagram shows the high-level technology choices and how responsibilities are distributed across containers (applications, databases, microservices) within the QaliTrack system.
 
 ### **Architecture Overview**
-QaliTrack follows a microservices architecture pattern with clear separation between **masterdata** (master data management) and **DataManager** (operational data processing) services, supported by a robust infrastructure layer.
+QaliTrack follows a microservices architecture pattern with clear separation between **masterdata** (master data management) and **masterdata** (operational data processing) services, supported by a robust infrastructure layer.
 
 ## 🏗️ **Container Architecture Diagram**
 
@@ -13,11 +13,12 @@ QaliTrack follows a microservices architecture pattern with clear separation bet
 C4Container
     title QaliTrack Platform - Container Architecture
 
-    Person(user, "System Users", "Drivers, Operators, Managers, Administrators")
+    Person(user, "System Users", "Drivers, Operators, Managers, Administrators, Vehicle Inspectors, SACCO Administrators")
 
     Container_Boundary(client_layer, "Client Applications") {
         Container(web_portal, "Web Portal", "React/TypeScript", "Main dashboard for operators and managers with real-time monitoring")
         Container(mobile_app, "Mobile App", "React Native", "Driver-focused app for vehicle registration and status updates")
+        Container(kiosk_app, "Self-Service Kiosk", "React/TypeScript", "Unmanned weighing with phase detection authorization")
         Container(admin_panel, "Admin Panel", "React/TypeScript", "System administration, user management, and configuration")
     }
 
@@ -40,7 +41,7 @@ C4Container
         Container(organization_service, "Organization Service", ".NET 8/SQLite", "Multi-tenant context, permissions - Port 7002")
     }
 
-    Container_Boundary(datamanager_layer, "DataManager Services - Operational Data Processing") {
+    Container_Boundary(datamanager_layer, "masterdata Services - Operational Data Processing") {
         Container(weight_data_service, "Weight Data Service", ".NET 8/SQLite", "Real-time weight capture, hardware integration")
         Container(transaction_service, "Transaction Service", ".NET 8/SQLite", "Transaction lifecycle, multi-entity linking")
         Container(compliance_service, "Compliance Service", ".NET 8/SQLite", "Regulatory monitoring, violation detection")
@@ -57,16 +58,18 @@ C4Container
         ContainerQueue(command_queue, "Command Queue", "RabbitMQ", "Command processing, background jobs, notifications")
     }
 
-    System_Ext(external_systems, "External Systems", "ERP, Hardware, Regulatory, Payment systems")
+    System_Ext(external_systems, "External Systems", "ERP (SAP ECC, S/4HANA), Hardware (Gate Control Systems with RFID vehicle detection, Self-Service Kiosk with phase detection authorization, ANPR Camera System with automatic number plate recognition), Regulatory, Payment systems")
 
     %% Client Layer Relationships
     Rel(user, web_portal, "Uses", "HTTPS")
     Rel(user, mobile_app, "Uses", "HTTPS")
+    Rel(user, kiosk_app, "Uses", "HTTPS")
     Rel(user, admin_panel, "Uses", "HTTPS")
 
     %% Gateway Layer Relationships
     Rel(web_portal, api_gateway, "API calls", "HTTPS/REST")
     Rel(mobile_app, api_gateway, "API calls", "HTTPS/REST")
+    Rel(kiosk_app, api_gateway, "API calls", "HTTPS/REST")
     Rel(admin_panel, api_gateway, "API calls", "HTTPS/REST")
 
     Rel(api_gateway, service_discovery, "Service lookup", "HTTP")
@@ -84,7 +87,7 @@ C4Container
     Rel(api_gateway, sacco_service, "SACCO operations", "HTTP/REST")
     Rel(api_gateway, organization_service, "Organization operations", "HTTP/REST")
 
-    %% DataManager Service Relationships
+    %% masterdata Service Relationships
     Rel(api_gateway, weight_data_service, "Weight operations", "HTTP/REST")
     Rel(api_gateway, transaction_service, "Transaction operations", "HTTP/REST")
     Rel(api_gateway, compliance_service, "Compliance operations", "HTTP/REST")
@@ -138,7 +141,7 @@ C4Container
 #### **Web Portal** (React/TypeScript)
 - **Purpose**: Primary interface for operators and managers
 - **Features**: Real-time dashboards, transaction monitoring, reporting
-- **Users**: Weighbridge operators, site managers, administrators
+- **Users**: Weighbridge operators, site managers, administrators, vehicle inspectors
 - **Key Capabilities**: 
   - Live transaction tracking
   - Equipment status monitoring  
@@ -148,17 +151,27 @@ C4Container
 #### **Mobile App** (React Native)
 - **Purpose**: Driver-focused mobile experience
 - **Features**: Vehicle registration, delivery tracking, status updates
-- **Users**: Truck drivers, field personnel
+- **Users**: Truck drivers, field personnel, vehicle inspectors
 - **Key Capabilities**:
   - Quick vehicle registration
   - Real-time delivery status
   - Digital receipts
   - Route guidance
 
+#### **Self-Service Kiosk** (React/TypeScript)
+- **Purpose**: Unmanned weighing operations
+- **Features**: Phase detection authorization, driver authentication, transaction processing
+- **Users**: Truck drivers, vehicle inspectors
+- **Key Capabilities**:
+  - Automated driver authentication via phase detection
+  - Self-service transaction initiation
+  - Digital documentation generation
+  - Multi-language support
+
 #### **Admin Panel** (React/TypeScript)
 - **Purpose**: System administration and configuration
 - **Features**: User management, system configuration, security settings
-- **Users**: System administrators, IT personnel
+- **Users**: System administrators, IT personnel, SACCO administrators
 - **Key Capabilities**:
   - User role management
   - System configuration
@@ -216,7 +229,7 @@ C4Container
 - **Weighbridge Service** (:7007) - Equipment management, calibration
 - **SACCO Service** (:7011) - Cooperative organizations, memberships ✅
 
-### **⚙️ DataManager Services - Operational Data Processing**
+### **⚙️ masterdata Services - Operational Data Processing**
 
 #### **Core Operational Services**
 - **Weight Data Service** - Real-time weight capture, hardware integration

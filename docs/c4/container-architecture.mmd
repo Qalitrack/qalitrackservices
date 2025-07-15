@@ -1,0 +1,122 @@
+C4Container
+    title QaliTrack Platform - Container Architecture
+
+    Person(user, "System Users", "Drivers, Operators, Managers, Administrators, Vehicle Inspectors, SACCO Administrators")
+
+    Container_Boundary(client_layer, "Client Applications") {
+        Container(web_portal, "Web Portal", "React/TypeScript", "Main dashboard for operators and managers with real-time monitoring")
+        Container(mobile_app, "Mobile App", "React Native", "Driver-focused app for vehicle registration and status updates")
+        Container(kiosk_app, "Self-Service Kiosk", "React/TypeScript", "Unmanned weighing with phase detection authorization")
+        Container(admin_panel, "Admin Panel", "React/TypeScript", "System administration, user management, and configuration")
+    }
+
+    Container_Boundary(gateway_layer, "API Gateway Layer") {
+        Container(api_gateway, "API Gateway", "Ocelot/.NET 8", "Request routing, authentication, rate limiting, and load balancing")
+        Container(service_discovery, "Service Discovery", ".NET 8", "Service registration, health monitoring, and dynamic routing")
+    }
+
+    Container_Boundary(datamaster_layer, "masterdata Services - Master Data Management") {
+        Container(user_service, "User Service", ".NET 8/SQLite", "Authentication, authorization, JWT tokens, RBAC - Port 7001")
+        Container(customer_service, "Customer Service", ".NET 8/SQLite", "Customer management, orders, relationships - Port 7008")
+        Container(product_service, "Product Service", ".NET 8/SQLite", "Product catalog, pricing, specifications - Port 7005")
+        Container(supplier_service, "Supplier Service", ".NET 8/SQLite", "Vendor management, procurement, contracts - Port 7009")
+        Container(transporter_service, "Transporter Service", ".NET 8/SQLite", "Fleet companies, capacity planning - Port 7010")
+        Container(route_service, "Route Service", ".NET 8/SQLite", "Transport routes, optimization, gates - Port 7006")
+        Container(vehicle_service, "Vehicle Service", ".NET 8/SQLite", "Vehicle registration, maintenance, compliance - Port 7003")
+        Container(driver_service, "Driver Service", ".NET 8/SQLite", "Driver profiles, licenses, performance - Port 7004")
+        Container(weighbridge_service, "Weighbridge Service", ".NET 8/SQLite", "Equipment management, calibration - Port 7007")
+        Container(sacco_service, "SACCO Service", ".NET 8/SQLite", "Cooperative organizations, memberships - Port 7011")
+        Container(organization_service, "Organization Service", ".NET 8/SQLite", "Multi-tenant context, permissions - Port 7002")
+    }
+
+    Container_Boundary(datamanager_layer, "masterdata Services - Operational Data Processing") {
+        Container(weight_data_service, "Weight Data Service", ".NET 8/SQLite", "Real-time weight capture, hardware integration")
+        Container(transaction_service, "Transaction Service", ".NET 8/SQLite", "Transaction lifecycle, multi-entity linking")
+        Container(compliance_service, "Compliance Service", ".NET 8/SQLite", "Regulatory monitoring, violation detection")
+        Container(analytics_service, "Analytics Service", ".NET 8/SQLite", "Performance metrics, business intelligence")
+        Container(operational_data_service, "Operational Data Service", ".NET 8/SQLite", "Product & route management, weighbridge orchestration")
+        Container(data_sync_service, "Data Sync Service", "Go/SQLite", "Multi-site synchronization, master data replication")
+        Container(archive_service, "Archive Service", ".NET 8/SQLite", "Long-term storage, historical data retrieval")
+    }
+
+    Container_Boundary(infrastructure_layer, "Infrastructure Layer") {
+        ContainerDb(primary_db, "Primary Database", "PostgreSQL 15+ with Extensions", "Transactional data, time-series (TimescaleDB), full-text search, JSON documents")
+        ContainerDb(cache_layer, "Cache Layer", "Redis Cluster", "Session management, master data caching, performance optimization")
+        ContainerQueue(message_streaming, "Message Streaming", "Apache Kafka", "Event sourcing, real-time data streaming")
+        ContainerQueue(command_queue, "Command Queue", "RabbitMQ", "Command processing, background jobs, notifications")
+    }
+
+    System_Ext(external_systems, "External Systems", "ERP (SAP ECC, S/4HANA), Hardware (Gate Control Systems with RFID vehicle detection, Self-Service Kiosk with phase detection authorization, ANPR Camera System with automatic number plate recognition), Regulatory, Payment systems")
+
+    %% Client Layer Relationships
+    Rel(user, web_portal, "Uses", "HTTPS")
+    Rel(user, mobile_app, "Uses", "HTTPS")
+    Rel(user, kiosk_app, "Uses", "HTTPS")
+    Rel(user, admin_panel, "Uses", "HTTPS")
+
+    %% Gateway Layer Relationships
+    Rel(web_portal, api_gateway, "API calls", "HTTPS/REST")
+    Rel(mobile_app, api_gateway, "API calls", "HTTPS/REST")
+    Rel(kiosk_app, api_gateway, "API calls", "HTTPS/REST")
+    Rel(admin_panel, api_gateway, "API calls", "HTTPS/REST")
+
+    Rel(api_gateway, service_discovery, "Service lookup", "HTTP")
+
+    %% masterdata Service Relationships
+    Rel(api_gateway, user_service, "Authentication", "HTTP/REST")
+    Rel(api_gateway, customer_service, "Customer operations", "HTTP/REST")
+    Rel(api_gateway, product_service, "Product operations", "HTTP/REST")
+    Rel(api_gateway, supplier_service, "Supplier operations", "HTTP/REST")
+    Rel(api_gateway, transporter_service, "Transport operations", "HTTP/REST")
+    Rel(api_gateway, route_service, "Route operations", "HTTP/REST")
+    Rel(api_gateway, vehicle_service, "Vehicle operations", "HTTP/REST")
+    Rel(api_gateway, driver_service, "Driver operations", "HTTP/REST")
+    Rel(api_gateway, weighbridge_service, "Equipment operations", "HTTP/REST")
+    Rel(api_gateway, sacco_service, "SACCO operations", "HTTP/REST")
+    Rel(api_gateway, organization_service, "Organization operations", "HTTP/REST")
+
+    %% masterdata Service Relationships
+    Rel(api_gateway, weight_data_service, "Weight operations", "HTTP/REST")
+    Rel(api_gateway, transaction_service, "Transaction operations", "HTTP/REST")
+    Rel(api_gateway, compliance_service, "Compliance operations", "HTTP/REST")
+    Rel(api_gateway, analytics_service, "Analytics operations", "HTTP/REST")
+    Rel(api_gateway, operational_data_service, "Operational operations", "HTTP/REST")
+    Rel(api_gateway, data_sync_service, "Sync operations", "HTTP/REST")
+    Rel(api_gateway, archive_service, "Archive operations", "HTTP/REST")
+
+    %% Inter-Service Communication
+    Rel(transaction_service, customer_service, "Customer validation", "HTTP/REST")
+    Rel(transaction_service, product_service, "Product validation", "HTTP/REST")
+    Rel(transaction_service, vehicle_service, "Vehicle validation", "HTTP/REST")
+    Rel(transaction_service, driver_service, "Driver validation", "HTTP/REST")
+    Rel(compliance_service, driver_service, "License monitoring", "HTTP/REST")
+    Rel(analytics_service, transaction_service, "Transaction analysis", "HTTP/REST")
+
+    %% Database Relationships
+    Rel(user_service, primary_db, "User data", "SQL")
+    Rel(customer_service, primary_db, "Customer data", "SQL")
+    Rel(transaction_service, primary_db, "Transaction data", "SQL")
+    Rel(weight_data_service, primary_db, "Weight measurements", "SQL/TimescaleDB")
+    Rel(analytics_service, primary_db, "Analytics data", "SQL/TimescaleDB")
+    Rel(compliance_service, primary_db, "Audit trails", "SQL/Full-text search")
+
+    %% Cache Relationships
+    Rel(user_service, cache_layer, "Session cache", "Redis Protocol")
+    Rel(customer_service, cache_layer, "Master data cache", "Redis Protocol")
+    Rel(api_gateway, cache_layer, "Auth cache", "Redis Protocol")
+
+    %% Message Queue Relationships
+    Rel(weight_data_service, message_streaming, "Weight events", "Kafka Protocol")
+    Rel(transaction_service, message_streaming, "Transaction events", "Kafka Protocol")
+    Rel(compliance_service, command_queue, "Violation alerts", "AMQP")
+    Rel(data_sync_service, message_streaming, "Sync events", "Kafka Protocol")
+
+    %% External System Integration
+    Rel(weight_data_service, external_systems, "Hardware integration", "TCP/Serial")
+    Rel(compliance_service, external_systems, "Regulatory reporting", "HTTPS")
+    Rel(data_sync_service, external_systems, "ERP synchronization", "HTTPS/REST")
+
+    UpdateElementStyle(user_service, $bgColor="#E8F5E8", $borderColor="#4CAF50")
+    UpdateElementStyle(customer_service, $bgColor="#E8F5E8", $borderColor="#4CAF50")
+    UpdateElementStyle(datamaster_layer, $bgColor="#F3E5F5", $borderColor="#9C27B0")
+    UpdateElementStyle(datamanager_layer, $bgColor="#FFF3E0", $borderColor="#FF9800")

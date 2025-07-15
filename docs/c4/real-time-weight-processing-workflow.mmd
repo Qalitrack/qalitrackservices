@@ -1,0 +1,38 @@
+sequenceDiagram
+    participant Hardware as Weighbridge Hardware
+    participant Weight_Svc as Weight Data Service
+    participant Transaction as Transaction Service
+    participant Analytics as Analytics Service
+    participant Compliance as Compliance Service
+    participant Events as Event Bus
+    participant Operator as Operator Portal
+
+    loop Continuous Weight Monitoring
+        Hardware->>Weight_Svc: Raw weight readings
+        Weight_Svc->>Weight_Svc: Apply calibration & validation
+        Weight_Svc->>Weight_Svc: Check weight stability
+        
+        alt Weight stable and valid
+            Weight_Svc->>Events: Publish WeightReading event
+            Events->>Transaction: Update transaction weight
+            Events->>Analytics: Update real-time metrics
+            Events->>Compliance: Check weight compliance
+            
+            Weight_Svc->>Operator: Display stable weight
+            
+            alt Compliance violation detected
+                Compliance->>Events: Publish ComplianceViolation event
+                Events->>Operator: Display compliance alert
+                Events->>Transaction: Flag transaction for review
+            end
+            
+        else Weight unstable or invalid
+            Weight_Svc->>Operator: Display unstable weight warning
+        end
+    end
+    
+    Operator->>Weight_Svc: Capture final weight
+    Weight_Svc->>Transaction: Confirm weight capture
+    Transaction->>Transaction: Calculate net weight
+    Transaction->>Events: Publish WeightCaptured event
+    Events->>Analytics: Update transaction analytics

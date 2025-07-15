@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant Customer as Customer Service
+    participant Product as Product Service
+    participant Supplier as Supplier Service
+    participant Transaction as Transaction Service
+    participant Compliance as Compliance Service
+    participant Events as Kafka Events
+
+    Note over Customer,Events: End-to-End Order Processing
+
+    Customer->>Product: 1. Validate ProductId
+    Product->>Product: Check product catalog
+    Product->>Customer: Product details & pricing
+    
+    Customer->>Supplier: 2. Check supplier availability
+    Supplier->>Supplier: Verify supplier capacity
+    Supplier->>Customer: Supplier confirmation
+    
+    Customer->>Transaction: 3. Create order transaction
+    Transaction->>Transaction: Generate transaction ID
+    Transaction->>Events: Publish OrderCreated event
+    
+    Events->>Compliance: 4. Compliance validation
+    Compliance->>Product: Check product regulations
+    Compliance->>Supplier: Check supplier licenses
+    Compliance->>Events: Publish ComplianceValidated event
+    
+    Events->>Customer: 5. Order confirmation
+    Customer->>Customer: Update order status

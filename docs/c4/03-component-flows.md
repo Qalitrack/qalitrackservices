@@ -47,6 +47,8 @@ flowchart TD
     subgraph "Client Layer"
         Driver[Driver Mobile App]
         Operator[Operator Web Portal]
+        Inspector[Vehicle Inspector App]
+        SaccoAdmin[SACCO Administrator Portal]
     end
     
     subgraph "Gateway & Auth"
@@ -63,7 +65,7 @@ flowchart TD
         RouteSvc[Route Service :7006]
     end
     
-    subgraph "DataManager Services"
+    subgraph "masterdata Services"
         WeightSvc[Weight Data Service]
         TransactionSvc[Transaction Service]
         ComplianceSvc[Compliance Service]
@@ -122,7 +124,7 @@ flowchart TD
     classDef infrastructure fill:#fce4ec
     classDef external fill:#e8f5e8
     
-    class Driver,Operator client
+    class Driver,Operator,Inspector,SaccoAdmin client
     class Gateway,UserSvc gateway
     class VehicleSvc,DriverSvc,CustomerSvc,ProductSvc,TransporterSvc,RouteSvc datamaster
     class WeightSvc,TransactionSvc,ComplianceSvc,AnalyticsSvc datamanager
@@ -130,7 +132,7 @@ flowchart TD
     class Hardware external
 ```
 
-## 🔗 **masterdata to DataManager Integration Patterns**
+## 🔗 **masterdata to masterdata Integration Patterns**
 
 ### **Customer Order Processing Flow**
 

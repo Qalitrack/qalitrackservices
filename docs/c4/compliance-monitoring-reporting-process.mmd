@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant Transaction as Transaction Service
+    participant Compliance as Compliance Service
+    participant Driver_Svc as Driver Service
+    participant Vehicle as Vehicle Service
+    participant Regulatory as Regulatory Systems
+    participant Alerts as Alert System
+
+    loop Continuous Compliance Monitoring
+        Transaction->>Compliance: Transaction data stream
+        Compliance->>Driver_Svc: Check driver license status
+        Driver_Svc->>Compliance: License validity status
+        
+        Compliance->>Vehicle: Check vehicle compliance
+        Vehicle->>Compliance: Vehicle status & certifications
+        
+        Compliance->>Compliance: Apply regulatory rules
+        
+        alt Compliance violation detected
+            Compliance->>Alerts: Trigger immediate alert
+            Alerts->>Transaction: Halt transaction if critical
+            Compliance->>Regulatory: Report violation
+        else Compliance requirements met
+            Compliance->>Transaction: Approve transaction
+        end
+    end
+    
+    Note over Compliance: Daily/Weekly/Monthly Reporting
+    Compliance->>Regulatory: Generate compliance reports
+    Regulatory->>Compliance: Acknowledgment
+    Compliance->>Alerts: Send summary to stakeholders

@@ -1,0 +1,49 @@
+flowchart TD
+    subgraph "Normal Operations"
+        NO1[Primary Database]
+        NO2[Active Services]
+        NO3[Real-time Processing]
+    end
+    
+    subgraph "Monitoring & Detection"
+        MD1[Health Checks]
+        MD2[Performance Monitoring]
+        MD3[Error Detection]
+        MD4[Alert Generation]
+    end
+    
+    subgraph "Failover Process"
+        FP1[Automatic Failover Trigger]
+        FP2[Database Switch to Replica]
+        FP3[Service Instance Restart]
+        FP4[Load Balancer Update]
+        FP5[Client Notification]
+    end
+    
+    subgraph "Recovery Process"
+        RP1[Root Cause Analysis]
+        RP2[Primary System Repair]
+        RP3[Data Synchronization]
+        RP4[Gradual Traffic Shift]
+        RP5[Full Recovery Confirmation]
+    end
+
+    NO1 --> MD1
+    NO2 --> MD2
+    NO3 --> MD3
+    
+    MD1 --> MD4
+    MD2 --> MD4
+    MD3 --> MD4
+    
+    MD4 --> FP1
+    FP1 --> FP2
+    FP2 --> FP3
+    FP3 --> FP4
+    FP4 --> FP5
+    
+    FP5 --> RP1
+    RP1 --> RP2
+    RP2 --> RP3
+    RP3 --> RP4
+    RP4 --> RP5

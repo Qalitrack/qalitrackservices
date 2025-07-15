@@ -1,0 +1,41 @@
+sequenceDiagram
+    participant Customer as Customer Portal
+    participant Gateway as API Gateway
+    participant Customer_Svc as Customer Service
+    participant Product as Product Service
+    participant Supplier as Supplier Service
+    participant Transporter as Transporter Service
+    participant Route as Route Service
+    participant Transaction as Transaction Service
+    participant Events as Event Bus
+
+    Customer->>Gateway: Create Order Request
+    Gateway->>Customer_Svc: Process order creation
+    
+    Customer_Svc->>Product: Validate product availability
+    Product->>Product: Check inventory & pricing
+    Product->>Customer_Svc: Product validation result
+    
+    Customer_Svc->>Supplier: Check supplier capacity
+    Supplier->>Supplier: Verify production capacity
+    Supplier->>Customer_Svc: Supplier confirmation
+    
+    Customer_Svc->>Transporter: Request transport assignment
+    Transporter->>Transporter: Check fleet availability
+    Transporter->>Customer_Svc: Transport assignment
+    
+    Customer_Svc->>Route: Optimize delivery route
+    Route->>Route: Calculate optimal path
+    Route->>Customer_Svc: Route recommendation
+    
+    Customer_Svc->>Transaction: Create order transaction
+    Transaction->>Transaction: Generate transaction ID
+    Transaction->>Events: Publish OrderCreated event
+    
+    Events->>Customer_Svc: Update order status
+    Events->>Product: Reserve inventory
+    Events->>Supplier: Create production order
+    Events->>Transporter: Schedule transport
+    
+    Customer_Svc->>Gateway: Order creation confirmed
+    Gateway->>Customer: Order confirmation with details

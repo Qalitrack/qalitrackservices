@@ -1,0 +1,103 @@
+classDiagram
+    class UserController {
+        +AuthenticateAsync(LoginRequest)
+        +RefreshTokenAsync(RefreshRequest)
+        +CreateUserAsync(CreateUserRequest)
+        +GetUserProfileAsync(userId)
+        +UpdateUserProfileAsync(userId, UpdateRequest)
+        +ChangePasswordAsync(userId, ChangePasswordRequest)
+    }
+    
+    class IUserService {
+        <<interface>>
+        +AuthenticateUserAsync(username, password)
+        +ValidateTokenAsync(token)
+        +RefreshTokenAsync(refreshToken)
+        +CreateUserAsync(userDto)
+        +GetUserByIdAsync(userId)
+        +UpdateUserAsync(userId, userDto)
+    }
+    
+    class UserService {
+        -IUserRepository userRepository
+        -IPasswordHasher passwordHasher
+        -IJwtTokenService tokenService
+        -IRoleService roleService
+        +AuthenticateUserAsync(username, password)
+        +ValidateTokenAsync(token)
+        +CreateUserAsync(userDto)
+        +GetUserByIdAsync(userId)
+    }
+    
+    class IUserRepository {
+        <<interface>>
+        +GetByUsernameAsync(username)
+        +GetByIdAsync(userId)
+        +CreateAsync(user)
+        +UpdateAsync(user)
+        +GetUserRolesAsync(userId)
+    }
+    
+    class UserRepository {
+        -ApplicationDbContext context
+        +GetByUsernameAsync(username)
+        +GetByIdAsync(userId)
+        +CreateAsync(user)
+        +UpdateAsync(user)
+    }
+    
+    class User {
+        +Id: Guid
+        +Username: string
+        +Email: string
+        +PasswordHash: string
+        +FirstName: string
+        +LastName: string
+        +PhoneNumber: string
+        +IsActive: bool
+        +LastLoginAt: DateTime
+        +CreatedAt: DateTime
+        +UserRoles: ICollection~UserRole~
+    }
+    
+    class Role {
+        +Id: Guid
+        +Name: string
+        +Description: string
+        +Level: int
+        +IsActive: bool
+        +RolePermissions: ICollection~RolePermission~
+    }
+    
+    class Permission {
+        +Id: Guid
+        +Name: string
+        +Resource: string
+        +Action: string
+        +IsActive: bool
+    }
+    
+    class IJwtTokenService {
+        <<interface>>
+        +GenerateTokenAsync(user)
+        +ValidateTokenAsync(token)
+        +RefreshTokenAsync(refreshToken)
+    }
+    
+    class ApplicationDbContext {
+        +Users: DbSet~User~
+        +Roles: DbSet~Role~
+        +Permissions: DbSet~Permission~
+        +UserRoles: DbSet~UserRole~
+        +RolePermissions: DbSet~RolePermission~
+    }
+
+    UserController --> IUserService
+    IUserService <|-- UserService
+    UserService --> IUserRepository
+    UserService --> IJwtTokenService
+    IUserRepository <|-- UserRepository
+    UserRepository --> ApplicationDbContext
+    ApplicationDbContext --> User
+    ApplicationDbContext --> Role
+    ApplicationDbContext --> Permission
