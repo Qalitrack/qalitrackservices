@@ -70,27 +70,35 @@ flowchart TD
     subgraph "Infrastructure"
         PostgreSQL[(PostgreSQL with TimescaleDB)]
         Hardware[Weighbridge Hardware]
+        QRReader[QR Code Reader]
+        ANPRCamera[ANPR Camera System]
     end
 
     %% Sequential transaction flow
-    Driver -->|"1: Vehicle Registration"| Gateway
-    Gateway -->|"2: Validate Vehicle"| VehicleSvc
-    VehicleSvc -->|"Vehicle Valid"| Gateway
-    Gateway -->|"3: Verify Driver"| DriverSvc
+    QRReader -->|"1: Vehicle QR Detection"| Gateway
+    Gateway -->|"QR Data"| VehicleSvc
+    ANPRCamera -->|"2: License Plate Recognition"| Gateway
+    Gateway -->|"Plate Data"| VehicleSvc
+    VehicleSvc -->|"Vehicle Identified"| Gateway
+    
+    %% Driver and document verification
+    %% Manned operations
+    Operator -->|"3: Driver Verification • Manned"| Gateway
+    Gateway -->|"Verify Driver"| DriverSvc
+    
+    %% Unmanned operations  
+    Kiosk -->|"3: Driver Verification • Unmanned"| Gateway
+    Kiosk -->|"3.1: Face Detection Auth"| Gateway
+    Kiosk -->|"3.2: Document Verification • QR Code"| Gateway
+    Gateway -->|"Verify Driver"| DriverSvc
+    
+    %% Weight capture after verification
     DriverSvc -->|"Driver Verified"| Gateway
     Hardware -->|"4: Capture Weight"| WeightSvc
     
-    %% Manned operations
-    Operator -->|"5: Create Transaction • Manned"| Gateway
-    
-    %% Unmanned operations  
-    Kiosk -->|"5: Create Transaction • Unmanned"| Gateway
-    Kiosk -->|"5.1: Face Detection Auth"| Gateway
-    Kiosk -->|"5.2: Document Verification • QR Code"| Gateway
-    
-    %% Common transaction processing
-    Gateway -->|"6: Process Transaction"| TransactionSvc
-    TransactionSvc -->|"7: Store & Notify"| PostgreSQL
+    %% Transaction processing
+    Gateway -->|"5: Process Transaction"| TransactionSvc
+    TransactionSvc -->|"6: Store & Notify"| PostgreSQL
     
     %% Data storage
     VehicleSvc -->|Vehicle Data| PostgreSQL
@@ -111,37 +119,37 @@ flowchart TD
     class Driver,Operator,Kiosk client
     class Gateway gateway
     class VehicleSvc,DriverSvc,WeightSvc,TransactionSvc services
-    class PostgreSQL,Hardware infrastructure
+    class PostgreSQL,Hardware,QRReader,ANPRCamera infrastructure
 ```
 
 ### **🔄 Complete Transaction Flow**
 
-The enhanced transaction flow includes comprehensive verification before weighing:
+The operational transaction flow follows the actual weighbridge sequence:
 
-**Pre-Weighing Verification (Steps 1-4):**
-- **Step 1:** Vehicle registration via driver mobile app
-- **Step 2:** Vehicle validation against registered fleet
-- **Step 3:** Driver verification and license validation
-- **Step 4:** Weight capture from calibrated hardware
+**Vehicle Identification (Steps 1-2):**
+- **Step 1:** QR Code Reader detects vehicle QR code for initial identification
+- **Step 2:** ANPR Camera System captures license plate for verification
+- Vehicle Service validates vehicle registration and status
 
-**Manned Operations (Step 5):**
-- Operator uses web portal to create transactions
-- Human oversight and validation
-- Real-time operator assistance
-- Manual intervention capabilities
+**Driver & Document Verification (Step 3):**
 
-**Unmanned Operations (Step 5 + 5.1 + 5.2):**
-- Self-service kiosk creates transactions automatically
-- Face detection authentication (Step 5.1)
-- Document verification using QR code scanning (Step 5.2)
-- Touch interface for driver interaction
-- Automatic receipt generation
+**Manned Operations (Step 3):**
+- Operator verifies driver credentials via web portal
+- Manual document inspection and validation
+- Human oversight and intervention capabilities
 
-**Transaction Processing (Steps 6-7):**
-- Gateway processes validated transaction
-- Data storage and stakeholder notifications
+**Unmanned Operations (Step 3 + 3.1 + 3.2):**
+- Self-service kiosk handles driver verification
+- **Step 3.1:** Face detection authentication
+- **Step 3.2:** Document verification using QR code scanning
+- Automated credential validation
 
-Both paths converge at the Gateway for consistent transaction processing, ensuring the same data integrity and compliance standards regardless of operation mode.
+**Weight Capture & Processing (Steps 4-6):**
+- **Step 4:** Weighbridge hardware captures weight after verification
+- **Step 5:** Gateway processes validated transaction
+- **Step 6:** Data storage and stakeholder notifications
+
+This sequence ensures complete vehicle and driver verification before any weighing operation, maintaining security and compliance standards.
 
 ## 🔗 **masterdata to masterdata Integration Patterns**
 
