@@ -25,27 +25,35 @@ flowchart TD
     subgraph "Infrastructure"
         PostgreSQL[(PostgreSQL with TimescaleDB)]
         Hardware[Weighbridge Hardware]
+        QRReader[QR Code Reader]
+        ANPRCamera[ANPR Camera System]
     end
 
     %% Sequential transaction flow
-    Driver -->|"1: Vehicle Registration"| Gateway
-    Gateway -->|"2: Validate Vehicle"| VehicleSvc
-    VehicleSvc -->|"Vehicle Valid"| Gateway
-    Gateway -->|"3: Verify Driver"| DriverSvc
+    QRReader -->|"1: Vehicle QR Detection"| Gateway
+    Gateway -->|"QR Data"| VehicleSvc
+    ANPRCamera -->|"2: License Plate Recognition"| Gateway
+    Gateway -->|"Plate Data"| VehicleSvc
+    VehicleSvc -->|"Vehicle Identified"| Gateway
+    
+    %% Driver and document verification
+    %% Manned operations
+    Operator -->|"3: Driver Verification • Manned"| Gateway
+    Gateway -->|"Verify Driver"| DriverSvc
+    
+    %% Unmanned operations  
+    Kiosk -->|"3: Driver Verification • Unmanned"| Gateway
+    Kiosk -->|"3.1: Face Detection Auth"| Gateway
+    Kiosk -->|"3.2: Document Verification • QR Code"| Gateway
+    Gateway -->|"Verify Driver"| DriverSvc
+    
+    %% Weight capture after verification
     DriverSvc -->|"Driver Verified"| Gateway
     Hardware -->|"4: Capture Weight"| WeightSvc
     
-    %% Manned operations
-    Operator -->|"5: Create Transaction • Manned"| Gateway
-    
-    %% Unmanned operations  
-    Kiosk -->|"5: Create Transaction • Unmanned"| Gateway
-    Kiosk -->|"5.1: Face Detection Auth"| Gateway
-    Kiosk -->|"5.2: Document Verification • QR Code"| Gateway
-    
-    %% Common transaction processing
-    Gateway -->|"6: Process Transaction"| TransactionSvc
-    TransactionSvc -->|"7: Store & Notify"| PostgreSQL
+    %% Transaction processing
+    Gateway -->|"5: Process Transaction"| TransactionSvc
+    TransactionSvc -->|"6: Store & Notify"| PostgreSQL
     
     %% Data storage
     VehicleSvc -->|Vehicle Data| PostgreSQL
@@ -66,4 +74,4 @@ flowchart TD
     class Driver,Operator,Kiosk client
     class Gateway gateway
     class VehicleSvc,DriverSvc,WeightSvc,TransactionSvc services
-    class PostgreSQL,Hardware infrastructure
+    class PostgreSQL,Hardware,QRReader,ANPRCamera infrastructure
