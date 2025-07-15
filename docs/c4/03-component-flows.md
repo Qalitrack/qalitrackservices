@@ -143,24 +143,24 @@ sequenceDiagram
 
     Note over Customer,Events: End-to-End Order Processing
 
-    Customer->>Product: 1. Validate ProductId
+    Customer->>Product: 1: Validate ProductId
     Product->>Product: Check product catalog
     Product->>Customer: Product details & pricing
     
-    Customer->>Supplier: 2. Check supplier availability
+    Customer->>Supplier: 2: Check supplier availability
     Supplier->>Supplier: Verify supplier capacity
     Supplier->>Customer: Supplier confirmation
     
-    Customer->>Transaction: 3. Create order transaction
+    Customer->>Transaction: 3: Create order transaction
     Transaction->>Transaction: Generate transaction ID
     Transaction->>Events: Publish OrderCreated event
     
-    Events->>Compliance: 4. Compliance validation
+    Events->>Compliance: 4: Compliance validation
     Compliance->>Product: Check product regulations
     Compliance->>Supplier: Check supplier licenses
     Compliance->>Events: Publish ComplianceValidated event
     
-    Events->>Customer: 5. Order confirmation
+    Events->>Customer: 5: Order confirmation
     Customer->>Customer: Update order status
 ```
 
@@ -177,21 +177,21 @@ sequenceDiagram
 
     Note over Transporter,Transaction: Transport Assignment Process
 
-    Transporter->>Vehicle: 1. Check vehicle availability
+    Transporter->>Vehicle: 1: Check vehicle availability
     Vehicle->>SACCO: Verify SACCO registration
     SACCO->>Vehicle: SACCO membership status
     Vehicle->>Transporter: Available vehicles list
     
-    Transporter->>Driver: 2. Check driver availability
+    Transporter->>Driver: 2: Check driver availability
     Driver->>SACCO: Verify driver membership
     Driver->>Driver: Check license validity
     Driver->>Transporter: Available drivers list
     
-    Transporter->>Route: 3. Optimize route assignment
+    Transporter->>Route: 3: Optimize route assignment
     Route->>Route: Calculate optimal route
     Route->>Transporter: Route recommendations
     
-    Transporter->>Transaction: 4. Create transport assignment
+    Transporter->>Transaction: 4: Create transport assignment
     Transaction->>Vehicle: Lock vehicle assignment
     Transaction->>Driver: Lock driver assignment
     Transaction->>Route: Lock route assignment
