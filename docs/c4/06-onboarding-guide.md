@@ -47,7 +47,7 @@ flowchart LR
 ### **Key System Numbers**
 - **18 Microservices**: 11 masterdata + 7 DataManager services
 - **3 Client Applications**: Web Portal, Mobile App, Admin Panel
-- **4 Infrastructure Components**: PostgreSQL, Redis, Kafka, Elasticsearch
+- **3 Infrastructure Components**: PostgreSQL (with TimescaleDB), Redis, Kafka
 - **1 API Gateway**: Central routing and authentication
 
 ## 📚 **Learning Path**

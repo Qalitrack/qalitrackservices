@@ -71,8 +71,7 @@ flowchart TD
     end
     
     subgraph "Infrastructure"
-        PostgreSQL[(PostgreSQL)]
-        InfluxDB[(InfluxDB)]
+        PostgreSQL[(PostgreSQL with TimescaleDB)]
         Kafka[Apache Kafka]
         Redis[(Redis Cache)]
     end
@@ -92,7 +91,7 @@ flowchart TD
     
     %% Weight Capture Flow
     Hardware -->|5. Raw Weight Data| WeightSvc
-    WeightSvc -->|Store Time-Series Data| InfluxDB
+    WeightSvc -->|Store Time-Series Data| PostgreSQL
     WeightSvc -->|6. Weight Event| Kafka
     
     %% Transaction Processing
@@ -109,7 +108,7 @@ flowchart TD
     Kafka -->|15. Compliance Check| ComplianceSvc
     ComplianceSvc -->|Validate Regulations| PostgreSQL
     Kafka -->|16. Analytics Processing| AnalyticsSvc
-    AnalyticsSvc -->|Update Metrics| InfluxDB
+    AnalyticsSvc -->|Update Metrics| PostgreSQL
     
     %% Response Flow
     TransactionSvc -->|17. Transaction Complete| Gateway
@@ -127,7 +126,7 @@ flowchart TD
     class Gateway,UserSvc gateway
     class VehicleSvc,DriverSvc,CustomerSvc,ProductSvc,TransporterSvc,RouteSvc datamaster
     class WeightSvc,TransactionSvc,ComplianceSvc,AnalyticsSvc datamanager
-    class PostgreSQL,InfluxDB,Kafka,Redis infrastructure
+    class PostgreSQL,Kafka,Redis infrastructure
     class Hardware external
 ```
 
@@ -225,7 +224,7 @@ flowchart LR
     end
     
     subgraph "Storage Layer"
-        InfluxDB[(InfluxDB)]
+        PostgreSQL[(PostgreSQL with TimescaleDB)]
         Kafka[Kafka Stream]
         Redis[(Redis Cache)]
     end
@@ -245,7 +244,7 @@ flowchart LR
     Processor -->|Calibrated Weight| Calibrator
     Calibrator -->|Accurate Weight| Publisher
     
-    Publisher -->|Time-Series Data| InfluxDB
+    Publisher -->|Time-Series Data| PostgreSQL
     Publisher -->|Weight Events| Kafka
     Publisher -->|Current Weight| Redis
     
