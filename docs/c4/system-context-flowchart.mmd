@@ -4,7 +4,8 @@ flowchart TB
         direction LR
         KEBS["🏛️ KEBS<br/>Kenya Bureau of Standards<br/>Compliance reporting"]
         NTSA["🚗 NTSA<br/>Transport & Safety Authority<br/>Vehicle compliance"]
-        ERP_SAP["🏭 ERP SAP<br/>Factory management<br/>Production planning"]
+        ERP_SAP["🏭 ERP SAP (ECC)<br/>Legacy factory management<br/>Production planning"]
+        ERP_S4HANA["🏭 ERP S4HANA<br/>Next-gen SAP suite<br/>Real-time analytics"]
         ERP_ORACLE["💼 ERP Oracle<br/>Financial management<br/>Procurement"]
     end
     
@@ -13,6 +14,7 @@ flowchart TB
         direction TB
         driver["🚛 Truck Driver<br/>Transports goods<br/>Requires weighing services"]
         operator["⚖️ Weighbridge Operator<br/>Operates equipment<br/>Validates transactions"]
+        inspector["🔍 Vehicle Inspector<br/>Conducts safety inspections<br/>Compliance checks"]
         manager["👨‍💼 Site Manager<br/>Monitors operations<br/>Reviews reports"]
     end
     
@@ -25,6 +27,7 @@ flowchart TB
         admin["🔧 System Administrator<br/>Manages users<br/>Configures system"]
         auditor["📋 Compliance Auditor<br/>Reviews compliance reports<br/>Validates adherence"]
         customer["🏢 Customer Representative<br/>Tracks orders<br/>Monitors deliveries"]
+        sacco_admin["🏦 SACCO Administrator<br/>Manages cooperative members<br/>Vehicle assignments"]
     end
     
     %% Bottom left - Hardware Systems
@@ -48,17 +51,20 @@ flowchart TB
     %% User Interactions - Operational (Left to Center)
     driver -->|"Uses mobile app<br/>HTTPS/Mobile"| qalitrack
     operator -->|"Uses web portal<br/>HTTPS/Web"| qalitrack
+    inspector -->|"Uses inspection app<br/>HTTPS/Mobile"| qalitrack
     manager -->|"Uses dashboard<br/>HTTPS/Web"| qalitrack
     
     %% User Interactions - Administrative (Right to Center)
     admin -->|"Uses admin panel<br/>HTTPS/Web"| qalitrack
     auditor -->|"Reviews reports<br/>HTTPS/Web"| qalitrack
     customer -->|"Tracks orders<br/>HTTPS/Web"| qalitrack
+    sacco_admin -->|"Manages cooperative<br/>HTTPS/Web"| qalitrack
     
     %% External System Integrations - Top
     qalitrack -->|"Submits compliance<br/>HTTPS"| KEBS
     qalitrack -->|"Validates licenses<br/>HTTPS"| NTSA
     qalitrack -->|"Synchronizes data<br/>HTTPS/REST"| ERP_SAP
+    qalitrack -->|"Real-time integration<br/>HTTPS/REST"| ERP_S4HANA
     qalitrack -->|"Exchanges transactions<br/>HTTPS/REST"| ERP_ORACLE
     
     %% Hardware Integrations - Bottom Left
@@ -76,12 +82,14 @@ flowchart TB
     %% Styling
     classDef platformStyle fill:#2E8B57,stroke:#1F5F3F,stroke-width:3px,color:#FFFFFF
     classDef userStyle fill:#4A90E2,stroke:#2E5A87,stroke-width:2px,color:#FFFFFF
+    classDef inspectorStyle fill:#9C27B0,stroke:#6A1B9A,stroke-width:2px,color:#FFFFFF
     classDef externalStyle fill:#E67E22,stroke:#A0522D,stroke-width:2px,color:#FFFFFF
     classDef hardwareStyle fill:#8E44AD,stroke:#6A1B9A,stroke-width:2px,color:#FFFFFF
     classDef commStyle fill:#16A085,stroke:#0D7A6B,stroke-width:2px,color:#FFFFFF
     
     class qalitrack platformStyle
-    class driver,operator,manager,admin,auditor,customer userStyle
-    class KEBS,NTSA,ERP_SAP,ERP_ORACLE externalStyle
+    class driver,operator,manager,admin,auditor,customer,sacco_admin userStyle
+    class inspector inspectorStyle
+    class KEBS,NTSA,ERP_SAP,ERP_S4HANA,ERP_ORACLE externalStyle
     class weighbridge,gates,anpr,kiosk hardwareStyle
     class mpesa,sms,email,backup commStyle

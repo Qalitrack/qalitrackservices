@@ -21,8 +21,8 @@ fi
 echo "Converting C4 Context diagram..."
 mmdc -i system-context-c4.mmd -o assets/system-context-c4.png -t default -b white
 
-echo "Converting Flowchart diagram..."
-mmdc -i system-context-flowchart.mmd -o assets/system-context-flowchart.png -t default -b white
+echo "Converting Flowchart diagram (3x size)..."
+mmdc -i system-context-flowchart.mmd -o assets/system-context-flowchart.png -t default -b white -s 3
 
 echo "✅ Conversion complete!"
 echo "📁 PNG files saved in assets/ directory:"
