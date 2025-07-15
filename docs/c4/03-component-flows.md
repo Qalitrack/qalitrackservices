@@ -229,7 +229,6 @@ sequenceDiagram
 flowchart LR
     subgraph "Hardware Layer"
         LoadCells[Load Cells]
-        Sensors[Weight Sensors]
     end
     
     subgraph "Data Acquisition"
@@ -256,8 +255,7 @@ flowchart LR
         ComplianceSvc[Compliance Service]
     end
 
-    LoadCells -->|Raw Signals| HardwareInterface
-    Sensors -->|Digital Data| HardwareInterface
+    LoadCells -->|Analog Signals| HardwareInterface
     HardwareInterface -->|Buffered Data| DataBuffer
     DataBuffer -->|Validated Data| Validator
     
