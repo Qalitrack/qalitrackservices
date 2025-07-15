@@ -1,5 +1,5 @@
 C4Container
-    title QaliTrack Platform - Container Architecture
+    title QaliTrack Platform • Container Architecture
 
     Person(user, "System Users", "Drivers, Operators, Managers, Administrators, Vehicle Inspectors, SACCO Administrators")
 
@@ -15,21 +15,21 @@ C4Container
         Container(service_discovery, "Service Discovery", ".NET 8", "Service registration, health monitoring, and dynamic routing")
     }
 
-    Container_Boundary(datamaster_layer, "masterdata Services - Master Data Management") {
-        Container(user_service, "User Service", ".NET 8/SQLite", "Authentication, authorization, JWT tokens, RBAC - Port 7001")
-        Container(customer_service, "Customer Service", ".NET 8/SQLite", "Customer management, orders, relationships - Port 7008")
-        Container(product_service, "Product Service", ".NET 8/SQLite", "Product catalog, pricing, specifications - Port 7005")
-        Container(supplier_service, "Supplier Service", ".NET 8/SQLite", "Vendor management, procurement, contracts - Port 7009")
-        Container(transporter_service, "Transporter Service", ".NET 8/SQLite", "Fleet companies, capacity planning - Port 7010")
-        Container(route_service, "Route Service", ".NET 8/SQLite", "Transport routes, optimization, gates - Port 7006")
-        Container(vehicle_service, "Vehicle Service", ".NET 8/SQLite", "Vehicle registration, maintenance, compliance - Port 7003")
-        Container(driver_service, "Driver Service", ".NET 8/SQLite", "Driver profiles, licenses, performance - Port 7004")
-        Container(weighbridge_service, "Weighbridge Service", ".NET 8/SQLite", "Equipment management, calibration - Port 7007")
-        Container(sacco_service, "SACCO Service", ".NET 8/SQLite", "Cooperative organizations, memberships - Port 7011")
-        Container(organization_service, "Organization Service", ".NET 8/SQLite", "Multi-tenant context, permissions - Port 7002")
+    Container_Boundary(datamaster_layer, "masterdata Services • Master Data Management") {
+        Container(user_service, "User Service", ".NET 8/SQLite", "Authentication, authorization, JWT tokens, RBAC • Port 7001")
+        Container(customer_service, "Customer Service", ".NET 8/SQLite", "Customer management, orders, relationships • Port 7008")
+        Container(product_service, "Product Service", ".NET 8/SQLite", "Product catalog, pricing, specifications • Port 7005")
+        Container(supplier_service, "Supplier Service", ".NET 8/SQLite", "Vendor management, procurement, contracts • Port 7009")
+        Container(transporter_service, "Transporter Service", ".NET 8/SQLite", "Fleet companies, capacity planning • Port 7010")
+        Container(route_service, "Route Service", ".NET 8/SQLite", "Transport routes, optimization, gates • Port 7006")
+        Container(vehicle_service, "Vehicle Service", ".NET 8/SQLite", "Vehicle registration, maintenance, compliance • Port 7003")
+        Container(driver_service, "Driver Service", ".NET 8/SQLite", "Driver profiles, licenses, performance • Port 7004")
+        Container(weighbridge_service, "Weighbridge Service", ".NET 8/SQLite", "Equipment management, calibration • Port 7007")
+        Container(sacco_service, "SACCO Service", ".NET 8/SQLite", "Cooperative organizations, memberships • Port 7011")
+        Container(organization_service, "Organization Service", ".NET 8/SQLite", "Multi-tenant context, permissions • Port 7002")
     }
 
-    Container_Boundary(datamanager_layer, "masterdata Services - Operational Data Processing") {
+    Container_Boundary(datamanager_layer, "masterdata Services • Operational Data Processing") {
         Container(weight_data_service, "Weight Data Service", ".NET 8/SQLite", "Real-time weight capture, hardware integration")
         Container(transaction_service, "Transaction Service", ".NET 8/SQLite", "Transaction lifecycle, multi-entity linking")
         Container(compliance_service, "Compliance Service", ".NET 8/SQLite", "Regulatory monitoring, violation detection")
