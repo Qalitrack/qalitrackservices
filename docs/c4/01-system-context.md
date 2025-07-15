@@ -32,7 +32,7 @@ C4Context
     
     Enterprise_Boundary(external_systems, "External Systems") {
         System_Ext(erp_sap, "ERP System (SAP ECC)", "Legacy factory management, inventory, production")
-        System_Ext(erp_s4hana, "ERP System (S4HANA)", "Next-gen SAP suite, real-time analytics, digital core")
+        System_Ext(erp_s4hana, "ERP System (S/4HANA)", "Next-gen SAP suite, real-time analytics, digital core")
         System_Ext(erp_oracle, "ERP System (Oracle)", "Financial management, procurement")
         System_Ext(hardware_weighbridge, "Weighbridge Hardware", "Load cells, sensors, weight measurement")
         System_Ext(hardware_gates, "Gate Control Systems", "Access control, RFID readers, barriers")
@@ -230,12 +230,12 @@ flowchart TB
 
 ### **Enterprise Systems**
 
-#### **🏭 ERP Systems (SAP ECC, S4HANA, Oracle)**
+#### **🏭 ERP Systems (SAP ECC, S/4HANA, Oracle)**
 - **Purpose**: Synchronize production data, inventory, financial transactions
 - **Integration**: REST API, scheduled batch jobs, real-time updates
 - **Data Flow**: Production orders → QaliTrack, Weight data → ERP
 - **SAP ECC**: Legacy factory management, batch processing
-- **S4HANA**: Real-time analytics, digital core operations
+- **S/4HANA**: Real-time analytics, digital core operations
 - **Oracle**: Financial management, procurement workflows
 
 #### **💳 Payment Systems (M-Pesa)**
