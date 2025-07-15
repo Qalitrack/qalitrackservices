@@ -27,6 +27,8 @@ C4Context
         System_Ext(erp_oracle, "ERP System (Oracle)", "Financial management, procurement")
         System_Ext(hardware_weighbridge, "Weighbridge Hardware", "Load cells, sensors, weight measurement")
         System_Ext(hardware_gates, "Gate Control Systems", "Access control, RFID readers, barriers")
+        System_Ext(anpr_camera, "ANPR Camera System", "Automatic Number Plate Recognition for vehicle identification")
+        System_Ext(kiosk_system, "Self-Service Kiosk", "Unmanned weighing points for automated transactions")
         System_Ext(regulatory_kebs, "KEBS (Regulatory)", "Kenya Bureau of Standards - compliance")
         System_Ext(regulatory_ntsa, "NTSA (Regulatory)", "National Transport & Safety Authority")
         System_Ext(payment_mpesa, "M-Pesa Payment", "Mobile payment processing")
@@ -48,6 +50,8 @@ C4Context
     Rel(qalitrack, erp_oracle, "Exchanges transactions", "HTTPS/REST - Financial data, procurement")
     Rel_Back(hardware_weighbridge, qalitrack, "Sends weight data", "Serial/TCP - Real-time measurements")
     Rel_Back(hardware_gates, qalitrack, "Reports vehicle presence", "TCP/HTTP - RFID scans, access control")
+    Rel_Back(anpr_camera, qalitrack, "Sends plate data", "HTTP/TCP - License plate recognition")
+    Rel_Back(kiosk_system, qalitrack, "Processes transactions", "HTTPS/REST - Unmanned weighing operations")
     Rel(qalitrack, regulatory_kebs, "Submits compliance reports", "HTTPS - Monthly compliance data")
     Rel(qalitrack, regulatory_ntsa, "Validates vehicle licenses", "HTTPS - Vehicle registration checks")
     Rel(qalitrack, payment_mpesa, "Processes payments", "HTTPS API - Fee collection, invoices")
@@ -125,6 +129,16 @@ C4Context
 - **Purpose**: Vehicle identification, access control, traffic management
 - **Integration**: RFID readers, barrier controls, camera systems
 - **Data Flow**: Vehicle RFID → Gate system → QaliTrack registration
+
+#### **📷 ANPR Camera System**
+- **Purpose**: Automatic Number Plate Recognition for vehicle identification
+- **Integration**: Computer vision, license plate databases, real-time processing
+- **Data Flow**: Vehicle plates → ANPR system → QaliTrack vehicle validation
+
+#### **🖥️ Self-Service Kiosk**
+- **Purpose**: Unmanned weighing points for automated transactions
+- **Integration**: Touch interface, payment processing, receipt printing
+- **Data Flow**: Driver input → Kiosk system → QaliTrack transaction processing
 
 ### **Regulatory Systems**
 
