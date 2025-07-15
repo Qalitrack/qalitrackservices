@@ -1,0 +1,62 @@
+C4Context
+    title QaliTrack Weighbridge Management System - System Context
+
+    %% Primary Users (Left side)
+    Person(driver, "Truck Driver", "Transports goods, requires weighing services")
+    Person(operator, "Weighbridge Operator", "Operates weighing equipment, validates transactions")
+    Person(manager, "Site Manager", "Monitors operations, reviews reports")
+    
+    %% Administrative Users (Right side)
+    Person(admin, "System Administrator", "Manages users, configures system")
+    Person(auditor, "Compliance Auditor", "Reviews compliance reports, validates adherence")
+    Person(customer, "Customer Representative", "Tracks orders, monitors deliveries")
+    
+    %% Central System
+    System(qalitrack, "QaliTrack Platform", "Comprehensive weighbridge management system for real-time weighing, transactions, compliance, and analytics")
+    
+    Enterprise_Boundary(external_systems, "External Systems") {
+        System_Ext(erp_sap, "ERP System (SAP)", "Factory management, inventory, production")
+        System_Ext(erp_oracle, "ERP System (Oracle)", "Financial management, procurement")
+        System_Ext(hardware_weighbridge, "Weighbridge Hardware", "Load cells, sensors, weight measurement")
+        System_Ext(hardware_gates, "Gate Control Systems", "Access control, RFID readers, barriers")
+        System_Ext(anpr_camera, "ANPR Camera System", "Automatic Number Plate Recognition for vehicle identification")
+        System_Ext(kiosk_system, "Self-Service Kiosk", "Unmanned weighing points for automated transactions")
+        System_Ext(regulatory_kebs, "KEBS (Regulatory)", "Kenya Bureau of Standards - compliance")
+        System_Ext(regulatory_ntsa, "NTSA (Regulatory)", "National Transport & Safety Authority")
+        System_Ext(payment_mpesa, "M-Pesa Payment", "Mobile payment processing")
+        System_Ext(sms_gateway, "SMS Gateway", "Notifications and alerts")
+        System_Ext(email_service, "Email Service", "System notifications, reports")
+        System_Ext(backup_cloud, "Cloud Backup", "Automated data backup and recovery")
+    }
+    
+    %% Primary User Interactions (Left to Center)
+    Rel(driver, qalitrack, "Uses mobile app", "HTTPS/Mobile - Vehicle registration, status checks")
+    Rel(operator, qalitrack, "Uses web portal", "HTTPS/Web - Weight capture, transaction validation")
+    Rel(manager, qalitrack, "Uses dashboard", "HTTPS/Web - Performance monitoring, reports")
+    
+    %% Administrative User Interactions (Right to Center)
+    Rel(admin, qalitrack, "Uses admin panel", "HTTPS/Web - User management, system configuration")
+    Rel(auditor, qalitrack, "Reviews reports", "HTTPS/Web - Compliance verification, audit trails")
+    Rel(customer, qalitrack, "Tracks orders", "HTTPS/Web - Delivery status, weight confirmations")
+    
+    %% External System Integrations
+    Rel(qalitrack, erp_sap, "Synchronizes data", "HTTPS/REST - Production orders, inventory")
+    Rel(qalitrack, erp_oracle, "Exchanges transactions", "HTTPS/REST - Financial data, procurement")
+    Rel_Back(hardware_weighbridge, qalitrack, "Sends weight data", "Serial/TCP - Real-time measurements")
+    Rel_Back(hardware_gates, qalitrack, "Reports vehicle presence", "TCP/HTTP - RFID scans, access control")
+    Rel_Back(anpr_camera, qalitrack, "Sends plate data", "HTTP/TCP - License plate recognition")
+    Rel_Back(kiosk_system, qalitrack, "Processes transactions", "HTTPS/REST - Unmanned weighing operations")
+    Rel(qalitrack, regulatory_kebs, "Submits compliance reports", "HTTPS - Monthly compliance data")
+    Rel(qalitrack, regulatory_ntsa, "Validates vehicle licenses", "HTTPS - Vehicle registration checks")
+    Rel(qalitrack, payment_mpesa, "Processes payments", "HTTPS API - Fee collection, invoices")
+    Rel(qalitrack, sms_gateway, "Sends notifications", "HTTPS API - Alerts, status updates")
+    Rel(qalitrack, email_service, "Sends reports", "SMTP - Automated reports, notifications")
+    Rel(qalitrack, backup_cloud, "Backs up data", "HTTPS - Encrypted backup, disaster recovery")
+
+    UpdateElementStyle(qalitrack, $bgColor="#2E8B57", $fontColor="#FFFFFF", $borderColor="#1F5F3F")
+    UpdateElementStyle(driver, $bgColor="#4A90E2", $fontColor="#FFFFFF")
+    UpdateElementStyle(operator, $bgColor="#4A90E2", $fontColor="#FFFFFF")
+    UpdateElementStyle(manager, $bgColor="#4A90E2", $fontColor="#FFFFFF")
+    UpdateElementStyle(admin, $bgColor="#4A90E2", $fontColor="#FFFFFF")
+    UpdateElementStyle(auditor, $bgColor="#4A90E2", $fontColor="#FFFFFF")
+    UpdateElementStyle(customer, $bgColor="#4A90E2", $fontColor="#FFFFFF")
