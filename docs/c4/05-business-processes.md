@@ -7,7 +7,7 @@ This document illustrates the complete business processes that flow through the 
 ## 🚛 **Complete Weighing Transaction Process**
 
 ### **Process Overview**
-A complete weighing transaction involves multiple stages from initial vehicle registration through final delivery confirmation, spanning both DataMaster and DataManager services.
+A complete weighing transaction involves multiple stages from initial vehicle registration through final delivery confirmation, spanning both masterdata and DataManager services.
 
 ```mermaid
 flowchart TD

@@ -18,7 +18,7 @@ This directory contains comprehensive system architecture documentation using th
 - **Purpose**: Major system components and technology choices
 - **Audience**: Technical teams, architects, DevOps
 - **Shows**: Applications, databases, services, technology stack
-- **Key Elements**: DataMaster services, DataManager services, Infrastructure
+- **Key Elements**: masterdata services, DataManager services, Infrastructure
 
 ### **🔧 Level 3: Component Interactions**
 **File**: [03-component-flows.md](03-component-flows.md)
@@ -68,7 +68,7 @@ This directory contains comprehensive system architecture documentation using th
 
 ## 🛠️ **System Components Overview**
 
-### **DataMaster Services** (Master Data Management)
+### **masterdata Services** (Master Data Management)
 - **User Service** :7001 - Authentication & Authorization ✅
 - **Customer Service** :7008 - Customer Management ✅  
 - **Product Service** :7005 - Product Catalog
@@ -107,7 +107,7 @@ This directory contains comprehensive system architecture documentation using th
 - **🟦 Blue**: External systems and users
 - **🟩 Green**: QaliTrack core services
 - **🟨 Yellow**: Infrastructure and middleware
-- **🟪 Purple**: DataMaster services
+- **🟪 Purple**: masterdata services
 - **🟧 Orange**: DataManager services
 - **🟥 Red**: Critical dependencies
 

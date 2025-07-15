@@ -4,7 +4,7 @@
 
 This document provides detailed views of the internal structure of key services, showing classes, interfaces, data models, and architectural patterns used within individual services.
 
-## 🗄️ **DataMaster Service Architectures**
+## 🗄️ **masterdata Service Architectures**
 
 ### **User Service Architecture** (:7001)
 

@@ -20,7 +20,7 @@ flowchart LR
     end
     
     subgraph "🏗️ QaliTrack Platform"
-        DataMaster[DataMaster Services<br/>📋 Master Data Management]
+        masterdata[masterdata Services<br/>📋 Master Data Management]
         DataManager[DataManager Services<br/>⚙️ Operational Processing]
         Gateway[API Gateway<br/>🚪 Single Entry Point]
     end
@@ -35,17 +35,17 @@ flowchart LR
     Operators --> Gateway
     Managers --> Gateway
     
-    Gateway --> DataMaster
+    Gateway --> masterdata
     Gateway --> DataManager
     
-    DataMaster --> Databases
+    masterdata --> Databases
     DataManager --> Databases
     DataManager --> Hardware
-    DataMaster --> Cloud
+    masterdata --> Cloud
 ```
 
 ### **Key System Numbers**
-- **18 Microservices**: 11 DataMaster + 7 DataManager services
+- **18 Microservices**: 11 masterdata + 7 DataManager services
 - **3 Client Applications**: Web Portal, Mobile App, Admin Panel
 - **4 Infrastructure Components**: PostgreSQL, Redis, Kafka, Elasticsearch
 - **1 API Gateway**: Central routing and authentication

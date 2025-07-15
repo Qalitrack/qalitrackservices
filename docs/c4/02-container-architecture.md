@@ -5,7 +5,7 @@
 This diagram shows the high-level technology choices and how responsibilities are distributed across containers (applications, databases, microservices) within the QaliTrack system.
 
 ### **Architecture Overview**
-QaliTrack follows a microservices architecture pattern with clear separation between **DataMaster** (master data management) and **DataManager** (operational data processing) services, supported by a robust infrastructure layer.
+QaliTrack follows a microservices architecture pattern with clear separation between **masterdata** (master data management) and **DataManager** (operational data processing) services, supported by a robust infrastructure layer.
 
 ## 🏗️ **Container Architecture Diagram**
 
@@ -26,7 +26,7 @@ C4Container
         Container(service_discovery, "Service Discovery", ".NET 8", "Service registration, health monitoring, and dynamic routing")
     }
 
-    Container_Boundary(datamaster_layer, "DataMaster Services - Master Data Management") {
+    Container_Boundary(datamaster_layer, "masterdata Services - Master Data Management") {
         Container(user_service, "User Service", ".NET 8/SQLite", "Authentication, authorization, JWT tokens, RBAC - Port 7001")
         Container(customer_service, "Customer Service", ".NET 8/SQLite", "Customer management, orders, relationships - Port 7008")
         Container(product_service, "Product Service", ".NET 8/SQLite", "Product catalog, pricing, specifications - Port 7005")
@@ -73,7 +73,7 @@ C4Container
 
     Rel(api_gateway, service_discovery, "Service lookup", "HTTP")
 
-    %% DataMaster Service Relationships
+    %% masterdata Service Relationships
     Rel(api_gateway, user_service, "Authentication", "HTTP/REST")
     Rel(api_gateway, customer_service, "Customer operations", "HTTP/REST")
     Rel(api_gateway, product_service, "Product operations", "HTTP/REST")
@@ -197,7 +197,7 @@ C4Container
   - Load balancing decisions
   - Failover management
 
-### **🗄️ DataMaster Services - Master Data Management**
+### **🗄️ masterdata Services - Master Data Management**
 
 #### **Core Identity & Access**
 - **User Service** (:7001) - Authentication, authorization, JWT tokens, RBAC ✅
