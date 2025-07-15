@@ -168,46 +168,13 @@ flowchart TB
     class mpesa,sms,email,backup commStyle
 ```
 
-## 🎯 **Diagram Comparison**
+### **PNG Exports**
 
-### **C4Context Approach (Option 1)**
-**Pros:**
-- ✅ Standard C4 model format
-- ✅ Clean, professional appearance
-- ✅ Follows architectural documentation standards
-- ✅ Automatic layout optimization
-- ✅ Consistent with other C4 diagrams
+![System Context - C4 Format](assets/system-context-c4.png)
 
-**Cons:**
-- ❌ Limited control over element positioning
-- ❌ May not place elements exactly where you want
-- ❌ Relationship lines can overlap
-- ❌ Less visual grouping of related elements
+![System Context - Flowchart Format](assets/system-context-flowchart.png)
 
-### **Flowchart Approach (Option 2)**
-**Pros:**
-- ✅ Explicit positioning control through subgraphs
-- ✅ Clear visual grouping of related systems
-- ✅ Better organization of different system types
-- ✅ More detailed descriptions with icons
-- ✅ Cleaner separation of concerns
-
-**Cons:**
-- ❌ Not standard C4 format
-- ❌ May be more complex to maintain
-- ❌ Requires more manual layout management
-- ❌ Different style from other C4 diagrams
-
-### **Recommendation**
-For the **system context level**, I recommend **Option 2 (Flowchart)** because:
-1. **Better organization** - Clear grouping of users, systems, and hardware
-2. **Improved readability** - Icons and structured layout
-3. **Explicit positioning** - You control where each element appears
-4. **Scalability** - Easy to add new systems in appropriate groups
-
-For **lower-level C4 diagrams** (container, component), stick with standard C4 format.
-
----
+> **Note**: To generate the PNG files, use the Mermaid CLI or online tools as described in [assets/README.md](assets/README.md)
 
 ## 👥 **System Users & Their Goals**
 
