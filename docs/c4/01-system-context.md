@@ -34,7 +34,7 @@ C4Context
         System_Ext(erp_sap, "ERP System (SAP ECC)", "Legacy factory management, inventory, production")
         System_Ext(erp_s4hana, "ERP System (S/4HANA)", "Next-gen SAP suite, real-time analytics, digital core")
         System_Ext(erp_oracle, "ERP System (Oracle)", "Financial management, procurement")
-        System_Ext(hardware_weighbridge, "Weighbridge Hardware", "Load cells, sensors, weight measurement")
+        System_Ext(hardware_weighbridge, "Weighbridge Hardware", "Load cells, weight measurement, signal processing")
         System_Ext(hardware_gates, "Gate Control Systems", "Access control, RFID vehicle detection, barriers")
         System_Ext(anpr_camera, "ANPR Camera System", "Automatic Number Plate Recognition for vehicle identification")
         System_Ext(kiosk_system, "Self-Service Kiosk", "Unmanned weighing points, driver authorization via face detection")
@@ -122,7 +122,7 @@ flowchart TB
     %% Bottom left - Hardware Systems
     subgraph "🔧 Hardware Systems"
         direction LR
-        weighbridge["⚖️ Weighbridge Hardware<br/>Load cells, sensors<br/>Weight measurement"]
+        weighbridge["⚖️ Weighbridge Hardware<br/>Load cells, signal processing<br/>Weight measurement"]
         gates["🚪 Gate Control Systems<br/>Access control, RFID vehicle detection<br/>Barrier systems"]
         anpr["📷 ANPR Camera<br/>License plate recognition<br/>Vehicle identification"]
         kiosk["🖥️ Self-Service Kiosk<br/>Unmanned weighing<br/>Face detection authorization"]
