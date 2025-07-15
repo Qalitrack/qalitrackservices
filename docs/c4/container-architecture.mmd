@@ -6,7 +6,7 @@ C4Container
     Container_Boundary(client_layer, "Client Applications") {
         Container(web_portal, "Web Portal", "React/TypeScript", "Main dashboard for operators and managers with real-time monitoring")
         Container(mobile_app, "Mobile App", "React Native", "Driver-focused app for vehicle registration and status updates")
-        Container(kiosk_app, "Self-Service Kiosk", "React/TypeScript", "Unmanned weighing with phase detection authorization")
+        Container(kiosk_app, "Self-Service Kiosk", "React/TypeScript", "Unmanned weighing with face detection authorization")
         Container(admin_panel, "Admin Panel", "React/TypeScript", "System administration, user management, and configuration")
     }
 
@@ -46,7 +46,7 @@ C4Container
         ContainerQueue(command_queue, "Command Queue", "RabbitMQ", "Command processing, background jobs, notifications")
     }
 
-    System_Ext(external_systems, "External Systems", "ERP (SAP ECC, S/4HANA), Hardware (Gate Control Systems with RFID vehicle detection, Self-Service Kiosk with phase detection authorization, ANPR Camera System with automatic number plate recognition), Regulatory, Payment systems")
+    System_Ext(external_systems, "External Systems", "ERP (SAP ECC, S/4HANA), Hardware (Gate Control Systems with RFID vehicle detection, Self-Service Kiosk with face detection authorization, ANPR Camera System with automatic number plate recognition), Regulatory, Payment systems")
 
     %% Client Layer Relationships
     Rel(user, web_portal, "Uses", "HTTPS")
