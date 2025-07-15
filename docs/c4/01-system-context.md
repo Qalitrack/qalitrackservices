@@ -18,18 +18,21 @@ C4Context
     %% Primary Users (Left side)
     Person(driver, "Truck Driver", "Transports goods, requires weighing services")
     Person(operator, "Weighbridge Operator", "Operates weighing equipment, validates transactions")
+    Person(inspector, "Vehicle Inspector", "Conducts safety inspections, compliance checks")
     Person(manager, "Site Manager", "Monitors operations, reviews reports")
     
     %% Administrative Users (Right side)
     Person(admin, "System Administrator", "Manages users, configures system")
     Person(auditor, "Compliance Auditor", "Reviews compliance reports, validates adherence")
     Person(customer, "Customer Representative", "Tracks orders, monitors deliveries")
+    Person(sacco_admin, "SACCO Administrator", "Manages cooperative members, vehicles, finances")
     
     %% Central System
     System(qalitrack, "QaliTrack Platform", "Comprehensive weighbridge management system for real-time weighing, transactions, compliance, and analytics")
     
     Enterprise_Boundary(external_systems, "External Systems") {
-        System_Ext(erp_sap, "ERP System (SAP)", "Factory management, inventory, production")
+        System_Ext(erp_sap, "ERP System (SAP ECC)", "Legacy factory management, inventory, production")
+        System_Ext(erp_s4hana, "ERP System (S4HANA)", "Next-gen SAP suite, real-time analytics, digital core")
         System_Ext(erp_oracle, "ERP System (Oracle)", "Financial management, procurement")
         System_Ext(hardware_weighbridge, "Weighbridge Hardware", "Load cells, sensors, weight measurement")
         System_Ext(hardware_gates, "Gate Control Systems", "Access control, RFID readers, barriers")
@@ -46,15 +49,18 @@ C4Context
     %% Primary User Interactions (Left to Center)
     Rel(driver, qalitrack, "Uses mobile app", "HTTPS/Mobile - Vehicle registration, status checks")
     Rel(operator, qalitrack, "Uses web portal", "HTTPS/Web - Weight capture, transaction validation")
+    Rel(inspector, qalitrack, "Uses inspection app", "HTTPS/Mobile - Safety checks, compliance validation")
     Rel(manager, qalitrack, "Uses dashboard", "HTTPS/Web - Performance monitoring, reports")
     
     %% Administrative User Interactions (Right to Center)
     Rel(admin, qalitrack, "Uses admin panel", "HTTPS/Web - User management, system configuration")
     Rel(auditor, qalitrack, "Reviews reports", "HTTPS/Web - Compliance verification, audit trails")
     Rel(customer, qalitrack, "Tracks orders", "HTTPS/Web - Delivery status, weight confirmations")
+    Rel(sacco_admin, qalitrack, "Manages cooperative", "HTTPS/Web - Member vehicles, driver assignments")
     
     %% External System Integrations
-    Rel(qalitrack, erp_sap, "Synchronizes data", "HTTPS/REST - Production orders, inventory")
+    Rel(qalitrack, erp_sap, "Synchronizes data", "HTTPS/REST - Legacy production orders, inventory")
+    Rel(qalitrack, erp_s4hana, "Real-time integration", "HTTPS/REST - Live production, analytics")
     Rel(qalitrack, erp_oracle, "Exchanges transactions", "HTTPS/REST - Financial data, procurement")
     Rel_Back(hardware_weighbridge, qalitrack, "Sends weight data", "Serial/TCP - Real-time measurements")
     Rel_Back(hardware_gates, qalitrack, "Reports vehicle presence", "TCP/HTTP - RFID scans, access control")
@@ -70,10 +76,12 @@ C4Context
     UpdateElementStyle(qalitrack, $bgColor="#2E8B57", $fontColor="#FFFFFF", $borderColor="#1F5F3F")
     UpdateElementStyle(driver, $bgColor="#4A90E2", $fontColor="#FFFFFF")
     UpdateElementStyle(operator, $bgColor="#4A90E2", $fontColor="#FFFFFF")
+    UpdateElementStyle(inspector, $bgColor="#9C27B0", $fontColor="#FFFFFF")
     UpdateElementStyle(manager, $bgColor="#4A90E2", $fontColor="#FFFFFF")
     UpdateElementStyle(admin, $bgColor="#4A90E2", $fontColor="#FFFFFF")
     UpdateElementStyle(auditor, $bgColor="#4A90E2", $fontColor="#FFFFFF")
     UpdateElementStyle(customer, $bgColor="#4A90E2", $fontColor="#FFFFFF")
+    UpdateElementStyle(sacco_admin, $bgColor="#FF9800", $fontColor="#FFFFFF")
 ```
 
 ### **Option 2: Flowchart with Explicit Positioning Control**
@@ -186,6 +194,11 @@ flowchart TB
 - **Interactions**: Web portal for equipment control, transaction management, reporting
 - **Key Needs**: Equipment status monitoring, validation tools, audit trails
 
+#### **🔍 Vehicle Inspector**
+- **Goals**: Safety compliance, vehicle roadworthiness, regulatory adherence
+- **Interactions**: Mobile inspection app for safety checks, compliance validation, certificate generation
+- **Key Needs**: Inspection checklists, compliance databases, digital certification
+
 #### **👨‍💼 Site Manager**
 - **Goals**: Operational efficiency, performance optimization, resource management
 - **Interactions**: Dashboard for KPI monitoring, report generation, resource allocation
@@ -208,14 +221,22 @@ flowchart TB
 - **Interactions**: Customer portal for order status, delivery tracking, documentation
 - **Key Needs**: Real-time delivery status, weight confirmations, digital documentation
 
+#### **🏦 SACCO Administrator**
+- **Goals**: Cooperative member management, vehicle fleet coordination, financial oversight
+- **Interactions**: SACCO management portal for member registration, vehicle assignments, financial tracking
+- **Key Needs**: Member databases, vehicle assignments, cooperative financial reports
+
 ## 🔗 **External System Integration**
 
 ### **Enterprise Systems**
 
-#### **🏭 ERP Systems (SAP/Oracle)**
+#### **🏭 ERP Systems (SAP ECC, S4HANA, Oracle)**
 - **Purpose**: Synchronize production data, inventory, financial transactions
 - **Integration**: REST API, scheduled batch jobs, real-time updates
 - **Data Flow**: Production orders → QaliTrack, Weight data → ERP
+- **SAP ECC**: Legacy factory management, batch processing
+- **S4HANA**: Real-time analytics, digital core operations
+- **Oracle**: Financial management, procurement workflows
 
 #### **💳 Payment Systems (M-Pesa)**
 - **Purpose**: Process service fees, delivery payments, invoice settlements
