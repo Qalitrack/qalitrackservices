@@ -47,6 +47,7 @@ flowchart TD
     subgraph "Users"
         Driver[Driver Mobile App]
         Operator[Operator Web Portal]
+        Kiosk[Self-Service Kiosk]
     end
     
     subgraph "Gateway Layer"
@@ -64,11 +65,19 @@ flowchart TD
         Hardware[Weighbridge Hardware]
     end
 
-    %% Simplified 6-step flow
+    %% Simplified flow paths
     Driver -->|1. Vehicle Registration| Gateway
     Gateway -->|2. Validate Vehicle| VehicleSvc
     Hardware -->|3. Capture Weight| WeightSvc
-    Operator -->|4. Create Transaction| Gateway
+    
+    %% Manned operations
+    Operator -->|4a. Create Transaction - Manned| Gateway
+    
+    %% Unmanned operations  
+    Kiosk -->|4b. Create Transaction - Unmanned| Gateway
+    Kiosk -->|Face Detection Auth| Gateway
+    
+    %% Common transaction processing
     Gateway -->|5. Process Transaction| TransactionSvc
     TransactionSvc -->|6. Store & Notify| PostgreSQL
     
@@ -79,6 +88,7 @@ flowchart TD
     
     %% Responses
     Gateway -->|Success Response| Operator
+    Gateway -->|Kiosk Receipt| Kiosk
     Gateway -->|Notification| Driver
 
     classDef client fill:#e3f2fd
@@ -86,11 +96,29 @@ flowchart TD
     classDef services fill:#f3e5f5
     classDef infrastructure fill:#fce4ec
     
-    class Driver,Operator client
+    class Driver,Operator,Kiosk client
     class Gateway gateway
     class VehicleSvc,WeightSvc,TransactionSvc services
     class PostgreSQL,Hardware infrastructure
 ```
+
+### **🔄 Manned vs Unmanned Operations**
+
+The transaction flow supports both manned and unmanned weighing operations:
+
+**Manned Operations (4a):**
+- Operator uses web portal to create transactions
+- Human oversight and validation
+- Real-time operator assistance
+- Manual intervention capabilities
+
+**Unmanned Operations (4b):**
+- Self-service kiosk with face detection authentication
+- Automated transaction creation
+- Touch interface for driver interaction
+- Automatic receipt generation
+
+Both paths converge at the Gateway for consistent transaction processing, ensuring the same data integrity and compliance standards regardless of operation mode.
 
 ## 🔗 **masterdata to masterdata Integration Patterns**
 
