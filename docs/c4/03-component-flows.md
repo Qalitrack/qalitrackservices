@@ -46,8 +46,14 @@ sequenceDiagram
 flowchart TD
     subgraph "Users"
         Driver[Driver Mobile App]
-        Operator[Operator Web Portal]
-        Kiosk[Self-Service Kiosk]
+        
+        subgraph "Manned Operations"
+            Operator[Operator Web Portal]
+        end
+        
+        subgraph "Unmanned Operations"
+            Kiosk[Self-Service Kiosk]
+        end
     end
     
     subgraph "Gateway Layer"
@@ -65,17 +71,17 @@ flowchart TD
         Hardware[Weighbridge Hardware]
     end
 
-    %% Simplified flow paths
+    %% Sequential transaction flow
     Driver -->|1. Vehicle Registration| Gateway
     Gateway -->|2. Validate Vehicle| VehicleSvc
     Hardware -->|3. Capture Weight| WeightSvc
     
     %% Manned operations
-    Operator -->|4a. Create Transaction - Manned| Gateway
+    Operator -->|4. Create Transaction - Manned| Gateway
     
     %% Unmanned operations  
-    Kiosk -->|4b. Create Transaction - Unmanned| Gateway
-    Kiosk -->|Face Detection Auth| Gateway
+    Kiosk -->|4. Create Transaction - Unmanned| Gateway
+    Kiosk -->|4.1. Face Detection Auth| Gateway
     
     %% Common transaction processing
     Gateway -->|5. Process Transaction| TransactionSvc
@@ -106,15 +112,15 @@ flowchart TD
 
 The transaction flow supports both manned and unmanned weighing operations:
 
-**Manned Operations (4a):**
+**Manned Operations (Step 4):**
 - Operator uses web portal to create transactions
 - Human oversight and validation
 - Real-time operator assistance
 - Manual intervention capabilities
 
-**Unmanned Operations (4b):**
-- Self-service kiosk with face detection authentication
-- Automated transaction creation
+**Unmanned Operations (Step 4 + 4.1):**
+- Self-service kiosk creates transactions automatically
+- Face detection authentication (Step 4.1)
 - Touch interface for driver interaction
 - Automatic receipt generation
 
