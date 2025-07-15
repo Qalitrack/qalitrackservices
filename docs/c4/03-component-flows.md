@@ -54,7 +54,7 @@ flowchart TD
         UserSvc[User Service :7001]
     end
     
-    subgraph "DataMaster Services"
+    subgraph "masterdata Services"
         VehicleSvc[Vehicle Service :7003]
         DriverSvc[Driver Service :7004]
         CustomerSvc[Customer Service :7008]
@@ -131,7 +131,7 @@ flowchart TD
     class Hardware external
 ```
 
-## 🔗 **DataMaster to DataManager Integration Patterns**
+## 🔗 **masterdata to DataManager Integration Patterns**
 
 ### **Customer Order Processing Flow**
 
