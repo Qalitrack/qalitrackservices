@@ -36,7 +36,7 @@ flowchart TB
         weighbridge["⚖️ Weighbridge Hardware<br/>Load cells, sensors<br/>Weight measurement"]
         gates["🚪 Gate Control Systems<br/>Access control, RFID vehicle detection<br/>Barrier systems"]
         anpr["📷 ANPR Camera<br/>License plate recognition<br/>Vehicle identification"]
-        kiosk["🖥️ Self-Service Kiosk<br/>Unmanned weighing<br/>Phase detection authorization"]
+        kiosk["🖥️ Self-Service Kiosk<br/>Unmanned weighing<br/>Face detection authorization"]
     end
     
     %% Bottom right - Communication Systems
@@ -69,9 +69,9 @@ flowchart TB
     
     %% Hardware Integrations - Bottom Left
     weighbridge -->|"Sends weight data<br/>Serial/TCP"| qalitrack
-    gates -->|"Reports vehicle presence<br/>TCP/HTTP - RFID detection"| qalitrack
+    gates -->|"Reports vehicle presence<br/>TCP/HTTP • RFID detection"| qalitrack
     anpr -->|"Sends plate data<br/>HTTP/TCP"| qalitrack
-    kiosk -->|"Processes transactions<br/>HTTPS/REST - Phase detection auth"| qalitrack
+    kiosk -->|"Processes transactions<br/>HTTPS/REST • Face detection auth"| qalitrack
     
     %% Communication Integrations - Bottom Right
     qalitrack -->|"Processes payments<br/>HTTPS API"| mpesa

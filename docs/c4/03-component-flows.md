@@ -77,11 +77,12 @@ flowchart TD
     Hardware -->|3. Capture Weight| WeightSvc
     
     %% Manned operations
-    Operator -->|4. Create Transaction - Manned| Gateway
+    Operator -->|4. Create Transaction \\- Manned| Gateway
     
     %% Unmanned operations  
-    Kiosk -->|4. Create Transaction - Unmanned| Gateway
+    Kiosk -->|4. Create Transaction \\- Unmanned| Gateway
     Kiosk -->|4.1. Face Detection Auth| Gateway
+    Kiosk -->|4.2. Document Verification \\- QR Code| Gateway
     
     %% Common transaction processing
     Gateway -->|5. Process Transaction| TransactionSvc
@@ -118,9 +119,10 @@ The transaction flow supports both manned and unmanned weighing operations:
 - Real-time operator assistance
 - Manual intervention capabilities
 
-**Unmanned Operations (Step 4 + 4.1):**
+**Unmanned Operations (Step 4 + 4.1 + 4.2):**
 - Self-service kiosk creates transactions automatically
 - Face detection authentication (Step 4.1)
+- Document verification using QR code scanning (Step 4.2)
 - Touch interface for driver interaction
 - Automatic receipt generation
 
