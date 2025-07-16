@@ -38,7 +38,7 @@ C4Container
         Container(driver_service, "Driver Service", ".NET 8/SQLite", "Driver profiles, licenses, performance - Port 7004")
         Container(weighbridge_service, "Weighbridge Service", ".NET 8/SQLite", "Equipment management, calibration - Port 7007")
         Container(sacco_service, "SACCO Service", ".NET 8/SQLite", "Cooperative organizations, memberships - Port 7011")
-        Container(organization_service, "Organization Service", ".NET 8/SQLite", "Multi-tenant context, permissions - Port 7002")
+        Container(organization_service, "Organization Service (DEPRECATED)", ".NET 8/SQLite", "Multi-tenant context, permissions - Port 7002")
     }
 
     Container_Boundary(datamanager_layer, "masterdata Services - Operational Data Processing") {

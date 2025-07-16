@@ -16,7 +16,7 @@ The system is built around event-driven microservices with clear data flow patte
 
 **Service Categories:**
 - **Infrastructure Services**: API Gateway, Service Discovery, Cache Layer, Message Streaming, Database
-- **Master Data Services (13)**: User, Customer, Vehicle, Driver, Product, Route, Weighbridge, Supplier, Transporter, SACCO, Organization, Report
+- **Master Data Services (13)**: User, Customer, Vehicle, Driver, Product, Route, Weighbridge, Supplier, Transporter, SACCO, ~~Organization~~ (deprecated), Report
 - **Data Manager Services (7)**: Weight Data, Transaction, Compliance, Analytics, Operational Data, Data Sync, Archive
 
 For detailed component flows of each category, please refer to the dedicated documentation files linked above.
