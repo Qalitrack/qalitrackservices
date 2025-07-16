@@ -4,7 +4,7 @@
 
 **Navigation**: [← Main Component Flows](03-component-flows.md) | [← Previous: Infrastructure Components](03-component-flows-infrastructure.md) | **Next**: [Data Manager Components →](03-component-flows-datamanager.md)
 
-This document details the component-level interactions for all 13 QaliTrack Master Data services, showing internal architecture and external dependencies.
+This document details the component-level interactions for all 10+ QaliTrack Master Data services, showing internal architecture and external dependencies.
 
 ## 📋 **Table of Contents**
 
@@ -18,6 +18,7 @@ This document details the component-level interactions for all 13 QaliTrack Mast
 - [Supplier Service Component Flow (:7009)](#supplier-service-component-flow-7009)
 - [Transporter Service Component Flow (:7010)](#transporter-service-component-flow-7010)
 - [SACCO Service Component Flow (:7011)](#sacco-service-component-flow-7011)
+- [Report Service Component Flow (:7012)](#report-service-component-flow-7012)
 - [Organization Service Component Flow (:7002) - DEPRECATED](#organization-service-component-flow-7002---deprecated)
 
 ---
@@ -808,6 +809,91 @@ flowchart TD
 - Manages SACCO financial operations and accounts
 - Handles member contributions and benefits
 - Provides financial reporting and analytics
+
+[↑ Back to Top](#-table-of-contents)
+
+---
+
+## **Report Service Component Flow (:7012)**
+
+```mermaid
+flowchart TD
+    subgraph "API Layer"
+        ReportController[Report Controller]
+        TemplateController[Template Controller]
+        ScheduleController[Schedule Controller]
+        ExportController[Export Controller]
+    end
+    
+    subgraph "Core Layer"
+        ReportService[Report Service]
+        TemplateService[Template Service]
+        ScheduleService[Schedule Service]
+        ExportService[Export Service]
+        ValidationService[Validation Service]
+    end
+    
+    subgraph "Infrastructure Layer"
+        ReportRepo[Report Repository]
+        TemplateRepo[Template Repository]
+        ScheduleRepo[Schedule Repository]
+        ExportRepo[Export Repository]
+        ReportDB[(Report Database)]
+    end
+    
+    subgraph "External Dependencies"
+        AnalyticsSvc[Analytics Service]
+        WeightSvc[Weight Data Service]
+        TransactionSvc[Transaction Service]
+        ComplianceSvc[Compliance Service]
+        EmailService[Email Service]
+        FileStorage[File Storage]
+    end
+
+    ReportController -->|Report Operations| ReportService
+    ReportService -->|Analytics Data| AnalyticsSvc
+    ReportService -->|Weight Data| WeightSvc
+    ReportService -->|Transaction Data| TransactionSvc
+    ReportService -->|Compliance Data| ComplianceSvc
+    
+    TemplateController -->|Template Management| TemplateService
+    TemplateService -->|Template Data| TemplateRepo
+    
+    ScheduleController -->|Schedule Management| ScheduleService
+    ScheduleService -->|Schedule Data| ScheduleRepo
+    
+    ExportController -->|Export Management| ExportService
+    ExportService -->|File Storage| FileStorage
+    ExportService -->|Email Reports| EmailService
+    ExportService -->|Export Data| ExportRepo
+    
+    ReportRepo -->|Store| ReportDB
+    TemplateRepo -->|Store| ReportDB
+    ScheduleRepo -->|Store| ReportDB
+    ExportRepo -->|Store| ReportDB
+```
+
+### **Report Service Components**
+
+**Report Service Core**
+- Manages report generation and data aggregation
+- Integrates with multiple data sources for comprehensive reporting
+- Handles custom report creation and parameterization
+
+**Template Service Core**
+- Manages report templates and layouts
+- Handles template versioning and customization
+- Supports dynamic template generation based on data sources
+
+**Schedule Service Core**
+- Manages automated report scheduling and execution
+- Handles recurring report generation and distribution
+- Provides scheduling flexibility with cron-like expressions
+
+**Export Service Core**
+- Manages report export in multiple formats (PDF, Excel, CSV)
+- Handles file storage and retrieval for generated reports
+- Integrates with email service for automated report distribution
 
 [↑ Back to Top](#-table-of-contents)
 
