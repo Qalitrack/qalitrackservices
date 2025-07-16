@@ -1,0 +1,45 @@
+flowchart TD
+    subgraph "Phase 1: Pre-Arrival Setup"
+        A1[Driver Vehicle Registration]
+        A2[Route Assignment]
+        A3[Load Planning]
+        A4[Documentation Preparation]
+    end
+    
+    subgraph "Phase 2: Arrival & Tare Weighing"
+        B1[Gate Entry Scan]
+        B2[Vehicle Identification]
+        B3[Driver Validation]
+        B4[Tare Weight Capture]
+        B5[Compliance Check]
+    end
+    
+    subgraph "Phase 3: Loading Process"
+        C1[Product Loading]
+        C2[Quality Control]
+        C3[Loading Documentation]
+        C4[Safety Verification]
+    end
+    
+    subgraph "Phase 4: Gross Weighing & Exit"
+        D1[Gross Weight Capture]
+        D2[Net Weight Calculation]
+        D3[Final Compliance Check]
+        D4[Documentation Generation]
+        D5[Payment Processing]
+        D6[Gate Exit Authorization]
+    end
+    
+    subgraph "Phase 5: Post-Departure"
+        E1[Delivery Tracking]
+        E2[Customer Notification]
+        E3[Invoice Generation]
+        E4[Performance Analytics]
+        E5[Compliance Reporting]
+    end
+
+    A1 --> A2 --> A3 --> A4
+    A4 --> B1 --> B2 --> B3 --> B4 --> B5
+    B5 --> C1 --> C2 --> C3 --> C4
+    C4 --> D1 --> D2 --> D3 --> D4 --> D5 --> D6
+    D6 --> E1 --> E2 --> E3 --> E4 --> E5

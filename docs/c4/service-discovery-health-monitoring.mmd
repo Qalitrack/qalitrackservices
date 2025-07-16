@@ -1,0 +1,42 @@
+flowchart TD
+    subgraph "Service Instances"
+        Service1[Service Instance 1]
+        Service2[Service Instance 2]
+        Service3[Service Instance 3]
+    end
+    
+    subgraph "Service Discovery"
+        Registry[Service Registry]
+        HealthChecker[Health Checker]
+        LoadBalancer[Load Balancer]
+    end
+    
+    subgraph "Monitoring"
+        HealthEndpoints[Health Endpoints]
+        Metrics[Metrics Collector]
+        Alerts[Alert Manager]
+    end
+    
+    subgraph "Client Layer"
+        Gateway[API Gateway]
+        ServiceClient[Service Client]
+    end
+
+    Service1 -->|Register| Registry
+    Service2 -->|Register| Registry
+    Service3 -->|Register| Registry
+    
+    HealthChecker -->|Health Check| Service1
+    HealthChecker -->|Health Check| Service2
+    HealthChecker -->|Health Check| Service3
+    
+    Service1 -->|Expose| HealthEndpoints
+    Service2 -->|Expose| HealthEndpoints
+    Service3 -->|Expose| HealthEndpoints
+    
+    HealthEndpoints -->|Collect| Metrics
+    Metrics -->|Trigger| Alerts
+    
+    Registry -->|Service Discovery| LoadBalancer
+    LoadBalancer -->|Route Requests| Gateway
+    Gateway -->|Service Calls| ServiceClient

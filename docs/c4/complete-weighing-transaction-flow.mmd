@@ -1,0 +1,77 @@
+flowchart TD
+    subgraph "Users"
+        Driver[Driver Mobile App]
+        
+        subgraph "Manned Operations"
+            Operator[Operator Web Portal]
+        end
+        
+        subgraph "Unmanned Operations"
+            Kiosk[Self-Service Kiosk]
+        end
+    end
+    
+    subgraph "Gateway Layer"
+        Gateway[API Gateway :7000]
+    end
+    
+    subgraph "Core Services"
+        VehicleSvc[Vehicle Service :7003]
+        DriverSvc[Driver Service :7004]
+        WeightSvc[Weight Data Service]
+        TransactionSvc[Transaction Service]
+    end
+    
+    subgraph "Infrastructure"
+        PostgreSQL[(PostgreSQL with TimescaleDB)]
+        Hardware[Weighbridge Hardware]
+        QRReader[QR Code Reader]
+        ANPRCamera[ANPR Camera System]
+    end
+
+    %% Sequential transaction flow
+    QRReader -->|"1: Vehicle QR Detection"| Gateway
+    Gateway -->|"QR Data"| VehicleSvc
+    ANPRCamera -->|"2: License Plate Recognition"| Gateway
+    Gateway -->|"Plate Data"| VehicleSvc
+    VehicleSvc -->|"Vehicle Identified"| Gateway
+    
+    %% Driver and document verification
+    %% Manned operations
+    Operator -->|"3: Driver Verification • Manned"| Gateway
+    Gateway -->|"Verify Driver"| DriverSvc
+    
+    %% Unmanned operations  
+    Kiosk -->|"3: Driver Verification • Unmanned"| Gateway
+    Kiosk -->|"3.1: Face Detection Auth"| Gateway
+    Kiosk -->|"3.2: Document Verification • QR Code"| Gateway
+    Gateway -->|"Verify Driver"| DriverSvc
+    
+    %% Weight capture after verification
+    DriverSvc -->|"Driver Verified"| Gateway
+    Hardware -->|"4: Capture Weight"| WeightSvc
+    
+    %% Transaction processing
+    Gateway -->|"5: Process Transaction"| TransactionSvc
+    TransactionSvc -->|"6: Store & Notify"| PostgreSQL
+    
+    %% Data storage
+    VehicleSvc -->|Vehicle Data| PostgreSQL
+    DriverSvc -->|Driver Data| PostgreSQL
+    WeightSvc -->|Weight Data| PostgreSQL
+    TransactionSvc -->|Transaction Data| PostgreSQL
+    
+    %% Responses
+    Gateway -->|Success Response| Operator
+    Gateway -->|Kiosk Receipt| Kiosk
+    Gateway -->|Notification| Driver
+
+    classDef client fill:#e3f2fd
+    classDef gateway fill:#fff3e0
+    classDef services fill:#f3e5f5
+    classDef infrastructure fill:#fce4ec
+    
+    class Driver,Operator,Kiosk client
+    class Gateway gateway
+    class VehicleSvc,DriverSvc,WeightSvc,TransactionSvc services
+    class PostgreSQL,Hardware,QRReader,ANPRCamera infrastructure

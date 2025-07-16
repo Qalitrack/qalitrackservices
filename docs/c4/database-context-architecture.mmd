@@ -1,0 +1,53 @@
+classDiagram
+    class IApplicationDbContext {
+        <<interface>>
+        +Users: DbSet~User~
+        +Customers: DbSet~Customer~
+        +Products: DbSet~Product~
+        +Transactions: DbSet~Transaction~
+        +SaveChangesAsync(cancellationToken)
+    }
+    
+    class ApplicationDbContext {
+        +Users: DbSet~User~
+        +Customers: DbSet~Customer~
+        +Products: DbSet~Product~
+        +Transactions: DbSet~Transaction~
+        +WeightReadings: DbSet~WeightReading~
+        +OnModelCreating(modelBuilder)
+        +SaveChangesAsync(cancellationToken)
+        -ApplyEntityConfigurations(modelBuilder)
+        -SetAuditFields()
+    }
+    
+    class BaseEntity {
+        <<abstract>>
+        +Id: Guid
+        +CreatedAt: DateTime
+        +CreatedBy: Guid?
+        +UpdatedAt: DateTime?
+        +UpdatedBy: Guid?
+        +IsDeleted: bool
+        +DeletedAt: DateTime?
+        +DeletedBy: Guid?
+    }
+    
+    class IAuditableEntity {
+        <<interface>>
+        +CreatedAt: DateTime
+        +CreatedBy: Guid?
+        +UpdatedAt: DateTime?
+        +UpdatedBy: Guid?
+    }
+    
+    class ISoftDeletable {
+        <<interface>>
+        +IsDeleted: bool
+        +DeletedAt: DateTime?
+        +DeletedBy: Guid?
+    }
+
+    IApplicationDbContext <|-- ApplicationDbContext
+    IAuditableEntity <|-- BaseEntity
+    ISoftDeletable <|-- BaseEntity
+    ApplicationDbContext --> BaseEntity

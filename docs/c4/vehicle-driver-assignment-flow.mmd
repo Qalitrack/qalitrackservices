@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant Transporter as Transporter Service
+    participant Vehicle as Vehicle Service
+    participant Driver as Driver Service
+    participant Route as Route Service
+    participant SACCO as SACCO Service
+    participant Transaction as Transaction Service
+
+    Note over Transporter,Transaction: Transport Assignment Process
+
+    Transporter->>Vehicle: 1: Check vehicle availability
+    Vehicle->>SACCO: Verify SACCO registration
+    SACCO->>Vehicle: SACCO membership status
+    Vehicle->>Transporter: Available vehicles list
+    
+    Transporter->>Driver: 2: Check driver availability
+    Driver->>SACCO: Verify driver membership
+    Driver->>Driver: Check license validity
+    Driver->>Transporter: Available drivers list
+    
+    Transporter->>Route: 3: Optimize route assignment
+    Route->>Route: Calculate optimal route
+    Route->>Transporter: Route recommendations
+    
+    Transporter->>Transaction: 4: Create transport assignment
+    Transaction->>Vehicle: Lock vehicle assignment
+    Transaction->>Driver: Lock driver assignment
+    Transaction->>Route: Lock route assignment
+    Transaction->>Transporter: Assignment confirmation

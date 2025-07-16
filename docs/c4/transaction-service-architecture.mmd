@@ -1,0 +1,100 @@
+classDiagram
+    class TransactionController {
+        +CreateTransactionAsync(createRequest)
+        +GetTransactionByIdAsync(transactionId)
+        +GetTransactionsAsync(filters)
+        +UpdateTransactionStatusAsync(transactionId, status)
+        +CompleteTransactionAsync(transactionId)
+        +CancelTransactionAsync(transactionId)
+    }
+    
+    class ITransactionService {
+        <<interface>>
+        +CreateTransactionAsync(transactionDto)
+        +ProcessTransactionAsync(transactionId)
+        +ValidateTransactionAsync(transactionId)
+        +CompleteTransactionAsync(transactionId)
+    }
+    
+    class TransactionService {
+        -ITransactionRepository repository
+        -IWeightDataServiceClient weightClient
+        -ICustomerServiceClient customerClient
+        -IProductServiceClient productClient
+        -IVehicleServiceClient vehicleClient
+        -ITransactionSagaOrchestrator sagaOrchestrator
+        +CreateTransactionAsync(transactionDto)
+        +ProcessTransactionAsync(transactionId)
+        +ValidateAllEntitiesAsync(transaction)
+    }
+    
+    class Transaction {
+        +Id: Guid
+        +TransactionNumber: string
+        +CustomerId: Guid
+        +ProductId: Guid
+        +VehicleId: Guid
+        +DriverId: Guid
+        +WeighbridgeId: Guid
+        +OrderId: Guid?
+        +TareWeight: decimal?
+        +GrossWeight: decimal?
+        +NetWeight: decimal?
+        +TransactionType: TransactionType
+        +Status: TransactionStatus
+        +StartTime: DateTime
+        +EndTime: DateTime?
+        +CreatedBy: Guid
+        +WeightReadings: ICollection~WeightReading~
+        +ComplianceChecks: ICollection~ComplianceCheck~
+    }
+    
+    class ITransactionSagaOrchestrator {
+        <<interface>>
+        +StartTransactionSagaAsync(transactionId)
+        +HandleSagaStepAsync(sagaStep)
+        +CompensateSagaAsync(sagaId)
+    }
+    
+    class TransactionSagaOrchestrator {
+        -ISagaRepository sagaRepository
+        -IEventPublisher eventPublisher
+        +StartTransactionSagaAsync(transactionId)
+        +ExecuteSagaStepAsync(sagaStep)
+        +HandleCompensationAsync(compensationStep)
+    }
+    
+    class SagaStep {
+        +Id: Guid
+        +SagaId: Guid
+        +StepName: string
+        +StepType: SagaStepType
+        +Status: SagaStepStatus
+        +ServiceName: string
+        +Request: string
+        +Response: string
+        +CompensationAction: string
+        +ExecutedAt: DateTime?
+        +CompensatedAt: DateTime?
+    }
+    
+    class ICustomerServiceClient {
+        <<interface>>
+        +ValidateCustomerAsync(customerId)
+        +GetCustomerDetailsAsync(customerId)
+    }
+    
+    class IWeightDataServiceClient {
+        <<interface>>
+        +GetWeightDataAsync(weighbridgeId, timeRange)
+        +ValidateWeightReadingAsync(weightReading)
+    }
+
+    TransactionController --> ITransactionService
+    ITransactionService <|-- TransactionService
+    TransactionService --> ITransactionSagaOrchestrator
+    ITransactionSagaOrchestrator <|-- TransactionSagaOrchestrator
+    TransactionService --> Transaction
+    TransactionSagaOrchestrator --> SagaStep
+    TransactionService --> ICustomerServiceClient
+    TransactionService --> IWeightDataServiceClient

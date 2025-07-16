@@ -1,0 +1,45 @@
+sequenceDiagram
+    participant Driver as Driver Mobile App
+    participant Inspector as Vehicle Inspector App
+    participant Gateway as API Gateway
+    participant User as User Service
+    participant Vehicle as Vehicle Service
+    participant Driver_Svc as Driver Service
+    participant SACCO as SACCO Service
+    participant Compliance as Compliance Service
+    participant Events as Event Bus
+
+    Driver->>Gateway: Register Vehicle (VehicleId, DriverId)
+    Gateway->>User: Validate driver authentication
+    User->>Gateway: Authentication confirmed
+    
+    Gateway->>Vehicle: Validate vehicle registration
+    Vehicle->>Vehicle: Check vehicle status & compliance
+    alt Vehicle requires SACCO validation
+        Vehicle->>SACCO: Validate SACCO membership
+        SACCO->>Vehicle: Membership status confirmed
+    end
+    Vehicle->>Gateway: Vehicle validation result
+    
+    Gateway->>Driver_Svc: Validate driver license
+    Driver_Svc->>Driver_Svc: Check license validity & restrictions
+    Driver_Svc->>Gateway: Driver validation result
+    
+    Gateway->>Compliance: Perform compliance checks
+    Compliance->>Compliance: Check vehicle-driver compatibility
+    Compliance->>Compliance: Verify regulatory requirements
+    Compliance->>Gateway: Compliance validation result
+    
+    alt Inspection required
+        Gateway->>Inspector: Request vehicle inspection
+        Inspector->>Gateway: Inspection completed
+    end
+    
+    alt All validations successful
+        Gateway->>Events: Publish VehicleRegistered event
+        Events->>Vehicle: Update vehicle status
+        Events->>Driver_Svc: Update driver assignment
+        Gateway->>Driver: Registration successful
+    else Validation failed
+        Gateway->>Driver: Registration failed with details
+    end

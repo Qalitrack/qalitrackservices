@@ -40,10 +40,8 @@ graph TB
     end
 
     subgraph "Database Layer"
-        POSTGRES[(PostgreSQL 15+<br/>Primary Database<br/>Multi-entity Relations<br/>Partitioned by Org)]
-        INFLUX[(InfluxDB<br/>Time-Series Data<br/>Performance Metrics<br/>Route Analytics)]
+        POSTGRES[(PostgreSQL 15+ with Extensions<br/>Primary Database + TimescaleDB<br/>Multi-entity Relations + Time-Series<br/>Full-text Search + JSONB<br/>Partitioned by Org)]
         REDIS[(Redis Cluster<br/>Cache Layer<br/>Master Data Cache<br/>Session Context)]
-        ELASTIC[(Elasticsearch<br/>Search Engine<br/>Cross-entity Search<br/>Audit Trails)]
     end
 
     %% External System Connections
@@ -120,29 +118,25 @@ graph TB
 
     %% Database Connections
     WEIGHT --> POSTGRES
-    WEIGHT --> INFLUX
+    WEIGHT --> POSTGRES
     WEIGHT --> REDIS
     
     TRANSACTION --> POSTGRES
     TRANSACTION --> REDIS
     
     COMPLIANCE --> POSTGRES
-    COMPLIANCE --> ELASTIC
     COMPLIANCE --> REDIS
     
-    ANALYTICS --> INFLUX
-    ANALYTICS --> REDIS
     ANALYTICS --> POSTGRES
+    ANALYTICS --> REDIS
     
     OPERATIONAL --> POSTGRES
     OPERATIONAL --> REDIS
-    OPERATIONAL --> INFLUX
     
     SYNC --> POSTGRES
     SYNC --> REDIS
     
     ARCHIVE --> POSTGRES
-    ARCHIVE --> ELASTIC
 
     %% Service Interactions
     WEIGHT -.->|User Context| USER_SVC
@@ -165,6 +159,6 @@ graph TB
     
     class WEIGHT,TRANSACTION,COMPLIANCE,ANALYTICS,OPERATIONAL,SYNC,ARCHIVE service
     class VEHICLE_SVC,DRIVER_SVC,SUPPLIER_SVC,CUSTOMER_SVC,TRANSPORTER_SVC,PRODUCT_SVC,ROUTE_SVC,WEIGHBRIDGE_SVC,ORG_SVC,SACCO_SVC masterdata
-    class POSTGRES,INFLUX,REDIS,ELASTIC database
+    class POSTGRES,REDIS database
     class KAFKA,RABBIT queue
     class GATEWAY,USER_SVC,HARDWARE,ERP external

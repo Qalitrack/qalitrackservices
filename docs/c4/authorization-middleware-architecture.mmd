@@ -1,0 +1,55 @@
+classDiagram
+    class IAuthorizationMiddleware {
+        <<interface>>
+        +InvokeAsync(context, next)
+    }
+    
+    class RoleAuthorizationMiddleware {
+        -RequestDelegate next
+        -IJwtTokenService tokenService
+        -IAuthorizationCacheService cacheService
+        +InvokeAsync(context, next)
+        -ExtractTokenFromRequest(request)
+        -ValidateTokenAndExtractClaims(token)
+        -CheckRoutePermissions(route, userRoles)
+        -SetUserContextHeaders(context, userInfo)
+    }
+    
+    class IAuthorizationCacheService {
+        <<interface>>
+        +GetUserPermissionsAsync(userId)
+        +CacheUserPermissionsAsync(userId, permissions)
+        +InvalidateUserCacheAsync(userId)
+    }
+    
+    class AuthorizationCacheService {
+        -IMemoryCache memoryCache
+        -IDistributedCache distributedCache
+        +GetUserPermissionsAsync(userId)
+        +CacheUserPermissionsAsync(userId, permissions)
+        -GetCacheKey(userId)
+    }
+    
+    class UserContext {
+        +UserId: Guid
+        +Username: string
+        +Email: string
+        +Roles: List~string~
+        +Permissions: List~string~
+        +OrganizationId: Guid?
+        +IsAuthenticated: bool
+    }
+    
+    class RoutePermission {
+        +Route: string
+        +HttpMethod: string
+        +RequiredRoles: List~string~
+        +RequiredPermissions: List~string~
+        +IsPublic: bool
+    }
+
+    IAuthorizationMiddleware <|-- RoleAuthorizationMiddleware
+    RoleAuthorizationMiddleware --> IAuthorizationCacheService
+    IAuthorizationCacheService <|-- AuthorizationCacheService
+    RoleAuthorizationMiddleware --> UserContext
+    RoleAuthorizationMiddleware --> RoutePermission

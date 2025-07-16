@@ -1,0 +1,57 @@
+flowchart TD
+    subgraph "Cement Company A (Bamburi)"
+        A1[Internal Production Orders]
+        A2[Quality Control Processes]
+        A3[Distribution Management]
+        A4[Customer Delivery Tracking]
+    end
+    
+    subgraph "Cement Company B (ARM)"
+        B1[Production Planning]
+        B2[Supplier Coordination]
+        B3[Fleet Management]
+        B4[Regional Distribution]
+    end
+    
+    subgraph "Transport Company C (Trans-Fast)"
+        C1[Multi-Client Fleet]
+        C2[Driver Assignment]
+        C3[Route Optimization]
+        C4[Performance Monitoring]
+    end
+    
+    subgraph "SACCO Cooperative D"
+        D1[Member Vehicle Management]
+        D2[Cooperative Benefits]
+        D3[Democratic Governance]
+        D4[Financial Services]
+        D5[SACCO Administrator Operations]
+    end
+    
+    subgraph "Shared QaliTrack Services"
+        S1[User Authentication]
+        S2[Weighbridge Operations]
+        S3[Compliance Monitoring]
+        S4[Analytics & Reporting]
+    end
+
+    A1 --> S1
+    A2 --> S2
+    A3 --> S3
+    A4 --> S4
+    
+    B1 --> S1
+    B2 --> S2
+    B3 --> S3
+    B4 --> S4
+    
+    C1 --> S1
+    C2 --> S2
+    C3 --> S3
+    C4 --> S4
+    
+    D1 --> S1
+    D2 --> S2
+    D3 --> S3
+    D4 --> S4
+    D5 --> S1

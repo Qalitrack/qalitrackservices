@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant Client as Service Client
+    participant Discovery as Service Discovery
+    participant Service as Target Service
+
+    Client->>Discovery: Request service endpoint
+    Discovery->>Discovery: Check service registry
+    Discovery->>Client: Return service URL
+    Client->>Service: Make API call
+    Service->>Client: Return response
