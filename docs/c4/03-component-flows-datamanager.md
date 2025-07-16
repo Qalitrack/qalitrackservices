@@ -2,7 +2,7 @@
 
 ## 📊 **Data Manager Service Components**
 
-**Navigation**: [← Main Component Flows](03-component-flows.md) | [← Infrastructure Components](03-component-flows-infrastructure.md) | [← Master Data Components](03-component-flows-masterdata.md)
+**Navigation**: [← Main Component Flows](03-component-flows.md) | [← Previous: Master Data Components](03-component-flows-masterdata.md) | **Next**: [Service Architectures →](04-service-architectures.md)
 
 This document details the component-level interactions for all 7 QaliTrack Data Manager services, showing how operational data flows through the system and integrates with master data services.
 
@@ -669,4 +669,4 @@ flowchart LR
 
 ---
 
-**Navigation**: [← Main Component Flows](03-component-flows.md) | [← Infrastructure Components](03-component-flows-infrastructure.md) | [← Master Data Components](03-component-flows-masterdata.md)
+**Navigation**: [← Main Component Flows](03-component-flows.md) | [← Previous: Master Data Components](03-component-flows-masterdata.md) | **Next**: [Service Architectures →](04-service-architectures.md)

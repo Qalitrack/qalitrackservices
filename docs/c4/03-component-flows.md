@@ -324,4 +324,4 @@ flowchart LR
 
 ---
 
-**Previous Level**: [← Container Architecture](02-container-architecture.md) | **Next Level**: [Service Architectures →](04-service-architectures.md)
+**Previous Level**: [← Container Architecture](02-container-architecture.md) | **Next Level**: [Infrastructure Components →](03-component-flows-infrastructure.md)
