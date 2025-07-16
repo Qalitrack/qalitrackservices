@@ -2,7 +2,7 @@
 
 ## 🏗️ **Infrastructure Components**
 
-**Navigation**: [← Main Component Flows](03-component-flows.md) | [Master Data Components →](03-component-flows-masterdata.md) | [Data Manager Components →](03-component-flows-datamanager.md)
+**Navigation**: [← Main Component Flows](03-component-flows.md) | **Next**: [Master Data Components →](03-component-flows-masterdata.md)
 
 This document details the component-level interactions for all QaliTrack infrastructure services including API Gateway, Service Discovery, Cache Layer, Message Streaming, and Database components.
 
@@ -386,4 +386,4 @@ flowchart TD
 
 ---
 
-**Navigation**: [← Main Component Flows](03-component-flows.md) | [Master Data Components →](03-component-flows-masterdata.md) | [Data Manager Components →](03-component-flows-datamanager.md)
+**Navigation**: [← Main Component Flows](03-component-flows.md) | **Next**: [Master Data Components →](03-component-flows-masterdata.md)
