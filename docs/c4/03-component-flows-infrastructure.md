@@ -86,7 +86,12 @@ flowchart TD
 **Auth Middleware**
 - Validates JWT tokens from client requests
 - Integrates with Redis cache for token validation performance
+- Performs **coarse-grained authorization** at service level (e.g., "User must be Operator+ to access /api/vehicles/*")
+- Enforces **role hierarchy** with inheritance (User < Operator < SiteManager < Admin < SuperAdmin)
+- Uses **YAML-based authorization rules** for flexible, environment-specific access control
 - Extracts user context and permissions for downstream services
+- Forwards user information via headers (X-User-ID, X-User-Roles, X-User-Permissions) to services for fine-grained control
+- Supports **client-specific authorization configurations** for multi-tenant deployments
 
 **Rate Limiter**
 - Implements rate limiting per client/user/endpoint
