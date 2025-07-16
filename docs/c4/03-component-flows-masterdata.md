@@ -6,6 +6,20 @@
 
 This document details the component-level interactions for all 13 QaliTrack Master Data services, showing internal architecture and external dependencies.
 
+## 📋 **Table of Contents**
+
+- [User Service Component Flow (:7001)](#user-service-component-flow-7001)
+- [Customer Service Component Flow (:7008)](#customer-service-component-flow-7008)
+- [Vehicle Service Component Flow (:7003)](#vehicle-service-component-flow-7003)
+- [Driver Service Component Flow (:7004)](#driver-service-component-flow-7004)
+- [Product Service Component Flow (:7005)](#product-service-component-flow-7005)
+- [Route Service Component Flow (:7006)](#route-service-component-flow-7006)
+- [Weighbridge Service Component Flow (:7007)](#weighbridge-service-component-flow-7007)
+- [Supplier Service Component Flow (:7009)](#supplier-service-component-flow-7009)
+- [Transporter Service Component Flow (:7010)](#transporter-service-component-flow-7010)
+- [SACCO Service Component Flow (:7011)](#sacco-service-component-flow-7011)
+- [Organization Service Component Flow (:7002) - DEPRECATED](#organization-service-component-flow-7002---deprecated)
+
 ---
 
 ## **User Service Component Flow (:7001)**
@@ -72,6 +86,8 @@ flowchart TD
 - Manages role-based access control (RBAC)
 - Defines permissions and role hierarchies
 - Supports dynamic role assignment and inheritance
+
+[↑ Back to Top](#-table-of-contents)
 
 ---
 
@@ -143,6 +159,8 @@ flowchart TD
 - Manages customer contracts and agreements
 - Handles pricing, terms, and credit arrangements
 - Monitors contract compliance and renewals
+
+[↑ Back to Top](#-table-of-contents)
 
 ---
 
@@ -224,6 +242,8 @@ flowchart TD
 - Tracks compliance with safety and regulatory standards
 - Handles inspection scheduling and results
 
+[↑ Back to Top](#-table-of-contents)
+
 ---
 
 ## **Driver Service Component Flow (:7004)**
@@ -302,6 +322,8 @@ flowchart TD
 - Tracks driver performance metrics and ratings
 - Monitors safety records and violations
 - Provides performance analytics and reporting
+
+[↑ Back to Top](#-table-of-contents)
 
 ---
 
@@ -382,6 +404,8 @@ flowchart TD
 - Handles quality standards and compliance requirements
 - Supports technical documentation and certifications
 
+[↑ Back to Top](#-table-of-contents)
+
 ---
 
 ## **Route Service Component Flow (:7006)**
@@ -460,6 +484,8 @@ flowchart TD
 - Tracks expected vs actual transit times
 - Manages delivery schedules and time windows
 - Provides timing analytics and performance metrics
+
+[↑ Back to Top](#-table-of-contents)
 
 ---
 
@@ -540,6 +566,8 @@ flowchart TD
 - Handles operational parameters and thresholds
 - Supports remote configuration management
 
+[↑ Back to Top](#-table-of-contents)
+
 ---
 
 ## **Supplier Service Component Flow (:7009)**
@@ -618,6 +646,8 @@ flowchart TD
 - Tracks supplier performance metrics and KPIs
 - Monitors delivery performance, quality, and compliance
 - Provides supplier scorecards and analytics
+
+[↑ Back to Top](#-table-of-contents)
 
 ---
 
@@ -698,6 +728,8 @@ flowchart TD
 - Handles route assignments and scheduling
 - Tracks assignment performance and completion
 
+[↑ Back to Top](#-table-of-contents)
+
 ---
 
 ## **SACCO Service Component Flow (:7011)**
@@ -777,9 +809,11 @@ flowchart TD
 - Handles member contributions and benefits
 - Provides financial reporting and analytics
 
+[↑ Back to Top](#-table-of-contents)
+
 ---
 
-## **Organization Service Component Flow (:7002)**
+## **Organization Service Component Flow (:7002) - DEPRECATED**
 
 ```mermaid
 flowchart TD
@@ -855,6 +889,10 @@ flowchart TD
 - Manages organizational hierarchy and reporting structures
 - Handles department and division management
 - Supports complex organizational relationships
+
+> **⚠️ DEPRECATED**: This service is deprecated and should not be used in new implementations.
+
+[↑ Back to Top](#-table-of-contents)
 
 ---
 
