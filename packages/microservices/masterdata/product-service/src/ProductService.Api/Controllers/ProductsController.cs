@@ -8,26 +8,31 @@ namespace ProductService.Api.Controllers;
 public class ProductsController : BaseController
 {
     private readonly IProductService _productService;
+    private readonly IPricingService _pricingService;
+    private readonly ILogger<ProductsController> _logger;
 
-    public ProductsController(IProductService productService)
+    public ProductsController(IProductService productService, IPricingService pricingService, ILogger<ProductsController> logger)
     {
         _productService = productService;
+        _pricingService = pricingService;
+        _logger = logger;
     }
 
     /// <summary>
     /// Get all products
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<ApiResponseDto<List<ProductDto>>>> GetAllProducts()
+    public async Task<IActionResult> GetAll()
     {
         try
         {
-            var products = await _productService.GetAllProductsAsync();
-            return Ok(ApiResponseDto<List<ProductDto>>.SuccessResponse(products));
+            var products = await _productService.GetAllAsync();
+            return Ok(products);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponseDto<List<ProductDto>>.ErrorResponse("An error occurred while retrieving products", new List<string> { ex.Message }));
+            _logger.LogError(ex, "Error getting all products");
+            return InternalServerError("An error occurred while retrieving products");
         }
     }
 
@@ -35,59 +40,124 @@ public class ProductsController : BaseController
     /// Get product by ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ApiResponseDto<ProductDto>>> GetProduct(string id)
+    public async Task<IActionResult> GetById(string id)
     {
         try
         {
-            var product = await _productService.GetProductByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
             if (product == null)
             {
-                return NotFound(ApiResponseDto<ProductDto>.ErrorResponse("Product not found"));
+                return NotFound("Product not found");
             }
-            return Ok(ApiResponseDto<ProductDto>.SuccessResponse(product));
+
+            return Ok(product);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponseDto<ProductDto>.ErrorResponse("An error occurred while retrieving the product", new List<string> { ex.Message }));
+            _logger.LogError(ex, "Error getting product with id {Id}", id);
+            return InternalServerError("An error occurred while retrieving product");
         }
     }
 
     /// <summary>
-    /// Register a new product
+    /// Create a new product
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<ApiResponseDto<ProductDto>>> RegisterProduct([FromBody] RegisterProductRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateProductDto request)
     {
         try
         {
-            var product = await _productService.RegisterProductAsync(request);
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, 
-                ApiResponseDto<ProductDto>.SuccessResponse(product, "Product registered successfully"));
+            var product = await _productService.CreateAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponseDto<ProductDto>.ErrorResponse("An error occurred while registering the product", new List<string> { ex.Message }));
+            _logger.LogError(ex, "Error creating product");
+            return InternalServerError("An error occurred while creating product");
         }
     }
 
     /// <summary>
-    /// Update a product
+    /// Register a new product (integration compatibility)
     /// </summary>
-    [HttpPut("{id}")]
-    public async Task<ActionResult<ApiResponseDto<ProductDto>>> UpdateProduct(string id, [FromBody] UpdateProductRequest request)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterProductRequest request)
     {
         try
         {
-            var product = await _productService.UpdateProductAsync(id, request);
-            return Ok(ApiResponseDto<ProductDto>.SuccessResponse(product, "Product updated successfully"));
-        }
-        catch (ArgumentException)
-        {
-            return NotFound(ApiResponseDto<ProductDto>.ErrorResponse("Product not found"));
+            // Convert RegisterProductRequest to CreateProductDto
+            var createDto = new CreateProductDto
+            {
+                Name = request.Name,
+                Description = request.Description,
+                Code = GenerateProductCode(request.Name),
+                SKU = GenerateProductSKU(request.Name),
+                Brand = "Default Brand",
+                CategoryId = await GetOrCreateCategoryId(request.Category)
+            };
+
+            var product = await _productService.CreateAsync(createDto);
+            
+            // Create base pricing
+            if (request.BasePrice > 0)
+            {
+                var pricingDto = new PricingDto
+                {
+                    ProductId = product.Id,
+                    Type = Core.Entities.PricingType.Standard,
+                    BasePrice = request.BasePrice,
+                    Currency = request.Currency,
+                    ValidFrom = DateTime.UtcNow,
+                    IsActive = true
+                };
+                await _pricingService.CreateAsync(pricingDto);
+            }
+
+            // Convert to ProductDto for response
+            var responseDto = new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Category = request.Category,
+                UnitOfMeasure = request.UnitOfMeasure,
+                BasePrice = request.BasePrice,
+                Currency = request.Currency,
+                Code = product.Code,
+                SKU = product.SKU,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt
+            };
+
+            return Ok(ApiResponseDto<ProductDto>.Success(responseDto));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponseDto<ProductDto>.ErrorResponse("An error occurred while updating the product", new List<string> { ex.Message }));
+            _logger.LogError(ex, "Error registering product");
+            return InternalServerError("An error occurred while registering product");
+        }
+    }
+
+    /// <summary>
+    /// Update an existing product
+    /// </summary>
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateProductDto request)
+    {
+        try
+        {
+            var product = await _productService.UpdateAsync(id, request);
+            if (product == null)
+            {
+                return NotFound("Product not found");
+            }
+
+            return Ok(product, "Product updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating product with id {Id}", id);
+            return InternalServerError("An error occurred while updating product");
         }
     }
 
@@ -95,161 +165,112 @@ public class ProductsController : BaseController
     /// Delete a product
     /// </summary>
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ApiResponseDto>> DeleteProduct(string id)
+    public async Task<IActionResult> Delete(string id)
     {
         try
         {
-            await _productService.DeleteProductAsync(id);
-            return Ok(ApiResponseDto.SuccessResponse("Product deleted successfully"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponseDto.ErrorResponse("An error occurred while deleting the product", new List<string> { ex.Message }));
-        }
-    }
-
-    /// <summary>
-    /// Get products by category
-    /// </summary>
-    [HttpGet("category/{categoryId}")]
-    public async Task<ActionResult<ApiResponseDto<List<ProductDto>>>> GetProductsByCategory(string categoryId)
-    {
-        try
-        {
-            var products = await _productService.GetProductsByCategoryAsync(categoryId);
-            return Ok(ApiResponseDto<List<ProductDto>>.SuccessResponse(products));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponseDto<List<ProductDto>>.ErrorResponse("An error occurred while retrieving products by category", new List<string> { ex.Message }));
-        }
-    }
-
-    /// <summary>
-    /// Get hazardous products
-    /// </summary>
-    [HttpGet("hazmat")]
-    public async Task<ActionResult<ApiResponseDto<List<ProductDto>>>> GetHazardousProducts()
-    {
-        try
-        {
-            var products = await _productService.GetHazardousProductsAsync();
-            return Ok(ApiResponseDto<List<ProductDto>>.SuccessResponse(products));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponseDto<List<ProductDto>>.ErrorResponse("An error occurred while retrieving hazardous products", new List<string> { ex.Message }));
-        }
-    }
-
-    /// <summary>
-    /// Search products
-    /// </summary>
-    [HttpGet("search")]
-    public async Task<ActionResult<ApiResponseDto<List<ProductDto>>>> SearchProducts([FromQuery] string searchTerm)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            var result = await _productService.DeleteAsync(id);
+            if (!result)
             {
-                return BadRequest(ApiResponseDto<List<ProductDto>>.ErrorResponse("Search term is required"));
+                return NotFound("Product not found");
             }
 
-            var products = await _productService.SearchProductsAsync(searchTerm);
-            return Ok(ApiResponseDto<List<ProductDto>>.SuccessResponse(products));
+            return Ok<object?>(null, "Product deleted successfully");
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponseDto<List<ProductDto>>.ErrorResponse("An error occurred while searching products", new List<string> { ex.Message }));
+            _logger.LogError(ex, "Error deleting product with id {Id}", id);
+            return InternalServerError("An error occurred while deleting product");
         }
     }
 
     /// <summary>
-    /// Get product specifications
+    /// Check if product name is available
     /// </summary>
-    [HttpGet("{id}/specifications")]
-    public async Task<ActionResult<ApiResponseDto<List<ProductSpecificationDto>>>> GetProductSpecifications(string id)
+    [HttpGet("check-name/{name}")]
+    public async Task<IActionResult> CheckName(string name)
     {
         try
         {
-            var specifications = await _productService.GetProductSpecificationsAsync(id);
-            return Ok(ApiResponseDto<List<ProductSpecificationDto>>.SuccessResponse(specifications));
+            var available = await _productService.IsNameAvailableAsync(name);
+            return Ok(new { available }, available ? "Name is available" : "Name is not available");
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponseDto<List<ProductSpecificationDto>>.ErrorResponse("An error occurred while retrieving product specifications", new List<string> { ex.Message }));
+            _logger.LogError(ex, "Error checking product name availability");
+            return InternalServerError("An error occurred while checking name");
         }
     }
 
     /// <summary>
-    /// Update product specifications
-    /// </summary>
-    [HttpPut("{id}/specifications")]
-    public async Task<ActionResult<ApiResponseDto>> UpdateProductSpecifications(string id, [FromBody] UpdateProductSpecificationsRequest request)
-    {
-        try
-        {
-            await _productService.UpdateProductSpecificationsAsync(id, request);
-            return Ok(ApiResponseDto.SuccessResponse("Product specifications updated successfully"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponseDto.ErrorResponse("An error occurred while updating product specifications", new List<string> { ex.Message }));
-        }
-    }
-
-    /// <summary>
-    /// Get product pricing
+    /// Get product pricing (integration compatibility)
     /// </summary>
     [HttpGet("{id}/pricing")]
-    public async Task<ActionResult<ApiResponseDto<List<ProductPricingDto>>>> GetProductPricing(string id)
+    public async Task<IActionResult> GetPricing(string id)
     {
         try
         {
-            var pricing = await _productService.GetProductPricingAsync(id);
-            return Ok(ApiResponseDto<List<ProductPricingDto>>.SuccessResponse(pricing));
+            var pricings = await _pricingService.GetByProductIdAsync(id);
+            var pricingDtos = pricings.Select(p => new ProductPricingDto
+            {
+                Id = p.Id,
+                ProductId = p.ProductId,
+                PricingType = p.Type.ToString(),
+                Price = p.EffectivePrice,
+                Currency = p.Currency,
+                ValidFrom = p.ValidFrom,
+                ValidTo = p.ValidTo,
+                IsActive = p.IsActive
+            }).ToList();
+
+            // Add base pricing if no pricing exists
+            if (!pricingDtos.Any())
+            {
+                var product = await _productService.GetByIdAsync(id);
+                if (product != null)
+                {
+                    pricingDtos.Add(new ProductPricingDto
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ProductId = id,
+                        PricingType = "Base",
+                        Price = 0, // Default base price
+                        Currency = "KES",
+                        ValidFrom = DateTime.UtcNow,
+                        IsActive = true
+                    });
+                }
+            }
+
+            return Ok(ApiResponseDto<List<ProductPricingDto>>.Success(pricingDtos));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponseDto<List<ProductPricingDto>>.ErrorResponse("An error occurred while retrieving product pricing", new List<string> { ex.Message }));
+            _logger.LogError(ex, "Error getting pricing for product {Id}", id);
+            return InternalServerError("An error occurred while retrieving product pricing");
         }
     }
 
-    /// <summary>
-    /// Update product pricing
-    /// </summary>
-    [HttpPut("{id}/pricing")]
-    public async Task<ActionResult<ApiResponseDto>> UpdateProductPricing(string id, [FromBody] UpdateProductPricingRequest request)
+    private string GenerateProductCode(string name)
     {
-        try
-        {
-            await _productService.UpdateProductPricingAsync(id, request);
-            return Ok(ApiResponseDto.SuccessResponse("Product pricing updated successfully"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponseDto.ErrorResponse("An error occurred while updating product pricing", new List<string> { ex.Message }));
-        }
+        // Generate a simple code from the product name
+        var code = string.Concat(name.Where(char.IsLetterOrDigit)).ToUpper();
+        if (code.Length > 10) code = code.Substring(0, 10);
+        return $"{code}{DateTime.UtcNow.Ticks % 1000:D3}";
     }
 
-    /// <summary>
-    /// Get product compliance information
-    /// </summary>
-    [HttpGet("{id}/compliance")]
-    public async Task<ActionResult<ApiResponseDto<ProductComplianceDto>>> GetProductCompliance(string id)
+    private string GenerateProductSKU(string name)
     {
-        try
-        {
-            var compliance = await _productService.GetProductComplianceAsync(id);
-            return Ok(ApiResponseDto<ProductComplianceDto>.SuccessResponse(compliance));
-        }
-        catch (ArgumentException)
-        {
-            return NotFound(ApiResponseDto<ProductComplianceDto>.ErrorResponse("Product not found"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponseDto<ProductComplianceDto>.ErrorResponse("An error occurred while retrieving product compliance", new List<string> { ex.Message }));
-        }
+        // Generate a simple SKU from the product name
+        var sku = string.Concat(name.Where(char.IsLetterOrDigit)).ToUpper();
+        if (sku.Length > 8) sku = sku.Substring(0, 8);
+        return $"SKU-{sku}-{DateTime.UtcNow.Ticks % 10000:D4}";
+    }
+
+    private async Task<string> GetOrCreateCategoryId(string categoryName)
+    {
+        // For now, return empty string - in a full implementation, 
+        // this would create or find the category
+        return string.Empty;
     }
 }

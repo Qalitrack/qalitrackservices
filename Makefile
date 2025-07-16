@@ -1538,3 +1538,49 @@ docker-build-abuso:
 docker-run-abuso:
 	@echo "Running Docker container for Abuso service..."
 	@docker run -p 5000:80 abuso
+
+# CustomerService Service Targets (Auto-generated)
+.PHONY: build-customer-service run-customer-service test-customer-service
+
+build-customer-service:
+	@echo "Building CustomerService service..."
+	@cd packages/microservices/masterdata/customer-service && dotnet build
+
+run-customer-service:
+	@echo "Running CustomerService service..."
+	@cd packages/microservices/masterdata/customer-service && dotnet run --project src/CustomerService.Api
+
+test-customer-service:
+	@echo "Testing CustomerService service..."
+	@cd packages/microservices/masterdata/customer-service && dotnet test tests/CustomerService.Tests --verbosity normal
+
+docker-build-customer-service:
+	@echo "Building Docker image for CustomerService service..."
+	@cd packages/microservices/masterdata/customer-service && docker build -t customer-service .
+
+docker-run-customer-service:
+	@echo "Running Docker container for CustomerService service..."
+	@docker run -p 5000:80 customer-service
+
+# ProductService Service Targets (Auto-generated)
+.PHONY: build-product-service run-product-service test-product-service
+
+build-product-service:
+	@echo "Building ProductService service..."
+	@cd packages/microservices/masterdata/product-service && dotnet build
+
+run-product-service:
+	@echo "Running ProductService service..."
+	@cd packages/microservices/masterdata/product-service && dotnet run --project src/ProductService.Api
+
+test-product-service:
+	@echo "Testing ProductService service..."
+	@cd packages/microservices/masterdata/product-service && dotnet test tests/ProductService.Tests --verbosity normal
+
+docker-build-product-service:
+	@echo "Building Docker image for ProductService service..."
+	@cd packages/microservices/masterdata/product-service && docker build -t product-service .
+
+docker-run-product-service:
+	@echo "Running Docker container for ProductService service..."
+	@docker run -p 5000:80 product-service

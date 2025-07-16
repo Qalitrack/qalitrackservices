@@ -9,16 +9,22 @@ public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly ICustomerRepository _customerRepository;
+    private readonly IRepository<OrderStatusHistory> _statusHistoryRepository;
     private readonly IMapper _mapper;
 
-    public OrderService(IOrderRepository orderRepository, ICustomerRepository customerRepository, IMapper mapper)
+    public OrderService(
+        IOrderRepository orderRepository,
+        ICustomerRepository customerRepository,
+        IRepository<OrderStatusHistory> statusHistoryRepository,
+        IMapper mapper)
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;
+        _statusHistoryRepository = statusHistoryRepository;
         _mapper = mapper;
     }
 
-    public async Task<OrderDto> CreateOrderAsync(CreateOrderDto createOrderDto)
+    public async Task<OrderReadDto> CreateOrderAsync(CreateOrderDto createOrderDto)
     {
         // Validate customer exists
         var customer = await _customerRepository.GetByIdAsync(createOrderDto.CustomerId);
@@ -38,7 +44,7 @@ public class OrderService : IOrderService
         }
 
         // Generate order number
-        var orderNumber = await _orderRepository.GenerateOrderNumberAsync();
+        var orderNumber = await GenerateOrderNumberAsync();
 
         // Create order entity
         var order = new Order
@@ -81,46 +87,32 @@ public class OrderService : IOrderService
             order.TransporterId = customer.PreferredTransporterId;
         }
 
-        await _orderRepository.AddAsync(order);
+        var createdOrder = await _orderRepository.CreateAsync(order);
 
         // Create initial status history
-        var statusHistory = new OrderStatusHistory
-        {
-            Id = Guid.NewGuid().ToString(),
-            OrderId = order.Id,
-            FromStatus = OrderStatus.Pending,
-            ToStatus = OrderStatus.Pending,
-            ChangedAt = DateTime.UtcNow,
-            Reason = "Order created",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        await CreateStatusHistoryAsync(createdOrder.Id, OrderStatus.Pending, OrderStatus.Pending, "Order created", null);
 
-        // Add status history (if you have a repository for it)
-        // await _statusHistoryRepository.AddAsync(statusHistory);
-
-        var orderWithDetails = await _orderRepository.GetOrderWithDetailsAsync(order.Id);
-        return _mapper.Map<OrderDto>(orderWithDetails);
+        return _mapper.Map<OrderReadDto>(createdOrder);
     }
 
-    public async Task<OrderDto?> GetOrderAsync(string id)
+    public async Task<OrderReadDto?> GetOrderAsync(string id)
     {
-        var order = await _orderRepository.GetOrderWithDetailsAsync(id);
-        return order != null ? _mapper.Map<OrderDto>(order) : null;
+        var order = await _orderRepository.GetByIdAsync(id);
+        return order != null ? _mapper.Map<OrderReadDto>(order) : null;
     }
 
-    public async Task<IEnumerable<OrderSummaryDto>> GetOrdersPagedAsync(int page, int pageSize, string? status = null, string? customerId = null)
+    public async Task<IEnumerable<OrderReadDto>> GetOrdersAsync(int page = 1, int pageSize = 20, string? status = null, string? customerId = null)
     {
         var orders = await _orderRepository.GetOrdersPagedAsync(page, pageSize, status, customerId);
-        return _mapper.Map<IEnumerable<OrderSummaryDto>>(orders);
+        return _mapper.Map<IEnumerable<OrderReadDto>>(orders);
     }
 
-    public async Task<OrderDto> UpdateOrderAsync(string id, UpdateOrderDto updateOrderDto)
+    public async Task<OrderReadDto?> UpdateOrderAsync(string id, UpdateOrderDto updateOrderDto)
     {
         var order = await _orderRepository.GetByIdAsync(id);
         if (order == null)
         {
-            throw new ArgumentException($"Order with ID {id} not found");
+            return null;
         }
 
         // Update order properties
@@ -183,23 +175,16 @@ public class OrderService : IOrderService
 
         order.UpdatedAt = DateTime.UtcNow;
 
-        await _orderRepository.UpdateAsync(order);
-
-        var updatedOrder = await _orderRepository.GetOrderWithDetailsAsync(id);
-        return _mapper.Map<OrderDto>(updatedOrder);
+        var updatedOrder = await _orderRepository.UpdateAsync(order);
+        return updatedOrder != null ? _mapper.Map<OrderReadDto>(updatedOrder) : null;
     }
 
-    public async Task<bool> UpdateOrderStatusAsync(string id, OrderStatusUpdateDto statusUpdate)
+    public async Task<bool> UpdateOrderStatusAsync(string id, OrderStatus newStatus, string? reason = null, string? changedBy = null)
     {
         var order = await _orderRepository.GetByIdAsync(id);
         if (order == null)
         {
             return false;
-        }
-
-        if (!Enum.TryParse<OrderStatus>(statusUpdate.Status, out var newStatus))
-        {
-            throw new ArgumentException($"Invalid order status: {statusUpdate.Status}");
         }
 
         var oldStatus = order.Status;
@@ -209,27 +194,12 @@ public class OrderService : IOrderService
         await _orderRepository.UpdateAsync(order);
 
         // Create status history entry
-        var statusHistory = new OrderStatusHistory
-        {
-            Id = Guid.NewGuid().ToString(),
-            OrderId = order.Id,
-            FromStatus = oldStatus,
-            ToStatus = newStatus,
-            ChangedAt = DateTime.UtcNow,
-            ChangedBy = statusUpdate.ChangedBy,
-            Reason = statusUpdate.Reason,
-            Notes = statusUpdate.Notes,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-
-        // Add status history (you might need to create this repository method)
-        // await _statusHistoryRepository.AddAsync(statusHistory);
+        await CreateStatusHistoryAsync(order.Id, oldStatus, newStatus, reason, changedBy);
 
         return true;
     }
 
-    public async Task<bool> CancelOrderAsync(string id, string? cancellationReason = null)
+    public async Task<bool> CancelOrderAsync(string id, string? cancellationReason = null, string? cancelledBy = null)
     {
         var order = await _orderRepository.GetByIdAsync(id);
         if (order == null)
@@ -243,49 +213,62 @@ public class OrderService : IOrderService
             return false;
         }
 
+        var oldStatus = order.Status;
         order.Status = OrderStatus.Cancelled;
         order.CancellationReason = cancellationReason;
         order.CancelledAt = DateTime.UtcNow;
+        order.CancelledBy = cancelledBy;
         order.UpdatedAt = DateTime.UtcNow;
 
         await _orderRepository.UpdateAsync(order);
 
+        // Create status history entry
+        await CreateStatusHistoryAsync(order.Id, oldStatus, OrderStatus.Cancelled, cancellationReason, cancelledBy);
+
         return true;
     }
 
-    public async Task<IEnumerable<OrderSummaryDto>> GetCustomerOrdersAsync(string customerId, int page, int pageSize)
+    public async Task<IEnumerable<OrderReadDto>> GetCustomerOrdersAsync(string customerId, int page = 1, int pageSize = 20)
     {
         var orders = await _orderRepository.GetCustomerOrdersAsync(customerId, page, pageSize);
-        return _mapper.Map<IEnumerable<OrderSummaryDto>>(orders);
+        return _mapper.Map<IEnumerable<OrderReadDto>>(orders);
     }
 
-    public async Task<IEnumerable<OrderSummaryDto>> GetSupplierOrdersAsync(string supplierId, int page, int pageSize)
+    public async Task<IEnumerable<OrderReadDto>> GetSupplierOrdersAsync(string supplierId, int page = 1, int pageSize = 20)
     {
         var orders = await _orderRepository.GetSupplierOrdersAsync(supplierId, page, pageSize);
-        return _mapper.Map<IEnumerable<OrderSummaryDto>>(orders);
+        return _mapper.Map<IEnumerable<OrderReadDto>>(orders);
     }
 
-    public async Task<IEnumerable<OrderSummaryDto>> GetPendingOrdersAsync(int page, int pageSize)
+    public async Task<IEnumerable<OrderStatusHistoryReadDto>> GetOrderStatusHistoryAsync(string orderId)
     {
-        var orders = await _orderRepository.GetPendingOrdersAsync(page, pageSize);
-        return _mapper.Map<IEnumerable<OrderSummaryDto>>(orders);
+        var history = await _statusHistoryRepository.FindAsync(h => h.OrderId == orderId);
+        return _mapper.Map<IEnumerable<OrderStatusHistoryReadDto>>(history.OrderBy(h => h.ChangedAt));
     }
 
-    public async Task<IEnumerable<OrderSummaryDto>> GetInTransitOrdersAsync(int page, int pageSize)
+    private async Task<string> GenerateOrderNumberAsync()
     {
-        var orders = await _orderRepository.GetInTransitOrdersAsync(page, pageSize);
-        return _mapper.Map<IEnumerable<OrderSummaryDto>>(orders);
+        var today = DateTime.UtcNow;
+        var prefix = $"ORD-{today:yyyyMMdd}";
+        var count = await _orderRepository.GetOrderCountForDateAsync(today.Date);
+        return $"{prefix}-{(count + 1):D4}";
     }
 
-    public async Task<IEnumerable<OrderStatusHistoryDto>> GetOrderStatusHistoryAsync(string orderId)
+    private async Task CreateStatusHistoryAsync(string orderId, OrderStatus fromStatus, OrderStatus toStatus, string? reason, string? changedBy)
     {
-        var history = await _orderRepository.GetOrderStatusHistoryAsync(orderId);
-        return _mapper.Map<IEnumerable<OrderStatusHistoryDto>>(history);
-    }
+        var statusHistory = new OrderStatusHistory
+        {
+            Id = Guid.NewGuid().ToString(),
+            OrderId = orderId,
+            FromStatus = fromStatus,
+            ToStatus = toStatus,
+            ChangedAt = DateTime.UtcNow,
+            ChangedBy = changedBy,
+            Reason = reason,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
 
-    public async Task<IEnumerable<OrderSummaryDto>> SearchOrdersAsync(string query, int page, int pageSize)
-    {
-        var orders = await _orderRepository.SearchOrdersAsync(query, page, pageSize);
-        return _mapper.Map<IEnumerable<OrderSummaryDto>>(orders);
+        await _statusHistoryRepository.CreateAsync(statusHistory);
     }
 }

@@ -1,12 +1,1 @@
 global using Xunit;
-global using FluentAssertions;
-global using Moq;
-global using Microsoft.AspNetCore.Mvc.Testing;
-global using Microsoft.EntityFrameworkCore;
-global using Microsoft.EntityFrameworkCore.InMemory;
-global using Microsoft.Extensions.DependencyInjection;
-global using ProductService.Core.Entities;
-global using ProductService.Core.DTOs;
-global using ProductService.Core.Interfaces;
-global using ProductService.Infrastructure.Data;
-global using ProductService.Tests.Helpers;
