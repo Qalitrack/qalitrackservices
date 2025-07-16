@@ -17,6 +17,8 @@ public class SupplierDbContext : DbContext
     public DbSet<SupplierDocument> SupplierDocuments { get; set; } = null!;
     public DbSet<SupplierPerformance> SupplierPerformances { get; set; } = null!;
     public DbSet<SupplierFinancial> SupplierFinancials { get; set; } = null!;
+    public DbSet<Procurement> Procurements { get; set; } = null!;
+    public DbSet<ProcurementItem> ProcurementItems { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -226,6 +228,58 @@ public class SupplierDbContext : DbContext
             entity.HasIndex(e => e.SupplierId);
             entity.HasIndex(e => e.CreditRating);
             entity.HasIndex(e => e.Status);
+        });
+
+        // Procurement Configuration
+        modelBuilder.Entity<Procurement>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ProcurementNumber).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Currency).HasMaxLength(10);
+            entity.Property(e => e.RequestedBy).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.ApprovedBy).HasMaxLength(100);
+            entity.Property(e => e.PurchaseOrderNumber).HasMaxLength(50);
+            entity.Property(e => e.DeliveryAddress).HasMaxLength(500);
+            entity.Property(e => e.SpecialInstructions).HasMaxLength(1000);
+            entity.Property(e => e.Notes).HasMaxLength(1000);
+            entity.Property(e => e.EstimatedValue).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.ActualValue).HasColumnType("decimal(18,2)");
+
+            entity.HasOne(e => e.Supplier)
+                .WithMany(s => s.Procurements)
+                .HasForeignKey(e => e.SupplierId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.ProcurementNumber).IsUnique();
+            entity.HasIndex(e => e.SupplierId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.RequestDate);
+            entity.HasIndex(e => e.RequestedBy);
+            entity.HasIndex(e => e.Priority);
+        });
+
+        // ProcurementItem Configuration
+        modelBuilder.Entity<ProcurementItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ProductCode).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.ProductName).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Unit).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Specifications).HasMaxLength(2000);
+            entity.Property(e => e.Notes).HasMaxLength(1000);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18,2)");
+
+            entity.HasOne(e => e.Procurement)
+                .WithMany(p => p.Items)
+                .HasForeignKey(e => e.ProcurementId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.ProcurementId);
+            entity.HasIndex(e => e.ProductCode);
         });
     }
 

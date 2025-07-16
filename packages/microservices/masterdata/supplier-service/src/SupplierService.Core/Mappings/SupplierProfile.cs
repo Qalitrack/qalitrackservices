@@ -106,5 +106,42 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
             .ForMember(dest => dest.Status, opt => opt.Ignore())
             .ForMember(dest => dest.LastFinancialReview, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+        // Procurement mappings
+        CreateMap<Procurement, ProcurementDto>();
+        CreateMap<CreateProcurementRequest, Procurement>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.ProcurementNumber, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForMember(dest => dest.RequestDate, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
+
+        CreateMap<UpdateProcurementRequest, Procurement>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.SupplierId, opt => opt.Ignore())
+            .ForMember(dest => dest.ProcurementNumber, opt => opt.Ignore())
+            .ForMember(dest => dest.RequestDate, opt => opt.Ignore())
+            .ForMember(dest => dest.RequestedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
+
+        // Procurement Item mappings
+        CreateMap<ProcurementItem, ProcurementItemDto>();
+        CreateMap<CreateProcurementItemRequest, ProcurementItem>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.ProcurementId, opt => opt.Ignore())
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => (src.UnitPrice ?? 0) * src.Quantity))
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
     }
 }

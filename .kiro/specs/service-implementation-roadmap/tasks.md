@@ -60,7 +60,7 @@ Convert the service implementation roadmap into a series of actionable developme
 -
 
 
-- [ ] 3. Implement Supplier Service (:7009)
+- [x] 3. Implement Supplier Service (:7009)
 
 
 
