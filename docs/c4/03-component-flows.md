@@ -2,12 +2,28 @@
 
 ## 🔧 **QaliTrack Component Interactions**
 
-This diagram shows the detailed interactions between services, components, and how data flows through the QaliTrack system during key business processes.
+This document provides detailed component-level interactions for all QaliTrack services, showing how data flows through the system during key business processes. Due to the comprehensive nature of the system (13 Master Data + 7 Data Manager + Infrastructure services), this documentation is organized into focused sections with cross-references.
+
+### **Navigation**
+- [🏗️ Infrastructure Components](03-component-flows-infrastructure.md) - API Gateway, Service Discovery, Cache, Messaging
+- [👥 Master Data Service Components](03-component-flows-masterdata.md) - All 13 Master Data Services
+- [📊 Data Manager Service Components](03-component-flows-datamanager.md) - All 7 Data Manager Services
+- [🔄 Cross-Service Integration Patterns](#-cross-service-integration-patterns)
+- [🔐 Security & Authentication Flows](#-security--authentication-flows)
 
 ### **Component Overview**
-The system is built around event-driven microservices with clear data flow patterns, authentication boundaries, and business process orchestration.
+The system is built around event-driven microservices with clear data flow patterns, authentication boundaries, and business process orchestration. Each service follows Clean Architecture principles with API, Core, and Infrastructure layers.
 
-## 🔄 **Authentication & Authorization Flow**
+**Service Categories:**
+- **Infrastructure Services**: API Gateway, Service Discovery, Cache Layer, Message Streaming, Database
+- **Master Data Services (13)**: User, Customer, Vehicle, Driver, Product, Route, Weighbridge, Supplier, Transporter, SACCO, Organization, Report
+- **Data Manager Services (7)**: Weight Data, Transaction, Compliance, Analytics, Operational Data, Data Sync, Archive
+
+For detailed component flows of each category, please refer to the dedicated documentation files linked above.
+
+## 🔐 **Security & Authentication Flows**
+
+### **Authentication & Authorization Flow**
 
 ```mermaid
 sequenceDiagram
@@ -151,7 +167,7 @@ The operational transaction flow follows the actual weighbridge sequence:
 
 This sequence ensures complete vehicle and driver verification before any weighing operation, maintaining security and compliance standards.
 
-## 🔗 **masterdata to masterdata Integration Patterns**
+## 🔄 **Cross-Service Integration Patterns**
 
 ### **Customer Order Processing Flow**
 
@@ -221,150 +237,7 @@ sequenceDiagram
     Transaction->>Transporter: Assignment confirmation
 ```
 
-## 📱 **Real-Time Data Processing Components**
 
-### **Weight Data Processing Pipeline**
-
-```mermaid
-flowchart LR
-    subgraph "Hardware Layer"
-        LoadCells[Load Cells]
-    end
-    
-    subgraph "Data Acquisition"
-        HardwareInterface[Hardware Interface]
-        DataBuffer[Data Buffer]
-        Validator[Data Validator]
-    end
-    
-    subgraph "Weight Data Service"
-        Processor[Weight Processor]
-        Calibrator[Calibration Engine]
-        Publisher[Event Publisher]
-    end
-    
-    subgraph "Storage Layer"
-        PostgreSQL[(PostgreSQL with TimescaleDB)]
-        Kafka[Kafka Stream]
-        Redis[(Redis Cache)]
-    end
-    
-    subgraph "Consumer Services"
-        TransactionSvc[Transaction Service]
-        AnalyticsSvc[Analytics Service]
-        ComplianceSvc[Compliance Service]
-    end
-
-    LoadCells -->|Analog Signals| HardwareInterface
-    HardwareInterface -->|Buffered Data| DataBuffer
-    DataBuffer -->|Validated Data| Validator
-    
-    Validator -->|Clean Data| Processor
-    Processor -->|Calibrated Weight| Calibrator
-    Calibrator -->|Accurate Weight| Publisher
-    
-    Publisher -->|Time-Series Data| PostgreSQL
-    Publisher -->|Weight Events| Kafka
-    Publisher -->|Current Weight| Redis
-    
-    Kafka -->|Real-Time Events| TransactionSvc
-    Kafka -->|Analytics Events| AnalyticsSvc
-    Kafka -->|Compliance Events| ComplianceSvc
-```
-
-### **Event-Driven Architecture Components**
-
-```mermaid
-flowchart TD
-    subgraph "Event Producers"
-        WeightEvents[Weight Data Events]
-        TransactionEvents[Transaction Events]
-        ComplianceEvents[Compliance Events]
-        UserEvents[User Activity Events]
-    end
-    
-    subgraph "Message Streaming"
-        Kafka[Apache Kafka Cluster]
-        Topics[Event Topics]
-    end
-    
-    subgraph "Event Consumers"
-        Analytics[Analytics Service]
-        Compliance[Compliance Service]
-        DataSync[Data Sync Service]
-        Archive[Archive Service]
-        Notifications[Notification Service]
-    end
-    
-    subgraph "Event Processing"
-        StreamProcessor[Stream Processor]
-        EventStore[Event Store]
-        Replay[Event Replay]
-    end
-
-    WeightEvents -->|Weight measurements| Kafka
-    TransactionEvents -->|Business transactions| Kafka
-    ComplianceEvents -->|Regulatory events| Kafka
-    UserEvents -->|User actions| Kafka
-    
-    Kafka -->|Real-time streams| Topics
-    Topics -->|Event consumption| Analytics
-    Topics -->|Compliance monitoring| Compliance
-    Topics -->|Multi-site sync| DataSync
-    Topics -->|Long-term storage| Archive
-    Topics -->|User notifications| Notifications
-    
-    Topics -->|Stream processing| StreamProcessor
-    StreamProcessor -->|Processed events| EventStore
-    EventStore -->|Historical replay| Replay
-```
-
-## 🔐 **Security Component Interactions**
-
-### **Role-Based Access Control (RBAC) Flow**
-
-```mermaid
-flowchart TD
-    subgraph "Authentication Components"
-        JWTValidator[JWT Validator]
-        TokenCache[Token Cache]
-        UserContext[User Context Builder]
-    end
-    
-    subgraph "Authorization Components"
-        RoleResolver[Role Resolver]
-        PermissionEngine[Permission Engine]
-        ResourceGuard[Resource Guard]
-    end
-    
-    subgraph "Service Components"
-        ServiceAuth[Service Authorization]
-        BusinessLogic[Business Logic]
-        DataAccess[Data Access Layer]
-    end
-    
-    subgraph "User Store"
-        UserDB[(User Database)]
-        RoleDB[(Role Database)]
-        PermissionDB[(Permission Database)]
-    end
-
-    Request[Incoming Request] -->|JWT Token| JWTValidator
-    JWTValidator -->|Valid Token| TokenCache
-    TokenCache -->|User Info| UserContext
-    
-    UserContext -->|User Roles| RoleResolver
-    RoleResolver -->|Role Details| UserDB
-    RoleResolver -->|Role Permissions| PermissionEngine
-    
-    PermissionEngine -->|Permission Check| ResourceGuard
-    ResourceGuard -->|Authorized Request| ServiceAuth
-    
-    ServiceAuth -->|Validated Request| BusinessLogic
-    BusinessLogic -->|Data Operations| DataAccess
-    DataAccess -->|Query Results| UserDB
-    DataAccess -->|Filtered Data| BusinessLogic
-```
 
 ## 📊 **Data Consistency Patterns**
 
@@ -447,119 +320,7 @@ flowchart LR
     Projections -->|Cache| Redis
 ```
 
-## 🔄 **Service Discovery & Health Monitoring**
 
-```mermaid
-flowchart TD
-    subgraph "Service Instances"
-        Service1[Service Instance 1]
-        Service2[Service Instance 2]
-        Service3[Service Instance 3]
-    end
-    
-    subgraph "Service Discovery"
-        Registry[Service Registry]
-        HealthChecker[Health Checker]
-        LoadBalancer[Load Balancer]
-    end
-    
-    subgraph "Monitoring"
-        HealthEndpoints[Health Endpoints]
-        Metrics[Metrics Collector]
-        Alerts[Alert Manager]
-    end
-    
-    subgraph "Client Layer"
-        Gateway[API Gateway]
-        ServiceClient[Service Client]
-    end
-
-    Service1 -->|Register| Registry
-    Service2 -->|Register| Registry
-    Service3 -->|Register| Registry
-    
-    HealthChecker -->|Health Check| Service1
-    HealthChecker -->|Health Check| Service2
-    HealthChecker -->|Health Check| Service3
-    
-    Service1 -->|Expose| HealthEndpoints
-    Service2 -->|Expose| HealthEndpoints
-    Service3 -->|Expose| HealthEndpoints
-    
-    HealthEndpoints -->|Collect| Metrics
-    Metrics -->|Trigger| Alerts
-    
-    Registry -->|Service Discovery| LoadBalancer
-    LoadBalancer -->|Route Requests| Gateway
-    Gateway -->|Service Calls| ServiceClient
-```
-
-## 🔧 **Error Handling & Resilience Patterns**
-
-### **Circuit Breaker Pattern**
-
-```mermaid
-stateDiagram-v2
-    [*] --> Closed: Initial State
-    
-    Closed --> Open: Failure threshold exceeded
-    Closed --> Closed: Successful requests
-    
-    Open --> HalfOpen: Timeout period elapsed
-    Open --> Open: Requests fail fast
-    
-    HalfOpen --> Closed: Test request succeeds
-    HalfOpen --> Open: Test request fails
-    
-    note right of Closed
-        Normal operation
-        All requests pass through
-    end note
-    
-    note right of Open
-        Circuit breaker active
-        Requests fail immediately
-    end note
-    
-    note right of HalfOpen
-        Testing recovery
-        Limited requests allowed
-    end note
-```
-
-### **Retry & Timeout Strategy**
-
-```mermaid
-sequenceDiagram
-    participant Client as Service Client
-    participant CircuitBreaker as Circuit Breaker
-    participant Target as Target Service
-    participant Fallback as Fallback Handler
-
-    Client->>CircuitBreaker: Service request
-    
-    alt Circuit Closed
-        CircuitBreaker->>Target: Forward request
-        alt Request succeeds
-            Target->>CircuitBreaker: Success response
-            CircuitBreaker->>Client: Return response
-        else Request fails
-            Target->>CircuitBreaker: Error response
-            CircuitBreaker->>CircuitBreaker: Increment failure count
-            alt Retry available
-                Note over CircuitBreaker: Exponential backoff
-                CircuitBreaker->>Target: Retry request
-            else Max retries exceeded
-                CircuitBreaker->>CircuitBreaker: Open circuit
-                CircuitBreaker->>Fallback: Invoke fallback
-                Fallback->>Client: Fallback response
-            end
-        end
-    else Circuit Open
-        CircuitBreaker->>Fallback: Invoke fallback
-        Fallback->>Client: Fallback response
-    end
-```
 
 ---
 
