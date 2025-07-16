@@ -1,0 +1,34 @@
+flowchart LR
+    subgraph "🚛 Users"
+        Drivers[Truck Drivers]
+        Operators[Weighbridge Operators]
+        Managers[Site Managers]
+        Inspectors[Vehicle Inspectors]
+        SaccoAdmins[SACCO Administrators]
+    end
+    
+    subgraph "🏗️ QaliTrack Platform"
+        masterdata[masterdata Services<br/>📋 Master Data Management]
+        operational[masterdata Services<br/>⚙️ Operational Processing]
+        Gateway[API Gateway<br/>🚪 Single Entry Point]
+    end
+    
+    subgraph "🔧 Infrastructure"
+        Databases[(Databases)]
+        Hardware[Weighbridge Hardware]
+        Cloud[Cloud Services]
+    end
+
+    Drivers --> Gateway
+    Operators --> Gateway
+    Managers --> Gateway
+    Inspectors --> Gateway
+    SaccoAdmins --> Gateway
+    
+    Gateway --> masterdata
+    Gateway --> operational
+    
+    masterdata --> Databases
+    operational --> Databases
+    operational --> Hardware
+    masterdata --> Cloud

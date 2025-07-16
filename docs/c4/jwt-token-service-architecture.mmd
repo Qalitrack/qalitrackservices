@@ -1,0 +1,53 @@
+classDiagram
+    class IJwtTokenService {
+        <<interface>>
+        +GenerateTokenAsync(user, roles)
+        +ValidateTokenAsync(token)
+        +RefreshTokenAsync(refreshToken)
+        +RevokeTokenAsync(token)
+    }
+    
+    class JwtTokenService {
+        -JwtSecurityTokenHandler tokenHandler
+        -IConfiguration configuration
+        -IRefreshTokenRepository refreshTokenRepository
+        +GenerateTokenAsync(user, roles)
+        +ValidateTokenAsync(token)
+        +RefreshTokenAsync(refreshToken)
+        +CreateJwtToken(claims, expiry)
+        +ExtractClaimsFromToken(token)
+    }
+    
+    class TokenValidationResult {
+        +IsValid: bool
+        +UserId: Guid?
+        +Username: string
+        +Roles: List~string~
+        +Permissions: List~string~
+        +ExpiresAt: DateTime?
+        +ErrorMessage: string
+    }
+    
+    class RefreshToken {
+        +Id: Guid
+        +UserId: Guid
+        +Token: string
+        +ExpiresAt: DateTime
+        +CreatedAt: DateTime
+        +IsRevoked: bool
+        +RevokedAt: DateTime?
+    }
+    
+    class IRefreshTokenRepository {
+        <<interface>>
+        +CreateAsync(refreshToken)
+        +GetByTokenAsync(token)
+        +RevokeAsync(token)
+        +RevokeAllUserTokensAsync(userId)
+        +DeleteExpiredTokensAsync()
+    }
+
+    IJwtTokenService <|-- JwtTokenService
+    JwtTokenService --> TokenValidationResult
+    JwtTokenService --> RefreshToken
+    JwtTokenService --> IRefreshTokenRepository

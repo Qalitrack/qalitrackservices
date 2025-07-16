@@ -1,0 +1,85 @@
+classDiagram
+    class CustomerController {
+        +GetCustomersAsync(filters)
+        +GetCustomerByIdAsync(customerId)
+        +CreateCustomerAsync(createRequest)
+        +UpdateCustomerAsync(customerId, updateRequest)
+        +DeleteCustomerAsync(customerId)
+        +GetCustomerOrdersAsync(customerId)
+    }
+    
+    class ICustomerService {
+        <<interface>>
+        +GetCustomersAsync(filters)
+        +GetCustomerByIdAsync(customerId)
+        +CreateCustomerAsync(customerDto)
+        +UpdateCustomerAsync(customerId, customerDto)
+        +ValidateCustomerExistsAsync(customerId)
+    }
+    
+    class CustomerService {
+        -ICustomerRepository customerRepository
+        -IOrderRepository orderRepository
+        -IProductServiceClient productClient
+        -ITransporterServiceClient transporterClient
+        +GetCustomersAsync(filters)
+        +CreateCustomerAsync(customerDto)
+        +ValidateCustomerExistsAsync(customerId)
+    }
+    
+    class Customer {
+        +Id: Guid
+        +Name: string
+        +TaxNumber: string
+        +RegistrationNumber: string
+        +ContactEmail: string
+        +ContactPhone: string
+        +BillingAddress: string
+        +CustomerType: CustomerType
+        +CreditLimit: decimal
+        +Status: CustomerStatus
+        +TransporterId: Guid?
+        +PreferredTransporterId: Guid?
+        +IsSupplier: bool
+        +IsBuyer: bool
+        +PaymentTermsDays: int
+        +Currency: string
+        +Orders: ICollection~Order~
+        +Contacts: ICollection~CustomerContact~
+    }
+    
+    class Order {
+        +Id: Guid
+        +OrderNumber: string
+        +CustomerId: Guid
+        +SupplierId: Guid?
+        +ProductId: Guid
+        +ProductName: string
+        +Quantity: decimal
+        +UnitPrice: decimal
+        +TotalAmount: decimal
+        +TransporterId: Guid?
+        +RouteId: Guid?
+        +OrderDate: DateTime
+        +Status: OrderStatus
+        +OrderType: OrderType
+    }
+    
+    class IProductServiceClient {
+        <<interface>>
+        +ValidateProductAsync(productId)
+        +GetProductPricingAsync(productId)
+    }
+    
+    class ITransporterServiceClient {
+        <<interface>>
+        +ValidateTransporterAsync(transporterId)
+        +GetTransporterCapacityAsync(transporterId)
+    }
+
+    CustomerController --> ICustomerService
+    ICustomerService <|-- CustomerService
+    CustomerService --> Customer
+    CustomerService --> Order
+    CustomerService --> IProductServiceClient
+    CustomerService --> ITransporterServiceClient

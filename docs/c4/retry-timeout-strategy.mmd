@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant Client as Service Client
+    participant CircuitBreaker as Circuit Breaker
+    participant Target as Target Service
+    participant Fallback as Fallback Handler
+
+    Client->>CircuitBreaker: Service request
+    
+    alt Circuit Closed
+        CircuitBreaker->>Target: Forward request
+        alt Request succeeds
+            Target->>CircuitBreaker: Success response
+            CircuitBreaker->>Client: Return response
+        else Request fails
+            Target->>CircuitBreaker: Error response
+            CircuitBreaker->>CircuitBreaker: Increment failure count
+            alt Retry available
+                Note over CircuitBreaker: Exponential backoff
+                CircuitBreaker->>Target: Retry request
+            else Max retries exceeded
+                CircuitBreaker->>CircuitBreaker: Open circuit
+                CircuitBreaker->>Fallback: Invoke fallback
+                Fallback->>Client: Fallback response
+            end
+        end
+    else Circuit Open
+        CircuitBreaker->>Fallback: Invoke fallback
+        Fallback->>Client: Fallback response
+    end

@@ -1,0 +1,56 @@
+classDiagram
+    class IRepository~T~ {
+        <<interface>>
+        +GetByIdAsync(id)
+        +GetAllAsync()
+        +FindAsync(predicate)
+        +AddAsync(entity)
+        +UpdateAsync(entity)
+        +DeleteAsync(id)
+        +SaveChangesAsync()
+    }
+    
+    class BaseRepository~T~ {
+        <<abstract>>
+        #DbContext context
+        #DbSet~T~ dbSet
+        +GetByIdAsync(id)
+        +GetAllAsync()
+        +FindAsync(predicate)
+        +AddAsync(entity)
+        +UpdateAsync(entity)
+        +DeleteAsync(id)
+        +SaveChangesAsync()
+    }
+    
+    class IUserRepository {
+        <<interface>>
+        +GetByUsernameAsync(username)
+        +GetUserWithRolesAsync(userId)
+        +GetUserPermissionsAsync(userId)
+    }
+    
+    class UserRepository {
+        +GetByUsernameAsync(username)
+        +GetUserWithRolesAsync(userId)
+        +GetUserPermissionsAsync(userId)
+    }
+    
+    class ICustomerRepository {
+        <<interface>>
+        +GetCustomersWithOrdersAsync(filters)
+        +GetCustomersByTransporterAsync(transporterId)
+    }
+    
+    class CustomerRepository {
+        +GetCustomersWithOrdersAsync(filters)
+        +GetCustomersByTransporterAsync(transporterId)
+    }
+
+    IRepository <|-- BaseRepository
+    BaseRepository <|-- UserRepository
+    BaseRepository <|-- CustomerRepository
+    IRepository <|-- IUserRepository
+    IRepository <|-- ICustomerRepository
+    IUserRepository <|-- UserRepository
+    ICustomerRepository <|-- CustomerRepository

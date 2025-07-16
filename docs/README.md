@@ -2,10 +2,42 @@
 
 This directory contains comprehensive documentation for the QaliTrack ecosystem.
 
+## 📋 **Master Data Services**
+
+### **Visual Guides**
+All visual documentation has been moved to the `/visuals/` directory:
+
+- **[Complete Services Visual Guide](visuals/qalitrack-complete-services-visual-guide.md)** - Comprehensive single-file reference
+- **[Main System Visual](visuals/qalitrack-microservices-visual-guide.md)** - System overview
+- **[Individual Service Visuals](visuals/)** - Detailed guides for each service
+
+### **Implementation Guides**
+- **[Implementation Priority](master-data-implementation-priority.md)** - Service implementation order
+- **[Implementation Roadmap](master-data-implementation-roadmap.md)** - Development timeline
+- **[Customer Service Architecture](customer-service-clean-architecture.md)** - Clean architecture example
+
+## 🔄 **SACCO Integration**
+
+The QaliTrack system includes comprehensive SACCO (Savings and Credit Cooperative Organizations) integration:
+
+### **Key SACCO Relationships:**
+- **Multiple Vehicle Ownership** - Transporters can have vehicles in different SACCOs
+- **Driver Membership** - Drivers can register as SACCO members
+- **Cooperative Fleet Management** - SACCOs can manage vehicle fleets
+- **Democratic Governance** - SACCO leadership and member management
+
+### **Visual References:**
+- See [Complete Services Visual Guide](visuals/qalitrack-complete-services-visual-guide.md) for detailed SACCO integration patterns
+- SACCO Service entity models and relationships
+- Integration arrows showing multi-SACCO vehicle ownership
+- Driver membership patterns and workflows
+
 ## Structure
 
 ### Requirements Documentation (`/requirements/`)
 Business Requirements Documents (BRD) for each application and service:
+- [Master Data Service](./requirements/masterdataservice/README.md) - Master data management requirements
+- [User Service](./requirements/userservice/README.md) - User administration and security requirements
 - Functional and non-functional requirements
 - User stories and acceptance criteria
 - Technical specifications
@@ -29,14 +61,6 @@ Documentation for application end users:
 - Tutorials
 - FAQ
 - Troubleshooting
-
-### Requirements (`/requirements/`)
-Business Requirements Documents (BRD) and specifications:
-- [Master Data Service](./requirements/masterdataservice/README.md) - Master data management requirements
-- [User Service](./requirements/userservice/README.md) - User administration and security requirements
-- Functional and non-functional requirements
-- System specifications and acceptance criteria
-- User stories and implementation timelines
 
 ## Documentation Standards
 

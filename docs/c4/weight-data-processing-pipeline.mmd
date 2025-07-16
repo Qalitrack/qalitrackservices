@@ -1,0 +1,46 @@
+flowchart LR
+    subgraph "Hardware Layer"
+        LoadCells[Load Cells]
+        Sensors[Weight Sensors]
+    end
+    
+    subgraph "Data Acquisition"
+        HardwareInterface[Hardware Interface]
+        DataBuffer[Data Buffer]
+        Validator[Data Validator]
+    end
+    
+    subgraph "Weight Data Service"
+        Processor[Weight Processor]
+        Calibrator[Calibration Engine]
+        Publisher[Event Publisher]
+    end
+    
+    subgraph "Storage Layer"
+        PostgreSQL[(PostgreSQL with TimescaleDB)]
+        Kafka[Kafka Stream]
+        Redis[(Redis Cache)]
+    end
+    
+    subgraph "Consumer Services"
+        TransactionSvc[Transaction Service]
+        AnalyticsSvc[Analytics Service]
+        ComplianceSvc[Compliance Service]
+    end
+
+    LoadCells -->|Raw Signals| HardwareInterface
+    Sensors -->|Digital Data| HardwareInterface
+    HardwareInterface -->|Buffered Data| DataBuffer
+    DataBuffer -->|Validated Data| Validator
+    
+    Validator -->|Clean Data| Processor
+    Processor -->|Calibrated Weight| Calibrator
+    Calibrator -->|Accurate Weight| Publisher
+    
+    Publisher -->|Time-Series Data| PostgreSQL
+    Publisher -->|Weight Events| Kafka
+    Publisher -->|Current Weight| Redis
+    
+    Kafka -->|Real-Time Events| TransactionSvc
+    Kafka -->|Analytics Events| AnalyticsSvc
+    Kafka -->|Compliance Events| ComplianceSvc

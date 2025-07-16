@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant Client as Client Application
+    participant Gateway as API Gateway
+    participant User as User Service
+    participant Cache as Redis Cache
+    participant Target as Target Service
+
+    Client->>Gateway: Request with JWT Token
+    Gateway->>Cache: Check token cache
+    alt Token cached and valid
+        Cache->>Gateway: Return user context
+    else Token not cached or expired
+        Gateway->>User: Validate JWT token
+        User->>User: Verify signature & expiry
+        User->>Gateway: Return user context + permissions
+        Gateway->>Cache: Cache user context (TTL: 15 min)
+    end
+    
+    Gateway->>Gateway: Check route permissions
+    alt User authorized
+        Gateway->>Target: Forward request with user headers
+        Note over Gateway,Target: Headers: X-User-ID, X-User-Roles, X-User-Permissions
+        Target->>Target: Execute business logic
+        Target->>Gateway: Return response
+        Gateway->>Client: Return response
+    else User not authorized
+        Gateway->>Client: 403 Forbidden
+    end
