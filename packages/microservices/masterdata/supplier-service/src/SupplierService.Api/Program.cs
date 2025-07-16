@@ -30,9 +30,12 @@ builder.Services.AddScoped<ISupplierContractRepository, SupplierContractReposito
 builder.Services.AddScoped<ISupplierProductRepository, SupplierProductRepository>();
 builder.Services.AddScoped<ISupplierPerformanceRepository, SupplierPerformanceRepository>();
 builder.Services.AddScoped<ISupplierFinancialRepository, SupplierFinancialRepository>();
+builder.Services.AddScoped<IProcurementRepository, ProcurementRepository>();
 
 // Service Registration
 builder.Services.AddScoped<ISupplierService, SupplierService.Core.Services.SupplierService>();
+builder.Services.AddScoped<IProcurementService, ProcurementService>();
+builder.Services.AddScoped<IPerformanceService, PerformanceService>();
 
 // API Documentation
 builder.Services.AddEndpointsApiExplorer();

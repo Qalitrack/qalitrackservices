@@ -1,4 +1,6 @@
-@SupplierService_HostAddress = https://localhost:7147
+@SupplierService_HostAddress = https://localhost:7009
+@supplierId = {{$guid}}
+@procurementId = {{$guid}}
 
 ### Get all suppliers
 GET {{SupplierService_HostAddress}}/api/suppliers
@@ -180,3 +182,117 @@ Accept: application/json
 
 ### Delete supplier
 DELETE {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}
+
+### === PROCUREMENT ENDPOINTS ===
+
+### Get all procurements
+GET {{SupplierService_HostAddress}}/api/procurement
+Accept: application/json
+
+### Create procurement
+POST {{SupplierService_HostAddress}}/api/procurement
+Content-Type: application/json
+
+{
+  "supplierId": "{{supplierId}}",
+  "title": "Office Supplies Procurement",
+  "description": "Monthly procurement of office supplies",
+  "procurementType": 0,
+  "requiredDate": "2024-02-15T00:00:00Z",
+  "estimatedValue": 5000.00,
+  "currency": "USD",
+  "requestedBy": "John Doe",
+  "deliveryAddress": "123 Main St, Office Building",
+  "priority": 1,
+  "items": [
+    {
+      "productCode": "PAPER-A4",
+      "productName": "A4 Copy Paper",
+      "description": "White A4 copy paper, 80gsm",
+      "quantity": 100,
+      "unit": "ream",
+      "unitPrice": 8.50,
+      "specifications": "80gsm, white, A4 size"
+    },
+    {
+      "productCode": "PEN-BLUE",
+      "productName": "Blue Ballpoint Pens",
+      "description": "Blue ink ballpoint pens",
+      "quantity": 50,
+      "unit": "piece",
+      "unitPrice": 1.25
+    }
+  ]
+}
+
+### Get procurement by ID
+GET {{SupplierService_HostAddress}}/api/procurement/{{procurementId}}
+Accept: application/json
+
+### Get procurements by supplier
+GET {{SupplierService_HostAddress}}/api/procurement/supplier/{{supplierId}}
+Accept: application/json
+
+### Get procurements by status
+GET {{SupplierService_HostAddress}}/api/procurement/status/0
+Accept: application/json
+
+### Get pending approvals
+GET {{SupplierService_HostAddress}}/api/procurement/pending-approvals
+Accept: application/json
+
+### Get overdue deliveries
+GET {{SupplierService_HostAddress}}/api/procurement/overdue-deliveries
+Accept: application/json
+
+### Update procurement
+PUT {{SupplierService_HostAddress}}/api/procurement/{{procurementId}}
+Content-Type: application/json
+
+{
+  "title": "Updated Office Supplies Procurement",
+  "description": "Updated monthly procurement of office supplies",
+  "procurementType": 0,
+  "status": 1,
+  "requiredDate": "2024-02-20T00:00:00Z",
+  "estimatedValue": 5500.00,
+  "currency": "USD",
+  "priority": 2
+}
+
+### Approve procurement
+POST {{SupplierService_HostAddress}}/api/procurement/{{procurementId}}/approve
+Content-Type: application/json
+
+{
+  "approvedBy": "Jane Manager"
+}
+
+### Reject procurement
+POST {{SupplierService_HostAddress}}/api/procurement/{{procurementId}}/reject
+Content-Type: application/json
+
+{
+  "rejectedBy": "Jane Manager",
+  "reason": "Budget constraints"
+}
+
+### Mark procurement as ordered
+POST {{SupplierService_HostAddress}}/api/procurement/{{procurementId}}/order
+Content-Type: application/json
+
+{
+  "purchaseOrderNumber": "PO-2024-001"
+}
+
+### Mark procurement as delivered
+POST {{SupplierService_HostAddress}}/api/procurement/{{procurementId}}/deliver
+Content-Type: application/json
+
+{
+  "deliveryDate": "2024-02-18T10:30:00Z",
+  "actualValue": 5200.00
+}
+
+### Delete procurement
+DELETE {{SupplierService_HostAddress}}/api/procurement/{{procurementId}}
