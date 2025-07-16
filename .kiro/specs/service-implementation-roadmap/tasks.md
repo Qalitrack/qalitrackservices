@@ -60,7 +60,7 @@ Convert the service implementation roadmap into a series of actionable developme
 -
 
 
-- [x] 3. Implement Supplier Service (:7009)
+- [x] 3. Implement Supplier Service (:7006)
 
 
 
@@ -83,7 +83,7 @@ Convert the service implementation roadmap into a series of actionable developme
   - Verify Swagger documentation at http://localhost:5000
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [-] 4. Phase 1 Integration Testing
+- [ ] 4. Phase 1 Integration Testing (SKIPPED - will do later)
 
 
 
@@ -99,7 +99,7 @@ Convert the service implementation roadmap into a series of actionable developme
 
 ### Phase 2: Transportation Infrastructure (Priorities 4-7)
 
-- [ ] 5. Implement Vehicle Service (:7003)
+- [-] 5. Implement Vehicle Service (:7003)
 
   - Generate Vehicle Service using template: `make generate-service TYPE=masterdata SERVICE=vehicle-service ENTITY=vehicle DESC="Vehicle Registration and Management"`
   - Review generated Clean Architecture structure (API, Core, Infrastructure layers)

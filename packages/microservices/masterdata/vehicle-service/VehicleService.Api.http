@@ -1,0 +1,354 @@
+@VehicleService_HostAddress = https://localhost:7003
+@vehicleId = {{$guid}}
+@vehicleTypeId = {{$guid}}
+@registrationId = {{$guid}}
+@inspectionId = {{$guid}}
+@insuranceId = {{$guid}}
+@documentId = {{$guid}}
+
+### === VEHICLE MANAGEMENT ===
+
+### Get all vehicles
+GET {{VehicleService_HostAddress}}/api/vehicles
+Accept: application/json
+
+### Register a new vehicle
+POST {{VehicleService_HostAddress}}/api/vehicles
+Content-Type: application/json
+
+{
+  "registrationNumber": "KCA-123A",
+  "make": "Toyota",
+  "model": "Hilux",
+  "year": 2022,
+  "color": "White",
+  "vin": "JTMHY05V0X4123456",
+  "engineNumber": "2KD-FTV-123456",
+  "fuelType": "Diesel",
+  "maxWeight": 3500.0,
+  "tareWeight": 1800.0,
+  "ownerName": "John Doe Transport",
+  "ownerContactInfo": "+254700123456",
+  "vehicleTypeId": "{{vehicleTypeId}}",
+  "currentMileage": 15000.0,
+  "notes": "New vehicle registration"
+}
+
+### Get vehicle by ID
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}
+Accept: application/json
+
+### Get vehicle by registration number
+GET {{VehicleService_HostAddress}}/api/vehicles/registration/KCA-123A
+Accept: application/json
+
+### Get vehicle by VIN
+GET {{VehicleService_HostAddress}}/api/vehicles/vin/JTMHY05V0X4123456
+Accept: application/json
+
+### Get vehicle with full details
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/details
+Accept: application/json
+
+### Get vehicles by status
+GET {{VehicleService_HostAddress}}/api/vehicles/status/Active
+Accept: application/json
+
+### Get vehicles by owner
+GET {{VehicleService_HostAddress}}/api/vehicles/owner/John%20Doe%20Transport
+Accept: application/json
+
+### Update vehicle
+PUT {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}
+Content-Type: application/json
+
+{
+  "make": "Toyota",
+  "model": "Hilux Double Cab",
+  "year": 2022,
+  "color": "White",
+  "engineNumber": "2KD-FTV-123456",
+  "fuelType": "Diesel",
+  "maxWeight": 3500.0,
+  "tareWeight": 1800.0,
+  "ownerName": "John Doe Transport Ltd",
+  "ownerContactInfo": "+254700123456",
+  "status": "Active",
+  "currentMileage": 16500.0,
+  "notes": "Updated vehicle information"
+}
+
+### Validate registration number
+GET {{VehicleService_HostAddress}}/api/vehicles/validate/registration/KCA-456B
+Accept: application/json
+
+### Validate VIN
+GET {{VehicleService_HostAddress}}/api/vehicles/validate/vin/JTMHY05V0X4789012
+Accept: application/json
+
+### Delete vehicle
+DELETE {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}
+
+### === VEHICLE TYPES ===
+
+### Get all vehicle types
+GET {{VehicleService_HostAddress}}/api/vehicletypes
+Accept: application/json
+
+### Get active vehicle types
+GET {{VehicleService_HostAddress}}/api/vehicletypes/active
+Accept: application/json
+
+### Create vehicle type
+POST {{VehicleService_HostAddress}}/api/vehicletypes
+Content-Type: application/json
+
+{
+  "name": "Truck",
+  "description": "Heavy duty trucks for cargo transport",
+  "category": "Commercial",
+  "maxWeightCapacity": 10000.0,
+  "isActive": true
+}
+
+### Get vehicle type by ID
+GET {{VehicleService_HostAddress}}/api/vehicletypes/{{vehicleTypeId}}
+Accept: application/json
+
+### Update vehicle type
+PUT {{VehicleService_HostAddress}}/api/vehicletypes/{{vehicleTypeId}}
+Content-Type: application/json
+
+{
+  "name": "Heavy Truck",
+  "description": "Heavy duty trucks for cargo transport and construction",
+  "category": "Commercial",
+  "maxWeightCapacity": 15000.0,
+  "isActive": true
+}
+
+### Delete vehicle type
+DELETE {{VehicleService_HostAddress}}/api/vehicletypes/{{vehicleTypeId}}
+
+### === VEHICLE REGISTRATION ===
+
+### Create vehicle registration
+POST {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/registration
+Content-Type: application/json
+
+{
+  "registrationNumber": "KCA-123A",
+  "registrationDate": "2024-01-15T00:00:00Z",
+  "expiryDate": "2025-01-15T00:00:00Z",
+  "issuingAuthority": "NTSA Kenya",
+  "registrationCertificateNumber": "RC-2024-001234",
+  "registeredOwnerName": "John Doe Transport Ltd",
+  "registeredOwnerAddress": "P.O. Box 12345, Nairobi",
+  "registeredOwnerContact": "+254700123456",
+  "registrationFee": 5000.0,
+  "notes": "Initial vehicle registration"
+}
+
+### Get vehicle registration
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/registration
+Accept: application/json
+
+### Get expiring registrations
+GET {{VehicleService_HostAddress}}/api/vehicles/registrations/expiring?beforeDate=2024-12-31
+Accept: application/json
+
+### Update vehicle registration
+PUT {{VehicleService_HostAddress}}/api/vehicles/registrations/{{registrationId}}
+Content-Type: application/json
+
+{
+  "expiryDate": "2026-01-15T00:00:00Z",
+  "registeredOwnerName": "John Doe Transport Ltd",
+  "registeredOwnerAddress": "P.O. Box 12345, Nairobi",
+  "registeredOwnerContact": "+254700123456",
+  "registrationFee": 5500.0,
+  "notes": "Registration renewal"
+}
+
+### === VEHICLE INSPECTIONS ===
+
+### Record vehicle inspection
+POST {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/inspections
+Content-Type: application/json
+
+{
+  "inspectionDate": "2024-01-20T10:00:00Z",
+  "nextInspectionDue": "2025-01-20T00:00:00Z",
+  "inspectionType": "AnnualInspection",
+  "result": "Pass",
+  "inspectorName": "Jane Smith",
+  "inspectionCenter": "NTSA Inspection Center - Nairobi",
+  "certificateNumber": "INSP-2024-001234",
+  "inspectionFee": 2000.0,
+  "currentMileage": 15500,
+  "recommendations": "Replace brake pads within 6 months",
+  "notes": "Vehicle in good condition"
+}
+
+### Get vehicle inspections
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/inspections
+Accept: application/json
+
+### Get latest vehicle inspection
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/inspections/latest
+Accept: application/json
+
+### Get due inspections
+GET {{VehicleService_HostAddress}}/api/vehicleinspections/due?beforeDate=2024-12-31
+Accept: application/json
+
+### Update vehicle inspection
+PUT {{VehicleService_HostAddress}}/api/vehicleinspections/{{inspectionId}}
+Content-Type: application/json
+
+{
+  "result": "ConditionalPass",
+  "issues": "Minor brake wear detected",
+  "recommendations": "Replace brake pads within 3 months",
+  "notes": "Vehicle passed with conditions"
+}
+
+### === VEHICLE INSURANCE ===
+
+### Create vehicle insurance
+POST {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/insurance
+Content-Type: application/json
+
+{
+  "policyNumber": "POL-2024-001234",
+  "insuranceCompany": "Kenya Insurance Company",
+  "policyType": "Comprehensive",
+  "startDate": "2024-01-01T00:00:00Z",
+  "endDate": "2024-12-31T23:59:59Z",
+  "premiumAmount": 45000.0,
+  "coverageAmount": 2000000.0,
+  "currency": "KES",
+  "agentName": "Peter Mwangi",
+  "agentContact": "+254700987654",
+  "notes": "Full comprehensive coverage"
+}
+
+### Get vehicle insurance
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/insurance
+Accept: application/json
+
+### Get active vehicle insurance
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/insurance/active
+Accept: application/json
+
+### Get expiring insurance
+GET {{VehicleService_HostAddress}}/api/vehicleinsurance/expiring?beforeDate=2024-12-31
+Accept: application/json
+
+### Update vehicle insurance
+PUT {{VehicleService_HostAddress}}/api/vehicleinsurance/{{insuranceId}}
+Content-Type: application/json
+
+{
+  "endDate": "2025-12-31T23:59:59Z",
+  "premiumAmount": 48000.0,
+  "coverageAmount": 2200000.0,
+  "notes": "Policy renewed with increased coverage"
+}
+
+### === VEHICLE DOCUMENTS ===
+
+### Upload vehicle document
+POST {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/documents
+Content-Type: multipart/form-data
+
+{
+  "documentType": "RegistrationCertificate",
+  "title": "Vehicle Registration Certificate",
+  "description": "Official vehicle registration certificate",
+  "issueDate": "2024-01-15T00:00:00Z",
+  "expiryDate": "2025-01-15T00:00:00Z",
+  "documentNumber": "RC-2024-001234",
+  "issuingAuthority": "NTSA Kenya",
+  "notes": "Original registration certificate"
+}
+
+### Get vehicle documents
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/documents
+Accept: application/json
+
+### Get vehicle documents by type
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/documents/type/RegistrationCertificate
+Accept: application/json
+
+### Get expiring documents
+GET {{VehicleService_HostAddress}}/api/vehicledocuments/expiring?beforeDate=2024-12-31
+Accept: application/json
+
+### Get document by ID
+GET {{VehicleService_HostAddress}}/api/vehicledocuments/{{documentId}}
+Accept: application/json
+
+### Download document file
+GET {{VehicleService_HostAddress}}/api/vehicledocuments/{{documentId}}/download
+Accept: application/octet-stream
+
+### Update vehicle document
+PUT {{VehicleService_HostAddress}}/api/vehicledocuments/{{documentId}}
+Content-Type: application/json
+
+{
+  "title": "Updated Vehicle Registration Certificate",
+  "description": "Updated official vehicle registration certificate",
+  "expiryDate": "2026-01-15T00:00:00Z",
+  "notes": "Certificate renewed"
+}
+
+### Delete vehicle document
+DELETE {{VehicleService_HostAddress}}/api/vehicledocuments/{{documentId}}
+
+### === VEHICLE SPECIFICATIONS ===
+
+### Create vehicle specification
+POST {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/specifications
+Content-Type: application/json
+
+{
+  "engineCapacity": 2500.0,
+  "engineType": "4-Cylinder Turbo Diesel",
+  "transmission": "Manual 5-Speed",
+  "driveType": "4WD",
+  "fuelTankCapacity": 80.0,
+  "seatingCapacity": 5,
+  "loadCapacity": 1000.0,
+  "dimensions": "5.3m x 1.8m x 1.8m",
+  "wheelbase": 3085.0,
+  "groundClearance": 215.0,
+  "tyreSizeFront": "265/65R17",
+  "tyreSizeRear": "265/65R17",
+  "notes": "Standard pickup truck specifications"
+}
+
+### Get vehicle specification
+GET {{VehicleService_HostAddress}}/api/vehicles/{{vehicleId}}/specifications
+Accept: application/json
+
+### Update vehicle specification
+PUT {{VehicleService_HostAddress}}/api/vehicles/specifications/{{vehicleId}}
+Content-Type: application/json
+
+{
+  "engineCapacity": 2500.0,
+  "engineType": "4-Cylinder Turbo Diesel Intercooled",
+  "transmission": "Automatic 6-Speed",
+  "driveType": "4WD",
+  "fuelTankCapacity": 80.0,
+  "seatingCapacity": 5,
+  "loadCapacity": 1200.0,
+  "dimensions": "5.3m x 1.8m x 1.8m",
+  "wheelbase": 3085.0,
+  "groundClearance": 215.0,
+  "tyreSizeFront": "265/65R17",
+  "tyreSizeRear": "265/65R17",
+  "notes": "Updated specifications with automatic transmission"
+}

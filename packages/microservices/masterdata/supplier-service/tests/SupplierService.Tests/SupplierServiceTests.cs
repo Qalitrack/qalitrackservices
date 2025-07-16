@@ -32,64 +32,74 @@ public class SupplierServiceTests : IDisposable
 
         // Setup repositories
         _supplierRepository = new SupplierRepository(_context);
-        var contactRepository = new SupplierContactRepository(_context);
-        var contractRepository = new SupplierContractRepository(_context);
-        var productRepository = new SupplierProductRepository(_context);
-        var performanceRepository = new SupplierPerformanceRepository(_context);
-        var financialRepository = new SupplierFinancialRepository(_context);
 
         // Setup service
         _supplierService = new SupplierService.Core.Services.SupplierService(
             _supplierRepository,
-            contactRepository,
-            contractRepository,
-            productRepository,
-            performanceRepository,
-            financialRepository,
             _mapper);
     }
 
     [Fact]
-    public async Task RegisterSupplier_ShouldCreateSupplierSuccessfully()
+    public async Task CreateSupplier_ShouldCreateSupplierSuccessfully()
     {
         // Arrange
-        var request = new RegisterSupplierRequest
+        var request = new CreateSupplierDto
         {
             Name = "Test Supplier Ltd",
-            ContactEmail = "contact@testsupplier.com",
-            Address = "123 Test Street",
-            SupplierType = SupplierType.Manufacturer,
-            TaxNumber = "TAX123456",
-            RegistrationNumber = "REG123456"
+            Code = "TSL001",
+            Email = "contact@testsupplier.com",
+            ContactPerson = "John Doe",
+            Phone = "+1234567890",
+            Type = "Manufacturer",
+            Description = "Test supplier description"
         };
 
         // Act
-        var result = await _supplierService.RegisterSupplierAsync(request);
+        var result = await _supplierService.CreateAsync(request);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(request.Name, result.Name);
-        Assert.Equal(request.ContactEmail, result.ContactEmail);
-        Assert.Equal(SupplierStatus.Active, result.Status);
+        Assert.Equal(request.Code, result.Code);
+        Assert.Equal(request.Email, result.Email);
+        Assert.Equal("Active", result.Status);
         Assert.NotNull(result.Id);
     }
 
     [Fact]
-    public async Task RegisterSupplier_WithDuplicateName_ShouldThrowException()
+    public async Task CreateSupplier_WithDuplicateName_ShouldThrowException()
     {
         // Arrange
-        var supplier = await CreateTestSupplier("Duplicate Supplier");
-        var request = new RegisterSupplierRequest
+        var supplier = await CreateTestSupplier("Duplicate Supplier", "DUP001");
+        var request = new CreateSupplierDto
         {
             Name = "Duplicate Supplier",
-            ContactEmail = "duplicate@test.com",
-            Address = "123 Test Street",
-            SupplierType = SupplierType.Manufacturer
+            Code = "DUP002",
+            Email = "duplicate@test.com",
+            Type = "Manufacturer"
         };
 
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _supplierService.RegisterSupplierAsync(request));
+            () => _supplierService.CreateAsync(request));
+    }
+
+    [Fact]
+    public async Task CreateSupplier_WithDuplicateCode_ShouldThrowException()
+    {
+        // Arrange
+        var supplier = await CreateTestSupplier("Test Supplier", "DUP001");
+        var request = new CreateSupplierDto
+        {
+            Name = "Another Supplier",
+            Code = "DUP001",
+            Email = "another@test.com",
+            Type = "Manufacturer"
+        };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _supplierService.CreateAsync(request));
     }
 
     [Fact]
@@ -99,7 +109,7 @@ public class SupplierServiceTests : IDisposable
         await SeedTestData();
 
         // Act
-        var result = await _supplierService.GetAllSuppliersAsync();
+        var result = await _supplierService.GetAllAsync();
 
         // Assert
         Assert.NotNull(result);
@@ -110,156 +120,83 @@ public class SupplierServiceTests : IDisposable
     public async Task GetSupplierById_ShouldReturnCorrectSupplier()
     {
         // Arrange
-        var supplier = await CreateTestSupplier("Test Supplier");
+        var supplier = await CreateTestSupplier("Test Supplier", "TEST001");
 
         // Act
-        var result = await _supplierService.GetSupplierByIdAsync(supplier.Id);
+        var result = await _supplierService.GetByIdAsync(supplier.Id);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(supplier.Name, result.Name);
-        Assert.Equal(supplier.ContactEmail, result.ContactEmail);
+        Assert.Equal(supplier.Code, result.Code);
+        Assert.Equal(supplier.Email, result.Email);
+    }
+
+    [Fact]
+    public async Task GetSupplierByCode_ShouldReturnCorrectSupplier()
+    {
+        // Arrange
+        var supplier = await CreateTestSupplier("Test Supplier", "TEST001");
+
+        // Act
+        var result = await _supplierService.GetByCodeAsync("TEST001");
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(supplier.Name, result.Name);
+        Assert.Equal(supplier.Code, result.Code);
     }
 
     [Fact]
     public async Task UpdateSupplier_ShouldUpdateSupplierSuccessfully()
     {
         // Arrange
-        var supplier = await CreateTestSupplier("Original Supplier");
-        var updateRequest = new UpdateSupplierRequest
+        var supplier = await CreateTestSupplier("Original Supplier", "ORIG001");
+        var updateRequest = new UpdateSupplierDto
         {
             Name = "Updated Supplier",
-            ContactEmail = supplier.ContactEmail,
-            Address = "Updated Address",
-            SupplierType = SupplierType.Distributor,
-            Status = SupplierStatus.Active
+            Email = "updated@supplier.com",
+            ContactPerson = "Jane Doe",
+            Phone = "+9876543210",
+            Type = "Distributor",
+            Status = "Active"
         };
 
         // Act
-        var result = await _supplierService.UpdateSupplierAsync(supplier.Id, updateRequest);
+        var result = await _supplierService.UpdateAsync(supplier.Id, updateRequest);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(updateRequest.Name, result.Name);
-        Assert.Equal(updateRequest.Address, result.Address);
-        Assert.Equal(updateRequest.SupplierType, result.SupplierType);
+        Assert.Equal(updateRequest.Email, result.Email);
+        Assert.Equal(updateRequest.ContactPerson, result.ContactPerson);
+        Assert.Equal(updateRequest.Type, result.Type);
     }
 
     [Fact]
-    public async Task CreateContact_ShouldCreateContactSuccessfully()
+    public async Task DeleteSupplier_ShouldDeleteSupplierSuccessfully()
     {
         // Arrange
-        var supplier = await CreateTestSupplier("Supplier with Contact");
-        var contactRequest = new CreateSupplierContactRequest
-        {
-            FirstName = "John",
-            LastName = "Doe",
-            Email = "john.doe@supplier.com",
-            Phone = "+1234567890",
-            JobTitle = "Sales Manager",
-            ContactType = ContactType.Sales,
-            IsPrimary = true
-        };
+        var supplier = await CreateTestSupplier("Supplier to Delete", "DEL001");
 
         // Act
-        var result = await _supplierService.CreateContactAsync(supplier.Id, contactRequest);
+        var result = await _supplierService.DeleteAsync(supplier.Id);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(contactRequest.FirstName, result.FirstName);
-        Assert.Equal(contactRequest.LastName, result.LastName);
-        Assert.Equal(contactRequest.Email, result.Email);
-        Assert.True(result.IsPrimary);
-    }
+        Assert.True(result);
 
-    [Fact]
-    public async Task CreateContract_ShouldCreateContractSuccessfully()
-    {
-        // Arrange
-        var supplier = await CreateTestSupplier("Supplier with Contract");
-        var contractRequest = new CreateSupplierContractRequest
-        {
-            ContractNumber = "CNT-001",
-            Title = "Test Contract",
-            Description = "Test contract description",
-            ContractType = ContractType.Supply,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddYears(1),
-            ContractValue = 100000m,
-            Currency = "USD",
-            PaymentTerms = PaymentTerms.Net30
-        };
-
-        // Act
-        var result = await _supplierService.CreateContractAsync(supplier.Id, contractRequest);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(contractRequest.ContractNumber, result.ContractNumber);
-        Assert.Equal(contractRequest.Title, result.Title);
-        Assert.Equal(contractRequest.ContractValue, result.ContractValue);
-    }
-
-    [Fact]
-    public async Task CreateProduct_ShouldCreateProductSuccessfully()
-    {
-        // Arrange
-        var supplier = await CreateTestSupplier("Supplier with Product");
-        var productRequest = new CreateSupplierProductRequest
-        {
-            ProductId = "PROD-001",
-            SupplierPrice = 850m,
-            Currency = "KES",
-            MinimumOrderQuantity = 10,
-            LeadTimeDays = 5,
-            IsPreferred = true
-        };
-
-        // Act
-        var result = await _supplierService.CreateProductAsync(supplier.Id, productRequest);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(productRequest.ProductId, result.ProductId);
-        Assert.Equal(productRequest.SupplierPrice, result.UnitPrice);
-        Assert.Equal(productRequest.MinimumOrderQuantity, result.MinimumOrderQuantity);
-        Assert.True(result.IsActive);
-    }
-
-    [Fact]
-    public async Task CreatePerformance_ShouldCreatePerformanceSuccessfully()
-    {
-        // Arrange
-        var supplier = await CreateTestSupplier("Supplier with Performance");
-        var performanceRequest = new CreateSupplierPerformanceRequest
-        {
-            EvaluationDate = DateTime.UtcNow,
-            QualityScore = 85,
-            DeliveryScore = 90,
-            ServiceScore = 88,
-            OverallScore = 87.67m,
-            Comments = "Good performance overall",
-            EvaluatedBy = "Test Evaluator"
-        };
-
-        // Act
-        var result = await _supplierService.CreatePerformanceAsync(supplier.Id, performanceRequest);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(85m, result.QualityRating);
-        Assert.Equal(90m, result.DeliveryRating);
-        Assert.Equal(88m, result.ServiceRating);
-        Assert.Equal(87.67m, result.OverallRating);
+        // Verify supplier is deleted
+        var deletedSupplier = await _supplierService.GetByIdAsync(supplier.Id);
+        Assert.Null(deletedSupplier);
     }
 
     [Fact]
     public async Task SearchSuppliers_ShouldReturnMatchingSuppliers()
     {
         // Arrange
-        await CreateTestSupplier("ABC Manufacturing");
-        await CreateTestSupplier("XYZ Distribution");
-        await CreateTestSupplier("ABC Logistics");
+        await CreateTestSupplier("ABC Manufacturing", "ABC001");
+        await CreateTestSupplier("XYZ Distribution", "XYZ001");
+        await CreateTestSupplier("ABC Logistics", "ABC002");
 
         // Act
         var result = await _supplierService.SearchSuppliersAsync("ABC");
@@ -274,47 +211,112 @@ public class SupplierServiceTests : IDisposable
     public async Task GetSuppliersByStatus_ShouldReturnCorrectSuppliers()
     {
         // Arrange
-        var activeSupplier = await CreateTestSupplier("Active Supplier");
-        var inactiveSupplier = await CreateTestSupplier("Inactive Supplier");
+        var activeSupplier = await CreateTestSupplier("Active Supplier", "ACT001");
+        var inactiveSupplier = await CreateTestSupplier("Inactive Supplier", "INA001");
         
         // Update one supplier to inactive
-        await _supplierService.UpdateSupplierAsync(inactiveSupplier.Id, new UpdateSupplierRequest
+        await _supplierService.UpdateAsync(inactiveSupplier.Id, new UpdateSupplierDto
         {
-            Name = inactiveSupplier.Name,
-            ContactEmail = inactiveSupplier.ContactEmail,
-            Address = inactiveSupplier.Address,
-            SupplierType = inactiveSupplier.SupplierType,
-            Status = SupplierStatus.Inactive
+            Status = "Inactive"
         });
 
         // Act
-        var activeSuppliers = await _supplierService.GetSuppliersByStatusAsync(SupplierStatus.Active);
-        var inactiveSuppliers = await _supplierService.GetSuppliersByStatusAsync(SupplierStatus.Inactive);
+        var activeSuppliers = await _supplierService.GetByStatusAsync(SupplierStatus.Active);
+        var inactiveSuppliers = await _supplierService.GetByStatusAsync(SupplierStatus.Inactive);
 
         // Assert
         Assert.Contains(activeSuppliers, s => s.Id == activeSupplier.Id);
         Assert.Contains(inactiveSuppliers, s => s.Id == inactiveSupplier.Id);
     }
 
-    private async Task<SupplierDto> CreateTestSupplier(string name)
+    [Fact]
+    public async Task GetSuppliersByType_ShouldReturnCorrectSuppliers()
     {
-        var request = new RegisterSupplierRequest
+        // Arrange
+        await CreateTestSupplier("Manufacturer 1", "MAN001", "Manufacturer");
+        await CreateTestSupplier("Distributor 1", "DIS001", "Distributor");
+        await CreateTestSupplier("Manufacturer 2", "MAN002", "Manufacturer");
+
+        // Act
+        var manufacturers = await _supplierService.GetByTypeAsync(SupplierType.Manufacturer);
+        var distributors = await _supplierService.GetByTypeAsync(SupplierType.Distributor);
+
+        // Assert
+        Assert.Equal(2, manufacturers.Count());
+        Assert.Single(distributors);
+        Assert.All(manufacturers, s => Assert.Equal("Manufacturer", s.Type));
+        Assert.All(distributors, s => Assert.Equal("Distributor", s.Type));
+    }
+
+    [Fact]
+    public async Task VerifySupplier_ShouldVerifySupplierSuccessfully()
+    {
+        // Arrange
+        var supplier = await CreateTestSupplier("Unverified Supplier", "UNV001");
+
+        // Act
+        var result = await _supplierService.VerifySupplierAsync(supplier.Id);
+
+        // Assert
+        Assert.True(result);
+
+        // Verify supplier is verified
+        var verifiedSupplier = await _supplierService.GetByIdAsync(supplier.Id);
+        Assert.NotNull(verifiedSupplier);
+        Assert.True(verifiedSupplier.IsVerified);
+        Assert.NotNull(verifiedSupplier.VerificationDate);
+    }
+
+    [Fact]
+    public async Task IsNameAvailable_ShouldReturnCorrectResult()
+    {
+        // Arrange
+        await CreateTestSupplier("Existing Supplier", "EXI001");
+
+        // Act
+        var existingNameAvailable = await _supplierService.IsNameAvailableAsync("Existing Supplier");
+        var newNameAvailable = await _supplierService.IsNameAvailableAsync("New Supplier");
+
+        // Assert
+        Assert.False(existingNameAvailable);
+        Assert.True(newNameAvailable);
+    }
+
+    [Fact]
+    public async Task IsCodeAvailable_ShouldReturnCorrectResult()
+    {
+        // Arrange
+        await CreateTestSupplier("Test Supplier", "EXI001");
+
+        // Act
+        var existingCodeAvailable = await _supplierService.IsCodeAvailableAsync("EXI001");
+        var newCodeAvailable = await _supplierService.IsCodeAvailableAsync("NEW001");
+
+        // Assert
+        Assert.False(existingCodeAvailable);
+        Assert.True(newCodeAvailable);
+    }
+
+    private async Task<SupplierReadDto> CreateTestSupplier(string name, string code, string type = "Manufacturer")
+    {
+        var request = new CreateSupplierDto
         {
             Name = name,
-            ContactEmail = $"{name.Replace(" ", "").ToLower()}@test.com",
-            Address = "Test Address",
-            SupplierType = SupplierType.Manufacturer,
-            TaxNumber = $"TAX{Guid.NewGuid().ToString()[..8]}",
-            RegistrationNumber = $"REG{Guid.NewGuid().ToString()[..8]}"
+            Code = code,
+            Email = $"{name.Replace(" ", "").ToLower()}@test.com",
+            ContactPerson = "Test Contact",
+            Phone = "+1234567890",
+            Type = type,
+            Description = "Test supplier description"
         };
 
-        return await _supplierService.RegisterSupplierAsync(request);
+        return await _supplierService.CreateAsync(request);
     }
 
     private async Task SeedTestData()
     {
-        await CreateTestSupplier("Supplier 1");
-        await CreateTestSupplier("Supplier 2");
+        await CreateTestSupplier("Supplier 1", "SUP001");
+        await CreateTestSupplier("Supplier 2", "SUP002");
     }
 
     public void Dispose()
