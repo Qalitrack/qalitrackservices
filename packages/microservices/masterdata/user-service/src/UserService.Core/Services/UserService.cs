@@ -1,6 +1,7 @@
 using System.Collections;
 using AutoMapper;
 using UserService.Core.DTOs;
+using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.DTOs.User;
 using UserService.Core.DTOs.Role;
@@ -148,6 +149,29 @@ namespace UserService.Core.Services;
         public async Task<IEnumerable> GetUserPermissionsAsync(string? toString)
         {
             return await _userRepository.GetUserPermissionsAsync(toString);
+        }
+
+        public async Task<UserReadDto> UpdatePassword(string userId, UpdatePasswordDto dto)
+        {
+            var user = await _userRepository.GetByIdAsync(userId, true);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID {userId} not found");
+            }
+
+            // Verify current password
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Password))
+            {
+                throw new InvalidOperationException("Current password is incorrect");
+            }
+
+            // Update password
+            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            user.IsFirstLogin = false;  // Reset first login flag
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            return _mapper.Map<UserReadDto>(user);
         }
 
 

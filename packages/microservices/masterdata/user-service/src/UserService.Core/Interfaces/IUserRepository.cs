@@ -18,5 +18,6 @@ namespace UserService.Core.Interfaces
         Task<User> GetByEmailAsync(string toLower);
         Task<IEnumerable<User>> GetDeletedAsync();
         Task<bool> RestoreAsync(string id);
+        Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive);
     }
 }
