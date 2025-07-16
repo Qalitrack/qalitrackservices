@@ -9,10 +9,20 @@ namespace SupplierService.Api.Controllers;
 public class SuppliersController : BaseController
 {
     private readonly ISupplierService _supplierService;
+    private readonly IAddressService _addressService;
+    private readonly ISupplierProductService _supplierProductService;
+    private readonly ISupplierPerformanceService _performanceService;
 
-    public SuppliersController(ISupplierService supplierService)
+    public SuppliersController(
+        ISupplierService supplierService,
+        IAddressService addressService,
+        ISupplierProductService supplierProductService,
+        ISupplierPerformanceService performanceService)
     {
         _supplierService = supplierService;
+        _addressService = addressService;
+        _supplierProductService = supplierProductService;
+        _performanceService = performanceService;
     }
 
     /// <summary>
@@ -23,8 +33,8 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var suppliers = await _supplierService.GetAllSuppliersAsync();
-            return Ok(ApiResponseDto<IEnumerable<SupplierDto>>.SuccessResponse(suppliers));
+            var suppliers = await _supplierService.GetAllAsync();
+            return Ok(ApiResponseDto<IEnumerable<SupplierReadDto>>.SuccessResponse(suppliers));
         }
         catch (Exception ex)
         {
@@ -40,7 +50,24 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var supplier = await _supplierService.GetSupplierByIdAsync(id);
+            var supplier = await _supplierService.GetByIdAsync(id);
+            return HandleResult(supplier);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get supplier by code
+    /// </summary>
+    [HttpGet("code/{code}")]
+    public async Task<IActionResult> GetSupplierByCode(string code)
+    {
+        try
+        {
+            var supplier = await _supplierService.GetByCodeAsync(code);
             return HandleResult(supplier);
         }
         catch (Exception ex)
@@ -53,13 +80,13 @@ public class SuppliersController : BaseController
     /// Register a new supplier
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> RegisterSupplier([FromBody] RegisterSupplierRequest request)
+    public async Task<IActionResult> CreateSupplier([FromBody] CreateSupplierDto request)
     {
         try
         {
-            var supplier = await _supplierService.RegisterSupplierAsync(request);
+            var supplier = await _supplierService.CreateAsync(request);
             return CreatedAtAction(nameof(GetSupplierById), new { id = supplier.Id }, 
-                ApiResponseDto<SupplierDto>.SuccessResponse(supplier, "Supplier registered successfully"));
+                ApiResponseDto<SupplierReadDto>.SuccessResponse(supplier, "Supplier created successfully"));
         }
         catch (Exception ex)
         {
@@ -71,12 +98,15 @@ public class SuppliersController : BaseController
     /// Update supplier information
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateSupplier(string id, [FromBody] UpdateSupplierRequest request)
+    public async Task<IActionResult> UpdateSupplier(string id, [FromBody] UpdateSupplierDto request)
     {
         try
         {
-            var supplier = await _supplierService.UpdateSupplierAsync(id, request);
-            return Ok(ApiResponseDto<SupplierDto>.SuccessResponse(supplier, "Supplier updated successfully"));
+            var supplier = await _supplierService.UpdateAsync(id, request);
+            if (supplier == null)
+                return NotFound(ApiResponseDto<object>.ErrorResponse("Supplier not found"));
+            
+            return Ok(ApiResponseDto<SupplierReadDto>.SuccessResponse(supplier, "Supplier updated successfully"));
         }
         catch (Exception ex)
         {
@@ -92,7 +122,10 @@ public class SuppliersController : BaseController
     {
         try
         {
-            await _supplierService.DeleteSupplierAsync(id);
+            var result = await _supplierService.DeleteAsync(id);
+            if (!result)
+                return NotFound(ApiResponseDto<object>.ErrorResponse("Supplier not found"));
+            
             return Ok(ApiResponseDto<object>.SuccessResponse(null!, "Supplier deleted successfully"));
         }
         catch (Exception ex)
@@ -110,7 +143,7 @@ public class SuppliersController : BaseController
         try
         {
             var suppliers = await _supplierService.SearchSuppliersAsync(term);
-            return Ok(ApiResponseDto<IEnumerable<SupplierDto>>.SuccessResponse(suppliers));
+            return Ok(ApiResponseDto<IEnumerable<SupplierReadDto>>.SuccessResponse(suppliers));
         }
         catch (Exception ex)
         {
@@ -126,8 +159,8 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var suppliers = await _supplierService.GetSuppliersByStatusAsync(status);
-            return Ok(ApiResponseDto<IEnumerable<SupplierDto>>.SuccessResponse(suppliers));
+            var suppliers = await _supplierService.GetByStatusAsync(status);
+            return Ok(ApiResponseDto<IEnumerable<SupplierReadDto>>.SuccessResponse(suppliers));
         }
         catch (Exception ex)
         {
@@ -143,8 +176,8 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var suppliers = await _supplierService.GetSuppliersByTypeAsync(type);
-            return Ok(ApiResponseDto<IEnumerable<SupplierDto>>.SuccessResponse(suppliers));
+            var suppliers = await _supplierService.GetByTypeAsync(type);
+            return Ok(ApiResponseDto<IEnumerable<SupplierReadDto>>.SuccessResponse(suppliers));
         }
         catch (Exception ex)
         {
@@ -153,15 +186,18 @@ public class SuppliersController : BaseController
     }
 
     /// <summary>
-    /// Get supplier contacts
+    /// Verify a supplier
     /// </summary>
-    [HttpGet("{id}/contacts")]
-    public async Task<IActionResult> GetSupplierContacts(string id)
+    [HttpPost("{id}/verify")]
+    public async Task<IActionResult> VerifySupplier(string id)
     {
         try
         {
-            var contacts = await _supplierService.GetSupplierContactsAsync(id);
-            return Ok(ApiResponseDto<IEnumerable<SupplierContactDto>>.SuccessResponse(contacts));
+            var result = await _supplierService.VerifySupplierAsync(id);
+            if (!result)
+                return NotFound(ApiResponseDto<object>.ErrorResponse("Supplier not found"));
+            
+            return Ok(ApiResponseDto<object>.SuccessResponse(null!, "Supplier verified successfully"));
         }
         catch (Exception ex)
         {
@@ -170,16 +206,15 @@ public class SuppliersController : BaseController
     }
 
     /// <summary>
-    /// Create supplier contact
+    /// Get supplier addresses
     /// </summary>
-    [HttpPost("{id}/contacts")]
-    public async Task<IActionResult> CreateSupplierContact(string id, [FromBody] CreateSupplierContactRequest request)
+    [HttpGet("{id}/addresses")]
+    public async Task<IActionResult> GetSupplierAddresses(string id)
     {
         try
         {
-            var contact = await _supplierService.CreateContactAsync(id, request);
-            return CreatedAtAction(nameof(GetSupplierContacts), new { id }, 
-                ApiResponseDto<SupplierContactDto>.SuccessResponse(contact, "Contact created successfully"));
+            var addresses = await _addressService.GetAllAsync(id);
+            return Ok(ApiResponseDto<IEnumerable<AddressDto>>.SuccessResponse(addresses));
         }
         catch (Exception ex)
         {
@@ -188,15 +223,16 @@ public class SuppliersController : BaseController
     }
 
     /// <summary>
-    /// Get supplier contracts
+    /// Create supplier address
     /// </summary>
-    [HttpGet("{id}/contracts")]
-    public async Task<IActionResult> GetSupplierContracts(string id)
+    [HttpPost("{id}/addresses")]
+    public async Task<IActionResult> CreateSupplierAddress(string id, [FromBody] CreateAddressDto request)
     {
         try
         {
-            var contracts = await _supplierService.GetSupplierContractsAsync(id);
-            return Ok(ApiResponseDto<IEnumerable<SupplierContractDto>>.SuccessResponse(contracts));
+            var address = await _addressService.CreateAsync(id, request);
+            return CreatedAtAction(nameof(GetSupplierAddresses), new { id }, 
+                ApiResponseDto<AddressDto>.SuccessResponse(address, "Address created successfully"));
         }
         catch (Exception ex)
         {
@@ -205,16 +241,38 @@ public class SuppliersController : BaseController
     }
 
     /// <summary>
-    /// Create supplier contract
+    /// Update supplier address
     /// </summary>
-    [HttpPost("{id}/contracts")]
-    public async Task<IActionResult> CreateSupplierContract(string id, [FromBody] CreateSupplierContractRequest request)
+    [HttpPut("{supplierId}/addresses/{addressId}")]
+    public async Task<IActionResult> UpdateSupplierAddress(string supplierId, string addressId, [FromBody] UpdateAddressDto request)
     {
         try
         {
-            var contract = await _supplierService.CreateContractAsync(id, request);
-            return CreatedAtAction(nameof(GetSupplierContracts), new { id }, 
-                ApiResponseDto<SupplierContractDto>.SuccessResponse(contract, "Contract created successfully"));
+            var address = await _addressService.UpdateAsync(addressId, request);
+            if (address == null)
+                return NotFound(ApiResponseDto<object>.ErrorResponse("Address not found"));
+            
+            return Ok(ApiResponseDto<AddressDto>.SuccessResponse(address, "Address updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Delete supplier address
+    /// </summary>
+    [HttpDelete("{supplierId}/addresses/{addressId}")]
+    public async Task<IActionResult> DeleteSupplierAddress(string supplierId, string addressId)
+    {
+        try
+        {
+            var result = await _addressService.DeleteAsync(addressId);
+            if (!result)
+                return NotFound(ApiResponseDto<object>.ErrorResponse("Address not found"));
+            
+            return Ok(ApiResponseDto<object>.SuccessResponse(null!, "Address deleted successfully"));
         }
         catch (Exception ex)
         {
@@ -230,7 +288,7 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var products = await _supplierService.GetSupplierProductsAsync(id);
+            var products = await _supplierProductService.GetAllAsync(id);
             return Ok(ApiResponseDto<IEnumerable<SupplierProductDto>>.SuccessResponse(products));
         }
         catch (Exception ex)
@@ -243,13 +301,53 @@ public class SuppliersController : BaseController
     /// Create supplier product
     /// </summary>
     [HttpPost("{id}/products")]
-    public async Task<IActionResult> CreateSupplierProduct(string id, [FromBody] CreateSupplierProductRequest request)
+    public async Task<IActionResult> CreateSupplierProduct(string id, [FromBody] CreateSupplierProductDto request)
     {
         try
         {
-            var product = await _supplierService.CreateProductAsync(id, request);
+            var product = await _supplierProductService.CreateAsync(id, request);
             return CreatedAtAction(nameof(GetSupplierProducts), new { id }, 
                 ApiResponseDto<SupplierProductDto>.SuccessResponse(product, "Product created successfully"));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Update supplier product
+    /// </summary>
+    [HttpPut("{supplierId}/products/{productId}")]
+    public async Task<IActionResult> UpdateSupplierProduct(string supplierId, string productId, [FromBody] UpdateSupplierProductDto request)
+    {
+        try
+        {
+            var product = await _supplierProductService.UpdateAsync(productId, request);
+            if (product == null)
+                return NotFound(ApiResponseDto<object>.ErrorResponse("Product not found"));
+            
+            return Ok(ApiResponseDto<SupplierProductDto>.SuccessResponse(product, "Product updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Delete supplier product
+    /// </summary>
+    [HttpDelete("{supplierId}/products/{productId}")]
+    public async Task<IActionResult> DeleteSupplierProduct(string supplierId, string productId)
+    {
+        try
+        {
+            var result = await _supplierProductService.DeleteAsync(productId);
+            if (!result)
+                return NotFound(ApiResponseDto<object>.ErrorResponse("Product not found"));
+            
+            return Ok(ApiResponseDto<object>.SuccessResponse(null!, "Product deleted successfully"));
         }
         catch (Exception ex)
         {
@@ -265,7 +363,7 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var performance = await _supplierService.GetSupplierPerformanceAsync(id);
+            var performance = await _performanceService.GetAllAsync(id);
             return Ok(ApiResponseDto<IEnumerable<SupplierPerformanceDto>>.SuccessResponse(performance));
         }
         catch (Exception ex)
@@ -278,11 +376,11 @@ public class SuppliersController : BaseController
     /// Create supplier performance record
     /// </summary>
     [HttpPost("{id}/performance")]
-    public async Task<IActionResult> CreateSupplierPerformance(string id, [FromBody] CreateSupplierPerformanceRequest request)
+    public async Task<IActionResult> CreateSupplierPerformance(string id, [FromBody] CreateSupplierPerformanceDto request)
     {
         try
         {
-            var performance = await _supplierService.CreatePerformanceAsync(id, request);
+            var performance = await _performanceService.CreateAsync(id, request);
             return CreatedAtAction(nameof(GetSupplierPerformance), new { id }, 
                 ApiResponseDto<SupplierPerformanceDto>.SuccessResponse(performance, "Performance record created successfully"));
         }
@@ -293,32 +391,15 @@ public class SuppliersController : BaseController
     }
 
     /// <summary>
-    /// Get supplier financial information
+    /// Get supplier performance summary
     /// </summary>
-    [HttpGet("{id}/financial")]
-    public async Task<IActionResult> GetSupplierFinancial(string id)
+    [HttpGet("{id}/performance/summary")]
+    public async Task<IActionResult> GetSupplierPerformanceSummary(string id)
     {
         try
         {
-            var financial = await _supplierService.GetSupplierFinancialAsync(id);
-            return HandleResult(financial);
-        }
-        catch (Exception ex)
-        {
-            return HandleException(ex);
-        }
-    }
-
-    /// <summary>
-    /// Update supplier financial information
-    /// </summary>
-    [HttpPut("{id}/financial")]
-    public async Task<IActionResult> UpdateSupplierFinancial(string id, [FromBody] UpdateSupplierFinancialRequest request)
-    {
-        try
-        {
-            var financial = await _supplierService.UpdateFinancialAsync(id, request);
-            return Ok(ApiResponseDto<SupplierFinancialDto>.SuccessResponse(financial, "Financial information updated successfully"));
+            var summary = await _performanceService.GetPerformanceSummaryAsync(id);
+            return Ok(ApiResponseDto<SupplierPerformanceSummaryDto>.SuccessResponse(summary));
         }
         catch (Exception ex)
         {
