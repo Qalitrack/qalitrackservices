@@ -40,7 +40,7 @@ public class UserReadDto
 
     // Navigation properties
     [JsonPropertyName("roles")]
-    public ICollection<string> Roles { get; set; } = new List<string>();
+    public List<string>? Roles { get; set; } = new List<string>();
 
     // Helper method to get full name
     [JsonIgnore]
