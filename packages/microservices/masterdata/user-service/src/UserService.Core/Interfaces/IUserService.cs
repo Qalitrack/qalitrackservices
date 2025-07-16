@@ -1,5 +1,6 @@
 using System.Collections;
 using UserService.Core.DTOs;
+using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
 
@@ -19,4 +20,4 @@ public interface IUserService
     Task<IEnumerable> GetUserPermissionsAsync(string? toString);
     Task<bool> RestoreAsync(string id);
     Task<IEnumerable<UserReadDto>> GetDeletedAsync();
-}
+    Task<UserReadDto> UpdatePassword(string userId, UpdatePasswordDto dto);}

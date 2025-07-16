@@ -156,6 +156,21 @@ namespace UserService.Infrastructure.Repositories
             return true;
         }
 
+        public async Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.IsActive = isActive;
+            user.UpdatedAt = DateTime.UtcNow;
+    
+            // Only mark these properties as modified
+            _context.Entry(user).Property(x => x.IsActive).IsModified = true;
+            _context.Entry(user).Property(x => x.UpdatedAt).IsModified = true;
+    
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task<User?> GetByIdAsync(string id, bool b)
         {
             return await _context.Users
