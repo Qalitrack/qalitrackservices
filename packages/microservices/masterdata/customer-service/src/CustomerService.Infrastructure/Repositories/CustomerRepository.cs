@@ -5,122 +5,34 @@ using CustomerService.Infrastructure.Data;
 
 namespace CustomerService.Infrastructure.Repositories;
 
-public class CustomerRepository : Repository<Customer>, ICustomerRepository
+public class CustomerRepository : Repository<CustomerService.Core.Entities.Customer>, ICustomerRepository
 {
-    public CustomerRepository(CustomerDbContext context) : base(context)
+    public CustomerRepository(CustomerServiceDbContext context) : base(context)
     {
     }
 
-    public async Task<Customer?> GetByTaxNumberAsync(string taxNumber)
+    public async Task<bool> IsNameAvailableAsync(string name)
     {
-        return await _dbSet
-            .FirstOrDefaultAsync(c => c.TaxNumber == taxNumber && !c.IsDeleted);
+        return !await _dbSet.AnyAsync(e => e.Name.ToLower() == name.ToLower() && !e.IsDeleted);
     }
 
-    public async Task<Customer?> GetByRegistrationNumberAsync(string registrationNumber)
+    public async Task<CustomerService.Core.Entities.Customer?> GetByNameAsync(string name)
     {
-        return await _dbSet
-            .FirstOrDefaultAsync(c => c.RegistrationNumber == registrationNumber && !c.IsDeleted);
+        return await _dbSet.FirstOrDefaultAsync(e => e.Name.ToLower() == name.ToLower() && !e.IsDeleted);
     }
 
-    public async Task<Customer?> GetByEmailAsync(string email)
+    public async Task<CustomerService.Core.Entities.Customer?> GetByEmailAsync(string email)
     {
-        return await _dbSet
-            .FirstOrDefaultAsync(c => c.ContactEmail == email && !c.IsDeleted);
+        return await _dbSet.FirstOrDefaultAsync(e => e.ContactEmail.ToLower() == email.ToLower() && !e.IsDeleted);
     }
 
-    public async Task<Customer?> GetWithContactsAsync(string id)
+    public async Task<CustomerService.Core.Entities.Customer?> GetByTaxNumberAsync(string taxNumber)
     {
-        var customer = await _dbSet
-            .Include(c => c.Contacts)
-            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
-            
-        if (customer != null)
-        {
-            // Filter out deleted contacts manually since EF Core in-memory may not support filtered includes
-            customer.Contacts = customer.Contacts.Where(ct => !ct.IsDeleted).ToList();
-        }
-        
-        return customer;
+        return await _dbSet.FirstOrDefaultAsync(e => e.TaxNumber == taxNumber && !e.IsDeleted);
     }
 
-    public async Task<Customer?> GetWithContractsAsync(string id)
+    public async Task<CustomerService.Core.Entities.Customer?> GetByRegistrationNumberAsync(string registrationNumber)
     {
-        var customer = await _dbSet
-            .Include(c => c.Contracts)
-            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
-            
-        if (customer != null)
-        {
-            customer.Contracts = customer.Contracts.Where(ct => !ct.IsDeleted).ToList();
-        }
-        
-        return customer;
-    }
-
-    public async Task<Customer?> GetWithBillingAsync(string id)
-    {
-        return await _dbSet
-            .Include(c => c.Billing)
-            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
-    }
-
-    public async Task<Customer?> GetWithCreditAsync(string id)
-    {
-        return await _dbSet
-            .Include(c => c.Credit)
-            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
-    }
-
-    public async Task<Customer?> GetWithAllDetailsAsync(string id)
-    {
-        var customer = await _dbSet
-            .Include(c => c.Contacts)
-            .Include(c => c.Contracts)
-            .Include(c => c.Locations)
-            .Include(c => c.Billing)
-            .Include(c => c.Credit)
-            .Include(c => c.Preferences)
-            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
-            
-        if (customer != null)
-        {
-            customer.Contacts = customer.Contacts.Where(ct => !ct.IsDeleted).ToList();
-            customer.Contracts = customer.Contracts.Where(ct => !ct.IsDeleted).ToList();
-            customer.Locations = customer.Locations.Where(l => !l.IsDeleted).ToList();
-        }
-        
-        return customer;
-    }
-
-    public async Task<IEnumerable<Customer>> GetByStatusAsync(CustomerStatus status)
-    {
-        return await _dbSet
-            .Where(c => c.Status == status && !c.IsDeleted)
-            .OrderBy(c => c.Name)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Customer>> GetByTypeAsync(CustomerType customerType)
-    {
-        return await _dbSet
-            .Where(c => c.CustomerType == customerType && !c.IsDeleted)
-            .OrderBy(c => c.Name)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Customer>> SearchAsync(string searchTerm)
-    {
-        var term = searchTerm.ToLower();
-        return await _dbSet
-            .Where(c => !c.IsDeleted && (
-                c.Name.ToLower().Contains(term) ||
-                (c.TaxNumber != null && c.TaxNumber.ToLower().Contains(term)) ||
-                (c.RegistrationNumber != null && c.RegistrationNumber.ToLower().Contains(term)) ||
-                c.ContactEmail.ToLower().Contains(term) ||
-                (c.ContactPhone != null && c.ContactPhone.Contains(term))
-            ))
-            .OrderBy(c => c.Name)
-            .ToListAsync();
+        return await _dbSet.FirstOrDefaultAsync(e => e.RegistrationNumber == registrationNumber && !e.IsDeleted);
     }
 }

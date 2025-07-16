@@ -1,14 +1,1 @@
 global using Xunit;
-global using FluentAssertions;
-global using Moq;
-global using Microsoft.AspNetCore.Mvc.Testing;
-global using Microsoft.EntityFrameworkCore;
-global using Microsoft.Extensions.DependencyInjection;
-global using Microsoft.AspNetCore.Mvc;
-global using AutoFixture;
-global using AutoFixture.Xunit2;
-global using CustomerService.Core.DTOs;
-global using CustomerService.Core.Entities;
-global using CustomerService.Core.Interfaces;
-global using CustomerService.Infrastructure.Data;
-global using CustomerService.Api.Controllers;

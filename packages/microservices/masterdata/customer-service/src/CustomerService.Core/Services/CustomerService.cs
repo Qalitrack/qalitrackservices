@@ -8,143 +8,106 @@ namespace CustomerService.Core.Services;
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _customerRepository;
-    private readonly IRepository<CustomerContact> _contactRepository;
-    private readonly IRepository<CustomerContract> _contractRepository;
-    private readonly IRepository<CustomerBilling> _billingRepository;
-    private readonly IRepository<CustomerCredit> _creditRepository;
+    private readonly IRepository<Contact> _contactRepository;
+    private readonly IRepository<Contract> _contractRepository;
     private readonly IMapper _mapper;
 
     public CustomerService(
         ICustomerRepository customerRepository,
-        IRepository<CustomerContact> contactRepository,
-        IRepository<CustomerContract> contractRepository,
-        IRepository<CustomerBilling> billingRepository,
-        IRepository<CustomerCredit> creditRepository,
+        IRepository<Contact> contactRepository,
+        IRepository<Contract> contractRepository,
         IMapper mapper)
     {
         _customerRepository = customerRepository;
         _contactRepository = contactRepository;
         _contractRepository = contractRepository;
-        _billingRepository = billingRepository;
-        _creditRepository = creditRepository;
         _mapper = mapper;
     }
 
-    public async Task<CustomerDto> RegisterCustomerAsync(RegisterCustomerRequest request)
-    {
-        var existingCustomer = await _customerRepository.GetByEmailAsync(request.ContactEmail);
-        if (existingCustomer != null)
-        {
-            throw new InvalidOperationException($"Customer with email {request.ContactEmail} already exists");
-        }
-
-        if (!string.IsNullOrEmpty(request.TaxNumber))
-        {
-            var existingByTax = await _customerRepository.GetByTaxNumberAsync(request.TaxNumber);
-            if (existingByTax != null)
-            {
-                throw new InvalidOperationException($"Customer with tax number {request.TaxNumber} already exists");
-            }
-        }
-
-        if (!string.IsNullOrEmpty(request.RegistrationNumber))
-        {
-            var existingByReg = await _customerRepository.GetByRegistrationNumberAsync(request.RegistrationNumber);
-            if (existingByReg != null)
-            {
-                throw new InvalidOperationException($"Customer with registration number {request.RegistrationNumber} already exists");
-            }
-        }
-
-        var customer = _mapper.Map<Customer>(request);
-        var savedCustomer = await _customerRepository.AddAsync(customer);
-
-        var customerCredit = new CustomerCredit
-        {
-            CustomerId = savedCustomer.Id,
-            CreditLimit = request.CreditLimit,
-            AvailableCredit = request.CreditLimit,
-            UsedCredit = 0,
-            CreditStatus = CreditStatus.Good,
-            CreditScore = 700,
-            RequiresApproval = request.CreditLimit > 10000,
-            PaymentHistory = new PaymentHistory()
-        };
-
-        await _creditRepository.AddAsync(customerCredit);
-
-        return _mapper.Map<CustomerDto>(savedCustomer);
-    }
-
-    public async Task<CustomerDto?> GetCustomerAsync(string id)
-    {
-        var customer = await _customerRepository.GetByIdAsync(id);
-        return customer == null ? null : _mapper.Map<CustomerDto>(customer);
-    }
-
-    public async Task<CustomerDto?> GetCustomerByEmailAsync(string email)
-    {
-        var customer = await _customerRepository.GetByEmailAsync(email);
-        return customer == null ? null : _mapper.Map<CustomerDto>(customer);
-    }
-
-    public async Task<CustomerDto?> GetCustomerByTaxNumberAsync(string taxNumber)
-    {
-        var customer = await _customerRepository.GetByTaxNumberAsync(taxNumber);
-        return customer == null ? null : _mapper.Map<CustomerDto>(customer);
-    }
-
-    public async Task<IEnumerable<CustomerDto>> GetAllCustomersAsync()
+    public async Task<IEnumerable<CustomerReadDto>> GetAllAsync()
     {
         var customers = await _customerRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<CustomerDto>>(customers);
+        return _mapper.Map<IEnumerable<CustomerReadDto>>(customers);
     }
 
-    public async Task<IEnumerable<CustomerDto>> GetCustomersPagedAsync(int pageNumber, int pageSize)
-    {
-        var customers = await _customerRepository.GetPagedAsync(pageNumber, pageSize);
-        return _mapper.Map<IEnumerable<CustomerDto>>(customers);
-    }
-
-    public async Task<IEnumerable<CustomerDto>> SearchCustomersAsync(string searchTerm)
-    {
-        var customers = await _customerRepository.SearchAsync(searchTerm);
-        return _mapper.Map<IEnumerable<CustomerDto>>(customers);
-    }
-
-    public async Task<CustomerDto> UpdateCustomerAsync(string id, UpdateCustomerRequest request)
+    public async Task<CustomerReadDto?> GetByIdAsync(string id)
     {
         var customer = await _customerRepository.GetByIdAsync(id);
-        if (customer == null)
-        {
-            throw new ArgumentException($"Customer with ID {id} not found");
-        }
+        return customer == null ? null : _mapper.Map<CustomerReadDto>(customer);
+    }
 
-        if (request.ContactEmail != customer.ContactEmail)
+    public async Task<CustomerReadDto> CreateAsync(CreateCustomerDto dto)
+    {
+        // Validate unique constraints
+        if (!string.IsNullOrEmpty(dto.ContactEmail))
         {
-            var existingCustomer = await _customerRepository.GetByEmailAsync(request.ContactEmail);
-            if (existingCustomer != null && existingCustomer.Id != id)
+            var existingByEmail = await _customerRepository.GetByEmailAsync(dto.ContactEmail);
+            if (existingByEmail != null)
             {
-                throw new InvalidOperationException($"Customer with email {request.ContactEmail} already exists");
+                throw new InvalidOperationException($"Customer with email {dto.ContactEmail} already exists");
             }
         }
 
-        _mapper.Map(request, customer);
-        var updatedCustomer = await _customerRepository.UpdateAsync(customer);
-        return _mapper.Map<CustomerDto>(updatedCustomer);
+        if (!string.IsNullOrEmpty(dto.TaxNumber))
+        {
+            var existingByTax = await _customerRepository.GetByTaxNumberAsync(dto.TaxNumber);
+            if (existingByTax != null)
+            {
+                throw new InvalidOperationException($"Customer with tax number {dto.TaxNumber} already exists");
+            }
+        }
+
+        var customer = _mapper.Map<CustomerService.Core.Entities.Customer>(dto);
+        customer.CreatedAt = DateTime.UtcNow;
+        customer.UpdatedAt = DateTime.UtcNow;
+        
+        var createdCustomer = await _customerRepository.CreateAsync(customer);
+        return _mapper.Map<CustomerReadDto>(createdCustomer);
     }
 
-    public async Task<bool> DeleteCustomerAsync(string id)
+    public async Task<CustomerReadDto?> UpdateAsync(string id, UpdateCustomerDto dto)
     {
-        return await _customerRepository.DeleteByIdAsync(id);
+        var existingCustomer = await _customerRepository.GetByIdAsync(id);
+        if (existingCustomer == null)
+        {
+            return null;
+        }
+
+        // Validate unique constraints if changed
+        if (!string.IsNullOrEmpty(dto.ContactEmail) && dto.ContactEmail != existingCustomer.ContactEmail)
+        {
+            var existingByEmail = await _customerRepository.GetByEmailAsync(dto.ContactEmail);
+            if (existingByEmail != null && existingByEmail.Id != id)
+            {
+                throw new InvalidOperationException($"Customer with email {dto.ContactEmail} already exists");
+            }
+        }
+
+        _mapper.Map(dto, existingCustomer);
+        existingCustomer.UpdatedAt = DateTime.UtcNow;
+        
+        var updatedCustomer = await _customerRepository.UpdateAsync(existingCustomer);
+        return updatedCustomer == null ? null : _mapper.Map<CustomerReadDto>(updatedCustomer);
     }
 
+    public async Task<bool> DeleteAsync(string id)
+    {
+        return await _customerRepository.DeleteAsync(id);
+    }
+
+    public async Task<bool> IsNameAvailableAsync(string name)
+    {
+        return await _customerRepository.IsNameAvailableAsync(name);
+    }
+
+    // Customer status management
     public async Task<bool> ActivateCustomerAsync(string id)
     {
         var customer = await _customerRepository.GetByIdAsync(id);
         if (customer == null) return false;
 
         customer.Status = CustomerStatus.Active;
+        customer.UpdatedAt = DateTime.UtcNow;
         await _customerRepository.UpdateAsync(customer);
         return true;
     }
@@ -155,157 +118,31 @@ public class CustomerService : ICustomerService
         if (customer == null) return false;
 
         customer.Status = CustomerStatus.Inactive;
+        customer.UpdatedAt = DateTime.UtcNow;
         await _customerRepository.UpdateAsync(customer);
         return true;
     }
 
-    public async Task<CustomerDetailDto?> GetCustomerDetailsAsync(string id)
-    {
-        var customer = await _customerRepository.GetWithAllDetailsAsync(id);
-        return customer == null ? null : _mapper.Map<CustomerDetailDto>(customer);
-    }
-
-    public async Task<CustomerContactDto> AddContactAsync(string customerId, CreateCustomerContactRequest request)
+    // Dual-role support (customer-as-transporter)
+    public async Task<bool> EnableTransporterRoleAsync(string customerId, string transporterId)
     {
         var customer = await _customerRepository.GetByIdAsync(customerId);
-        if (customer == null)
-        {
-            throw new ArgumentException($"Customer with ID {customerId} not found");
-        }
+        if (customer == null) return false;
 
-        var contact = _mapper.Map<CustomerContact>(request);
-        contact.CustomerId = customerId;
-
-        var savedContact = await _contactRepository.AddAsync(contact);
-        return _mapper.Map<CustomerContactDto>(savedContact);
+        customer.TransporterId = transporterId;
+        customer.UpdatedAt = DateTime.UtcNow;
+        await _customerRepository.UpdateAsync(customer);
+        return true;
     }
 
-    public async Task<IEnumerable<CustomerContactDto>> GetCustomerContactsAsync(string customerId)
-    {
-        var contacts = await _contactRepository.FindAsync(c => c.CustomerId == customerId);
-        return _mapper.Map<IEnumerable<CustomerContactDto>>(contacts);
-    }
-
-    public async Task<CustomerContactDto> UpdateContactAsync(string contactId, UpdateCustomerContactRequest request)
-    {
-        var contact = await _contactRepository.GetByIdAsync(contactId);
-        if (contact == null)
-        {
-            throw new ArgumentException($"Contact with ID {contactId} not found");
-        }
-
-        _mapper.Map(request, contact);
-        var updatedContact = await _contactRepository.UpdateAsync(contact);
-        return _mapper.Map<CustomerContactDto>(updatedContact);
-    }
-
-    public async Task<bool> DeleteContactAsync(string contactId)
-    {
-        return await _contactRepository.DeleteByIdAsync(contactId);
-    }
-
-    public async Task<CustomerContractDto> CreateContractAsync(string customerId, CreateCustomerContractRequest request)
+    public async Task<bool> SetPreferredTransporterAsync(string customerId, string transporterId)
     {
         var customer = await _customerRepository.GetByIdAsync(customerId);
-        if (customer == null)
-        {
-            throw new ArgumentException($"Customer with ID {customerId} not found");
-        }
+        if (customer == null) return false;
 
-        var existingContract = await _contractRepository.FirstOrDefaultAsync(c => c.ContractNumber == request.ContractNumber);
-        if (existingContract != null)
-        {
-            throw new InvalidOperationException($"Contract with number {request.ContractNumber} already exists");
-        }
-
-        var contract = _mapper.Map<CustomerContract>(request);
-        contract.CustomerId = customerId;
-
-        var savedContract = await _contractRepository.AddAsync(contract);
-        return _mapper.Map<CustomerContractDto>(savedContract);
-    }
-
-    public async Task<IEnumerable<CustomerContractDto>> GetCustomerContractsAsync(string customerId)
-    {
-        var contracts = await _contractRepository.FindAsync(c => c.CustomerId == customerId);
-        return _mapper.Map<IEnumerable<CustomerContractDto>>(contracts);
-    }
-
-    public async Task<CustomerContractDto> UpdateContractAsync(string contractId, UpdateCustomerContractRequest request)
-    {
-        var contract = await _contractRepository.GetByIdAsync(contractId);
-        if (contract == null)
-        {
-            throw new ArgumentException($"Contract with ID {contractId} not found");
-        }
-
-        _mapper.Map(request, contract);
-        var updatedContract = await _contractRepository.UpdateAsync(contract);
-        return _mapper.Map<CustomerContractDto>(updatedContract);
-    }
-
-    public async Task<bool> DeleteContractAsync(string contractId)
-    {
-        return await _contractRepository.DeleteByIdAsync(contractId);
-    }
-
-    public async Task<CustomerBillingDto> UpdateBillingAsync(string customerId, UpdateCustomerBillingRequest request)
-    {
-        var customer = await _customerRepository.GetByIdAsync(customerId);
-        if (customer == null)
-        {
-            throw new ArgumentException($"Customer with ID {customerId} not found");
-        }
-
-        var billing = await _billingRepository.FirstOrDefaultAsync(b => b.CustomerId == customerId);
-        if (billing == null)
-        {
-            billing = new CustomerBilling { CustomerId = customerId };
-            _mapper.Map(request, billing);
-            billing = await _billingRepository.AddAsync(billing);
-        }
-        else
-        {
-            _mapper.Map(request, billing);
-            billing = await _billingRepository.UpdateAsync(billing);
-        }
-
-        return _mapper.Map<CustomerBillingDto>(billing);
-    }
-
-    public async Task<CustomerBillingDto?> GetCustomerBillingAsync(string customerId)
-    {
-        var billing = await _billingRepository.FirstOrDefaultAsync(b => b.CustomerId == customerId);
-        return billing == null ? null : _mapper.Map<CustomerBillingDto>(billing);
-    }
-
-    public async Task<CustomerCreditDto> UpdateCreditAsync(string customerId, UpdateCustomerCreditRequest request)
-    {
-        var customer = await _customerRepository.GetByIdAsync(customerId);
-        if (customer == null)
-        {
-            throw new ArgumentException($"Customer with ID {customerId} not found");
-        }
-
-        var credit = await _creditRepository.FirstOrDefaultAsync(c => c.CustomerId == customerId);
-        if (credit == null)
-        {
-            throw new ArgumentException($"Credit record for customer {customerId} not found");
-        }
-
-        var oldLimit = credit.CreditLimit;
-        _mapper.Map(request, credit);
-        
-        credit.AvailableCredit = credit.CreditLimit - credit.UsedCredit;
-        credit.LastCreditCheck = DateTime.UtcNow;
-
-        var updatedCredit = await _creditRepository.UpdateAsync(credit);
-        return _mapper.Map<CustomerCreditDto>(updatedCredit);
-    }
-
-    public async Task<CustomerCreditDto?> GetCustomerCreditAsync(string customerId)
-    {
-        var credit = await _creditRepository.FirstOrDefaultAsync(c => c.CustomerId == customerId);
-        return credit == null ? null : _mapper.Map<CustomerCreditDto>(credit);
+        customer.PreferredTransporterId = transporterId;
+        customer.UpdatedAt = DateTime.UtcNow;
+        await _customerRepository.UpdateAsync(customer);
+        return true;
     }
 }
