@@ -10,10 +10,13 @@ using Serilog;
 using UserService.Api.Authorization;
 using UserService.Core.Interfaces;
 using UserService.Core.Mappings;
+using UserService.Core.Options;
 using UserService.Core.Services;
 using UserService.Infrastructure.Data;
+using UserService.Infrastructure.Interfaces;
 using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Services;
+using UserService.Core.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +35,7 @@ try
     Log.Information("Starting application...");
 
     // Configure to listen on port 8080
-    builder.WebHost.UseUrls("http://localhost:8080");
+   // builder.WebHost.UseUrls("http://localhost:8080");
 
     // Add services to the container
     builder.Services.AddControllers()
@@ -44,7 +47,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     
     // Register application services
-    RegisterServices(builder.Services);
+    RegisterServices(builder.Services, builder);
     
     // Configure database
     ConfigureDatabase(builder);
@@ -62,7 +65,8 @@ try
     ConfigureCors(builder.Services);
     
     // Add health checks
-    builder.Services.AddHealthChecks();
+    builder.Services.AddHealthChecks()
+        .AddCheck<BackupHealthCheck>("backup");
     
     var app = builder.Build();
     
@@ -70,7 +74,7 @@ try
     ConfigureMiddleware(app);
     
     // Run migrations and seed database
-    // await InitializeDatabaseAsync(app);
+    await InitializeDatabaseAsync(app);
     
     Log.Information("Application is now running...");
     app.Run();
@@ -85,53 +89,106 @@ finally
     Log.CloseAndFlush();
 }
 
-public partial class Program
+static void RegisterServices(IServiceCollection services, WebApplicationBuilder builder)
 {
-    private static void RegisterServices(IServiceCollection services)
-    {
-        // Core Services
-        services.AddScoped<IUserService, UserService.Core.Services.UserService>();
-        services.AddScoped<IRoleService, RoleService>();
-        services.AddScoped<IShiftService, ShiftService>();
-        services.AddScoped<IUserRoleService, UserRoleService>();
-        services.AddScoped<IPermissionsService, PermissionsService>();
-        services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IUserStatusService, UserStatusService>();
-        services.AddScoped<IReportService, ReportService>();
+    // Core Services
+    services.AddScoped<IUserService, UserService.Core.Services.UserService>();
+    services.AddScoped<IRoleService, RoleService>();
+    services.AddScoped<IShiftService, ShiftService>();
+    services.AddScoped<IUserRoleService, UserRoleService>();
+    services.AddScoped<IPermissionsService, PermissionsService>();
+    services.AddScoped<ITokenService, TokenService>();
+    services.AddScoped<IUserStatusService, UserStatusService>();
+    services.AddScoped<IReportService, ReportService>();
 
-        // Repositories
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IShiftRepository, ShiftRepository>();
-        services.AddScoped<IUserShiftRepository, UserShiftRepository>();
-        services.AddScoped<ITokenRepository, TokenRepository>();
-        services.AddScoped<IPermissionsRepository, PermissionsRepository>();
-        services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
-        services.AddScoped<IUserStatusRepository, UserStatusRepository>();
-        services.AddScoped<IUserRoleRepository, UserRoleRepository>(); // ✅ THIS LINE WAS MISSING
+    // Repositories
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IRoleRepository, RoleRepository>();
+    services.AddScoped<IShiftRepository, ShiftRepository>();
+    services.AddScoped<IUserShiftRepository, UserShiftRepository>();
+    services.AddScoped<ITokenRepository, TokenRepository>();
+    services.AddScoped<IPermissionsRepository, PermissionsRepository>();
+    services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+    services.AddScoped<IUserStatusRepository, UserStatusRepository>();
+    services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
-        // Infrastructure
-        services.AddHttpContextAccessor();
-        services.AddAutoMapper(typeof(UserProfile));
+    // Infrastructure
+    services.AddHttpContextAccessor();
+    services.AddAutoMapper(typeof(UserProfile));
+    services.AddHealthChecks(); // This registers all necessary health check services
+    
+    // Register BackupOptions from configuration
+    services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
+    
+    // Register our health check service
+    services.AddScoped<IHealthCheckService, HealthCheckService>();
+    
+    // Backup Services
+    services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
+    services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
+    services.AddScoped< RestoreService>();
+    services.AddScoped<IBackupNotificationService, BackupNotificationService>();
+    services.AddScoped<IBackupVerificationService, BackupVerificationService>();
+    
+    // Background Services
+    services.AddHostedService<BackupScheduler>();
+    services.AddHostedService<BackupMonitor>();
+    services.AddHostedService<ShiftMonitorService>();
         
-        // Add background services
-        services.AddHostedService<ShiftMonitorService>();
-
-        Log.Information("Application services registered.");
-    }
-
-    private static void ConfigureDatabase(WebApplicationBuilder builder)
+    // Register IEmailService if not already registered
+    if (!services.Any(s => s.ServiceType == typeof(IEmailService)))
     {
-        builder.Services.AddDbContext<UserServiceDbContext>(options =>
-            options.UseSqlite(
-                builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-                "Data Source=user-service.db",
-                b => b.MigrationsAssembly("UserService.Infrastructure")));
-                
-        Log.Information("Database configured.");
+        services.AddScoped<IEmailService, NullEmailService>();
+        var logger = LoggerFactory.Create(logging => 
+        {
+            logging.AddConsole();
+            logging.AddDebug();
+        }).CreateLogger<Program>();
+        
+        logger.LogWarning("No IEmailService implementation found. Using NullEmailService. No emails will be sent.");
     }
 
-   private static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
+    Log.Information("Application services registered.");
+}
+
+static void ConfigureDatabase(WebApplicationBuilder builder)
+{
+    // Ensure backup directory exists
+    var backupOptions = builder.Configuration.GetSection(BackupOptions.SectionName).Get<BackupOptions>();
+    if (backupOptions?.Path != null && !Directory.Exists(backupOptions.Path))
+    {
+        try
+        {
+            Directory.CreateDirectory(backupOptions.Path);
+            builder.Logging.AddConsole().Services.BuildServiceProvider()
+                .GetRequiredService<ILogger<Program>>()
+                .LogInformation("Created backup directory: {BackupPath}", 
+                    Path.GetFullPath(backupOptions.Path));
+        }
+        catch (Exception ex)
+        {
+            builder.Logging.AddConsole().Services.BuildServiceProvider()
+                .GetRequiredService<ILogger<Program>>()
+                .LogError(ex, "Failed to create backup directory: {BackupPath}", 
+                    backupOptions.Path);
+            throw;
+        }
+    }
+
+    builder.Services.AddDbContext<UserServiceDbContext>(options =>
+        options.UseSqlite(
+            builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+            "Data Source=user-service.db",
+            sqlOptions => 
+            {
+                sqlOptions.MigrationsAssembly("UserService.Infrastructure");
+                sqlOptions.CommandTimeout(30);
+            }));
+            
+    Log.Information("Database configured.");
+}
+
+static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
 {
     var jwtSettings = builder.Configuration.GetSection("JwtSettings");
     var secretKey = jwtSettings["SecretKey"] ?? 
@@ -177,7 +234,6 @@ public partial class Program
             ValidAudience = audience,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
-            // Use JWT standard claim types
             NameClaimType = "sub",
             RoleClaimType = "role"
         };
@@ -186,10 +242,8 @@ public partial class Program
         {
             OnMessageReceived = context =>
             {
-                // Get the token from the Authorization header
                 var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
                 
-                // If token is not in the header, try to get it from the query string (for WebSocket connections)
                 if (string.IsNullOrEmpty(token) && context.Request.Query.TryGetValue("access_token", out var tokenValues))
                 {
                     token = tokenValues.FirstOrDefault();
@@ -197,7 +251,6 @@ public partial class Program
 
                 if (!string.IsNullOrEmpty(token))
                 {
-                    // Ensure the token has the "Bearer " prefix if it's not there
                     if (!token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) && 
                         !token.Contains(' '))
                     {
@@ -205,7 +258,6 @@ public partial class Program
                         context.Request.Headers["Authorization"] = token;
                     }
                     
-                    // Log the token (without logging the actual token value in production)
                     var tokenPreview = token.Length > 10 
                         ? token.Substring(0, 10) + "..." 
                         : "[invalid]";
@@ -224,11 +276,9 @@ public partial class Program
                 var identity = context.Principal?.Identity as ClaimsIdentity;
                 if (identity != null)
                 {
-                    // Ensure we have a name claim
                     var sub = identity.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
                     if (sub != null)
                     {
-                        // Map 'sub' to multiple claim types for compatibility
                         if (!identity.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
                             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, sub));
                             
@@ -236,7 +286,6 @@ public partial class Program
                             identity.AddClaim(new Claim(ClaimTypes.Name, sub));
                     }
 
-                    // Log all claims for debugging
                     Log.Debug("User claims after validation: {Claims}",
                         string.Join(", ", identity.Claims.Select(c => $"{c.Type}={c.Value}")));
                 }
@@ -280,145 +329,153 @@ public partial class Program
     Log.Information("JWT Authentication configured. Issuer: {Issuer}, Audience: {Audience}", issuer, audience);
 }
 
-    private static void ConfigureAuthorization(IServiceCollection services)
-    {
-        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
-        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        
-        services.AddAuthorization(options =>
-        {
-            // Add default policy that requires authentication
-            options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                .RequireAuthenticatedUser()
-                .Build();
-                
-            // Add a policy that requires the user to be an admin
-            options.AddPolicy("RequireAdminRole", policy => 
-                policy.RequireRole("Admin")
-                      .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
-        });
-        
-        Log.Information("Authorization configured.");
-    }
 
-    private static void ConfigureSwagger(IServiceCollection services)
+static void ConfigureAuthorization(IServiceCollection services)
+{
+    services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+    services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+    
+    services.AddAuthorization(options =>
     {
-        services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo 
-            { 
-                Title = "UserService API", 
-                Version = "v1",
-                Description = "UserService API",
-                Contact = new OpenApiContact
-                {
-                    Name = "Support",
-                    Email = "support@example.com"
-                }
-            });
+        // Add default policy that requires authentication
+        options.DefaultPolicy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
             
-            // Add JWT Authentication to Swagger
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        // Add a policy that requires the user to be an admin
+        options.AddPolicy("RequireAdminRole", policy => 
+            policy.RequireRole("Admin")
+                  .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
+    });
+    
+    Log.Information("Authorization configured.");
+}
+
+static void ConfigureSwagger(IServiceCollection services)
+{
+    services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo 
+        { 
+            Title = "UserService API", 
+            Version = "v1",
+            Description = "UserService API",
+            Contact = new OpenApiContact
             {
-                Description = "JWT Authorization header using the Bearer scheme",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                BearerFormat = "JWT"
-            });
-            
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-            
-            // Enable XML comments if available
-            var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            if (File.Exists(xmlPath))
-            {
-                c.IncludeXmlComments(xmlPath);
+                Name = "Support",
+                Email = "support@example.com"
             }
         });
         
-        Log.Information("Swagger configured.");
-    }
-
-    private static void ConfigureCors(IServiceCollection services)
-    {
-        services.AddCors(options =>
+        // Add JWT Authentication to Swagger
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            options.AddPolicy("AllowAll", policy =>
-            {
-                policy.AllowAnyOrigin()
-                      .AllowAnyMethod()
-                      .AllowAnyHeader();
-            });
+            Description = "JWT Authorization header using the Bearer scheme",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
         });
         
-        Log.Information("CORS configured.");
-    }
-
-    private static void ConfigureMiddleware(WebApplication app)
-    {
-        if (app.Environment.IsDevelopment())
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
-            app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(c => 
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
-                c.RoutePrefix = "swagger";
-            });
-        }
-
-        app.UseSerilogRequestLogging();
-        app.UseRouting();
-        
-        // CORS must come before UseAuthentication and UseAuthorization
-        app.UseCors("AllowAll");
-        
-        // Authentication must come before Authorization
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHealthChecks("/health");
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
         });
         
-        Log.Information("Middleware pipeline configured.");
-    }
+        // Enable XML comments if available
+        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        if (File.Exists(xmlPath))
+        {
+            c.IncludeXmlComments(xmlPath);
+        }
+    });
+    
+    Log.Information("Swagger configured.");
+}
 
-    private static async Task InitializeDatabaseAsync(WebApplication app)
+static void ConfigureCors(IServiceCollection services)
+{
+    services.AddCors(options =>
     {
-        using var scope = app.Services.CreateScope();
-        var services = scope.ServiceProvider;
+        options.AddPolicy("AllowAll", policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    });
+    
+    Log.Information("CORS configured.");
+}
+
+static void ConfigureMiddleware(WebApplication app)
+{
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI(c => 
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
+            c.RoutePrefix = "swagger";
+        });
+    }
+    else
+    {
+        app.UseExceptionHandler("/error");
+        app.UseHsts();
+    }
+    
+    
+    app.UseSerilogRequestLogging();
+    app.UseRouting();
+    
+    // CORS must come before UseAuthentication and UseAuthorization
+    app.UseCors("AllowAll");
+    
+    // Authentication must come before Authorization
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+        endpoints.MapHealthChecks("/health");
+    });
+    
+    Log.Information("Middleware pipeline configured.");
+}
+
+static async Task InitializeDatabaseAsync(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    
+    try
+    {
+        var context = services.GetRequiredService<UserServiceDbContext>();
+        await context.Database.MigrateAsync();
         
-        try
-        {
-            var context = services.GetRequiredService<UserServiceDbContext>();
-            await context.Database.MigrateAsync();
-            await PrepDb.PrepPopulation(app, app.Environment.IsProduction());
-            Log.Information("Database initialized successfully.");
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while initializing the database");
-            throw;
-        }
+        // Seed initial data if needed
+        await PrepDb.PrepPopulation(app, isProduction: false);        
+        Log.Information("Database initialized successfully.");
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "An error occurred while initializing the database");
+        throw;
     }
 }
