@@ -3,10 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using UserService.Core.Entities;
 using UserService.Core.Interfaces;
-using System;
-using System.Threading.Tasks;
 using Serilog;
 
 namespace UserService.Core.Services
