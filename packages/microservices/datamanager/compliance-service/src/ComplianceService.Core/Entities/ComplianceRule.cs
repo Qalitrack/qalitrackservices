@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace ComplianceService.Core.Entities
 {
-    public class ComplianceRule
+    public class ComplianceRule : BaseEntity
     {
-        public int Id { get; set; }
         
         [Required]
         [StringLength(100)]
@@ -40,17 +40,28 @@ namespace ComplianceService.Core.Entities
         [StringLength(10)]
         public string PenaltyCurrency { get; set; } = "KES";
         
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        [StringLength(50)]
+        public string? RegulatoryId { get; set; }
         
-        [StringLength(100)]
-        public string CreatedBy { get; set; } = string.Empty;
+        // JSON properties for flexible configuration
+        public string? MetadataJson { get; set; }
         
-        [StringLength(100)]
-        public string UpdatedBy { get; set; } = string.Empty;
+        // Computed properties
+        public Dictionary<string, object>? Configuration
+        {
+            get => string.IsNullOrEmpty(ConfigurationJson) ? null : JsonConvert.DeserializeObject<Dictionary<string, object>>(ConfigurationJson);
+            set => ConfigurationJson = value == null ? null : JsonConvert.SerializeObject(value);
+        }
+        
+        public Dictionary<string, object>? Metadata
+        {
+            get => string.IsNullOrEmpty(MetadataJson) ? null : JsonConvert.DeserializeObject<Dictionary<string, object>>(MetadataJson);
+            set => MetadataJson = value == null ? null : JsonConvert.SerializeObject(value);
+        }
         
         // Navigation properties
         public virtual ICollection<ComplianceViolation> Violations { get; set; } = new List<ComplianceViolation>();
         public virtual ICollection<ComplianceCheck> ComplianceChecks { get; set; } = new List<ComplianceCheck>();
+        public virtual Regulatory? Regulatory { get; set; }
     }
 }

@@ -12,6 +12,8 @@ using QaliTrack.Gateway.Services;
 using MMLib.SwaggerForOcelot.DependencyInjection;
 using MMLib.SwaggerForOcelot.Middleware;
 using QaliTrackGateway.Extensions;
+using QaliTrackGateway.Services;
+using QaliTrackGateway.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,35 @@ builder.Services.AddMemoryCache();
 
 // Register authorization cache service
 builder.Services.AddSingleton<QaliTrackGateway.Services.IAuthorizationCacheService, QaliTrackGateway.Services.AuthorizationCacheService>();
+
+// Configure audit settings
+builder.Services.Configure<AuditSettings>(builder.Configuration.GetSection(AuditSettings.SectionName));
+
+// Register audit service with configured HTTP client
+builder.Services.AddHttpClient<IAuditService, AuditService>((serviceProvider, client) =>
+{
+    var auditSettings = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<AuditSettings>>().Value;
+    client.BaseAddress = new Uri(auditSettings.TransactionServiceBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(auditSettings.HttpTimeoutSeconds);
+    client.DefaultRequestHeaders.Add("User-Agent", "QaliTrack-Gateway/1.0");
+});
+
+builder.Services.AddSingleton<IAuditService, AuditService>();
+
+// Configure monitoring settings
+builder.Services.Configure<MonitoringSettings>(builder.Configuration.GetSection(MonitoringSettings.SectionName));
+
+// Register service health monitor
+builder.Services.AddHttpClient<IServiceHealthMonitor, ServiceHealthMonitor>((serviceProvider, client) =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.Add("User-Agent", "QaliTrack-Gateway-Monitor/1.0");
+});
+
+builder.Services.AddSingleton<IServiceHealthMonitor, ServiceHealthMonitor>();
+
+// Register health-aware routing service
+builder.Services.AddSingleton<IHealthAwareRoutingService, HealthAwareRoutingService>();
 
 // Add HTTP client factory and configuration service
 builder.Services.AddHttpClient();
@@ -307,6 +338,10 @@ app.UseHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthC
 });
 
 Log.Information("QaliTrack API Gateway starting up...");
+
+// Start service health monitoring
+var healthMonitor = app.Services.GetRequiredService<IServiceHealthMonitor>();
+await healthMonitor.StartMonitoringAsync();
 
 // Map controllers for Gateway's own endpoints
 app.MapControllers();

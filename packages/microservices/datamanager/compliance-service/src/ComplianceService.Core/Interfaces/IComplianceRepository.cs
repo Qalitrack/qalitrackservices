@@ -2,7 +2,7 @@ using ComplianceService.Core.Entities;
 
 namespace ComplianceService.Core.Interfaces
 {
-    public interface IComplianceRepository
+    public interface IComplianceRepository : IRepository<Compliance>
     {
         // Compliance Rules
         Task<ComplianceRule?> GetRuleByIdAsync(int id);
@@ -36,5 +36,17 @@ namespace ComplianceService.Core.Interfaces
         // Compliance Audits
         Task<ComplianceAudit> CreateAuditEntryAsync(ComplianceAudit audit);
         Task<List<ComplianceAudit>> GetAuditsByEntityAsync(string entityType, int entityId);
+        
+        // New methods for Compliance entity management
+        Task<List<Compliance>> GetByEntityAsync(string entityType, string entityId);
+        Task<List<Compliance>> GetByOrganizationAsync(string organizationId);
+        Task<List<Compliance>> GetByStatusAsync(ComplianceStatus status);
+        Task<List<Compliance>> GetByTypeAsync(ComplianceType complianceType);
+        Task<List<Compliance>> GetByOrganizationAndDateRangeAsync(string organizationId, DateTime fromDate, DateTime toDate);
+        Task<List<Compliance>> GetHighRiskItemsAsync(string organizationId);
+        Task<List<Compliance>> GetItemsRequiringMonitoringAsync();
+        Task<List<Compliance>> GetMonitoringScheduleAsync(string organizationId);
+        Task<List<ComplianceRule>> GetRulesByIdsAsync(List<string> ruleIds);
+        Task<List<ComplianceRule>> GetRulesByEntityTypeAsync(string entityType);
     }
 }

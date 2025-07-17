@@ -216,4 +216,63 @@ public class TransportersController : BaseController
             return HandleException(ex);
         }
     }
+
+    /// <summary>
+    /// Enable dual-role (customer) for transporter
+    /// </summary>
+    [HttpPost("{id}/enable-customer-role")]
+    public async Task<IActionResult> EnableCustomerRole(string id, [FromBody] EnableCustomerRoleDto enableCustomerRoleDto)
+    {
+        try
+        {
+            var result = await _transporterService.EnableCustomerRoleAsync(id, enableCustomerRoleDto);
+            return HandleResult(result, "Customer role enabled successfully");
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Disable dual-role (customer) for transporter
+    /// </summary>
+    [HttpPost("{id}/disable-customer-role")]
+    public async Task<IActionResult> DisableCustomerRole(string id)
+    {
+        try
+        {
+            var result = await _transporterService.DisableCustomerRoleAsync(id);
+            return HandleResult(result, "Customer role disabled successfully");
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get transporters with dual-role (customer) capability
+    /// </summary>
+    [HttpGet("dual-role")]
+    public async Task<IActionResult> GetDualRoleTransporters()
+    {
+        try
+        {
+            var transporters = await _transporterService.GetDualRoleTransportersAsync();
+            return HandleListResult(transporters, "Dual-role transporters retrieved successfully");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
 }
