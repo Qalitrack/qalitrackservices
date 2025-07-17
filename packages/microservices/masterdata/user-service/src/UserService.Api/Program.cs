@@ -35,7 +35,7 @@ try
     Log.Information("Starting application...");
 
     // Configure to listen on port 8080
-    builder.WebHost.UseUrls("http://localhost:8080");
+    //builder.WebHost.UseUrls("http://localhost:8080");
 
     // Add services to the container
     builder.Services.AddControllers()
