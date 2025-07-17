@@ -482,7 +482,7 @@ namespace UserService.Core.Services
             }
         }
 
-        public async Task<UsersAssignedToShiftDto> GetUsersAssignedToShiftAsync(string shiftId)
+        public async Task<UsersAssignedToShiftDto> GetUsersAssignedToShiftAsync(string? shiftId)
         {
             if (string.IsNullOrEmpty(shiftId))
                 throw new ArgumentException("Shift ID is required", nameof(shiftId));

@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Auth;
 using UserService.Core.Interfaces;
@@ -21,6 +23,7 @@ namespace UserService.Api.Controllers
         private readonly IShiftService _shiftService;
         private readonly ILogger<AuthController> _logger;
         private readonly IMapper _mapper;
+        private readonly IUserStatusService _userStatusService;
 
         public AuthController(
             ITokenService tokenService, 
@@ -29,7 +32,8 @@ namespace UserService.Api.Controllers
             ITokenRepository tokenRepository,
             IShiftService shiftService,
             ILogger<AuthController> logger,
-            IMapper mapper)
+            IMapper mapper,
+            IUserStatusService userStatusService)
         {
             _tokenService = tokenService;
             _userService = userService;
@@ -38,6 +42,7 @@ namespace UserService.Api.Controllers
             _shiftService = shiftService;
             _logger = logger;
             _mapper = mapper;
+            _userStatusService = userStatusService;
         }
 
         [HttpPost("login")]
@@ -57,9 +62,9 @@ namespace UserService.Api.Controllers
                     return Unauthorized(new { message = "Invalid email or password" });
                 }
 
-                if (!user.IsActive)
+                if (user.IsDeleted)
                 {
-                    return Unauthorized(new { message = "Account is not active" });
+                    return Unauthorized(new { message = "Account has been deleted" });
                 }
 
                 // If it's the first login, redirect to password update
@@ -74,18 +79,8 @@ namespace UserService.Api.Controllers
 
                 var token = await _tokenService.GenerateTokenAsync(user.Email, loginDto.Password);
 
-                // Update user's online status in background
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        await _userRepository.UpdateUserActiveStatusAsync(user.Id, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Failed to update user status in background for user {UserId}", user.Id);
-                    }
-                }, default);
+                // Update user's online status using background service
+                _userStatusService.EnqueueStatusUpdate(user.Id, true);
 
                 var response = new LoginResponseDto
                 {
@@ -111,7 +106,7 @@ namespace UserService.Api.Controllers
         }
 
         [HttpPut("update-password/{userId}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdatePassword(string userId, [FromBody] UpdatePasswordDto dto)
         {
             try
@@ -126,18 +121,8 @@ namespace UserService.Api.Controllers
                 // Generate new token after password update
                 var token = await _tokenService.GenerateTokenAsync(user.Email, dto.NewPassword);
 
-                // Update user's online status in background
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        await _userRepository.UpdateUserActiveStatusAsync(userId, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Failed to update user status in background for user {UserId}", userId);
-                    }
-                }, default);
+                // Update user's online status using background service
+                _userStatusService.EnqueueStatusUpdate(userId, true);
 
                 var response = new LoginResponseDto
                 {
@@ -177,43 +162,55 @@ namespace UserService.Api.Controllers
                     return BadRequest(new { message = "No token provided" });
                 }
 
-                var isValidToken = await _tokenService.ValidateTokenAsync(token);
-                
-                if (!isValidToken)
-                {
-                    return Unauthorized(new { message = "Invalid or expired token" });
-                }
-
+                // Try to get user ID from token even if it's expired
                 var userId = await _tokenService.GetUserIdFromTokenAsync(token);
                 
                 if (userId == null)
                 {
-                    return BadRequest(new { message = "Unable to identify user from token" });
+                    // If we can't get user ID, try to extract it manually from the token
+                    try
+                    {
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var jwtToken = tokenHandler.ReadJwtToken(token);
+                        var userIdClaim = jwtToken.Claims.FirstOrDefault(c => 
+                            c.Type == ClaimTypes.NameIdentifier || 
+                            c.Type == JwtRegisteredClaimNames.Sub);
+                        
+                        if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var parsedUserId))
+                        {
+                            userId = parsedUserId;
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Could not extract user ID from token");
+                            return BadRequest(new { message = "Invalid token format" });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to parse token");
+                        return BadRequest(new { message = "Invalid token" });
+                    }
                 }
                 
-                var revoked = await _tokenRepository.RevokeTokenAsync(userId.Value);
+                // Update user's status directly in the database first
+                await _userRepository.UpdateUserActiveStatusAsync(userId.Value.ToString(), false);
                 
-                if (revoked)
+                // Delete all tokens for this user
+                var tokensDeleted = await _tokenRepository.DeleteAllTokensForUserAsync(userId.Value);
+                
+                // Also enqueue the status update for background processing (for any other systems that might be listening)
+                _userStatusService.EnqueueStatusUpdate(userId.Value.ToString(), false);
+                
+                if (tokensDeleted)
                 {
-                    // Update user's online status in background
-                    _ = Task.Run(async () =>
-                    {
-                        try
-                        {
-                            var userIdStr = userId.Value.ToString();
-                            await _userRepository.UpdateUserActiveStatusAsync(userIdStr, false);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Failed to update user status in background for user {UserId}", userId.Value);
-                        }
-                    }, default);
-                    
+                    _logger.LogInformation("Successfully logged out user {UserId} and deleted all tokens", userId.Value);
                     return (ActionResult)Ok(new { message = "Successfully logged out" });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Failed to revoke token" });
+                    _logger.LogInformation("User {UserId} logged out, but no tokens were found to delete", userId.Value);
+                    return (ActionResult)Ok(new { message = "Successfully logged out (no active sessions found)" });
                 }
             }
             catch (Exception ex)

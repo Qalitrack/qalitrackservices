@@ -376,6 +376,10 @@ namespace UserService.Infrastructure.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("Jti")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime?>("LastUsedAt")
                         .HasColumnType("TEXT");
 

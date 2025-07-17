@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace UserService.Infrastructure.Repositories
@@ -15,65 +16,74 @@ namespace UserService.Infrastructure.Repositories
     public class TokenRepository : Repository<PersonalAccessToken>, ITokenRepository
     {
         private readonly UserServiceDbContext _dbContext;
+        private readonly ILogger<TokenRepository> _logger;
 
-        public TokenRepository(UserServiceDbContext dbContext)
+        public TokenRepository(UserServiceDbContext dbContext, ILogger<TokenRepository> logger)
             : base(dbContext)
         {
             _dbContext = dbContext;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // Retrieve token by userId (with no revocation)
+        // Retrieve token by userId (non-revoked)
         public async Task<PersonalAccessToken?> GetTokenByUserIdAsync(Guid userId)
         {
             string userIdString = userId.ToString();
 
-            var token = await _dbContext.PersonalAccessTokens
+            return await _dbContext.PersonalAccessTokens
                 .FirstOrDefaultAsync(t => t.UserId == userIdString && !t.IsRevoked);
-            return token;
         }
 
-        // Create a new token and save to the database
+        // Retrieve token by ID
         public async Task<PersonalAccessToken?> GetByIdAsync(string id, bool b)
         {
             return await _dbContext.PersonalAccessTokens
-                .FirstOrDefaultAsync(t => t.Id == id);  
-            
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
+        // Create a new token and save it
         public async Task<PersonalAccessToken> CreateAsync(PersonalAccessToken token)
         {
             try
             {
-                // Check if a token already exists for this user
-                var existingToken = await _dbContext.PersonalAccessTokens
-                    .FirstOrDefaultAsync(t => t.UserId == token.UserId);
-                
-                // Ensure UserId is properly set as a string
-                if (token.UserId == null)
+                if (string.IsNullOrEmpty(token.UserId))
+                    throw new ArgumentNullException(nameof(token.UserId), "UserId cannot be null or empty");
+
+                // Revoke all previous tokens for the user before creating the new one
+                var existingTokens = await _dbContext.PersonalAccessTokens
+                    .Where(t => t.UserId == token.UserId && !t.IsRevoked)
+                    .ToListAsync();
+
+                foreach (var existing in existingTokens)
                 {
-                    throw new ArgumentNullException(nameof(token.UserId), "UserId cannot be null");
+                    existing.IsRevoked = true;
+                    existing.UpdatedAt = DateTime.UtcNow;
                 }
 
-                if (existingToken != null)
-                {
-                    existingToken.IsRevoked = true;
-                    existingToken.UpdatedAt = DateTime.UtcNow;
-                }
-
-                // Ensure the new token is not marked as revoked
+                // Set up the new token
                 token.IsRevoked = false;
                 token.CreatedAt = DateTime.UtcNow;
-                
+                token.UpdatedAt = DateTime.UtcNow;
+
                 await _dbContext.PersonalAccessTokens.AddAsync(token);
                 int changes = await _dbContext.SaveChangesAsync();
-                return token;
+
+                if (changes > 0)
+                {
+                    _logger.LogInformation("Created new token for user {UserId}", token.UserId);
+                    return token;
+                }
+
+                throw new InvalidOperationException("Failed to save token to database");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating token for user {UserId}", token.UserId);
                 throw;
             }
         }
 
+        // Delete token by ID
         public async Task<bool> DeleteAsync(string id)
         {
             return await _dbContext.PersonalAccessTokens
@@ -86,100 +96,153 @@ namespace UserService.Infrastructure.Repositories
         {
             string userIdString = userId.ToString();
 
-            var token = await _dbContext.PersonalAccessTokens
-                .FirstOrDefaultAsync(t => t.UserId == userIdString && !t.IsRevoked);
-
-            if (token == null)
-            {
-                // Check if there are any tokens for this user at all
-                var anyToken = await _dbContext.PersonalAccessTokens
-                    .AnyAsync(t => t.UserId == userIdString);
-                
-                if (anyToken)
-                {
-                    return true; // Consider all tokens already revoked as success
-                }
-                return false;
-            }
-
             try
             {
-                token.IsRevoked = true;
-                token.UpdatedAt = DateTime.UtcNow;
+                // Find non-revoked tokens
+                var tokens = await _dbContext.PersonalAccessTokens
+                    .Where(t => t.UserId == userIdString && !t.IsRevoked)
+                    .ToListAsync();
+
+                if (!tokens.Any())
+                {
+                    var anyToken = await _dbContext.PersonalAccessTokens
+                        .AnyAsync(t => t.UserId == userIdString);
+
+                    if (anyToken)
+                    {
+                        _logger.LogInformation("All tokens already revoked for user {UserId}", userId);
+                        return true;
+                    }
+
+                    _logger.LogWarning("No tokens found for user {UserId}", userId);
+                    return false;
+                }
+
+                // Revoke all active tokens
+                foreach (var token in tokens)
+                {
+                    token.IsRevoked = true;
+                    token.UpdatedAt = DateTime.UtcNow;
+                }
+
                 int changes = await _dbContext.SaveChangesAsync();
+                _logger.LogInformation("Revoked {Count} tokens for user {UserId}", tokens.Count, userId);
                 return changes > 0;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error revoking tokens for user {UserId}", userId);
                 return false;
             }
         }
 
-        // Delete token by userId
+        // Delete all tokens for user
         public async Task<bool> DeleteTokenAsync(Guid userId)
         {
             string userIdString = userId.ToString();
 
-            var token = await _dbContext.PersonalAccessTokens
-                .FirstOrDefaultAsync(t => t.UserId == userIdString && !t.IsRevoked);
-
-            if (token == null)
+            try
             {
+                var tokens = await _dbContext.PersonalAccessTokens
+                    .Where(t => t.UserId == userIdString)
+                    .ToListAsync();
+
+                if (!tokens.Any())
+                {
+                    _logger.LogInformation("No tokens found to delete for user {UserId}", userId);
+                    return false;
+                }
+
+                _dbContext.PersonalAccessTokens.RemoveRange(tokens);
+                int changes = await _dbContext.SaveChangesAsync();
+
+                _logger.LogInformation("Deleted {Count} tokens for user {UserId}", tokens.Count, userId);
+                return changes > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting tokens for user {UserId}", userId);
                 return false;
             }
-
-            _dbContext.PersonalAccessTokens.Remove(token);
-            await _dbContext.SaveChangesAsync();
-
-            return true;
         }
 
-        // Optional: Method to get a user based on token info
+        // Retrieve user based on token
         public async Task<User?> GetUserFromTokenAsync(string token)
         {
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtToken = tokenHandler.ReadJwtToken(token);  // Parse the token
+                var jwtToken = tokenHandler.ReadJwtToken(token);
 
                 var userIdClaim = jwtToken?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-                if (userIdClaim != null)
+                if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
                 {
-                    // Convert the userId from string to Guid
-                    var userId = Guid.Parse(userIdClaim.Value);
-
-                    // Retrieve the user from the database based on userId
-                    var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(userId));
-
-                    if (user != null)
-                    {
-                        return user; // Return the user entity
-                    }
-                    else
-                    {
-                    }
+                    return await _dbContext.Users.FirstOrDefaultAsync(u => Equals(u.Id, userId));
                 }
-                else
-                {
-                }
+
+                _logger.LogWarning("No valid user ID found in token");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting user from token");
             }
 
-            return null; // Return null if user was not found or there was an error
+            return null;
         }
 
-        // Optional: Method to get all tokens (for administrative purposes)
+        // Get all non-revoked tokens
         public async Task<IEnumerable<PersonalAccessToken>> GetAllAsync()
         {
-
-            var tokens = await _dbContext.PersonalAccessTokens
-                .Where(t => !t.IsRevoked) // Only get non-revoked tokens
+            return await _dbContext.PersonalAccessTokens
+                .Where(t => !t.IsRevoked)
                 .ToListAsync();
+        }
 
+        // Delete all tokens for user
+        public async Task<bool> DeleteAllTokensForUserAsync(Guid userId)
+        {
+            try
+            {
+                var userIdString = userId.ToString();
+                var tokens = await _dbContext.PersonalAccessTokens
+                    .Where(t => t.UserId == userIdString)
+                    .ToListAsync();
 
-            return tokens;
+                if (!tokens.Any())
+                {
+                    _logger.LogInformation("No tokens found for user {UserId}", userId);
+                    return false;
+                }
+
+                _dbContext.PersonalAccessTokens.RemoveRange(tokens);
+                var changes = await _dbContext.SaveChangesAsync();
+
+                _logger.LogInformation("Deleted {Count} tokens for user {UserId}", tokens.Count, userId);
+                return changes > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting tokens for user {UserId}", userId);
+                return false;
+            }
+        }
+
+        // Retrieve token by JTI (JWT ID) and check if revoked
+        public async Task<PersonalAccessToken?> GetTokenByJtiAsync(string jti)
+        {
+            if (string.IsNullOrWhiteSpace(jti))
+                return null;
+
+            try
+            {
+                return await _dbContext.PersonalAccessTokens
+                    .FirstOrDefaultAsync(t => t.Jti == jti && !t.IsRevoked);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to retrieve token by JTI: {Jti}", jti);
+                return null;
+            }
         }
     }
 }

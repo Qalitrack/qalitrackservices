@@ -11,8 +11,8 @@ using UserService.Infrastructure.Data;
 namespace UserService.Infrastructure.Migrations
 {
     [DbContext(typeof(UserServiceDbContext))]
-    [Migration("20250715122350_UpdateUserStatusToBooleanFlags")]
-    partial class UpdateUserStatusToBooleanFlags
+    [Migration("20250716172258_UpdateDatabaseSchema")]
+    partial class UpdateDatabaseSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -378,6 +378,10 @@ namespace UserService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
+
+                    b.Property<string>("Jti")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("LastUsedAt")
                         .HasColumnType("TEXT");
