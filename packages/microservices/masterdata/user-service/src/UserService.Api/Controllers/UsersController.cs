@@ -120,7 +120,26 @@ namespace UserService.Api.Controllers
         [Authorize(Policy = "users.view")]
         public async Task<IEnumerable<string>> GetUserPermissions(string userId)
         {
-            return (IEnumerable<string>)await _userService.GetUserPermissionsAsync(userId);
+            // Ensure the user is provided
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Enumerable.Empty<string>();  // Return empty if no userId is provided
+            }
+
+            // Get the permissions for the user from the service layer
+            var permissions = await _userService.GetUserPermissionsAsync(userId);
+
+            // If permissions are null or empty, handle gracefully
+            if (permissions == null || !permissions.Any())
+            {
+                return Enumerable.Empty<string>();  // Return empty if no permissions are found
+            }
+
+            // Return the list of permission names (strings)
+            return permissions.Select(p => p.Name);  // Assuming Permission has a 'Name' property
         }
+
+
+
     }
 }

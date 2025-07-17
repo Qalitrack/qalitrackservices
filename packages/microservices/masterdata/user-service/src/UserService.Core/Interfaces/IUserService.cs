@@ -17,7 +17,7 @@ public interface IUserService
     // TODO: Add domain-specific service methods here
     Task<User?> ValidateUserCredentials(string email, string password);
     Task<bool> HasPermissionAsync(string userId, string permissionName);
-    Task<IEnumerable> GetUserPermissionsAsync(string? toString);
+    Task<IEnumerable<Permission>> GetUserPermissionsAsync(string userId);
     Task<bool> RestoreAsync(string id);
     Task<IEnumerable<UserReadDto>> GetDeletedAsync();
     Task<UserReadDto> UpdatePassword(string userId, UpdatePasswordDto dto);}
