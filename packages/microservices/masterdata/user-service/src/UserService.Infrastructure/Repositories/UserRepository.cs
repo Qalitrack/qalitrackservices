@@ -16,15 +16,29 @@ namespace UserService.Infrastructure.Repositories
         }
         // In IUserRepository.cs
         // In UserRepository.cs
-        async Task<IEnumerable> IUserRepository.GetUserPermissionsAsync(string userId)
+        public async Task<IEnumerable<Permission>>GetUserPermissionsAsync(string userId)
         {
-            return await _context.UserRoles
+            var userRoles = await _context.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .ToListAsync();
+            
+            if (!userRoles.Any())
+            {
+                return Enumerable.Empty<Permission>();  // Return empty if no roles found
+            }
+
+            var permissions = await _context.UserRoles
                 .Where(ur => ur.UserId == userId)
                 .SelectMany(ur => ur.Role.RolePermissions)
                 .Select(rp => rp.Permission)
                 .Distinct()
                 .ToListAsync();
+
+
+            return permissions;
         }
+
+
 
         public async Task<IEnumerable> GetUsersByRoleAsync(string roleId)
         {
@@ -100,15 +114,7 @@ namespace UserService.Infrastructure.Repositories
             return await _context.UserPermissions
                 .AnyAsync(up => up.UserId == userId && up.PermissionName == permissionName);
         }
-
-        public async Task<IEnumerable> GetUserPermissionsAsync(string? toString)
-        {
-            return await _context.UserPermissions
-                .Where(up => up.UserId == toString)
-                .ToListAsync(); 
-        }
-
-
+        
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users

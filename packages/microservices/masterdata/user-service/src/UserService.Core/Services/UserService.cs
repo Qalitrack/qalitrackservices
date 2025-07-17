@@ -130,10 +130,11 @@ namespace UserService.Core.Services;
             return await _userRepository.HasPermissionAsync(userId, permissionName);
         }
 
-        public async Task<IEnumerable> GetUserPermissionsAsync(string? toString)
+        public async Task<IEnumerable<Permission>> GetUserPermissionsAsync(string userId)
         {
-            return await _userRepository.GetUserPermissionsAsync(toString);
+            return await _userRepository.GetUserPermissionsAsync(userId);  // This returns IEnumerable<Permission>
         }
+
 
         public async Task<UserReadDto> UpdatePassword(string userId, UpdatePasswordDto dto)
         {

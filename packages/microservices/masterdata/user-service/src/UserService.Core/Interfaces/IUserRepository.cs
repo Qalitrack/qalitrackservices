@@ -11,7 +11,7 @@ namespace UserService.Core.Interfaces
         Task<bool> AssignShiftToUserAsync(string userId, string shiftId);  // Assign a shift to a user
         Task<bool> RemoveShiftFromUserAsync(string userId, string shiftId); // Remove a shift assignment for a user
         Task<bool> HasPermissionAsync(string userId, string permissionName);
-        Task<IEnumerable> GetUserPermissionsAsync(string? toString);
+        Task<IEnumerable<Permission>> GetUserPermissionsAsync(string userId);
         Task<IEnumerable> GetUsersByRoleAsync(string roleId);
         Task<IEnumerable<UserRole>> GetUserRolesAsync(string userId);
         Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds);
