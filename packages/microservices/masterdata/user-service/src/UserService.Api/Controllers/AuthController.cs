@@ -80,8 +80,7 @@ namespace UserService.Api.Controllers
                 var token = await _tokenService.GenerateTokenAsync(user.Email, loginDto.Password);
 
                 // Update user's online status using background service
-                _userStatusService.EnqueueStatusUpdate(user.Id, true);
-
+                await _userRepository.UpdateUserActiveStatusAsync(user.Id.ToString(), true);
                 var response = new LoginResponseDto
                 {
                     Token = token.Token,
@@ -122,7 +121,8 @@ namespace UserService.Api.Controllers
                 var token = await _tokenService.GenerateTokenAsync(user.Email, dto.NewPassword);
 
                 // Update user's online status using background service
-                _userStatusService.EnqueueStatusUpdate(userId, true);
+                await _userRepository.UpdateUserActiveStatusAsync(userId, true);
+
 
                 var response = new LoginResponseDto
                 {
