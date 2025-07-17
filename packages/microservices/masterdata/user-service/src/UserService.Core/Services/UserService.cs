@@ -107,35 +107,19 @@ namespace UserService.Core.Services;
 
             // Get user by email (case-insensitive)
             var user = await _userRepository.GetByEmailAsync(email.Trim().ToLower());
-            if (user == null)
-            {
-                // User not found
-                return null;
-            }
-
-            // Check if user is deleted
-            if (user.IsDeleted)
+            if (user == null || user.IsDeleted)
             {
                 return null;
             }
 
-            // Verify password using the User entity's method
+            // Verify password
             if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                // Invalid password
                 return null;
             }
 
-            // Handle FirstLogin status
-            if (user.IsFirstLogin)
-            {
-                user.IsFirstLogin = false;
-                user.IsActive = true;
-                user.UpdatedAt = DateTime.UtcNow;
-                await _userRepository.UpdateAsync(user);
-            }
-
-            // Update last login time
+            // Just update the last login time
+            user.UpdatedAt = DateTime.UtcNow;
             await _userRepository.UpdateAsync(user);
 
             return user;

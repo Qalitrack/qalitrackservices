@@ -19,6 +19,8 @@ public class PersonalAccessToken : BaseEntity
 
     [Required]
     public bool IsRevoked { get; set; } = false;
+    
+    public string Jti { set; get; }
         
     public Entities.ShiftMode ShiftMode { get; set; }  
 }

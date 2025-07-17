@@ -1,29 +1,23 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 using System.Text.Json;
 using UserService.Core.Interfaces;
 
 namespace UserService.Api.Authorization
 {
-    public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+    public class PermissionAuthorizationHandler(
+        IUserService userService,
+        ILogger<PermissionAuthorizationHandler> logger,
+        IHttpContextAccessor httpContextAccessor,
+        ITokenService tokenService)
+        : AuthorizationHandler<PermissionRequirement>
     {
-        private readonly IUserService _userService;
-        private readonly ILogger<PermissionAuthorizationHandler> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public PermissionAuthorizationHandler(
-            IUserService userService,
-            ILogger<PermissionAuthorizationHandler> logger,
-            IHttpContextAccessor httpContextAccessor)
-        {
-            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-        }
+        private readonly IUserService _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+        private readonly ILogger<PermissionAuthorizationHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+        private readonly ITokenService _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService)); // Inject TokenService
+            // Injected Token Service for validation
 
         protected override async Task HandleRequirementAsync(
             AuthorizationHandlerContext context,
@@ -41,23 +35,16 @@ namespace UserService.Api.Authorization
             {
                 try
                 {
-                    _logger.LogInformation("=== START PERMISSION CHECK ===");
-                    
-                    // 1. Log all request headers
-                    LogRequestHeaders(httpContext);
-
                     // 2. Check authentication status
                     if (context.User?.Identity?.IsAuthenticated != true)
                     {
-                        _logger.LogWarning("!!! USER NOT AUTHENTICATED !!!");
-                        _logger.LogWarning("Authentication Type: {AuthType}", 
-                            context.User?.Identity?.AuthenticationType ?? "null");
+                        // Authentication check failed - proceeding to token validation
                         
                         // 3. Check for token in Authorization header
-                        var token = GetTokenFromRequest();
-                        if (token != null)
+                        var authorizationToken = GetTokenFromRequest();  // Renamed token to authorizationToken
+                        if (authorizationToken != null)
                         {
-                            LogTokenDetails(token);
+                            LogTokenDetails(authorizationToken);  // Use authorizationToken here
                         }
                         else
                         {
@@ -69,9 +56,7 @@ namespace UserService.Api.Authorization
                     }
 
                     // 4. If we get here, user is authenticated
-                    _logger.LogInformation("User is authenticated as: {User}", 
-                        context.User.Identity?.Name ?? "unknown");
-
+                    _logger.LogInformation("User is authenticated");
                     // 5. Validate permission requirement
                     if (requirement == null || string.IsNullOrWhiteSpace(requirement.Permission))
                     {
@@ -80,7 +65,18 @@ namespace UserService.Api.Authorization
                         return;
                     }
 
-                    // 6. Check user permissions
+                    // 6. Ensure the token is valid and not revoked
+                    var authorizationTokenForValidation = GetTokenFromRequest();  // Renamed to avoid conflict
+                    if (authorizationTokenForValidation == null || !await _tokenService.ValidateTokenAsync(authorizationTokenForValidation))
+                    {
+                        _logger.LogWarning("Token is either invalid or revoked.");
+                        context.Fail();
+                        return;
+                    }
+
+                    _logger.LogInformation("Token validated successfully.");
+
+                    // 7. Check user permissions
                     await CheckUserPermission(context, requirement);
                 }
                 catch (Exception ex)
@@ -95,11 +91,11 @@ namespace UserService.Api.Authorization
             }
         }
 
+        // Log request headers for debugging
         private void LogRequestHeaders(HttpContext httpContext)
         {
             if (httpContext?.Request.Headers != null)
             {
-                _logger.LogInformation("=== REQUEST HEADERS ===");
                 foreach (var header in httpContext.Request.Headers)
                 {
                     _logger.LogInformation($"  {header.Key}: {header.Value}");
@@ -107,6 +103,7 @@ namespace UserService.Api.Authorization
             }
         }
 
+        // Extract the token from the request header
         private string GetTokenFromRequest()
         {
             try
@@ -130,67 +127,42 @@ namespace UserService.Api.Authorization
             return null;
         }
 
+        // Log the details of the JWT token for debugging
         private void LogTokenDetails(string token)
         {
             try
             {
-                _logger.LogInformation("=== JWT TOKEN FOUND ===");
-                _logger.LogInformation($"Token: {token}");
-
                 var handler = new JwtSecurityTokenHandler();
                 if (handler.CanReadToken(token))
                 {
                     var jwtToken = handler.ReadJwtToken(token);
-                    
-                    _logger.LogInformation("=== JWT HEADER ===");
-                    _logger.LogInformation(JsonSerializer.Serialize(jwtToken.Header, new JsonSerializerOptions { WriteIndented = true }));
-
-                    _logger.LogInformation("=== JWT PAYLOAD ===");
-                    _logger.LogInformation(JsonSerializer.Serialize(jwtToken.Payload, new JsonSerializerOptions { WriteIndented = true }));
-
-                    // Check token expiration
+            
+                    // Only log token expiration in development
                     if (jwtToken.ValidTo < DateTime.UtcNow)
                     {
-                        _logger.LogWarning("!!! TOKEN EXPIRED !!!");
-                        _logger.LogWarning($"Token expired at: {jwtToken.ValidTo:yyyy-MM-dd HH:mm:ss} UTC");
-                        _logger.LogWarning($"Current time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+                        _logger.LogWarning("Token expired at {ExpirationTime}", jwtToken.ValidTo);
                     }
-                    else
-                    {
-                        _logger.LogInformation("Token is valid");
-                        _logger.LogInformation($"Expires at: {jwtToken.ValidTo:yyyy-MM-dd HH:mm:ss} UTC");
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning("Token is not a valid JWT");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error reading JWT token");
+                _logger.LogDebug(ex, "Error processing JWT token");
             }
         }
 
+        // Check the user's permissions based on the provided requirement
         private async Task CheckUserPermission(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
-            var claims = context.User.Claims?.ToList() ?? new List<Claim>();
-            
-            // Get user ID
             var userId = GetUserIdFromClaims(context.User);
             if (string.IsNullOrEmpty(userId))
             {
-                _logger.LogWarning("User ID not found in claims. Available claim types: {ClaimTypes}",
-                    string.Join(", ", claims.Select(c => c.Type).Distinct()));
+                _logger.LogDebug("User ID not found in claims");
                 context.Fail();
                 return;
             }
 
-            _logger.LogInformation("Checking permission for user {UserId}", userId);
-
             try
             {
-                // Get user permissions
                 var userPermissions = await _userService.GetUserPermissionsAsync(userId);
                 if (userPermissions == null)
                 {
@@ -199,30 +171,24 @@ namespace UserService.Api.Authorization
                     return;
                 }
 
-                // Process permissions
                 var permissionNames = (userPermissions as IEnumerable<object> ?? Enumerable.Empty<object>())
                     .Select(p => GetPermissionName(p))
                     .Where(name => !string.IsNullOrEmpty(name))
                     .ToList();
 
-                _logger.LogInformation("User {UserId} has {Count} permissions: {Permissions}",
-                    userId,
-                    permissionNames.Count,
-                    string.Join(", ", permissionNames));
-
-                // Check permission
                 var hasPermission = permissionNames.Any(p => 
                     string.Equals(p, requirement.Permission, StringComparison.OrdinalIgnoreCase));
 
                 if (hasPermission)
                 {
-                    _logger.LogInformation("Permission granted for user {UserId}", userId);
+                    _logger.LogDebug("Permission {Permission} granted for user {UserId}", 
+                        requirement.Permission, userId);
                     context.Succeed(requirement);
                 }
                 else
                 {
-                    _logger.LogWarning("Permission denied. User {UserId} lacks permission: {Permission}",
-                        userId, requirement.Permission);
+                    _logger.LogDebug("Permission {Permission} denied for user {UserId}", 
+                        requirement.Permission, userId);
                     context.Fail();
                 }
             }
@@ -233,6 +199,7 @@ namespace UserService.Api.Authorization
             }
         }
 
+        // Extract UserId from claims
         private static string GetUserIdFromClaims(ClaimsPrincipal user)
         {
             if (user == null) return null;
@@ -262,6 +229,7 @@ namespace UserService.Api.Authorization
             return null;
         }
 
+        // Get permission name from permission object
         private static string GetPermissionName(object permission)
         {
             if (permission == null) return string.Empty;

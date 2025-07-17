@@ -25,6 +25,6 @@ namespace UserService.Core.Interfaces
         Task<object?> IsUserAssignedToShiftAsync(string userId, string shiftId);
         Task<MassAssignShiftResultDto> MassAssignShiftToRoleAsync(string roleId, string shiftId);
         Task<MassAssignShiftResultDto> MassRemoveUsersFromShiftByRoleAsync(string roleId, string shiftId);
-        Task<UsersAssignedToShiftDto> GetUsersAssignedToShiftAsync(string shiftId);
+        Task<UsersAssignedToShiftDto> GetUsersAssignedToShiftAsync(string? shiftId);
     }
 }

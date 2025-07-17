@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UserService.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class UpdateDatabaseSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -79,12 +79,13 @@ namespace UserService.Infrastructure.Migrations
                     MobileNumber = table.Column<string>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Password = table.Column<string>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
+                    IsFirstLogin = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -131,6 +132,7 @@ namespace UserService.Infrastructure.Migrations
                     Token = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     LastUsedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     IsRevoked = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
+                    Jti = table.Column<string>(type: "TEXT", nullable: false),
                     ShiftMode = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),

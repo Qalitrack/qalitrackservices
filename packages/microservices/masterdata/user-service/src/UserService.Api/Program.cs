@@ -13,6 +13,7 @@ using UserService.Core.Mappings;
 using UserService.Core.Services;
 using UserService.Infrastructure.Data;
 using UserService.Infrastructure.Repositories;
+using UserService.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +70,7 @@ try
     ConfigureMiddleware(app);
     
     // Run migrations and seed database
-    await InitializeDatabaseAsync(app);
+    // await InitializeDatabaseAsync(app);
     
     Log.Information("Application is now running...");
     app.Run();
@@ -95,6 +96,8 @@ public partial class Program
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IPermissionsService, PermissionsService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IUserStatusService, UserStatusService>();
+        services.AddScoped<IReportService, ReportService>();
 
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();
@@ -104,11 +107,15 @@ public partial class Program
         services.AddScoped<ITokenRepository, TokenRepository>();
         services.AddScoped<IPermissionsRepository, PermissionsRepository>();
         services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+        services.AddScoped<IUserStatusRepository, UserStatusRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>(); // ✅ THIS LINE WAS MISSING
 
         // Infrastructure
         services.AddHttpContextAccessor();
         services.AddAutoMapper(typeof(UserProfile));
+        
+        // Add background services
+        services.AddHostedService<ShiftMonitorService>();
 
         Log.Information("Application services registered.");
     }
