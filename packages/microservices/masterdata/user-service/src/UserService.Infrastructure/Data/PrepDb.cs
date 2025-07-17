@@ -267,23 +267,7 @@ namespace UserService.Infrastructure.Data
                 }
             }
 
-            // Seed PersonalAccessTokens (Optional, depending on use case)
-            if (!context.PersonalAccessTokens.Any())
-            {
-                var adminUser = await context.Users.FirstOrDefaultAsync(u => u.Email == "admin1@userservice.com");
-                if (adminUser != null)
-                {
-                    var token = new PersonalAccessToken
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserId = adminUser.Id,
-                        Token = Guid.NewGuid().ToString(), // Replace with proper token generation logic
-                        CreatedAt = DateTime.UtcNow,
-                    };
-                    await context.PersonalAccessTokens.AddAsync(token);
-                    await context.SaveChangesAsync();
-                }
-            }
+            // Seed PersonalAccessTokens (Optional, depending on use case
         }
     }
 }
