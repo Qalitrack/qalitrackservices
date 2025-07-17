@@ -7,6 +7,7 @@ public interface IWorkflowRepository : IRepository<TransactionWorkflow>
     Task<IEnumerable<TransactionWorkflow>> GetByTransactionIdAsync(string transactionId);
     Task<TransactionWorkflow?> GetCurrentStepAsync(string transactionId);
     Task<TransactionWorkflow?> GetByTransactionAndStepAsync(string transactionId, WorkflowStep step);
+    Task<TransactionWorkflow?> GetByTransactionAndStepAsync(string transactionId, string stepName);
     Task<IEnumerable<TransactionWorkflow>> GetPendingStepsAsync();
     Task<bool> IsStepCompletedAsync(string transactionId, WorkflowStep step);
 }

@@ -42,4 +42,9 @@ public interface IDriverService
     Task<DriverViolationDto> AddDriverViolationAsync(CreateDriverViolationDto createViolationDto);
     Task<DriverViolationDto> UpdateDriverViolationAsync(string violationId, UpdateDriverViolationDto updateViolationDto);
     Task DeleteDriverViolationAsync(string violationId);
+
+    // Biometric management
+    Task RegisterBiometricAsync(string driverId, BiometricRegistrationDto biometricDto);
+    Task<BiometricVerificationResultDto> VerifyBiometricAsync(string driverId, BiometricVerificationDto verificationDto);
+    Task UpdateBiometricSettingsAsync(string driverId, BiometricSettingsDto settingsDto);
 }

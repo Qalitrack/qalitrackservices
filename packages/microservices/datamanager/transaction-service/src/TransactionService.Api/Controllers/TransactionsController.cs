@@ -11,15 +11,21 @@ namespace TransactionService.Api.Controllers;
 public class TransactionsController : BaseController
 {
     private readonly ITransactionService _transactionService;
+    private readonly IStateService _stateService;
+    private readonly IOrchestrationService _orchestrationService;
     private readonly IValidator<CreateTransactionRequest> _createValidator;
     private readonly IValidator<UpdateTransactionRequest> _updateValidator;
 
     public TransactionsController(
         ITransactionService transactionService,
+        IStateService stateService,
+        IOrchestrationService orchestrationService,
         IValidator<CreateTransactionRequest> createValidator,
         IValidator<UpdateTransactionRequest> updateValidator)
     {
         _transactionService = transactionService;
+        _stateService = stateService;
+        _orchestrationService = orchestrationService;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
     }
@@ -281,5 +287,128 @@ public class TransactionsController : BaseController
         {
             return HandleException(ex);
         }
+    }
+
+    /// <summary>
+    /// Trigger state transition
+    /// </summary>
+    [HttpPost("{id}/state/transition")]
+    public async Task<IActionResult> TriggerStateTransition(string id, [FromBody] TransitionRequest request)
+    {
+        try
+        {
+            var result = await _stateService.TriggerTransitionAsync(id, request.Trigger, request.Reason ?? string.Empty, request.UserId);
+            return HandleResult(result, "Invalid state transition");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get current transaction state
+    /// </summary>
+    [HttpGet("{id}/state/current")]
+    public async Task<IActionResult> GetCurrentState(string id)
+    {
+        try
+        {
+            var state = await _stateService.GetCurrentStateAsync(id);
+            return HandleResult(state, "Transaction state not found");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get transaction state history
+    /// </summary>
+    [HttpGet("{id}/state/history")]
+    public async Task<IActionResult> GetStateHistory(string id)
+    {
+        try
+        {
+            var history = await _stateService.GetStateHistoryAsync(id);
+            return HandleResult(history);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Start transaction orchestration
+    /// </summary>
+    [HttpPost("{id}/orchestration/start")]
+    public async Task<IActionResult> StartOrchestration(string id, [FromBody] OrchestrationRequest request)
+    {
+        try
+        {
+            var result = await _orchestrationService.StartOrchestrationAsync(id, request.UserId);
+            return HandleResult(result);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Complete current workflow step
+    /// </summary>
+    [HttpPost("{id}/orchestration/complete-step")]
+    public async Task<IActionResult> CompleteCurrentStep(string id, [FromBody] CompleteStepRequest request)
+    {
+        try
+        {
+            var result = await _orchestrationService.CompleteCurrentStepAsync(id, request.Notes ?? string.Empty, request.UserId);
+            return HandleResult(result);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get orchestration status
+    /// </summary>
+    [HttpGet("{id}/orchestration/status")]
+    public async Task<IActionResult> GetOrchestrationStatus(string id)
+    {
+        try
+        {
+            var status = await _orchestrationService.GetOrchestrationStatusAsync(id);
+            return HandleResult(status);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Request DTOs for state and orchestration endpoints
+    /// </summary>
+    public class TransitionRequest
+    {
+        public string Trigger { get; set; } = string.Empty;
+        public string? Reason { get; set; }
+        public string UserId { get; set; } = string.Empty;
+    }
+
+    public class OrchestrationRequest
+    {
+        public string UserId { get; set; } = string.Empty;
+    }
+
+    public class CompleteStepRequest
+    {
+        public string? Notes { get; set; }
+        public string UserId { get; set; } = string.Empty;
     }
 }

@@ -60,12 +60,18 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IWeightMeasurementRepository, WeightMeasurementRepository>();
 builder.Services.AddScoped<IWeighbridgeStatusRepository, WeighbridgeStatusRepository>();
 builder.Services.AddScoped<IWeightCorrectionRepository, WeightCorrectionRepository>();
+builder.Services.AddScoped<IRealTimeSessionRepository, RealTimeSessionRepository>();
+builder.Services.AddScoped<ICalibrationRecordRepository, CalibrationRecordRepository>();
+builder.Services.AddScoped<IHistoricalAnalysisRepository, HistoricalAnalysisRepository>();
 
 // Business services
 builder.Services.AddScoped<IWeightMeasurementService, WeightMeasurementService>();
 builder.Services.AddScoped<IWeighbridgeStatusService, WeighbridgeStatusService>();
 builder.Services.AddScoped<IWeightCorrectionService, WeightCorrectionService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IRealTimeStreamingService, RealTimeStreamingService>();
+builder.Services.AddScoped<ICalibrationService, CalibrationService>();
+builder.Services.AddScoped<IHistoricalAnalysisService, HistoricalAnalysisService>();
 
 // CORS
 builder.Services.AddCors(options =>

@@ -451,4 +451,203 @@ public class RouteService : IRouteService
     public Task<RouteScheduleDto> UpdateScheduleAsync(string routeId, string scheduleId, UpdateRouteScheduleRequest request) => throw new NotImplementedException();
     public Task<bool> DeleteScheduleAsync(string routeId, string scheduleId) => throw new NotImplementedException();
     #endregion
+
+    #region Mapping and Traffic Integration
+    public async Task<RouteMapDto?> GetRouteMapAsync(string routeId)
+    {
+        var route = await _routeRepository.GetByIdAsync(routeId);
+        if (route == null) return null;
+
+        var waypoints = await _waypointRepository.GetWaypointsByRouteIdAsync(routeId);
+        
+        // Generate map coordinates from waypoints
+        var coordinates = waypoints.Select((wp, index) => new MapCoordinateDto
+        {
+            Latitude = wp.Latitude,
+            Longitude = wp.Longitude,
+            Sequence = index + 1
+        }).ToList();
+
+        // Calculate bounds
+        var bounds = new MapBoundsDto();
+        if (coordinates.Any())
+        {
+            bounds.NortheastLat = coordinates.Max(c => c.Latitude);
+            bounds.NortheastLng = coordinates.Max(c => c.Longitude);
+            bounds.SouthwestLat = coordinates.Min(c => c.Latitude);
+            bounds.SouthwestLng = coordinates.Min(c => c.Longitude);
+        }
+
+        return new RouteMapDto
+        {
+            Id = route.Id,
+            Name = route.Name,
+            Origin = route.Origin,
+            Destination = route.Destination,
+            Distance = route.Distance,
+            EstimatedDuration = route.EstimatedDuration,
+            Waypoints = _mapper.Map<List<RouteWaypointDto>>(waypoints),
+            Coordinates = coordinates,
+            Bounds = bounds,
+            MapProvider = "OpenStreetMap", // Default provider
+            LastUpdated = route.UpdatedAt != default(DateTime) ? route.UpdatedAt : route.CreatedAt
+        };
+    }
+
+    public async Task<RouteTrafficDto?> GetRouteTrafficAsync(string routeId)
+    {
+        var route = await _routeRepository.GetByIdAsync(routeId);
+        if (route == null) return null;
+
+        // In a real implementation, this would integrate with external traffic APIs
+        // For now, we'll return simulated traffic data
+        var currentTime = DateTime.UtcNow;
+        var trafficStatus = SimulateTrafficStatus(currentTime);
+        var delayFactor = GetDelayFactor(trafficStatus);
+
+        return new RouteTrafficDto
+        {
+            RouteId = routeId,
+            TrafficStatus = trafficStatus,
+            CurrentDuration = TimeSpan.FromMinutes(route.EstimatedDuration.TotalMinutes * delayFactor),
+            EstimatedDuration = route.EstimatedDuration,
+            DelayMinutes = (route.EstimatedDuration.TotalMinutes * delayFactor) - route.EstimatedDuration.TotalMinutes,
+            Incidents = await SimulateTrafficIncidents(routeId),
+            LastUpdated = currentTime
+        };
+    }
+
+    public async Task<RouteOptimizationDto> OptimizeRouteAsync(string routeId, RouteOptimizationRequestDto request)
+    {
+        var route = await _routeRepository.GetByIdAsync(routeId);
+        if (route == null)
+        {
+            throw new InvalidOperationException($"Route with ID {routeId} not found");
+        }
+
+        var currentMap = await GetRouteMapAsync(routeId);
+        if (currentMap == null)
+        {
+            throw new InvalidOperationException($"Could not retrieve map for route {routeId}");
+        }
+
+        // Simulate optimization algorithm
+        var optimizedRoute = await SimulateRouteOptimization(currentMap, request);
+        var timeSaved = currentMap.EstimatedDuration - optimizedRoute.EstimatedDuration;
+        var distanceSaved = currentMap.Distance - optimizedRoute.Distance;
+
+        return new RouteOptimizationDto
+        {
+            RouteId = routeId,
+            OptimizedRoute = optimizedRoute,
+            AlternativeRoute = currentMap,
+            TimeSaved = timeSaved,
+            DistanceSaved = distanceSaved,
+            CostSaved = (decimal)(distanceSaved * 0.5), // Simulate cost savings
+            OptimizationReason = GenerateOptimizationReason(request),
+            Recommendations = GenerateRecommendations(request),
+            OptimizedAt = DateTime.UtcNow
+        };
+    }
+
+    private string SimulateTrafficStatus(DateTime currentTime)
+    {
+        var hour = currentTime.Hour;
+        return hour switch
+        {
+            >= 7 and <= 9 => "heavy", // Morning rush
+            >= 17 and <= 19 => "heavy", // Evening rush
+            >= 12 and <= 14 => "moderate", // Lunch time
+            >= 22 or <= 5 => "low", // Night time
+            _ => "moderate"
+        };
+    }
+
+    private double GetDelayFactor(string trafficStatus)
+    {
+        return trafficStatus switch
+        {
+            "low" => 0.9,
+            "moderate" => 1.2,
+            "heavy" => 1.5,
+            "severe" => 2.0,
+            _ => 1.0
+        };
+    }
+
+    private async Task<List<TrafficIncidentDto>> SimulateTrafficIncidents(string routeId)
+    {
+        // Simulate random incidents
+        var incidents = new List<TrafficIncidentDto>();
+        var random = new Random();
+        
+        if (random.NextDouble() < 0.3) // 30% chance of incident
+        {
+            incidents.Add(new TrafficIncidentDto
+            {
+                Id = Guid.NewGuid().ToString(),
+                Type = "construction",
+                Description = "Lane closure due to road maintenance",
+                Severity = "moderate",
+                Location = new MapCoordinateDto { Latitude = 40.7128, Longitude = -74.0060 },
+                StartTime = DateTime.UtcNow.AddHours(-2),
+                EndTime = DateTime.UtcNow.AddHours(4),
+                EstimatedDelay = TimeSpan.FromMinutes(15)
+            });
+        }
+
+        return incidents;
+    }
+
+    private async Task<RouteMapDto> SimulateRouteOptimization(RouteMapDto currentRoute, RouteOptimizationRequestDto request)
+    {
+        // Simulate optimization by reducing distance and time
+        var optimizedRoute = new RouteMapDto
+        {
+            Id = currentRoute.Id,
+            Name = currentRoute.Name + " (Optimized)",
+            Origin = currentRoute.Origin,
+            Destination = currentRoute.Destination,
+            Distance = currentRoute.Distance * 0.9, // 10% reduction
+            EstimatedDuration = TimeSpan.FromMinutes(currentRoute.EstimatedDuration.TotalMinutes * 0.85), // 15% reduction
+            Waypoints = currentRoute.Waypoints,
+            Coordinates = currentRoute.Coordinates,
+            Bounds = currentRoute.Bounds,
+            MapProvider = currentRoute.MapProvider,
+            LastUpdated = DateTime.UtcNow
+        };
+
+        return optimizedRoute;
+    }
+
+    private string GenerateOptimizationReason(RouteOptimizationRequestDto request)
+    {
+        var reasons = new List<string>();
+        
+        if (request.AvoidTolls) reasons.Add("avoided toll roads");
+        if (request.AvoidHighways) reasons.Add("avoided highways");
+        if (request.ConsiderTraffic) reasons.Add("considered current traffic conditions");
+        
+        return reasons.Any() ? string.Join(", ", reasons) : "found more efficient route";
+    }
+
+    private List<string> GenerateRecommendations(RouteOptimizationRequestDto request)
+    {
+        var recommendations = new List<string>();
+        
+        if (request.ConsiderTraffic)
+        {
+            recommendations.Add("Consider departing 30 minutes earlier to avoid traffic");
+        }
+        
+        if (!request.AvoidTolls)
+        {
+            recommendations.Add("Using toll roads can save 15 minutes");
+        }
+        
+        recommendations.Add("Monitor traffic conditions before departure");
+        
+        return recommendations;
+    }
+    #endregion
 }

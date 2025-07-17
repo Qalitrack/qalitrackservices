@@ -70,4 +70,11 @@ public class TransporterRepository : Repository<Transporter>, ITransporterReposi
         
         return !await query.AnyAsync();
     }
+
+    public async Task<IEnumerable<Transporter>> GetDualRoleTransportersAsync()
+    {
+        return await _dbSet
+            .Where(t => t.IsCustomer && !t.IsDeleted)
+            .ToListAsync();
+    }
 }

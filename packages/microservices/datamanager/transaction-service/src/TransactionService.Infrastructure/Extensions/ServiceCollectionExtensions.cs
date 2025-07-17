@@ -32,6 +32,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IWorkflowService, WorkflowService>();
         services.AddScoped<IChargeService, ChargeService>();
         services.AddScoped<IDocumentService, DocumentService>();
+        services.AddScoped<IStateService, StateService>();
+        services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<IOrchestrationService, OrchestrationService>();
 
         // Add Validators
         services.AddValidatorsFromAssemblyContaining<CreateTransactionRequestValidator>();
@@ -51,6 +54,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IWorkflowRepository, WorkflowRepository>();
         services.AddScoped<IChargeRepository, ChargeRepository>();
         services.AddScoped<IDocumentRepository, DocumentRepository>();
+        services.AddScoped<IStateRepository, StateRepository>();
+        services.AddScoped<IAuditRepository, AuditRepository>();
 
         return services;
     }

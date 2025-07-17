@@ -34,6 +34,15 @@ public class WorkflowRepository : Repository<TransactionWorkflow>, IWorkflowRepo
             .FirstOrDefaultAsync(w => w.TransactionId == transactionId && w.WorkflowStep == step && !w.IsDeleted);
     }
 
+    public async Task<TransactionWorkflow?> GetByTransactionAndStepAsync(string transactionId, string stepName)
+    {
+        if (Enum.TryParse<WorkflowStep>(stepName, out var step))
+        {
+            return await GetByTransactionAndStepAsync(transactionId, step);
+        }
+        return null;
+    }
+
     public async Task<IEnumerable<TransactionWorkflow>> GetPendingStepsAsync()
     {
         return await _dbSet

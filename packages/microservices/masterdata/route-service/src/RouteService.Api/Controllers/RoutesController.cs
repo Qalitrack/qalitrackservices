@@ -420,4 +420,106 @@ public class RoutesController : ControllerBase
             });
         }
     }
+
+    [HttpGet("{id}/map")]
+    public async Task<ActionResult<ApiResponseDto<RouteMapDto>>> GetRouteMap(string id)
+    {
+        try
+        {
+            var routeMap = await _routeService.GetRouteMapAsync(id);
+            if (routeMap == null)
+            {
+                return NotFound(new ApiResponseDto<RouteMapDto>
+                {
+                    Success = false,
+                    Message = $"Route map for ID '{id}' not found"
+                });
+            }
+
+            return Ok(new ApiResponseDto<RouteMapDto>
+            {
+                Success = true,
+                Data = routeMap,
+                Message = "Route map retrieved successfully"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving route map for {RouteId}", id);
+            return StatusCode(500, new ApiResponseDto<RouteMapDto>
+            {
+                Success = false,
+                Message = "An error occurred while retrieving the route map",
+                Errors = new List<string> { ex.Message }
+            });
+        }
+    }
+
+    [HttpGet("{id}/traffic")]
+    public async Task<ActionResult<ApiResponseDto<RouteTrafficDto>>> GetRouteTraffic(string id)
+    {
+        try
+        {
+            var routeTraffic = await _routeService.GetRouteTrafficAsync(id);
+            if (routeTraffic == null)
+            {
+                return NotFound(new ApiResponseDto<RouteTrafficDto>
+                {
+                    Success = false,
+                    Message = $"Route traffic for ID '{id}' not found"
+                });
+            }
+
+            return Ok(new ApiResponseDto<RouteTrafficDto>
+            {
+                Success = true,
+                Data = routeTraffic,
+                Message = "Route traffic retrieved successfully"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving route traffic for {RouteId}", id);
+            return StatusCode(500, new ApiResponseDto<RouteTrafficDto>
+            {
+                Success = false,
+                Message = "An error occurred while retrieving the route traffic",
+                Errors = new List<string> { ex.Message }
+            });
+        }
+    }
+
+    [HttpPost("{id}/optimize")]
+    public async Task<ActionResult<ApiResponseDto<RouteOptimizationDto>>> OptimizeRoute(string id, [FromBody] RouteOptimizationRequestDto request)
+    {
+        try
+        {
+            var optimizedRoute = await _routeService.OptimizeRouteAsync(id, request);
+            return Ok(new ApiResponseDto<RouteOptimizationDto>
+            {
+                Success = true,
+                Data = optimizedRoute,
+                Message = "Route optimized successfully"
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new ApiResponseDto<RouteOptimizationDto>
+            {
+                Success = false,
+                Message = ex.Message,
+                Errors = new List<string> { ex.Message }
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error optimizing route {RouteId}", id);
+            return StatusCode(500, new ApiResponseDto<RouteOptimizationDto>
+            {
+                Success = false,
+                Message = "An error occurred while optimizing the route",
+                Errors = new List<string> { ex.Message }
+            });
+        }
+    }
 }

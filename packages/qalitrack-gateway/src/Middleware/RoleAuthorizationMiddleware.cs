@@ -3,6 +3,8 @@ using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
 using System.Text.Json;
 using QaliTrackGateway.Services;
+using QaliTrackGateway.Models;
+using System.Diagnostics;
 
 namespace QaliTrackGateway.Middleware;
 
@@ -15,6 +17,7 @@ public class RoleAuthorizationMiddleware
     private readonly RequestDelegate _next;
     private readonly IMemoryCache _cache;
     private readonly IAuthorizationCacheService _cacheService;
+    private readonly IAuditService _auditService;
     private readonly ILogger<RoleAuthorizationMiddleware> _logger;
     private readonly Dictionary<string, int> _roleHierarchy;
     private readonly Dictionary<string, RouteRoleRequirement> _routeRoleRequirements;
@@ -23,12 +26,14 @@ public class RoleAuthorizationMiddleware
         RequestDelegate next,
         IMemoryCache cache,
         IAuthorizationCacheService cacheService,
+        IAuditService auditService,
         ILogger<RoleAuthorizationMiddleware> logger,
         IConfiguration configuration)
     {
         _next = next;
         _cache = cache;
         _cacheService = cacheService;
+        _auditService = auditService;
         _logger = logger;
         
         // Initialize role hierarchy (higher number = higher privileges)
@@ -48,12 +53,19 @@ public class RoleAuthorizationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        var stopwatch = Stopwatch.StartNew();
+        var correlationId = _auditService.GenerateCorrelationId();
         var path = context.Request.Path.Value?.ToLowerInvariant() ?? string.Empty;
+        
+        // Add correlation ID to context for downstream services
+        context.Items["CorrelationId"] = correlationId;
+        context.Request.Headers["X-Correlation-ID"] = correlationId;
         
         // Skip authorization for public endpoints
         if (IsPublicEndpoint(path))
         {
             _logger.LogDebug("Allowing access to public endpoint: {Path}", path);
+            await LogGatewayRequestAsync(context, correlationId, stopwatch, "PublicEndpoint", true);
             await _next(context);
             return;
         }
@@ -63,6 +75,7 @@ public class RoleAuthorizationMiddleware
         if (roleRequirement == null)
         {
             _logger.LogDebug("No role requirement found for path: {Path}", path);
+            await LogGatewayRequestAsync(context, correlationId, stopwatch, "NoRoleRequirement", true);
             await _next(context);
             return;
         }
@@ -71,6 +84,7 @@ public class RoleAuthorizationMiddleware
         if (!context.User.Identity?.IsAuthenticated ?? true)
         {
             _logger.LogWarning("Unauthorized access attempt to protected endpoint: {Path}", path);
+            await LogGatewayRequestAsync(context, correlationId, stopwatch, "Unauthenticated", false, "Authentication required");
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Unauthorized: Authentication required");
             return;
@@ -93,6 +107,10 @@ public class RoleAuthorizationMiddleware
                 string.Join(",", roleRequirement.RequiredRoles), string.Join(",", roleRequirement.RequiredPermissions),
                 string.Join(",", userRoles), string.Join(",", userPermissions));
             
+            // Log authorization failure
+            await LogAuthorizationEventAsync(context, correlationId, stopwatch, roleRequirement, userRoles, userPermissions, false, "Insufficient privileges");
+            await LogGatewayRequestAsync(context, correlationId, stopwatch, "Forbidden", false, "Insufficient role or permission privileges");
+            
             context.Response.StatusCode = 403;
             await context.Response.WriteAsync("Forbidden: Insufficient role or permission privileges");
             return;
@@ -107,7 +125,13 @@ public class RoleAuthorizationMiddleware
             roleRequirement.ServiceName,
             path);
 
+        // Log successful authorization
+        await LogAuthorizationEventAsync(context, correlationId, stopwatch, roleRequirement, userRoles, userPermissions, true, "Access granted");
+
         await _next(context);
+        
+        // Log successful gateway request
+        await LogGatewayRequestAsync(context, correlationId, stopwatch, "Authorized", true);
     }
 
     private bool IsPublicEndpoint(string path)
@@ -405,6 +429,102 @@ public class RoleAuthorizationMiddleware
         }
 
         return requirements;
+    }
+
+    private async Task LogAuthorizationEventAsync(
+        HttpContext context,
+        string correlationId,
+        Stopwatch stopwatch,
+        RouteRoleRequirement roleRequirement,
+        List<string> userRoles,
+        List<string> userPermissions,
+        bool authorizationResult,
+        string reason)
+    {
+        try
+        {
+            var user = context.User;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
+            var userName = user.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown";
+            
+            var authEvent = new AuthorizationAuditEvent
+            {
+                CorrelationId = correlationId,
+                UserId = userId,
+                UserName = userName,
+                ServiceName = roleRequirement.ServiceName,
+                Action = authorizationResult ? "Authorize" : "Deny",
+                Resource = context.Request.Path,
+                IpAddress = context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                UserAgent = context.Request.Headers["User-Agent"].ToString(),
+                RequestPath = context.Request.Path,
+                HttpMethod = context.Request.Method,
+                StatusCode = authorizationResult ? 200 : 403,
+                ResponseTimeMs = stopwatch.ElapsedMilliseconds,
+                RequiredRoles = roleRequirement.RequiredRoles.ToArray(),
+                RequiredPermissions = roleRequirement.RequiredPermissions.ToArray(),
+                UserRoles = userRoles.ToArray(),
+                UserPermissions = userPermissions.ToArray(),
+                AuthorizationResult = authorizationResult,
+                AuthorizationReason = reason,
+                SessionId = context.Session?.Id ?? "Unknown",
+                TenantId = user.FindFirst("tenant_id")?.Value ?? "default"
+            };
+
+            await _auditService.LogAuthorizationEventAsync(authEvent);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to log authorization audit event");
+        }
+    }
+
+    private async Task LogGatewayRequestAsync(
+        HttpContext context,
+        string correlationId,
+        Stopwatch stopwatch,
+        string action,
+        bool isSuccess,
+        string? errorMessage = null)
+    {
+        try
+        {
+            var user = context.User;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Anonymous";
+            var userName = user.FindFirst(ClaimTypes.Name)?.Value ?? "Anonymous";
+            
+            var gatewayEvent = new AuditEvent
+            {
+                CorrelationId = correlationId,
+                EventType = "GatewayRequest",
+                UserId = userId,
+                UserName = userName,
+                ServiceName = "QaliTrack-Gateway",
+                Action = action,
+                Resource = context.Request.Path,
+                IpAddress = context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                UserAgent = context.Request.Headers["User-Agent"].ToString(),
+                RequestPath = context.Request.Path,
+                HttpMethod = context.Request.Method,
+                StatusCode = isSuccess ? 200 : context.Response.StatusCode,
+                ResponseTimeMs = stopwatch.ElapsedMilliseconds,
+                ErrorMessage = errorMessage,
+                SessionId = context.Session?.Id ?? "Unknown",
+                TenantId = user.FindFirst("tenant_id")?.Value ?? "default"
+            };
+
+            // Add additional context data
+            gatewayEvent.AdditionalData["UserAgent"] = context.Request.Headers["User-Agent"].ToString();
+            gatewayEvent.AdditionalData["Referer"] = context.Request.Headers["Referer"].ToString();
+            gatewayEvent.AdditionalData["ContentType"] = context.Request.ContentType ?? "Unknown";
+            gatewayEvent.AdditionalData["ContentLength"] = context.Request.ContentLength?.ToString() ?? "0";
+
+            await _auditService.LogAuditEventAsync(gatewayEvent);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to log gateway request audit event");
+        }
     }
 }
 
