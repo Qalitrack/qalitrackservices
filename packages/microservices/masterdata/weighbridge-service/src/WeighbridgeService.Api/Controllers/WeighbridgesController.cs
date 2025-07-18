@@ -284,4 +284,67 @@ public class WeighbridgesController : ControllerBase
             return StatusCode(500, ApiResponseDto<WeighbridgeLocationDto>.ErrorResponse("An error occurred while updating location"));
         }
     }
+
+    // Hardware Integration Endpoints
+    [HttpGet("{id}/hardware-status")]
+    public async Task<ActionResult<ApiResponseDto<WeighbridgeHardwareStatusDto>>> GetHardwareStatus(string id)
+    {
+        try
+        {
+            var status = await _weighbridgeService.GetHardwareStatusAsync(id);
+            return Ok(ApiResponseDto<WeighbridgeHardwareStatusDto>.SuccessResponse(status, "Hardware status retrieved successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving hardware status for weighbridge {Id}", id);
+            return StatusCode(500, ApiResponseDto<WeighbridgeHardwareStatusDto>.ErrorResponse("An error occurred while retrieving hardware status"));
+        }
+    }
+
+    [HttpPost("{id}/hardware/control")]
+    public async Task<ActionResult<ApiResponseDto<WeighbridgeControlResultDto>>> ControlHardware(
+        string id, [FromBody] WeighbridgeControlCommandDto command)
+    {
+        try
+        {
+            var result = await _weighbridgeService.ExecuteHardwareControlAsync(id, command);
+            return Ok(ApiResponseDto<WeighbridgeControlResultDto>.SuccessResponse(result, "Hardware control executed successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error executing hardware control for weighbridge {Id}", id);
+            return StatusCode(500, ApiResponseDto<WeighbridgeControlResultDto>.ErrorResponse("An error occurred while executing hardware control"));
+        }
+    }
+
+    [HttpPost("{id}/hardware/test")]
+    public async Task<ActionResult<ApiResponseDto<WeighbridgeTestResultDto>>> TestHardware(string id)
+    {
+        try
+        {
+            var result = await _weighbridgeService.TestHardwareConnectionAsync(id);
+            return Ok(ApiResponseDto<WeighbridgeTestResultDto>.SuccessResponse(result, "Hardware test completed successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error testing hardware for weighbridge {Id}", id);
+            return StatusCode(500, ApiResponseDto<WeighbridgeTestResultDto>.ErrorResponse("An error occurred while testing hardware"));
+        }
+    }
+
+    [HttpPost("{id}/remote-update")]
+    public async Task<ActionResult<ApiResponseDto<WeighbridgeUpdateResultDto>>> RemoteUpdate(
+        string id, [FromBody] WeighbridgeRemoteUpdateDto update)
+    {
+        try
+        {
+            var result = await _weighbridgeService.PerformRemoteUpdateAsync(id, update);
+            return Ok(ApiResponseDto<WeighbridgeUpdateResultDto>.SuccessResponse(result, "Remote update completed successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error performing remote update for weighbridge {Id}", id);
+            return StatusCode(500, ApiResponseDto<WeighbridgeUpdateResultDto>.ErrorResponse("An error occurred while performing remote update"));
+        }
+    }
 }

@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
 using VehicleService.Core.DTOs;
 using VehicleService.Core.Entities;
 using VehicleService.Core.Interfaces;
@@ -208,5 +211,25 @@ public class VehiclesController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+    }
+
+    [HttpGet("{id}/qr-code")]
+    public async Task<IActionResult> GenerateQRCode(string id)
+    {
+        var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+        if (vehicle == null)
+        {
+            return NotFound();
+        }
+
+        var qrData = $"VEHICLE:{vehicle.RegistrationNumber}|ID:{vehicle.Id}|VIN:{vehicle.VIN}";
+        
+        using var qrGenerator = new QRCodeGenerator();
+        using var qrCodeData = qrGenerator.CreateQrCode(qrData, QRCodeGenerator.ECCLevel.Q);
+        using var qrCode = new QRCoder.BitmapByteQRCode(qrCodeData);
+        
+        var qrCodeImage = qrCode.GetGraphic(20);
+        
+        return File(qrCodeImage, "image/png", $"vehicle-{vehicle.RegistrationNumber}-qr.png");
     }
 }

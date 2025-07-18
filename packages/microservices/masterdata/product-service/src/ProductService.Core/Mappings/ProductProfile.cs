@@ -9,39 +9,25 @@ public class ProductProfile : Profile
     public ProductProfile()
     {
         // Product mappings
-        CreateMap<Product, ProductDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null));
-
-        CreateMap<RegisterProductRequest, Product>();
-        CreateMap<UpdateProductRequest, Product>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ProductStatus>(src.Status)));
+        CreateMap<ProductService.Core.Entities.Product, ProductReadDto>();
+        CreateMap<CreateProductDto, ProductService.Core.Entities.Product>();
+        CreateMap<UpdateProductDto, ProductService.Core.Entities.Product>();
+        CreateMap<ProductService.Core.Entities.Product, ProductDto>().ReverseMap();
 
         // Category mappings
-        CreateMap<ProductCategory, ProductCategoryDto>()
-            .ForMember(dest => dest.ParentCategoryName, opt => opt.MapFrom(src => src.ParentCategory != null ? src.ParentCategory.Name : null));
-
-        CreateMap<CreateProductCategoryRequest, ProductCategory>();
-
-        // Specification mappings
-        CreateMap<ProductSpecification, ProductSpecificationDto>()
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
-
-        CreateMap<ProductSpecificationDto, ProductSpecification>()
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<SpecificationType>(src.Type)));
+        CreateMap<Category, CategoryDto>().ReverseMap();
+        CreateMap<Category, CategoryReadDto>();
 
         // Pricing mappings
-        CreateMap<ProductPricing, ProductPricingDto>()
-            .ForMember(dest => dest.PricingType, opt => opt.MapFrom(src => src.PricingType.ToString()));
+        CreateMap<Pricing, PricingDto>().ReverseMap();
+        CreateMap<Pricing, PricingReadDto>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
+            .ForMember(dest => dest.Strategy, opt => opt.MapFrom(src => src.Strategy.ToString()));
 
-        CreateMap<ProductPricingDto, ProductPricing>()
-            .ForMember(dest => dest.PricingType, opt => opt.MapFrom(src => Enum.Parse<PricingType>(src.PricingType)));
-
-        // Compliance mappings
-        CreateMap<ProductCompliance, ComplianceRequirementDto>()
+        // Specification mappings
+        CreateMap<Specification, SpecificationDto>().ReverseMap();
+        CreateMap<Specification, SpecificationReadDto>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
-
-        CreateMap<ComplianceRequirementDto, ProductCompliance>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ComplianceStatus>(src.Status)));
     }
 }

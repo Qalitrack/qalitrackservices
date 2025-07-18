@@ -13,6 +13,8 @@ public class TransactionDbContext : DbContext
     public DbSet<TransactionWorkflow> TransactionWorkflows { get; set; }
     public DbSet<TransactionCharge> TransactionCharges { get; set; }
     public DbSet<TransactionDocument> TransactionDocuments { get; set; }
+    public DbSet<TransactionState> TransactionStates { get; set; }
+    public DbSet<TransactionAudit> TransactionAudits { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -115,6 +117,58 @@ public class TransactionDbContext : DbContext
             entity.HasIndex(e => e.TransactionId);
             entity.HasIndex(e => e.DocumentType);
             entity.HasIndex(e => e.IsActive);
+        });
+
+        // Configure TransactionState
+        modelBuilder.Entity<TransactionState>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TransactionId).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.FromState).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.ToState).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Trigger).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.UserId).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Reason).HasMaxLength(500);
+            entity.Property(e => e.TransitionDataJson).HasColumnType("TEXT");
+            entity.Property(e => e.ValidationErrors).HasMaxLength(1000);
+
+            entity.HasIndex(e => e.TransactionId);
+            entity.HasIndex(e => e.FromState);
+            entity.HasIndex(e => e.ToState);
+            entity.HasIndex(e => e.TransitionDate);
+            entity.HasIndex(e => e.Trigger);
+            
+            // Ignore the computed property
+            entity.Ignore(e => e.TransitionData);
+        });
+
+        // Configure TransactionAudit
+        modelBuilder.Entity<TransactionAudit>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TransactionId).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.EntityType).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.EntityId).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.UserId).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.UserName).HasMaxLength(100);
+            entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.OldValuesJson).HasColumnType("TEXT");
+            entity.Property(e => e.NewValuesJson).HasColumnType("TEXT");
+            entity.Property(e => e.IpAddress).HasMaxLength(45);
+            entity.Property(e => e.UserAgent).HasMaxLength(500);
+            entity.Property(e => e.SessionId).HasMaxLength(100);
+            entity.Property(e => e.Reason).HasMaxLength(1000);
+
+            entity.HasIndex(e => e.TransactionId);
+            entity.HasIndex(e => e.EntityType);
+            entity.HasIndex(e => e.EntityId);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.AuditAction);
+            entity.HasIndex(e => e.AuditDate);
+            
+            // Ignore the computed properties
+            entity.Ignore(e => e.OldValues);
+            entity.Ignore(e => e.NewValues);
         });
 
         // Configure base entity properties for all entities

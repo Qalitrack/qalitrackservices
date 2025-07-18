@@ -23,6 +23,7 @@ public class Supplier : BaseEntity
     public virtual ICollection<SupplierProduct> Products { get; set; } = new List<SupplierProduct>();
     public virtual ICollection<SupplierLocation> Locations { get; set; } = new List<SupplierLocation>();
     public virtual ICollection<SupplierDocument> Documents { get; set; } = new List<SupplierDocument>();
+    public virtual ICollection<Procurement> Procurements { get; set; } = new List<Procurement>();
     public virtual SupplierPerformance? Performance { get; set; }
     public virtual SupplierFinancial? Financial { get; set; }
 }

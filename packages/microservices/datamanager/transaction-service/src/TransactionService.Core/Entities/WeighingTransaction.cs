@@ -32,10 +32,24 @@ public class WeighingTransaction : BaseEntity
     public string? Remarks { get; set; }
     public string? MetadataJson { get; set; }
     
+    // Lifecycle and State Management
+    public string CurrentState { get; set; } = TransactionStates.Pending;
+    public DateTime? StateLastChanged { get; set; }
+    public string? StateChangedBy { get; set; }
+    
+    // Orchestration and Coordination
+    public bool RequiresApproval { get; set; } = false;
+    public string? ApprovedBy { get; set; }
+    public DateTime? ApprovedAt { get; set; }
+    public int Priority { get; set; } = 1; // 1=Low, 2=Normal, 3=High, 4=Critical
+    public string? ExternalReferenceId { get; set; }
+    
     // Navigation Properties
     public virtual ICollection<TransactionWorkflow> WorkflowSteps { get; set; } = new List<TransactionWorkflow>();
     public virtual ICollection<TransactionCharge> Charges { get; set; } = new List<TransactionCharge>();
     public virtual ICollection<TransactionDocument> Documents { get; set; } = new List<TransactionDocument>();
+    public virtual ICollection<TransactionState> StateHistory { get; set; } = new List<TransactionState>();
+    public virtual ICollection<TransactionAudit> AuditTrail { get; set; } = new List<TransactionAudit>();
     
     // Helper property for metadata
     public Dictionary<string, object>? Metadata

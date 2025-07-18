@@ -65,6 +65,11 @@ public interface IRouteService
     Task<RouteScheduleDto?> GetNextScheduleAsync(string routeId, DateTime fromTime);
     Task<RouteScheduleDto> UpdateScheduleAsync(string routeId, string scheduleId, UpdateRouteScheduleRequest request);
     Task<bool> DeleteScheduleAsync(string routeId, string scheduleId);
+
+    // Mapping and Traffic Integration
+    Task<RouteMapDto?> GetRouteMapAsync(string routeId);
+    Task<RouteTrafficDto?> GetRouteTrafficAsync(string routeId);
+    Task<RouteOptimizationDto> OptimizeRouteAsync(string routeId, RouteOptimizationRequestDto request);
 }
 
 public class RoutePerformanceAnalytics

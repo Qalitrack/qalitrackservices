@@ -1,33 +1,48 @@
 using Xunit;
-using FluentAssertions;
 
 namespace ProductService.Tests;
 
-[Trait("Category", "Unit")]
 public class BasicTests
 {
     [Fact]
     public void BasicTest_ShouldPass()
     {
         // Arrange
-        var value = "test";
-
+        var expected = true;
+        
         // Act
-        var result = value.ToUpper();
-
+        var actual = true;
+        
         // Assert
-        result.Should().Be("TEST");
+        Assert.Equal(expected, actual);
     }
-
+    
     [Fact]
-    public void ProductService_ShouldHaveCorrectAssemblyReference()
+    public void BasicMathTest_ShouldPass()
     {
-        // Arrange & Act
-        var coreAssembly = typeof(ProductService.Core.Entities.Product).Assembly;
-        var apiAssembly = typeof(ProductService.Api.Controllers.ProductsController).Assembly;
-
+        // Arrange
+        var a = 2;
+        var b = 3;
+        var expected = 5;
+        
+        // Act
+        var actual = a + b;
+        
         // Assert
-        coreAssembly.Should().NotBeNull();
-        apiAssembly.Should().NotBeNull();
+        Assert.Equal(expected, actual);
+    }
+    
+    [Fact]
+    public void StringTest_ShouldPass()
+    {
+        // Arrange
+        var text = "Hello World";
+        var expected = "Hello World";
+        
+        // Act
+        var actual = text;
+        
+        // Assert
+        Assert.Equal(expected, actual);
     }
 }

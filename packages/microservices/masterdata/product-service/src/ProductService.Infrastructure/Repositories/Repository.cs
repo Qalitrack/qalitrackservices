@@ -7,18 +7,13 @@ namespace ProductService.Infrastructure.Repositories;
 
 public class Repository<T> : IRepository<T> where T : BaseEntity
 {
-    protected readonly ProductDbContext _context;
+    protected readonly ProductServiceDbContext _context;
     protected readonly DbSet<T> _dbSet;
 
-    public Repository(ProductDbContext context)
+    public Repository(ProductServiceDbContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();
-    }
-
-    public virtual async Task<T?> GetByIdAsync(string id)
-    {
-        return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
     }
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
@@ -26,32 +21,45 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await _dbSet.Where(e => !e.IsDeleted).ToListAsync();
     }
 
-    public virtual async Task<T> AddAsync(T entity)
+    public virtual async Task<T?> GetByIdAsync(string id)
     {
+        return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+    }
+
+    public virtual async Task<T> CreateAsync(T entity)
+    {
+        entity.Id = Guid.NewGuid().ToString();
         entity.CreatedAt = DateTime.UtcNow;
         entity.UpdatedAt = DateTime.UtcNow;
+        
         _dbSet.Add(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
-    public virtual async Task<T> UpdateAsync(T entity)
+    public virtual async Task<T?> UpdateAsync(T entity)
     {
         entity.UpdatedAt = DateTime.UtcNow;
+        
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
-    public virtual async Task DeleteAsync(string id)
+    public virtual async Task<bool> DeleteAsync(string id)
     {
-        var entity = await _dbSet.FindAsync(id);
-        if (entity != null)
+        var entity = await GetByIdAsync(id);
+        if (entity == null)
         {
-            entity.IsDeleted = true;
-            entity.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            return false;
         }
+
+        entity.IsDeleted = true;
+        entity.UpdatedAt = DateTime.UtcNow;
+        
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public virtual async Task<bool> ExistsAsync(string id)

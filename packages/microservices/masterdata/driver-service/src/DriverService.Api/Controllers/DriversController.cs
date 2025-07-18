@@ -253,4 +253,91 @@ public class DriversController : ControllerBase
             return StatusCode(500, ApiResponseDto<object>.ErrorResult("Internal server error"));
         }
     }
+
+    /// <summary>
+    /// Register biometric data for a driver
+    /// </summary>
+    [HttpPost("{id}/biometric")]
+    public async Task<ActionResult<ApiResponseDto<object>>> RegisterBiometric(string id, [FromBody] BiometricRegistrationDto biometricDto)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return BadRequest(ApiResponseDto<object>.ErrorResult(errors));
+            }
+
+            await _driverService.RegisterBiometricAsync(id, biometricDto);
+            return Ok(ApiResponseDto<object>.SuccessResult(new { }, "Biometric data registered successfully"));
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Driver not found for biometric registration: {DriverId}", id);
+            return NotFound(ApiResponseDto<object>.ErrorResult(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error registering biometric data for driver {DriverId}", id);
+            return StatusCode(500, ApiResponseDto<object>.ErrorResult("Internal server error"));
+        }
+    }
+
+    /// <summary>
+    /// Verify biometric data for a driver
+    /// </summary>
+    [HttpPost("{id}/biometric/verify")]
+    public async Task<ActionResult<ApiResponseDto<BiometricVerificationResultDto>>> VerifyBiometric(string id, [FromBody] BiometricVerificationDto verificationDto)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return BadRequest(ApiResponseDto<BiometricVerificationResultDto>.ErrorResult(errors));
+            }
+
+            var result = await _driverService.VerifyBiometricAsync(id, verificationDto);
+            return Ok(ApiResponseDto<BiometricVerificationResultDto>.SuccessResult(result, "Biometric verification completed"));
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Driver not found for biometric verification: {DriverId}", id);
+            return NotFound(ApiResponseDto<BiometricVerificationResultDto>.ErrorResult(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error verifying biometric data for driver {DriverId}", id);
+            return StatusCode(500, ApiResponseDto<BiometricVerificationResultDto>.ErrorResult("Internal server error"));
+        }
+    }
+
+    /// <summary>
+    /// Update biometric settings for a driver
+    /// </summary>
+    [HttpPut("{id}/biometric/settings")]
+    public async Task<ActionResult<ApiResponseDto<object>>> UpdateBiometricSettings(string id, [FromBody] BiometricSettingsDto settingsDto)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return BadRequest(ApiResponseDto<object>.ErrorResult(errors));
+            }
+
+            await _driverService.UpdateBiometricSettingsAsync(id, settingsDto);
+            return Ok(ApiResponseDto<object>.SuccessResult(new { }, "Biometric settings updated successfully"));
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Driver not found for biometric settings update: {DriverId}", id);
+            return NotFound(ApiResponseDto<object>.ErrorResult(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating biometric settings for driver {DriverId}", id);
+            return StatusCode(500, ApiResponseDto<object>.ErrorResult("Internal server error"));
+        }
+    }
 }

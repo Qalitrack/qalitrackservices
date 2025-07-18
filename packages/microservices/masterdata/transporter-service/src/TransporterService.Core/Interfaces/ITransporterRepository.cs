@@ -11,4 +11,5 @@ public interface ITransporterRepository : IRepository<Transporter>
     Task<IEnumerable<Transporter>> GetAvailableTransportersAsync(DateTime date, string? routeId = null);
     Task<IEnumerable<Transporter>> SearchTransportersAsync(string searchTerm);
     Task<bool> IsRegistrationNumberUniqueAsync(string registrationNumber, string? excludeId = null);
+    Task<IEnumerable<Transporter>> GetDualRoleTransportersAsync();
 }

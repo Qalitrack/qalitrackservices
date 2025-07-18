@@ -12,6 +12,9 @@ public class UnitOfWork : IUnitOfWork
     private IWeightMeasurementRepository? _weightMeasurements;
     private IWeighbridgeStatusRepository? _weighbridgeStatuses;
     private IWeightCorrectionRepository? _weightCorrections;
+    private IRealTimeSessionRepository? _realTimeSessions;
+    private ICalibrationRecordRepository? _calibrationRecords;
+    private IHistoricalAnalysisRepository? _historicalAnalyses;
 
     public UnitOfWork(WeightDataContext context)
     {
@@ -26,6 +29,15 @@ public class UnitOfWork : IUnitOfWork
 
     public IWeightCorrectionRepository WeightCorrections =>
         _weightCorrections ??= new WeightCorrectionRepository(_context);
+
+    public IRealTimeSessionRepository RealTimeSessions =>
+        _realTimeSessions ??= new RealTimeSessionRepository(_context);
+
+    public ICalibrationRecordRepository CalibrationRecords =>
+        _calibrationRecords ??= new CalibrationRecordRepository(_context);
+
+    public IHistoricalAnalysisRepository HistoricalAnalyses =>
+        _historicalAnalyses ??= new HistoricalAnalysisRepository(_context);
 
     public async Task<int> SaveChangesAsync()
     {

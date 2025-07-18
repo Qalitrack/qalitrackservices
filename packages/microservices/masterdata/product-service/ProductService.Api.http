@@ -1,0 +1,125 @@
+@host = https://localhost:7005
+@baseUrl = {{host}}/api
+
+### Health Check
+GET {{host}}/health
+
+### Get All Products
+GET {{baseUrl}}/products
+
+### Get Product by ID
+GET {{baseUrl}}/products/{{productId}}
+
+### Create Product
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Sample Product",
+  "description": "A sample product for testing",
+  "code": "PROD001",
+  "sku": "SKU001",
+  "barcode": "123456789012",
+  "brand": "Sample Brand",
+  "manufacturer": "Sample Manufacturer",
+  "categoryId": "{{categoryId}}",
+  "weight": 1.5,
+  "weightUnit": "kg",
+  "stockQuantity": 100,
+  "minimumStock": 10,
+  "reorderLevel": 20
+}
+
+### Update Product
+PUT {{baseUrl}}/products/{{productId}}
+Content-Type: application/json
+
+{
+  "name": "Updated Product",
+  "description": "An updated product description",
+  "stockQuantity": 150
+}
+
+### Delete Product
+DELETE {{baseUrl}}/products/{{productId}}
+
+### Get All Categories
+GET {{baseUrl}}/categories
+
+### Get Category Hierarchy
+GET {{baseUrl}}/categories/hierarchy
+
+### Get Category by ID
+GET {{baseUrl}}/categories/{{categoryId}}
+
+### Create Category
+POST {{baseUrl}}/categories
+Content-Type: application/json
+
+{
+  "name": "Electronics",
+  "description": "Electronic products and devices",
+  "code": "ELEC",
+  "parentCategoryId": null,
+  "isVisible": true,
+  "allowProducts": true
+}
+
+### Get Subcategories
+GET {{baseUrl}}/categories/{{categoryId}}/subcategories
+
+### Get All Pricing
+GET {{baseUrl}}/pricing
+
+### Get Pricing by Product ID
+GET {{baseUrl}}/pricing/product/{{productId}}
+
+### Get Customer Pricing
+GET {{baseUrl}}/pricing/product/{{productId}}/customer/{{customerId}}
+
+### Get Effective Price
+GET {{baseUrl}}/pricing/product/{{productId}}/effective-price?customerId={{customerId}}&quantity=5
+
+### Create Pricing
+POST {{baseUrl}}/pricing
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "type": "Standard",
+  "basePrice": 99.99,
+  "currency": "USD",
+  "validFrom": "2024-01-01T00:00:00Z",
+  "isActive": true
+}
+
+### Get All Specifications
+GET {{baseUrl}}/specifications
+
+### Get Specifications by Product ID
+GET {{baseUrl}}/specifications/product/{{productId}}
+
+### Get Compliance Specifications
+GET {{baseUrl}}/specifications/product/{{productId}}/compliance
+
+### Validate Product Compliance
+GET {{baseUrl}}/specifications/product/{{productId}}/compliance/validate
+
+### Get Expiring Certifications
+GET {{baseUrl}}/specifications/expiring-certifications?daysAhead=30
+
+### Create Specification
+POST {{baseUrl}}/specifications
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "name": "Weight Specification",
+  "description": "Product weight specification",
+  "type": "Physical",
+  "category": "Physical",
+  "value": "1.5",
+  "unit": "kg",
+  "isRequired": true,
+  "isVisible": true
+}

@@ -1,48 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
 using CustomerService.Core.DTOs;
+using CustomerService.Core.Entities;
 using CustomerService.Core.Interfaces;
 
 namespace CustomerService.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
 public class OrdersController : BaseController
 {
     private readonly IOrderService _orderService;
+    private readonly ILogger<OrdersController> _logger;
 
-    public OrdersController(IOrderService orderService)
+    public OrdersController(IOrderService orderService, ILogger<OrdersController> logger)
     {
         _orderService = orderService;
+        _logger = logger;
     }
 
+    /// <summary>
+    /// Get all orders with optional filtering
+    /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] string? status = null, [FromQuery] string? customerId = null)
+    public async Task<IActionResult> GetOrders(
+        [FromQuery] int page = 1, 
+        [FromQuery] int pageSize = 20, 
+        [FromQuery] string? status = null, 
+        [FromQuery] string? customerId = null)
     {
         try
         {
-            var orders = await _orderService.GetOrdersPagedAsync(page, pageSize, status, customerId);
-            return HandleResult(Success(orders, "Orders retrieved successfully"));
+            var orders = await _orderService.GetOrdersAsync(page, pageSize, status, customerId);
+            return Ok(orders);
         }
         catch (Exception ex)
         {
-            return HandleResult(Error<IEnumerable<OrderSummaryDto>>(ex.Message));
+            _logger.LogError(ex, "Error getting orders");
+            return InternalServerError("An error occurred while retrieving orders");
         }
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto request)
-    {
-        try
-        {
-            var order = await _orderService.CreateOrderAsync(request);
-            return HandleResult(Success(order, "Order created successfully"));
-        }
-        catch (Exception ex)
-        {
-            return HandleResult(Error<OrderDto>(ex.Message));
-        }
-    }
-
+    /// <summary>
+    /// Get order by ID
+    /// </summary>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetOrder(string id)
     {
@@ -51,154 +50,160 @@ public class OrdersController : BaseController
             var order = await _orderService.GetOrderAsync(id);
             if (order == null)
             {
-                return NotFound(Error<OrderDto>($"Order with ID {id} not found"));
+                return NotFound("Order not found");
             }
 
-            return HandleResult(Success(order, "Order retrieved successfully"));
+            return Ok(order);
         }
         catch (Exception ex)
         {
-            return HandleResult(Error<OrderDto>(ex.Message));
+            _logger.LogError(ex, "Error getting order with id {Id}", id);
+            return InternalServerError("An error occurred while retrieving order");
         }
     }
 
+    /// <summary>
+    /// Create a new order
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto request)
+    {
+        try
+        {
+            var order = await _orderService.CreateOrderAsync(request);
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating order");
+            return InternalServerError("An error occurred while creating order");
+        }
+    }
+
+    /// <summary>
+    /// Update an existing order
+    /// </summary>
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateOrder(string id, [FromBody] UpdateOrderDto request)
     {
         try
         {
             var order = await _orderService.UpdateOrderAsync(id, request);
-            return HandleResult(Success(order, "Order updated successfully"));
-        }
-        catch (ArgumentException ex)
-        {
-            return NotFound(Error<OrderDto>(ex.Message));
+            if (order == null)
+            {
+                return NotFound("Order not found");
+            }
+
+            return Ok(order, "Order updated successfully");
         }
         catch (Exception ex)
         {
-            return HandleResult(Error<OrderDto>(ex.Message));
+            _logger.LogError(ex, "Error updating order with id {Id}", id);
+            return InternalServerError("An error occurred while updating order");
         }
     }
 
-    [HttpPost("{id}/status")]
-    public async Task<IActionResult> UpdateOrderStatus(string id, [FromBody] OrderStatusUpdateDto request)
+    /// <summary>
+    /// Update order status
+    /// </summary>
+    [HttpPut("{id}/status")]
+    public async Task<IActionResult> UpdateOrderStatus(string id, [FromBody] UpdateOrderStatusDto request)
     {
         try
         {
-            var result = await _orderService.UpdateOrderStatusAsync(id, request);
+            var result = await _orderService.UpdateOrderStatusAsync(id, request.Status, request.Reason, request.ChangedBy);
             if (!result)
             {
-                return NotFound(Error($"Order with ID {id} not found"));
+                return NotFound("Order not found");
             }
 
-            return HandleResult(Success("Order status updated successfully"));
+            return Ok<object?>(null, "Order status updated successfully");
         }
         catch (Exception ex)
         {
-            return HandleResult(Error(ex.Message));
+            _logger.LogError(ex, "Error updating order status for id {Id}", id);
+            return InternalServerError("An error occurred while updating order status");
         }
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> CancelOrder(string id, [FromBody] string? cancellationReason = null)
+    /// <summary>
+    /// Cancel an order
+    /// </summary>
+    [HttpPost("{id}/cancel")]
+    public async Task<IActionResult> CancelOrder(string id, [FromBody] CancelOrderDto request)
     {
         try
         {
-            var result = await _orderService.CancelOrderAsync(id, cancellationReason);
+            var result = await _orderService.CancelOrderAsync(id, request.CancellationReason, request.CancelledBy);
             if (!result)
             {
-                return NotFound(Error($"Order with ID {id} not found or cannot be cancelled"));
+                return NotFound("Order not found or cannot be cancelled");
             }
 
-            return HandleResult(Success("Order cancelled successfully"));
+            return Ok<object?>(null, "Order cancelled successfully");
         }
         catch (Exception ex)
         {
-            return HandleResult(Error(ex.Message));
+            _logger.LogError(ex, "Error cancelling order with id {Id}", id);
+            return InternalServerError("An error occurred while cancelling order");
         }
     }
 
+    /// <summary>
+    /// Get orders for a specific customer
+    /// </summary>
     [HttpGet("customer/{customerId}")]
     public async Task<IActionResult> GetCustomerOrders(string customerId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         try
         {
             var orders = await _orderService.GetCustomerOrdersAsync(customerId, page, pageSize);
-            return HandleResult(Success(orders, "Customer orders retrieved successfully"));
+            return Ok(orders);
         }
         catch (Exception ex)
         {
-            return HandleResult(Error<IEnumerable<OrderSummaryDto>>(ex.Message));
+            _logger.LogError(ex, "Error getting orders for customer {CustomerId}", customerId);
+            return InternalServerError("An error occurred while retrieving customer orders");
         }
     }
 
+    /// <summary>
+    /// Get orders for a specific supplier
+    /// </summary>
     [HttpGet("supplier/{supplierId}")]
     public async Task<IActionResult> GetSupplierOrders(string supplierId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         try
         {
             var orders = await _orderService.GetSupplierOrdersAsync(supplierId, page, pageSize);
-            return HandleResult(Success(orders, "Supplier orders retrieved successfully"));
+            return Ok(orders);
         }
         catch (Exception ex)
         {
-            return HandleResult(Error<IEnumerable<OrderSummaryDto>>(ex.Message));
+            _logger.LogError(ex, "Error getting orders for supplier {SupplierId}", supplierId);
+            return InternalServerError("An error occurred while retrieving supplier orders");
         }
     }
 
-    [HttpGet("pending")]
-    public async Task<IActionResult> GetPendingOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
-    {
-        try
-        {
-            var orders = await _orderService.GetPendingOrdersAsync(page, pageSize);
-            return HandleResult(Success(orders, "Pending orders retrieved successfully"));
-        }
-        catch (Exception ex)
-        {
-            return HandleResult(Error<IEnumerable<OrderSummaryDto>>(ex.Message));
-        }
-    }
-
-    [HttpGet("in-transit")]
-    public async Task<IActionResult> GetInTransitOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
-    {
-        try
-        {
-            var orders = await _orderService.GetInTransitOrdersAsync(page, pageSize);
-            return HandleResult(Success(orders, "In-transit orders retrieved successfully"));
-        }
-        catch (Exception ex)
-        {
-            return HandleResult(Error<IEnumerable<OrderSummaryDto>>(ex.Message));
-        }
-    }
-
-    [HttpGet("{id}/history")]
+    /// <summary>
+    /// Get order status history
+    /// </summary>
+    [HttpGet("{id}/status-history")]
     public async Task<IActionResult> GetOrderStatusHistory(string id)
     {
         try
         {
             var history = await _orderService.GetOrderStatusHistoryAsync(id);
-            return HandleResult(Success(history, "Order status history retrieved successfully"));
+            return Ok(history);
         }
         catch (Exception ex)
         {
-            return HandleResult(Error<IEnumerable<OrderStatusHistoryDto>>(ex.Message));
-        }
-    }
-
-    [HttpGet("search")]
-    public async Task<IActionResult> SearchOrders([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
-    {
-        try
-        {
-            var orders = await _orderService.SearchOrdersAsync(query, page, pageSize);
-            return HandleResult(Success(orders, "Orders search completed successfully"));
-        }
-        catch (Exception ex)
-        {
-            return HandleResult(Error<IEnumerable<OrderSummaryDto>>(ex.Message));
+            _logger.LogError(ex, "Error getting status history for order {Id}", id);
+            return InternalServerError("An error occurred while retrieving order status history");
         }
     }
 }
