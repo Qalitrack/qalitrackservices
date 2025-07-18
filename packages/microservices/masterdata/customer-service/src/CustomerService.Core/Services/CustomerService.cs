@@ -57,7 +57,7 @@ public class CustomerService : ICustomerService
             }
         }
 
-        var customer = _mapper.Map<CustomerService.Core.Entities.Customer>(dto);
+        var customer = _mapper.Map<Customer>(dto);
         customer.CreatedAt = DateTime.UtcNow;
         customer.UpdatedAt = DateTime.UtcNow;
         
