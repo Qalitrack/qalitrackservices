@@ -37,6 +37,12 @@ public class Transporter : BaseEntity
     public string? Website { get; set; }
     public string? Description { get; set; }
     
+    // Dual-role support (transporter can also be a customer)
+    public bool IsCustomer { get; set; } = false;
+    public string? CustomerServiceReference { get; set; }
+    public DateTime? CustomerRegistrationDate { get; set; }
+    public string? CustomerNotes { get; set; }
+    
     // Navigation properties
     public virtual ICollection<TransporterContact> Contacts { get; set; } = new List<TransporterContact>();
     public virtual ICollection<TransporterFleet> Fleet { get; set; } = new List<TransporterFleet>();

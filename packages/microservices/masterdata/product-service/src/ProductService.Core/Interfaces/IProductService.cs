@@ -4,31 +4,27 @@ namespace ProductService.Core.Interfaces;
 
 public interface IProductService
 {
-    // Product Management
-    Task<ProductDto> RegisterProductAsync(RegisterProductRequest request);
-    Task<ProductDto> UpdateProductAsync(string id, UpdateProductRequest request);
-    Task<ProductDto?> GetProductByIdAsync(string id);
-    Task<ProductDto?> GetProductByCodeAsync(string code);
-    Task<List<ProductDto>> GetAllProductsAsync();
-    Task<List<ProductDto>> GetProductsByCategoryAsync(string categoryId);
-    Task<List<ProductDto>> GetHazardousProductsAsync();
-    Task<List<ProductDto>> SearchProductsAsync(string searchTerm);
-    Task DeleteProductAsync(string id);
-
-    // Category Management
-    Task<ProductCategoryDto> CreateCategoryAsync(CreateProductCategoryRequest request);
-    Task<List<ProductCategoryDto>> GetAllCategoriesAsync();
-    Task<List<ProductCategoryDto>> GetRootCategoriesAsync();
-    Task<List<ProductCategoryDto>> GetSubCategoriesAsync(string parentCategoryId);
-
-    // Specification Management
-    Task<List<ProductSpecificationDto>> GetProductSpecificationsAsync(string productId);
-    Task UpdateProductSpecificationsAsync(string productId, UpdateProductSpecificationsRequest request);
-
-    // Pricing Management
-    Task<List<ProductPricingDto>> GetProductPricingAsync(string productId);
-    Task UpdateProductPricingAsync(string productId, UpdateProductPricingRequest request);
-
-    // Compliance Management
-    Task<ProductComplianceDto> GetProductComplianceAsync(string productId);
+    Task<IEnumerable<ProductReadDto>> GetAllAsync();
+    Task<ProductReadDto?> GetByIdAsync(string id);
+    Task<ProductReadDto> CreateAsync(CreateProductDto dto);
+    Task<ProductReadDto?> UpdateAsync(string id, UpdateProductDto dto);
+    Task<bool> DeleteAsync(string id);
+    Task<bool> IsNameAvailableAsync(string name);
+    
+    // Inventory Management
+    Task<bool> IsAvailableAsync(string productId, int quantity = 1);
+    Task<int> GetAvailableStockAsync(string productId);
+    Task<bool> UpdateStockAsync(string productId, int quantity);
+    Task<bool> ReserveStockAsync(string productId, int quantity);
+    Task<bool> ReleaseStockAsync(string productId, int quantity);
+    Task<IEnumerable<ProductReadDto>> GetLowStockProductsAsync();
+    
+    // Search and Filtering
+    Task<IEnumerable<ProductReadDto>> SearchAsync(string searchTerm);
+    Task<IEnumerable<ProductReadDto>> GetByCategoryAsync(string categoryId);
+    Task<IEnumerable<ProductReadDto>> GetByStatusAsync(ProductStatus status);
+    
+    // Integration with Customer Service
+    Task<decimal> GetCustomerPriceAsync(string productId, string customerId, int quantity = 1);
+    Task<IEnumerable<ProductReadDto>> GetCustomerProductsAsync(string customerId);
 }

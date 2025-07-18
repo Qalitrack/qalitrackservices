@@ -45,6 +45,10 @@ public class Driver : BaseEntity
     public string Supervisor { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
     public string ProfilePhotoUrl { get; set; } = string.Empty;
+    public string? FingerprintData { get; set; }
+    public string? FaceRecognitionData { get; set; }
+    public DateTime? BiometricRegistrationDate { get; set; }
+    public bool BiometricEnabled { get; set; } = false;
 
     // Navigation properties
     public virtual DriverLicense? License { get; set; }

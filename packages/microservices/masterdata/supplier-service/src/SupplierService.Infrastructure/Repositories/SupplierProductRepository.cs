@@ -11,43 +11,61 @@ public class SupplierProductRepository : Repository<SupplierProduct>, ISupplierP
     {
     }
 
-    public async Task<IEnumerable<SupplierProduct>> GetBySupplierIdAsync(string supplierId)
+    public async Task<IEnumerable<SupplierProduct>> GetBySupplierId(string supplierId)
     {
         return await _dbSet
-            .Where(p => p.SupplierId == supplierId && !p.IsDeleted)
-            .OrderBy(p => p.ProductName)
+            .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
+            .Where(sp => sp.SupplierId == supplierId && !sp.IsDeleted)
+            .OrderBy(sp => sp.SupplierSKU)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<SupplierProduct>> GetByProductIdAsync(string productId)
+    public async Task<IEnumerable<SupplierProduct>> GetByProductId(string productId)
     {
         return await _dbSet
-            .Where(p => p.ProductId == productId && !p.IsDeleted)
+            .Include(sp => sp.Supplier)
+            .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
+            .Where(sp => sp.ProductId == productId && !sp.IsDeleted)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<SupplierProduct>> GetByCategoryAsync(string category)
+    public async Task<SupplierProduct?> GetBySupplierAndProductId(string supplierId, string productId)
     {
         return await _dbSet
-            .Where(p => p.Category == category && !p.IsDeleted)
+            .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
+            .FirstOrDefaultAsync(sp => sp.SupplierId == supplierId && sp.ProductId == productId && !sp.IsDeleted);
+    }
+
+    public async Task<IEnumerable<SupplierProduct>> GetByAvailabilityStatus(ProductAvailabilityStatus status)
+    {
+        return await _dbSet
+            .Include(sp => sp.Supplier)
+            .Where(sp => sp.Status == status && !sp.IsDeleted)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<SupplierProduct>> GetActiveProductsAsync(string supplierId)
+    public async Task<IEnumerable<SupplierProduct>> GetPreferredProducts(string supplierId)
     {
         return await _dbSet
-            .Where(p => p.SupplierId == supplierId && p.IsActive && !p.IsDeleted)
-            .OrderBy(p => p.ProductName)
+            .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
+            .Where(sp => sp.SupplierId == supplierId && sp.IsPreferred && !sp.IsDeleted)
             .ToListAsync();
     }
 
-    public override async Task<IEnumerable<SupplierProduct>> GetAllAsync()
+    public async Task<IEnumerable<SupplierProduct>> GetLowStockProducts(string supplierId, int threshold = 0)
     {
-        return await _dbSet.Where(p => !p.IsDeleted).ToListAsync();
+        return await _dbSet
+            .Where(sp => sp.SupplierId == supplierId && 
+                        sp.CurrentStock <= (threshold > 0 ? threshold : sp.ReorderLevel) && 
+                        !sp.IsDeleted)
+            .ToListAsync();
     }
 
     public override async Task<SupplierProduct?> GetByIdAsync(string id)
     {
-        return await _dbSet.FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+        return await _dbSet
+            .Include(sp => sp.Supplier)
+            .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
+            .FirstOrDefaultAsync(sp => sp.Id == id && !sp.IsDeleted);
     }
 }

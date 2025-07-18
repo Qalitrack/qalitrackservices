@@ -351,4 +351,47 @@ public class TransporterService : ITransporterService
 
         return summary;
     }
+
+    // Dual-Role Management
+    public async Task<TransporterDto> EnableCustomerRoleAsync(string transporterId, EnableCustomerRoleDto enableCustomerRoleDto)
+    {
+        var transporter = await _transporterRepository.GetByIdAsync(transporterId);
+        if (transporter == null)
+        {
+            throw new KeyNotFoundException($"Transporter with ID {transporterId} not found");
+        }
+
+        transporter.IsCustomer = true;
+        transporter.CustomerServiceReference = enableCustomerRoleDto.CustomerServiceReference;
+        transporter.CustomerRegistrationDate = DateTime.UtcNow;
+        transporter.CustomerNotes = enableCustomerRoleDto.CustomerNotes;
+        transporter.UpdatedAt = DateTime.UtcNow;
+
+        await _transporterRepository.UpdateAsync(transporter);
+        return _mapper.Map<TransporterDto>(transporter);
+    }
+
+    public async Task<TransporterDto> DisableCustomerRoleAsync(string transporterId)
+    {
+        var transporter = await _transporterRepository.GetByIdAsync(transporterId);
+        if (transporter == null)
+        {
+            throw new KeyNotFoundException($"Transporter with ID {transporterId} not found");
+        }
+
+        transporter.IsCustomer = false;
+        transporter.CustomerServiceReference = null;
+        transporter.CustomerRegistrationDate = null;
+        transporter.CustomerNotes = null;
+        transporter.UpdatedAt = DateTime.UtcNow;
+
+        await _transporterRepository.UpdateAsync(transporter);
+        return _mapper.Map<TransporterDto>(transporter);
+    }
+
+    public async Task<IEnumerable<TransporterDto>> GetDualRoleTransportersAsync()
+    {
+        var transporters = await _transporterRepository.GetDualRoleTransportersAsync();
+        return _mapper.Map<IEnumerable<TransporterDto>>(transporters);
+    }
 }

@@ -160,4 +160,88 @@ public class SaccosController : ControllerBase
         var shares = await _saccoService.GetSharesAsync(id);
         return Ok(shares);
     }
+
+    // Regulatory Compliance Endpoints
+    [HttpGet("{id}/compliance-status")]
+    public async Task<ActionResult<SaccoComplianceStatusDto>> GetComplianceStatus(string id)
+    {
+        try
+        {
+            var status = await _saccoService.GetComplianceStatusAsync(id);
+            return Ok(status);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPost("{id}/compliance-check")]
+    public async Task<ActionResult<SaccoComplianceReportDto>> PerformComplianceCheck(string id)
+    {
+        try
+        {
+            var report = await _saccoService.PerformComplianceCheckAsync(id);
+            return Ok(report);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPost("{id}/regulatory-submission")]
+    public async Task<ActionResult<SaccoRegulatorySubmissionDto>> SubmitRegulatoryReport(
+        string id, [FromBody] SubmitRegulatoryReportRequest request)
+    {
+        try
+        {
+            var submission = await _saccoService.SubmitRegulatoryReportAsync(id, request);
+            return Ok(submission);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("{id}/regulatory-submissions")]
+    public async Task<ActionResult<IEnumerable<SaccoRegulatorySubmissionDto>>> GetRegulatorySubmissions(string id)
+    {
+        try
+        {
+            var submissions = await _saccoService.GetRegulatorySubmissionsAsync(id);
+            return Ok(submissions);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpGet("compliance-violations")]
+    public async Task<ActionResult<IEnumerable<SaccoComplianceViolationDto>>> GetComplianceViolations()
+    {
+        var violations = await _saccoService.GetComplianceViolationsAsync();
+        return Ok(violations);
+    }
+
+    [HttpPost("{id}/external-audit")]
+    public async Task<ActionResult<SaccoAuditResultDto>> ScheduleExternalAudit(
+        string id, [FromBody] ScheduleAuditRequest request)
+    {
+        try
+        {
+            var audit = await _saccoService.ScheduleExternalAuditAsync(id, request);
+            return Ok(audit);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 }

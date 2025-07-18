@@ -4,138 +4,90 @@ using ProductService.Core.DTOs;
 namespace ProductService.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class BaseController : ControllerBase
+public abstract class BaseController : ControllerBase
 {
-    /// <summary>
-    /// Gets the organization ID from gateway-forwarded headers
-    /// </summary>
-    protected string GetOrganizationId()
+    protected IActionResult Ok<T>(T data, string? message = null)
     {
-        return HttpContext.Request.Headers["X-Organization-Id"].FirstOrDefault() ?? "default-org";
-    }
-
-    /// <summary>
-    /// Gets the user ID from gateway-forwarded headers
-    /// </summary>
-    protected string GetUserId()
-    {
-        return HttpContext.Request.Headers["X-User-ID"].FirstOrDefault() ?? "system";
-    }
-
-    /// <summary>
-    /// Gets the user name from gateway-forwarded headers
-    /// </summary>
-    protected string GetUserName()
-    {
-        return HttpContext.Request.Headers["X-User-Name"].FirstOrDefault() ?? "Unknown";
-    }
-
-    /// <summary>
-    /// Gets the user email from gateway-forwarded headers
-    /// </summary>
-    protected string GetUserEmail()
-    {
-        return HttpContext.Request.Headers["X-User-Email"].FirstOrDefault() ?? string.Empty;
-    }
-
-    /// <summary>
-    /// Gets the user roles from gateway-forwarded headers
-    /// </summary>
-    protected List<string> GetUserRoles()
-    {
-        var rolesHeader = HttpContext.Request.Headers["X-User-Roles"].FirstOrDefault();
-        if (string.IsNullOrEmpty(rolesHeader))
-            return new List<string>();
-        
-        return rolesHeader.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                         .Select(r => r.Trim())
-                         .ToList();
-    }
-
-    /// <summary>
-    /// Checks if the current user has any of the specified roles
-    /// </summary>
-    protected bool HasAnyRole(params string[] roles)
-    {
-        var userRoles = GetUserRoles();
-        return roles.Any(role => userRoles.Contains(role, StringComparer.OrdinalIgnoreCase));
-    }
-
-    /// <summary>
-    /// Checks if the current user has admin-level access
-    /// </summary>
-    protected bool IsAdmin()
-    {
-        return HasAnyRole("Admin", "SuperAdmin");
-    }
-
-    /// <summary>
-    /// Checks if the current user has operator-level access or higher
-    /// </summary>
-    protected bool IsOperatorOrHigher()
-    {
-        return HasAnyRole("Operator", "SiteManager", "Admin", "SuperAdmin");
-    }
-
-    /// <summary>
-    /// Checks if the request is authorized by the gateway
-    /// </summary>
-    protected bool IsGatewayAuthorized()
-    {
-        return HttpContext.Request.Headers["X-Gateway-Authorized"].FirstOrDefault() == "true";
-    }
-
-    /// <summary>
-    /// Handles API response formatting
-    /// </summary>
-    protected IActionResult HandleResult<T>(ApiResponseDto<T> result)
-    {
-        if (result.Success)
+        return base.Ok(new ApiResponseDto<T>
         {
-            return Ok(result);
-        }
-
-        return BadRequest(result);
+            Success = true,
+            Data = data,
+            Message = message,
+            StatusCode = 200
+        });
     }
 
-    /// <summary>
-    /// Creates a successful API response
-    /// </summary>
-    protected ApiResponseDto<T> Success<T>(T data, string message = "")
+    protected IActionResult Created<T>(T data, string? message = null)
     {
-        return ApiResponseDto<T>.SuccessResponse(data, message);
+        return StatusCode(201, new ApiResponseDto<T>
+        {
+            Success = true,
+            Data = data,
+            Message = message,
+            StatusCode = 201
+        });
     }
 
-    /// <summary>
-    /// Creates an error API response
-    /// </summary>
-    protected ApiResponseDto<T> Error<T>(string message, List<string>? errors = null)
+    protected IActionResult BadRequest(string message, List<string>? errors = null)
     {
-        return ApiResponseDto<T>.ErrorResponse(message, errors);
+        return base.BadRequest(new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            Errors = errors,
+            StatusCode = 400
+        });
     }
 
-    /// <summary>
-    /// Creates a successful API response without data
-    /// </summary>
-    protected ApiResponseDto Success(string message = "")
+    protected IActionResult Unauthorized(string message = "Unauthorized")
     {
-        return ApiResponseDto.SuccessResponse(message);
+        return base.Unauthorized(new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 401
+        });
     }
 
-    /// <summary>
-    /// Creates an error API response without data
-    /// </summary>
-    protected ApiResponseDto Error(string message, List<string>? errors = null)
+    protected IActionResult Forbidden(string message = "Forbidden")
     {
-        return ApiResponseDto.ErrorResponse(message, errors);
+        return StatusCode(403, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 403
+        });
     }
 
-    /// <summary>
-    /// Returns a 403 Forbidden response for insufficient permissions
-    /// </summary>
-    protected IActionResult Forbidden(string message = "Insufficient permissions")
+    protected IActionResult NotFound(string message = "Not found")
     {
-        return StatusCode(403, Error(message));
+        return base.NotFound(new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 404
+        });
     }
+
+    protected IActionResult InternalServerError(string message = "Internal server error")
+    {
+        return StatusCode(500, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 500
+        });
+    }
+
+    // TODO: Add authentication-related helper methods if needed
+    // Example methods for JWT claims:
+    // protected string? GetCurrentUserId()
+    // {
+    //     return User?.FindFirst("user_id")?.Value;
+    // }
+    //
+    // protected string? GetCurrentUserName()
+    // {
+    //     return User?.FindFirst("username")?.Value;
+    // }
 }

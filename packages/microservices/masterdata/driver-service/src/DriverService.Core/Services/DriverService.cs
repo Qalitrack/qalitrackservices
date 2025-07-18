@@ -285,4 +285,114 @@ public class DriverService : IDriverService
         violation.UpdatedAt = DateTime.UtcNow;
         await _violationRepository.UpdateAsync(violation);
     }
+
+    // Biometric management
+    public async Task RegisterBiometricAsync(string driverId, BiometricRegistrationDto biometricDto)
+    {
+        var driver = await _driverRepository.GetByIdAsync(driverId);
+        if (driver == null)
+        {
+            throw new ArgumentException($"Driver with ID {driverId} not found");
+        }
+
+        // Register biometric data based on type
+        switch (biometricDto.BiometricType.ToLower())
+        {
+            case "fingerprint":
+                driver.FingerprintData = biometricDto.BiometricData;
+                break;
+            case "face":
+                driver.FaceRecognitionData = biometricDto.BiometricData;
+                break;
+            default:
+                throw new ArgumentException($"Unsupported biometric type: {biometricDto.BiometricType}");
+        }
+
+        driver.BiometricRegistrationDate = DateTime.UtcNow;
+        driver.BiometricEnabled = true;
+        driver.UpdatedAt = DateTime.UtcNow;
+
+        await _driverRepository.UpdateAsync(driver);
+    }
+
+    public async Task<BiometricVerificationResultDto> VerifyBiometricAsync(string driverId, BiometricVerificationDto verificationDto)
+    {
+        var driver = await _driverRepository.GetByIdAsync(driverId);
+        if (driver == null)
+        {
+            throw new ArgumentException($"Driver with ID {driverId} not found");
+        }
+
+        if (!driver.BiometricEnabled)
+        {
+            return new BiometricVerificationResultDto
+            {
+                IsMatch = false,
+                ConfidenceScore = 0.0,
+                BiometricType = verificationDto.BiometricType,
+                VerificationTimestamp = DateTime.UtcNow,
+                Notes = "Biometric authentication not enabled for this driver"
+            };
+        }
+
+        // Simple verification logic (in real implementation, use proper biometric libraries)
+        string storedBiometricData = verificationDto.BiometricType.ToLower() switch
+        {
+            "fingerprint" => driver.FingerprintData ?? "",
+            "face" => driver.FaceRecognitionData ?? "",
+            _ => ""
+        };
+
+        if (string.IsNullOrEmpty(storedBiometricData))
+        {
+            return new BiometricVerificationResultDto
+            {
+                IsMatch = false,
+                ConfidenceScore = 0.0,
+                BiometricType = verificationDto.BiometricType,
+                VerificationTimestamp = DateTime.UtcNow,
+                Notes = $"No {verificationDto.BiometricType} data registered for this driver"
+            };
+        }
+
+        // Simple comparison (in real implementation, use proper biometric matching algorithms)
+        bool isMatch = storedBiometricData == verificationDto.BiometricData;
+        double confidenceScore = isMatch ? 0.95 : 0.0;
+
+        return new BiometricVerificationResultDto
+        {
+            IsMatch = isMatch,
+            ConfidenceScore = confidenceScore,
+            BiometricType = verificationDto.BiometricType,
+            VerificationTimestamp = DateTime.UtcNow,
+            Notes = isMatch ? "Biometric match successful" : "Biometric match failed"
+        };
+    }
+
+    public async Task UpdateBiometricSettingsAsync(string driverId, BiometricSettingsDto settingsDto)
+    {
+        var driver = await _driverRepository.GetByIdAsync(driverId);
+        if (driver == null)
+        {
+            throw new ArgumentException($"Driver with ID {driverId} not found");
+        }
+
+        driver.BiometricEnabled = settingsDto.BiometricEnabled;
+        
+        // If biometric is disabled, optionally clear biometric data
+        if (!settingsDto.BiometricEnabled)
+        {
+            if (!settingsDto.FingerprintEnabled)
+            {
+                driver.FingerprintData = null;
+            }
+            if (!settingsDto.FaceRecognitionEnabled)
+            {
+                driver.FaceRecognitionData = null;
+            }
+        }
+
+        driver.UpdatedAt = DateTime.UtcNow;
+        await _driverRepository.UpdateAsync(driver);
+    }
 }

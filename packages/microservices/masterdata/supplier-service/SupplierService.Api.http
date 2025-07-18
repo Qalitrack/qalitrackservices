@@ -1,30 +1,35 @@
-@SupplierService_HostAddress = https://localhost:7147
+@SupplierService_HostAddress = https://localhost:7006
+@supplierId = {{$guid}}
+@addressId = {{$guid}}
+@productId = {{$guid}}
+@pricingId = {{$guid}}
 
 ### Get all suppliers
 GET {{SupplierService_HostAddress}}/api/suppliers
 Accept: application/json
 
-### Register a new supplier
+### Create a new supplier
 POST {{SupplierService_HostAddress}}/api/suppliers
 Content-Type: application/json
 
 {
   "name": "ABC Manufacturing Co.",
-  "taxNumber": "123456789",
-  "registrationNumber": "REG123456",
-  "contactEmail": "contact@abcmanufacturing.com",
-  "contactPhone": "+1-555-0123",
-  "address": "123 Industrial Blvd, Manufacturing City, MC 12345",
-  "supplierType": 0,
-  "website": "https://www.abcmanufacturing.com",
+  "code": "ABC001",
+  "contactPerson": "John Smith",
+  "email": "contact@abcmanufacturing.com",
+  "phone": "+1-555-0123",
+  "type": "Manufacturer",
   "description": "Leading manufacturer of industrial components",
-  "industry": "Manufacturing",
-  "employeeCount": 250,
-  "establishedDate": "1995-06-15T00:00:00Z"
+  "website": "https://www.abcmanufacturing.com",
+  "taxIdentificationNumber": "TAX123456789"
 }
 
 ### Get supplier by ID (replace with actual ID)
 GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}
+Accept: application/json
+
+### Get supplier by code
+GET {{SupplierService_HostAddress}}/api/suppliers/code/ABC001
 Accept: application/json
 
 ### Update supplier
@@ -33,17 +38,14 @@ Content-Type: application/json
 
 {
   "name": "ABC Manufacturing Co. Ltd.",
-  "taxNumber": "123456789",
-  "registrationNumber": "REG123456",
-  "contactEmail": "contact@abcmanufacturing.com",
-  "contactPhone": "+1-555-0123",
-  "address": "123 Industrial Blvd, Manufacturing City, MC 12345",
-  "supplierType": 0,
-  "status": 0,
-  "website": "https://www.abcmanufacturing.com",
+  "contactPerson": "Jane Smith",
+  "email": "contact@abcmanufacturing.com",
+  "phone": "+1-555-0123",
+  "status": "Active",
+  "type": "Manufacturer",
   "description": "Leading manufacturer of industrial components and solutions",
-  "industry": "Manufacturing",
-  "employeeCount": 275
+  "website": "https://www.abcmanufacturing.com",
+  "taxIdentificationNumber": "TAX123456789"
 }
 
 ### Search suppliers
@@ -51,54 +53,62 @@ GET {{SupplierService_HostAddress}}/api/suppliers/search?term=ABC
 Accept: application/json
 
 ### Get suppliers by status
-GET {{SupplierService_HostAddress}}/api/suppliers/status/0
+GET {{SupplierService_HostAddress}}/api/suppliers/status/Active
 Accept: application/json
 
 ### Get suppliers by type
-GET {{SupplierService_HostAddress}}/api/suppliers/type/0
+GET {{SupplierService_HostAddress}}/api/suppliers/type/Manufacturer
 Accept: application/json
 
-### Create supplier contact
-POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contacts
+### Verify supplier
+POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/verify
+Accept: application/json
+
+### Delete supplier
+DELETE {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}
+
+### === ADDRESS ENDPOINTS ===
+
+### Get supplier addresses
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/addresses
+Accept: application/json
+
+### Create supplier address
+POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/addresses
 Content-Type: application/json
 
 {
-  "firstName": "John",
-  "lastName": "Smith",
-  "email": "john.smith@abcmanufacturing.com",
-  "phone": "+1-555-0124",
-  "mobile": "+1-555-0125",
-  "jobTitle": "Sales Manager",
-  "department": "Sales",
-  "contactType": 1,
-  "isPrimary": true
+  "type": "Main",
+  "street": "123 Industrial Blvd",
+  "city": "Manufacturing City",
+  "state": "MC",
+  "postalCode": "12345",
+  "country": "United States",
+  "additionalInfo": "Building A, Floor 2",
+  "isDefault": true,
+  "latitude": 40.7128,
+  "longitude": -74.0060
 }
 
-### Get supplier contacts
-GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contacts
-Accept: application/json
-
-### Create supplier contract
-POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contracts
+### Update supplier address
+PUT {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/addresses/{{addressId}}
 Content-Type: application/json
 
 {
-  "contractNumber": "CNT-2024-001",
-  "title": "Industrial Components Supply Agreement",
-  "description": "Long-term agreement for supply of industrial components",
-  "contractType": 1,
-  "startDate": "2024-01-01T00:00:00Z",
-  "endDate": "2026-12-31T23:59:59Z",
-  "contractValue": 500000.00,
-  "currency": "USD",
-  "paymentTerms": 1,
-  "paymentDays": 30,
-  "autoRenewal": true,
-  "renewalPeriodMonths": 12
+  "street": "456 Updated Industrial Blvd",
+  "city": "Manufacturing City",
+  "state": "MC",
+  "postalCode": "12346",
+  "additionalInfo": "Building B, Floor 3"
 }
 
-### Get supplier contracts
-GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/contracts
+### Delete supplier address
+DELETE {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/addresses/{{addressId}}
+
+### === SUPPLIER PRODUCT ENDPOINTS ===
+
+### Get supplier products
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/products
 Accept: application/json
 
 ### Create supplier product
@@ -107,22 +117,100 @@ Content-Type: application/json
 
 {
   "productId": "PROD-001",
-  "productName": "Industrial Bearing Type A",
-  "supplierProductCode": "IBA-001",
-  "description": "High-quality industrial bearing for heavy machinery",
-  "category": "Bearings",
-  "unitPrice": 45.99,
-  "currency": "USD",
-  "unitOfMeasure": "piece",
-  "minimumOrderQuantity": 100,
-  "leadTimeDays": 14,
-  "specifications": "Material: Steel, Size: 50mm diameter",
-  "qualityCertifications": "ISO 9001",
-  "complianceStandards": "ANSI B3.20"
+  "supplierSKU": "ABC-BEARING-001",
+  "leadTime": 14,
+  "minOrderQuantity": 100,
+  "isPreferred": true,
+  "status": "Available",
+  "notes": "High-quality industrial bearing for heavy machinery",
+  "reorderLevel": 50,
+  "currentStock": 500,
+  "nextDeliveryDate": "2024-02-15T00:00:00Z"
 }
 
-### Get supplier products
-GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/products
+### Update supplier product
+PUT {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/products/{{productId}}
+Content-Type: application/json
+
+{
+  "supplierSKU": "ABC-BEARING-001-V2",
+  "leadTime": 12,
+  "minOrderQuantity": 75,
+  "currentStock": 750,
+  "notes": "Updated specifications for improved performance"
+}
+
+### Delete supplier product
+DELETE {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/products/{{productId}}
+
+### Update product stock
+POST {{SupplierService_HostAddress}}/api/supplierproducts/{{productId}}/stock
+Content-Type: application/json
+
+1000
+
+### Set product as preferred
+POST {{SupplierService_HostAddress}}/api/supplierproducts/{{productId}}/preferred
+Content-Type: application/json
+
+true
+
+### === PRICING ENDPOINTS ===
+
+### Get product pricing
+GET {{SupplierService_HostAddress}}/api/supplierproducts/{{productId}}/pricing
+Accept: application/json
+
+### Create product pricing
+POST {{SupplierService_HostAddress}}/api/supplierproducts/{{productId}}/pricing
+Content-Type: application/json
+
+{
+  "type": "Standard",
+  "amount": 45.99,
+  "currency": "USD",
+  "minQuantity": 1,
+  "maxQuantity": 99,
+  "validFrom": "2024-01-01T00:00:00Z",
+  "validTo": "2024-12-31T23:59:59Z",
+  "isActive": true,
+  "priority": 1,
+  "notes": "Standard pricing for small quantities"
+}
+
+### Get active pricing
+GET {{SupplierService_HostAddress}}/api/supplierproducts/{{productId}}/pricing/active?quantity=50
+Accept: application/json
+
+### Calculate effective price
+GET {{SupplierService_HostAddress}}/api/supplierproducts/{{productId}}/pricing/calculate?quantity=50
+Accept: application/json
+
+### Update pricing
+PUT {{SupplierService_HostAddress}}/api/pricing/{{pricingId}}
+Content-Type: application/json
+
+{
+  "amount": 42.99,
+  "validTo": "2025-12-31T23:59:59Z",
+  "notes": "Updated pricing with discount"
+}
+
+### Delete pricing
+DELETE {{SupplierService_HostAddress}}/api/pricing/{{pricingId}}
+
+### Get promotional pricing
+GET {{SupplierService_HostAddress}}/api/pricing/promotional?supplierProductId={{productId}}
+Accept: application/json
+
+### Get expiring pricing
+GET {{SupplierService_HostAddress}}/api/pricing/expiring?daysAhead=30
+Accept: application/json
+
+### === PERFORMANCE ENDPOINTS ===
+
+### Get supplier performance
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/performance
 Accept: application/json
 
 ### Create supplier performance record
@@ -130,53 +218,15 @@ POST {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/performance
 Content-Type: application/json
 
 {
-  "year": 2024,
-  "month": 1,
-  "qualityRating": 8.5,
-  "deliveryRating": 9.0,
-  "serviceRating": 8.7,
-  "overallRating": 8.7,
-  "totalOrders": 25,
-  "onTimeDeliveries": 23,
-  "lateDeliveries": 2,
-  "defectiveDeliveries": 1,
-  "averageLeadTime": 12.5,
-  "totalOrderValue": 125000.00,
-  "currency": "USD",
-  "complaintCount": 1,
-  "resolvedComplaints": 1,
-  "customerSatisfactionScore": 8.8,
-  "comments": "Good performance overall, minor delays in January",
-  "evaluatedBy": "Quality Manager"
+  "metricType": "DeliveryTime",
+  "score": 85.5,
+  "period": "Month",
+  "periodStart": "2024-01-01T00:00:00Z",
+  "periodEnd": "2024-01-31T23:59:59Z",
+  "notes": "Good delivery performance with minor delays",
+  "dataPoints": 25
 }
 
-### Get supplier performance
-GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/performance
+### Get supplier performance summary
+GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/performance/summary
 Accept: application/json
-
-### Update supplier financial information
-PUT {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/financial
-Content-Type: application/json
-
-{
-  "annualRevenue": 5000000.00,
-  "currency": "USD",
-  "creditRating": 1,
-  "creditLimit": 100000.00,
-  "preferredPaymentTerms": 1,
-  "bankName": "First National Bank",
-  "taxId": "12-3456789",
-  "vatNumber": "VAT123456",
-  "taxExempt": false
-}
-
-### Get supplier financial information
-GET {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}/financial
-Accept: application/json
-
-### Get expiring contracts
-GET {{SupplierService_HostAddress}}/api/suppliercontracts/expiring?date=2024-12-31
-Accept: application/json
-
-### Delete supplier
-DELETE {{SupplierService_HostAddress}}/api/suppliers/{{supplierId}}

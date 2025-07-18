@@ -50,4 +50,9 @@ public interface ITransporterService
     // Performance Management
     Task<IEnumerable<TransporterPerformanceDto>> GetPerformanceByTransporterIdAsync(string transporterId);
     Task<TransporterPerformanceSummaryDto> GetPerformanceSummaryAsync(string transporterId);
+    
+    // Dual-Role Management
+    Task<TransporterDto> EnableCustomerRoleAsync(string transporterId, EnableCustomerRoleDto enableCustomerRoleDto);
+    Task<TransporterDto> DisableCustomerRoleAsync(string transporterId);
+    Task<IEnumerable<TransporterDto>> GetDualRoleTransportersAsync();
 }

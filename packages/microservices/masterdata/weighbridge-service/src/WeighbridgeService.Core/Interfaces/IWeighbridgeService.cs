@@ -47,4 +47,10 @@ public interface IWeighbridgeService
     // Location Management
     Task<WeighbridgeLocationDto?> GetLocationAsync(string weighbridgeId);
     Task<WeighbridgeLocationDto> UpdateLocationAsync(string weighbridgeId, CreateWeighbridgeLocationRequest request);
+    
+    // Hardware Integration
+    Task<WeighbridgeHardwareStatusDto> GetHardwareStatusAsync(string weighbridgeId);
+    Task<WeighbridgeControlResultDto> ExecuteHardwareControlAsync(string weighbridgeId, WeighbridgeControlCommandDto command);
+    Task<WeighbridgeTestResultDto> TestHardwareConnectionAsync(string weighbridgeId);
+    Task<WeighbridgeUpdateResultDto> PerformRemoteUpdateAsync(string weighbridgeId, WeighbridgeRemoteUpdateDto update);
 }

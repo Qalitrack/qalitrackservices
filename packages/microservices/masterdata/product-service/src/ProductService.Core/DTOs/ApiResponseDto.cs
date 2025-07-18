@@ -1,51 +1,14 @@
 namespace ProductService.Core.DTOs;
 
-public class ApiResponseDto<T>
+public class ApiResponseDto
 {
     public bool Success { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public T? Data { get; set; }
-    public List<string> Errors { get; set; } = new List<string>();
-
-    public static ApiResponseDto<T> SuccessResponse(T data, string message = "Success")
-    {
-        return new ApiResponseDto<T>
-        {
-            Success = true,
-            Message = message,
-            Data = data
-        };
-    }
-
-    public static ApiResponseDto<T> ErrorResponse(string message, List<string>? errors = null)
-    {
-        return new ApiResponseDto<T>
-        {
-            Success = false,
-            Message = message,
-            Errors = errors ?? new List<string>()
-        };
-    }
+    public string? Message { get; set; }
+    public List<string>? Errors { get; set; }
+    public int StatusCode { get; set; }
 }
 
-public class ApiResponseDto : ApiResponseDto<object>
+public class ApiResponseDto<T> : ApiResponseDto
 {
-    public static ApiResponseDto SuccessResponse(string message = "Success")
-    {
-        return new ApiResponseDto
-        {
-            Success = true,
-            Message = message
-        };
-    }
-
-    public new static ApiResponseDto ErrorResponse(string message, List<string>? errors = null)
-    {
-        return new ApiResponseDto
-        {
-            Success = false,
-            Message = message,
-            Errors = errors ?? new List<string>()
-        };
-    }
+    public T? Data { get; set; }
 }

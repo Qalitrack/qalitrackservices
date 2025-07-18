@@ -11,53 +11,57 @@ public class SupplierPerformanceRepository : Repository<SupplierPerformance>, IS
     {
     }
 
-    public async Task<IEnumerable<SupplierPerformance>> GetBySupplierIdAsync(string supplierId)
+    public async Task<IEnumerable<SupplierPerformance>> GetBySupplierId(string supplierId)
     {
         return await _dbSet
-            .Where(p => p.SupplierId == supplierId && !p.IsDeleted)
-            .OrderByDescending(p => p.Year)
-            .ThenByDescending(p => p.Month)
+            .Where(sp => sp.SupplierId == supplierId && !sp.IsDeleted)
+            .OrderByDescending(sp => sp.PeriodEnd)
+            .ThenBy(sp => sp.MetricType)
             .ToListAsync();
     }
 
-    public async Task<SupplierPerformance?> GetBySupplierAndPeriodAsync(string supplierId, int year, int month)
+    public async Task<IEnumerable<SupplierPerformance>> GetByMetricType(string supplierId, PerformanceMetricType metricType)
     {
         return await _dbSet
-            .FirstOrDefaultAsync(p => p.SupplierId == supplierId && p.Year == year && p.Month == month && !p.IsDeleted);
+            .Where(sp => sp.SupplierId == supplierId && 
+                        sp.MetricType == metricType && 
+                        !sp.IsDeleted)
+            .OrderByDescending(sp => sp.PeriodEnd)
+            .ToListAsync();
     }
 
-    public async Task<IEnumerable<SupplierPerformance>> GetByPeriodAsync(int year, int? month = null)
+    public async Task<IEnumerable<SupplierPerformance>> GetByPeriod(string supplierId, PerformancePeriod period)
     {
-        var query = _dbSet.Where(p => p.Year == year && !p.IsDeleted);
-        
-        if (month.HasValue)
-        {
-            query = query.Where(p => p.Month == month.Value);
-        }
-        
-        return await query.ToListAsync();
+        return await _dbSet
+            .Where(sp => sp.SupplierId == supplierId && 
+                        sp.Period == period && 
+                        !sp.IsDeleted)
+            .OrderByDescending(sp => sp.PeriodEnd)
+            .ThenBy(sp => sp.MetricType)
+            .ToListAsync();
     }
 
-    public async Task<decimal?> GetAverageRatingAsync(string supplierId, int? months = null)
+    public async Task<IEnumerable<SupplierPerformance>> GetByDateRange(string supplierId, DateTime startDate, DateTime endDate)
     {
-        var query = _dbSet.Where(p => p.SupplierId == supplierId && p.OverallRating.HasValue && !p.IsDeleted);
-        
-        if (months.HasValue)
-        {
-            var cutoffDate = DateTime.UtcNow.AddMonths(-months.Value);
-            query = query.Where(p => p.CreatedAt >= cutoffDate);
-        }
-        
-        return await query.AverageAsync(p => p.OverallRating);
+        return await _dbSet
+            .Where(sp => sp.SupplierId == supplierId && 
+                        sp.PeriodStart >= startDate && 
+                        sp.PeriodEnd <= endDate && 
+                        !sp.IsDeleted)
+            .OrderByDescending(sp => sp.PeriodEnd)
+            .ThenBy(sp => sp.MetricType)
+            .ToListAsync();
     }
 
-    public override async Task<IEnumerable<SupplierPerformance>> GetAllAsync()
+    public async Task<decimal> GetAverageScore(string supplierId, PerformanceMetricType metricType)
     {
-        return await _dbSet.Where(p => !p.IsDeleted).ToListAsync();
-    }
+        var scores = await _dbSet
+            .Where(sp => sp.SupplierId == supplierId && 
+                        sp.MetricType == metricType && 
+                        !sp.IsDeleted)
+            .Select(sp => sp.Score)
+            .ToListAsync();
 
-    public override async Task<SupplierPerformance?> GetByIdAsync(string id)
-    {
-        return await _dbSet.FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+        return scores.Any() ? scores.Average() : 0;
     }
 }

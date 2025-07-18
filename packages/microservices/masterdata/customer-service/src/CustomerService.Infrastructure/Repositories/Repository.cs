@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using CustomerService.Core.Entities;
 using CustomerService.Core.Interfaces;
 using CustomerService.Infrastructure.Data;
@@ -8,18 +7,13 @@ namespace CustomerService.Infrastructure.Repositories;
 
 public class Repository<T> : IRepository<T> where T : BaseEntity
 {
-    protected readonly CustomerDbContext _context;
+    protected readonly CustomerServiceDbContext _context;
     protected readonly DbSet<T> _dbSet;
 
-    public Repository(CustomerDbContext context)
+    public Repository(CustomerServiceDbContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();
-    }
-
-    public virtual async Task<T?> GetByIdAsync(string id)
-    {
-        return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
     }
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
@@ -27,84 +21,49 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await _dbSet.Where(e => !e.IsDeleted).ToListAsync();
     }
 
-    public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<T?> GetByIdAsync(string id)
     {
-        return await _dbSet.Where(e => !e.IsDeleted).Where(predicate).ToListAsync();
+        return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
     }
 
-    public virtual async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<T> CreateAsync(T entity)
     {
-        return await _dbSet.Where(e => !e.IsDeleted).FirstOrDefaultAsync(predicate);
-    }
-
-    public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
-    {
-        return await _dbSet.Where(e => !e.IsDeleted).AnyAsync(predicate);
-    }
-
-    public virtual async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
-    {
-        var query = _dbSet.Where(e => !e.IsDeleted);
-        if (predicate != null)
-        {
-            query = query.Where(predicate);
-        }
-        return await query.CountAsync();
-    }
-
-    public virtual async Task<T> AddAsync(T entity)
-    {
-        await _dbSet.AddAsync(entity);
+        entity.Id = Guid.NewGuid().ToString();
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+        
+        _dbSet.Add(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
-    public virtual async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
-    {
-        await _dbSet.AddRangeAsync(entities);
-        await _context.SaveChangesAsync();
-        return entities;
-    }
-
-    public virtual async Task<T> UpdateAsync(T entity)
+    public virtual async Task<T?> UpdateAsync(T entity)
     {
         entity.UpdatedAt = DateTime.UtcNow;
+        
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
-    public virtual async Task<T> DeleteAsync(T entity)
-    {
-        entity.IsDeleted = true;
-        entity.UpdatedAt = DateTime.UtcNow;
-        _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
-        return entity;
-    }
-
-    public virtual async Task<bool> DeleteByIdAsync(string id)
+    public virtual async Task<bool> DeleteAsync(string id)
     {
         var entity = await GetByIdAsync(id);
-        if (entity == null) return false;
+        if (entity == null)
+        {
+            return false;
+        }
+
+        entity.IsDeleted = true;
+        entity.UpdatedAt = DateTime.UtcNow;
         
-        await DeleteAsync(entity);
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
         return true;
     }
 
-    public virtual async Task<IEnumerable<T>> GetPagedAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? predicate = null)
+    public virtual async Task<bool> ExistsAsync(string id)
     {
-        var query = _dbSet.Where(e => !e.IsDeleted);
-        
-        if (predicate != null)
-        {
-            query = query.Where(predicate);
-        }
-
-        return await query
-            .OrderByDescending(e => e.CreatedAt)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+        return await _dbSet.AnyAsync(e => e.Id == id && !e.IsDeleted);
     }
 }

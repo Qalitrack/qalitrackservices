@@ -452,4 +452,221 @@ public class WeighbridgeService : IWeighbridgeService
 
         return _mapper.Map<WeighbridgeLocationDto>(savedLocation);
     }
+
+    // Hardware Integration
+    public async Task<WeighbridgeHardwareStatusDto> GetHardwareStatusAsync(string weighbridgeId)
+    {
+        var weighbridge = await _weighbridgeRepository.GetByIdAsync(weighbridgeId);
+        if (weighbridge == null)
+        {
+            throw new InvalidOperationException($"Weighbridge with ID {weighbridgeId} not found");
+        }
+
+        // Simulate hardware status check (in real implementation, this would communicate with actual hardware)
+        var status = new WeighbridgeHardwareStatusDto
+        {
+            WeighbridgeId = weighbridgeId,
+            IsOnline = SimulateConnectionStatus(),
+            IsCalibrated = await IsRecentlyCalibrated(weighbridgeId),
+            ConnectionStatus = SimulateConnectionStatus() ? "connected" : "disconnected",
+            OperationalStatus = weighbridge.Status == WeighbridgeStatus.Active ? "operational" : "maintenance",
+            CurrentWeight = SimulateCurrentWeight(),
+            LastCommunication = DateTime.UtcNow.AddMinutes(-Random.Shared.Next(1, 10)),
+            FirmwareVersion = "v2.1.3",
+            SystemParameters = new Dictionary<string, object>
+            {
+                { "temperature", Random.Shared.Next(18, 35) },
+                { "humidity", Random.Shared.Next(40, 80) },
+                { "load_cell_voltage", Random.Shared.NextDouble() * 5 },
+                { "signal_strength", Random.Shared.Next(70, 100) }
+            }
+        };
+
+        return status;
+    }
+
+    public async Task<WeighbridgeControlResultDto> ExecuteHardwareControlAsync(string weighbridgeId, WeighbridgeControlCommandDto command)
+    {
+        var weighbridge = await _weighbridgeRepository.GetByIdAsync(weighbridgeId);
+        if (weighbridge == null)
+        {
+            throw new InvalidOperationException($"Weighbridge with ID {weighbridgeId} not found");
+        }
+
+        // Simulate hardware control execution
+        var success = SimulateCommandExecution(command.Command);
+        var result = new WeighbridgeControlResultDto
+        {
+            WeighbridgeId = weighbridgeId,
+            Command = command.Command,
+            Success = success,
+            ExecutedAt = DateTime.UtcNow,
+            ExecutedBy = command.Operator
+        };
+
+        if (success)
+        {
+            result.ResultData = GenerateCommandResultData(command.Command);
+        }
+        else
+        {
+            result.ErrorMessage = $"Failed to execute command '{command.Command}'. Hardware communication error.";
+        }
+
+        return result;
+    }
+
+    public async Task<WeighbridgeTestResultDto> TestHardwareConnectionAsync(string weighbridgeId)
+    {
+        var weighbridge = await _weighbridgeRepository.GetByIdAsync(weighbridgeId);
+        if (weighbridge == null)
+        {
+            throw new InvalidOperationException($"Weighbridge with ID {weighbridgeId} not found");
+        }
+
+        // Simulate comprehensive hardware testing
+        var testResult = new WeighbridgeTestResultDto
+        {
+            WeighbridgeId = weighbridgeId,
+            ConnectionTest = SimulateTest("connection"),
+            CalibrationTest = SimulateTest("calibration"),
+            LoadCellTest = SimulateTest("load_cell"),
+            DisplayTest = SimulateTest("display"),
+            CommunicationTest = SimulateTest("communication"),
+            TestedAt = DateTime.UtcNow
+        };
+
+        // Generate test results
+        testResult.TestResults.Add($"Connection test: {(testResult.ConnectionTest ? "PASSED" : "FAILED")}");
+        testResult.TestResults.Add($"Calibration test: {(testResult.CalibrationTest ? "PASSED" : "FAILED")}");
+        testResult.TestResults.Add($"Load cell test: {(testResult.LoadCellTest ? "PASSED" : "FAILED")}");
+        testResult.TestResults.Add($"Display test: {(testResult.DisplayTest ? "PASSED" : "FAILED")}");
+        testResult.TestResults.Add($"Communication test: {(testResult.CommunicationTest ? "PASSED" : "FAILED")}");
+
+        // Add warnings and errors based on test results
+        if (!testResult.CalibrationTest)
+        {
+            testResult.Warnings.Add("Calibration may be required");
+        }
+        if (!testResult.ConnectionTest)
+        {
+            testResult.Errors.Add("Hardware connection failed");
+        }
+
+        testResult.OverallResult = testResult.ConnectionTest && testResult.CalibrationTest && 
+                                  testResult.LoadCellTest && testResult.DisplayTest && 
+                                  testResult.CommunicationTest;
+
+        return testResult;
+    }
+
+    public async Task<WeighbridgeUpdateResultDto> PerformRemoteUpdateAsync(string weighbridgeId, WeighbridgeRemoteUpdateDto update)
+    {
+        var weighbridge = await _weighbridgeRepository.GetByIdAsync(weighbridgeId);
+        if (weighbridge == null)
+        {
+            throw new InvalidOperationException($"Weighbridge with ID {weighbridgeId} not found");
+        }
+
+        var updateResult = new WeighbridgeUpdateResultDto
+        {
+            WeighbridgeId = weighbridgeId,
+            UpdateType = update.UpdateType,
+            UpdateStarted = DateTime.UtcNow,
+            PreviousVersion = "v2.1.2"
+        };
+
+        // Simulate update process
+        updateResult.UpdateLog.Add($"Starting {update.UpdateType} update...");
+        await Task.Delay(1000); // Simulate update time
+
+        var success = SimulateUpdateSuccess(update.UpdateType);
+        updateResult.Success = success;
+        updateResult.UpdateCompleted = DateTime.UtcNow;
+
+        if (success)
+        {
+            updateResult.NewVersion = update.UpdateType switch
+            {
+                "firmware" => update.FirmwareVersion ?? "v2.1.3",
+                "configuration" => "Config v1.2",
+                "calibration" => "Calibration Updated",
+                _ => "Unknown"
+            };
+            updateResult.UpdateLog.Add($"{update.UpdateType} update completed successfully");
+            updateResult.RequiresRestart = update.UpdateType == "firmware";
+        }
+        else
+        {
+            updateResult.ErrorMessage = $"Failed to perform {update.UpdateType} update";
+            updateResult.UpdateLog.Add($"Error during {update.UpdateType} update");
+        }
+
+        return updateResult;
+    }
+
+    // Helper methods for simulation
+    private bool SimulateConnectionStatus() => Random.Shared.NextDouble() > 0.1; // 90% uptime
+
+    private async Task<bool> IsRecentlyCalibrated(string weighbridgeId)
+    {
+        var calibrations = await _calibrationRepository.GetByWeighbridgeIdAsync(weighbridgeId);
+        var lastCalibration = calibrations.OrderByDescending(c => c.ActualDate).FirstOrDefault();
+        return lastCalibration?.ActualDate > DateTime.UtcNow.AddDays(-30);
+    }
+
+    private decimal? SimulateCurrentWeight()
+    {
+        return Random.Shared.NextDouble() > 0.3 ? (decimal)(Random.Shared.NextDouble() * 50000) : null; // 70% chance of having weight
+    }
+
+    private bool SimulateCommandExecution(string command)
+    {
+        return command switch
+        {
+            "zero" => Random.Shared.NextDouble() > 0.05, // 95% success rate
+            "calibrate" => Random.Shared.NextDouble() > 0.15, // 85% success rate
+            "reset" => Random.Shared.NextDouble() > 0.02, // 98% success rate
+            "start" => Random.Shared.NextDouble() > 0.01, // 99% success rate
+            "stop" => Random.Shared.NextDouble() > 0.01, // 99% success rate
+            _ => false
+        };
+    }
+
+    private Dictionary<string, object> GenerateCommandResultData(string command)
+    {
+        return command switch
+        {
+            "zero" => new Dictionary<string, object> { { "zero_value", 0.0 }, { "drift_correction", Random.Shared.NextDouble() * 0.1 } },
+            "calibrate" => new Dictionary<string, object> { { "calibration_factor", Random.Shared.NextDouble() * 2 + 0.5 }, { "accuracy", "±0.1%" } },
+            "reset" => new Dictionary<string, object> { { "reset_complete", true }, { "system_state", "ready" } },
+            "start" => new Dictionary<string, object> { { "operational_mode", "active" }, { "ready_for_weighing", true } },
+            "stop" => new Dictionary<string, object> { { "operational_mode", "stopped" }, { "safe_shutdown", true } },
+            _ => new Dictionary<string, object>()
+        };
+    }
+
+    private bool SimulateTest(string testType)
+    {
+        return testType switch
+        {
+            "connection" => Random.Shared.NextDouble() > 0.05, // 95% pass rate
+            "calibration" => Random.Shared.NextDouble() > 0.1, // 90% pass rate
+            "load_cell" => Random.Shared.NextDouble() > 0.08, // 92% pass rate
+            "display" => Random.Shared.NextDouble() > 0.03, // 97% pass rate
+            "communication" => Random.Shared.NextDouble() > 0.06, // 94% pass rate
+            _ => false
+        };
+    }
+
+    private bool SimulateUpdateSuccess(string updateType)
+    {
+        return updateType switch
+        {
+            "firmware" => Random.Shared.NextDouble() > 0.15, // 85% success rate
+            "configuration" => Random.Shared.NextDouble() > 0.05, // 95% success rate
+            "calibration" => Random.Shared.NextDouble() > 0.1, // 90% success rate
+            _ => false
+        };
+    }
 }

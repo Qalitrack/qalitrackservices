@@ -4,46 +4,90 @@ using CustomerService.Core.DTOs;
 namespace CustomerService.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class BaseController : ControllerBase
+public abstract class BaseController : ControllerBase
 {
-    protected string GetOrganizationId()
+    protected IActionResult Ok<T>(T data, string? message = null)
     {
-        return HttpContext.Request.Headers["X-Organization-Id"].FirstOrDefault() ?? "default-org";
-    }
-
-    protected string GetUserId()
-    {
-        return HttpContext.Request.Headers["X-User-Id"].FirstOrDefault() ?? "system";
-    }
-
-    protected IActionResult HandleResult<T>(ApiResponseDto<T> result)
-    {
-        if (result.Success)
+        return base.Ok(new ApiResponseDto<T>
         {
-            return Ok(result);
-        }
-
-        return BadRequest(result);
+            Success = true,
+            Data = data,
+            Message = message,
+            StatusCode = 200
+        });
     }
 
-    protected ApiResponseDto<T> Success<T>(T data, string message = "")
+    protected IActionResult Created<T>(T data, string? message = null)
     {
-        return ApiResponseDto<T>.SuccessResult(data, message);
+        return StatusCode(201, new ApiResponseDto<T>
+        {
+            Success = true,
+            Data = data,
+            Message = message,
+            StatusCode = 201
+        });
     }
 
-    protected ApiResponseDto<T> Error<T>(string message, List<string>? errors = null)
+    protected IActionResult BadRequest(string message, List<string>? errors = null)
     {
-        return ApiResponseDto<T>.ErrorResult(message, errors);
+        return base.BadRequest(new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            Errors = errors,
+            StatusCode = 400
+        });
     }
 
-    protected ApiResponseDto Success(string message = "")
+    protected IActionResult Unauthorized(string message = "Unauthorized")
     {
-        return ApiResponseDto.SuccessResult(message);
+        return base.Unauthorized(new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 401
+        });
     }
 
-    protected ApiResponseDto Error(string message, List<string>? errors = null)
+    protected IActionResult Forbidden(string message = "Forbidden")
     {
-        return ApiResponseDto.ErrorResult(message, errors);
+        return StatusCode(403, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 403
+        });
     }
+
+    protected IActionResult NotFound(string message = "Not found")
+    {
+        return base.NotFound(new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 404
+        });
+    }
+
+    protected IActionResult InternalServerError(string message = "Internal server error")
+    {
+        return StatusCode(500, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 500
+        });
+    }
+
+    // TODO: Add authentication-related helper methods if needed
+    // Example methods for JWT claims:
+    // protected string? GetCurrentUserId()
+    // {
+    //     return User?.FindFirst("user_id")?.Value;
+    // }
+    //
+    // protected string? GetCurrentUserName()
+    // {
+    //     return User?.FindFirst("username")?.Value;
+    // }
 }
