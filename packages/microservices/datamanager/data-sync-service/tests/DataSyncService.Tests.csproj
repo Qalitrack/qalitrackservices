@@ -22,12 +22,12 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../src/QaliTrackGateway.csproj" />
+    <ProjectReference Include="../src/DataSyncService.API/DataSyncService.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
