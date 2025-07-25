@@ -1,0 +1,106 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Roles
+  commentId: N:UserService.Core.DTOs.Roles
+  id: UserService.Core.DTOs.Roles
+  children:
+  - UserService.Core.DTOs.Roles.CreateRoleDto
+  - UserService.Core.DTOs.Roles.CreateUserRoleDto
+  - UserService.Core.DTOs.Roles.RoleDto
+  - UserService.Core.DTOs.Roles.UpdateRoleDto
+  - UserService.Core.DTOs.Roles.UpdateUserRoleDto
+  - UserService.Core.DTOs.Roles.UserBasicInfoDto
+  - UserService.Core.DTOs.Roles.UserRoleDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.Roles
+  nameWithType: UserService.Core.DTOs.Roles
+  fullName: UserService.Core.DTOs.Roles
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.Roles.CreateRoleDto
+  commentId: T:UserService.Core.DTOs.Roles.CreateRoleDto
+  parent: UserService.Core.DTOs.Roles
+  href: UserService.Core.DTOs.Roles.CreateRoleDto.html
+  name: CreateRoleDto
+  nameWithType: CreateRoleDto
+  fullName: UserService.Core.DTOs.Roles.CreateRoleDto
+- uid: UserService.Core.DTOs.Roles.CreateUserRoleDto
+  commentId: T:UserService.Core.DTOs.Roles.CreateUserRoleDto
+  href: UserService.Core.DTOs.Roles.CreateUserRoleDto.html
+  name: CreateUserRoleDto
+  nameWithType: CreateUserRoleDto
+  fullName: UserService.Core.DTOs.Roles.CreateUserRoleDto
+- uid: UserService.Core.DTOs.Roles.UserBasicInfoDto
+  commentId: T:UserService.Core.DTOs.Roles.UserBasicInfoDto
+  href: UserService.Core.DTOs.Roles.UserBasicInfoDto.html
+  name: UserBasicInfoDto
+  nameWithType: UserBasicInfoDto
+  fullName: UserService.Core.DTOs.Roles.UserBasicInfoDto
+- uid: UserService.Core.DTOs.Roles.RoleDto
+  commentId: T:UserService.Core.DTOs.Roles.RoleDto
+  parent: UserService.Core.DTOs.Roles
+  href: UserService.Core.DTOs.Roles.RoleDto.html
+  name: RoleDto
+  nameWithType: RoleDto
+  fullName: UserService.Core.DTOs.Roles.RoleDto
+- uid: UserService.Core.DTOs.Roles.UpdateRoleDto
+  commentId: T:UserService.Core.DTOs.Roles.UpdateRoleDto
+  parent: UserService.Core.DTOs.Roles
+  href: UserService.Core.DTOs.Roles.UpdateRoleDto.html
+  name: UpdateRoleDto
+  nameWithType: UpdateRoleDto
+  fullName: UserService.Core.DTOs.Roles.UpdateRoleDto
+- uid: UserService.Core.DTOs.Roles.UpdateUserRoleDto
+  commentId: T:UserService.Core.DTOs.Roles.UpdateUserRoleDto
+  href: UserService.Core.DTOs.Roles.UpdateUserRoleDto.html
+  name: UpdateUserRoleDto
+  nameWithType: UpdateUserRoleDto
+  fullName: UserService.Core.DTOs.Roles.UpdateUserRoleDto
+- uid: UserService.Core.DTOs.Roles.UserRoleDto
+  commentId: T:UserService.Core.DTOs.Roles.UserRoleDto
+  href: UserService.Core.DTOs.Roles.UserRoleDto.html
+  name: UserRoleDto
+  nameWithType: UserRoleDto
+  fullName: UserService.Core.DTOs.Roles.UserRoleDto
+- uid: UserService.Core.DTOs.Roles
+  commentId: N:UserService.Core.DTOs.Roles
+  href: UserService.html
+  name: UserService.Core.DTOs.Roles
+  nameWithType: UserService.Core.DTOs.Roles
+  fullName: UserService.Core.DTOs.Roles
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Roles
+    name: Roles
+    href: UserService.Core.DTOs.Roles.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Roles
+    name: Roles
+    href: UserService.Core.DTOs.Roles.html

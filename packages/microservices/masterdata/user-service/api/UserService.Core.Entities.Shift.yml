@@ -1,0 +1,809 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Entities.Shift
+  commentId: T:UserService.Core.Entities.Shift
+  id: Shift
+  parent: UserService.Core.Entities
+  children:
+  - UserService.Core.Entities.Shift.Description
+  - UserService.Core.Entities.Shift.EndTime
+  - UserService.Core.Entities.Shift.IsActive
+  - UserService.Core.Entities.Shift.Mode
+  - UserService.Core.Entities.Shift.Name
+  - UserService.Core.Entities.Shift.StartTime
+  - UserService.Core.Entities.Shift.UserShifts
+  langs:
+  - csharp
+  - vb
+  name: Shift
+  nameWithType: Shift
+  fullName: UserService.Core.Entities.Shift
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Shift
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: 'public class Shift : BaseEntity'
+    content.vb: Public Class Shift Inherits BaseEntity
+  inheritance:
+  - System.Object
+  - UserService.Core.Entities.BaseEntity
+  inheritedMembers:
+  - UserService.Core.Entities.BaseEntity.Id
+  - UserService.Core.Entities.BaseEntity.CreatedAt
+  - UserService.Core.Entities.BaseEntity.UpdatedAt
+  - UserService.Core.Entities.BaseEntity.CreatedBy
+  - UserService.Core.Entities.BaseEntity.UpdatedBy
+  - UserService.Core.Entities.BaseEntity.IsDeleted
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.Entities.Shift.Name
+  commentId: P:UserService.Core.Entities.Shift.Name
+  id: Name
+  parent: UserService.Core.Entities.Shift
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: Shift.Name
+  fullName: UserService.Core.Entities.Shift.Name
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Name
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: >-
+      [Required]
+
+      public string Name { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <Required>
+
+      Public Property Name As String
+  overload: UserService.Core.Entities.Shift.Name*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+- uid: UserService.Core.Entities.Shift.Description
+  commentId: P:UserService.Core.Entities.Shift.Description
+  id: Description
+  parent: UserService.Core.Entities.Shift
+  langs:
+  - csharp
+  - vb
+  name: Description
+  nameWithType: Shift.Description
+  fullName: UserService.Core.Entities.Shift.Description
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Description
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: >-
+      [Required]
+
+      public string Description { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <Required>
+
+      Public Property Description As String
+  overload: UserService.Core.Entities.Shift.Description*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+- uid: UserService.Core.Entities.Shift.StartTime
+  commentId: P:UserService.Core.Entities.Shift.StartTime
+  id: StartTime
+  parent: UserService.Core.Entities.Shift
+  langs:
+  - csharp
+  - vb
+  name: StartTime
+  nameWithType: Shift.StartTime
+  fullName: UserService.Core.Entities.Shift.StartTime
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: StartTime
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 11
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: >-
+      [Required]
+
+      public TimeSpan StartTime { get; set; }
+    parameters: []
+    return:
+      type: System.TimeSpan
+    content.vb: >-
+      <Required>
+
+      Public Property StartTime As TimeSpan
+  overload: UserService.Core.Entities.Shift.StartTime*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+- uid: UserService.Core.Entities.Shift.EndTime
+  commentId: P:UserService.Core.Entities.Shift.EndTime
+  id: EndTime
+  parent: UserService.Core.Entities.Shift
+  langs:
+  - csharp
+  - vb
+  name: EndTime
+  nameWithType: Shift.EndTime
+  fullName: UserService.Core.Entities.Shift.EndTime
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: EndTime
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 13
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: >-
+      [Required]
+
+      public TimeSpan EndTime { get; set; }
+    parameters: []
+    return:
+      type: System.TimeSpan
+    content.vb: >-
+      <Required>
+
+      Public Property EndTime As TimeSpan
+  overload: UserService.Core.Entities.Shift.EndTime*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+- uid: UserService.Core.Entities.Shift.Mode
+  commentId: P:UserService.Core.Entities.Shift.Mode
+  id: Mode
+  parent: UserService.Core.Entities.Shift
+  langs:
+  - csharp
+  - vb
+  name: Mode
+  nameWithType: Shift.Mode
+  fullName: UserService.Core.Entities.Shift.Mode
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Mode
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 15
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: >-
+      [Required]
+
+      public ShiftMode Mode { get; set; }
+    parameters: []
+    return:
+      type: UserService.Core.Entities.ShiftMode
+    content.vb: >-
+      <Required>
+
+      Public Property Mode As ShiftMode
+  overload: UserService.Core.Entities.Shift.Mode*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+- uid: UserService.Core.Entities.Shift.IsActive
+  commentId: P:UserService.Core.Entities.Shift.IsActive
+  id: IsActive
+  parent: UserService.Core.Entities.Shift
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: Shift.IsActive
+  fullName: UserService.Core.Entities.Shift.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsActive
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 19
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: >-
+      [NotMapped]
+
+      public bool IsActive { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <NotMapped>
+
+      Public Property IsActive As Boolean
+  overload: UserService.Core.Entities.Shift.IsActive*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute
+    ctor: System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute.#ctor
+    arguments: []
+- uid: UserService.Core.Entities.Shift.UserShifts
+  commentId: P:UserService.Core.Entities.Shift.UserShifts
+  id: UserShifts
+  parent: UserService.Core.Entities.Shift
+  langs:
+  - csharp
+  - vb
+  name: UserShifts
+  nameWithType: Shift.UserShifts
+  fullName: UserService.Core.Entities.Shift.UserShifts
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UserShifts
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 40
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public virtual ICollection<UserShift> UserShifts { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.ICollection{UserService.Core.Entities.UserShift}
+    content.vb: Public Overridable Property UserShifts As ICollection(Of UserShift)
+  overload: UserService.Core.Entities.Shift.UserShifts*
+references:
+- uid: UserService.Core.Entities
+  commentId: N:UserService.Core.Entities
+  href: UserService.html
+  name: UserService.Core.Entities
+  nameWithType: UserService.Core.Entities
+  fullName: UserService.Core.Entities
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.Entities.BaseEntity
+  commentId: T:UserService.Core.Entities.BaseEntity
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: UserService.Core.Entities.BaseEntity
+- uid: UserService.Core.Entities.BaseEntity.Id
+  commentId: P:UserService.Core.Entities.BaseEntity.Id
+  parent: UserService.Core.Entities.BaseEntity
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: UserService.Core.Entities.BaseEntity.Id
+- uid: UserService.Core.Entities.BaseEntity.CreatedAt
+  commentId: P:UserService.Core.Entities.BaseEntity.CreatedAt
+  parent: UserService.Core.Entities.BaseEntity
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: UserService.Core.Entities.BaseEntity.CreatedAt
+- uid: UserService.Core.Entities.BaseEntity.UpdatedAt
+  commentId: P:UserService.Core.Entities.BaseEntity.UpdatedAt
+  parent: UserService.Core.Entities.BaseEntity
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: UserService.Core.Entities.BaseEntity.UpdatedAt
+- uid: UserService.Core.Entities.BaseEntity.CreatedBy
+  commentId: P:UserService.Core.Entities.BaseEntity.CreatedBy
+  parent: UserService.Core.Entities.BaseEntity
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: UserService.Core.Entities.BaseEntity.CreatedBy
+- uid: UserService.Core.Entities.BaseEntity.UpdatedBy
+  commentId: P:UserService.Core.Entities.BaseEntity.UpdatedBy
+  parent: UserService.Core.Entities.BaseEntity
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: UserService.Core.Entities.BaseEntity.UpdatedBy
+- uid: UserService.Core.Entities.BaseEntity.IsDeleted
+  commentId: P:UserService.Core.Entities.BaseEntity.IsDeleted
+  parent: UserService.Core.Entities.BaseEntity
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: UserService.Core.Entities.BaseEntity.IsDeleted
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Entities.Shift.Name*
+  commentId: Overload:UserService.Core.Entities.Shift.Name
+  href: UserService.Core.Entities.Shift.html#UserService_Core_Entities_Shift_Name
+  name: Name
+  nameWithType: Shift.Name
+  fullName: UserService.Core.Entities.Shift.Name
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Core.Entities.Shift.Description*
+  commentId: Overload:UserService.Core.Entities.Shift.Description
+  href: UserService.Core.Entities.Shift.html#UserService_Core_Entities_Shift_Description
+  name: Description
+  nameWithType: Shift.Description
+  fullName: UserService.Core.Entities.Shift.Description
+- uid: UserService.Core.Entities.Shift.StartTime*
+  commentId: Overload:UserService.Core.Entities.Shift.StartTime
+  href: UserService.Core.Entities.Shift.html#UserService_Core_Entities_Shift_StartTime
+  name: StartTime
+  nameWithType: Shift.StartTime
+  fullName: UserService.Core.Entities.Shift.StartTime
+- uid: System.TimeSpan
+  commentId: T:System.TimeSpan
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.timespan
+  name: TimeSpan
+  nameWithType: TimeSpan
+  fullName: System.TimeSpan
+- uid: UserService.Core.Entities.Shift.EndTime*
+  commentId: Overload:UserService.Core.Entities.Shift.EndTime
+  href: UserService.Core.Entities.Shift.html#UserService_Core_Entities_Shift_EndTime
+  name: EndTime
+  nameWithType: Shift.EndTime
+  fullName: UserService.Core.Entities.Shift.EndTime
+- uid: UserService.Core.Entities.Shift.Mode*
+  commentId: Overload:UserService.Core.Entities.Shift.Mode
+  href: UserService.Core.Entities.Shift.html#UserService_Core_Entities_Shift_Mode
+  name: Mode
+  nameWithType: Shift.Mode
+  fullName: UserService.Core.Entities.Shift.Mode
+- uid: UserService.Core.Entities.ShiftMode
+  commentId: T:UserService.Core.Entities.ShiftMode
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.ShiftMode.html
+  name: ShiftMode
+  nameWithType: ShiftMode
+  fullName: UserService.Core.Entities.ShiftMode
+- uid: UserService.Core.Entities.Shift.IsActive*
+  commentId: Overload:UserService.Core.Entities.Shift.IsActive
+  href: UserService.Core.Entities.Shift.html#UserService_Core_Entities_Shift_IsActive
+  name: IsActive
+  nameWithType: Shift.IsActive
+  fullName: UserService.Core.Entities.Shift.IsActive
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: UserService.Core.Entities.Shift.UserShifts*
+  commentId: Overload:UserService.Core.Entities.Shift.UserShifts
+  href: UserService.Core.Entities.Shift.html#UserService_Core_Entities_Shift_UserShifts
+  name: UserShifts
+  nameWithType: Shift.UserShifts
+  fullName: UserService.Core.Entities.Shift.UserShifts
+- uid: System.Collections.Generic.ICollection{UserService.Core.Entities.UserShift}
+  commentId: T:System.Collections.Generic.ICollection{UserService.Core.Entities.UserShift}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.ICollection`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  name: ICollection<UserShift>
+  nameWithType: ICollection<UserShift>
+  fullName: System.Collections.Generic.ICollection<UserService.Core.Entities.UserShift>
+  nameWithType.vb: ICollection(Of UserShift)
+  fullName.vb: System.Collections.Generic.ICollection(Of UserService.Core.Entities.UserShift)
+  name.vb: ICollection(Of UserShift)
+  spec.csharp:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: <
+  - uid: UserService.Core.Entities.UserShift
+    name: UserShift
+    href: UserService.Core.Entities.UserShift.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Entities.UserShift
+    name: UserShift
+    href: UserService.Core.Entities.UserShift.html
+  - name: )
+- uid: System.Collections.Generic.ICollection`1
+  commentId: T:System.Collections.Generic.ICollection`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  name: ICollection<T>
+  nameWithType: ICollection<T>
+  fullName: System.Collections.Generic.ICollection<T>
+  nameWithType.vb: ICollection(Of T)
+  fullName.vb: System.Collections.Generic.ICollection(Of T)
+  name.vb: ICollection(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic

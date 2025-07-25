@@ -1,0 +1,68 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Api.Authorization
+  commentId: N:UserService.Api.Authorization
+  id: UserService.Api.Authorization
+  children:
+  - UserService.Api.Authorization.PermissionAuthorizationHandler
+  - UserService.Api.Authorization.PermissionPolicyProvider
+  - UserService.Api.Authorization.PermissionRequirement
+  langs:
+  - csharp
+  - vb
+  name: UserService.Api.Authorization
+  nameWithType: UserService.Api.Authorization
+  fullName: UserService.Api.Authorization
+  type: Namespace
+  assemblies:
+  - UserService.Api
+references:
+- uid: UserService.Api.Authorization.PermissionAuthorizationHandler
+  commentId: T:UserService.Api.Authorization.PermissionAuthorizationHandler
+  href: UserService.Api.Authorization.PermissionAuthorizationHandler.html
+  name: PermissionAuthorizationHandler
+  nameWithType: PermissionAuthorizationHandler
+  fullName: UserService.Api.Authorization.PermissionAuthorizationHandler
+- uid: UserService.Api.Authorization.PermissionPolicyProvider
+  commentId: T:UserService.Api.Authorization.PermissionPolicyProvider
+  href: UserService.Api.Authorization.PermissionPolicyProvider.html
+  name: PermissionPolicyProvider
+  nameWithType: PermissionPolicyProvider
+  fullName: UserService.Api.Authorization.PermissionPolicyProvider
+- uid: UserService.Api.Authorization.PermissionRequirement
+  commentId: T:UserService.Api.Authorization.PermissionRequirement
+  parent: UserService.Api.Authorization
+  href: UserService.Api.Authorization.PermissionRequirement.html
+  name: PermissionRequirement
+  nameWithType: PermissionRequirement
+  fullName: UserService.Api.Authorization.PermissionRequirement
+- uid: UserService.Api.Authorization
+  commentId: N:UserService.Api.Authorization
+  href: UserService.html
+  name: UserService.Api.Authorization
+  nameWithType: UserService.Api.Authorization
+  fullName: UserService.Api.Authorization
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Api
+    name: Api
+    href: UserService.Api.html
+  - name: .
+  - uid: UserService.Api.Authorization
+    name: Authorization
+    href: UserService.Api.Authorization.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Api
+    name: Api
+    href: UserService.Api.html
+  - name: .
+  - uid: UserService.Api.Authorization
+    name: Authorization
+    href: UserService.Api.Authorization.html

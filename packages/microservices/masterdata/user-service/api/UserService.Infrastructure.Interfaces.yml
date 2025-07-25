@@ -1,0 +1,54 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Interfaces
+  commentId: N:UserService.Infrastructure.Interfaces
+  id: UserService.Infrastructure.Interfaces
+  children:
+  - UserService.Infrastructure.Interfaces.IEmailService
+  langs:
+  - csharp
+  - vb
+  name: UserService.Infrastructure.Interfaces
+  nameWithType: UserService.Infrastructure.Interfaces
+  fullName: UserService.Infrastructure.Interfaces
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Infrastructure.Interfaces.IEmailService
+  commentId: T:UserService.Infrastructure.Interfaces.IEmailService
+  parent: UserService.Infrastructure.Interfaces
+  href: UserService.Infrastructure.Interfaces.IEmailService.html
+  name: IEmailService
+  nameWithType: IEmailService
+  fullName: UserService.Infrastructure.Interfaces.IEmailService
+- uid: UserService.Infrastructure.Interfaces
+  commentId: N:UserService.Infrastructure.Interfaces
+  href: UserService.html
+  name: UserService.Infrastructure.Interfaces
+  nameWithType: UserService.Infrastructure.Interfaces
+  fullName: UserService.Infrastructure.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Interfaces
+    name: Interfaces
+    href: UserService.Infrastructure.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Interfaces
+    name: Interfaces
+    href: UserService.Infrastructure.Interfaces.html

@@ -1,0 +1,469 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto
+  commentId: T:UserService.Core.DTOs.Role.UserBasicInfoDto
+  id: UserBasicInfoDto
+  parent: UserService.Core.DTOs.Role
+  children:
+  - UserService.Core.DTOs.Role.UserBasicInfoDto.Email
+  - UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName
+  - UserService.Core.DTOs.Role.UserBasicInfoDto.Id
+  - UserService.Core.DTOs.Role.UserBasicInfoDto.LastName
+  langs:
+  - csharp
+  - vb
+  name: UserBasicInfoDto
+  nameWithType: UserBasicInfoDto
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UserBasicInfoDto
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: public class UserBasicInfoDto
+    content.vb: Public Class UserBasicInfoDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.Id
+  commentId: P:UserService.Core.DTOs.Role.UserBasicInfoDto.Id
+  id: Id
+  parent: UserService.Core.DTOs.Role.UserBasicInfoDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: UserBasicInfoDto.Id
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Id
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: public string Id { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Id As String
+  overload: UserService.Core.DTOs.Role.UserBasicInfoDto.Id*
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.Email
+  commentId: P:UserService.Core.DTOs.Role.UserBasicInfoDto.Email
+  id: Email
+  parent: UserService.Core.DTOs.Role.UserBasicInfoDto
+  langs:
+  - csharp
+  - vb
+  name: Email
+  nameWithType: UserBasicInfoDto.Email
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.Email
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Email
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: public string Email { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Email As String
+  overload: UserService.Core.DTOs.Role.UserBasicInfoDto.Email*
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName
+  commentId: P:UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName
+  id: FirstName
+  parent: UserService.Core.DTOs.Role.UserBasicInfoDto
+  langs:
+  - csharp
+  - vb
+  name: FirstName
+  nameWithType: UserBasicInfoDto.FirstName
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: FirstName
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: public string FirstName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FirstName As String
+  overload: UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName*
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.LastName
+  commentId: P:UserService.Core.DTOs.Role.UserBasicInfoDto.LastName
+  id: LastName
+  parent: UserService.Core.DTOs.Role.UserBasicInfoDto
+  langs:
+  - csharp
+  - vb
+  name: LastName
+  nameWithType: UserBasicInfoDto.LastName
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.LastName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: LastName
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: public string LastName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LastName As String
+  overload: UserService.Core.DTOs.Role.UserBasicInfoDto.LastName*
+references:
+- uid: UserService.Core.DTOs.Role
+  commentId: N:UserService.Core.DTOs.Role
+  href: UserService.html
+  name: UserService.Core.DTOs.Role
+  nameWithType: UserService.Core.DTOs.Role
+  fullName: UserService.Core.DTOs.Role
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Role
+    name: Role
+    href: UserService.Core.DTOs.Role.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Role
+    name: Role
+    href: UserService.Core.DTOs.Role.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.Id*
+  commentId: Overload:UserService.Core.DTOs.Role.UserBasicInfoDto.Id
+  href: UserService.Core.DTOs.Role.UserBasicInfoDto.html#UserService_Core_DTOs_Role_UserBasicInfoDto_Id
+  name: Id
+  nameWithType: UserBasicInfoDto.Id
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.Id
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.Email*
+  commentId: Overload:UserService.Core.DTOs.Role.UserBasicInfoDto.Email
+  href: UserService.Core.DTOs.Role.UserBasicInfoDto.html#UserService_Core_DTOs_Role_UserBasicInfoDto_Email
+  name: Email
+  nameWithType: UserBasicInfoDto.Email
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.Email
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName*
+  commentId: Overload:UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName
+  href: UserService.Core.DTOs.Role.UserBasicInfoDto.html#UserService_Core_DTOs_Role_UserBasicInfoDto_FirstName
+  name: FirstName
+  nameWithType: UserBasicInfoDto.FirstName
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.FirstName
+- uid: UserService.Core.DTOs.Role.UserBasicInfoDto.LastName*
+  commentId: Overload:UserService.Core.DTOs.Role.UserBasicInfoDto.LastName
+  href: UserService.Core.DTOs.Role.UserBasicInfoDto.html#UserService_Core_DTOs_Role_UserBasicInfoDto_LastName
+  name: LastName
+  nameWithType: UserBasicInfoDto.LastName
+  fullName: UserService.Core.DTOs.Role.UserBasicInfoDto.LastName

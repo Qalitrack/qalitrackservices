@@ -1,0 +1,77 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Auth
+  commentId: N:UserService.Core.DTOs.Auth
+  id: UserService.Core.DTOs.Auth
+  children:
+  - UserService.Core.DTOs.Auth.LoginDto
+  - UserService.Core.DTOs.Auth.LoginResponseDto
+  - UserService.Core.DTOs.Auth.UpdatePasswordDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.Auth
+  nameWithType: UserService.Core.DTOs.Auth
+  fullName: UserService.Core.DTOs.Auth
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.Auth.LoginDto
+  commentId: T:UserService.Core.DTOs.Auth.LoginDto
+  parent: UserService.Core.DTOs.Auth
+  href: UserService.Core.DTOs.Auth.LoginDto.html
+  name: LoginDto
+  nameWithType: LoginDto
+  fullName: UserService.Core.DTOs.Auth.LoginDto
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto
+  commentId: T:UserService.Core.DTOs.Auth.LoginResponseDto
+  href: UserService.Core.DTOs.Auth.LoginResponseDto.html
+  name: LoginResponseDto
+  nameWithType: LoginResponseDto
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto
+- uid: UserService.Core.DTOs.Auth.UpdatePasswordDto
+  commentId: T:UserService.Core.DTOs.Auth.UpdatePasswordDto
+  parent: UserService.Core.DTOs.Auth
+  href: UserService.Core.DTOs.Auth.UpdatePasswordDto.html
+  name: UpdatePasswordDto
+  nameWithType: UpdatePasswordDto
+  fullName: UserService.Core.DTOs.Auth.UpdatePasswordDto
+- uid: UserService.Core.DTOs.Auth
+  commentId: N:UserService.Core.DTOs.Auth
+  href: UserService.html
+  name: UserService.Core.DTOs.Auth
+  nameWithType: UserService.Core.DTOs.Auth
+  fullName: UserService.Core.DTOs.Auth
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Auth
+    name: Auth
+    href: UserService.Core.DTOs.Auth.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Auth
+    name: Auth
+    href: UserService.Core.DTOs.Auth.html

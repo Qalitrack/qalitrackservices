@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Migrations
+  commentId: N:UserService.Infrastructure.Migrations
+  id: UserService.Infrastructure.Migrations
+  children:
+  - UserService.Infrastructure.Migrations.UpdateDatabaseSchema
+  langs:
+  - csharp
+  - vb
+  name: UserService.Infrastructure.Migrations
+  nameWithType: UserService.Infrastructure.Migrations
+  fullName: UserService.Infrastructure.Migrations
+  type: Namespace
+  assemblies:
+  - UserService.Infrastructure
+references:
+- uid: UserService.Infrastructure.Migrations.UpdateDatabaseSchema
+  commentId: T:UserService.Infrastructure.Migrations.UpdateDatabaseSchema
+  href: UserService.Infrastructure.Migrations.UpdateDatabaseSchema.html
+  name: UpdateDatabaseSchema
+  nameWithType: UpdateDatabaseSchema
+  fullName: UserService.Infrastructure.Migrations.UpdateDatabaseSchema

@@ -1,0 +1,1899 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Repositories.TokenRepository
+  commentId: T:UserService.Infrastructure.Repositories.TokenRepository
+  id: TokenRepository
+  parent: UserService.Infrastructure.Repositories
+  children:
+  - UserService.Infrastructure.Repositories.TokenRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.TokenRepository})
+  - UserService.Infrastructure.Repositories.TokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  - UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync(System.String)
+  - UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync
+  - UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync(System.String,System.Boolean)
+  - UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync(System.String)
+  - UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(System.String)
+  - UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
+  langs:
+  - csharp
+  - vb
+  name: TokenRepository
+  nameWithType: TokenRepository
+  fullName: UserService.Infrastructure.Repositories.TokenRepository
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: TokenRepository
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 15
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: 'public class TokenRepository : Repository<PersonalAccessToken>, ITokenRepository, IRepository<PersonalAccessToken>'
+    content.vb: Public Class TokenRepository Inherits Repository(Of PersonalAccessToken) Implements ITokenRepository, IRepository(Of PersonalAccessToken)
+  inheritance:
+  - System.Object
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  implements:
+  - UserService.Core.Interfaces.ITokenRepository
+  - UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}
+  inheritedMembers:
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}._dbContext
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}._dbSet
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.UpdateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.Guid)
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Infrastructure.Repositories.TokenRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.TokenRepository})
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.TokenRepository})
+  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.TokenRepository})'
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: TokenRepository(UserServiceDbContext, ILogger<TokenRepository>)
+  nameWithType: TokenRepository.TokenRepository(UserServiceDbContext, ILogger<TokenRepository>)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.TokenRepository(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.TokenRepository>)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 20
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: public TokenRepository(UserServiceDbContext dbContext, ILogger<TokenRepository> logger)
+    parameters:
+    - id: dbContext
+      type: UserService.Infrastructure.Data.UserServiceDbContext
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.TokenRepository}
+    content.vb: Public Sub New(dbContext As UserServiceDbContext, logger As ILogger(Of TokenRepository))
+  overload: UserService.Infrastructure.Repositories.TokenRepository.#ctor*
+  nameWithType.vb: TokenRepository.New(UserServiceDbContext, ILogger(Of TokenRepository))
+  fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.TokenRepository))
+  name.vb: New(UserServiceDbContext, ILogger(Of TokenRepository))
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync(System.Guid)
+  id: GetTokenByUserIdAsync(System.Guid)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: GetTokenByUserIdAsync(Guid)
+  nameWithType: TokenRepository.GetTokenByUserIdAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync(System.Guid)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetTokenByUserIdAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 28
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<PersonalAccessToken?> GetTokenByUserIdAsync(Guid userId)
+    parameters:
+    - id: userId
+      type: System.Guid
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+    content.vb: Public Function GetTokenByUserIdAsync(userId As Guid) As Task(Of PersonalAccessToken)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync*
+  implements:
+  - UserService.Core.Interfaces.ITokenRepository.GetTokenByUserIdAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync(System.String,System.Boolean)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync(System.String,System.Boolean)
+  id: GetByIdAsync(System.String,System.Boolean)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: GetByIdAsync(string, bool)
+  nameWithType: TokenRepository.GetByIdAsync(string, bool)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync(string, bool)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetByIdAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 37
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<PersonalAccessToken?> GetByIdAsync(string id, bool b)
+    parameters:
+    - id: id
+      type: System.String
+    - id: b
+      type: System.Boolean
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+    content.vb: Public Function GetByIdAsync(id As String, b As Boolean) As Task(Of PersonalAccessToken)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync*
+  implements:
+  - UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.String,System.Boolean)
+  nameWithType.vb: TokenRepository.GetByIdAsync(String, Boolean)
+  fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync(String, Boolean)
+  name.vb: GetByIdAsync(String, Boolean)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  id: CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: CreateAsync(PersonalAccessToken)
+  nameWithType: TokenRepository.CreateAsync(PersonalAccessToken)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CreateAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 44
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<PersonalAccessToken> CreateAsync(PersonalAccessToken token)
+    parameters:
+    - id: token
+      type: UserService.Core.Interfaces.PersonalAccessToken
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+    content.vb: Public Function CreateAsync(token As PersonalAccessToken) As Task(Of PersonalAccessToken)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.CreateAsync*
+  implements:
+  - UserService.Core.Interfaces.ITokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  - UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync(System.String)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync(System.String)
+  id: DeleteAsync(System.String)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: DeleteAsync(string)
+  nameWithType: TokenRepository.DeleteAsync(string)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: DeleteAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 86
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<bool> DeleteAsync(string id)
+    parameters:
+    - id: id
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function DeleteAsync(id As String) As Task(Of Boolean)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync*
+  implements:
+  - UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.String)
+  nameWithType.vb: TokenRepository.DeleteAsync(String)
+  fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync(String)
+  name.vb: DeleteAsync(String)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
+  id: RevokeTokenAsync(System.Guid)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: RevokeTokenAsync(Guid)
+  nameWithType: TokenRepository.RevokeTokenAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RevokeTokenAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 94
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<bool> RevokeTokenAsync(Guid userId)
+    parameters:
+    - id: userId
+      type: System.Guid
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function RevokeTokenAsync(userId As Guid) As Task(Of Boolean)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync*
+  implements:
+  - UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync(System.Guid)
+  id: DeleteTokenAsync(System.Guid)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: DeleteTokenAsync(Guid)
+  nameWithType: TokenRepository.DeleteTokenAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync(System.Guid)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: DeleteTokenAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 139
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<bool> DeleteTokenAsync(Guid userId)
+    parameters:
+    - id: userId
+      type: System.Guid
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function DeleteTokenAsync(userId As Guid) As Task(Of Boolean)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync*
+  implements:
+  - UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(System.String)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(System.String)
+  id: GetUserFromTokenAsync(System.String)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: GetUserFromTokenAsync(string)
+  nameWithType: TokenRepository.GetUserFromTokenAsync(string)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetUserFromTokenAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 169
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: public Task<User?> GetUserFromTokenAsync(string token)
+    parameters:
+    - id: token
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Entities.User}
+    content.vb: Public Function GetUserFromTokenAsync(token As String) As Task(Of User)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync*
+  nameWithType.vb: TokenRepository.GetUserFromTokenAsync(String)
+  fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(String)
+  name.vb: GetUserFromTokenAsync(String)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync
+  id: GetAllAsync
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: GetAllAsync()
+  nameWithType: TokenRepository.GetAllAsync()
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetAllAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 193
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<IEnumerable<PersonalAccessToken>> GetAllAsync()
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Interfaces.PersonalAccessToken}}
+    content.vb: Public Function GetAllAsync() As Task(Of IEnumerable(Of PersonalAccessToken))
+  overload: UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync*
+  implements:
+  - UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetAllAsync
+- uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+  id: DeleteAllTokensForUserAsync(System.Guid)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: DeleteAllTokensForUserAsync(Guid)
+  nameWithType: TokenRepository.DeleteAllTokensForUserAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: DeleteAllTokensForUserAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 201
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  summary: Deletes all tokens for a specific user
+  example: []
+  syntax:
+    content: public Task<bool> DeleteAllTokensForUserAsync(Guid userId)
+    parameters:
+    - id: userId
+      type: System.Guid
+      description: The ID of the user
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+      description: True if any tokens were deleted, false otherwise
+    content.vb: Public Function DeleteAllTokensForUserAsync(userId As Guid) As Task(Of Boolean)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync*
+  implements:
+  - UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync(System.String)
+  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync(System.String)
+  id: GetTokenByJtiAsync(System.String)
+  parent: UserService.Infrastructure.Repositories.TokenRepository
+  langs:
+  - csharp
+  - vb
+  name: GetTokenByJtiAsync(string)
+  nameWithType: TokenRepository.GetTokenByJtiAsync(string)
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetTokenByJtiAsync
+    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
+    startLine: 230
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<PersonalAccessToken?> GetTokenByJtiAsync(string jti)
+    parameters:
+    - id: jti
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+    content.vb: Public Function GetTokenByJtiAsync(jti As String) As Task(Of PersonalAccessToken)
+  overload: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync*
+  implements:
+  - UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(System.String)
+  nameWithType.vb: TokenRepository.GetTokenByJtiAsync(String)
+  fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync(String)
+  name.vb: GetTokenByJtiAsync(String)
+references:
+- uid: UserService.Infrastructure.Repositories
+  commentId: N:UserService.Infrastructure.Repositories
+  href: UserService.html
+  name: UserService.Infrastructure.Repositories
+  nameWithType: UserService.Infrastructure.Repositories
+  fullName: UserService.Infrastructure.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Repositories
+    name: Repositories
+    href: UserService.Infrastructure.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Repositories
+    name: Repositories
+    href: UserService.Infrastructure.Repositories.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  commentId: T:UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  parent: UserService.Infrastructure.Repositories
+  definition: UserService.Infrastructure.Repositories.Repository`1
+  href: UserService.Infrastructure.Repositories.Repository-1.html
+  name: Repository<PersonalAccessToken>
+  nameWithType: Repository<PersonalAccessToken>
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Interfaces.PersonalAccessToken>
+  nameWithType.vb: Repository(Of PersonalAccessToken)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Interfaces.PersonalAccessToken)
+  name.vb: Repository(Of PersonalAccessToken)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: <
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+- uid: UserService.Core.Interfaces.ITokenRepository
+  commentId: T:UserService.Core.Interfaces.ITokenRepository
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ITokenRepository.html
+  name: ITokenRepository
+  nameWithType: ITokenRepository
+  fullName: UserService.Core.Interfaces.ITokenRepository
+- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}
+  commentId: T:UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}
+  parent: UserService.Core.Interfaces
+  definition: UserService.Core.Interfaces.IRepository`1
+  href: UserService.Core.Interfaces.IRepository-1.html
+  name: IRepository<PersonalAccessToken>
+  nameWithType: IRepository<PersonalAccessToken>
+  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Interfaces.PersonalAccessToken>
+  nameWithType.vb: IRepository(Of PersonalAccessToken)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Interfaces.PersonalAccessToken)
+  name.vb: IRepository(Of PersonalAccessToken)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository`1
+    name: IRepository
+    href: UserService.Core.Interfaces.IRepository-1.html
+  - name: <
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+    href: UserService.Core.Interfaces.PersonalAccessToken.html
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository`1
+    name: IRepository
+    href: UserService.Core.Interfaces.IRepository-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+    href: UserService.Core.Interfaces.PersonalAccessToken.html
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}._dbContext
+  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}._dbContext
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Infrastructure.Repositories.Repository`1._dbContext
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbContext
+  name: _dbContext
+  nameWithType: Repository<PersonalAccessToken>._dbContext
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Interfaces.PersonalAccessToken>._dbContext
+  nameWithType.vb: Repository(Of PersonalAccessToken)._dbContext
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Interfaces.PersonalAccessToken)._dbContext
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}._dbSet
+  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}._dbSet
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Infrastructure.Repositories.Repository`1._dbSet
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbSet
+  name: _dbSet
+  nameWithType: Repository<PersonalAccessToken>._dbSet
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Interfaces.PersonalAccessToken>._dbSet
+  nameWithType.vb: Repository(Of PersonalAccessToken)._dbSet
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Interfaces.PersonalAccessToken)._dbSet
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.Guid)
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
+  name: GetByIdAsync(Guid)
+  nameWithType: Repository<PersonalAccessToken>.GetByIdAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Interfaces.PersonalAccessToken>.GetByIdAsync(System.Guid)
+  nameWithType.vb: Repository(Of PersonalAccessToken).GetByIdAsync(Guid)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Interfaces.PersonalAccessToken).GetByIdAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.Guid)
+    name: GetByIdAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.Guid)
+    name: GetByIdAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.UpdateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.UpdateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Infrastructure.Repositories.Repository`1.UpdateAsync(`0)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_UpdateAsync__0_
+  name: UpdateAsync(PersonalAccessToken)
+  nameWithType: Repository<PersonalAccessToken>.UpdateAsync(PersonalAccessToken)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Interfaces.PersonalAccessToken>.UpdateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  nameWithType.vb: Repository(Of PersonalAccessToken).UpdateAsync(PersonalAccessToken)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Interfaces.PersonalAccessToken).UpdateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.UpdateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+    name: UpdateAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_UpdateAsync__0_
+  - name: (
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.UpdateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+    name: UpdateAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_UpdateAsync__0_
+  - name: (
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.Guid)
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+  name: DeleteAsync(Guid)
+  nameWithType: Repository<PersonalAccessToken>.DeleteAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Interfaces.PersonalAccessToken>.DeleteAsync(System.Guid)
+  nameWithType.vb: Repository(Of PersonalAccessToken).DeleteAsync(Guid)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Interfaces.PersonalAccessToken).DeleteAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.Guid)
+    name: DeleteAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.Guid)
+    name: DeleteAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Infrastructure.Repositories.Repository`1
+  commentId: T:UserService.Infrastructure.Repositories.Repository`1
+  href: UserService.Infrastructure.Repositories.Repository-1.html
+  name: Repository<T>
+  nameWithType: Repository<T>
+  fullName: UserService.Infrastructure.Repositories.Repository<T>
+  nameWithType.vb: Repository(Of T)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)
+  name.vb: Repository(Of T)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Interfaces.IRepository`1
+  commentId: T:UserService.Core.Interfaces.IRepository`1
+  href: UserService.Core.Interfaces.IRepository-1.html
+  name: IRepository<T>
+  nameWithType: IRepository<T>
+  fullName: UserService.Core.Interfaces.IRepository<T>
+  nameWithType.vb: IRepository(Of T)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T)
+  name.vb: IRepository(Of T)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository`1
+    name: IRepository
+    href: UserService.Core.Interfaces.IRepository-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository`1
+    name: IRepository
+    href: UserService.Core.Interfaces.IRepository-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1._dbContext
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbContext
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbContext
+  name: _dbContext
+  nameWithType: Repository<T>._dbContext
+  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbContext
+  nameWithType.vb: Repository(Of T)._dbContext
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbContext
+- uid: UserService.Infrastructure.Repositories.Repository`1._dbSet
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbSet
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbSet
+  name: _dbSet
+  nameWithType: Repository<T>._dbSet
+  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbSet
+  nameWithType.vb: Repository(Of T)._dbSet
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbSet
+- uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
+  isExternal: true
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
+  name: GetByIdAsync(Guid)
+  nameWithType: Repository<T>.GetByIdAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetByIdAsync(System.Guid)
+  nameWithType.vb: Repository(Of T).GetByIdAsync(Guid)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetByIdAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
+    name: GetByIdAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
+    name: GetByIdAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.UpdateAsync(`0)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.UpdateAsync(`0)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_UpdateAsync__0_
+  name: UpdateAsync(T)
+  nameWithType: Repository<T>.UpdateAsync(T)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.UpdateAsync(T)
+  nameWithType.vb: Repository(Of T).UpdateAsync(T)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).UpdateAsync(T)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.UpdateAsync(`0)
+    name: UpdateAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_UpdateAsync__0_
+  - name: (
+  - name: T
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.UpdateAsync(`0)
+    name: UpdateAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_UpdateAsync__0_
+  - name: (
+  - name: T
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+  isExternal: true
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+  name: DeleteAsync(Guid)
+  nameWithType: Repository<T>.DeleteAsync(Guid)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync(System.Guid)
+  nameWithType.vb: Repository(Of T).DeleteAsync(Guid)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).DeleteAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+    name: DeleteAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+    name: DeleteAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.#ctor*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.#ctor
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Repositories_TokenRepository__
+  name: TokenRepository
+  nameWithType: TokenRepository.TokenRepository
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.TokenRepository
+  nameWithType.vb: TokenRepository.New
+  fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.New
+  name.vb: New
+- uid: UserService.Infrastructure.Data.UserServiceDbContext
+  commentId: T:UserService.Infrastructure.Data.UserServiceDbContext
+  parent: UserService.Infrastructure.Data
+  href: UserService.Infrastructure.Data.UserServiceDbContext.html
+  name: UserServiceDbContext
+  nameWithType: UserServiceDbContext
+  fullName: UserService.Infrastructure.Data.UserServiceDbContext
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.TokenRepository}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.TokenRepository}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TokenRepository>
+  nameWithType: ILogger<TokenRepository>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.TokenRepository>
+  nameWithType.vb: ILogger(Of TokenRepository)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.TokenRepository)
+  name.vb: ILogger(Of TokenRepository)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Infrastructure.Repositories.TokenRepository
+    name: TokenRepository
+    href: UserService.Infrastructure.Repositories.TokenRepository.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Infrastructure.Repositories.TokenRepository
+    name: TokenRepository
+    href: UserService.Infrastructure.Repositories.TokenRepository.html
+  - name: )
+- uid: UserService.Infrastructure.Data
+  commentId: N:UserService.Infrastructure.Data
+  href: UserService.html
+  name: UserService.Infrastructure.Data
+  nameWithType: UserService.Infrastructure.Data
+  fullName: UserService.Infrastructure.Data
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_GetTokenByUserIdAsync_System_Guid_
+  name: GetTokenByUserIdAsync
+  nameWithType: TokenRepository.GetTokenByUserIdAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync
+- uid: UserService.Core.Interfaces.ITokenRepository.GetTokenByUserIdAsync(System.Guid)
+  commentId: M:UserService.Core.Interfaces.ITokenRepository.GetTokenByUserIdAsync(System.Guid)
+  parent: UserService.Core.Interfaces.ITokenRepository
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: GetTokenByUserIdAsync(Guid)
+  nameWithType: ITokenRepository.GetTokenByUserIdAsync(Guid)
+  fullName: UserService.Core.Interfaces.ITokenRepository.GetTokenByUserIdAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITokenRepository.GetTokenByUserIdAsync(System.Guid)
+    name: GetTokenByUserIdAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITokenRepository.GetTokenByUserIdAsync(System.Guid)
+    name: GetTokenByUserIdAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<PersonalAccessToken>
+  nameWithType: Task<PersonalAccessToken>
+  fullName: System.Threading.Tasks.Task<UserService.Core.Interfaces.PersonalAccessToken>
+  nameWithType.vb: Task(Of PersonalAccessToken)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.Interfaces.PersonalAccessToken)
+  name.vb: Task(Of PersonalAccessToken)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+    href: UserService.Core.Interfaces.PersonalAccessToken.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+    href: UserService.Core.Interfaces.PersonalAccessToken.html
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_GetByIdAsync_System_String_System_Boolean_
+  name: GetByIdAsync
+  nameWithType: TokenRepository.GetByIdAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync
+- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.String,System.Boolean)
+  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  name: GetByIdAsync(string, bool)
+  nameWithType: IRepository<PersonalAccessToken>.GetByIdAsync(string, bool)
+  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Interfaces.PersonalAccessToken>.GetByIdAsync(string, bool)
+  nameWithType.vb: IRepository(Of PersonalAccessToken).GetByIdAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Interfaces.PersonalAccessToken).GetByIdAsync(String, Boolean)
+  name.vb: GetByIdAsync(String, Boolean)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.String,System.Boolean)
+    name: GetByIdAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetByIdAsync(System.String,System.Boolean)
+    name: GetByIdAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  isExternal: true
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  name: GetByIdAsync(string, bool)
+  nameWithType: IRepository<T>.GetByIdAsync(string, bool)
+  fullName: UserService.Core.Interfaces.IRepository<T>.GetByIdAsync(string, bool)
+  nameWithType.vb: IRepository(Of T).GetByIdAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetByIdAsync(String, Boolean)
+  name.vb: GetByIdAsync(String, Boolean)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+    name: GetByIdAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+    name: GetByIdAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.CreateAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.CreateAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_CreateAsync_UserService_Core_Interfaces_PersonalAccessToken_
+  name: CreateAsync
+  nameWithType: TokenRepository.CreateAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.CreateAsync
+- uid: UserService.Core.Interfaces.ITokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  commentId: M:UserService.Core.Interfaces.ITokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  parent: UserService.Core.Interfaces.ITokenRepository
+  name: CreateAsync(PersonalAccessToken)
+  nameWithType: ITokenRepository.CreateAsync(PersonalAccessToken)
+  fullName: UserService.Core.Interfaces.ITokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+    name: CreateAsync
+  - name: (
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITokenRepository.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+    name: CreateAsync
+  - name: (
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+  name: CreateAsync(PersonalAccessToken)
+  nameWithType: IRepository<PersonalAccessToken>.CreateAsync(PersonalAccessToken)
+  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Interfaces.PersonalAccessToken>.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  nameWithType.vb: IRepository(Of PersonalAccessToken).CreateAsync(PersonalAccessToken)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Interfaces.PersonalAccessToken).CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+    name: CreateAsync
+  - name: (
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.CreateAsync(UserService.Core.Interfaces.PersonalAccessToken)
+    name: CreateAsync
+  - name: (
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+- uid: UserService.Core.Interfaces.PersonalAccessToken
+  commentId: T:UserService.Core.Interfaces.PersonalAccessToken
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.PersonalAccessToken.html
+  name: PersonalAccessToken
+  nameWithType: PersonalAccessToken
+  fullName: UserService.Core.Interfaces.PersonalAccessToken
+- uid: UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+  commentId: M:UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_CreateAsync__0_
+  name: CreateAsync(T)
+  nameWithType: IRepository<T>.CreateAsync(T)
+  fullName: UserService.Core.Interfaces.IRepository<T>.CreateAsync(T)
+  nameWithType.vb: IRepository(Of T).CreateAsync(T)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).CreateAsync(T)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+    name: CreateAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_CreateAsync__0_
+  - name: (
+  - name: T
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+    name: CreateAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_CreateAsync__0_
+  - name: (
+  - name: T
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_DeleteAsync_System_String_
+  name: DeleteAsync
+  nameWithType: TokenRepository.DeleteAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync
+- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.String)
+  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  name: DeleteAsync(string)
+  nameWithType: IRepository<PersonalAccessToken>.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Interfaces.PersonalAccessToken>.DeleteAsync(string)
+  nameWithType.vb: IRepository(Of PersonalAccessToken).DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Interfaces.PersonalAccessToken).DeleteAsync(String)
+  name.vb: DeleteAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.String)
+    name: DeleteAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.DeleteAsync(System.String)
+    name: DeleteAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  isExternal: true
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  name: DeleteAsync(string)
+  nameWithType: IRepository<T>.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.IRepository<T>.DeleteAsync(string)
+  nameWithType.vb: IRepository(Of T).DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).DeleteAsync(String)
+  name.vb: DeleteAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+    name: DeleteAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+    name: DeleteAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_RevokeTokenAsync_System_Guid_
+  name: RevokeTokenAsync
+  nameWithType: TokenRepository.RevokeTokenAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync
+- uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
+  commentId: M:UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
+  parent: UserService.Core.Interfaces.ITokenRepository
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: RevokeTokenAsync(Guid)
+  nameWithType: ITokenRepository.RevokeTokenAsync(Guid)
+  fullName: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
+    name: RevokeTokenAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
+    name: RevokeTokenAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_DeleteTokenAsync_System_Guid_
+  name: DeleteTokenAsync
+  nameWithType: TokenRepository.DeleteTokenAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync
+- uid: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
+  commentId: M:UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
+  parent: UserService.Core.Interfaces.ITokenRepository
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: DeleteTokenAsync(Guid)
+  nameWithType: ITokenRepository.DeleteTokenAsync(Guid)
+  fullName: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
+    name: DeleteTokenAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
+    name: DeleteTokenAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_GetUserFromTokenAsync_System_String_
+  name: GetUserFromTokenAsync
+  nameWithType: TokenRepository.GetUserFromTokenAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync
+- uid: System.Threading.Tasks.Task{UserService.Core.Entities.User}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.Entities.User}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<User>
+  nameWithType: Task<User>
+  fullName: System.Threading.Tasks.Task<UserService.Core.Entities.User>
+  nameWithType.vb: Task(Of User)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.Entities.User)
+  name.vb: Task(Of User)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.Entities.User
+    name: User
+    href: UserService.Core.Entities.User.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Entities.User
+    name: User
+    href: UserService.Core.Entities.User.html
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_GetAllAsync
+  name: GetAllAsync
+  nameWithType: TokenRepository.GetAllAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync
+- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetAllAsync
+  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}
+  definition: UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+  name: GetAllAsync()
+  nameWithType: IRepository<PersonalAccessToken>.GetAllAsync()
+  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Interfaces.PersonalAccessToken>.GetAllAsync()
+  nameWithType.vb: IRepository(Of PersonalAccessToken).GetAllAsync()
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Interfaces.PersonalAccessToken).GetAllAsync()
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetAllAsync
+    name: GetAllAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Interfaces.PersonalAccessToken}.GetAllAsync
+    name: GetAllAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+  - name: (
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Interfaces.PersonalAccessToken}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Interfaces.PersonalAccessToken}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<PersonalAccessToken>>
+  nameWithType: Task<IEnumerable<PersonalAccessToken>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.Interfaces.PersonalAccessToken>>
+  nameWithType.vb: Task(Of IEnumerable(Of PersonalAccessToken))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.Interfaces.PersonalAccessToken))
+  name.vb: Task(Of IEnumerable(Of PersonalAccessToken))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+  - name: )
+  - name: )
+- uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+  name: GetAllAsync()
+  nameWithType: IRepository<T>.GetAllAsync()
+  fullName: UserService.Core.Interfaces.IRepository<T>.GetAllAsync()
+  nameWithType.vb: IRepository(Of T).GetAllAsync()
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetAllAsync()
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync
+    name: GetAllAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync
+    name: GetAllAsync
+    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_DeleteAllTokensForUserAsync_System_Guid_
+  name: DeleteAllTokensForUserAsync
+  nameWithType: TokenRepository.DeleteAllTokensForUserAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.DeleteAllTokensForUserAsync
+- uid: UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+  commentId: M:UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+  parent: UserService.Core.Interfaces.ITokenRepository
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: DeleteAllTokensForUserAsync(Guid)
+  nameWithType: ITokenRepository.DeleteAllTokensForUserAsync(Guid)
+  fullName: UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+    name: DeleteAllTokensForUserAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync(System.Guid)
+    name: DeleteAllTokensForUserAsync
+  - name: (
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: )
+- uid: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync
+  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_GetTokenByJtiAsync_System_String_
+  name: GetTokenByJtiAsync
+  nameWithType: TokenRepository.GetTokenByJtiAsync
+  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync
+- uid: UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(System.String)
+  parent: UserService.Core.Interfaces.ITokenRepository
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: GetTokenByJtiAsync(string)
+  nameWithType: ITokenRepository.GetTokenByJtiAsync(string)
+  fullName: UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(string)
+  nameWithType.vb: ITokenRepository.GetTokenByJtiAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(String)
+  name.vb: GetTokenByJtiAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(System.String)
+    name: GetTokenByJtiAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(System.String)
+    name: GetTokenByJtiAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )

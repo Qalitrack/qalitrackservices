@@ -1,0 +1,152 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Services
+  commentId: N:UserService.Core.Services
+  id: UserService.Core.Services
+  children:
+  - UserService.Core.Services.BackupHealthCheck
+  - UserService.Core.Services.BackupMonitor
+  - UserService.Core.Services.BackupNotificationService
+  - UserService.Core.Services.BackupScheduler
+  - UserService.Core.Services.BackupVerificationService
+  - UserService.Core.Services.DatabaseBackupService
+  - UserService.Core.Services.PermissionsService
+  - UserService.Core.Services.RestoreService
+  - UserService.Core.Services.RoleService
+  - UserService.Core.Services.ShiftService
+  - UserService.Core.Services.TokenService
+  - UserService.Core.Services.UserRoleService
+  - UserService.Core.Services.UserService
+  - UserService.Core.Services.UserStatusService
+  - UserService.Core.Services.UserStatusUpdate
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Services
+  nameWithType: UserService.Core.Services
+  fullName: UserService.Core.Services
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Services.BackupHealthCheck
+  commentId: T:UserService.Core.Services.BackupHealthCheck
+  href: UserService.Core.Services.BackupHealthCheck.html
+  name: BackupHealthCheck
+  nameWithType: BackupHealthCheck
+  fullName: UserService.Core.Services.BackupHealthCheck
+- uid: UserService.Core.Services.BackupMonitor
+  commentId: T:UserService.Core.Services.BackupMonitor
+  href: UserService.Core.Services.BackupMonitor.html
+  name: BackupMonitor
+  nameWithType: BackupMonitor
+  fullName: UserService.Core.Services.BackupMonitor
+- uid: UserService.Core.Services.BackupNotificationService
+  commentId: T:UserService.Core.Services.BackupNotificationService
+  href: UserService.Core.Services.BackupNotificationService.html
+  name: BackupNotificationService
+  nameWithType: BackupNotificationService
+  fullName: UserService.Core.Services.BackupNotificationService
+- uid: UserService.Core.Services.BackupScheduler
+  commentId: T:UserService.Core.Services.BackupScheduler
+  href: UserService.Core.Services.BackupScheduler.html
+  name: BackupScheduler
+  nameWithType: BackupScheduler
+  fullName: UserService.Core.Services.BackupScheduler
+- uid: UserService.Core.Services.BackupVerificationService
+  commentId: T:UserService.Core.Services.BackupVerificationService
+  href: UserService.Core.Services.BackupVerificationService.html
+  name: BackupVerificationService
+  nameWithType: BackupVerificationService
+  fullName: UserService.Core.Services.BackupVerificationService
+- uid: UserService.Core.Services.DatabaseBackupService
+  commentId: T:UserService.Core.Services.DatabaseBackupService
+  href: UserService.Core.Services.DatabaseBackupService.html
+  name: DatabaseBackupService
+  nameWithType: DatabaseBackupService
+  fullName: UserService.Core.Services.DatabaseBackupService
+- uid: UserService.Core.Services.PermissionsService
+  commentId: T:UserService.Core.Services.PermissionsService
+  href: UserService.Core.Services.PermissionsService.html
+  name: PermissionsService
+  nameWithType: PermissionsService
+  fullName: UserService.Core.Services.PermissionsService
+- uid: UserService.Core.Services.RestoreService
+  commentId: T:UserService.Core.Services.RestoreService
+  parent: UserService.Core.Services
+  href: UserService.Core.Services.RestoreService.html
+  name: RestoreService
+  nameWithType: RestoreService
+  fullName: UserService.Core.Services.RestoreService
+- uid: UserService.Core.Services.RoleService
+  commentId: T:UserService.Core.Services.RoleService
+  href: UserService.Core.Services.RoleService.html
+  name: RoleService
+  nameWithType: RoleService
+  fullName: UserService.Core.Services.RoleService
+- uid: UserService.Core.Services.ShiftService
+  commentId: T:UserService.Core.Services.ShiftService
+  href: UserService.Core.Services.ShiftService.html
+  name: ShiftService
+  nameWithType: ShiftService
+  fullName: UserService.Core.Services.ShiftService
+- uid: UserService.Core.Services.TokenService
+  commentId: T:UserService.Core.Services.TokenService
+  href: UserService.Core.Services.TokenService.html
+  name: TokenService
+  nameWithType: TokenService
+  fullName: UserService.Core.Services.TokenService
+- uid: UserService.Core.Services.UserRoleService
+  commentId: T:UserService.Core.Services.UserRoleService
+  href: UserService.Core.Services.UserRoleService.html
+  name: UserRoleService
+  nameWithType: UserRoleService
+  fullName: UserService.Core.Services.UserRoleService
+- uid: UserService.Core.Services.UserService
+  commentId: T:UserService.Core.Services.UserService
+  href: UserService.Core.Services.UserService.html
+  name: UserService
+  nameWithType: UserService
+  fullName: UserService.Core.Services.UserService
+- uid: UserService.Core.Services.UserStatusService
+  commentId: T:UserService.Core.Services.UserStatusService
+  href: UserService.Core.Services.UserStatusService.html
+  name: UserStatusService
+  nameWithType: UserStatusService
+  fullName: UserService.Core.Services.UserStatusService
+- uid: UserService.Core.Services.UserStatusUpdate
+  commentId: T:UserService.Core.Services.UserStatusUpdate
+  href: UserService.Core.Services.UserStatusUpdate.html
+  name: UserStatusUpdate
+  nameWithType: UserStatusUpdate
+  fullName: UserService.Core.Services.UserStatusUpdate
+- uid: UserService.Core.Services
+  commentId: N:UserService.Core.Services
+  href: UserService.html
+  name: UserService.Core.Services
+  nameWithType: UserService.Core.Services
+  fullName: UserService.Core.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html

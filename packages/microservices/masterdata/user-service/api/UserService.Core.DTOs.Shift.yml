@@ -1,0 +1,91 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Shift
+  commentId: N:UserService.Core.DTOs.Shift
+  id: UserService.Core.DTOs.Shift
+  children:
+  - UserService.Core.DTOs.Shift.CreateShiftDto
+  - UserService.Core.DTOs.Shift.MassAssignShiftResultDto
+  - UserService.Core.DTOs.Shift.UpdateShiftDto
+  - UserService.Core.DTOs.Shift.UserDetailsDto
+  - UserService.Core.DTOs.Shift.UsersAssignedToShiftDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.Shift
+  nameWithType: UserService.Core.DTOs.Shift
+  fullName: UserService.Core.DTOs.Shift
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.Shift.CreateShiftDto
+  commentId: T:UserService.Core.DTOs.Shift.CreateShiftDto
+  parent: UserService.Core.DTOs.Shift
+  href: UserService.Core.DTOs.Shift.CreateShiftDto.html
+  name: CreateShiftDto
+  nameWithType: CreateShiftDto
+  fullName: UserService.Core.DTOs.Shift.CreateShiftDto
+- uid: UserService.Core.DTOs.Shift.MassAssignShiftResultDto
+  commentId: T:UserService.Core.DTOs.Shift.MassAssignShiftResultDto
+  href: UserService.Core.DTOs.Shift.MassAssignShiftResultDto.html
+  name: MassAssignShiftResultDto
+  nameWithType: MassAssignShiftResultDto
+  fullName: UserService.Core.DTOs.Shift.MassAssignShiftResultDto
+- uid: UserService.Core.DTOs.Shift.UpdateShiftDto
+  commentId: T:UserService.Core.DTOs.Shift.UpdateShiftDto
+  parent: UserService.Core.DTOs.Shift
+  href: UserService.Core.DTOs.Shift.UpdateShiftDto.html
+  name: UpdateShiftDto
+  nameWithType: UpdateShiftDto
+  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto
+- uid: UserService.Core.DTOs.Shift.UserDetailsDto
+  commentId: T:UserService.Core.DTOs.Shift.UserDetailsDto
+  href: UserService.Core.DTOs.Shift.UserDetailsDto.html
+  name: UserDetailsDto
+  nameWithType: UserDetailsDto
+  fullName: UserService.Core.DTOs.Shift.UserDetailsDto
+- uid: UserService.Core.DTOs.Shift.UsersAssignedToShiftDto
+  commentId: T:UserService.Core.DTOs.Shift.UsersAssignedToShiftDto
+  href: UserService.Core.DTOs.Shift.UsersAssignedToShiftDto.html
+  name: UsersAssignedToShiftDto
+  nameWithType: UsersAssignedToShiftDto
+  fullName: UserService.Core.DTOs.Shift.UsersAssignedToShiftDto
+- uid: UserService.Core.DTOs.Shift
+  commentId: N:UserService.Core.DTOs.Shift
+  href: UserService.html
+  name: UserService.Core.DTOs.Shift
+  nameWithType: UserService.Core.DTOs.Shift
+  fullName: UserService.Core.DTOs.Shift
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Shift
+    name: Shift
+    href: UserService.Core.DTOs.Shift.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Shift
+    name: Shift
+    href: UserService.Core.DTOs.Shift.html

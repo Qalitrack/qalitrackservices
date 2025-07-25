@@ -1,0 +1,458 @@
+### YamlMime:TableOfContent
+items:
+- uid: UserService.Api.Authorization
+  name: UserService.Api.Authorization
+  type: Namespace
+  items:
+  - uid: UserService.Api.Authorization.PermissionAuthorizationHandler
+    name: PermissionAuthorizationHandler
+    type: Class
+  - uid: UserService.Api.Authorization.PermissionPolicyProvider
+    name: PermissionPolicyProvider
+    type: Class
+  - uid: UserService.Api.Authorization.PermissionRequirement
+    name: PermissionRequirement
+    type: Class
+- uid: UserService.Api.Controllers
+  name: UserService.Api.Controllers
+  type: Namespace
+  items:
+  - uid: UserService.Api.Controllers.AuthController
+    name: AuthController
+    type: Class
+  - uid: UserService.Api.Controllers.BackupController
+    name: BackupController
+    type: Class
+  - uid: UserService.Api.Controllers.BaseController
+    name: BaseController
+    type: Class
+  - uid: UserService.Api.Controllers.PermissionsController
+    name: PermissionsController
+    type: Class
+  - uid: UserService.Api.Controllers.ReportsController
+    name: ReportsController
+    type: Class
+  - uid: UserService.Api.Controllers.RolesController
+    name: RolesController
+    type: Class
+  - uid: UserService.Api.Controllers.ShiftController
+    name: ShiftController
+    type: Class
+  - uid: UserService.Api.Controllers.UserRoleController
+    name: UserRoleController
+    type: Class
+  - uid: UserService.Api.Controllers.UserShiftController
+    name: UserShiftController
+    type: Class
+  - uid: UserService.Api.Controllers.UsersController
+    name: UsersController
+    type: Class
+- uid: UserService.Core.DTOs
+  name: UserService.Core.DTOs
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.ApiResponseDto
+    name: ApiResponseDto
+    type: Class
+  - uid: UserService.Core.DTOs.ApiResponseDto`1
+    name: ApiResponseDto<T>
+    type: Class
+  - uid: UserService.Core.DTOs.RoleWithPermissionsDto
+    name: RoleWithPermissionsDto
+    type: Class
+  - uid: UserService.Core.DTOs.UserShiftDto
+    name: UserShiftDto
+    type: Class
+- uid: UserService.Core.DTOs.Auth
+  name: UserService.Core.DTOs.Auth
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.Auth.LoginDto
+    name: LoginDto
+    type: Class
+  - uid: UserService.Core.DTOs.Auth.LoginResponseDto
+    name: LoginResponseDto
+    type: Class
+  - uid: UserService.Core.DTOs.Auth.UpdatePasswordDto
+    name: UpdatePasswordDto
+    type: Class
+- uid: UserService.Core.DTOs.Permissions
+  name: UserService.Core.DTOs.Permissions
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.Permissions.CreatePermissionDto
+    name: CreatePermissionDto
+    type: Class
+  - uid: UserService.Core.DTOs.Permissions.PermissionDto
+    name: PermissionDto
+    type: Class
+  - uid: UserService.Core.DTOs.Permissions.PermissionWithRolesDto
+    name: PermissionWithRolesDto
+    type: Class
+  - uid: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+    name: UpdatePermissionDto
+    type: Class
+- uid: UserService.Core.DTOs.Report
+  name: UserService.Core.DTOs.Report
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.Report.ShiftReportDto
+    name: ShiftReportDto
+    type: Class
+  - uid: UserService.Core.DTOs.Report.ShiftReportResponse
+    name: ShiftReportResponse
+    type: Class
+  - uid: UserService.Core.DTOs.Report.UserReportDto
+    name: UserReportDto
+    type: Class
+  - uid: UserService.Core.DTOs.Report.UserReportResponse
+    name: UserReportResponse
+    type: Class
+  - uid: UserService.Core.DTOs.Report.UserShiftInfoDto
+    name: UserShiftInfoDto
+    type: Class
+- uid: UserService.Core.DTOs.Role
+  name: UserService.Core.DTOs.Role
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.Role.RoleWithUsersDto
+    name: RoleWithUsersDto
+    type: Class
+  - uid: UserService.Core.DTOs.Role.UserBasicInfoDto
+    name: UserBasicInfoDto
+    type: Class
+- uid: UserService.Core.DTOs.RolePermission
+  name: UserService.Core.DTOs.RolePermission
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.RolePermission.RolePermissionDto
+    name: RolePermissionDto
+    type: Class
+- uid: UserService.Core.DTOs.Roles
+  name: UserService.Core.DTOs.Roles
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.Roles.CreateRoleDto
+    name: CreateRoleDto
+    type: Class
+  - uid: UserService.Core.DTOs.Roles.CreateUserRoleDto
+    name: CreateUserRoleDto
+    type: Class
+  - uid: UserService.Core.DTOs.Roles.RoleDto
+    name: RoleDto
+    type: Class
+  - uid: UserService.Core.DTOs.Roles.UpdateRoleDto
+    name: UpdateRoleDto
+    type: Class
+  - uid: UserService.Core.DTOs.Roles.UpdateUserRoleDto
+    name: UpdateUserRoleDto
+    type: Class
+  - uid: UserService.Core.DTOs.Roles.UserBasicInfoDto
+    name: UserBasicInfoDto
+    type: Class
+  - uid: UserService.Core.DTOs.Roles.UserRoleDto
+    name: UserRoleDto
+    type: Class
+- uid: UserService.Core.DTOs.Shift
+  name: UserService.Core.DTOs.Shift
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.Shift.CreateShiftDto
+    name: CreateShiftDto
+    type: Class
+  - uid: UserService.Core.DTOs.Shift.MassAssignShiftResultDto
+    name: MassAssignShiftResultDto
+    type: Class
+  - uid: UserService.Core.DTOs.Shift.UpdateShiftDto
+    name: UpdateShiftDto
+    type: Class
+  - uid: UserService.Core.DTOs.Shift.UserDetailsDto
+    name: UserDetailsDto
+    type: Class
+  - uid: UserService.Core.DTOs.Shift.UsersAssignedToShiftDto
+    name: UsersAssignedToShiftDto
+    type: Class
+- uid: UserService.Core.DTOs.User
+  name: UserService.Core.DTOs.User
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.User.CreateUserDto
+    name: CreateUserDto
+    type: Class
+  - uid: UserService.Core.DTOs.User.UpdateUserDto
+    name: UpdateUserDto
+    type: Class
+  - uid: UserService.Core.DTOs.User.UserReadDto
+    name: UserReadDto
+    type: Class
+- uid: UserService.Core.Entities
+  name: UserService.Core.Entities
+  type: Namespace
+  items:
+  - uid: UserService.Core.Entities.BaseEntity
+    name: BaseEntity
+    type: Class
+  - uid: UserService.Core.Entities.Permission
+    name: Permission
+    type: Class
+  - uid: UserService.Core.Entities.Role
+    name: Role
+    type: Class
+  - uid: UserService.Core.Entities.RolePermission
+    name: RolePermission
+    type: Class
+  - uid: UserService.Core.Entities.Shift
+    name: Shift
+    type: Class
+  - uid: UserService.Core.Entities.ShiftMode
+    name: ShiftMode
+    type: Enum
+  - uid: UserService.Core.Entities.User
+    name: User
+    type: Class
+  - uid: UserService.Core.Entities.UserPermissions
+    name: UserPermissions
+    type: Class
+  - uid: UserService.Core.Entities.UserRole
+    name: UserRole
+    type: Class
+  - uid: UserService.Core.Entities.UserShift
+    name: UserShift
+    type: Class
+- uid: UserService.Core.Enums
+  name: UserService.Core.Enums
+  type: Namespace
+  items:
+  - uid: UserService.Core.Enums.BackupType
+    name: BackupType
+    type: Enum
+- uid: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces
+  type: Namespace
+  items:
+  - uid: UserService.Core.Interfaces.IBackupNotificationService
+    name: IBackupNotificationService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IBackupVerificationService
+    name: IBackupVerificationService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IDatabaseBackupService
+    name: IDatabaseBackupService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IHealthCheckService
+    name: IHealthCheckService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IPermissionsRepository
+    name: IPermissionsRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IPermissionsService
+    name: IPermissionsService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IReportService
+    name: IReportService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IRepository`1
+    name: IRepository<T>
+    type: Interface
+  - uid: UserService.Core.Interfaces.IRolePermissionRepository
+    name: IRolePermissionRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IRoleRepository
+    name: IRoleRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IRoleService
+    name: IRoleService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IShiftRepository
+    name: IShiftRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IShiftService
+    name: IShiftService
+    type: Interface
+  - uid: UserService.Core.Interfaces.ITokenRepository
+    name: ITokenRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.ITokenService
+    name: ITokenService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IUserRepository
+    name: IUserRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IUserRoleRepository
+    name: IUserRoleRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IUserRoleService
+    name: IUserRoleService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IUserService
+    name: IUserService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IUserShiftRepository
+    name: IUserShiftRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IUserStatusRepository
+    name: IUserStatusRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.IUserStatusService
+    name: IUserStatusService
+    type: Interface
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+    type: Class
+- uid: UserService.Core.Mappings
+  name: UserService.Core.Mappings
+  type: Namespace
+  items:
+  - uid: UserService.Core.Mappings.PermissionProfile
+    name: PermissionProfile
+    type: Class
+  - uid: UserService.Core.Mappings.RolePermissionProfile
+    name: RolePermissionProfile
+    type: Class
+  - uid: UserService.Core.Mappings.RoleProfile
+    name: RoleProfile
+    type: Class
+  - uid: UserService.Core.Mappings.ShiftProfile
+    name: ShiftProfile
+    type: Class
+  - uid: UserService.Core.Mappings.UserProfile
+    name: UserProfile
+    type: Class
+  - uid: UserService.Core.Mappings.UserShiftProfile
+    name: UserShiftProfile
+    type: Class
+- uid: UserService.Core.Options
+  name: UserService.Core.Options
+  type: Namespace
+  items:
+  - uid: UserService.Core.Options.BackupOptions
+    name: BackupOptions
+    type: Class
+- uid: UserService.Core.Services
+  name: UserService.Core.Services
+  type: Namespace
+  items:
+  - uid: UserService.Core.Services.BackupHealthCheck
+    name: BackupHealthCheck
+    type: Class
+  - uid: UserService.Core.Services.BackupMonitor
+    name: BackupMonitor
+    type: Class
+  - uid: UserService.Core.Services.BackupNotificationService
+    name: BackupNotificationService
+    type: Class
+  - uid: UserService.Core.Services.BackupScheduler
+    name: BackupScheduler
+    type: Class
+  - uid: UserService.Core.Services.BackupVerificationService
+    name: BackupVerificationService
+    type: Class
+  - uid: UserService.Core.Services.DatabaseBackupService
+    name: DatabaseBackupService
+    type: Class
+  - uid: UserService.Core.Services.PermissionsService
+    name: PermissionsService
+    type: Class
+  - uid: UserService.Core.Services.RestoreService
+    name: RestoreService
+    type: Class
+  - uid: UserService.Core.Services.RoleService
+    name: RoleService
+    type: Class
+  - uid: UserService.Core.Services.ShiftService
+    name: ShiftService
+    type: Class
+  - uid: UserService.Core.Services.TokenService
+    name: TokenService
+    type: Class
+  - uid: UserService.Core.Services.UserRoleService
+    name: UserRoleService
+    type: Class
+  - uid: UserService.Core.Services.UserService
+    name: UserService
+    type: Class
+  - uid: UserService.Core.Services.UserStatusService
+    name: UserStatusService
+    type: Class
+  - uid: UserService.Core.Services.UserStatusUpdate
+    name: UserStatusUpdate
+    type: Class
+- uid: UserService.Infrastructure.Data
+  name: UserService.Infrastructure.Data
+  type: Namespace
+  items:
+  - uid: UserService.Infrastructure.Data.PrepDb
+    name: PrepDb
+    type: Class
+  - uid: UserService.Infrastructure.Data.UserServiceDbContext
+    name: UserServiceDbContext
+    type: Class
+- uid: UserService.Infrastructure.Data.Migrations
+  name: UserService.Infrastructure.Data.Migrations
+  type: Namespace
+  items:
+  - uid: UserService.Infrastructure.Data.Migrations.InitialCreate
+    name: InitialCreate
+    type: Class
+- uid: UserService.Infrastructure.Interfaces
+  name: UserService.Infrastructure.Interfaces
+  type: Namespace
+  items:
+  - uid: UserService.Infrastructure.Interfaces.IEmailService
+    name: IEmailService
+    type: Interface
+- uid: UserService.Infrastructure.Migrations
+  name: UserService.Infrastructure.Migrations
+  type: Namespace
+  items:
+  - uid: UserService.Infrastructure.Migrations.UpdateDatabaseSchema
+    name: UpdateDatabaseSchema
+    type: Class
+- uid: UserService.Infrastructure.Repositories
+  name: UserService.Infrastructure.Repositories
+  type: Namespace
+  items:
+  - uid: UserService.Infrastructure.Repositories.PermissionsRepository
+    name: PermissionsRepository
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository<T>
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.RolePermissionRepository
+    name: RolePermissionRepository
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.RoleRepository
+    name: RoleRepository
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.ShiftRepository
+    name: ShiftRepository
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.TokenRepository
+    name: TokenRepository
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.UserRepository
+    name: UserRepository
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.UserRoleRepository
+    name: UserRoleRepository
+    type: Class
+  - uid: UserService.Infrastructure.Repositories.UserShiftRepository
+    name: UserShiftRepository
+    type: Class
+- uid: UserService.Infrastructure.Services
+  name: UserService.Infrastructure.Services
+  type: Namespace
+  items:
+  - uid: UserService.Infrastructure.Services.HealthCheckService
+    name: HealthCheckService
+    type: Class
+  - uid: UserService.Infrastructure.Services.NullEmailService
+    name: NullEmailService
+    type: Class
+  - uid: UserService.Infrastructure.Services.ReportService
+    name: ReportService
+    type: Class
+  - uid: UserService.Infrastructure.Services.ShiftMonitorService
+    name: ShiftMonitorService
+    type: Class
+memberLayout: SamePage

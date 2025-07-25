@@ -1,0 +1,117 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Api.Controllers
+  commentId: N:UserService.Api.Controllers
+  id: UserService.Api.Controllers
+  children:
+  - UserService.Api.Controllers.AuthController
+  - UserService.Api.Controllers.BackupController
+  - UserService.Api.Controllers.BaseController
+  - UserService.Api.Controllers.PermissionsController
+  - UserService.Api.Controllers.ReportsController
+  - UserService.Api.Controllers.RolesController
+  - UserService.Api.Controllers.ShiftController
+  - UserService.Api.Controllers.UserRoleController
+  - UserService.Api.Controllers.UserShiftController
+  - UserService.Api.Controllers.UsersController
+  langs:
+  - csharp
+  - vb
+  name: UserService.Api.Controllers
+  nameWithType: UserService.Api.Controllers
+  fullName: UserService.Api.Controllers
+  type: Namespace
+  assemblies:
+  - UserService.Api
+references:
+- uid: UserService.Api.Controllers.AuthController
+  commentId: T:UserService.Api.Controllers.AuthController
+  href: UserService.Api.Controllers.AuthController.html
+  name: AuthController
+  nameWithType: AuthController
+  fullName: UserService.Api.Controllers.AuthController
+- uid: UserService.Api.Controllers.BackupController
+  commentId: T:UserService.Api.Controllers.BackupController
+  href: UserService.Api.Controllers.BackupController.html
+  name: BackupController
+  nameWithType: BackupController
+  fullName: UserService.Api.Controllers.BackupController
+- uid: UserService.Api.Controllers.BaseController
+  commentId: T:UserService.Api.Controllers.BaseController
+  parent: UserService.Api.Controllers
+  href: UserService.Api.Controllers.BaseController.html
+  name: BaseController
+  nameWithType: BaseController
+  fullName: UserService.Api.Controllers.BaseController
+- uid: UserService.Api.Controllers.PermissionsController
+  commentId: T:UserService.Api.Controllers.PermissionsController
+  href: UserService.Api.Controllers.PermissionsController.html
+  name: PermissionsController
+  nameWithType: PermissionsController
+  fullName: UserService.Api.Controllers.PermissionsController
+- uid: UserService.Api.Controllers.ReportsController
+  commentId: T:UserService.Api.Controllers.ReportsController
+  href: UserService.Api.Controllers.ReportsController.html
+  name: ReportsController
+  nameWithType: ReportsController
+  fullName: UserService.Api.Controllers.ReportsController
+- uid: UserService.Api.Controllers.RolesController
+  commentId: T:UserService.Api.Controllers.RolesController
+  href: UserService.Api.Controllers.RolesController.html
+  name: RolesController
+  nameWithType: RolesController
+  fullName: UserService.Api.Controllers.RolesController
+- uid: UserService.Api.Controllers.ShiftController
+  commentId: T:UserService.Api.Controllers.ShiftController
+  href: UserService.Api.Controllers.ShiftController.html
+  name: ShiftController
+  nameWithType: ShiftController
+  fullName: UserService.Api.Controllers.ShiftController
+- uid: UserService.Api.Controllers.UserRoleController
+  commentId: T:UserService.Api.Controllers.UserRoleController
+  href: UserService.Api.Controllers.UserRoleController.html
+  name: UserRoleController
+  nameWithType: UserRoleController
+  fullName: UserService.Api.Controllers.UserRoleController
+- uid: UserService.Api.Controllers.UsersController
+  commentId: T:UserService.Api.Controllers.UsersController
+  href: UserService.Api.Controllers.UsersController.html
+  name: UsersController
+  nameWithType: UsersController
+  fullName: UserService.Api.Controllers.UsersController
+- uid: UserService.Api.Controllers.UserShiftController
+  commentId: T:UserService.Api.Controllers.UserShiftController
+  href: UserService.Api.Controllers.UserShiftController.html
+  name: UserShiftController
+  nameWithType: UserShiftController
+  fullName: UserService.Api.Controllers.UserShiftController
+- uid: UserService.Api.Controllers
+  commentId: N:UserService.Api.Controllers
+  href: UserService.html
+  name: UserService.Api.Controllers
+  nameWithType: UserService.Api.Controllers
+  fullName: UserService.Api.Controllers
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Api
+    name: Api
+    href: UserService.Api.html
+  - name: .
+  - uid: UserService.Api.Controllers
+    name: Controllers
+    href: UserService.Api.Controllers.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Api
+    name: Api
+    href: UserService.Api.html
+  - name: .
+  - uid: UserService.Api.Controllers
+    name: Controllers
+    href: UserService.Api.Controllers.html

@@ -1,0 +1,426 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.IReportService
+  commentId: T:UserService.Core.Interfaces.IReportService
+  id: IReportService
+  parent: UserService.Core.Interfaces
+  children:
+  - UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+  - UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+  - UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  - UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  langs:
+  - csharp
+  - vb
+  name: IReportService
+  nameWithType: IReportService
+  fullName: UserService.Core.Interfaces.IReportService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IReportService
+    path: src/UserService.Core/Interfaces/IReportService.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: public interface IReportService
+    content.vb: Public Interface IReportService
+- uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+  commentId: M:UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+  id: GenerateShiftReportAsync
+  parent: UserService.Core.Interfaces.IReportService
+  langs:
+  - csharp
+  - vb
+  name: GenerateShiftReportAsync()
+  nameWithType: IReportService.GenerateShiftReportAsync()
+  fullName: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GenerateShiftReportAsync
+    path: src/UserService.Core/Interfaces/IReportService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<ShiftReportResponse> GenerateShiftReportAsync()
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
+    content.vb: Function GenerateShiftReportAsync() As Task(Of ShiftReportResponse)
+  overload: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync*
+- uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+  commentId: M:UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+  id: GenerateUserReportAsync
+  parent: UserService.Core.Interfaces.IReportService
+  langs:
+  - csharp
+  - vb
+  name: GenerateUserReportAsync()
+  nameWithType: IReportService.GenerateUserReportAsync()
+  fullName: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GenerateUserReportAsync
+    path: src/UserService.Core/Interfaces/IReportService.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<UserReportResponse> GenerateUserReportAsync()
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
+    content.vb: Function GenerateUserReportAsync() As Task(Of UserReportResponse)
+  overload: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync*
+- uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  id: GetShiftDetailsReportAsync(System.String)
+  parent: UserService.Core.Interfaces.IReportService
+  langs:
+  - csharp
+  - vb
+  name: GetShiftDetailsReportAsync(string)
+  nameWithType: IReportService.GetShiftDetailsReportAsync(string)
+  fullName: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetShiftDetailsReportAsync
+    path: src/UserService.Core/Interfaces/IReportService.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<ShiftReportDto> GetShiftDetailsReportAsync(string shiftId)
+    parameters:
+    - id: shiftId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportDto}
+    content.vb: Function GetShiftDetailsReportAsync(shiftId As String) As Task(Of ShiftReportDto)
+  overload: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync*
+  nameWithType.vb: IReportService.GetShiftDetailsReportAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(String)
+  name.vb: GetShiftDetailsReportAsync(String)
+- uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  id: GetUserDetailsReportAsync(System.String)
+  parent: UserService.Core.Interfaces.IReportService
+  langs:
+  - csharp
+  - vb
+  name: GetUserDetailsReportAsync(string)
+  nameWithType: IReportService.GetUserDetailsReportAsync(string)
+  fullName: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetUserDetailsReportAsync
+    path: src/UserService.Core/Interfaces/IReportService.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<UserReportDto> GetUserDetailsReportAsync(string userId)
+    parameters:
+    - id: userId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportDto}
+    content.vb: Function GetUserDetailsReportAsync(userId As String) As Task(Of UserReportDto)
+  overload: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync*
+  nameWithType.vb: IReportService.GetUserDetailsReportAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(String)
+  name.vb: GetUserDetailsReportAsync(String)
+references:
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync*
+  commentId: Overload:UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GenerateShiftReportAsync
+  name: GenerateShiftReportAsync
+  nameWithType: IReportService.GenerateShiftReportAsync
+  fullName: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ShiftReportResponse>
+  nameWithType: Task<ShiftReportResponse>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.ShiftReportResponse>
+  nameWithType.vb: Task(Of ShiftReportResponse)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.ShiftReportResponse)
+  name.vb: Task(Of ShiftReportResponse)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.ShiftReportResponse
+    name: ShiftReportResponse
+    href: UserService.Core.DTOs.Report.ShiftReportResponse.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.ShiftReportResponse
+    name: ShiftReportResponse
+    href: UserService.Core.DTOs.Report.ShiftReportResponse.html
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync*
+  commentId: Overload:UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GenerateUserReportAsync
+  name: GenerateUserReportAsync
+  nameWithType: IReportService.GenerateUserReportAsync
+  fullName: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<UserReportResponse>
+  nameWithType: Task<UserReportResponse>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.UserReportResponse>
+  nameWithType.vb: Task(Of UserReportResponse)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.UserReportResponse)
+  name.vb: Task(Of UserReportResponse)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.UserReportResponse
+    name: UserReportResponse
+    href: UserService.Core.DTOs.Report.UserReportResponse.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.UserReportResponse
+    name: UserReportResponse
+    href: UserService.Core.DTOs.Report.UserReportResponse.html
+  - name: )
+- uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync*
+  commentId: Overload:UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync
+  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GetShiftDetailsReportAsync_System_String_
+  name: GetShiftDetailsReportAsync
+  nameWithType: IReportService.GetShiftDetailsReportAsync
+  fullName: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportDto}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ShiftReportDto>
+  nameWithType: Task<ShiftReportDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.ShiftReportDto>
+  nameWithType.vb: Task(Of ShiftReportDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.ShiftReportDto)
+  name.vb: Task(Of ShiftReportDto)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.ShiftReportDto
+    name: ShiftReportDto
+    href: UserService.Core.DTOs.Report.ShiftReportDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.ShiftReportDto
+    name: ShiftReportDto
+    href: UserService.Core.DTOs.Report.ShiftReportDto.html
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync*
+  commentId: Overload:UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync
+  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GetUserDetailsReportAsync_System_String_
+  name: GetUserDetailsReportAsync
+  nameWithType: IReportService.GetUserDetailsReportAsync
+  fullName: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportDto}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<UserReportDto>
+  nameWithType: Task<UserReportDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.UserReportDto>
+  nameWithType.vb: Task(Of UserReportDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.UserReportDto)
+  name.vb: Task(Of UserReportDto)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.UserReportDto
+    name: UserReportDto
+    href: UserService.Core.DTOs.Report.UserReportDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.UserReportDto
+    name: UserReportDto
+    href: UserService.Core.DTOs.Report.UserReportDto.html
+  - name: )

@@ -1,0 +1,1120 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.User.UserReadDto
+  commentId: T:UserService.Core.DTOs.User.UserReadDto
+  id: UserReadDto
+  parent: UserService.Core.DTOs.User
+  children:
+  - UserService.Core.DTOs.User.UserReadDto.CreatedAt
+  - UserService.Core.DTOs.User.UserReadDto.Email
+  - UserService.Core.DTOs.User.UserReadDto.FirstName
+  - UserService.Core.DTOs.User.UserReadDto.FullName
+  - UserService.Core.DTOs.User.UserReadDto.Id
+  - UserService.Core.DTOs.User.UserReadDto.IsActive
+  - UserService.Core.DTOs.User.UserReadDto.IsDeleted
+  - UserService.Core.DTOs.User.UserReadDto.IsFirstLogin
+  - UserService.Core.DTOs.User.UserReadDto.LastLoginDate
+  - UserService.Core.DTOs.User.UserReadDto.LastName
+  - UserService.Core.DTOs.User.UserReadDto.MobileNumber
+  - UserService.Core.DTOs.User.UserReadDto.Roles
+  - UserService.Core.DTOs.User.UserReadDto.UpdatedAt
+  langs:
+  - csharp
+  - vb
+  name: UserReadDto
+  nameWithType: UserReadDto
+  fullName: UserService.Core.DTOs.User.UserReadDto
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UserReadDto
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: public class UserReadDto
+    content.vb: Public Class UserReadDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.DTOs.User.UserReadDto.Id
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.Id
+  id: Id
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: UserReadDto.Id
+  fullName: UserService.Core.DTOs.User.UserReadDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Id
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("id")]
+
+      public string Id { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("id")>
+
+      Public Property Id As String
+  overload: UserService.Core.DTOs.User.UserReadDto.Id*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: id
+- uid: UserService.Core.DTOs.User.UserReadDto.FirstName
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.FirstName
+  id: FirstName
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: FirstName
+  nameWithType: UserReadDto.FirstName
+  fullName: UserService.Core.DTOs.User.UserReadDto.FirstName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: FirstName
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("firstName")]
+
+      public string FirstName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("firstName")>
+
+      Public Property FirstName As String
+  overload: UserService.Core.DTOs.User.UserReadDto.FirstName*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: firstName
+- uid: UserService.Core.DTOs.User.UserReadDto.LastName
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.LastName
+  id: LastName
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: LastName
+  nameWithType: UserReadDto.LastName
+  fullName: UserService.Core.DTOs.User.UserReadDto.LastName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: LastName
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 13
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("lastName")]
+
+      public string LastName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("lastName")>
+
+      Public Property LastName As String
+  overload: UserService.Core.DTOs.User.UserReadDto.LastName*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: lastName
+- uid: UserService.Core.DTOs.User.UserReadDto.MobileNumber
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.MobileNumber
+  id: MobileNumber
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: MobileNumber
+  nameWithType: UserReadDto.MobileNumber
+  fullName: UserService.Core.DTOs.User.UserReadDto.MobileNumber
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: MobileNumber
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 16
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("mobileNumber")]
+
+      public string MobileNumber { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("mobileNumber")>
+
+      Public Property MobileNumber As String
+  overload: UserService.Core.DTOs.User.UserReadDto.MobileNumber*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: mobileNumber
+- uid: UserService.Core.DTOs.User.UserReadDto.Email
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.Email
+  id: Email
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: Email
+  nameWithType: UserReadDto.Email
+  fullName: UserService.Core.DTOs.User.UserReadDto.Email
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Email
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 19
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("email")]
+
+      public string Email { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("email")>
+
+      Public Property Email As String
+  overload: UserService.Core.DTOs.User.UserReadDto.Email*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: email
+- uid: UserService.Core.DTOs.User.UserReadDto.IsActive
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.IsActive
+  id: IsActive
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: UserReadDto.IsActive
+  fullName: UserService.Core.DTOs.User.UserReadDto.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsActive
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 22
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("isActive")]
+
+      public bool IsActive { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <JsonPropertyName("isActive")>
+
+      Public Property IsActive As Boolean
+  overload: UserService.Core.DTOs.User.UserReadDto.IsActive*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: isActive
+- uid: UserService.Core.DTOs.User.UserReadDto.IsFirstLogin
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.IsFirstLogin
+  id: IsFirstLogin
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: IsFirstLogin
+  nameWithType: UserReadDto.IsFirstLogin
+  fullName: UserService.Core.DTOs.User.UserReadDto.IsFirstLogin
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsFirstLogin
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 25
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("isFirstLogin")]
+
+      public bool IsFirstLogin { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <JsonPropertyName("isFirstLogin")>
+
+      Public Property IsFirstLogin As Boolean
+  overload: UserService.Core.DTOs.User.UserReadDto.IsFirstLogin*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: isFirstLogin
+- uid: UserService.Core.DTOs.User.UserReadDto.IsDeleted
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.IsDeleted
+  id: IsDeleted
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: IsDeleted
+  nameWithType: UserReadDto.IsDeleted
+  fullName: UserService.Core.DTOs.User.UserReadDto.IsDeleted
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsDeleted
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 28
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("isDeleted")]
+
+      public bool IsDeleted { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <JsonPropertyName("isDeleted")>
+
+      Public Property IsDeleted As Boolean
+  overload: UserService.Core.DTOs.User.UserReadDto.IsDeleted*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: isDeleted
+- uid: UserService.Core.DTOs.User.UserReadDto.CreatedAt
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.CreatedAt
+  id: CreatedAt
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: UserReadDto.CreatedAt
+  fullName: UserService.Core.DTOs.User.UserReadDto.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CreatedAt
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 31
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("createdAt")]
+
+      public DateTime CreatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: >-
+      <JsonPropertyName("createdAt")>
+
+      Public Property CreatedAt As Date
+  overload: UserService.Core.DTOs.User.UserReadDto.CreatedAt*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: createdAt
+- uid: UserService.Core.DTOs.User.UserReadDto.UpdatedAt
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.UpdatedAt
+  id: UpdatedAt
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedAt
+  nameWithType: UserReadDto.UpdatedAt
+  fullName: UserService.Core.DTOs.User.UserReadDto.UpdatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdatedAt
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 34
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("updatedAt")]
+
+      public DateTime UpdatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: >-
+      <JsonPropertyName("updatedAt")>
+
+      Public Property UpdatedAt As Date
+  overload: UserService.Core.DTOs.User.UserReadDto.UpdatedAt*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: updatedAt
+- uid: UserService.Core.DTOs.User.UserReadDto.LastLoginDate
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.LastLoginDate
+  id: LastLoginDate
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: LastLoginDate
+  nameWithType: UserReadDto.LastLoginDate
+  fullName: UserService.Core.DTOs.User.UserReadDto.LastLoginDate
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: LastLoginDate
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 37
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("lastLoginDate")]
+
+      public DateTime? LastLoginDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: >-
+      <JsonPropertyName("lastLoginDate")>
+
+      Public Property LastLoginDate As Date?
+  overload: UserService.Core.DTOs.User.UserReadDto.LastLoginDate*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: lastLoginDate
+- uid: UserService.Core.DTOs.User.UserReadDto.Roles
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.Roles
+  id: Roles
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: Roles
+  nameWithType: UserReadDto.Roles
+  fullName: UserService.Core.DTOs.User.UserReadDto.Roles
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Roles
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 41
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonPropertyName("roles")]
+
+      public List<string>? Roles { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.List{System.String}
+    content.vb: >-
+      <JsonPropertyName("roles")>
+
+      Public Property Roles As List(Of String)
+  overload: UserService.Core.DTOs.User.UserReadDto.Roles*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: roles
+- uid: UserService.Core.DTOs.User.UserReadDto.FullName
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.FullName
+  id: FullName
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: FullName
+  nameWithType: UserReadDto.FullName
+  fullName: UserService.Core.DTOs.User.UserReadDto.FullName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: FullName
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 45
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [JsonIgnore]
+
+      public string FullName { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonIgnore>
+
+      Public ReadOnly Property FullName As String
+  overload: UserService.Core.DTOs.User.UserReadDto.FullName*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonIgnoreAttribute
+    ctor: System.Text.Json.Serialization.JsonIgnoreAttribute.#ctor
+    arguments: []
+references:
+- uid: UserService.Core.DTOs.User
+  commentId: N:UserService.Core.DTOs.User
+  href: UserService.html
+  name: UserService.Core.DTOs.User
+  nameWithType: UserService.Core.DTOs.User
+  fullName: UserService.Core.DTOs.User
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.DTOs.User.UserReadDto.Id*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.Id
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_Id
+  name: Id
+  nameWithType: UserReadDto.Id
+  fullName: UserService.Core.DTOs.User.UserReadDto.Id
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Core.DTOs.User.UserReadDto.FirstName*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.FirstName
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_FirstName
+  name: FirstName
+  nameWithType: UserReadDto.FirstName
+  fullName: UserService.Core.DTOs.User.UserReadDto.FirstName
+- uid: UserService.Core.DTOs.User.UserReadDto.LastName*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.LastName
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_LastName
+  name: LastName
+  nameWithType: UserReadDto.LastName
+  fullName: UserService.Core.DTOs.User.UserReadDto.LastName
+- uid: UserService.Core.DTOs.User.UserReadDto.MobileNumber*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.MobileNumber
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_MobileNumber
+  name: MobileNumber
+  nameWithType: UserReadDto.MobileNumber
+  fullName: UserService.Core.DTOs.User.UserReadDto.MobileNumber
+- uid: UserService.Core.DTOs.User.UserReadDto.Email*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.Email
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_Email
+  name: Email
+  nameWithType: UserReadDto.Email
+  fullName: UserService.Core.DTOs.User.UserReadDto.Email
+- uid: UserService.Core.DTOs.User.UserReadDto.IsActive*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.IsActive
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_IsActive
+  name: IsActive
+  nameWithType: UserReadDto.IsActive
+  fullName: UserService.Core.DTOs.User.UserReadDto.IsActive
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: UserService.Core.DTOs.User.UserReadDto.IsFirstLogin*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.IsFirstLogin
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_IsFirstLogin
+  name: IsFirstLogin
+  nameWithType: UserReadDto.IsFirstLogin
+  fullName: UserService.Core.DTOs.User.UserReadDto.IsFirstLogin
+- uid: UserService.Core.DTOs.User.UserReadDto.IsDeleted*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.IsDeleted
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_IsDeleted
+  name: IsDeleted
+  nameWithType: UserReadDto.IsDeleted
+  fullName: UserService.Core.DTOs.User.UserReadDto.IsDeleted
+- uid: UserService.Core.DTOs.User.UserReadDto.CreatedAt*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.CreatedAt
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_CreatedAt
+  name: CreatedAt
+  nameWithType: UserReadDto.CreatedAt
+  fullName: UserService.Core.DTOs.User.UserReadDto.CreatedAt
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: UserService.Core.DTOs.User.UserReadDto.UpdatedAt*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.UpdatedAt
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_UpdatedAt
+  name: UpdatedAt
+  nameWithType: UserReadDto.UpdatedAt
+  fullName: UserService.Core.DTOs.User.UserReadDto.UpdatedAt
+- uid: UserService.Core.DTOs.User.UserReadDto.LastLoginDate*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.LastLoginDate
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_LastLoginDate
+  name: LastLoginDate
+  nameWithType: UserReadDto.LastLoginDate
+  fullName: UserService.Core.DTOs.User.UserReadDto.LastLoginDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Core.DTOs.User.UserReadDto.Roles*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.Roles
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_Roles
+  name: Roles
+  nameWithType: UserReadDto.Roles
+  fullName: UserService.Core.DTOs.User.UserReadDto.Roles
+- uid: System.Collections.Generic.List{System.String}
+  commentId: T:System.Collections.Generic.List{System.String}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<string>
+  nameWithType: List<string>
+  fullName: System.Collections.Generic.List<string>
+  nameWithType.vb: List(Of String)
+  fullName.vb: System.Collections.Generic.List(Of String)
+  name.vb: List(Of String)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: UserService.Core.DTOs.User.UserReadDto.FullName*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.FullName
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_FullName
+  name: FullName
+  nameWithType: UserReadDto.FullName
+  fullName: UserService.Core.DTOs.User.UserReadDto.FullName

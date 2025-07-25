@@ -1,0 +1,263 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.IUserRoleService
+  commentId: T:UserService.Core.Interfaces.IUserRoleService
+  id: IUserRoleService
+  parent: UserService.Core.Interfaces
+  children:
+  - UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync(System.String,System.String)
+  - UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync(System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: IUserRoleService
+  nameWithType: IUserRoleService
+  fullName: UserService.Core.Interfaces.IUserRoleService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IUserRoleService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IUserRoleService
+    path: src/UserService.Core/Interfaces/IUserRoleService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: public interface IUserRoleService
+    content.vb: Public Interface IUserRoleService
+- uid: UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync(System.String,System.String)
+  id: AddUserToRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.IUserRoleService
+  langs:
+  - csharp
+  - vb
+  name: AddUserToRoleAsync(string, string)
+  nameWithType: IUserRoleService.AddUserToRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IUserRoleService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: AddUserToRoleAsync
+    path: src/UserService.Core/Interfaces/IUserRoleService.cs
+    startLine: 11
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<object> AddUserToRoleAsync(string userId, string roleId)
+    parameters:
+    - id: userId
+      type: System.String
+    - id: roleId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Object}
+    content.vb: Function AddUserToRoleAsync(userId As String, roleId As String) As Task(Of Object)
+  overload: UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync*
+  nameWithType.vb: IUserRoleService.AddUserToRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync(String, String)
+  name.vb: AddUserToRoleAsync(String, String)
+- uid: UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync(System.String,System.String)
+  id: RemoveUserFromRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.IUserRoleService
+  langs:
+  - csharp
+  - vb
+  name: RemoveUserFromRoleAsync(string, string)
+  nameWithType: IUserRoleService.RemoveUserFromRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IUserRoleService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RemoveUserFromRoleAsync
+    path: src/UserService.Core/Interfaces/IUserRoleService.cs
+    startLine: 12
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<object> RemoveUserFromRoleAsync(string userId, string roleId)
+    parameters:
+    - id: userId
+      type: System.String
+    - id: roleId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Object}
+    content.vb: Function RemoveUserFromRoleAsync(userId As String, roleId As String) As Task(Of Object)
+  overload: UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync*
+  nameWithType.vb: IUserRoleService.RemoveUserFromRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync(String, String)
+  name.vb: RemoveUserFromRoleAsync(String, String)
+references:
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync*
+  commentId: Overload:UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync
+  href: UserService.Core.Interfaces.IUserRoleService.html#UserService_Core_Interfaces_IUserRoleService_AddUserToRoleAsync_System_String_System_String_
+  name: AddUserToRoleAsync
+  nameWithType: IUserRoleService.AddUserToRoleAsync
+  fullName: UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{System.Object}
+  commentId: T:System.Threading.Tasks.Task{System.Object}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<object>
+  nameWithType: Task<object>
+  fullName: System.Threading.Tasks.Task<object>
+  nameWithType.vb: Task(Of Object)
+  fullName.vb: System.Threading.Tasks.Task(Of Object)
+  name.vb: Task(Of Object)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync*
+  commentId: Overload:UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync
+  href: UserService.Core.Interfaces.IUserRoleService.html#UserService_Core_Interfaces_IUserRoleService_RemoveUserFromRoleAsync_System_String_System_String_
+  name: RemoveUserFromRoleAsync
+  nameWithType: IUserRoleService.RemoveUserFromRoleAsync
+  fullName: UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync

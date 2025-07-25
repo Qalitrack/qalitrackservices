@@ -1,0 +1,44 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Services
+  commentId: N:UserService.Infrastructure.Services
+  id: UserService.Infrastructure.Services
+  children:
+  - UserService.Infrastructure.Services.HealthCheckService
+  - UserService.Infrastructure.Services.NullEmailService
+  - UserService.Infrastructure.Services.ReportService
+  - UserService.Infrastructure.Services.ShiftMonitorService
+  langs:
+  - csharp
+  - vb
+  name: UserService.Infrastructure.Services
+  nameWithType: UserService.Infrastructure.Services
+  fullName: UserService.Infrastructure.Services
+  type: Namespace
+  assemblies:
+  - UserService.Infrastructure
+references:
+- uid: UserService.Infrastructure.Services.HealthCheckService
+  commentId: T:UserService.Infrastructure.Services.HealthCheckService
+  href: UserService.Infrastructure.Services.HealthCheckService.html
+  name: HealthCheckService
+  nameWithType: HealthCheckService
+  fullName: UserService.Infrastructure.Services.HealthCheckService
+- uid: UserService.Infrastructure.Services.NullEmailService
+  commentId: T:UserService.Infrastructure.Services.NullEmailService
+  href: UserService.Infrastructure.Services.NullEmailService.html
+  name: NullEmailService
+  nameWithType: NullEmailService
+  fullName: UserService.Infrastructure.Services.NullEmailService
+- uid: UserService.Infrastructure.Services.ReportService
+  commentId: T:UserService.Infrastructure.Services.ReportService
+  href: UserService.Infrastructure.Services.ReportService.html
+  name: ReportService
+  nameWithType: ReportService
+  fullName: UserService.Infrastructure.Services.ReportService
+- uid: UserService.Infrastructure.Services.ShiftMonitorService
+  commentId: T:UserService.Infrastructure.Services.ShiftMonitorService
+  href: UserService.Infrastructure.Services.ShiftMonitorService.html
+  name: ShiftMonitorService
+  nameWithType: ShiftMonitorService
+  fullName: UserService.Infrastructure.Services.ShiftMonitorService

@@ -1,0 +1,93 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Report
+  commentId: N:UserService.Core.DTOs.Report
+  id: UserService.Core.DTOs.Report
+  children:
+  - UserService.Core.DTOs.Report.ShiftReportDto
+  - UserService.Core.DTOs.Report.ShiftReportResponse
+  - UserService.Core.DTOs.Report.UserReportDto
+  - UserService.Core.DTOs.Report.UserReportResponse
+  - UserService.Core.DTOs.Report.UserShiftInfoDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.Report
+  nameWithType: UserService.Core.DTOs.Report
+  fullName: UserService.Core.DTOs.Report
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.Report.ShiftReportDto
+  commentId: T:UserService.Core.DTOs.Report.ShiftReportDto
+  parent: UserService.Core.DTOs.Report
+  href: UserService.Core.DTOs.Report.ShiftReportDto.html
+  name: ShiftReportDto
+  nameWithType: ShiftReportDto
+  fullName: UserService.Core.DTOs.Report.ShiftReportDto
+- uid: UserService.Core.DTOs.Report.ShiftReportResponse
+  commentId: T:UserService.Core.DTOs.Report.ShiftReportResponse
+  parent: UserService.Core.DTOs.Report
+  href: UserService.Core.DTOs.Report.ShiftReportResponse.html
+  name: ShiftReportResponse
+  nameWithType: ShiftReportResponse
+  fullName: UserService.Core.DTOs.Report.ShiftReportResponse
+- uid: UserService.Core.DTOs.Report.UserShiftInfoDto
+  commentId: T:UserService.Core.DTOs.Report.UserShiftInfoDto
+  href: UserService.Core.DTOs.Report.UserShiftInfoDto.html
+  name: UserShiftInfoDto
+  nameWithType: UserShiftInfoDto
+  fullName: UserService.Core.DTOs.Report.UserShiftInfoDto
+- uid: UserService.Core.DTOs.Report.UserReportDto
+  commentId: T:UserService.Core.DTOs.Report.UserReportDto
+  parent: UserService.Core.DTOs.Report
+  href: UserService.Core.DTOs.Report.UserReportDto.html
+  name: UserReportDto
+  nameWithType: UserReportDto
+  fullName: UserService.Core.DTOs.Report.UserReportDto
+- uid: UserService.Core.DTOs.Report.UserReportResponse
+  commentId: T:UserService.Core.DTOs.Report.UserReportResponse
+  parent: UserService.Core.DTOs.Report
+  href: UserService.Core.DTOs.Report.UserReportResponse.html
+  name: UserReportResponse
+  nameWithType: UserReportResponse
+  fullName: UserService.Core.DTOs.Report.UserReportResponse
+- uid: UserService.Core.DTOs.Report
+  commentId: N:UserService.Core.DTOs.Report
+  href: UserService.html
+  name: UserService.Core.DTOs.Report
+  nameWithType: UserService.Core.DTOs.Report
+  fullName: UserService.Core.DTOs.Report
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Report
+    name: Report
+    href: UserService.Core.DTOs.Report.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Report
+    name: Report
+    href: UserService.Core.DTOs.Report.html

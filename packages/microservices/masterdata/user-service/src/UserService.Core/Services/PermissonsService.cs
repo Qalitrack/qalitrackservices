@@ -7,6 +7,8 @@ using UserService.Core.Interfaces;
 
 namespace UserService.Core.Services;
 
+
+
 public class PermissionsService : IPermissionsService
 {
     private readonly IPermissionsRepository _permissionsRepository;

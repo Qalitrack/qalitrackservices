@@ -1,0 +1,77 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.User
+  commentId: N:UserService.Core.DTOs.User
+  id: UserService.Core.DTOs.User
+  children:
+  - UserService.Core.DTOs.User.CreateUserDto
+  - UserService.Core.DTOs.User.UpdateUserDto
+  - UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.User
+  nameWithType: UserService.Core.DTOs.User
+  fullName: UserService.Core.DTOs.User
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.User.CreateUserDto
+  commentId: T:UserService.Core.DTOs.User.CreateUserDto
+  parent: UserService.Core.DTOs.User
+  href: UserService.Core.DTOs.User.CreateUserDto.html
+  name: CreateUserDto
+  nameWithType: CreateUserDto
+  fullName: UserService.Core.DTOs.User.CreateUserDto
+- uid: UserService.Core.DTOs.User.UpdateUserDto
+  commentId: T:UserService.Core.DTOs.User.UpdateUserDto
+  parent: UserService.Core.DTOs.User
+  href: UserService.Core.DTOs.User.UpdateUserDto.html
+  name: UpdateUserDto
+  nameWithType: UpdateUserDto
+  fullName: UserService.Core.DTOs.User.UpdateUserDto
+- uid: UserService.Core.DTOs.User.UserReadDto
+  commentId: T:UserService.Core.DTOs.User.UserReadDto
+  href: UserService.Core.DTOs.User.UserReadDto.html
+  name: UserReadDto
+  nameWithType: UserReadDto
+  fullName: UserService.Core.DTOs.User.UserReadDto
+- uid: UserService.Core.DTOs.User
+  commentId: N:UserService.Core.DTOs.User
+  href: UserService.html
+  name: UserService.Core.DTOs.User
+  nameWithType: UserService.Core.DTOs.User
+  fullName: UserService.Core.DTOs.User
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html

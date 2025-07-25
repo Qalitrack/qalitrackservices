@@ -1,0 +1,167 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Interfaces.IEmailService
+  commentId: T:UserService.Infrastructure.Interfaces.IEmailService
+  id: IEmailService
+  parent: UserService.Infrastructure.Interfaces
+  children:
+  - UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: IEmailService
+  nameWithType: IEmailService
+  fullName: UserService.Infrastructure.Interfaces.IEmailService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IEmaliService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IEmailService
+    path: src/UserService.Core/Interfaces/IEmaliService.cs
+    startLine: 2
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Infrastructure.Interfaces
+  syntax:
+    content: public interface IEmailService
+    content.vb: Public Interface IEmailService
+- uid: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  id: SendEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Infrastructure.Interfaces.IEmailService
+  langs:
+  - csharp
+  - vb
+  name: SendEmailAsync(string, string, string)
+  nameWithType: IEmailService.SendEmailAsync(string, string, string)
+  fullName: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(string, string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IEmaliService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: SendEmailAsync
+    path: src/UserService.Core/Interfaces/IEmaliService.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Infrastructure.Interfaces
+  syntax:
+    content: Task SendEmailAsync(string to, string subject, string body)
+    parameters:
+    - id: to
+      type: System.String
+    - id: subject
+      type: System.String
+    - id: body
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function SendEmailAsync([to] As String, subject As String, body As String) As Task
+  overload: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync*
+  nameWithType.vb: IEmailService.SendEmailAsync(String, String, String)
+  fullName.vb: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(String, String, String)
+  name.vb: SendEmailAsync(String, String, String)
+references:
+- uid: UserService.Infrastructure.Interfaces
+  commentId: N:UserService.Infrastructure.Interfaces
+  href: UserService.html
+  name: UserService.Infrastructure.Interfaces
+  nameWithType: UserService.Infrastructure.Interfaces
+  fullName: UserService.Infrastructure.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Interfaces
+    name: Interfaces
+    href: UserService.Infrastructure.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Interfaces
+    name: Interfaces
+    href: UserService.Infrastructure.Interfaces.html
+- uid: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync*
+  commentId: Overload:UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync
+  href: UserService.Infrastructure.Interfaces.IEmailService.html#UserService_Infrastructure_Interfaces_IEmailService_SendEmailAsync_System_String_System_String_System_String_
+  name: SendEmailAsync
+  nameWithType: IEmailService.SendEmailAsync
+  fullName: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

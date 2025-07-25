@@ -1,0 +1,665 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto
+  commentId: T:UserService.Core.DTOs.Auth.LoginResponseDto
+  id: LoginResponseDto
+  parent: UserService.Core.DTOs.Auth
+  children:
+  - UserService.Core.DTOs.Auth.LoginResponseDto.Email
+  - UserService.Core.DTOs.Auth.LoginResponseDto.FirstName
+  - UserService.Core.DTOs.Auth.LoginResponseDto.Id
+  - UserService.Core.DTOs.Auth.LoginResponseDto.LastName
+  - UserService.Core.DTOs.Auth.LoginResponseDto.Token
+  - UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles
+  langs:
+  - csharp
+  - vb
+  name: LoginResponseDto
+  nameWithType: LoginResponseDto
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: LoginResponseDto
+    path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Auth
+  syntax:
+    content: public class LoginResponseDto
+    content.vb: Public Class LoginResponseDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.Token
+  commentId: P:UserService.Core.DTOs.Auth.LoginResponseDto.Token
+  id: Token
+  parent: UserService.Core.DTOs.Auth.LoginResponseDto
+  langs:
+  - csharp
+  - vb
+  name: Token
+  nameWithType: LoginResponseDto.Token
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.Token
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Token
+    path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Auth
+  syntax:
+    content: >-
+      [JsonPropertyName("token")]
+
+      public string Token { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("token")>
+
+      Public Property Token As String
+  overload: UserService.Core.DTOs.Auth.LoginResponseDto.Token*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: token
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.Id
+  commentId: P:UserService.Core.DTOs.Auth.LoginResponseDto.Id
+  id: Id
+  parent: UserService.Core.DTOs.Auth.LoginResponseDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: LoginResponseDto.Id
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Id
+    path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Auth
+  syntax:
+    content: >-
+      [JsonPropertyName("id")]
+
+      public string Id { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("id")>
+
+      Public Property Id As String
+  overload: UserService.Core.DTOs.Auth.LoginResponseDto.Id*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: id
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.Email
+  commentId: P:UserService.Core.DTOs.Auth.LoginResponseDto.Email
+  id: Email
+  parent: UserService.Core.DTOs.Auth.LoginResponseDto
+  langs:
+  - csharp
+  - vb
+  name: Email
+  nameWithType: LoginResponseDto.Email
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.Email
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Email
+    path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+    startLine: 13
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Auth
+  syntax:
+    content: public string Email { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Email As String
+  overload: UserService.Core.DTOs.Auth.LoginResponseDto.Email*
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.FirstName
+  commentId: P:UserService.Core.DTOs.Auth.LoginResponseDto.FirstName
+  id: FirstName
+  parent: UserService.Core.DTOs.Auth.LoginResponseDto
+  langs:
+  - csharp
+  - vb
+  name: FirstName
+  nameWithType: LoginResponseDto.FirstName
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.FirstName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: FirstName
+    path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+    startLine: 15
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Auth
+  syntax:
+    content: public string FirstName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FirstName As String
+  overload: UserService.Core.DTOs.Auth.LoginResponseDto.FirstName*
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.LastName
+  commentId: P:UserService.Core.DTOs.Auth.LoginResponseDto.LastName
+  id: LastName
+  parent: UserService.Core.DTOs.Auth.LoginResponseDto
+  langs:
+  - csharp
+  - vb
+  name: LastName
+  nameWithType: LoginResponseDto.LastName
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.LastName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: LastName
+    path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+    startLine: 17
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Auth
+  syntax:
+    content: public string LastName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LastName As String
+  overload: UserService.Core.DTOs.Auth.LoginResponseDto.LastName*
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles
+  commentId: P:UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles
+  id: UserRoles
+  parent: UserService.Core.DTOs.Auth.LoginResponseDto
+  langs:
+  - csharp
+  - vb
+  name: UserRoles
+  nameWithType: LoginResponseDto.UserRoles
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UserRoles
+    path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
+    startLine: 19
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Auth
+  syntax:
+    content: public virtual List<string>? UserRoles { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.List{System.String}
+    content.vb: Public Overridable Property UserRoles As List(Of String)
+  overload: UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles*
+references:
+- uid: UserService.Core.DTOs.Auth
+  commentId: N:UserService.Core.DTOs.Auth
+  href: UserService.html
+  name: UserService.Core.DTOs.Auth
+  nameWithType: UserService.Core.DTOs.Auth
+  fullName: UserService.Core.DTOs.Auth
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Auth
+    name: Auth
+    href: UserService.Core.DTOs.Auth.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Auth
+    name: Auth
+    href: UserService.Core.DTOs.Auth.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.Token*
+  commentId: Overload:UserService.Core.DTOs.Auth.LoginResponseDto.Token
+  href: UserService.Core.DTOs.Auth.LoginResponseDto.html#UserService_Core_DTOs_Auth_LoginResponseDto_Token
+  name: Token
+  nameWithType: LoginResponseDto.Token
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.Token
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.Id*
+  commentId: Overload:UserService.Core.DTOs.Auth.LoginResponseDto.Id
+  href: UserService.Core.DTOs.Auth.LoginResponseDto.html#UserService_Core_DTOs_Auth_LoginResponseDto_Id
+  name: Id
+  nameWithType: LoginResponseDto.Id
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.Id
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.Email*
+  commentId: Overload:UserService.Core.DTOs.Auth.LoginResponseDto.Email
+  href: UserService.Core.DTOs.Auth.LoginResponseDto.html#UserService_Core_DTOs_Auth_LoginResponseDto_Email
+  name: Email
+  nameWithType: LoginResponseDto.Email
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.Email
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.FirstName*
+  commentId: Overload:UserService.Core.DTOs.Auth.LoginResponseDto.FirstName
+  href: UserService.Core.DTOs.Auth.LoginResponseDto.html#UserService_Core_DTOs_Auth_LoginResponseDto_FirstName
+  name: FirstName
+  nameWithType: LoginResponseDto.FirstName
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.FirstName
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.LastName*
+  commentId: Overload:UserService.Core.DTOs.Auth.LoginResponseDto.LastName
+  href: UserService.Core.DTOs.Auth.LoginResponseDto.html#UserService_Core_DTOs_Auth_LoginResponseDto_LastName
+  name: LastName
+  nameWithType: LoginResponseDto.LastName
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.LastName
+- uid: UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles*
+  commentId: Overload:UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles
+  href: UserService.Core.DTOs.Auth.LoginResponseDto.html#UserService_Core_DTOs_Auth_LoginResponseDto_UserRoles
+  name: UserRoles
+  nameWithType: LoginResponseDto.UserRoles
+  fullName: UserService.Core.DTOs.Auth.LoginResponseDto.UserRoles
+- uid: System.Collections.Generic.List{System.String}
+  commentId: T:System.Collections.Generic.List{System.String}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<string>
+  nameWithType: List<string>
+  fullName: System.Collections.Generic.List<string>
+  nameWithType.vb: List(Of String)
+  fullName.vb: System.Collections.Generic.List(Of String)
+  name.vb: List(Of String)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
