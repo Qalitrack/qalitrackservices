@@ -42,7 +42,7 @@
       "_appName": "UserService",
       "_appTitle": "UserService",
       "_enableSearch": true,
-      "pdf": true
+      "pdf": false
     }
   }
 }
