@@ -1,0 +1,124 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Entities
+  commentId: N:UserService.Core.Entities
+  id: UserService.Core.Entities
+  children:
+  - UserService.Core.Entities.BaseEntity
+  - UserService.Core.Entities.Permission
+  - UserService.Core.Entities.Role
+  - UserService.Core.Entities.RolePermission
+  - UserService.Core.Entities.Shift
+  - UserService.Core.Entities.ShiftMode
+  - UserService.Core.Entities.User
+  - UserService.Core.Entities.UserPermissions
+  - UserService.Core.Entities.UserRole
+  - UserService.Core.Entities.UserShift
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Entities
+  nameWithType: UserService.Core.Entities
+  fullName: UserService.Core.Entities
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Entities.BaseEntity
+  commentId: T:UserService.Core.Entities.BaseEntity
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: UserService.Core.Entities.BaseEntity
+- uid: UserService.Core.Entities.User
+  commentId: T:UserService.Core.Entities.User
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.User.html
+  name: User
+  nameWithType: User
+  fullName: UserService.Core.Entities.User
+- uid: UserService.Core.Entities.Permission
+  commentId: T:UserService.Core.Entities.Permission
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.Permission.html
+  name: Permission
+  nameWithType: Permission
+  fullName: UserService.Core.Entities.Permission
+- uid: UserService.Core.Entities.Role
+  commentId: T:UserService.Core.Entities.Role
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.Role.html
+  name: Role
+  nameWithType: Role
+  fullName: UserService.Core.Entities.Role
+- uid: UserService.Core.Entities.RolePermission
+  commentId: T:UserService.Core.Entities.RolePermission
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.RolePermission.html
+  name: RolePermission
+  nameWithType: RolePermission
+  fullName: UserService.Core.Entities.RolePermission
+- uid: UserService.Core.Entities.Shift
+  commentId: T:UserService.Core.Entities.Shift
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.Shift.html
+  name: Shift
+  nameWithType: Shift
+  fullName: UserService.Core.Entities.Shift
+- uid: UserService.Core.Entities.ShiftMode
+  commentId: T:UserService.Core.Entities.ShiftMode
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.ShiftMode.html
+  name: ShiftMode
+  nameWithType: ShiftMode
+  fullName: UserService.Core.Entities.ShiftMode
+- uid: UserService.Core.Entities.UserPermissions
+  commentId: T:UserService.Core.Entities.UserPermissions
+  href: UserService.Core.Entities.UserPermissions.html
+  name: UserPermissions
+  nameWithType: UserPermissions
+  fullName: UserService.Core.Entities.UserPermissions
+- uid: UserService.Core.Entities.UserRole
+  commentId: T:UserService.Core.Entities.UserRole
+  href: UserService.Core.Entities.UserRole.html
+  name: UserRole
+  nameWithType: UserRole
+  fullName: UserService.Core.Entities.UserRole
+- uid: UserService.Core.Entities.UserShift
+  commentId: T:UserService.Core.Entities.UserShift
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.UserShift.html
+  name: UserShift
+  nameWithType: UserShift
+  fullName: UserService.Core.Entities.UserShift
+- uid: UserService.Core.Entities
+  commentId: N:UserService.Core.Entities
+  href: UserService.html
+  name: UserService.Core.Entities
+  nameWithType: UserService.Core.Entities
+  fullName: UserService.Core.Entities
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html

@@ -1,0 +1,589 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Role.RoleWithUsersDto
+  commentId: T:UserService.Core.DTOs.Role.RoleWithUsersDto
+  id: RoleWithUsersDto
+  parent: UserService.Core.DTOs.Role
+  children:
+  - UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers
+  - UserService.Core.DTOs.Role.RoleWithUsersDto.Users
+  langs:
+  - csharp
+  - vb
+  name: RoleWithUsersDto
+  nameWithType: RoleWithUsersDto
+  fullName: UserService.Core.DTOs.Role.RoleWithUsersDto
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RoleWithUsersDto
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 13
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: 'public class RoleWithUsersDto : RoleDto'
+    content.vb: Public Class RoleWithUsersDto Inherits RoleDto
+  inheritance:
+  - System.Object
+  - UserService.Core.DTOs.Roles.RoleDto
+  inheritedMembers:
+  - UserService.Core.DTOs.Roles.RoleDto.Id
+  - UserService.Core.DTOs.Roles.RoleDto.Name
+  - UserService.Core.DTOs.Roles.RoleDto.Description
+  - UserService.Core.DTOs.Roles.RoleDto.IsActive
+  - UserService.Core.DTOs.Roles.RoleDto.CreatedAt
+  - UserService.Core.DTOs.Roles.RoleDto.UpdatedAt
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.DTOs.Role.RoleWithUsersDto.Users
+  commentId: P:UserService.Core.DTOs.Role.RoleWithUsersDto.Users
+  id: Users
+  parent: UserService.Core.DTOs.Role.RoleWithUsersDto
+  langs:
+  - csharp
+  - vb
+  name: Users
+  nameWithType: RoleWithUsersDto.Users
+  fullName: UserService.Core.DTOs.Role.RoleWithUsersDto.Users
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Users
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 15
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: public List<UserBasicInfoDto> Users { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.List{UserService.Core.DTOs.Role.UserBasicInfoDto}
+    content.vb: Public Property Users As List(Of UserBasicInfoDto)
+  overload: UserService.Core.DTOs.Role.RoleWithUsersDto.Users*
+- uid: UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers
+  commentId: P:UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers
+  id: TotalUsers
+  parent: UserService.Core.DTOs.Role.RoleWithUsersDto
+  langs:
+  - csharp
+  - vb
+  name: TotalUsers
+  nameWithType: RoleWithUsersDto.TotalUsers
+  fullName: UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: TotalUsers
+    path: src/UserService.Core/DTOs/Role/RoleWithUsersDto.cs
+    startLine: 16
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Role
+  syntax:
+    content: public int TotalUsers { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property TotalUsers As Integer
+  overload: UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers*
+references:
+- uid: UserService.Core.DTOs.Role
+  commentId: N:UserService.Core.DTOs.Role
+  href: UserService.html
+  name: UserService.Core.DTOs.Role
+  nameWithType: UserService.Core.DTOs.Role
+  fullName: UserService.Core.DTOs.Role
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Role
+    name: Role
+    href: UserService.Core.DTOs.Role.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Role
+    name: Role
+    href: UserService.Core.DTOs.Role.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.DTOs.Roles.RoleDto
+  commentId: T:UserService.Core.DTOs.Roles.RoleDto
+  parent: UserService.Core.DTOs.Roles
+  href: UserService.Core.DTOs.Roles.RoleDto.html
+  name: RoleDto
+  nameWithType: RoleDto
+  fullName: UserService.Core.DTOs.Roles.RoleDto
+- uid: UserService.Core.DTOs.Roles.RoleDto.Id
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.Id
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_Id
+  name: Id
+  nameWithType: RoleDto.Id
+  fullName: UserService.Core.DTOs.Roles.RoleDto.Id
+- uid: UserService.Core.DTOs.Roles.RoleDto.Name
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.Name
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_Name
+  name: Name
+  nameWithType: RoleDto.Name
+  fullName: UserService.Core.DTOs.Roles.RoleDto.Name
+- uid: UserService.Core.DTOs.Roles.RoleDto.Description
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.Description
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_Description
+  name: Description
+  nameWithType: RoleDto.Description
+  fullName: UserService.Core.DTOs.Roles.RoleDto.Description
+- uid: UserService.Core.DTOs.Roles.RoleDto.IsActive
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.IsActive
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_IsActive
+  name: IsActive
+  nameWithType: RoleDto.IsActive
+  fullName: UserService.Core.DTOs.Roles.RoleDto.IsActive
+- uid: UserService.Core.DTOs.Roles.RoleDto.CreatedAt
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.CreatedAt
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_CreatedAt
+  name: CreatedAt
+  nameWithType: RoleDto.CreatedAt
+  fullName: UserService.Core.DTOs.Roles.RoleDto.CreatedAt
+- uid: UserService.Core.DTOs.Roles.RoleDto.UpdatedAt
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.UpdatedAt
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_UpdatedAt
+  name: UpdatedAt
+  nameWithType: RoleDto.UpdatedAt
+  fullName: UserService.Core.DTOs.Roles.RoleDto.UpdatedAt
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.DTOs.Roles
+  commentId: N:UserService.Core.DTOs.Roles
+  href: UserService.html
+  name: UserService.Core.DTOs.Roles
+  nameWithType: UserService.Core.DTOs.Roles
+  fullName: UserService.Core.DTOs.Roles
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Roles
+    name: Roles
+    href: UserService.Core.DTOs.Roles.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Roles
+    name: Roles
+    href: UserService.Core.DTOs.Roles.html
+- uid: UserService.Core.DTOs.Role.RoleWithUsersDto.Users*
+  commentId: Overload:UserService.Core.DTOs.Role.RoleWithUsersDto.Users
+  href: UserService.Core.DTOs.Role.RoleWithUsersDto.html#UserService_Core_DTOs_Role_RoleWithUsersDto_Users
+  name: Users
+  nameWithType: RoleWithUsersDto.Users
+  fullName: UserService.Core.DTOs.Role.RoleWithUsersDto.Users
+- uid: System.Collections.Generic.List{UserService.Core.DTOs.Role.UserBasicInfoDto}
+  commentId: T:System.Collections.Generic.List{UserService.Core.DTOs.Role.UserBasicInfoDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<UserBasicInfoDto>
+  nameWithType: List<UserBasicInfoDto>
+  fullName: System.Collections.Generic.List<UserService.Core.DTOs.Role.UserBasicInfoDto>
+  nameWithType.vb: List(Of UserBasicInfoDto)
+  fullName.vb: System.Collections.Generic.List(Of UserService.Core.DTOs.Role.UserBasicInfoDto)
+  name.vb: List(Of UserBasicInfoDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: UserService.Core.DTOs.Role.UserBasicInfoDto
+    name: UserBasicInfoDto
+    href: UserService.Core.DTOs.Role.UserBasicInfoDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Role.UserBasicInfoDto
+    name: UserBasicInfoDto
+    href: UserService.Core.DTOs.Role.UserBasicInfoDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers*
+  commentId: Overload:UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers
+  href: UserService.Core.DTOs.Role.RoleWithUsersDto.html#UserService_Core_DTOs_Role_RoleWithUsersDto_TotalUsers
+  name: TotalUsers
+  nameWithType: RoleWithUsersDto.TotalUsers
+  fullName: UserService.Core.DTOs.Role.RoleWithUsersDto.TotalUsers
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer

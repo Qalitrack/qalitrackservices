@@ -16,8 +16,6 @@ using UserService.Infrastructure.Data;
 using UserService.Infrastructure.Interfaces;
 using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Services;
-using UserService.Core.Interfaces;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
@@ -35,7 +33,7 @@ try
     Log.Information("Starting application...");
 
     // Configure to listen on port 8080
-    //builder.WebHost.UseUrls("http://localhost:8080");
+    builder.WebHost.UseUrls("http://localhost:8081");
 
     // Add services to the container
     builder.Services.AddControllers()
@@ -65,8 +63,8 @@ try
     ConfigureCors(builder.Services);
     
     // Add health checks
-    builder.Services.AddHealthChecks()
-        .AddCheck<BackupHealthCheck>("backup");
+    // builder.Services.AddHealthChecks()
+    //     .AddCheck<BackupHealthCheck>("backup");
     
     var app = builder.Build();
     
@@ -124,15 +122,15 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<IHealthCheckService, HealthCheckService>();
     
     // Backup Services
-    services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
-    services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
-    services.AddScoped< RestoreService>();
-    services.AddScoped<IBackupNotificationService, BackupNotificationService>();
-    services.AddScoped<IBackupVerificationService, BackupVerificationService>();
-    
-    // Background Services
-    services.AddHostedService<BackupScheduler>();
-    services.AddHostedService<BackupMonitor>();
+    // services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
+    // services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
+    // services.AddScoped<RestoreService>();
+    // services.AddScoped<IBackupNotificationService, BackupNotificationService>();
+    // services.AddScoped<IBackupVerificationService, BackupVerificationService>();
+    //
+    // // Background  Services
+    // services.AddHostedService<BackupScheduler>();
+    // services.AddHostedService<BackupMonitor>();
     services.AddHostedService<ShiftMonitorService>();
         
     // Register IEmailService if not already registered

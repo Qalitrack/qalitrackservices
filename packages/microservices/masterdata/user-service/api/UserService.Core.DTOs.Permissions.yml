@@ -1,0 +1,85 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Permissions
+  commentId: N:UserService.Core.DTOs.Permissions
+  id: UserService.Core.DTOs.Permissions
+  children:
+  - UserService.Core.DTOs.Permissions.CreatePermissionDto
+  - UserService.Core.DTOs.Permissions.PermissionDto
+  - UserService.Core.DTOs.Permissions.PermissionWithRolesDto
+  - UserService.Core.DTOs.Permissions.UpdatePermissionDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.Permissions
+  nameWithType: UserService.Core.DTOs.Permissions
+  fullName: UserService.Core.DTOs.Permissions
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.Permissions.CreatePermissionDto
+  commentId: T:UserService.Core.DTOs.Permissions.CreatePermissionDto
+  parent: UserService.Core.DTOs.Permissions
+  href: UserService.Core.DTOs.Permissions.CreatePermissionDto.html
+  name: CreatePermissionDto
+  nameWithType: CreatePermissionDto
+  fullName: UserService.Core.DTOs.Permissions.CreatePermissionDto
+- uid: UserService.Core.DTOs.Permissions.PermissionDto
+  commentId: T:UserService.Core.DTOs.Permissions.PermissionDto
+  parent: UserService.Core.DTOs.Permissions
+  href: UserService.Core.DTOs.Permissions.PermissionDto.html
+  name: PermissionDto
+  nameWithType: PermissionDto
+  fullName: UserService.Core.DTOs.Permissions.PermissionDto
+- uid: UserService.Core.DTOs.Permissions.PermissionWithRolesDto
+  commentId: T:UserService.Core.DTOs.Permissions.PermissionWithRolesDto
+  href: UserService.Core.DTOs.Permissions.PermissionWithRolesDto.html
+  name: PermissionWithRolesDto
+  nameWithType: PermissionWithRolesDto
+  fullName: UserService.Core.DTOs.Permissions.PermissionWithRolesDto
+- uid: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+  commentId: T:UserService.Core.DTOs.Permissions.UpdatePermissionDto
+  parent: UserService.Core.DTOs.Permissions
+  href: UserService.Core.DTOs.Permissions.UpdatePermissionDto.html
+  name: UpdatePermissionDto
+  nameWithType: UpdatePermissionDto
+  fullName: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+- uid: UserService.Core.DTOs.Permissions
+  commentId: N:UserService.Core.DTOs.Permissions
+  href: UserService.html
+  name: UserService.Core.DTOs.Permissions
+  nameWithType: UserService.Core.DTOs.Permissions
+  fullName: UserService.Core.DTOs.Permissions
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Permissions
+    name: Permissions
+    href: UserService.Core.DTOs.Permissions.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Permissions
+    name: Permissions
+    href: UserService.Core.DTOs.Permissions.html

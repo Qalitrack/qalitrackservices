@@ -1,0 +1,565 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Entities.BaseEntity
+  commentId: T:UserService.Core.Entities.BaseEntity
+  id: BaseEntity
+  parent: UserService.Core.Entities
+  children:
+  - UserService.Core.Entities.BaseEntity.CreatedAt
+  - UserService.Core.Entities.BaseEntity.CreatedBy
+  - UserService.Core.Entities.BaseEntity.Id
+  - UserService.Core.Entities.BaseEntity.IsDeleted
+  - UserService.Core.Entities.BaseEntity.UpdatedAt
+  - UserService.Core.Entities.BaseEntity.UpdatedBy
+  langs:
+  - csharp
+  - vb
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: UserService.Core.Entities.BaseEntity
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: BaseEntity
+    path: src/UserService.Core/Entities/BaseEntity.cs
+    startLine: 2
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public abstract class BaseEntity
+    content.vb: Public MustInherit Class BaseEntity
+  inheritance:
+  - System.Object
+  derivedClasses:
+  - UserService.Core.Entities.Permission
+  - UserService.Core.Entities.Role
+  - UserService.Core.Entities.RolePermission
+  - UserService.Core.Entities.Shift
+  - UserService.Core.Entities.User
+  - UserService.Core.Entities.UserPermissions
+  - UserService.Core.Entities.UserRole
+  - UserService.Core.Entities.UserShift
+  - UserService.Core.Interfaces.PersonalAccessToken
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.Entities.BaseEntity.Id
+  commentId: P:UserService.Core.Entities.BaseEntity.Id
+  id: Id
+  parent: UserService.Core.Entities.BaseEntity
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: UserService.Core.Entities.BaseEntity.Id
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Id
+    path: src/UserService.Core/Entities/BaseEntity.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public string Id { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Id As String
+  overload: UserService.Core.Entities.BaseEntity.Id*
+- uid: UserService.Core.Entities.BaseEntity.CreatedAt
+  commentId: P:UserService.Core.Entities.BaseEntity.CreatedAt
+  id: CreatedAt
+  parent: UserService.Core.Entities.BaseEntity
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: UserService.Core.Entities.BaseEntity.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CreatedAt
+    path: src/UserService.Core/Entities/BaseEntity.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public DateTime CreatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property CreatedAt As Date
+  overload: UserService.Core.Entities.BaseEntity.CreatedAt*
+- uid: UserService.Core.Entities.BaseEntity.UpdatedAt
+  commentId: P:UserService.Core.Entities.BaseEntity.UpdatedAt
+  id: UpdatedAt
+  parent: UserService.Core.Entities.BaseEntity
+  langs:
+  - csharp
+  - vb
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: UserService.Core.Entities.BaseEntity.UpdatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdatedAt
+    path: src/UserService.Core/Entities/BaseEntity.cs
+    startLine: 6
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public DateTime UpdatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property UpdatedAt As Date
+  overload: UserService.Core.Entities.BaseEntity.UpdatedAt*
+- uid: UserService.Core.Entities.BaseEntity.CreatedBy
+  commentId: P:UserService.Core.Entities.BaseEntity.CreatedBy
+  id: CreatedBy
+  parent: UserService.Core.Entities.BaseEntity
+  langs:
+  - csharp
+  - vb
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: UserService.Core.Entities.BaseEntity.CreatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CreatedBy
+    path: src/UserService.Core/Entities/BaseEntity.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public string? CreatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreatedBy As String
+  overload: UserService.Core.Entities.BaseEntity.CreatedBy*
+- uid: UserService.Core.Entities.BaseEntity.UpdatedBy
+  commentId: P:UserService.Core.Entities.BaseEntity.UpdatedBy
+  id: UpdatedBy
+  parent: UserService.Core.Entities.BaseEntity
+  langs:
+  - csharp
+  - vb
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: UserService.Core.Entities.BaseEntity.UpdatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdatedBy
+    path: src/UserService.Core/Entities/BaseEntity.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public string? UpdatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UpdatedBy As String
+  overload: UserService.Core.Entities.BaseEntity.UpdatedBy*
+- uid: UserService.Core.Entities.BaseEntity.IsDeleted
+  commentId: P:UserService.Core.Entities.BaseEntity.IsDeleted
+  id: IsDeleted
+  parent: UserService.Core.Entities.BaseEntity
+  langs:
+  - csharp
+  - vb
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: UserService.Core.Entities.BaseEntity.IsDeleted
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsDeleted
+    path: src/UserService.Core/Entities/BaseEntity.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public bool IsDeleted { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsDeleted As Boolean
+  overload: UserService.Core.Entities.BaseEntity.IsDeleted*
+references:
+- uid: UserService.Core.Entities
+  commentId: N:UserService.Core.Entities
+  href: UserService.html
+  name: UserService.Core.Entities
+  nameWithType: UserService.Core.Entities
+  fullName: UserService.Core.Entities
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Entities.BaseEntity.Id*
+  commentId: Overload:UserService.Core.Entities.BaseEntity.Id
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: UserService.Core.Entities.BaseEntity.Id
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Core.Entities.BaseEntity.CreatedAt*
+  commentId: Overload:UserService.Core.Entities.BaseEntity.CreatedAt
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: UserService.Core.Entities.BaseEntity.CreatedAt
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: UserService.Core.Entities.BaseEntity.UpdatedAt*
+  commentId: Overload:UserService.Core.Entities.BaseEntity.UpdatedAt
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: UserService.Core.Entities.BaseEntity.UpdatedAt
+- uid: UserService.Core.Entities.BaseEntity.CreatedBy*
+  commentId: Overload:UserService.Core.Entities.BaseEntity.CreatedBy
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: UserService.Core.Entities.BaseEntity.CreatedBy
+- uid: UserService.Core.Entities.BaseEntity.UpdatedBy*
+  commentId: Overload:UserService.Core.Entities.BaseEntity.UpdatedBy
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: UserService.Core.Entities.BaseEntity.UpdatedBy
+- uid: UserService.Core.Entities.BaseEntity.IsDeleted*
+  commentId: Overload:UserService.Core.Entities.BaseEntity.IsDeleted
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: UserService.Core.Entities.BaseEntity.IsDeleted
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean

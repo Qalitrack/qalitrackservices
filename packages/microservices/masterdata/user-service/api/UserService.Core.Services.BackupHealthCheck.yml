@@ -1,0 +1,874 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Services.BackupHealthCheck
+  commentId: T:UserService.Core.Services.BackupHealthCheck
+  id: BackupHealthCheck
+  parent: UserService.Core.Services
+  children:
+  - UserService.Core.Services.BackupHealthCheck.#ctor(Microsoft.Extensions.Options.IOptions{UserService.Core.Options.BackupOptions},Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.BackupHealthCheck},UserService.Core.Interfaces.IDatabaseBackupService)
+  - UserService.Core.Services.BackupHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+  langs:
+  - csharp
+  - vb
+  name: BackupHealthCheck
+  nameWithType: BackupHealthCheck
+  fullName: UserService.Core.Services.BackupHealthCheck
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/BackupHealthCheck.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: BackupHealthCheck
+    path: src/UserService.Core/Services/BackupHealthCheck.cs
+    startLine: 11
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  syntax:
+    content: 'public class BackupHealthCheck : IHealthCheck'
+    content.vb: Public Class BackupHealthCheck Implements IHealthCheck
+  inheritance:
+  - System.Object
+  implements:
+  - Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.Services.BackupHealthCheck.#ctor(Microsoft.Extensions.Options.IOptions{UserService.Core.Options.BackupOptions},Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.BackupHealthCheck},UserService.Core.Interfaces.IDatabaseBackupService)
+  commentId: M:UserService.Core.Services.BackupHealthCheck.#ctor(Microsoft.Extensions.Options.IOptions{UserService.Core.Options.BackupOptions},Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.BackupHealthCheck},UserService.Core.Interfaces.IDatabaseBackupService)
+  id: '#ctor(Microsoft.Extensions.Options.IOptions{UserService.Core.Options.BackupOptions},Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.BackupHealthCheck},UserService.Core.Interfaces.IDatabaseBackupService)'
+  parent: UserService.Core.Services.BackupHealthCheck
+  langs:
+  - csharp
+  - vb
+  name: BackupHealthCheck(IOptions<BackupOptions>, ILogger<BackupHealthCheck>, IDatabaseBackupService)
+  nameWithType: BackupHealthCheck.BackupHealthCheck(IOptions<BackupOptions>, ILogger<BackupHealthCheck>, IDatabaseBackupService)
+  fullName: UserService.Core.Services.BackupHealthCheck.BackupHealthCheck(Microsoft.Extensions.Options.IOptions<UserService.Core.Options.BackupOptions>, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.BackupHealthCheck>, UserService.Core.Interfaces.IDatabaseBackupService)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/BackupHealthCheck.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Core/Services/BackupHealthCheck.cs
+    startLine: 17
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  syntax:
+    content: public BackupHealthCheck(IOptions<BackupOptions> options, ILogger<BackupHealthCheck> logger, IDatabaseBackupService backupService)
+    parameters:
+    - id: options
+      type: Microsoft.Extensions.Options.IOptions{UserService.Core.Options.BackupOptions}
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.BackupHealthCheck}
+    - id: backupService
+      type: UserService.Core.Interfaces.IDatabaseBackupService
+    content.vb: Public Sub New(options As IOptions(Of BackupOptions), logger As ILogger(Of BackupHealthCheck), backupService As IDatabaseBackupService)
+  overload: UserService.Core.Services.BackupHealthCheck.#ctor*
+  nameWithType.vb: BackupHealthCheck.New(IOptions(Of BackupOptions), ILogger(Of BackupHealthCheck), IDatabaseBackupService)
+  fullName.vb: UserService.Core.Services.BackupHealthCheck.New(Microsoft.Extensions.Options.IOptions(Of UserService.Core.Options.BackupOptions), Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.BackupHealthCheck), UserService.Core.Interfaces.IDatabaseBackupService)
+  name.vb: New(IOptions(Of BackupOptions), ILogger(Of BackupHealthCheck), IDatabaseBackupService)
+- uid: UserService.Core.Services.BackupHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+  commentId: M:UserService.Core.Services.BackupHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+  id: CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+  parent: UserService.Core.Services.BackupHealthCheck
+  langs:
+  - csharp
+  - vb
+  name: CheckHealthAsync(HealthCheckContext, CancellationToken)
+  nameWithType: BackupHealthCheck.CheckHealthAsync(HealthCheckContext, CancellationToken)
+  fullName: UserService.Core.Services.BackupHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/BackupHealthCheck.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CheckHealthAsync
+    path: src/UserService.Core/Services/BackupHealthCheck.cs
+    startLine: 27
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  summary: Runs the health check, returning the status of the component being checked.
+  example: []
+  syntax:
+    content: public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    parameters:
+    - id: context
+      type: Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext
+      description: A context object associated with the current execution.
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+      description: A <xref href="System.Threading.CancellationToken" data-throw-if-not-resolved="false"></xref> that can be used to cancel the health check.
+    return:
+      type: System.Threading.Tasks.Task{Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult}
+      description: A <xref href="System.Threading.Tasks.Task%601" data-throw-if-not-resolved="false"></xref> that completes when the health check has finished, yielding the status of the component being checked.
+    content.vb: Public Function CheckHealthAsync(context As HealthCheckContext, cancellationToken As CancellationToken = Nothing) As Task(Of HealthCheckResult)
+  overload: UserService.Core.Services.BackupHealthCheck.CheckHealthAsync*
+  implements:
+  - Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+references:
+- uid: UserService.Core.Services
+  commentId: N:UserService.Core.Services
+  href: UserService.html
+  name: UserService.Core.Services
+  nameWithType: UserService.Core.Services
+  fullName: UserService.Core.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck
+  commentId: T:Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck
+  parent: Microsoft.Extensions.Diagnostics.HealthChecks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.ihealthcheck
+  name: IHealthCheck
+  nameWithType: IHealthCheck
+  fullName: Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Microsoft.Extensions.Diagnostics.HealthChecks
+  commentId: N:Microsoft.Extensions.Diagnostics.HealthChecks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Diagnostics.HealthChecks
+  nameWithType: Microsoft.Extensions.Diagnostics.HealthChecks
+  fullName: Microsoft.Extensions.Diagnostics.HealthChecks
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Diagnostics
+    name: Diagnostics
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics
+  - name: .
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks
+    name: HealthChecks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Diagnostics
+    name: Diagnostics
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics
+  - name: .
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks
+    name: HealthChecks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks
+- uid: UserService.Core.Services.BackupHealthCheck.#ctor*
+  commentId: Overload:UserService.Core.Services.BackupHealthCheck.#ctor
+  href: UserService.Core.Services.BackupHealthCheck.html#UserService_Core_Services_BackupHealthCheck__ctor_Microsoft_Extensions_Options_IOptions_UserService_Core_Options_BackupOptions__Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_BackupHealthCheck__UserService_Core_Interfaces_IDatabaseBackupService_
+  name: BackupHealthCheck
+  nameWithType: BackupHealthCheck.BackupHealthCheck
+  fullName: UserService.Core.Services.BackupHealthCheck.BackupHealthCheck
+  nameWithType.vb: BackupHealthCheck.New
+  fullName.vb: UserService.Core.Services.BackupHealthCheck.New
+  name.vb: New
+- uid: Microsoft.Extensions.Options.IOptions{UserService.Core.Options.BackupOptions}
+  commentId: T:Microsoft.Extensions.Options.IOptions{UserService.Core.Options.BackupOptions}
+  parent: Microsoft.Extensions.Options
+  definition: Microsoft.Extensions.Options.IOptions`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1
+  name: IOptions<BackupOptions>
+  nameWithType: IOptions<BackupOptions>
+  fullName: Microsoft.Extensions.Options.IOptions<UserService.Core.Options.BackupOptions>
+  nameWithType.vb: IOptions(Of BackupOptions)
+  fullName.vb: Microsoft.Extensions.Options.IOptions(Of UserService.Core.Options.BackupOptions)
+  name.vb: IOptions(Of BackupOptions)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Options.IOptions`1
+    name: IOptions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1
+  - name: <
+  - uid: UserService.Core.Options.BackupOptions
+    name: BackupOptions
+    href: UserService.Core.Options.BackupOptions.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Options.IOptions`1
+    name: IOptions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Options.BackupOptions
+    name: BackupOptions
+    href: UserService.Core.Options.BackupOptions.html
+  - name: )
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.BackupHealthCheck}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.BackupHealthCheck}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<BackupHealthCheck>
+  nameWithType: ILogger<BackupHealthCheck>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.BackupHealthCheck>
+  nameWithType.vb: ILogger(Of BackupHealthCheck)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.BackupHealthCheck)
+  name.vb: ILogger(Of BackupHealthCheck)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Core.Services.BackupHealthCheck
+    name: BackupHealthCheck
+    href: UserService.Core.Services.BackupHealthCheck.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Services.BackupHealthCheck
+    name: BackupHealthCheck
+    href: UserService.Core.Services.BackupHealthCheck.html
+  - name: )
+- uid: UserService.Core.Interfaces.IDatabaseBackupService
+  commentId: T:UserService.Core.Interfaces.IDatabaseBackupService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IDatabaseBackupService.html
+  name: IDatabaseBackupService
+  nameWithType: IDatabaseBackupService
+  fullName: UserService.Core.Interfaces.IDatabaseBackupService
+- uid: Microsoft.Extensions.Options.IOptions`1
+  commentId: T:Microsoft.Extensions.Options.IOptions`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1
+  name: IOptions<TOptions>
+  nameWithType: IOptions<TOptions>
+  fullName: Microsoft.Extensions.Options.IOptions<TOptions>
+  nameWithType.vb: IOptions(Of TOptions)
+  fullName.vb: Microsoft.Extensions.Options.IOptions(Of TOptions)
+  name.vb: IOptions(Of TOptions)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Options.IOptions`1
+    name: IOptions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1
+  - name: <
+  - name: TOptions
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Options.IOptions`1
+    name: IOptions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TOptions
+  - name: )
+- uid: Microsoft.Extensions.Options
+  commentId: N:Microsoft.Extensions.Options
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Options
+  nameWithType: Microsoft.Extensions.Options
+  fullName: Microsoft.Extensions.Options
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Options
+    name: Options
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Options
+    name: Options
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.options
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: UserService.Core.Services.BackupHealthCheck.CheckHealthAsync*
+  commentId: Overload:UserService.Core.Services.BackupHealthCheck.CheckHealthAsync
+  href: UserService.Core.Services.BackupHealthCheck.html#UserService_Core_Services_BackupHealthCheck_CheckHealthAsync_Microsoft_Extensions_Diagnostics_HealthChecks_HealthCheckContext_System_Threading_CancellationToken_
+  name: CheckHealthAsync
+  nameWithType: BackupHealthCheck.CheckHealthAsync
+  fullName: UserService.Core.Services.BackupHealthCheck.CheckHealthAsync
+- uid: Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+  commentId: M:Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+  parent: Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.ihealthcheck.checkhealthasync
+  name: CheckHealthAsync(HealthCheckContext, CancellationToken)
+  nameWithType: IHealthCheck.CheckHealthAsync(HealthCheckContext, CancellationToken)
+  fullName: Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+    name: CheckHealthAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.ihealthcheck.checkhealthasync
+  - name: (
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext
+    name: HealthCheckContext
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.healthcheckcontext
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)
+    name: CheckHealthAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.ihealthcheck.checkhealthasync
+  - name: (
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext
+    name: HealthCheckContext
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.healthcheckcontext
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext
+  commentId: T:Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext
+  parent: Microsoft.Extensions.Diagnostics.HealthChecks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.healthcheckcontext
+  name: HealthCheckContext
+  nameWithType: HealthCheckContext
+  fullName: Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext
+- uid: System.Threading.Tasks.Task{Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult}
+  commentId: T:System.Threading.Tasks.Task{Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<HealthCheckResult>
+  nameWithType: Task<HealthCheckResult>
+  fullName: System.Threading.Tasks.Task<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult>
+  nameWithType.vb: Task(Of HealthCheckResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult)
+  name.vb: Task(Of HealthCheckResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult
+    name: HealthCheckResult
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.healthcheckresult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult
+    name: HealthCheckResult
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.healthchecks.healthcheckresult
+  - name: )
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

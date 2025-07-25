@@ -1,0 +1,94 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs
+  commentId: N:UserService.Core.DTOs
+  id: UserService.Core.DTOs
+  children:
+  - UserService.Core.DTOs.ApiResponseDto
+  - UserService.Core.DTOs.ApiResponseDto`1
+  - UserService.Core.DTOs.RoleWithPermissionsDto
+  - UserService.Core.DTOs.UserShiftDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs
+  nameWithType: UserService.Core.DTOs
+  fullName: UserService.Core.DTOs
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.ApiResponseDto
+  commentId: T:UserService.Core.DTOs.ApiResponseDto
+  parent: UserService.Core.DTOs
+  href: UserService.Core.DTOs.ApiResponseDto.html
+  name: ApiResponseDto
+  nameWithType: ApiResponseDto
+  fullName: UserService.Core.DTOs.ApiResponseDto
+- uid: UserService.Core.DTOs.ApiResponseDto`1
+  commentId: T:UserService.Core.DTOs.ApiResponseDto`1
+  href: UserService.Core.DTOs.ApiResponseDto-1.html
+  name: ApiResponseDto<T>
+  nameWithType: ApiResponseDto<T>
+  fullName: UserService.Core.DTOs.ApiResponseDto<T>
+  nameWithType.vb: ApiResponseDto(Of T)
+  fullName.vb: UserService.Core.DTOs.ApiResponseDto(Of T)
+  name.vb: ApiResponseDto(Of T)
+  spec.csharp:
+  - uid: UserService.Core.DTOs.ApiResponseDto`1
+    name: ApiResponseDto
+    href: UserService.Core.DTOs.ApiResponseDto-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Core.DTOs.ApiResponseDto`1
+    name: ApiResponseDto
+    href: UserService.Core.DTOs.ApiResponseDto-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Core.DTOs.RoleWithPermissionsDto
+  commentId: T:UserService.Core.DTOs.RoleWithPermissionsDto
+  href: UserService.Core.DTOs.RoleWithPermissionsDto.html
+  name: RoleWithPermissionsDto
+  nameWithType: RoleWithPermissionsDto
+  fullName: UserService.Core.DTOs.RoleWithPermissionsDto
+- uid: UserService.Core.DTOs.UserShiftDto
+  commentId: T:UserService.Core.DTOs.UserShiftDto
+  href: UserService.Core.DTOs.UserShiftDto.html
+  name: UserShiftDto
+  nameWithType: UserShiftDto
+  fullName: UserService.Core.DTOs.UserShiftDto
+- uid: UserService.Core.DTOs
+  commentId: N:UserService.Core.DTOs
+  href: UserService.html
+  name: UserService.Core.DTOs
+  nameWithType: UserService.Core.DTOs
+  fullName: UserService.Core.DTOs
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html

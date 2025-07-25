@@ -1,0 +1,413 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.ITokenService
+  commentId: T:UserService.Core.Interfaces.ITokenService
+  id: ITokenService
+  parent: UserService.Core.Interfaces
+  children:
+  - UserService.Core.Interfaces.ITokenService.GenerateTokenAsync(System.String,System.String)
+  - UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync(System.String)
+  - UserService.Core.Interfaces.ITokenService.RevokeTokenAsync(System.String)
+  - UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(System.String)
+  langs:
+  - csharp
+  - vb
+  name: ITokenService
+  nameWithType: ITokenService
+  fullName: UserService.Core.Interfaces.ITokenService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: ITokenService
+    path: src/UserService.Core/Interfaces/ITokenService.cs
+    startLine: 6
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: public interface ITokenService
+    content.vb: Public Interface ITokenService
+- uid: UserService.Core.Interfaces.ITokenService.GenerateTokenAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.ITokenService.GenerateTokenAsync(System.String,System.String)
+  id: GenerateTokenAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.ITokenService
+  langs:
+  - csharp
+  - vb
+  name: GenerateTokenAsync(string, string)
+  nameWithType: ITokenService.GenerateTokenAsync(string, string)
+  fullName: UserService.Core.Interfaces.ITokenService.GenerateTokenAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GenerateTokenAsync
+    path: src/UserService.Core/Interfaces/ITokenService.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<PersonalAccessToken> GenerateTokenAsync(string email, string password)
+    parameters:
+    - id: email
+      type: System.String
+    - id: password
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+    content.vb: Function GenerateTokenAsync(email As String, password As String) As Task(Of PersonalAccessToken)
+  overload: UserService.Core.Interfaces.ITokenService.GenerateTokenAsync*
+  nameWithType.vb: ITokenService.GenerateTokenAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.ITokenService.GenerateTokenAsync(String, String)
+  name.vb: GenerateTokenAsync(String, String)
+- uid: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(System.String)
+  id: ValidateTokenAsync(System.String)
+  parent: UserService.Core.Interfaces.ITokenService
+  langs:
+  - csharp
+  - vb
+  name: ValidateTokenAsync(string)
+  nameWithType: ITokenService.ValidateTokenAsync(string)
+  fullName: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: ValidateTokenAsync
+    path: src/UserService.Core/Interfaces/ITokenService.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<bool> ValidateTokenAsync(string token)
+    parameters:
+    - id: token
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function ValidateTokenAsync(token As String) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync*
+  nameWithType.vb: ITokenService.ValidateTokenAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(String)
+  name.vb: ValidateTokenAsync(String)
+- uid: UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync(System.String)
+  id: GetUserIdFromTokenAsync(System.String)
+  parent: UserService.Core.Interfaces.ITokenService
+  langs:
+  - csharp
+  - vb
+  name: GetUserIdFromTokenAsync(string)
+  nameWithType: ITokenService.GetUserIdFromTokenAsync(string)
+  fullName: UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetUserIdFromTokenAsync
+    path: src/UserService.Core/Interfaces/ITokenService.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<Guid?> GetUserIdFromTokenAsync(string token)
+    parameters:
+    - id: token
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Nullable{System.Guid}}
+    content.vb: Function GetUserIdFromTokenAsync(token As String) As Task(Of Guid?)
+  overload: UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync*
+  nameWithType.vb: ITokenService.GetUserIdFromTokenAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync(String)
+  name.vb: GetUserIdFromTokenAsync(String)
+- uid: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITokenService.RevokeTokenAsync(System.String)
+  id: RevokeTokenAsync(System.String)
+  parent: UserService.Core.Interfaces.ITokenService
+  langs:
+  - csharp
+  - vb
+  name: RevokeTokenAsync(string)
+  nameWithType: ITokenService.RevokeTokenAsync(string)
+  fullName: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RevokeTokenAsync
+    path: src/UserService.Core/Interfaces/ITokenService.cs
+    startLine: 11
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<bool> RevokeTokenAsync(string token)
+    parameters:
+    - id: token
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function RevokeTokenAsync(token As String) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync*
+  nameWithType.vb: ITokenService.RevokeTokenAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync(String)
+  name.vb: RevokeTokenAsync(String)
+references:
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Interfaces.ITokenService.GenerateTokenAsync*
+  commentId: Overload:UserService.Core.Interfaces.ITokenService.GenerateTokenAsync
+  href: UserService.Core.Interfaces.ITokenService.html#UserService_Core_Interfaces_ITokenService_GenerateTokenAsync_System_String_System_String_
+  name: GenerateTokenAsync
+  nameWithType: ITokenService.GenerateTokenAsync
+  fullName: UserService.Core.Interfaces.ITokenService.GenerateTokenAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<PersonalAccessToken>
+  nameWithType: Task<PersonalAccessToken>
+  fullName: System.Threading.Tasks.Task<UserService.Core.Interfaces.PersonalAccessToken>
+  nameWithType.vb: Task(Of PersonalAccessToken)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.Interfaces.PersonalAccessToken)
+  name.vb: Task(Of PersonalAccessToken)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+    href: UserService.Core.Interfaces.PersonalAccessToken.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Interfaces.PersonalAccessToken
+    name: PersonalAccessToken
+    href: UserService.Core.Interfaces.PersonalAccessToken.html
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync*
+  commentId: Overload:UserService.Core.Interfaces.ITokenService.ValidateTokenAsync
+  href: UserService.Core.Interfaces.ITokenService.html#UserService_Core_Interfaces_ITokenService_ValidateTokenAsync_System_String_
+  name: ValidateTokenAsync
+  nameWithType: ITokenService.ValidateTokenAsync
+  fullName: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync*
+  commentId: Overload:UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync
+  href: UserService.Core.Interfaces.ITokenService.html#UserService_Core_Interfaces_ITokenService_GetUserIdFromTokenAsync_System_String_
+  name: GetUserIdFromTokenAsync
+  nameWithType: ITokenService.GetUserIdFromTokenAsync
+  fullName: UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync
+- uid: System.Threading.Tasks.Task{System.Nullable{System.Guid}}
+  commentId: T:System.Threading.Tasks.Task{System.Nullable{System.Guid}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<Guid?>
+  nameWithType: Task<Guid?>
+  fullName: System.Threading.Tasks.Task<System.Guid?>
+  nameWithType.vb: Task(Of Guid?)
+  fullName.vb: System.Threading.Tasks.Task(Of System.Guid?)
+  name.vb: Task(Of Guid?)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: '?'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Guid
+    name: Guid
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.guid
+  - name: '?'
+  - name: )
+- uid: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync*
+  commentId: Overload:UserService.Core.Interfaces.ITokenService.RevokeTokenAsync
+  href: UserService.Core.Interfaces.ITokenService.html#UserService_Core_Interfaces_ITokenService_RevokeTokenAsync_System_String_
+  name: RevokeTokenAsync
+  nameWithType: ITokenService.RevokeTokenAsync
+  fullName: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync

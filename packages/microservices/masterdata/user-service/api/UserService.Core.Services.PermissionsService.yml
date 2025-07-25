@@ -1,0 +1,1422 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Services.PermissionsService
+  commentId: T:UserService.Core.Services.PermissionsService
+  id: PermissionsService
+  parent: UserService.Core.Services
+  children:
+  - UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper)
+  - UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+  - UserService.Core.Services.PermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  - UserService.Core.Services.PermissionsService.DeleteAsync(System.String)
+  - UserService.Core.Services.PermissionsService.DoesPermissionExistAsync(System.String)
+  - UserService.Core.Services.PermissionsService.GetAllAsync
+  - UserService.Core.Services.PermissionsService.GetByIdAsync(System.String)
+  - UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync(System.String)
+  - UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+  - UserService.Core.Services.PermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  langs:
+  - csharp
+  - vb
+  name: PermissionsService
+  nameWithType: PermissionsService
+  fullName: UserService.Core.Services.PermissionsService
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: PermissionsService
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  syntax:
+    content: 'public class PermissionsService : IPermissionsService'
+    content.vb: Public Class PermissionsService Implements IPermissionsService
+  inheritance:
+  - System.Object
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper)
+  commentId: M:UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper)
+  id: '#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper)'
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: PermissionsService(IPermissionsRepository, IMapper)
+  nameWithType: PermissionsService.PermissionsService(IPermissionsRepository, IMapper)
+  fullName: UserService.Core.Services.PermissionsService.PermissionsService(UserService.Core.Interfaces.IPermissionsRepository, AutoMapper.IMapper)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 14
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  syntax:
+    content: public PermissionsService(IPermissionsRepository permissionsRepository, IMapper mapper)
+    parameters:
+    - id: permissionsRepository
+      type: UserService.Core.Interfaces.IPermissionsRepository
+    - id: mapper
+      type: AutoMapper.IMapper
+    content.vb: Public Sub New(permissionsRepository As IPermissionsRepository, mapper As IMapper)
+  overload: UserService.Core.Services.PermissionsService.#ctor*
+  nameWithType.vb: PermissionsService.New(IPermissionsRepository, IMapper)
+  fullName.vb: UserService.Core.Services.PermissionsService.New(UserService.Core.Interfaces.IPermissionsRepository, AutoMapper.IMapper)
+  name.vb: New(IPermissionsRepository, IMapper)
+- uid: UserService.Core.Services.PermissionsService.GetAllAsync
+  commentId: M:UserService.Core.Services.PermissionsService.GetAllAsync
+  id: GetAllAsync
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: GetAllAsync()
+  nameWithType: PermissionsService.GetAllAsync()
+  fullName: UserService.Core.Services.PermissionsService.GetAllAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetAllAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 20
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<IEnumerable<PermissionDto>> GetAllAsync()
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Permissions.PermissionDto}}
+    content.vb: Public Function GetAllAsync() As Task(Of IEnumerable(Of PermissionDto))
+  overload: UserService.Core.Services.PermissionsService.GetAllAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+- uid: UserService.Core.Services.PermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  commentId: M:UserService.Core.Services.PermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  id: CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: CreateAsync(CreatePermissionDto)
+  nameWithType: PermissionsService.CreateAsync(CreatePermissionDto)
+  fullName: UserService.Core.Services.PermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CreateAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 27
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<PermissionDto> CreateAsync(CreatePermissionDto dto)
+    parameters:
+    - id: dto
+      type: UserService.Core.DTOs.Permissions.CreatePermissionDto
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Permissions.PermissionDto}
+    content.vb: Public Function CreateAsync(dto As CreatePermissionDto) As Task(Of PermissionDto)
+  overload: UserService.Core.Services.PermissionsService.CreateAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+- uid: UserService.Core.Services.PermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  commentId: M:UserService.Core.Services.PermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  id: UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: UpdateAsync(string, UpdatePermissionDto)
+  nameWithType: PermissionsService.UpdateAsync(string, UpdatePermissionDto)
+  fullName: UserService.Core.Services.PermissionsService.UpdateAsync(string, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdateAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 41
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<PermissionDto?> UpdateAsync(string id, UpdatePermissionDto dto)
+    parameters:
+    - id: id
+      type: System.String
+    - id: dto
+      type: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Permissions.PermissionDto}
+    content.vb: Public Function UpdateAsync(id As String, dto As UpdatePermissionDto) As Task(Of PermissionDto)
+  overload: UserService.Core.Services.PermissionsService.UpdateAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  nameWithType.vb: PermissionsService.UpdateAsync(String, UpdatePermissionDto)
+  fullName.vb: UserService.Core.Services.PermissionsService.UpdateAsync(String, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  name.vb: UpdateAsync(String, UpdatePermissionDto)
+- uid: UserService.Core.Services.PermissionsService.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Services.PermissionsService.DeleteAsync(System.String)
+  id: DeleteAsync(System.String)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: DeleteAsync(string)
+  nameWithType: PermissionsService.DeleteAsync(string)
+  fullName: UserService.Core.Services.PermissionsService.DeleteAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: DeleteAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 84
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<bool> DeleteAsync(string id)
+    parameters:
+    - id: id
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function DeleteAsync(id As String) As Task(Of Boolean)
+  overload: UserService.Core.Services.PermissionsService.DeleteAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+  nameWithType.vb: PermissionsService.DeleteAsync(String)
+  fullName.vb: UserService.Core.Services.PermissionsService.DeleteAsync(String)
+  name.vb: DeleteAsync(String)
+- uid: UserService.Core.Services.PermissionsService.DoesPermissionExistAsync(System.String)
+  commentId: M:UserService.Core.Services.PermissionsService.DoesPermissionExistAsync(System.String)
+  id: DoesPermissionExistAsync(System.String)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: DoesPermissionExistAsync(string)
+  nameWithType: PermissionsService.DoesPermissionExistAsync(string)
+  fullName: UserService.Core.Services.PermissionsService.DoesPermissionExistAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: DoesPermissionExistAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 92
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<bool> DoesPermissionExistAsync(string name)
+    parameters:
+    - id: name
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function DoesPermissionExistAsync(name As String) As Task(Of Boolean)
+  overload: UserService.Core.Services.PermissionsService.DoesPermissionExistAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.DoesPermissionExistAsync(System.String)
+  nameWithType.vb: PermissionsService.DoesPermissionExistAsync(String)
+  fullName.vb: UserService.Core.Services.PermissionsService.DoesPermissionExistAsync(String)
+  name.vb: DoesPermissionExistAsync(String)
+- uid: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync(System.String)
+  commentId: M:UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync(System.String)
+  id: GetRolesForPermissionAsync(System.String)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: GetRolesForPermissionAsync(string)
+  nameWithType: PermissionsService.GetRolesForPermissionAsync(string)
+  fullName: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetRolesForPermissionAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 97
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<IEnumerable<RoleDto>> GetRolesForPermissionAsync(string permissionId)
+    parameters:
+    - id: permissionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Roles.RoleDto}}
+    content.vb: Public Function GetRolesForPermissionAsync(permissionId As String) As Task(Of IEnumerable(Of RoleDto))
+  overload: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  nameWithType.vb: PermissionsService.GetRolesForPermissionAsync(String)
+  fullName.vb: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync(String)
+  name.vb: GetRolesForPermissionAsync(String)
+- uid: UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+  id: AssignPermissionToRoleAsync(System.String,System.String)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: AssignPermissionToRoleAsync(string, string)
+  nameWithType: PermissionsService.AssignPermissionToRoleAsync(string, string)
+  fullName: UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: AssignPermissionToRoleAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 103
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
+    parameters:
+    - id: roleId
+      type: System.String
+    - id: permissionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function AssignPermissionToRoleAsync(roleId As String, permissionId As String) As Task(Of Boolean)
+  overload: UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+  nameWithType.vb: PermissionsService.AssignPermissionToRoleAsync(String, String)
+  fullName.vb: UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync(String, String)
+  name.vb: AssignPermissionToRoleAsync(String, String)
+- uid: UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+  id: RemovePermissionFromRoleAsync(System.String,System.String)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: RemovePermissionFromRoleAsync(string, string)
+  nameWithType: PermissionsService.RemovePermissionFromRoleAsync(string, string)
+  fullName: UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RemovePermissionFromRoleAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 108
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
+    parameters:
+    - id: roleId
+      type: System.String
+    - id: permissionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function RemovePermissionFromRoleAsync(roleId As String, permissionId As String) As Task(Of Boolean)
+  overload: UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+  nameWithType.vb: PermissionsService.RemovePermissionFromRoleAsync(String, String)
+  fullName.vb: UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync(String, String)
+  name.vb: RemovePermissionFromRoleAsync(String, String)
+- uid: UserService.Core.Services.PermissionsService.GetByIdAsync(System.String)
+  commentId: M:UserService.Core.Services.PermissionsService.GetByIdAsync(System.String)
+  id: GetByIdAsync(System.String)
+  parent: UserService.Core.Services.PermissionsService
+  langs:
+  - csharp
+  - vb
+  name: GetByIdAsync(string)
+  nameWithType: PermissionsService.GetByIdAsync(string)
+  fullName: UserService.Core.Services.PermissionsService.GetByIdAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetByIdAsync
+    path: src/UserService.Core/Services/PermissonsService.cs
+    startLine: 113
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<object?> GetByIdAsync(string id)
+    parameters:
+    - id: id
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Object}
+    content.vb: Public Function GetByIdAsync(id As String) As Task(Of Object)
+  overload: UserService.Core.Services.PermissionsService.GetByIdAsync*
+  implements:
+  - UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+  nameWithType.vb: PermissionsService.GetByIdAsync(String)
+  fullName.vb: UserService.Core.Services.PermissionsService.GetByIdAsync(String)
+  name.vb: GetByIdAsync(String)
+references:
+- uid: UserService.Core.Services
+  commentId: N:UserService.Core.Services
+  href: UserService.html
+  name: UserService.Core.Services
+  nameWithType: UserService.Core.Services
+  fullName: UserService.Core.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.Interfaces.IPermissionsService
+  commentId: T:UserService.Core.Interfaces.IPermissionsService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IPermissionsService.html
+  name: IPermissionsService
+  nameWithType: IPermissionsService
+  fullName: UserService.Core.Interfaces.IPermissionsService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Services.PermissionsService.#ctor*
+  commentId: Overload:UserService.Core.Services.PermissionsService.#ctor
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService__ctor_UserService_Core_Interfaces_IPermissionsRepository_AutoMapper_IMapper_
+  name: PermissionsService
+  nameWithType: PermissionsService.PermissionsService
+  fullName: UserService.Core.Services.PermissionsService.PermissionsService
+  nameWithType.vb: PermissionsService.New
+  fullName.vb: UserService.Core.Services.PermissionsService.New
+  name.vb: New
+- uid: UserService.Core.Interfaces.IPermissionsRepository
+  commentId: T:UserService.Core.Interfaces.IPermissionsRepository
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IPermissionsRepository.html
+  name: IPermissionsRepository
+  nameWithType: IPermissionsRepository
+  fullName: UserService.Core.Interfaces.IPermissionsRepository
+- uid: AutoMapper.IMapper
+  commentId: T:AutoMapper.IMapper
+  parent: AutoMapper
+  isExternal: true
+  name: IMapper
+  nameWithType: IMapper
+  fullName: AutoMapper.IMapper
+- uid: AutoMapper
+  commentId: N:AutoMapper
+  isExternal: true
+  name: AutoMapper
+  nameWithType: AutoMapper
+  fullName: AutoMapper
+- uid: UserService.Core.Services.PermissionsService.GetAllAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.GetAllAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_GetAllAsync
+  name: GetAllAsync
+  nameWithType: PermissionsService.GetAllAsync
+  fullName: UserService.Core.Services.PermissionsService.GetAllAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+  parent: UserService.Core.Interfaces.IPermissionsService
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetAllAsync
+  name: GetAllAsync()
+  nameWithType: IPermissionsService.GetAllAsync()
+  fullName: UserService.Core.Interfaces.IPermissionsService.GetAllAsync()
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+    name: GetAllAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetAllAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+    name: GetAllAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetAllAsync
+  - name: (
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Permissions.PermissionDto}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Permissions.PermissionDto}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<PermissionDto>>
+  nameWithType: Task<IEnumerable<PermissionDto>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.DTOs.Permissions.PermissionDto>>
+  nameWithType.vb: Task(Of IEnumerable(Of PermissionDto))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.DTOs.Permissions.PermissionDto))
+  name.vb: Task(Of IEnumerable(Of PermissionDto))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: UserService.Core.DTOs.Permissions.PermissionDto
+    name: PermissionDto
+    href: UserService.Core.DTOs.Permissions.PermissionDto.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Permissions.PermissionDto
+    name: PermissionDto
+    href: UserService.Core.DTOs.Permissions.PermissionDto.html
+  - name: )
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Services.PermissionsService.CreateAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.CreateAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
+  name: CreateAsync
+  nameWithType: PermissionsService.CreateAsync
+  fullName: UserService.Core.Services.PermissionsService.CreateAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
+  name: CreateAsync(CreatePermissionDto)
+  nameWithType: IPermissionsService.CreateAsync(CreatePermissionDto)
+  fullName: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+    name: CreateAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
+  - name: (
+  - uid: UserService.Core.DTOs.Permissions.CreatePermissionDto
+    name: CreatePermissionDto
+    href: UserService.Core.DTOs.Permissions.CreatePermissionDto.html
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+    name: CreateAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
+  - name: (
+  - uid: UserService.Core.DTOs.Permissions.CreatePermissionDto
+    name: CreatePermissionDto
+    href: UserService.Core.DTOs.Permissions.CreatePermissionDto.html
+  - name: )
+- uid: UserService.Core.DTOs.Permissions.CreatePermissionDto
+  commentId: T:UserService.Core.DTOs.Permissions.CreatePermissionDto
+  parent: UserService.Core.DTOs.Permissions
+  href: UserService.Core.DTOs.Permissions.CreatePermissionDto.html
+  name: CreatePermissionDto
+  nameWithType: CreatePermissionDto
+  fullName: UserService.Core.DTOs.Permissions.CreatePermissionDto
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Permissions.PermissionDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Permissions.PermissionDto}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<PermissionDto>
+  nameWithType: Task<PermissionDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Permissions.PermissionDto>
+  nameWithType.vb: Task(Of PermissionDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Permissions.PermissionDto)
+  name.vb: Task(Of PermissionDto)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Permissions.PermissionDto
+    name: PermissionDto
+    href: UserService.Core.DTOs.Permissions.PermissionDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Permissions.PermissionDto
+    name: PermissionDto
+    href: UserService.Core.DTOs.Permissions.PermissionDto.html
+  - name: )
+- uid: UserService.Core.DTOs.Permissions
+  commentId: N:UserService.Core.DTOs.Permissions
+  href: UserService.html
+  name: UserService.Core.DTOs.Permissions
+  nameWithType: UserService.Core.DTOs.Permissions
+  fullName: UserService.Core.DTOs.Permissions
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Permissions
+    name: Permissions
+    href: UserService.Core.DTOs.Permissions.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Permissions
+    name: Permissions
+    href: UserService.Core.DTOs.Permissions.html
+- uid: UserService.Core.Services.PermissionsService.UpdateAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.UpdateAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
+  name: UpdateAsync
+  nameWithType: PermissionsService.UpdateAsync
+  fullName: UserService.Core.Services.PermissionsService.UpdateAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  isExternal: true
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
+  name: UpdateAsync(string, UpdatePermissionDto)
+  nameWithType: IPermissionsService.UpdateAsync(string, UpdatePermissionDto)
+  fullName: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(string, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  nameWithType.vb: IPermissionsService.UpdateAsync(String, UpdatePermissionDto)
+  fullName.vb: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(String, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  name.vb: UpdateAsync(String, UpdatePermissionDto)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+    name: UpdateAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+    name: UpdatePermissionDto
+    href: UserService.Core.DTOs.Permissions.UpdatePermissionDto.html
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+    name: UpdateAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+    name: UpdatePermissionDto
+    href: UserService.Core.DTOs.Permissions.UpdatePermissionDto.html
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+  commentId: T:UserService.Core.DTOs.Permissions.UpdatePermissionDto
+  parent: UserService.Core.DTOs.Permissions
+  href: UserService.Core.DTOs.Permissions.UpdatePermissionDto.html
+  name: UpdatePermissionDto
+  nameWithType: UpdatePermissionDto
+  fullName: UserService.Core.DTOs.Permissions.UpdatePermissionDto
+- uid: UserService.Core.Services.PermissionsService.DeleteAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.DeleteAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_DeleteAsync_System_String_
+  name: DeleteAsync
+  nameWithType: PermissionsService.DeleteAsync
+  fullName: UserService.Core.Services.PermissionsService.DeleteAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  isExternal: true
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DeleteAsync_System_String_
+  name: DeleteAsync(string)
+  nameWithType: IPermissionsService.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(string)
+  nameWithType.vb: IPermissionsService.DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(String)
+  name.vb: DeleteAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+    name: DeleteAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DeleteAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+    name: DeleteAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DeleteAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: UserService.Core.Services.PermissionsService.DoesPermissionExistAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.DoesPermissionExistAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_DoesPermissionExistAsync_System_String_
+  name: DoesPermissionExistAsync
+  nameWithType: PermissionsService.DoesPermissionExistAsync
+  fullName: UserService.Core.Services.PermissionsService.DoesPermissionExistAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.DoesPermissionExistAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.DoesPermissionExistAsync(System.String)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  isExternal: true
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DoesPermissionExistAsync_System_String_
+  name: DoesPermissionExistAsync(string)
+  nameWithType: IPermissionsService.DoesPermissionExistAsync(string)
+  fullName: UserService.Core.Interfaces.IPermissionsService.DoesPermissionExistAsync(string)
+  nameWithType.vb: IPermissionsService.DoesPermissionExistAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IPermissionsService.DoesPermissionExistAsync(String)
+  name.vb: DoesPermissionExistAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.DoesPermissionExistAsync(System.String)
+    name: DoesPermissionExistAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DoesPermissionExistAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.DoesPermissionExistAsync(System.String)
+    name: DoesPermissionExistAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DoesPermissionExistAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_GetRolesForPermissionAsync_System_String_
+  name: GetRolesForPermissionAsync
+  nameWithType: PermissionsService.GetRolesForPermissionAsync
+  fullName: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  isExternal: true
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetRolesForPermissionAsync_System_String_
+  name: GetRolesForPermissionAsync(string)
+  nameWithType: IPermissionsService.GetRolesForPermissionAsync(string)
+  fullName: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(string)
+  nameWithType.vb: IPermissionsService.GetRolesForPermissionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(String)
+  name.vb: GetRolesForPermissionAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+    name: GetRolesForPermissionAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetRolesForPermissionAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+    name: GetRolesForPermissionAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetRolesForPermissionAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Roles.RoleDto}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Roles.RoleDto}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<RoleDto>>
+  nameWithType: Task<IEnumerable<RoleDto>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.DTOs.Roles.RoleDto>>
+  nameWithType.vb: Task(Of IEnumerable(Of RoleDto))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.DTOs.Roles.RoleDto))
+  name.vb: Task(Of IEnumerable(Of RoleDto))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: UserService.Core.DTOs.Roles.RoleDto
+    name: RoleDto
+    href: UserService.Core.DTOs.Roles.RoleDto.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Roles.RoleDto
+    name: RoleDto
+    href: UserService.Core.DTOs.Roles.RoleDto.html
+  - name: )
+  - name: )
+- uid: UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_AssignPermissionToRoleAsync_System_String_System_String_
+  name: AssignPermissionToRoleAsync
+  nameWithType: PermissionsService.AssignPermissionToRoleAsync
+  fullName: UserService.Core.Services.PermissionsService.AssignPermissionToRoleAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  isExternal: true
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_AssignPermissionToRoleAsync_System_String_System_String_
+  name: AssignPermissionToRoleAsync(string, string)
+  nameWithType: IPermissionsService.AssignPermissionToRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.IPermissionsService.AssignPermissionToRoleAsync(string, string)
+  nameWithType.vb: IPermissionsService.AssignPermissionToRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.IPermissionsService.AssignPermissionToRoleAsync(String, String)
+  name.vb: AssignPermissionToRoleAsync(String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+    name: AssignPermissionToRoleAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_AssignPermissionToRoleAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.AssignPermissionToRoleAsync(System.String,System.String)
+    name: AssignPermissionToRoleAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_AssignPermissionToRoleAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_RemovePermissionFromRoleAsync_System_String_System_String_
+  name: RemovePermissionFromRoleAsync
+  nameWithType: PermissionsService.RemovePermissionFromRoleAsync
+  fullName: UserService.Core.Services.PermissionsService.RemovePermissionFromRoleAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  isExternal: true
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_RemovePermissionFromRoleAsync_System_String_System_String_
+  name: RemovePermissionFromRoleAsync(string, string)
+  nameWithType: IPermissionsService.RemovePermissionFromRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.IPermissionsService.RemovePermissionFromRoleAsync(string, string)
+  nameWithType.vb: IPermissionsService.RemovePermissionFromRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.IPermissionsService.RemovePermissionFromRoleAsync(String, String)
+  name.vb: RemovePermissionFromRoleAsync(String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+    name: RemovePermissionFromRoleAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_RemovePermissionFromRoleAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.RemovePermissionFromRoleAsync(System.String,System.String)
+    name: RemovePermissionFromRoleAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_RemovePermissionFromRoleAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Services.PermissionsService.GetByIdAsync*
+  commentId: Overload:UserService.Core.Services.PermissionsService.GetByIdAsync
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_GetByIdAsync_System_String_
+  name: GetByIdAsync
+  nameWithType: PermissionsService.GetByIdAsync
+  fullName: UserService.Core.Services.PermissionsService.GetByIdAsync
+- uid: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+  parent: UserService.Core.Interfaces.IPermissionsService
+  isExternal: true
+  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetByIdAsync_System_String_
+  name: GetByIdAsync(string)
+  nameWithType: IPermissionsService.GetByIdAsync(string)
+  fullName: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(string)
+  nameWithType.vb: IPermissionsService.GetByIdAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(String)
+  name.vb: GetByIdAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+    name: GetByIdAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetByIdAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+    name: GetByIdAsync
+    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetByIdAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Object}
+  commentId: T:System.Threading.Tasks.Task{System.Object}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<object>
+  nameWithType: Task<object>
+  fullName: System.Threading.Tasks.Task<object>
+  nameWithType.vb: Task(Of Object)
+  fullName.vb: System.Threading.Tasks.Task(Of Object)
+  name.vb: Task(Of Object)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )

@@ -1,0 +1,1001 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Services.ReportService
+  commentId: T:UserService.Infrastructure.Services.ReportService
+  id: ReportService
+  parent: UserService.Infrastructure.Services
+  children:
+  - UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)
+  - UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync
+  - UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync
+  - UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(System.String)
+  - UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync(System.String)
+  langs:
+  - csharp
+  - vb
+  name: ReportService
+  nameWithType: ReportService
+  fullName: UserService.Infrastructure.Services.ReportService
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: ReportService
+    path: src/UserService.Infrastructure/Services/ReportService.cs
+    startLine: 14
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: 'public class ReportService : IReportService'
+    content.vb: Public Class ReportService Implements IReportService
+  inheritance:
+  - System.Object
+  implements:
+  - UserService.Core.Interfaces.IReportService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)
+  commentId: M:UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)
+  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)'
+  parent: UserService.Infrastructure.Services.ReportService
+  langs:
+  - csharp
+  - vb
+  name: ReportService(UserServiceDbContext, ILogger<ReportService>, IMapper)
+  nameWithType: ReportService.ReportService(UserServiceDbContext, ILogger<ReportService>, IMapper)
+  fullName: UserService.Infrastructure.Services.ReportService.ReportService(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.ReportService>, AutoMapper.IMapper)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Infrastructure/Services/ReportService.cs
+    startLine: 20
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: public ReportService(UserServiceDbContext context, ILogger<ReportService> logger, IMapper mapper)
+    parameters:
+    - id: context
+      type: UserService.Infrastructure.Data.UserServiceDbContext
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService}
+    - id: mapper
+      type: AutoMapper.IMapper
+    content.vb: Public Sub New(context As UserServiceDbContext, logger As ILogger(Of ReportService), mapper As IMapper)
+  overload: UserService.Infrastructure.Services.ReportService.#ctor*
+  nameWithType.vb: ReportService.New(UserServiceDbContext, ILogger(Of ReportService), IMapper)
+  fullName.vb: UserService.Infrastructure.Services.ReportService.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.ReportService), AutoMapper.IMapper)
+  name.vb: New(UserServiceDbContext, ILogger(Of ReportService), IMapper)
+- uid: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync
+  commentId: M:UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync
+  id: GenerateShiftReportAsync
+  parent: UserService.Infrastructure.Services.ReportService
+  langs:
+  - csharp
+  - vb
+  name: GenerateShiftReportAsync()
+  nameWithType: ReportService.GenerateShiftReportAsync()
+  fullName: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GenerateShiftReportAsync
+    path: src/UserService.Infrastructure/Services/ReportService.cs
+    startLine: 30
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task<ShiftReportResponse> GenerateShiftReportAsync()
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
+    content.vb: Public Function GenerateShiftReportAsync() As Task(Of ShiftReportResponse)
+  overload: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync*
+  implements:
+  - UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+- uid: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync
+  commentId: M:UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync
+  id: GenerateUserReportAsync
+  parent: UserService.Infrastructure.Services.ReportService
+  langs:
+  - csharp
+  - vb
+  name: GenerateUserReportAsync()
+  nameWithType: ReportService.GenerateUserReportAsync()
+  fullName: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GenerateUserReportAsync
+    path: src/UserService.Infrastructure/Services/ReportService.cs
+    startLine: 69
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task<UserReportResponse> GenerateUserReportAsync()
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
+    content.vb: Public Function GenerateUserReportAsync() As Task(Of UserReportResponse)
+  overload: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync*
+  implements:
+  - UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+- uid: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(System.String)
+  commentId: M:UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(System.String)
+  id: GetShiftDetailsReportAsync(System.String)
+  parent: UserService.Infrastructure.Services.ReportService
+  langs:
+  - csharp
+  - vb
+  name: GetShiftDetailsReportAsync(string)
+  nameWithType: ReportService.GetShiftDetailsReportAsync(string)
+  fullName: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetShiftDetailsReportAsync
+    path: src/UserService.Infrastructure/Services/ReportService.cs
+    startLine: 111
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task<ShiftReportDto> GetShiftDetailsReportAsync(string shiftId)
+    parameters:
+    - id: shiftId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportDto}
+    content.vb: Public Function GetShiftDetailsReportAsync(shiftId As String) As Task(Of ShiftReportDto)
+  overload: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync*
+  implements:
+  - UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  nameWithType.vb: ReportService.GetShiftDetailsReportAsync(String)
+  fullName.vb: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(String)
+  name.vb: GetShiftDetailsReportAsync(String)
+- uid: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync(System.String)
+  commentId: M:UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync(System.String)
+  id: GetUserDetailsReportAsync(System.String)
+  parent: UserService.Infrastructure.Services.ReportService
+  langs:
+  - csharp
+  - vb
+  name: GetUserDetailsReportAsync(string)
+  nameWithType: ReportService.GetUserDetailsReportAsync(string)
+  fullName: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetUserDetailsReportAsync
+    path: src/UserService.Infrastructure/Services/ReportService.cs
+    startLine: 147
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task<UserReportDto> GetUserDetailsReportAsync(string userId)
+    parameters:
+    - id: userId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportDto}
+    content.vb: Public Function GetUserDetailsReportAsync(userId As String) As Task(Of UserReportDto)
+  overload: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync*
+  implements:
+  - UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  nameWithType.vb: ReportService.GetUserDetailsReportAsync(String)
+  fullName.vb: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync(String)
+  name.vb: GetUserDetailsReportAsync(String)
+references:
+- uid: UserService.Infrastructure.Services
+  commentId: N:UserService.Infrastructure.Services
+  href: UserService.html
+  name: UserService.Infrastructure.Services
+  nameWithType: UserService.Infrastructure.Services
+  fullName: UserService.Infrastructure.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.Interfaces.IReportService
+  commentId: T:UserService.Core.Interfaces.IReportService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IReportService.html
+  name: IReportService
+  nameWithType: IReportService
+  fullName: UserService.Core.Interfaces.IReportService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Infrastructure.Services.ReportService.#ctor*
+  commentId: Overload:UserService.Infrastructure.Services.ReportService.#ctor
+  href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_ReportService__AutoMapper_IMapper_
+  name: ReportService
+  nameWithType: ReportService.ReportService
+  fullName: UserService.Infrastructure.Services.ReportService.ReportService
+  nameWithType.vb: ReportService.New
+  fullName.vb: UserService.Infrastructure.Services.ReportService.New
+  name.vb: New
+- uid: UserService.Infrastructure.Data.UserServiceDbContext
+  commentId: T:UserService.Infrastructure.Data.UserServiceDbContext
+  parent: UserService.Infrastructure.Data
+  href: UserService.Infrastructure.Data.UserServiceDbContext.html
+  name: UserServiceDbContext
+  nameWithType: UserServiceDbContext
+  fullName: UserService.Infrastructure.Data.UserServiceDbContext
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<ReportService>
+  nameWithType: ILogger<ReportService>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.ReportService>
+  nameWithType.vb: ILogger(Of ReportService)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.ReportService)
+  name.vb: ILogger(Of ReportService)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Infrastructure.Services.ReportService
+    name: ReportService
+    href: UserService.Infrastructure.Services.ReportService.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Infrastructure.Services.ReportService
+    name: ReportService
+    href: UserService.Infrastructure.Services.ReportService.html
+  - name: )
+- uid: AutoMapper.IMapper
+  commentId: T:AutoMapper.IMapper
+  parent: AutoMapper
+  isExternal: true
+  name: IMapper
+  nameWithType: IMapper
+  fullName: AutoMapper.IMapper
+- uid: UserService.Infrastructure.Data
+  commentId: N:UserService.Infrastructure.Data
+  href: UserService.html
+  name: UserService.Infrastructure.Data
+  nameWithType: UserService.Infrastructure.Data
+  fullName: UserService.Infrastructure.Data
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: AutoMapper
+  commentId: N:AutoMapper
+  isExternal: true
+  name: AutoMapper
+  nameWithType: AutoMapper
+  fullName: AutoMapper
+- uid: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync*
+  commentId: Overload:UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync
+  href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService_GenerateShiftReportAsync
+  name: GenerateShiftReportAsync
+  nameWithType: ReportService.GenerateShiftReportAsync
+  fullName: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync
+- uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+  commentId: M:UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+  parent: UserService.Core.Interfaces.IReportService
+  name: GenerateShiftReportAsync()
+  nameWithType: IReportService.GenerateShiftReportAsync()
+  fullName: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync()
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+    name: GenerateShiftReportAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
+    name: GenerateShiftReportAsync
+  - name: (
+  - name: )
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ShiftReportResponse>
+  nameWithType: Task<ShiftReportResponse>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.ShiftReportResponse>
+  nameWithType.vb: Task(Of ShiftReportResponse)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.ShiftReportResponse)
+  name.vb: Task(Of ShiftReportResponse)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.ShiftReportResponse
+    name: ShiftReportResponse
+    href: UserService.Core.DTOs.Report.ShiftReportResponse.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.ShiftReportResponse
+    name: ShiftReportResponse
+    href: UserService.Core.DTOs.Report.ShiftReportResponse.html
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync*
+  commentId: Overload:UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync
+  href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService_GenerateUserReportAsync
+  name: GenerateUserReportAsync
+  nameWithType: ReportService.GenerateUserReportAsync
+  fullName: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync
+- uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+  commentId: M:UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+  parent: UserService.Core.Interfaces.IReportService
+  name: GenerateUserReportAsync()
+  nameWithType: IReportService.GenerateUserReportAsync()
+  fullName: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync()
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+    name: GenerateUserReportAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+    name: GenerateUserReportAsync
+  - name: (
+  - name: )
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<UserReportResponse>
+  nameWithType: Task<UserReportResponse>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.UserReportResponse>
+  nameWithType.vb: Task(Of UserReportResponse)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.UserReportResponse)
+  name.vb: Task(Of UserReportResponse)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.UserReportResponse
+    name: UserReportResponse
+    href: UserService.Core.DTOs.Report.UserReportResponse.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.UserReportResponse
+    name: UserReportResponse
+    href: UserService.Core.DTOs.Report.UserReportResponse.html
+  - name: )
+- uid: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync*
+  commentId: Overload:UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync
+  href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService_GetShiftDetailsReportAsync_System_String_
+  name: GetShiftDetailsReportAsync
+  nameWithType: ReportService.GetShiftDetailsReportAsync
+  fullName: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync
+- uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  parent: UserService.Core.Interfaces.IReportService
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: GetShiftDetailsReportAsync(string)
+  nameWithType: IReportService.GetShiftDetailsReportAsync(string)
+  fullName: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(string)
+  nameWithType.vb: IReportService.GetShiftDetailsReportAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(String)
+  name.vb: GetShiftDetailsReportAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+    name: GetShiftDetailsReportAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+    name: GetShiftDetailsReportAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportDto}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ShiftReportDto>
+  nameWithType: Task<ShiftReportDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.ShiftReportDto>
+  nameWithType.vb: Task(Of ShiftReportDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.ShiftReportDto)
+  name.vb: Task(Of ShiftReportDto)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.ShiftReportDto
+    name: ShiftReportDto
+    href: UserService.Core.DTOs.Report.ShiftReportDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.ShiftReportDto
+    name: ShiftReportDto
+    href: UserService.Core.DTOs.Report.ShiftReportDto.html
+  - name: )
+- uid: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync*
+  commentId: Overload:UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync
+  href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService_GetUserDetailsReportAsync_System_String_
+  name: GetUserDetailsReportAsync
+  nameWithType: ReportService.GetUserDetailsReportAsync
+  fullName: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync
+- uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  parent: UserService.Core.Interfaces.IReportService
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: GetUserDetailsReportAsync(string)
+  nameWithType: IReportService.GetUserDetailsReportAsync(string)
+  fullName: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(string)
+  nameWithType.vb: IReportService.GetUserDetailsReportAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(String)
+  name.vb: GetUserDetailsReportAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+    name: GetUserDetailsReportAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+    name: GetUserDetailsReportAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportDto}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<UserReportDto>
+  nameWithType: Task<UserReportDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.UserReportDto>
+  nameWithType.vb: Task(Of UserReportDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.UserReportDto)
+  name.vb: Task(Of UserReportDto)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.UserReportDto
+    name: UserReportDto
+    href: UserService.Core.DTOs.Report.UserReportDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.UserReportDto
+    name: UserReportDto
+    href: UserService.Core.DTOs.Report.UserReportDto.html
+  - name: )

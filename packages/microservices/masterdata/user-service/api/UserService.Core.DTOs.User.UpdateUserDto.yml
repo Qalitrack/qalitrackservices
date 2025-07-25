@@ -1,0 +1,884 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.User.UpdateUserDto
+  commentId: T:UserService.Core.DTOs.User.UpdateUserDto
+  id: UpdateUserDto
+  parent: UserService.Core.DTOs.User
+  children:
+  - UserService.Core.DTOs.User.UpdateUserDto.Email
+  - UserService.Core.DTOs.User.UpdateUserDto.FirstName
+  - UserService.Core.DTOs.User.UpdateUserDto.IsActive
+  - UserService.Core.DTOs.User.UpdateUserDto.IsDeleted
+  - UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin
+  - UserService.Core.DTOs.User.UpdateUserDto.LastName
+  - UserService.Core.DTOs.User.UpdateUserDto.MobileNumber
+  - UserService.Core.DTOs.User.UpdateUserDto.Password
+  - UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt
+  langs:
+  - csharp
+  - vb
+  name: UpdateUserDto
+  nameWithType: UpdateUserDto
+  fullName: UserService.Core.DTOs.User.UpdateUserDto
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdateUserDto
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: public class UpdateUserDto
+    content.vb: Public Class UpdateUserDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.DTOs.User.UpdateUserDto.FirstName
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.FirstName
+  id: FirstName
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: FirstName
+  nameWithType: UpdateUserDto.FirstName
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.FirstName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: FirstName
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [Required(ErrorMessage = "First name is required")]
+
+      [StringLength(50, ErrorMessage = "First name must not exceed 50 characters")]
+
+      public string FirstName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <Required(ErrorMessage:="First name is required")>
+
+      <StringLength(50, ErrorMessage:="First name must not exceed 50 characters")>
+
+      Public Property FirstName As String
+  overload: UserService.Core.DTOs.User.UpdateUserDto.FirstName*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: First name is required
+  - type: System.ComponentModel.DataAnnotations.StringLengthAttribute
+    ctor: System.ComponentModel.DataAnnotations.StringLengthAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 50
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: First name must not exceed 50 characters
+- uid: UserService.Core.DTOs.User.UpdateUserDto.LastName
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.LastName
+  id: LastName
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: LastName
+  nameWithType: UpdateUserDto.LastName
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.LastName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: LastName
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 11
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [Required(ErrorMessage = "Last name is required")]
+
+      [StringLength(50, ErrorMessage = "Last name must not exceed 50 characters")]
+
+      public string LastName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <Required(ErrorMessage:="Last name is required")>
+
+      <StringLength(50, ErrorMessage:="Last name must not exceed 50 characters")>
+
+      Public Property LastName As String
+  overload: UserService.Core.DTOs.User.UpdateUserDto.LastName*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Last name is required
+  - type: System.ComponentModel.DataAnnotations.StringLengthAttribute
+    ctor: System.ComponentModel.DataAnnotations.StringLengthAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 50
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Last name must not exceed 50 characters
+- uid: UserService.Core.DTOs.User.UpdateUserDto.MobileNumber
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.MobileNumber
+  id: MobileNumber
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: MobileNumber
+  nameWithType: UpdateUserDto.MobileNumber
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.MobileNumber
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: MobileNumber
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 15
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [Required(ErrorMessage = "Mobile number is required")]
+
+      [StringLength(20, ErrorMessage = "Mobile number must not exceed 20 characters")]
+
+      public string MobileNumber { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <Required(ErrorMessage:="Mobile number is required")>
+
+      <StringLength(20, ErrorMessage:="Mobile number must not exceed 20 characters")>
+
+      Public Property MobileNumber As String
+  overload: UserService.Core.DTOs.User.UpdateUserDto.MobileNumber*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Mobile number is required
+  - type: System.ComponentModel.DataAnnotations.StringLengthAttribute
+    ctor: System.ComponentModel.DataAnnotations.StringLengthAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 20
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Mobile number must not exceed 20 characters
+- uid: UserService.Core.DTOs.User.UpdateUserDto.Email
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.Email
+  id: Email
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: Email
+  nameWithType: UpdateUserDto.Email
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.Email
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Email
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 19
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [Required(ErrorMessage = "Email is required")]
+
+      [EmailAddress(ErrorMessage = "Invalid email format")]
+
+      [StringLength(255, ErrorMessage = "Email must not exceed 255 characters")]
+
+      public string Email { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <Required(ErrorMessage:="Email is required")>
+
+      <EmailAddress(ErrorMessage:="Invalid email format")>
+
+      <StringLength(255, ErrorMessage:="Email must not exceed 255 characters")>
+
+      Public Property Email As String
+  overload: UserService.Core.DTOs.User.UpdateUserDto.Email*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Email is required
+  - type: System.ComponentModel.DataAnnotations.EmailAddressAttribute
+    ctor: System.ComponentModel.DataAnnotations.EmailAddressAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Invalid email format
+  - type: System.ComponentModel.DataAnnotations.StringLengthAttribute
+    ctor: System.ComponentModel.DataAnnotations.StringLengthAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 255
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Email must not exceed 255 characters
+- uid: UserService.Core.DTOs.User.UpdateUserDto.Password
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.Password
+  id: Password
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: Password
+  nameWithType: UpdateUserDto.Password
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.Password
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Password
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 26
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [DataType(DataType.Password)]
+
+      public string? Password { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <DataType(DataType.Password)>
+
+      Public Property Password As String
+  overload: UserService.Core.DTOs.User.UpdateUserDto.Password*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.DataTypeAttribute
+    ctor: System.ComponentModel.DataAnnotations.DataTypeAttribute.#ctor(System.ComponentModel.DataAnnotations.DataType)
+    arguments:
+    - type: System.ComponentModel.DataAnnotations.DataType
+      value: 11
+- uid: UserService.Core.DTOs.User.UpdateUserDto.IsActive
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.IsActive
+  id: IsActive
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: UpdateUserDto.IsActive
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsActive
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 30
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [Required(ErrorMessage = "Is Active is required")]
+
+      public bool IsActive { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <Required(ErrorMessage:="Is Active is required")>
+
+      Public Property IsActive As Boolean
+  overload: UserService.Core.DTOs.User.UpdateUserDto.IsActive*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Is Active is required
+- uid: UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin
+  id: IsFirstLogin
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: IsFirstLogin
+  nameWithType: UpdateUserDto.IsFirstLogin
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsFirstLogin
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 32
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [Required(ErrorMessage = "Is First Login is required")]
+
+      public bool IsFirstLogin { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <Required(ErrorMessage:="Is First Login is required")>
+
+      Public Property IsFirstLogin As Boolean
+  overload: UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Is First Login is required
+- uid: UserService.Core.DTOs.User.UpdateUserDto.IsDeleted
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.IsDeleted
+  id: IsDeleted
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: IsDeleted
+  nameWithType: UpdateUserDto.IsDeleted
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.IsDeleted
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsDeleted
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 34
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: >-
+      [Required(ErrorMessage = "Is Deleted is required")]
+
+      public bool IsDeleted { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: >-
+      <Required(ErrorMessage:="Is Deleted is required")>
+
+      Public Property IsDeleted As Boolean
+  overload: UserService.Core.DTOs.User.UpdateUserDto.IsDeleted*
+  attributes:
+  - type: System.ComponentModel.DataAnnotations.RequiredAttribute
+    ctor: System.ComponentModel.DataAnnotations.RequiredAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: ErrorMessage
+      type: System.String
+      value: Is Deleted is required
+- uid: UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt
+  commentId: P:UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt
+  id: UpdatedAt
+  parent: UserService.Core.DTOs.User.UpdateUserDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedAt
+  nameWithType: UpdateUserDto.UpdatedAt
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdatedAt
+    path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
+    startLine: 38
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: public DateTime? UpdatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property UpdatedAt As Date?
+  overload: UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt*
+references:
+- uid: UserService.Core.DTOs.User
+  commentId: N:UserService.Core.DTOs.User
+  href: UserService.html
+  name: UserService.Core.DTOs.User
+  nameWithType: UserService.Core.DTOs.User
+  fullName: UserService.Core.DTOs.User
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.DTOs.User.UpdateUserDto.FirstName*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.FirstName
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_FirstName
+  name: FirstName
+  nameWithType: UpdateUserDto.FirstName
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.FirstName
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Core.DTOs.User.UpdateUserDto.LastName*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.LastName
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_LastName
+  name: LastName
+  nameWithType: UpdateUserDto.LastName
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.LastName
+- uid: UserService.Core.DTOs.User.UpdateUserDto.MobileNumber*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.MobileNumber
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_MobileNumber
+  name: MobileNumber
+  nameWithType: UpdateUserDto.MobileNumber
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.MobileNumber
+- uid: UserService.Core.DTOs.User.UpdateUserDto.Email*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.Email
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_Email
+  name: Email
+  nameWithType: UpdateUserDto.Email
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.Email
+- uid: UserService.Core.DTOs.User.UpdateUserDto.Password*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.Password
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_Password
+  name: Password
+  nameWithType: UpdateUserDto.Password
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.Password
+- uid: UserService.Core.DTOs.User.UpdateUserDto.IsActive*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.IsActive
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_IsActive
+  name: IsActive
+  nameWithType: UpdateUserDto.IsActive
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.IsActive
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_IsFirstLogin
+  name: IsFirstLogin
+  nameWithType: UpdateUserDto.IsFirstLogin
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.IsFirstLogin
+- uid: UserService.Core.DTOs.User.UpdateUserDto.IsDeleted*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.IsDeleted
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_IsDeleted
+  name: IsDeleted
+  nameWithType: UpdateUserDto.IsDeleted
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.IsDeleted
+- uid: UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt*
+  commentId: Overload:UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt
+  href: UserService.Core.DTOs.User.UpdateUserDto.html#UserService_Core_DTOs_User_UpdateUserDto_UpdatedAt
+  name: UpdatedAt
+  nameWithType: UpdateUserDto.UpdatedAt
+  fullName: UserService.Core.DTOs.User.UpdateUserDto.UpdatedAt
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )

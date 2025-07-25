@@ -1,0 +1,120 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Entities.ShiftMode
+  commentId: T:UserService.Core.Entities.ShiftMode
+  id: ShiftMode
+  parent: UserService.Core.Entities
+  children:
+  - UserService.Core.Entities.ShiftMode.Open
+  - UserService.Core.Entities.ShiftMode.Strict
+  langs:
+  - csharp
+  - vb
+  name: ShiftMode
+  nameWithType: ShiftMode
+  fullName: UserService.Core.Entities.ShiftMode
+  type: Enum
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: ShiftMode
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 43
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public enum ShiftMode
+    content.vb: Public Enum ShiftMode
+- uid: UserService.Core.Entities.ShiftMode.Strict
+  commentId: F:UserService.Core.Entities.ShiftMode.Strict
+  id: Strict
+  parent: UserService.Core.Entities.ShiftMode
+  langs:
+  - csharp
+  - vb
+  name: Strict
+  nameWithType: ShiftMode.Strict
+  fullName: UserService.Core.Entities.ShiftMode.Strict
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Strict
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 45
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: Strict = 0
+    return:
+      type: UserService.Core.Entities.ShiftMode
+- uid: UserService.Core.Entities.ShiftMode.Open
+  commentId: F:UserService.Core.Entities.ShiftMode.Open
+  id: Open
+  parent: UserService.Core.Entities.ShiftMode
+  langs:
+  - csharp
+  - vb
+  name: Open
+  nameWithType: ShiftMode.Open
+  fullName: UserService.Core.Entities.ShiftMode.Open
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Open
+    path: src/UserService.Core/Entities/Shift.cs
+    startLine: 46
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: Open = 1
+    return:
+      type: UserService.Core.Entities.ShiftMode
+references:
+- uid: UserService.Core.Entities
+  commentId: N:UserService.Core.Entities
+  href: UserService.html
+  name: UserService.Core.Entities
+  nameWithType: UserService.Core.Entities
+  fullName: UserService.Core.Entities
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Entities
+    name: Entities
+    href: UserService.Core.Entities.html
+- uid: UserService.Core.Entities.ShiftMode
+  commentId: T:UserService.Core.Entities.ShiftMode
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.ShiftMode.html
+  name: ShiftMode
+  nameWithType: ShiftMode
+  fullName: UserService.Core.Entities.ShiftMode

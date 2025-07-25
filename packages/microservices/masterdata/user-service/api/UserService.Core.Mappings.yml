@@ -1,0 +1,58 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Mappings
+  commentId: N:UserService.Core.Mappings
+  id: UserService.Core.Mappings
+  children:
+  - UserService.Core.Mappings.PermissionProfile
+  - UserService.Core.Mappings.RolePermissionProfile
+  - UserService.Core.Mappings.RoleProfile
+  - UserService.Core.Mappings.ShiftProfile
+  - UserService.Core.Mappings.UserProfile
+  - UserService.Core.Mappings.UserShiftProfile
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Mappings
+  nameWithType: UserService.Core.Mappings
+  fullName: UserService.Core.Mappings
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Mappings.PermissionProfile
+  commentId: T:UserService.Core.Mappings.PermissionProfile
+  href: UserService.Core.Mappings.PermissionProfile.html
+  name: PermissionProfile
+  nameWithType: PermissionProfile
+  fullName: UserService.Core.Mappings.PermissionProfile
+- uid: UserService.Core.Mappings.RolePermissionProfile
+  commentId: T:UserService.Core.Mappings.RolePermissionProfile
+  href: UserService.Core.Mappings.RolePermissionProfile.html
+  name: RolePermissionProfile
+  nameWithType: RolePermissionProfile
+  fullName: UserService.Core.Mappings.RolePermissionProfile
+- uid: UserService.Core.Mappings.RoleProfile
+  commentId: T:UserService.Core.Mappings.RoleProfile
+  href: UserService.Core.Mappings.RoleProfile.html
+  name: RoleProfile
+  nameWithType: RoleProfile
+  fullName: UserService.Core.Mappings.RoleProfile
+- uid: UserService.Core.Mappings.ShiftProfile
+  commentId: T:UserService.Core.Mappings.ShiftProfile
+  href: UserService.Core.Mappings.ShiftProfile.html
+  name: ShiftProfile
+  nameWithType: ShiftProfile
+  fullName: UserService.Core.Mappings.ShiftProfile
+- uid: UserService.Core.Mappings.UserProfile
+  commentId: T:UserService.Core.Mappings.UserProfile
+  href: UserService.Core.Mappings.UserProfile.html
+  name: UserProfile
+  nameWithType: UserProfile
+  fullName: UserService.Core.Mappings.UserProfile
+- uid: UserService.Core.Mappings.UserShiftProfile
+  commentId: T:UserService.Core.Mappings.UserShiftProfile
+  href: UserService.Core.Mappings.UserShiftProfile.html
+  name: UserShiftProfile
+  nameWithType: UserShiftProfile
+  fullName: UserService.Core.Mappings.UserShiftProfile

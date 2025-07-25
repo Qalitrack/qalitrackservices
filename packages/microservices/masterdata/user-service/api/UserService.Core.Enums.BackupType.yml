@@ -1,0 +1,120 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Enums.BackupType
+  commentId: T:UserService.Core.Enums.BackupType
+  id: BackupType
+  parent: UserService.Core.Enums
+  children:
+  - UserService.Core.Enums.BackupType.Full
+  - UserService.Core.Enums.BackupType.Incremental
+  langs:
+  - csharp
+  - vb
+  name: BackupType
+  nameWithType: BackupType
+  fullName: UserService.Core.Enums.BackupType
+  type: Enum
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Enums/BackupTypes.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: BackupType
+    path: src/UserService.Core/Enums/BackupTypes.cs
+    startLine: 2
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Enums
+  syntax:
+    content: public enum BackupType
+    content.vb: Public Enum BackupType
+- uid: UserService.Core.Enums.BackupType.Full
+  commentId: F:UserService.Core.Enums.BackupType.Full
+  id: Full
+  parent: UserService.Core.Enums.BackupType
+  langs:
+  - csharp
+  - vb
+  name: Full
+  nameWithType: BackupType.Full
+  fullName: UserService.Core.Enums.BackupType.Full
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Enums/BackupTypes.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Full
+    path: src/UserService.Core/Enums/BackupTypes.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Enums
+  syntax:
+    content: Full = 0
+    return:
+      type: UserService.Core.Enums.BackupType
+- uid: UserService.Core.Enums.BackupType.Incremental
+  commentId: F:UserService.Core.Enums.BackupType.Incremental
+  id: Incremental
+  parent: UserService.Core.Enums.BackupType
+  langs:
+  - csharp
+  - vb
+  name: Incremental
+  nameWithType: BackupType.Incremental
+  fullName: UserService.Core.Enums.BackupType.Incremental
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Enums/BackupTypes.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Incremental
+    path: src/UserService.Core/Enums/BackupTypes.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Enums
+  syntax:
+    content: Incremental = 1
+    return:
+      type: UserService.Core.Enums.BackupType
+references:
+- uid: UserService.Core.Enums
+  commentId: N:UserService.Core.Enums
+  href: UserService.html
+  name: UserService.Core.Enums
+  nameWithType: UserService.Core.Enums
+  fullName: UserService.Core.Enums
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Enums
+    name: Enums
+    href: UserService.Core.Enums.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Enums
+    name: Enums
+    href: UserService.Core.Enums.html
+- uid: UserService.Core.Enums.BackupType
+  commentId: T:UserService.Core.Enums.BackupType
+  parent: UserService.Core.Enums
+  href: UserService.Core.Enums.BackupType.html
+  name: BackupType
+  nameWithType: BackupType
+  fullName: UserService.Core.Enums.BackupType

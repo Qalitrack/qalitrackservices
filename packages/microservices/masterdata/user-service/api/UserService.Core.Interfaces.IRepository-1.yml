@@ -1,0 +1,486 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.IRepository`1
+  commentId: T:UserService.Core.Interfaces.IRepository`1
+  id: IRepository`1
+  parent: UserService.Core.Interfaces
+  children:
+  - UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+  - UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  - UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  - UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  - UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
+  langs:
+  - csharp
+  - vb
+  name: IRepository<T>
+  nameWithType: IRepository<T>
+  fullName: UserService.Core.Interfaces.IRepository<T>
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IRepository
+    path: src/UserService.Core/Interfaces/IRepository.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: 'public interface IRepository<T> where T : BaseEntity'
+    typeParameters:
+    - id: T
+    content.vb: Public Interface IRepository(Of T As BaseEntity)
+  nameWithType.vb: IRepository(Of T)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T)
+  name.vb: IRepository(Of T)
+- uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  id: GetAllAsync
+  parent: UserService.Core.Interfaces.IRepository`1
+  langs:
+  - csharp
+  - vb
+  name: GetAllAsync()
+  nameWithType: IRepository<T>.GetAllAsync()
+  fullName: UserService.Core.Interfaces.IRepository<T>.GetAllAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetAllAsync
+    path: src/UserService.Core/Interfaces/IRepository.cs
+    startLine: 6
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<IEnumerable<T>> GetAllAsync()
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{{T}}}
+    content.vb: Function GetAllAsync() As Task(Of IEnumerable(Of T))
+  overload: UserService.Core.Interfaces.IRepository`1.GetAllAsync*
+  nameWithType.vb: IRepository(Of T).GetAllAsync()
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetAllAsync()
+- uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  id: GetByIdAsync(System.String,System.Boolean)
+  parent: UserService.Core.Interfaces.IRepository`1
+  langs:
+  - csharp
+  - vb
+  name: GetByIdAsync(string, bool)
+  nameWithType: IRepository<T>.GetByIdAsync(string, bool)
+  fullName: UserService.Core.Interfaces.IRepository<T>.GetByIdAsync(string, bool)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetByIdAsync
+    path: src/UserService.Core/Interfaces/IRepository.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<T?> GetByIdAsync(string id, bool b)
+    parameters:
+    - id: id
+      type: System.String
+    - id: b
+      type: System.Boolean
+    return:
+      type: System.Threading.Tasks.Task{{T}}
+    content.vb: Function GetByIdAsync(id As String, b As Boolean) As Task(Of T)
+  overload: UserService.Core.Interfaces.IRepository`1.GetByIdAsync*
+  nameWithType.vb: IRepository(Of T).GetByIdAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetByIdAsync(String, Boolean)
+  name.vb: GetByIdAsync(String, Boolean)
+- uid: UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+  commentId: M:UserService.Core.Interfaces.IRepository`1.CreateAsync(`0)
+  id: CreateAsync(`0)
+  parent: UserService.Core.Interfaces.IRepository`1
+  langs:
+  - csharp
+  - vb
+  name: CreateAsync(T)
+  nameWithType: IRepository<T>.CreateAsync(T)
+  fullName: UserService.Core.Interfaces.IRepository<T>.CreateAsync(T)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CreateAsync
+    path: src/UserService.Core/Interfaces/IRepository.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<T> CreateAsync(T entity)
+    parameters:
+    - id: entity
+      type: '{T}'
+    return:
+      type: System.Threading.Tasks.Task{{T}}
+    content.vb: Function CreateAsync(entity As T) As Task(Of T)
+  overload: UserService.Core.Interfaces.IRepository`1.CreateAsync*
+  nameWithType.vb: IRepository(Of T).CreateAsync(T)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).CreateAsync(T)
+- uid: UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
+  commentId: M:UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
+  id: UpdateAsync(`0)
+  parent: UserService.Core.Interfaces.IRepository`1
+  langs:
+  - csharp
+  - vb
+  name: UpdateAsync(T)
+  nameWithType: IRepository<T>.UpdateAsync(T)
+  fullName: UserService.Core.Interfaces.IRepository<T>.UpdateAsync(T)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdateAsync
+    path: src/UserService.Core/Interfaces/IRepository.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<T?> UpdateAsync(T entity)
+    parameters:
+    - id: entity
+      type: '{T}'
+    return:
+      type: System.Threading.Tasks.Task{{T}}
+    content.vb: Function UpdateAsync(entity As T) As Task(Of T)
+  overload: UserService.Core.Interfaces.IRepository`1.UpdateAsync*
+  nameWithType.vb: IRepository(Of T).UpdateAsync(T)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).UpdateAsync(T)
+- uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  id: DeleteAsync(System.String)
+  parent: UserService.Core.Interfaces.IRepository`1
+  langs:
+  - csharp
+  - vb
+  name: DeleteAsync(string)
+  nameWithType: IRepository<T>.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.IRepository<T>.DeleteAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: DeleteAsync
+    path: src/UserService.Core/Interfaces/IRepository.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<bool> DeleteAsync(string id)
+    parameters:
+    - id: id
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function DeleteAsync(id As String) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.IRepository`1.DeleteAsync*
+  nameWithType.vb: IRepository(Of T).DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).DeleteAsync(String)
+  name.vb: DeleteAsync(String)
+references:
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync*
+  commentId: Overload:UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+  name: GetAllAsync
+  nameWithType: IRepository<T>.GetAllAsync
+  fullName: UserService.Core.Interfaces.IRepository<T>.GetAllAsync
+  nameWithType.vb: IRepository(Of T).GetAllAsync
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetAllAsync
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{{T}}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{`0}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<T>>
+  nameWithType: Task<IEnumerable<T>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<T>>
+  nameWithType.vb: Task(Of IEnumerable(Of T))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of T))
+  name.vb: Task(Of IEnumerable(Of T))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync*
+  commentId: Overload:UserService.Core.Interfaces.IRepository`1.GetByIdAsync
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  name: GetByIdAsync
+  nameWithType: IRepository<T>.GetByIdAsync
+  fullName: UserService.Core.Interfaces.IRepository<T>.GetByIdAsync
+  nameWithType.vb: IRepository(Of T).GetByIdAsync
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetByIdAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.Threading.Tasks.Task{{T}}
+  commentId: T:System.Threading.Tasks.Task{`0}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<T>
+  nameWithType: Task<T>
+  fullName: System.Threading.Tasks.Task<T>
+  nameWithType.vb: Task(Of T)
+  fullName.vb: System.Threading.Tasks.Task(Of T)
+  name.vb: Task(Of T)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces.IRepository`1.CreateAsync*
+  commentId: Overload:UserService.Core.Interfaces.IRepository`1.CreateAsync
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_CreateAsync__0_
+  name: CreateAsync
+  nameWithType: IRepository<T>.CreateAsync
+  fullName: UserService.Core.Interfaces.IRepository<T>.CreateAsync
+  nameWithType.vb: IRepository(Of T).CreateAsync
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).CreateAsync
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: UserService.Core.Interfaces.IRepository`1.UpdateAsync*
+  commentId: Overload:UserService.Core.Interfaces.IRepository`1.UpdateAsync
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_UpdateAsync__0_
+  name: UpdateAsync
+  nameWithType: IRepository<T>.UpdateAsync
+  fullName: UserService.Core.Interfaces.IRepository<T>.UpdateAsync
+  nameWithType.vb: IRepository(Of T).UpdateAsync
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).UpdateAsync
+- uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync*
+  commentId: Overload:UserService.Core.Interfaces.IRepository`1.DeleteAsync
+  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  name: DeleteAsync
+  nameWithType: IRepository<T>.DeleteAsync
+  fullName: UserService.Core.Interfaces.IRepository<T>.DeleteAsync
+  nameWithType.vb: IRepository(Of T).DeleteAsync
+  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).DeleteAsync
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )

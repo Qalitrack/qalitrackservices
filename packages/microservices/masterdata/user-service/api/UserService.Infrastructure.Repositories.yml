@@ -1,0 +1,98 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Repositories
+  commentId: N:UserService.Infrastructure.Repositories
+  id: UserService.Infrastructure.Repositories
+  children:
+  - UserService.Infrastructure.Repositories.PermissionsRepository
+  - UserService.Infrastructure.Repositories.Repository`1
+  - UserService.Infrastructure.Repositories.RolePermissionRepository
+  - UserService.Infrastructure.Repositories.RoleRepository
+  - UserService.Infrastructure.Repositories.ShiftRepository
+  - UserService.Infrastructure.Repositories.TokenRepository
+  - UserService.Infrastructure.Repositories.UserRepository
+  - UserService.Infrastructure.Repositories.UserRoleRepository
+  - UserService.Infrastructure.Repositories.UserShiftRepository
+  langs:
+  - csharp
+  - vb
+  name: UserService.Infrastructure.Repositories
+  nameWithType: UserService.Infrastructure.Repositories
+  fullName: UserService.Infrastructure.Repositories
+  type: Namespace
+  assemblies:
+  - UserService.Infrastructure
+references:
+- uid: UserService.Infrastructure.Repositories.PermissionsRepository
+  commentId: T:UserService.Infrastructure.Repositories.PermissionsRepository
+  href: UserService.Infrastructure.Repositories.PermissionsRepository.html
+  name: PermissionsRepository
+  nameWithType: PermissionsRepository
+  fullName: UserService.Infrastructure.Repositories.PermissionsRepository
+- uid: UserService.Infrastructure.Repositories.Repository`1
+  commentId: T:UserService.Infrastructure.Repositories.Repository`1
+  href: UserService.Infrastructure.Repositories.Repository-1.html
+  name: Repository<T>
+  nameWithType: Repository<T>
+  fullName: UserService.Infrastructure.Repositories.Repository<T>
+  nameWithType.vb: Repository(Of T)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)
+  name.vb: Repository(Of T)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Infrastructure.Repositories.RolePermissionRepository
+  commentId: T:UserService.Infrastructure.Repositories.RolePermissionRepository
+  href: UserService.Infrastructure.Repositories.RolePermissionRepository.html
+  name: RolePermissionRepository
+  nameWithType: RolePermissionRepository
+  fullName: UserService.Infrastructure.Repositories.RolePermissionRepository
+- uid: UserService.Infrastructure.Repositories.RoleRepository
+  commentId: T:UserService.Infrastructure.Repositories.RoleRepository
+  href: UserService.Infrastructure.Repositories.RoleRepository.html
+  name: RoleRepository
+  nameWithType: RoleRepository
+  fullName: UserService.Infrastructure.Repositories.RoleRepository
+- uid: UserService.Infrastructure.Repositories.ShiftRepository
+  commentId: T:UserService.Infrastructure.Repositories.ShiftRepository
+  href: UserService.Infrastructure.Repositories.ShiftRepository.html
+  name: ShiftRepository
+  nameWithType: ShiftRepository
+  fullName: UserService.Infrastructure.Repositories.ShiftRepository
+- uid: UserService.Infrastructure.Repositories.TokenRepository
+  commentId: T:UserService.Infrastructure.Repositories.TokenRepository
+  href: UserService.Infrastructure.Repositories.TokenRepository.html
+  name: TokenRepository
+  nameWithType: TokenRepository
+  fullName: UserService.Infrastructure.Repositories.TokenRepository
+- uid: UserService.Infrastructure.Repositories.UserRepository
+  commentId: T:UserService.Infrastructure.Repositories.UserRepository
+  href: UserService.Infrastructure.Repositories.UserRepository.html
+  name: UserRepository
+  nameWithType: UserRepository
+  fullName: UserService.Infrastructure.Repositories.UserRepository
+- uid: UserService.Infrastructure.Repositories.UserRoleRepository
+  commentId: T:UserService.Infrastructure.Repositories.UserRoleRepository
+  href: UserService.Infrastructure.Repositories.UserRoleRepository.html
+  name: UserRoleRepository
+  nameWithType: UserRoleRepository
+  fullName: UserService.Infrastructure.Repositories.UserRoleRepository
+- uid: UserService.Infrastructure.Repositories.UserShiftRepository
+  commentId: T:UserService.Infrastructure.Repositories.UserShiftRepository
+  href: UserService.Infrastructure.Repositories.UserShiftRepository.html
+  name: UserShiftRepository
+  nameWithType: UserShiftRepository
+  fullName: UserService.Infrastructure.Repositories.UserShiftRepository

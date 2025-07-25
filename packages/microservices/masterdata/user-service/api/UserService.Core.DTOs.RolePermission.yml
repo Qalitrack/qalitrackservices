@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.RolePermission
+  commentId: N:UserService.Core.DTOs.RolePermission
+  id: UserService.Core.DTOs.RolePermission
+  children:
+  - UserService.Core.DTOs.RolePermission.RolePermissionDto
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.RolePermission
+  nameWithType: UserService.Core.DTOs.RolePermission
+  fullName: UserService.Core.DTOs.RolePermission
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.RolePermission.RolePermissionDto
+  commentId: T:UserService.Core.DTOs.RolePermission.RolePermissionDto
+  href: UserService.Core.DTOs.RolePermission.RolePermissionDto.html
+  name: RolePermissionDto
+  nameWithType: RolePermissionDto
+  fullName: UserService.Core.DTOs.RolePermission.RolePermissionDto

@@ -1,0 +1,61 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Data
+  commentId: N:UserService.Infrastructure.Data
+  id: UserService.Infrastructure.Data
+  children:
+  - UserService.Infrastructure.Data.PrepDb
+  - UserService.Infrastructure.Data.UserServiceDbContext
+  langs:
+  - csharp
+  - vb
+  name: UserService.Infrastructure.Data
+  nameWithType: UserService.Infrastructure.Data
+  fullName: UserService.Infrastructure.Data
+  type: Namespace
+  assemblies:
+  - UserService.Infrastructure
+references:
+- uid: UserService.Infrastructure.Data.PrepDb
+  commentId: T:UserService.Infrastructure.Data.PrepDb
+  href: UserService.Infrastructure.Data.PrepDb.html
+  name: PrepDb
+  nameWithType: PrepDb
+  fullName: UserService.Infrastructure.Data.PrepDb
+- uid: UserService.Infrastructure.Data.UserServiceDbContext
+  commentId: T:UserService.Infrastructure.Data.UserServiceDbContext
+  parent: UserService.Infrastructure.Data
+  href: UserService.Infrastructure.Data.UserServiceDbContext.html
+  name: UserServiceDbContext
+  nameWithType: UserServiceDbContext
+  fullName: UserService.Infrastructure.Data.UserServiceDbContext
+- uid: UserService.Infrastructure.Data
+  commentId: N:UserService.Infrastructure.Data
+  href: UserService.html
+  name: UserService.Infrastructure.Data
+  nameWithType: UserService.Infrastructure.Data
+  fullName: UserService.Infrastructure.Data
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
