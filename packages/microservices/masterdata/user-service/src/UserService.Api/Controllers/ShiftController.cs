@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace UserService.Api.Controllers
 {
@@ -51,7 +52,17 @@ namespace UserService.Api.Controllers
             try
             {
                 var shift = await _shiftService.GetByIdAsync(id);
-                return shift == null ? NotFound() : Ok(shift);
+                return Ok(shift);
+            }
+            catch (Exception ex) when (ex.Message == "Shift not found")
+            {
+                _logger.LogWarning("Attempt to get non-existent shift with ID: {ShiftId}", id);
+                return NotFound(new { 
+                    Success = false, 
+                    Message = $"Shift with ID {id} not found", 
+                    Errors = (string[])null, 
+                    StatusCode = 404 
+                });
             }
             catch (Exception ex)
             {
@@ -76,10 +87,47 @@ namespace UserService.Api.Controllers
                 _logger.LogInformation("User created shift {ShiftId}", shift.Id);
                 return CreatedAtAction(nameof(GetById), new { id = shift.Id }, shift);
             }
+            catch (ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error creating shift");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23505" => pgEx.ConstraintName switch
+                    {
+                        "IX_Shifts_Name" => "A shift with this name already exists. Please choose a different name.",
+                        _ => $"Duplicate entry detected: {pgEx.ConstraintName}"
+                    },
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error creating shift: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating shift");
-                return BadRequest("An error occurred while creating the shift");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred while creating the shift", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
             }
         }
 
@@ -104,18 +152,66 @@ namespace UserService.Api.Controllers
                 {
                     Name = dto.Name ?? existingShift.Name,
                     StartTime = dto.StartTime != default ? dto.StartTime : existingShift.StartTime,
-                    EndTime = dto.EndTime != default ? dto.EndTime : existingShift.EndTime,
+                    DurationMinutes = dto.DurationMinutes ?? existingShift.DurationMinutes,
                     Description = dto.Description ?? existingShift.Description,
-                    Mode = dto.Mode.HasValue ? dto.Mode.Value : existingShift.Mode
+                    Mode = dto.Mode.HasValue ? dto.Mode.Value : existingShift.Mode,
+                    AutoRepeatDaily = dto.AutoRepeatDaily ?? existingShift.AutoRepeatDaily
                 };
 
                 var shift = await _shiftService.UpdateAsync(id, updateDto);
                 return Ok(shift);
             }
+            catch (Exception ex) when (ex.Message == "Shift not found")
+            {
+                _logger.LogWarning("Attempt to update non-existent shift with ID: {ShiftId}", id);
+                return NotFound(new { 
+                    Success = false, 
+                    Message = $"Shift with ID {id} not found", 
+                    Errors = (string[])null, 
+                    StatusCode = 404 
+                });
+            }
+            catch (ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error updating shift with ID: {ShiftId}", id);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23505" => pgEx.ConstraintName switch
+                    {
+                        "IX_Shifts_Name" => "A shift with this name already exists. Please choose a different name.",
+                        _ => $"Duplicate entry detected: {pgEx.ConstraintName}"
+                    },
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error updating shift: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating shift with ID: {ShiftId}", id);
-                return BadRequest("An error occurred while updating the shift");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred while updating the shift", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
             }
         }
 
@@ -132,6 +228,26 @@ namespace UserService.Api.Controllers
             {
                 var result = await _shiftService.DeleteAsync(id);
                 return Ok(new { message = "Shift deleted successfully" });
+            }
+            catch (Exception ex) when (ex.Message == "Shift not found")
+            {
+                _logger.LogWarning("Attempt to delete non-existent shift with ID: {ShiftId}", id);
+                return NotFound(new { 
+                    Success = false, 
+                    Message = $"Shift with ID {id} not found", 
+                    Errors = (string[])null, 
+                    StatusCode = 404 
+                });
+            }
+            catch (ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error deleting shift with ID: {ShiftId}", id);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
             }
             catch (Exception ex)
             {

@@ -1,7 +1,10 @@
 using System.Collections;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.DTOs.Common;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
@@ -9,33 +12,31 @@ namespace UserService.Infrastructure.Repositories
     public class UserRepository : Repository<User>, IUserRepository
     {
         private readonly UserServiceDbContext _context;
+        private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(UserServiceDbContext context) : base(context)
+        public UserRepository(UserServiceDbContext context, ILogger<UserRepository> logger) : base(context)
         {
             _context = context;
+            _logger = logger;
         }
         // In IUserRepository.cs
         // In UserRepository.cs
         public async Task<IEnumerable<Permission>>GetUserPermissionsAsync(string userId)
         {
-            var userRoles = await _context.UserRoles
-                .Where(ur => ur.UserId == userId)
-                .ToListAsync();
-            
-            if (!userRoles.Any())
-            {
-                return Enumerable.Empty<Permission>();  // Return empty if no roles found
-            }
-
-            var permissions = await _context.UserRoles
-                .Where(ur => ur.UserId == userId)
+            // Get permissions ONLY from roles (pure RBAC)
+            var rolePermissions = await _context.UserRoles
+                .Where(ur => ur.UserId == userId && !ur.IsDeleted)
+                .Include(ur => ur.Role)
+                    .ThenInclude(r => r.RolePermissions)
+                        .ThenInclude(rp => rp.Permission)
                 .SelectMany(ur => ur.Role.RolePermissions)
+                .Where(rp => !rp.IsDeleted && rp.Role != null && !rp.Role.IsDeleted)
                 .Select(rp => rp.Permission)
+                .Where(p => !p.IsDeleted)
                 .Distinct()
                 .ToListAsync();
 
-
-            return permissions;
+            return rolePermissions;
         }
 
 
@@ -50,7 +51,8 @@ namespace UserService.Infrastructure.Repositories
         public async Task<IEnumerable<UserRole>> GetUserRolesAsync(string userId)
         {
             return await _context.UserRoles
-                .Where(ur => ur.UserId == userId)
+                .Include(ur => ur.Role)
+                .Where(ur => ur.UserId == userId && !ur.IsDeleted)
                 .ToListAsync();
         }
 
@@ -76,6 +78,7 @@ namespace UserService.Infrastructure.Repositories
             return await _context.Users
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
+                .AsTracking()
                 .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
         }
 
@@ -111,22 +114,23 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<bool> HasPermissionAsync(string userId, string permissionName)
         {
-            return await _context.UserPermissions
-                .AnyAsync(up => up.UserId == userId && up.PermissionName == permissionName);
+            // Check permissions through roles only (pure RBAC)
+            return await _context.UserRoles
+                .Where(ur => ur.UserId == userId && !ur.IsDeleted)
+                .SelectMany(ur => ur.Role.RolePermissions)
+                .Where(rp => !rp.IsDeleted)
+                .Select(rp => rp.Permission)
+                .Where(p => !p.IsDeleted)
+                .AnyAsync(p => p.Name == permissionName);
         }
         
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
                 .Where(u => !u.IsDeleted)
-                .ToListAsync(); 
-        }
-
-        public async Task<IEnumerable<User>> GetDeletedAsync()
-        {
-            return await _context.Users
-                .IgnoreQueryFilters()
-                .Where(u => u.IsDeleted)
                 .ToListAsync(); 
         }
 
@@ -135,6 +139,7 @@ namespace UserService.Infrastructure.Repositories
             // First check if user exists (without filter)
             var user = await _context.Users
                 .IgnoreQueryFilters()
+                .AsTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
@@ -164,17 +169,39 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
         {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null) return false;
-
-            user.IsActive = isActive;
-            user.UpdatedAt = DateTime.UtcNow;
-    
-            // Only mark these properties as modified
-            _context.Entry(user).Property(x => x.IsActive).IsModified = true;
-            _context.Entry(user).Property(x => x.UpdatedAt).IsModified = true;
-    
-            return await _context.SaveChangesAsync() > 0;
+            try
+            {
+                // Try using raw SQL first as a more direct approach
+                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                    "UPDATE \"Users\" SET \"IsActive\" = {0}, \"UpdatedAt\" = {1} WHERE \"Id\" = {2}",
+                    isActive, DateTime.UtcNow, userId);
+                
+                return rowsAffected > 0;
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    // Fallback to EF approach
+                    var user = await _context.Users
+                        .AsTracking()
+                        .FirstOrDefaultAsync(u => u.Id == userId);
+                    
+                    if (user == null) 
+                    {
+                        return false;
+                    }
+                    
+                    user.IsActive = isActive;
+                    user.UpdatedAt = DateTime.UtcNow;
+                    
+                    return await _context.SaveChangesAsync() > 0;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
         }
 
         public async Task<User?> GetByIdAsync(string id, bool b)
@@ -185,18 +212,198 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<bool> DeleteAsync(string id)
         {
-            var user = await _context.Users
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var user = await _context.Users
+                    .Include(u => u.UserShifts)
+                    .Include(u => u.UserRoles)
+                    .IgnoreQueryFilters()
+                    .AsTracking()
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null) return false;
+
+                if (user.IsDeleted) return false; // Already deleted
+
+                // Log cascading deletions
+                if (user.UserShifts?.Any() == true)
+                {
+                    var shiftCount = user.UserShifts.Count();
+                    _logger.LogInformation("Soft deleting user {UserId} - removing from {ShiftCount} shifts", id, shiftCount);
+                    
+                    // Remove user from all shifts
+                    _context.UserShifts.RemoveRange(user.UserShifts);
+                }
+
+                if (user.UserRoles?.Any() == true)
+                {
+                    var roleCount = user.UserRoles.Count();
+                    _logger.LogInformation("Soft deleting user {UserId} - removing {RoleCount} role assignments", id, roleCount);
+                    
+                    // Remove all role assignments
+                    _context.UserRoles.RemoveRange(user.UserRoles);
+                }
+
+                // Perform soft delete
+                user.IsDeleted = true;
+                user.UpdatedAt = DateTime.UtcNow;
+                
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
+                _logger.LogInformation("Successfully soft deleted user {UserId} with cascading cleanup", id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error soft deleting user {UserId}", id);
+                throw;
+            }
+        }
+
+        public async Task<PagedResult<User>> GetPagedAsync(PaginationParameters parameters)
+        {
+            var query = _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .Where(u => !u.IsDeleted);
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            {
+                var searchTerm = parameters.Search.ToLower();
+                query = query.Where(u => 
+                    u.FirstName.ToLower().Contains(searchTerm) ||
+                    u.LastName.ToLower().Contains(searchTerm) ||
+                    u.Email.ToLower().Contains(searchTerm) ||
+                    u.MobileNumber.Contains(searchTerm));
+            }
+
+            // Apply sorting
+            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
+            {
+                query = parameters.SortBy.ToLower() switch
+                {
+                    "firstname" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.FirstName)
+                        : query.OrderBy(u => u.FirstName),
+                    "lastname" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.LastName)
+                        : query.OrderBy(u => u.LastName),
+                    "email" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.Email)
+                        : query.OrderBy(u => u.Email),
+                    "createdat" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.CreatedAt)
+                        : query.OrderBy(u => u.CreatedAt),
+                    _ => query.OrderBy(u => u.FirstName)
+                };
+            }
+            else
+            {
+                query = query.OrderBy(u => u.FirstName);
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((parameters.Page - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<User>
+            {
+                Items = items,
+                Page = parameters.Page,
+                PageSize = parameters.PageSize,
+                TotalCount = totalCount
+            };
+        }
+
+        public async Task<PagedResult<User>> GetDeletedPagedAsync(PaginationParameters parameters)
+        {
+            var query = _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
                 .IgnoreQueryFilters()
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .Where(u => u.IsDeleted);
 
-            if (user == null) return false;
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            {
+                var searchTerm = parameters.Search.ToLower();
+                query = query.Where(u => 
+                    u.FirstName.ToLower().Contains(searchTerm) ||
+                    u.LastName.ToLower().Contains(searchTerm) ||
+                    u.Email.ToLower().Contains(searchTerm) ||
+                    u.MobileNumber.Contains(searchTerm));
+            }
 
-            if (user.IsDeleted) return false; // Already deleted
+            // Apply sorting
+            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
+            {
+                query = parameters.SortBy.ToLower() switch
+                {
+                    "firstname" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.FirstName)
+                        : query.OrderBy(u => u.FirstName),
+                    "lastname" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.LastName)
+                        : query.OrderBy(u => u.LastName),
+                    "email" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.Email)
+                        : query.OrderBy(u => u.Email),
+                    "createdat" => parameters.SortDescending 
+                        ? query.OrderByDescending(u => u.CreatedAt)
+                        : query.OrderBy(u => u.CreatedAt),
+                    _ => query.OrderBy(u => u.FirstName)
+                };
+            }
+            else
+            {
+                query = query.OrderBy(u => u.FirstName);
+            }
 
-            user.IsDeleted = true;
-            user.UpdatedAt = DateTime.UtcNow;
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((parameters.Page - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<User>
+            {
+                Items = items,
+                Page = parameters.Page,
+                PageSize = parameters.PageSize,
+                TotalCount = totalCount
+            };
+        }
+
+        public override async Task<User?> UpdateAsync(User entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            var existingUser = await _context.Users
+                .AsTracking()
+                .FirstOrDefaultAsync(u => u.Id == entity.Id && !u.IsDeleted);
+
+            if (existingUser == null)
+                return null;
+
+            // Only update specific fields to avoid constraint issues
+            existingUser.FirstName = entity.FirstName;
+            existingUser.LastName = entity.LastName;
+            existingUser.Email = entity.Email;
+            existingUser.MobileNumber = entity.MobileNumber;
+            existingUser.Password = entity.Password;
+            existingUser.IsActive = entity.IsActive;
+            existingUser.IsFirstLogin = entity.IsFirstLogin;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
-            return true;    
+            return existingUser;
         }
     }
 }

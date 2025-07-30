@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using UserService.Core.Interfaces;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using UserService.Core.DTOs.Shift;
 using UserService.Core.Entities;
 
 namespace UserService.Infrastructure.Services
@@ -50,15 +51,40 @@ namespace UserService.Infrastructure.Services
     private async Task MonitorStrictShiftsAsync(IShiftService shiftService)
     {
         // Use the existing method to get all active shifts
-        var activeShifts = await shiftService.GetAllAsync(); // Or use your existing method to fetch active shifts
+        var activeShifts = await shiftService.GetAllAsync();
+
+        var currentTime = DateTime.UtcNow.TimeOfDay;
+        _logger.LogDebug("Current time: {CurrentTime}", currentTime);
 
         // Filter for shifts in strict mode and whose end time has passed
         var strictShifts = activeShifts
-            .Where(s => s.Mode == ShiftMode.Strict && s.EndTime <= DateTime.UtcNow)
+            .Where(s => s.Mode == ShiftMode.Strict)
+            .Where(s => 
+            {
+                var shiftEndTime = s.EndTime.TimeOfDay;
+                
+                // For overnight shifts (EndTime < StartTime), check if current time is past midnight and before end time
+                // OR if current time is after start time (yesterday)
+                if (shiftEndTime < s.StartTime.TimeOfDay)
+                {
+                    // Overnight shift: ends next day
+                    return currentTime <= shiftEndTime; // We're in the "next day" portion and past end time
+                }
+                else
+                {
+                    // Regular shift: ends same day
+                    return currentTime >= shiftEndTime; // Current time is past the end time
+                }
+            })
             .ToList();
+
+        _logger.LogInformation("Found {Count} strict shifts that have ended", strictShifts.Count());
 
         foreach (ShiftDto shift in strictShifts)
         {
+            _logger.LogInformation("Processing ended strict shift: {ShiftName} (End: {EndTime})", 
+                shift.Name, shift.EndTime.TimeOfDay);
+
             // Create a new scope for logging out users
             using var logoutScope = _serviceScopeFactory.CreateScope();
             var userShiftRepository = logoutScope.ServiceProvider.GetRequiredService<IUserShiftRepository>();

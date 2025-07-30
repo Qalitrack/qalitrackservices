@@ -11,6 +11,15 @@ public class UserServiceDbContext : DbContext
     {
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        
+        // Suppress pending model changes warning
+        optionsBuilder.ConfigureWarnings(warnings => 
+            warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+    }
+
     // DbSet properties
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Shift> Shifts { get; set; } = null!;
@@ -20,7 +29,8 @@ public class UserServiceDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; } = null!;
     public DbSet<UserShift> UserShifts { get; set; } = null!;
     public DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; } = null!;
-    public DbSet<UserPermissions> UserPermissions { get; set; } = null!;
+    // Direct user permissions disabled - using pure RBAC only
+    // public DbSet<UserPermissions> UserPermissions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +49,26 @@ public class UserServiceDbContext : DbContext
         ConfigureUserShift(modelBuilder);
         ConfigurePersonalAccessToken(modelBuilder);
 
+        // Configure DateTime properties globally for PostgreSQL
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))
+                {
+                    property.SetColumnType("TIMESTAMPTZ");
+                }
+                if (property.ClrType == typeof(bool))
+                {
+                    property.SetColumnType("BOOLEAN");
+                }
+                if (property.ClrType == typeof(TimeSpan) || property.ClrType == typeof(TimeSpan?))
+                {
+                    property.SetColumnType("TIME");
+                }
+            }
+        }
+
         // Add global query filter for soft deletes
         modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<Role>().HasQueryFilter(e => !e.IsDeleted);
@@ -56,9 +86,10 @@ public class UserServiceDbContext : DbContext
             entity.Property(e => e.Password).IsRequired();
             entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.IsActive).HasDefaultValue(false);
             entity.Property(e => e.IsFirstLogin).HasDefaultValue(false);
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            
         });
     }
 
@@ -68,8 +99,12 @@ public class UserServiceDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-            entity.HasIndex(e => e.Name).IsUnique();
+            entity.HasIndex(e => e.Name)
+                .IsUnique()
+                .HasFilter("\"IsDeleted\" = false");
             entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.IsActive);
+            entity.Property(e => e.IsDeleted);
         });
     }
 
@@ -81,6 +116,7 @@ public class UserServiceDbContext : DbContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.HasIndex(e => e.Name).IsUnique();
             entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.IsDeleted);
         });
     }
 
@@ -99,6 +135,8 @@ public class UserServiceDbContext : DbContext
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId)
                 .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.Property(rp => rp.IsDeleted);
         });
     }
 
@@ -118,7 +156,8 @@ public class UserServiceDbContext : DbContext
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
                 
-            entity.Property(ur => ur.AssignedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(ur => ur.AssignedAt).HasDefaultValueSql("NOW()");
+            entity.Property(ur => ur.IsDeleted);
         });
     }
 
@@ -128,11 +167,14 @@ public class UserServiceDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name)
+                .IsUnique()
+                .HasFilter("\"IsDeleted\" = false");
             entity.Property(e => e.Description).HasMaxLength(500);
-            entity.Property(e => e.Mode).HasDefaultValue(ShiftMode.Open);
             
             // Configure IsActive as a computed property (not mapped to database)
             entity.Ignore(e => e.IsActive);
+            entity.Property(e => e.IsDeleted);
         });
     }
 
@@ -152,7 +194,8 @@ public class UserServiceDbContext : DbContext
                 .HasForeignKey(us => us.ShiftId)
                 .OnDelete(DeleteBehavior.Cascade);
                 
-            entity.Property(us => us.AssignedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(us => us.AssignedAt).HasDefaultValueSql("NOW()");
+            entity.Property(us => us.IsDeleted);
         });
     }
 
@@ -164,6 +207,7 @@ public class UserServiceDbContext : DbContext
             entity.Property(e => e.Token).IsRequired().HasMaxLength(255);
             entity.HasIndex(e => e.Token).IsUnique();
             entity.Property(e => e.IsRevoked).HasDefaultValue(false);
+            entity.Property(e => e.IsDeleted);
             
             entity.HasOne(pat => pat.User)
                 .WithMany(u => u.PersonalAccessTokens)
@@ -172,19 +216,21 @@ public class UserServiceDbContext : DbContext
         });
     }
     
-    public static void ConfigureUserPermissions(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<UserPermissions>(entity =>
-        {
-            entity.HasKey(up => new { up.UserId, up.Id });
-            entity.HasOne(up => up.User)
-                .WithMany(u => u.UserPermissions)
-                .HasForeignKey(up => up.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(up => up.Permission)
-                .WithMany(p => p.UserPermissions)
-                .HasForeignKey(up => up.Id)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-    }
+    // Direct user permissions disabled - using pure RBAC only
+    // public static void ConfigureUserPermissions(ModelBuilder modelBuilder)
+    // {
+    //     modelBuilder.Entity<UserPermissions>(entity =>
+    //     {
+    //         entity.HasKey(up => new { up.UserId, up.Id });
+    //         entity.HasOne(up => up.User)
+    //             .WithMany(u => u.UserPermissions)
+    //             .HasForeignKey(up => up.UserId)
+    //             .OnDelete(DeleteBehavior.Cascade);
+    //         entity.HasOne(up => up.Permission)
+    //             .WithMany(p => p.UserPermissions)
+    //             .HasForeignKey(up => up.Id)
+    //             .OnDelete(DeleteBehavior.Cascade);
+    //         entity.Property(up => up.IsDeleted);
+    //     });
+    // }
 }

@@ -6,11 +6,10 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Permissions;
-using UserService.Core.DTOs.Role;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
-using UserBasicInfoDto = UserService.Core.DTOs.Role.UserBasicInfoDto;
+using UserBasicInfoDto = UserService.Core.DTOs.Roles.UserBasicInfoDto;
 
 namespace UserService.Core.Services;
 
@@ -19,6 +18,7 @@ public class RoleService(
     IPermissionsRepository permissionRepository,
     IRolePermissionRepository rolePermissionRepository,
     IUserRepository userRepository,
+    IUserRoleRepository userRoleRepository,
     IMapper mapper,
     ILogger<RoleService> logger)
     : IRoleService
@@ -27,6 +27,7 @@ public class RoleService(
     private readonly IPermissionsRepository _permissionRepository = permissionRepository ?? throw new ArgumentNullException(nameof(permissionRepository));
     private readonly IRolePermissionRepository _rolePermissionRepository = rolePermissionRepository ?? throw new ArgumentNullException(nameof(rolePermissionRepository));
     private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly IUserRoleRepository _userRoleRepository = userRoleRepository ?? throw new ArgumentNullException(nameof(userRoleRepository));
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly ILogger<RoleService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -58,17 +59,11 @@ public class RoleService(
         if (role == null)
             return null;
 
-        var roleDto = _mapper.Map<RoleWithUsersDto>(role);
+        var roleDto = _mapper.Map<RoleDto>(role);
         
         // Get users with this role
         var users = (await _userRepository.GetUsersByRoleAsync(id)).Cast<User>();
-        roleDto.Users = users.Select<User, UserBasicInfoDto>(u => new UserBasicInfoDto
-        {
-            Id = u.Id,
-            Email = u.Email,
-            FirstName = u.FirstName,
-            LastName = u.LastName
-        }).ToList();
+        roleDto.Users = users.Select(u => _mapper.Map<UserBasicInfoDto>(u)).ToList();
         
         roleDto.TotalUsers = roleDto.Users.Count;
         
@@ -107,18 +102,60 @@ public async Task<RoleDto?> UpdateAsync(string id, DTOs.Roles.UpdateRoleDto dto)
 
     // Check if another role with the same name exists
     var roleWithSameName = await _roleRepository.GetByNameAsync(dto.Name);
+    _logger.LogInformation("Checking for duplicate role name '{Name}'. Found role: {FoundRole}, Current ID: {CurrentId}", 
+        dto.Name, roleWithSameName?.Id, id);
+    
     if (roleWithSameName != null && roleWithSameName.Id != id)
     {
+        _logger.LogWarning("Role name '{Name}' already exists for role ID {ExistingId}, cannot update role {CurrentId}", 
+            dto.Name, roleWithSameName.Id, id);
         throw new InvalidOperationException("A role with this name already exists.");
+    }
+
+    // Check if trying to deactivate a role that has active users assigned
+    if (existingRole.IsActive && !dto.IsActive)
+    {
+        var usersWithRole = await _userRepository.GetUsersByRoleAsync(id);
+        if (usersWithRole.Cast<User>().Any())
+        {
+            throw new InvalidOperationException("Cannot deactivate a role that has active users assigned. Remove all users from this role first.");
+        }
+    }
+
+    // If deactivating the role, remove all user assignments
+    if (existingRole.IsActive && !dto.IsActive)
+    {
+        _logger.LogInformation("Deactivating role {RoleId}. Checking for user assignments.", id);
+        
+        // Get all users assigned to this role
+        var usersWithRole = (await _userRepository.GetUsersByRoleAsync(id)).Cast<User>();
+        if (usersWithRole != null && usersWithRole.Any())
+        {
+            var userCount = usersWithRole.Count();
+            _logger.LogInformation("Removing {UserCount} user assignments from deactivated role {RoleId}", userCount, id);
+            
+            // Remove all user-role assignments
+            foreach (var user in usersWithRole)
+            {
+                var removed = await _userRoleRepository.RemoveRoleFromUserAsync(user.Id, id);
+                if (removed)
+                {
+                    _logger.LogInformation("Successfully removed role {RoleId} from user {UserId}", id, user.Id);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to remove role {RoleId} from user {UserId}", id, user.Id);
+                }
+            }
+        }
     }
 
     // Explicitly set the ID before mapping
     existingRole.Id = id;
     _mapper.Map(dto, existingRole);
-    await _roleRepository.UpdateAsync(existingRole);
-    await _roleRepository.SaveChangesAsync();
+    var updatedRole = await _roleRepository.UpdateAsync(existingRole);
 
-    return _mapper.Map<RoleDto>(existingRole);
+    return _mapper.Map<RoleDto>(updatedRole ?? existingRole);
 }
 
 public async Task<bool> DeleteAsync(string id)
@@ -132,10 +169,18 @@ public async Task<bool> DeleteAsync(string id)
         return false;
     }
 
-    // Check if role is assigned to any users
-    if (role.UserRoles != null && role.UserRoles.Any())
+    // Log if role is assigned to users - cascade delete will handle cleanup
+    if (role.UserRoles != null && role.UserRoles.Cast<UserRole>().Any())
     {
-        throw new InvalidOperationException("Cannot delete role that is assigned to users.");
+        var userCount = role.UserRoles.Cast<UserRole>().Count();
+        _logger.LogInformation("Deleting role {RoleId} which is assigned to {UserCount} users. User-role assignments will be removed automatically.", id, userCount);
+    }
+
+    // Log if role has permissions - cascade delete will handle cleanup
+    if (role.RolePermissions != null && role.RolePermissions.Cast<RolePermission>().Any())
+    {
+        var permissionCount = role.RolePermissions.Cast<RolePermission>().Count();
+        _logger.LogInformation("Deleting role {RoleId} which has {PermissionCount} permissions. Role-permission assignments will be removed automatically.", id, permissionCount);
     }
 
     await _roleRepository.DeleteAsync(id);
@@ -155,6 +200,12 @@ public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permis
     if (role == null)
     {
         throw new KeyNotFoundException("Role not found.");
+    }
+
+    // Check if role is active
+    if (!role.IsActive)
+    {
+        throw new InvalidOperationException("Cannot assign permissions to an inactive role.");
     }
 
     // Check if permission exists
@@ -190,6 +241,18 @@ public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string perm
         throw new ArgumentException("Role ID is required", nameof(roleId));
     if (string.IsNullOrEmpty(permissionId))
         throw new ArgumentException("Permission ID is required", nameof(permissionId));
+
+    // Check if role exists and is active
+    var role = await _roleRepository.GetByIdAsync(roleId, true);
+    if (role == null)
+    {
+        throw new KeyNotFoundException("Role not found.");
+    }
+
+    if (!role.IsActive)
+    {
+        throw new InvalidOperationException("Cannot remove permissions from an inactive role.");
+    }
 
     // Get the role-permission relationship
     var rolePermission = await _rolePermissionRepository.GetByRoleAndPermissionAsync(roleId, permissionId);

@@ -44,11 +44,26 @@ namespace UserService.Core.Services
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
 
-            // Validate shift times
-            if (dto.StartTime >= dto.EndTime)
-                throw new ValidationException("End time must be after start time");
+            // Validate duration
+            if (dto.DurationMinutes <= 0)
+                throw new ValidationException("Duration must be greater than 0 minutes");
+
+            // Always calculate EndTime from StartTime + DurationMinutes
+            var calculatedEndTime = dto.StartTime.AddMinutes(dto.DurationMinutes);
+
+            // Validate shift times - compare time parts only since shifts are time-based
+            var startTime = dto.StartTime.TimeOfDay;
+            var endTime = calculatedEndTime.TimeOfDay;
+            
+            // Allow overnight shifts (e.g., 22:00 to 06:00), but not same time
+            if (startTime == endTime)
+                throw new ValidationException("Start time and end time cannot be the same");
 
             var shift = _mapper.Map<Shift>(dto);
+            
+            // Set calculated EndTime
+            shift.EndTime = calculatedEndTime.TimeOfDay;
+            
             var createdShift = await _shiftRepository.CreateAsync(shift);
             return _mapper.Map<ShiftDto>(createdShift);
         }
@@ -61,10 +76,6 @@ namespace UserService.Core.Services
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
 
-            // Validate shift times
-            if (dto.StartTime >= dto.EndTime)
-                throw new ValidationException("End time must be after start time");
-
             var existingShift = await _shiftRepository.GetByIdAsync(id);
             if (existingShift == null)
                 throw new Exception("Shift not found");
@@ -76,14 +87,40 @@ namespace UserService.Core.Services
             if (!string.IsNullOrEmpty(dto.Description))
                 existingShift.Description = dto.Description;
                 
+            // Handle StartTime and DurationMinutes updates
+            var startTime = dto.StartTime != default ? dto.StartTime : DateTime.Today.Add(existingShift.StartTime);
+            var durationMinutes = dto.DurationMinutes ?? existingShift.DurationMinutes ?? 480; // Default 8 hours if null
+
+            // Validate duration
+            if (durationMinutes <= 0)
+                throw new ValidationException("Duration must be greater than 0 minutes");
+
+            // Always recalculate EndTime when either StartTime or DurationMinutes changes
+            var calculatedEndTime = startTime.AddMinutes(durationMinutes);
+
+            // Validate shift times - compare time parts only since shifts are time-based
+            var startTimeOfDay = startTime.TimeOfDay;
+            var endTimeOfDay = calculatedEndTime.TimeOfDay;
+            
+            // Allow overnight shifts (e.g., 22:00 to 06:00), but not same time
+            if (startTimeOfDay == endTimeOfDay)
+                throw new ValidationException("Start time and end time cannot be the same");
+
+            // Update the shift properties
             if (dto.StartTime != default)
-                existingShift.StartTime = dto.StartTime.TimeOfDay;
+                existingShift.StartTime = startTime.TimeOfDay;
                 
-            if (dto.EndTime != default)
-                existingShift.EndTime = dto.EndTime.TimeOfDay;
+            if (dto.DurationMinutes.HasValue)
+                existingShift.DurationMinutes = durationMinutes;
+
+            // Always update EndTime based on current StartTime and DurationMinutes
+            existingShift.EndTime = calculatedEndTime.TimeOfDay;
                 
             if (dto.Mode.HasValue)
                 existingShift.Mode = dto.Mode.Value;
+                
+            if (dto.AutoRepeatDaily.HasValue)
+                existingShift.AutoRepeatDaily = dto.AutoRepeatDaily.Value;
                 
             existingShift.UpdatedAt = DateTime.UtcNow;
 
@@ -132,10 +169,13 @@ namespace UserService.Core.Services
             if (string.IsNullOrEmpty(shiftId))
                 throw new ArgumentException("Shift ID is required", nameof(shiftId));
 
-            // Check if the user exists
+            // Check if the user exists and is not soft deleted
             var user = await _userRepository.GetByIdAsync(userId, true);
             if (user == null)
-                throw new Exception("User not found");
+            {
+                _logger.LogWarning("User {UserId} does not exist or is deleted", userId);
+                throw new Exception("User does not exist or is deleted");
+            }
 
             // Check if the shift exists
             var shift = await _shiftRepository.GetByIdAsync(shiftId);
@@ -179,6 +219,14 @@ namespace UserService.Core.Services
                 
             if (string.IsNullOrEmpty(shiftId))
                 throw new ArgumentException("Shift ID is required", nameof(shiftId));
+
+            // Check if the user exists and is not soft deleted
+            var user = await _userRepository.GetByIdAsync(userId, true);
+            if (user == null)
+            {
+                _logger.LogWarning("User {UserId} does not exist or is deleted", userId);
+                throw new Exception("User does not exist or is deleted");
+            }
 
             // Check if the assignment exists
             var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId, shiftId);

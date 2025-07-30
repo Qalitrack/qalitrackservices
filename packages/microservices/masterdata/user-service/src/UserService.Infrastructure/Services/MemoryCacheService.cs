@@ -1,0 +1,137 @@
+using System.Text.Json;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using UserService.Core.Interfaces;
+
+namespace UserService.Infrastructure.Services;
+
+public class MemoryCacheService : ICacheService
+{
+    private readonly IMemoryCache _memoryCache;
+    private readonly ILogger<MemoryCacheService> _logger;
+    private readonly HashSet<string> _cacheKeys = new();
+    private readonly object _lockObject = new();
+
+    public MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheService> logger)
+    {
+        _memoryCache = memoryCache;
+        _logger = logger;
+    }
+
+    public async Task<T?> GetAsync<T>(string key)
+    {
+        try
+        {
+            if (_memoryCache.TryGetValue(key, out var cachedValue))
+            {
+                if (cachedValue is T directValue)
+                {
+                    _logger.LogDebug("Cache hit for key: {Key}", key);
+                    return directValue;
+                }
+
+                if (cachedValue is string jsonValue)
+                {
+                    var deserializedValue = JsonSerializer.Deserialize<T>(jsonValue);
+                    _logger.LogDebug("Cache hit (deserialized) for key: {Key}", key);
+                    return deserializedValue;
+                }
+            }
+
+            _logger.LogDebug("Cache miss for key: {Key}", key);
+            return default(T);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving cache value for key: {Key}", key);
+            return default(T);
+        }
+    }
+
+    public async Task SetAsync<T>(string key, T value, TimeSpan? expiration = null)
+    {
+        try
+        {
+            var cacheOptions = new MemoryCacheEntryOptions();
+            
+            if (expiration.HasValue)
+            {
+                cacheOptions.AbsoluteExpirationRelativeToNow = expiration.Value;
+            }
+            else
+            {
+                // Default expiration of 30 minutes
+                cacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+            }
+
+            // Set priority to help with memory management
+            cacheOptions.Priority = CacheItemPriority.Normal;
+
+            // Add removal callback to track cache keys
+            cacheOptions.RegisterPostEvictionCallback((evictedKey, evictedValue, reason, state) =>
+            {
+                lock (_lockObject)
+                {
+                    _cacheKeys.Remove(evictedKey.ToString()!);
+                }
+                _logger.LogDebug("Cache entry evicted. Key: {Key}, Reason: {Reason}", evictedKey, reason);
+            });
+
+            var serializedValue = JsonSerializer.Serialize(value);
+            _memoryCache.Set(key, serializedValue, cacheOptions);
+
+            lock (_lockObject)
+            {
+                _cacheKeys.Add(key);
+            }
+
+            _logger.LogDebug("Cache set for key: {Key}", key);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error setting cache value for key: {Key}", key);
+        }
+    }
+
+    public async Task RemoveAsync(string key)
+    {
+        try
+        {
+            _memoryCache.Remove(key);
+            lock (_lockObject)
+            {
+                _cacheKeys.Remove(key);
+            }
+            _logger.LogDebug("Cache removed for key: {Key}", key);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing cache value for key: {Key}", key);
+        }
+    }
+
+    public async Task RemovePatternAsync(string pattern)
+    {
+        try
+        {
+            List<string> keysToRemove;
+            lock (_lockObject)
+            {
+                keysToRemove = _cacheKeys
+                    .Where(key => key.Contains(pattern, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            foreach (var key in keysToRemove)
+            {
+                await RemoveAsync(key);
+            }
+
+            _logger.LogDebug("Cache cleared for pattern: {Pattern}, Removed {Count} keys", pattern, keysToRemove.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing cache values for pattern: {Pattern}", pattern);
+        }
+    }
+}

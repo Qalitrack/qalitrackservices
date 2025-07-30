@@ -2,6 +2,8 @@
 
 using UserService.Core.Entities;
 
+namespace UserService.Core.DTOs.Shift;
+
 public class ShiftDto
 {
     public string Id { get; set; }
@@ -11,4 +13,6 @@ public class ShiftDto
     public DateTime EndTime { get; set; }    // Using DateTime
     public ShiftMode Mode { get; set; }
     public bool IsActive { get; set; }
+    public bool AutoRepeatDaily { get; set; }
+    public int? DurationMinutes { get; set; }
 }

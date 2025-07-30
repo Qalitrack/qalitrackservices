@@ -4,7 +4,7 @@ using UserService.Core.DTOs;
 using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.DTOs.User;
-using UserService.Core.DTOs.Role;
+using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 
@@ -22,38 +22,12 @@ namespace UserService.Core.Services;
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<UserReadDto>> GetAllAsync()
-        {
-            var users = await _userRepository.GetAllAsync();
-            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(users);
-
-            foreach (var userDto in userDtos)
-            {
-                var roles = await _roleService.GetRolesByUserIdAsync(userDto.Id);
-                userDto.Roles = roles.Select(r => r.Name).ToList();
-            }
-
-            return userDtos;
-        }
 
         public async Task<bool> RestoreAsync(string id)
         {
             return await _userRepository.RestoreAsync(id);  
         }
 
-        public async Task<IEnumerable<UserReadDto>> GetDeletedAsync()
-        {
-            var users = await _userRepository.GetDeletedAsync();
-            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(users);
-
-            foreach (var userDto in userDtos)
-            {
-                var roles = await _roleService.GetRolesByUserIdAsync(userDto.Id);
-                userDto.Roles = roles.Select(r => r.Name).ToList();
-            }
-
-            return userDtos;
-        }
 
         public async Task<UserReadDto?> GetByIdAsync(string id)
         {
@@ -86,10 +60,21 @@ namespace UserService.Core.Services;
                 return null;
             }
 
-            _mapper.Map(dto, existingUser);
-            existingUser.UpdatedAt = DateTime.UtcNow;
+            // Create a new entity with updated values to avoid tracking conflicts
+            // Only update fields that are provided (not null)
+            var userToUpdate = new User
+            {
+                Id = existingUser.Id,
+                FirstName = dto.FirstName ?? existingUser.FirstName,
+                LastName = dto.LastName ?? existingUser.LastName,
+                Email = dto.Email ?? existingUser.Email,
+                MobileNumber = dto.MobileNumber ?? existingUser.MobileNumber,
+                Password = existingUser.Password, // Keep existing password
+                IsFirstLogin = dto.IsFirstLogin ?? existingUser.IsFirstLogin,
+                UpdatedAt = DateTime.UtcNow
+            };
             
-            var updatedUser = await _userRepository.UpdateAsync(existingUser);
+            var updatedUser = await _userRepository.UpdateAsync(userToUpdate);
             return updatedUser == null ? null : _mapper.Map<UserReadDto>(updatedUser);
         }
 
@@ -182,6 +167,59 @@ namespace UserService.Core.Services;
         public async Task<bool> RemoveShiftFromUserAsync(string userId, string shiftId)
         {
             return await _userRepository.RemoveShiftFromUserAsync(userId, shiftId);
+        }
+
+        public async Task<PagedResult<UserReadDto>> GetPagedAsync(PaginationParameters parameters)
+        {
+            var pagedUsers = await _userRepository.GetPagedAsync(parameters);
+            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(pagedUsers.Items);
+
+            // Map roles from eagerly loaded data
+            foreach (var userDto in userDtos)
+            {
+                var user = pagedUsers.Items.FirstOrDefault(u => u.Id == userDto.Id);
+                if (user?.UserRoles != null)
+                {
+                    userDto.Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+                }
+            }
+
+            return new PagedResult<UserReadDto>
+            {
+                Items = userDtos,
+                Page = pagedUsers.Page,
+                PageSize = pagedUsers.PageSize,
+                TotalCount = pagedUsers.TotalCount
+            };
+        }
+
+        public async Task<PagedResult<UserReadDto>> GetDeletedPagedAsync(PaginationParameters parameters)
+        {
+            var pagedUsers = await _userRepository.GetDeletedPagedAsync(parameters);
+            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(pagedUsers.Items);
+
+            // Map roles from eagerly loaded data
+            foreach (var userDto in userDtos)
+            {
+                var user = pagedUsers.Items.FirstOrDefault(u => u.Id == userDto.Id);
+                if (user?.UserRoles != null)
+                {
+                    userDto.Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+                }
+            }
+
+            return new PagedResult<UserReadDto>
+            {
+                Items = userDtos,
+                Page = pagedUsers.Page,
+                PageSize = pagedUsers.PageSize,
+                TotalCount = pagedUsers.TotalCount
+            };
+        }
+
+        public async Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
+        {
+            return await _userRepository.UpdateUserActiveStatusAsync(userId, isActive);
         }
     }
 

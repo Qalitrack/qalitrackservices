@@ -51,12 +51,16 @@ namespace UserService.Infrastructure.Repositories
                 throw new ArgumentNullException(nameof(entity));
 
             var existingRole = await _context.Roles
+                .AsTracking()
                 .FirstOrDefaultAsync(r => r.Id == entity.Id && !r.IsDeleted);
 
             if (existingRole == null)
                 return null;
 
-            _context.Entry(existingRole).CurrentValues.SetValues(entity);
+            // Only update specific fields to avoid constraint issues
+            existingRole.Name = entity.Name;
+            existingRole.Description = entity.Description; 
+            existingRole.IsActive = entity.IsActive;
             existingRole.UpdatedAt = DateTime.UtcNow;
             
             await _context.SaveChangesAsync();
@@ -67,6 +71,7 @@ namespace UserService.Infrastructure.Repositories
         {
             var role = await _context.Roles
                 .Include(r => r.UserRoles)
+                .AsTracking()
                 .FirstOrDefaultAsync(r => r.Id == id && !r.IsDeleted);
 
             if (role == null)
@@ -85,7 +90,7 @@ namespace UserService.Infrastructure.Repositories
         public async Task<Role?> GetByNameAsync(string roleName)
         {
             return await _context.Roles
-                .FirstOrDefaultAsync(r => r.Name == roleName && !r.IsDeleted);
+                .FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.Trim().ToLower() && !r.IsDeleted);
         }
 
         public async Task<bool> DoesRoleExistAsync(string roleName)
@@ -125,6 +130,7 @@ namespace UserService.Infrastructure.Repositories
         public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
         {
             var rolePermission = await _context.RolePermissions
+                .AsTracking()
                 .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
 
             if (rolePermission == null)

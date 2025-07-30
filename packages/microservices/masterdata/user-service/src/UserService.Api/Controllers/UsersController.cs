@@ -1,67 +1,36 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.User;
+using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace UserService.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    public class UsersController(
+        IUserService userService,
+        IUserRoleService userRoleService,
+        IMapper mapper,
+        ILogger<UsersController> logger)
+        : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly IMapper _mapper;
-        private readonly ILogger<UsersController> _logger;
-        private readonly IUserRoleService _userRoleService;
+        private readonly IUserService _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+        private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        private readonly ILogger<UsersController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IUserRoleService _userRoleService = userRoleService ?? throw new ArgumentNullException(nameof(userRoleService));
 
-        public UsersController(
-            IUserService userService, 
-            IUserRoleService userRoleService,
-            IMapper mapper, 
-            ILogger<UsersController> logger)
-        {
-            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            _userRoleService = userRoleService ?? throw new ArgumentNullException(nameof(userRoleService));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "users.view")]
-        public async Task<IEnumerable<UserReadDto>> GetAll()
-        {
-            try
-            {
-                return (IEnumerable<UserReadDto>)await _userService.GetAllAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting all users");
-                throw;
-            }
-        }
-
-        [HttpGet("deleted")]
-        [Authorize(Policy = "users.manage")]
-        public async Task<IEnumerable<UserReadDto>> GetDeleted()
-        {
-            try
-            {
-                return (IEnumerable<UserReadDto>)await _userService.GetDeletedAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting deleted users");
-                throw;
-            }
-        }
 
         [HttpGet("{id}")]
         [Authorize(Policy = "users.view")]
@@ -76,32 +45,166 @@ namespace UserService.Api.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        public async Task<UserReadDto> Create([FromBody] CreateUserDto createUserDto)
+        [Authorize(Policy = "users.create")]
+        public async Task<IActionResult> Create([FromBody] CreateUserDto createUserDto)
         {
-            return await _userService.CreateAsync(createUserDto);
+            try
+            {
+                var user = await _userService.CreateAsync(createUserDto);
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            }
+            catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error creating user");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23505" => pgEx.ConstraintName switch
+                    {
+                        "IX_Users_Email" => "A user with this email already exists. Please use a different email address.",
+                        "IX_Users_Username" => "This username is already taken. Please choose a different username.",
+                        _ => $"Duplicate entry detected: {pgEx.ConstraintName}"
+                    },
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error creating user: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating user");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred while creating the user", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "users.manage")]
-        public async Task<UserReadDto> Update(string id, [FromBody] UpdateUserDto updateUserDto)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateUserDto updateUserDto)
         {
-            UserReadDto result = await _userService.UpdateAsync(id, updateUserDto);
-            if (result == null)
+            try
             {
-                throw new KeyNotFoundException($"User with ID {id} not found");
+                UserReadDto result = await _userService.UpdateAsync(id, updateUserDto);
+                if (result == null)
+                {
+                    return NotFound(new { 
+                        Success = false, 
+                        Message = $"User with ID {id} not found", 
+                        Errors = (string[])null, 
+                        StatusCode = 404 
+                    });
+                }
+                return Ok(result);
             }
-            return result;
+            catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error updating user with ID: {UserId}", id);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23505" => pgEx.ConstraintName switch
+                    {
+                        "IX_Users_Email" => "A user with this email already exists. Please use a different email address.",
+                        "IX_Users_Username" => "This username is already taken. Please choose a different username.",
+                        _ => $"Duplicate entry detected: {pgEx.ConstraintName}"
+                    },
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error updating user: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user with ID: {UserId}", id);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred while updating the user", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "users.manage")]
-        public async Task Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            var result = await _userService.DeleteAsync(id);
-            if (!result)
+            try
             {
-                throw new KeyNotFoundException($"User with ID {id} not found");
+                var result = await _userService.DeleteAsync(id);
+                if (!result)
+                {
+                    return NotFound(new { 
+                        Success = false, 
+                        Message = $"User with ID {id} not found", 
+                        Errors = (string[])null, 
+                        StatusCode = 404 
+                    });
+                }
+                return Ok(new { message = "User deleted successfully" });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23503" => "Cannot delete user - referenced by other records",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error deleting user: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user with ID: {UserId}", id);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred while deleting the user", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
             }
         }
 
@@ -118,12 +221,12 @@ namespace UserService.Api.Controllers
 
         [HttpGet("{userId}/permissions")]
         [Authorize(Policy = "users.view")]
-        public async Task<IEnumerable<string>> GetUserPermissions(string userId)
+        public async Task<IActionResult> GetUserPermissions(string userId)
         {
             // Ensure the user is provided
             if (string.IsNullOrWhiteSpace(userId))
             {
-                return Enumerable.Empty<string>();  // Return empty if no userId is provided
+                return Ok(new { permissions = new List<string>(), sources = new { roles = new List<string>(), direct = new List<string>() } });
             }
 
             // Get the permissions for the user from the service layer
@@ -132,14 +235,73 @@ namespace UserService.Api.Controllers
             // If permissions are null or empty, handle gracefully
             if (permissions == null || !permissions.Any())
             {
-                return Enumerable.Empty<string>();  // Return empty if no permissions are found
+                return Ok(new { permissions = new List<string>(), sources = new { roles = new List<string>(), direct = new List<string>() } });
             }
 
             // Return the list of permission names (strings)
-            return permissions.Select(p => p.Name);  // Assuming Permission has a 'Name' property
+            var permissionNames = permissions.Select(p => p.Name).ToList();
+            
+            // For debugging - show permission sources
+            var result = new
+            {
+                permissions = permissionNames,
+                count = permissionNames.Count,
+                sources = new
+                {
+                    note = "Check /api/v1/users/{userId}/permissions/debug for detailed sources"
+                }
+            };
+            
+            return Ok(result);
         }
 
+        [HttpGet("{userId}/permissions/debug")]
+        [Authorize(Policy = "users.manage")]
+        public async Task<IActionResult> GetUserPermissionsDebug(string userId)
+        {
+            var userRoles = await _userRoleService.GetUserRolesAsync(userId);
+            var permissions = await _userService.GetUserPermissionsAsync(userId);
+            
+            var result = new
+            {
+                userId,
+                totalPermissions = permissions?.Count() ?? 0,
+                permissions = permissions?.Select(p => new { p.Id, p.Name }) ?? Enumerable.Empty<object>(),
+                roles = userRoles ?? Enumerable.Empty<string>(),
+                timestamp = DateTime.UtcNow
+            };
+            
+            return Ok(result);
+        }
 
+        [HttpGet("paged")]
+        [Authorize(Policy = "users.view")]
+        public async Task<PagedResult<UserReadDto>> GetPaged([FromQuery] PaginationParameters parameters)
+        {
+            try
+            {
+                return await _userService.GetPagedAsync(parameters);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting paged users");
+                throw;
+            }
+        }
 
+        [HttpGet("deleted/paged")]
+        [Authorize(Policy = "users.manage")]
+        public async Task<PagedResult<UserReadDto>> GetDeletedPaged([FromQuery] PaginationParameters parameters)
+        {
+            try
+            {
+                return await _userService.GetDeletedPagedAsync(parameters);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting paged deleted users");
+                throw;
+            }
+        }
     }
 }
