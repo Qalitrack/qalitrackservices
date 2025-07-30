@@ -4,11 +4,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using UserService.Core.Interfaces;
+using UserService.Core.Services;
 using Serilog;
+using UserService.Core.Entities;
 
 namespace UserService.Core.Services
 {
-    public class TokenService(IUserService userService, IConfiguration configuration, ITokenRepository tokenRepository)
+    public class TokenService(IUserService userService, IJwtConfigurationService jwtConfigService, ITokenRepository tokenRepository)
         : ITokenService
     {
         public async Task<PersonalAccessToken> GenerateTokenAsync(string email, string password)
@@ -29,16 +31,17 @@ namespace UserService.Core.Services
                 new Claim(ClaimTypes.Name, user.Email)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                configuration["Jwt:SecretKey"] ??
-                configuration["JwtSettings:SecretKey"] ??
-                throw new InvalidOperationException("JWT Secret Key is not configured")));
-
+            var secretKey = jwtConfigService.GetSecretKey();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var issuer = jwtConfigService.GetIssuer();
+            var audience = jwtConfigService.GetAudience();
+            var expiration = jwtConfigService.GetTokenExpiration();
+            
             var token = new JwtSecurityToken(
-                issuer: configuration["Jwt:Issuer"] ?? configuration["JwtSettings:Issuer"] ?? "UserService",
-                audience: configuration["Jwt:Audience"] ?? configuration["JwtSettings:Audience"] ?? "UserService",
+                issuer: issuer,
+                audience: audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(7),
+                expires: DateTime.UtcNow.Add(expiration),
                 signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
             );
 
@@ -65,6 +68,65 @@ namespace UserService.Core.Services
             }
         }
 
+        public async Task<PersonalAccessToken> GenerateTokenForAuthenticatedUserAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            return await GenerateTokenForUserAsync(user);
+        }
+
+        private async Task<PersonalAccessToken> GenerateTokenForUserAsync(User user)
+        {
+            var jti = Guid.NewGuid().ToString(); // Generate unique token ID
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, jti),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Email)
+            };
+
+            var secretKey = jwtConfigService.GetSecretKey();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var issuer = jwtConfigService.GetIssuer();
+            var audience = jwtConfigService.GetAudience();
+            var expiration = jwtConfigService.GetTokenExpiration();
+            
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.Add(expiration),
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            var personalAccessToken = new PersonalAccessToken
+            {
+                Token = tokenString,
+                UserId = user.Id.ToString(),
+                Jti = jti,
+                IsRevoked = false,
+            };
+
+            try
+            {
+                var savedToken = await tokenRepository.CreateAsync(personalAccessToken);
+                Log.Information("Token created and saved for authenticated user {UserId}", user.Id);
+                return savedToken;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to save token to database for user {UserId}", user.Id);
+                throw new InvalidOperationException("Failed to create token", ex);
+            }
+        }
+
         public async Task<bool> ValidateTokenAsync(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
@@ -82,17 +144,19 @@ namespace UserService.Core.Services
                 }
 
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                    configuration["Jwt:SecretKey"] ??
-                    configuration["JwtSettings:SecretKey"] ??
-                    throw new InvalidOperationException("JWT Secret Key is not configured")));
+                var secretKey = jwtConfigService.GetSecretKey();
+                
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
+                var issuer = jwtConfigService.GetIssuer();
+                var audience = jwtConfigService.GetAudience();
+                
                 var validationResult = await tokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = configuration["Jwt:Issuer"] ?? configuration["JwtSettings:Issuer"] ?? "UserService",
+                    ValidIssuer = issuer,
                     ValidateAudience = true,
-                    ValidAudience = configuration["Jwt:Audience"] ?? configuration["JwtSettings:Audience"] ?? "UserService",
+                    ValidAudience = audience,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = key
@@ -197,6 +261,11 @@ namespace UserService.Core.Services
             }
 
             return false;
+        }
+
+        public async Task<bool> DeleteAllTokensForUserAsync(Guid userId)
+        {
+            return await tokenRepository.DeleteAllTokensForUserAsync(userId);
         }
     }
 }

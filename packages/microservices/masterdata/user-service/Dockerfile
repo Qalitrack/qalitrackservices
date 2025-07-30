@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-# Install wget for health checks
+# Install wget for health checks (temporarily disabled due to network issues)
 RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
 # Use the SDK image to build the app

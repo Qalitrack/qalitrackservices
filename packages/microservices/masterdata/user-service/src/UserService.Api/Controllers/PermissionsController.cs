@@ -122,6 +122,16 @@ namespace UserService.Api.Controllers
 
                 return Ok(new { message = "Permission deleted successfully" });
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Cannot delete permission {PermissionId} - business rule violation", id);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error deleting permission with ID: {id}");

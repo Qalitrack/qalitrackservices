@@ -19,6 +19,9 @@ namespace UserService.Core.Interfaces
         // Delete a shift by ID (already provided by IRepository)
         Task<bool> DeleteAsync(string id);
 
+        // Get a shift by name
+        Task<Shift?> GetByNameAsync(string shiftName);
+
         // Check if a shift is active based on current time and shift start/end time
         Task<bool> IsShiftActiveAsync(string shiftId);
 

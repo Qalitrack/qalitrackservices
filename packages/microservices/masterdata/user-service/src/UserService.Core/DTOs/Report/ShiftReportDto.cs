@@ -3,6 +3,16 @@ using System.Collections.Generic;
 
 namespace UserService.Core.DTOs.Report
 {
+    public class AssignedUserDto
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime AssignedAt { get; set; }
+        public bool IsActive { get; set; }
+    }
+
     public class ShiftReportDto
     {
         public string Id { get; set; }
@@ -14,6 +24,7 @@ namespace UserService.Core.DTOs.Report
         public bool IsActive { get; set; }
         public int AssignedUsersCount { get; set; }
         public DateTime? LastModified { get; set; }
+        public List<AssignedUserDto>? AssignedUsers { get; set; } = new List<AssignedUserDto>();
     }
 
     public class ShiftReportResponse

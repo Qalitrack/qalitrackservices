@@ -69,6 +69,8 @@ namespace UserService.Infrastructure.Data
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "users.view", Description = "Permission to view users", CreatedAt = DateTime.UtcNow },
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "users.manage", Description = "Permission to manage users", CreatedAt = DateTime.UtcNow },
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "users.assign", Description = "Permission to assign users", CreatedAt = DateTime.UtcNow },
+                    new Permission { Id = Guid.NewGuid().ToString(), Name = "users.delete", Description = "Permission to delete users", CreatedAt = DateTime.UtcNow },
+                    new Permission { Id = Guid.NewGuid().ToString(), Name = "users.create", Description = "Permission to create users", CreatedAt = DateTime.UtcNow },
                     //Reports Permissions
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "reports.view", Description = "Permission to view reports", CreatedAt = DateTime.UtcNow },
                     new Permission { Id = Guid.NewGuid().ToString(), Name = "reports.manage", Description = "Permission to manage reports", CreatedAt = DateTime.UtcNow },
@@ -89,7 +91,7 @@ namespace UserService.Infrastructure.Data
                 var users = new[]
                 {
                     // Admin role users (3)
-                    new User { Id = Guid.NewGuid().ToString(), FirstName = "Admin", LastName = "One", Email = "admin1@userservice.com", MobileNumber = "1234567890", Password = BCrypt.Net.BCrypt.HashPassword("password"), IsActive = true, IsFirstLogin = false, CreatedAt = DateTime.UtcNow },
+                    new User { Id = Guid.NewGuid().ToString(), FirstName = "Admin", LastName = "One", Email = "joshuaiska@gmail.com", MobileNumber = "1234567890", Password = BCrypt.Net.BCrypt.HashPassword("password"), IsActive = true, IsFirstLogin = false, CreatedAt = DateTime.UtcNow },
                     new User { Id = Guid.NewGuid().ToString(), FirstName = "Admin", LastName = "Two", Email = "admin2@userservice.com", MobileNumber = "1234567891", Password = BCrypt.Net.BCrypt.HashPassword("password"), IsActive = true, IsFirstLogin = false, CreatedAt = DateTime.UtcNow },
                     new User { Id = Guid.NewGuid().ToString(), FirstName = "Admin", LastName = "Three", Email = "admin3@userservice.com", MobileNumber = "1234567892", Password = BCrypt.Net.BCrypt.HashPassword("password"), IsActive = true, IsFirstLogin = false, CreatedAt = DateTime.UtcNow },
                     // User role users (3)

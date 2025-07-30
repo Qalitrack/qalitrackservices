@@ -1,5 +1,6 @@
 using System.Collections;
 using UserService.Core.Entities;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Core.Interfaces
 {
@@ -16,8 +17,9 @@ namespace UserService.Core.Interfaces
         Task<IEnumerable<UserRole>> GetUserRolesAsync(string userId);
         Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds);
         Task<User> GetByEmailAsync(string toLower);
-        Task<IEnumerable<User>> GetDeletedAsync();
         Task<bool> RestoreAsync(string id);
         Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive);
+        Task<PagedResult<User>> GetPagedAsync(PaginationParameters parameters);
+        Task<PagedResult<User>> GetDeletedPagedAsync(PaginationParameters parameters);
     }
 }

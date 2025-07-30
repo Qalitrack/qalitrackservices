@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Report;
+using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Infrastructure.Data;
@@ -28,14 +29,37 @@ namespace UserService.Infrastructure.Services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<ShiftReportResponse> GenerateShiftReportAsync()
+        public async Task<PagedResult<ShiftReportDto>> GenerateShiftReportAsync(PaginationParameters parameters)
         {
             try
             {
-                var shifts = await _context.Shifts
+                var query = _context.Shifts
                     .Include(s => s.UserShifts)
                     .ThenInclude(us => us.User)
-                    .AsNoTracking()
+                    .AsNoTracking();
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(parameters.Search))
+                {
+                    query = query.Where(s => s.Name.Contains(parameters.Search) || 
+                                           s.Description.Contains(parameters.Search));
+                }
+
+                // Apply sorting
+                query = parameters.SortBy?.ToLower() switch
+                {
+                    "name" => parameters.SortDescending ? query.OrderByDescending(s => s.Name) : query.OrderBy(s => s.Name),
+                    "mode" => parameters.SortDescending ? query.OrderByDescending(s => s.Mode) : query.OrderBy(s => s.Mode),
+                    "isactive" => parameters.SortDescending ? query.OrderByDescending(s => s.IsActive) : query.OrderBy(s => s.IsActive),
+                    "starttime" => parameters.SortDescending ? query.OrderByDescending(s => s.StartTime) : query.OrderBy(s => s.StartTime),
+                    _ => parameters.SortDescending ? query.OrderByDescending(s => s.CreatedAt) : query.OrderBy(s => s.CreatedAt)
+                };
+
+                var totalCount = await query.CountAsync();
+                
+                var shifts = await query
+                    .Skip((parameters.Page - 1) * parameters.PageSize)
+                    .Take(parameters.PageSize)
                     .ToListAsync();
 
                 var shiftReports = shifts.Select(s => new ShiftReportDto
@@ -48,16 +72,25 @@ namespace UserService.Infrastructure.Services
                     Mode = s.Mode.ToString(),
                     IsActive = s.IsActive,
                     AssignedUsersCount = s.UserShifts?.Count ?? 0,
-                    LastModified = s.UpdatedAt > s.CreatedAt ? s.UpdatedAt : s.CreatedAt
+                    LastModified = s.UpdatedAt > s.CreatedAt ? s.UpdatedAt : s.CreatedAt,
+                    AssignedUsers = s.UserShifts?.Where(us => us.User != null && !us.User.IsDeleted)
+                                                .Select(us => new AssignedUserDto
+                                                {
+                                                    Id = us.User.Id,
+                                                    Email = us.User.Email,
+                                                    FirstName = us.User.FirstName,
+                                                    LastName = us.User.LastName,
+                                                    AssignedAt = us.AssignedAt,
+                                                    IsActive = !us.User.IsDeleted
+                                                }).ToList() ?? new List<AssignedUserDto>()
                 }).ToList();
 
-                return new ShiftReportResponse
+                return new PagedResult<ShiftReportDto>
                 {
-                    Shifts = shiftReports,
-                    TotalShifts = shifts.Count,
-                    ActiveShifts = shifts.Count(s => s.IsActive),
-                    StrictModeShifts = shifts.Count(s => s.Mode == ShiftMode.Strict),
-                    OpenModeShifts = shifts.Count(s => s.Mode == ShiftMode.Open)
+                    Items = shiftReports,
+                    Page = parameters.Page,
+                    PageSize = parameters.PageSize,
+                    TotalCount = totalCount
                 };
             }
             catch (Exception ex)
@@ -67,14 +100,38 @@ namespace UserService.Infrastructure.Services
             }
         }
 
-        public async Task<UserReportResponse> GenerateUserReportAsync()
+        public async Task<PagedResult<UserReportDto>> GenerateUserReportAsync(PaginationParameters parameters)
         {
             try
             {
-                var users = await _context.Users
+                var query = _context.Users
                     .Include(u => u.UserShifts)
                     .ThenInclude(us => us.Shift)
-                    .AsNoTracking()
+                    .AsNoTracking();
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(parameters.Search))
+                {
+                    query = query.Where(u => u.Email.Contains(parameters.Search) || 
+                                           u.FirstName.Contains(parameters.Search) ||
+                                           u.LastName.Contains(parameters.Search));
+                }
+
+                // Apply sorting
+                query = parameters.SortBy?.ToLower() switch
+                {
+                    "email" => parameters.SortDescending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+                    "firstname" => parameters.SortDescending ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
+                    "lastname" => parameters.SortDescending ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
+                    "isactive" => parameters.SortDescending ? query.OrderByDescending(u => u.IsDeleted) : query.OrderBy(u => u.IsDeleted),
+                    _ => parameters.SortDescending ? query.OrderByDescending(u => u.CreatedAt) : query.OrderBy(u => u.CreatedAt)
+                };
+
+                var totalCount = await query.CountAsync();
+                
+                var users = await query
+                    .Skip((parameters.Page - 1) * parameters.PageSize)
+                    .Take(parameters.PageSize)
                     .ToListAsync();
 
                 var userReports = users.Select(u => new UserReportDto
@@ -84,22 +141,23 @@ namespace UserService.Infrastructure.Services
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     IsActive = !u.IsDeleted,
-                    AssignedShifts = u.UserShifts?.Select(us => new UserShiftInfoDto
-                    {
-                        ShiftId = us.ShiftId,
-                        ShiftName = us.Shift?.Name ?? "Unknown",
-                        ShiftMode = us.Shift?.Mode.ToString() ?? "Unknown",
-                        AssignedAt = us.AssignedAt,
-                        IsActive = us.Shift?.IsActive ?? false
-                    }).ToList()
+                    AssignedShifts = u.UserShifts?.Where(us => us.Shift != null)
+                                                .Select(us => new UserShiftInfoDto
+                                                {
+                                                    ShiftId = us.ShiftId,
+                                                    ShiftName = us.Shift?.Name ?? "Unknown",
+                                                    ShiftMode = us.Shift?.Mode.ToString() ?? "Unknown",
+                                                    AssignedAt = us.AssignedAt,
+                                                    IsActive = us.Shift?.IsActive ?? false
+                                                }).ToList() ?? new List<UserShiftInfoDto>()
                 }).ToList();
 
-                return new UserReportResponse
+                return new PagedResult<UserReportDto>
                 {
-                    Users = userReports,
-                    TotalUsers = users.Count,
-                    ActiveUsers = users.Count(u => !u.IsDeleted),
-                    UsersWithShifts = users.Count(u => u.UserShifts?.Any() == true)
+                    Items = userReports,
+                    Page = parameters.Page,
+                    PageSize = parameters.PageSize,
+                    TotalCount = totalCount
                 };
             }
             catch (Exception ex)
@@ -135,7 +193,17 @@ namespace UserService.Infrastructure.Services
                     Mode = shift.Mode.ToString(),
                     IsActive = shift.IsActive,
                     AssignedUsersCount = shift.UserShifts?.Count ?? 0,
-                    LastModified = shift.UpdatedAt > shift.CreatedAt ? shift.UpdatedAt : shift.CreatedAt
+                    LastModified = shift.UpdatedAt > shift.CreatedAt ? shift.UpdatedAt : shift.CreatedAt,
+                    AssignedUsers = shift.UserShifts?.Where(us => us.User != null && !us.User.IsDeleted)
+                                                  .Select(us => new AssignedUserDto
+                                                  {
+                                                      Id = us.User.Id,
+                                                      Email = us.User.Email,
+                                                      FirstName = us.User.FirstName,
+                                                      LastName = us.User.LastName,
+                                                      AssignedAt = us.AssignedAt,
+                                                      IsActive = !us.User.IsDeleted
+                                                  }).ToList() ?? new List<AssignedUserDto>()
                 };
             }
             catch (Exception ex)

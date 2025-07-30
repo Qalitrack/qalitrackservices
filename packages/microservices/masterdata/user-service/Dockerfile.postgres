@@ -1,0 +1,34 @@
+# PostgreSQL Database Dockerfile for User Service
+FROM postgres:16-alpine
+
+# Set environment variables for PostgreSQL
+ENV POSTGRES_DB=userservicedb
+ENV POSTGRES_USER=userservice
+ENV POSTGRES_PASSWORD=userservice123
+ENV PGDATA=/var/lib/postgresql/data/pgdata
+
+# Create directory for PostgreSQL data
+RUN mkdir -p /var/lib/postgresql/data/pgdata
+
+# Create init directory for database initialization scripts
+RUN mkdir -p /docker-entrypoint-initdb.d
+
+# Copy initialization script if needed
+COPY scripts/init-db.sql /docker-entrypoint-initdb.d/
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# Set proper permissions
+RUN chown -R postgres:postgres /var/lib/postgresql/data
+
+# Configure PostgreSQL settings via environment variables
+ENV POSTGRES_INITDB_ARGS="--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD pg_isready -U $POSTGRES_USER -d $POSTGRES_DB || exit 1
+
+# Use the default PostgreSQL entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["postgres"]

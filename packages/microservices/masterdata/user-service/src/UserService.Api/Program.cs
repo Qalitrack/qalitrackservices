@@ -16,6 +16,8 @@ using UserService.Infrastructure.Data;
 using UserService.Infrastructure.Interfaces;
 using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Services;
+using UserService.Api.Middleware;
+using UserService.Api.Filters;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
@@ -33,16 +35,35 @@ try
     Log.Information("Starting application...");
 
     // Configure to listen on port 8080
-    builder.WebHost.UseUrls("http://localhost:8081");
+  //  builder.WebHost.UseUrls("http://localhost:8081");
 
     // Add services to the container
-    builder.Services.AddControllers()
+    builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add<ModelValidationFilter>();
+        })
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve property casing
         });
     
     builder.Services.AddEndpointsApiExplorer();
+    
+    // Add API Versioning
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+        options.ApiVersionReader = Asp.Versioning.ApiVersionReader.Combine(
+            new Asp.Versioning.UrlSegmentApiVersionReader(),
+            new Asp.Versioning.HeaderApiVersionReader("X-Version"),
+            new Asp.Versioning.QueryStringApiVersionReader("version")
+        );
+    }).AddMvc().AddApiExplorer(setup =>
+    {
+        setup.GroupNameFormat = "'v'VVV";
+        setup.SubstituteApiVersionInUrl = true;
+    });
     
     // Register application services
     RegisterServices(builder.Services, builder);
@@ -88,9 +109,16 @@ finally
 }
 
 static void RegisterServices(IServiceCollection services, WebApplicationBuilder builder)
-{
-    // Core Services
-    services.AddScoped<IUserService, UserService.Core.Services.UserService>();
+{  
+    
+    // Core Services - Register base service first, then decorate with caching
+    services.AddScoped<UserService.Core.Services.UserService>();
+    services.AddScoped<IUserService>(provider =>
+    {
+        var baseUserService = provider.GetRequiredService<UserService.Core.Services.UserService>();
+        var cacheService = provider.GetRequiredService<ICacheService>();
+        return new CachedUserService(baseUserService, cacheService);
+    });
     services.AddScoped<IRoleService, RoleService>();
     services.AddScoped<IShiftService, ShiftService>();
     services.AddScoped<IUserRoleService, UserRoleService>();
@@ -98,6 +126,14 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<ITokenService, TokenService>();
     services.AddScoped<IUserStatusService, UserStatusService>();
     services.AddScoped<IReportService, ReportService>();
+    services.AddScoped<ITwoFactorService, TwoFactorService>();
+    
+    // Email queue services for improved performance
+    services.AddSingleton<EmailQueueService>();
+    services.AddScoped<IEmailQueueService>(provider => provider.GetRequiredService<EmailQueueService>());
+    
+    // JWT Configuration Service
+    services.AddScoped<IJwtConfigurationService, JwtConfigurationService>();
 
     // Repositories
     services.AddScoped<IUserRepository, UserRepository>();
@@ -115,11 +151,40 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddAutoMapper(typeof(UserProfile));
     services.AddHealthChecks(); // This registers all necessary health check services
     
+    // Configure caching for 1000+ users
+    var useRedis = builder.Configuration.GetValue<bool>("UseRedis", false);
+    var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+    
+    if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
+    {
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnectionString;
+            options.InstanceName = "UserService";
+        });
+        Log.Information("Redis distributed cache configured for 1000+ users");
+    }
+    else
+    {
+        services.AddMemoryCache();
+        Log.Information("Memory cache configured (suitable for <500 users)");
+    }
+    
     // Register BackupOptions from configuration
     services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
     
     // Register our health check service
     services.AddScoped<IHealthCheckService, HealthCheckService>();
+    
+    // Register cache service based on configuration
+    if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
+    {
+        services.AddScoped<ICacheService, RedisCacheService>();
+    }
+    else
+    {
+        services.AddScoped<ICacheService, MemoryCacheService>();
+    }
     
     // Backup Services
     // services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
@@ -132,19 +197,10 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     // services.AddHostedService<BackupScheduler>();
     // services.AddHostedService<BackupMonitor>();
     services.AddHostedService<ShiftMonitorService>();
+    services.AddHostedService<EmailProcessorService>();
         
-    // Register IEmailService if not already registered
-    if (!services.Any(s => s.ServiceType == typeof(IEmailService)))
-    {
-        services.AddScoped<IEmailService, NullEmailService>();
-        var logger = LoggerFactory.Create(logging => 
-        {
-            logging.AddConsole();
-            logging.AddDebug();
-        }).CreateLogger<Program>();
-        
-        logger.LogWarning("No IEmailService implementation found. Using NullEmailService. No emails will be sent.");
-    }
+    // Register SMTP Email Service for 2FA
+    services.AddScoped<IEmailService, SmtpEmailService>();
 
     Log.Information("Application services registered.");
 }
@@ -173,15 +229,36 @@ static void ConfigureDatabase(WebApplicationBuilder builder)
         }
     }
 
+    // Configure database - PostgreSQL for production, SQLite for development
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var usePostgreSQL = builder.Configuration.GetValue<bool>("UsePostgreSQL", false);
+    
     builder.Services.AddDbContext<UserServiceDbContext>(options =>
-        options.UseSqlite(
-            builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-            "Data Source=user-service.db",
-            sqlOptions => 
+    {
+        if (usePostgreSQL && !string.IsNullOrEmpty(connectionString))
+        {
+            options.UseNpgsql(connectionString, sqlOptions =>
             {
                 sqlOptions.MigrationsAssembly("UserService.Infrastructure");
-                sqlOptions.CommandTimeout(30);
-            }));
+                sqlOptions.CommandTimeout(15); // Reduced for better performance
+                sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
+            });
+        }
+        else
+        {
+            options.UseSqlite(
+                connectionString ?? "Data Source=user-service.db",
+                sqlOptions => 
+                {
+                    sqlOptions.MigrationsAssembly("UserService.Infrastructure");
+                    sqlOptions.CommandTimeout(15);
+                });
+        }
+        
+        // Performance optimizations for 1000+ users
+        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        options.EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
+    });
             
     Log.Information("Database configured.");
 }
@@ -189,21 +266,33 @@ static void ConfigureDatabase(WebApplicationBuilder builder)
 static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
 {
     var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-    var secretKey = jwtSettings["SecretKey"] ?? 
-                   builder.Configuration["Jwt:SecretKey"] ??
-                   throw new InvalidOperationException("JWT Secret Key is not configured");
     
-    var issuer = jwtSettings["Issuer"] ?? 
+    // Priority: Environment variables > appsettings.json
+    var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ??
+                   jwtSettings["SecretKey"] ?? 
+                   builder.Configuration["Jwt:SecretKey"] ??
+                   throw new InvalidOperationException("JWT Secret Key is not configured. Set JWT_SECRET_KEY environment variable or Jwt:SecretKey in configuration.");
+    
+    var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ??
+                jwtSettings["Issuer"] ?? 
                 builder.Configuration["Jwt:Issuer"] ?? 
                 "UserService";
     
-    var audience = jwtSettings["Audience"] ?? 
+    var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ??
+                  jwtSettings["Audience"] ?? 
                   builder.Configuration["Jwt:Audience"] ?? 
                   "UserService";
 
-    if (secretKey == "your-super-secret-key-here-minimum-32-characters")
+    // Validate secret key security
+    if (secretKey.Length < 32)
     {
-        throw new InvalidOperationException("Default JWT Secret Key detected. Please set a secure key in configuration.");
+        throw new InvalidOperationException("JWT Secret Key must be at least 32 characters long for security.");
+    }
+    
+    if (secretKey == "your-super-secret-key-here-minimum-32-characters" || 
+        secretKey == "YourSuperSecretJwtSigningKeyThatMustBeAtLeast32CharactersLong!")
+    {
+        throw new InvalidOperationException("Default JWT Secret Key detected. Please set a secure key in configuration or JWT_SECRET_KEY environment variable.");
     }
 
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -408,32 +497,57 @@ static void ConfigureCors(IServiceCollection services)
 {
     services.AddCors(options =>
     {
-        options.AddPolicy("AllowAll", policy =>
+        options.AddPolicy("RestrictedCors", policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("https://localhost:3000", "https://localhost:3001", "https://yourdomain.com")
+                  .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                  .WithHeaders("Content-Type", "Authorization", "X-Requested-With")
+                  .AllowCredentials();
+        });
+        
+        // Development policy for local testing
+        options.AddPolicy("DevelopmentCors", policy =>
+        {
+            policy.WithOrigins("http://localhost:3000", "https://localhost:3000", 
+                              "http://localhost:3001", "https://localhost:3001")
                   .AllowAnyMethod()
-                  .AllowAnyHeader();
+                  .AllowAnyHeader()
+                  .AllowCredentials();
         });
     });
     
-    Log.Information("CORS configured.");
+    Log.Information("CORS configured with restricted origins.");
 }
 
 static void ConfigureMiddleware(WebApplication app)
 {
-    if (app.Environment.IsDevelopment())
+    // Add global exception handling middleware first
+    app.UseMiddleware<GlobalExceptionMiddleware>();
+    
+    // Add validation middleware
+    app.UseMiddleware<ValidationMiddleware>();
+    
+    // Add rate limiting middleware - Redis-based for 1000+ users
+    var useRedisRateLimit = app.Configuration.GetValue<bool>("UseRedis", false);
+    if (useRedisRateLimit)
     {
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(c => 
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
-            c.RoutePrefix = "swagger";
-        });
+        app.UseMiddleware<RedisRateLimitMiddleware>();
     }
     else
     {
-        app.UseExceptionHandler("/error");
+        app.UseMiddleware<RateLimitMiddleware>();
+    }
+    
+    // Enable Swagger in all environments for testing containers
+    app.UseSwagger();
+    app.UseSwaggerUI(c => 
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
+        c.RoutePrefix = "swagger";
+    });
+    
+    if (!app.Environment.IsDevelopment())
+    {
         app.UseHsts();
     }
     
@@ -442,7 +556,8 @@ static void ConfigureMiddleware(WebApplication app)
     app.UseRouting();
     
     // CORS must come before UseAuthentication and UseAuthorization
-    app.UseCors("AllowAll");
+    var corsPolicy = app.Environment.IsDevelopment() ? "DevelopmentCors" : "RestrictedCors";
+    app.UseCors(corsPolicy);
     
     // Authentication must come before Authorization
     app.UseAuthentication();

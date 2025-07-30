@@ -14,7 +14,13 @@ namespace UserService.Core.Entities
         [Required]
         public TimeSpan EndTime { get; set; } // e.g., 16:00:00
         [Required]
-        public ShiftMode Mode { get; set; } = ShiftMode.Open; // Can be "Strict" or "Open"
+        public ShiftMode Mode { get; set; } // Can be "Strict" or "Open"
+        
+        // Auto-repeat functionality
+        public bool AutoRepeatDaily { get; set; } = false; // Whether this shift repeats daily
+        
+        // Duration in minutes (optional - can be used instead of EndTime)
+        public int? DurationMinutes { get; set; }
 
         // Real-time computed property, not persisted in the database
         [NotMapped]

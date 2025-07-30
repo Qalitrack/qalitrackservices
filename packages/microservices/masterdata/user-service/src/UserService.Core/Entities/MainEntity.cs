@@ -19,6 +19,7 @@ public class User : BaseEntity
     public bool IsActive { get; set; } = false;
     public bool IsFirstLogin { get; set; } = true;
     public bool IsDeleted { get; set; } = false;
+    public bool TwoFactorEnabled { get; set; } = true; // Mandatory 2FA for all users
 
     // Navigation properties
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

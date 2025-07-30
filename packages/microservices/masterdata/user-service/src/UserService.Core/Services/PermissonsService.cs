@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Permissions;
 using UserService.Core.DTOs.Roles;
@@ -13,11 +14,16 @@ public class PermissionsService : IPermissionsService
 {
     private readonly IPermissionsRepository _permissionsRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<PermissionsService> _logger;
 
-    public PermissionsService(IPermissionsRepository permissionsRepository, IMapper mapper)
+    public PermissionsService(
+        IPermissionsRepository permissionsRepository, 
+        IMapper mapper,
+        ILogger<PermissionsService> logger)
     {
         _permissionsRepository = permissionsRepository ?? throw new ArgumentNullException(nameof(permissionsRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<IEnumerable<PermissionDto>> GetAllAsync()
@@ -89,6 +95,29 @@ public class PermissionsService : IPermissionsService
         if (string.IsNullOrEmpty(id))
             throw new ArgumentNullException(nameof(id));
 
+        // Check if permission exists and log cascading deletion info
+        var permission = await _permissionsRepository.GetByIdAsync(id, true);
+        if (permission == null)
+        {
+            return false;
+        }
+
+        // Check if permission is assigned to any active roles
+        if (permission.RolePermissions != null && permission.RolePermissions.Any())
+        {
+            var activeRoles = permission.RolePermissions.Where(rp => rp.Role != null && rp.Role.IsActive).ToList();
+            if (activeRoles.Any())
+            {
+                var activeRoleNames = string.Join(", ", activeRoles.Select(rp => rp.Role?.Name ?? "Unknown"));
+                _logger.LogWarning("Cannot delete permission {PermissionId} - assigned to {ActiveRoleCount} active roles: {RoleNames}", 
+                    id, activeRoles.Count, activeRoleNames);
+                throw new InvalidOperationException($"Cannot delete permission assigned to active roles: {activeRoleNames}. Please remove from active roles first.");
+            }
+
+            var totalRoleCount = permission.RolePermissions.Count();
+            _logger.LogInformation("Deleting permission {PermissionId} which is assigned to {RoleCount} inactive roles. Role-permission assignments will be removed automatically.", id, totalRoleCount);
+        }
+
         return await _permissionsRepository.DeleteAsync(id);
     }
 
@@ -113,8 +142,12 @@ public class PermissionsService : IPermissionsService
         return await _permissionsRepository.RemovePermissionFromRoleAsync(roleId, permissionId);
     }
 
-    public async Task<object?> GetByIdAsync(string id)
+    public async Task<PermissionDto?> GetByIdAsync(string id)
     {
-        return await _permissionsRepository.GetByIdAsync(id, false);
+        if (string.IsNullOrEmpty(id))
+            throw new ArgumentNullException(nameof(id));
+
+        var permission = await _permissionsRepository.GetByIdAsync(id, false);
+        return permission == null ? null : _mapper.Map<PermissionDto>(permission);
     }
 }

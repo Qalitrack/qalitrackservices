@@ -31,7 +31,9 @@ public class ShiftRepository : Repository<Shift>, IShiftRepository
 
     public new async Task<bool> DeleteAsync(string id)
     {
-        var shift = await _context.Shifts.FirstOrDefaultAsync(s => s.Id == id);
+        var shift = await _context.Shifts
+            .AsTracking()
+            .FirstOrDefaultAsync(s => s.Id == id);
         if (shift == null) return false;
 
         _context.Shifts.Remove(shift);
@@ -54,9 +56,29 @@ public class ShiftRepository : Repository<Shift>, IShiftRepository
         if (shift == null)
             throw new ArgumentNullException(nameof(shift));
 
-        _context.Entry(shift).State = EntityState.Modified;
+        var existingShift = await _context.Shifts
+            .AsTracking()
+            .FirstOrDefaultAsync(s => s.Id == shift.Id && !s.IsDeleted);
+
+        if (existingShift == null)
+            return null;
+
+        // Only update specific fields to avoid constraint issues
+        existingShift.Name = shift.Name;
+        existingShift.Description = shift.Description;
+        existingShift.StartTime = shift.StartTime;
+        existingShift.EndTime = shift.EndTime;
+        existingShift.Mode = shift.Mode;
+        existingShift.UpdatedAt = DateTime.UtcNow;
+
         await _context.SaveChangesAsync();
-        return shift;
+        return existingShift;
+    }
+
+    public async Task<Shift?> GetByNameAsync(string shiftName)
+    {
+        return await _context.Shifts
+            .FirstOrDefaultAsync(s => s.Name.ToLower() == shiftName.Trim().ToLower() && !s.IsDeleted);
     }
 
     public async Task<bool> IsShiftActiveAsync(string shiftId)

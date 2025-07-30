@@ -26,9 +26,18 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Permission?> GetByIdAsync(string id, bool b)
+        public async Task<Permission?> GetByIdAsync(string id, bool includeRelated)
         {
-            return await _dbContext.Permissions
+            var query = _dbContext.Permissions.AsQueryable();
+            
+            if (includeRelated)
+            {
+                query = query
+                    .Include(p => p.RolePermissions)
+                    .ThenInclude(rp => rp.Role);
+            }
+            
+            return await query
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
         }

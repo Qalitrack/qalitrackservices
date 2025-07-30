@@ -8,7 +8,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using UserService.Core.DTOs.User;
-using UserService.Infrastructure.Repositories;
 
 namespace UserService.Api.Controllers
 {
@@ -18,31 +17,28 @@ namespace UserService.Api.Controllers
     {
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
-        private readonly IUserRepository _userRepository;
-        private readonly ITokenRepository _tokenRepository;
         private readonly IShiftService _shiftService;
         private readonly ILogger<AuthController> _logger;
         private readonly IMapper _mapper;
         private readonly IUserStatusService _userStatusService;
+        private readonly ITwoFactorService _twoFactorService;
 
         public AuthController(
             ITokenService tokenService, 
             IUserService userService,
-            IUserRepository userRepository,
-            ITokenRepository tokenRepository,
             IShiftService shiftService,
             ILogger<AuthController> logger,
             IMapper mapper,
-            IUserStatusService userStatusService)
+            IUserStatusService userStatusService,
+            ITwoFactorService twoFactorService)
         {
             _tokenService = tokenService;
             _userService = userService;
-            _userRepository = userRepository;
-            _tokenRepository = tokenRepository;
             _shiftService = shiftService;
             _logger = logger;
             _mapper = mapper;
             _userStatusService = userStatusService;
+            _twoFactorService = twoFactorService;
         }
 
         [HttpPost("login")]
@@ -77,29 +73,161 @@ namespace UserService.Api.Controllers
                     });
                 }
 
-                var token = await _tokenService.GenerateTokenAsync(user.Email, loginDto.Password);
+                // 2FA is mandatory for all users - create session and send code
+                var sessionId = await _twoFactorService.CreateTwoFactorSessionAsync(user.Id.ToString());
+                var codeResult = await _twoFactorService.GenerateAndSendCodeAsync(user.Id.ToString(), user.Email);
 
-                // Update user's online status using background service
-                await _userRepository.UpdateUserActiveStatusAsync(user.Id.ToString(), true);
-                var response = new LoginResponseDto
+                if (!codeResult.Success)
                 {
-                    Token = token.Token,
-                    Id = user.Id.ToString(),
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    UserRoles = user.UserRoles?.Select(ur => ur.Role.Name).ToList()
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = codeResult.Message, 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+
+                var response = new TwoFactorResponseDto
+                {
+                    Requires2FA = true,
+                    SessionId = sessionId,
+                    Message = "Verification code sent to your email address. Please enter the code to complete login.",
+                    Email = MaskEmail(user.Email)
                 };
 
-                _logger.LogInformation("Login successful for user {UserId}", user.Id);
+                _logger.LogInformation("2FA session created for user {UserId}", user.Id);
                 return Ok(response);
+            }
+            catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error during login for email: {Email}", loginDto?.Email ?? "unknown");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error during login: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred during login for email: {Email}", loginDto?.Email ?? "unknown");
-                return StatusCode(500, new { 
-                    message = "An error occurred during login", 
-                    error = ex.Message 
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred during login", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+        }
+
+        [HttpPost("verify-2fa")]
+        public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorRequestDto request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                // Verify the 2FA code
+                var verifyResult = await _twoFactorService.VerifyCodeAsync(request.SessionId, request.Code);
+                
+                if (!verifyResult.Success)
+                {
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = verifyResult.Message, 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+
+                // Get user from session
+                var userId = await _twoFactorService.GetUserIdFromSessionAsync(request.SessionId);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = "Invalid or expired session", 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+
+                // Get user details for token generation
+                UserReadDto? user = await _userService.GetByIdAsync(userId);
+                if (user == null)
+                {
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = "User not found", 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+
+                // Generate JWT token for already authenticated user (post-2FA)
+                // Get user details for token generation
+                // Get user details for token generation
+                UserReadDto? userDto = await _userService.GetByIdAsync(userId);
+                if (userDto == null)
+                {
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = "User not found", 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+
+// Map UserReadDto to User entity
+                var userEntity = _mapper.Map<User>(userDto);
+
+// Generate JWT token for already authenticated user (post-2FA)
+                var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(userEntity);
+
+// Update user's online status
+                await _userService.UpdateUserActiveStatusAsync(userId, true);
+
+                var response = new LoginResponseDto
+                {
+                    Token = token.Token,
+                    Id = userDto.Id.ToString(),
+                    Email = userDto.Email,
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
+                    // UserRoles = userDto.UserRoles?.Select(ur => ur.Role?.Name).ToList() ?? new List<string>()
+                };
+
+                _logger.LogInformation("2FA verification successful, login completed for user {UserId}", userId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during 2FA verification");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred during verification", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
                 });
             }
         }
@@ -120,8 +248,8 @@ namespace UserService.Api.Controllers
                 // Generate new token after password update
                 var token = await _tokenService.GenerateTokenAsync(user.Email, dto.NewPassword);
 
-                // Update user's online status using background service
-                await _userRepository.UpdateUserActiveStatusAsync(userId, true);
+                // Update user's online status using service layer
+                await _userService.UpdateUserActiveStatusAsync(userId, true);
 
 
                 var response = new LoginResponseDto
@@ -139,6 +267,33 @@ namespace UserService.Api.Controllers
                     data = response
                 });
             }
+            catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error updating password for user {UserId}", userId);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error updating password: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { message = ex.Message });
@@ -146,7 +301,12 @@ namespace UserService.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating password for user {UserId}", userId);
-                return StatusCode(500, new { message = "An error occurred while updating password", error = ex.Message });
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred while updating password", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
             }
         }
 
@@ -193,11 +353,11 @@ namespace UserService.Api.Controllers
                     }
                 }
                 
-                // Update user's status directly in the database first
-                await _userRepository.UpdateUserActiveStatusAsync(userId.Value.ToString(), false);
+                // Update user's status using service layer
+                await _userService.UpdateUserActiveStatusAsync(userId.Value.ToString(), false);
                 
-                // Delete all tokens for this user
-                var tokensDeleted = await _tokenRepository.DeleteAllTokensForUserAsync(userId.Value);
+                // Delete all tokens for this user using service layer
+                var tokensDeleted = await _tokenService.DeleteAllTokensForUserAsync(userId.Value);
                 
                 // Also enqueue the status update for background processing (for any other systems that might be listening)
                 _userStatusService.EnqueueStatusUpdate(userId.Value.ToString(), false);
@@ -213,12 +373,31 @@ namespace UserService.Api.Controllers
                     return (ActionResult)Ok(new { message = "Successfully logged out (no active sessions found)" });
                 }
             }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error during logout: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred during logout");
-                return StatusCode(500, new { 
-                    message = "An error occurred during logout", 
-                    error = ex.Message 
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred during logout", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
                 });
             }
         }
@@ -237,6 +416,22 @@ namespace UserService.Api.Controllers
             }
 
             return null;
+        }
+
+        private static string MaskEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email) || !email.Contains('@'))
+                return email;
+
+            var parts = email.Split('@');
+            var localPart = parts[0];
+            var domain = parts[1];
+
+            if (localPart.Length <= 2)
+                return $"{localPart[0]}***@{domain}";
+
+            var maskedLocal = $"{localPart[0]}***{localPart[^1]}";
+            return $"{maskedLocal}@{domain}";
         }
     }
 }

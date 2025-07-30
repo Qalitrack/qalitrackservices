@@ -94,9 +94,21 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
         if (userShift == null)
             throw new ArgumentNullException(nameof(userShift));
 
-        _context.Entry(userShift).State = EntityState.Modified;
+        var existingUserShift = await _context.UserShifts
+            .AsTracking()
+            .FirstOrDefaultAsync(us => us.UserId == userShift.UserId && 
+                                      us.ShiftId == userShift.ShiftId && 
+                                      !us.IsDeleted);
+
+        if (existingUserShift == null)
+            return null;
+
+        // Only update specific fields to avoid constraint issues
+        existingUserShift.AssignedAt = userShift.AssignedAt;
+        existingUserShift.UpdatedAt = DateTime.UtcNow;
+
         await _context.SaveChangesAsync();
-        return userShift;
+        return existingUserShift;
     }
 
     public async Task<bool> DeleteAsync(string id)
@@ -114,6 +126,7 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
     public async Task<bool> DeleteAsync(string userId, string shiftId)
     {
         var userShift = await _context.UserShifts
+            .AsTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId);
         
         if (userShift == null)
@@ -148,6 +161,7 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
     public async Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId)
     {
         var userShift = await _context.UserShifts
+            .AsTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId);
             
         if (userShift == null)

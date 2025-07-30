@@ -19,5 +19,8 @@ public class UserProfile : Profile
             
         // Map from UpdateUserDto to User
         CreateMap<UpdateUserDto, User>();
+        
+        CreateMap<UserReadDto, User>();
+
     }
 }

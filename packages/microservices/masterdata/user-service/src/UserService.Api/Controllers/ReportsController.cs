@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Report;
+using UserService.Core.DTOs.Common;
 using UserService.Core.Interfaces;
 
 namespace UserService.Api.Controllers
@@ -23,15 +24,24 @@ namespace UserService.Api.Controllers
         
         [HttpGet("shifts")]
         [Authorize(Policy = "reports.view")]
-        [ProducesResponseType(typeof(ShiftReportResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResult<ShiftReportDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ShiftReportResponse>> GetShiftReport()
+        public async Task<ActionResult<PagedResult<ShiftReportDto>>> GetShiftReport([FromQuery] PaginationParameters parameters)
         {
-            _logger.LogInformation("Generating shift report");
-            var report = await _reportService.GenerateShiftReportAsync();
-            return Ok(report);
+            try
+            {
+                _logger.LogInformation("Generating paginated shift report with page {Page}, size {PageSize}", parameters.Page, parameters.PageSize);
+                var report = await _reportService.GenerateShiftReportAsync(parameters);
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating shift report");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while generating the shift report");
+            }
         }
 
         /// <summary>
@@ -40,15 +50,24 @@ namespace UserService.Api.Controllers
         /// <returns>User report with statistics</returns>
         [HttpGet("users")]
         [Authorize(Policy = "reports.view")]
-        [ProducesResponseType(typeof(UserReportResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResult<UserReportDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserReportResponse>> GetUserReport()
+        public async Task<ActionResult<PagedResult<UserReportDto>>> GetUserReport([FromQuery] PaginationParameters parameters)
         {
-            _logger.LogInformation("Generating user report");
-            var report = await _reportService.GenerateUserReportAsync();
-            return Ok(report);
+            try
+            {
+                _logger.LogInformation("Generating paginated user report with page {Page}, size {PageSize}", parameters.Page, parameters.PageSize);
+                var report = await _reportService.GenerateUserReportAsync(parameters);
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating user report");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while generating the user report");
+            }
         }
 
         [HttpGet("shifts/{shiftId}")]
@@ -60,15 +79,23 @@ namespace UserService.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ShiftReportDto>> GetShiftDetails(string shiftId)
         {
-            _logger.LogInformation("Generating shift details report for shift {ShiftId}", shiftId);
-            var report = await _reportService.GetShiftDetailsReportAsync(shiftId);
-            
-            if (report == null)
+            try
             {
-                return NotFound($"Shift with ID {shiftId} not found");
-            }
+                _logger.LogInformation("Generating shift details report for shift {ShiftId}", shiftId);
+                var report = await _reportService.GetShiftDetailsReportAsync(shiftId);
+                
+                if (report == null)
+                {
+                    return NotFound($"Shift with ID {shiftId} not found");
+                }
 
-            return Ok(report);
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting shift details for {ShiftId}", shiftId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting shift details");
+            }
         }
 
       
@@ -81,15 +108,23 @@ namespace UserService.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<UserReportDto>> GetUserDetails(string userId)
         {
-            _logger.LogInformation("Generating user details report for user {UserId}", userId);
-            var report = await _reportService.GetUserDetailsReportAsync(userId);
-            
-            if (report == null)
+            try
             {
-                return NotFound($"User with ID {userId} not found");
-            }
+                _logger.LogInformation("Generating user details report for user {UserId}", userId);
+                var report = await _reportService.GetUserDetailsReportAsync(userId);
+                
+                if (report == null)
+                {
+                    return NotFound($"User with ID {userId} not found");
+                }
 
-            return Ok(report);
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting user details for {UserId}", userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting user details");
+            }
         }
     }
 }
