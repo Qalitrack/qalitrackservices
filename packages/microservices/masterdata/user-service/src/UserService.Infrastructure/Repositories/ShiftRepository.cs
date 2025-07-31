@@ -75,11 +75,11 @@ public class ShiftRepository : Repository<Shift>, IShiftRepository
         return existingShift;
     }
 
-    public async Task<Shift?> GetByNameAsync(string shiftName)
-    {
-        return await _context.Shifts
-            .FirstOrDefaultAsync(s => s.Name.ToLower() == shiftName.Trim().ToLower() && !s.IsDeleted);
-    }
+    // public async Task<Shift?> GetByNameAsync(string shiftName)
+    // {
+    //     return await _context.Shifts
+    //         .FirstOrDefaultAsync(s => s.Name.ToLower() == shiftName.Trim().ToLower() && !s.IsDeleted);
+    // }
 
     public async Task<bool> IsShiftActiveAsync(string shiftId)
     {
@@ -90,47 +90,47 @@ public class ShiftRepository : Repository<Shift>, IShiftRepository
         return shift.IsActive;
     }
 
-    public async Task<bool> AssignUserToShiftAsync(string userId, string shiftId)
-    {
-        // Check if shift exists
-        var shift = await _context.Shifts.FindAsync(shiftId);
-        if (shift == null)
-            return false;
+    // public async Task<bool> AssignUserToShiftAsync(string userId, string shiftId)
+    // {
+    //     // Check if shift exists
+    //     var shift = await _context.Shifts.FindAsync(shiftId);
+    //     if (shift == null)
+    //         return false;
+    //
+    //     // Check if user exists
+    //     var user = await _context.Users.FindAsync(userId);
+    //     if (user == null)
+    //         return false;
+    //
+    //     // Check if assignment already exists
+    //     var exists = await _context.UserShifts
+    //         .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId);
+    //         
+    //     if (exists)
+    //         return false;
+    //
+    //     var userShift = new UserShift
+    //     {
+    //         UserId = userId,
+    //         ShiftId = shiftId,
+    //         AssignedAt = DateTime.UtcNow
+    //     };
+    //
+    //     _context.UserShifts.Add(userShift);
+    //     await _context.SaveChangesAsync();
+    //     return true;
+    // }
 
-        // Check if user exists
-        var user = await _context.Users.FindAsync(userId);
-        if (user == null)
-            return false;
-
-        // Check if assignment already exists
-        var exists = await _context.UserShifts
-            .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId);
-            
-        if (exists)
-            return false;
-
-        var userShift = new UserShift
-        {
-            UserId = userId,
-            ShiftId = shiftId,
-            AssignedAt = DateTime.UtcNow
-        };
-
-        _context.UserShifts.Add(userShift);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-
-    public async Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId)
-    {
-        var userShift = await _context.UserShifts
-            .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId);
-            
-        if (userShift == null)
-            return false;
-
-        _context.UserShifts.Remove(userShift);
-        await _context.SaveChangesAsync();
-        return true;
-    }
+    // public async Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId)
+    // {
+    //     var userShift = await _context.UserShifts
+    //         .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId);
+    //         
+    //     if (userShift == null)
+    //         return false;
+    //
+    //     _context.UserShifts.Remove(userShift);
+    //     await _context.SaveChangesAsync();
+    //     return true;
+    // }
 }

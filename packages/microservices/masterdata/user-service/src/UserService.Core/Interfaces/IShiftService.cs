@@ -17,9 +17,9 @@ namespace UserService.Core.Interfaces
         Task<bool> IsShiftActive(string shiftId);  // Check if a shift is active (currently happening)
         Task<bool> AssignUserToShiftAsync(string userId, string shiftId);  // Assign a user to a shift
         Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId);  // Remove a user from a shift
-        Task<bool> HasActiveStrictShiftAsync();
-        Task<bool> HasActiveStrictShiftForUserAsync(string userId);
-        Task<User?> ValidateUserCredentials(string email, string password);
+      //  Task<bool> HasActiveStrictShiftAsync();
+       // Task<bool> HasActiveStrictShiftForUserAsync(string userId);
+        //Task<User?> ValidateUserCredentials(string email, string password);
         
         // Optional: Add any other business logic related to shifts (e.g., conflict checking)
         Task<object?> IsUserAssignedToShiftAsync(string userId, string shiftId);

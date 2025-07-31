@@ -17,7 +17,8 @@ namespace UserService.Api.Authorization
         private readonly ILogger<PermissionAuthorizationHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         private readonly ITokenService _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService)); // Inject TokenService
-            // Injected Token Service for validation
+        
+        // Injected Token Service for validation
 
         protected override async Task HandleRequirementAsync(
             AuthorizationHandlerContext context,
@@ -153,48 +154,47 @@ namespace UserService.Api.Authorization
         // Check the user's permissions based on the provided requirement
         private async Task CheckUserPermission(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
-            var userId = GetUserIdFromClaims(context.User);
-            if (string.IsNullOrEmpty(userId))
+            // Get roles from claims
+            var roles = context.User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToList();
+
+            if (!roles.Any())
             {
-                _logger.LogDebug("User ID not found in claims");
+                _logger.LogDebug("No roles found for user");
                 context.Fail();
                 return;
             }
 
             try
             {
-                var userPermissions = await _userService.GetUserPermissionsAsync(userId);
-                if (userPermissions == null)
+                // Get permissions for all roles
+                var rolePermissions = new List<string>();
+                foreach (var role in roles)
                 {
-                    _logger.LogWarning("No permissions found for user {UserId}", userId);
-                    context.Fail();
-                    return;
+                    var permissions = await _userService.GetPermissionsForRoleAsync(role);
+                    rolePermissions.AddRange(permissions);
                 }
 
-                var permissionNames = (userPermissions as IEnumerable<object> ?? Enumerable.Empty<object>())
-                    .Select(p => GetPermissionName(p))
-                    .Where(name => !string.IsNullOrEmpty(name))
-                    .ToList();
-
-                var hasPermission = permissionNames.Any(p => 
+                // Check if any role has the required permission
+                var hasPermission = rolePermissions.Any(p => 
                     string.Equals(p, requirement.Permission, StringComparison.OrdinalIgnoreCase));
 
                 if (hasPermission)
                 {
-                    _logger.LogDebug("Permission {Permission} granted for user {UserId}", 
-                        requirement.Permission, userId);
+                    _logger.LogDebug("Permission {Permission} granted via role", requirement.Permission);
                     context.Succeed(requirement);
                 }
                 else
                 {
-                    _logger.LogDebug("Permission {Permission} denied for user {UserId}", 
-                        requirement.Permission, userId);
+                    _logger.LogDebug("No role grants permission {Permission}", requirement.Permission);
                     context.Fail();
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error checking permissions for user {UserId}", userId);
+                _logger.LogError(ex, "Error checking role permissions");
                 context.Fail();
             }
         }

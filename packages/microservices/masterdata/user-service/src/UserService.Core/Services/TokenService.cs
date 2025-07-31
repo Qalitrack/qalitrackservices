@@ -6,6 +6,7 @@ using System.Text;
 using UserService.Core.Interfaces;
 using UserService.Core.Services;
 using Serilog;
+using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
 
 namespace UserService.Core.Services
@@ -29,6 +30,8 @@ namespace UserService.Core.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.Email)
+                
+                
             };
 
             var secretKey = jwtConfigService.GetSecretKey();
@@ -68,7 +71,7 @@ namespace UserService.Core.Services
             }
         }
 
-        public async Task<PersonalAccessToken> GenerateTokenForAuthenticatedUserAsync(User user)
+        public async Task<PersonalAccessToken> GenerateTokenForAuthenticatedUserAsync(UserReadDto user)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -76,56 +79,95 @@ namespace UserService.Core.Services
             return await GenerateTokenForUserAsync(user);
         }
 
-        private async Task<PersonalAccessToken> GenerateTokenForUserAsync(User user)
-        {
-            var jti = Guid.NewGuid().ToString(); // Generate unique token ID
+/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
+/// <summary>
+/// Generates a JSON Web Token (JWT) for a given authenticated user, including user claims and roles.
+/// </summary>
+/// <param name="user">The user object containing user details and roles.</param>
+/// <returns>A <see cref="PersonalAccessToken"/> containing the generated JWT and associated metadata.</returns>
+/// <exception cref="ArgumentNullException">Thrown when the user is null.</exception>
+/// <exception cref="InvalidOperationException">Thrown when saving the token to the database fails.</exception>
 
-            var claims = new[]
+/* <<<<<<<<<<  7f9f5679-c25e-4668-80d2-e86827675583  >>>>>>>>>>> */
+       private async Task<PersonalAccessToken> GenerateTokenForUserAsync(UserReadDto user)
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, jti),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Email)
-            };
+                var jti = Guid.NewGuid().ToString(); // Generate unique token ID
 
-            var secretKey = jwtConfigService.GetSecretKey();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var issuer = jwtConfigService.GetIssuer();
-            var audience = jwtConfigService.GetAudience();
-            var expiration = jwtConfigService.GetTokenExpiration();
-            
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: DateTime.UtcNow.Add(expiration),
-                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-            );
+                // Use List<Claim> instead of array for easier manipulation
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, jti),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, user.Email),
+                };
 
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+                // Log user's roles before adding to claims
+                if (user.Roles != null)
+                {
+                    foreach (var role in user.Roles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, role));
+                    }
+                }
 
-            var personalAccessToken = new PersonalAccessToken
-            {
-                Token = tokenString,
-                UserId = user.Id.ToString(),
-                Jti = jti,
-                IsRevoked = false,
-            };
 
-            try
-            {
-                var savedToken = await tokenRepository.CreateAsync(personalAccessToken);
-                Log.Information("Token created and saved for authenticated user {UserId}", user.Id);
-                return savedToken;
+                // Log all claims being added to the token
+                Log.Debug("All claims being added to token for user {UserId}: {Claims}", 
+                    user.Id,
+                    string.Join(" | ", claims.Select(c => $"{c.Type}: {c.Value}")));
+
+                var secretKey = jwtConfigService.GetSecretKey();
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+                var issuer = jwtConfigService.GetIssuer();
+                var audience = jwtConfigService.GetAudience();
+                var expiration = jwtConfigService.GetTokenExpiration();
+                
+                var token = new JwtSecurityToken(
+                    issuer: issuer,
+                    audience: audience,
+                    claims: claims,
+                    expires: DateTime.UtcNow.Add(expiration),
+                    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+                );
+
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+                // Log the final token's role claims for verification
+                var decodedToken = new JwtSecurityTokenHandler().ReadJwtToken(tokenString);
+                var tokenRoleClaims = decodedToken.Claims
+                    .Where(c => c.Type == ClaimTypes.Role || c.Type == "role")
+                    .ToList();
+
+                Log.Information("Token generated for user {UserId} with role claims: {TokenRoles}", 
+                    user.Id,
+                    tokenRoleClaims.Any()
+                        ? string.Join(", ", tokenRoleClaims.Select(rc => $"{rc.Type}: {rc.Value}"))
+                        : "No role claims found in token");
+
+                var personalAccessToken = new PersonalAccessToken
+                {
+                    Token = tokenString,
+                    UserId = user.Id.ToString(),
+                    Jti = jti,
+                    IsRevoked = false,
+                };
+
+                try
+                {
+                    var savedToken = await tokenRepository.CreateAsync(personalAccessToken);
+                    Log.Information("Token created and saved for user {UserId} with JTI: {Jti}", 
+                        user.Id, jti);
+                    return savedToken;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Failed to save token to database for user {UserId}", user.Id);
+                    throw new InvalidOperationException("Failed to create token", ex);
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Failed to save token to database for user {UserId}", user.Id);
-                throw new InvalidOperationException("Failed to create token", ex);
-            }
-        }
 
         public async Task<bool> ValidateTokenAsync(string token)
         {

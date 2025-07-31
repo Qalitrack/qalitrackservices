@@ -6,7 +6,7 @@ namespace UserService.Core.Interfaces
     {
         Task<PersonalAccessToken?> GetTokenByUserIdAsync(Guid userId);
         Task<PersonalAccessToken> CreateAsync(PersonalAccessToken token);
-        Task<bool> RevokeTokenAsync(Guid userId);
+       // Task<bool> RevokeTokenAsync(Guid userId);
         Task<bool> DeleteTokenAsync(Guid userId);
         
         /// <summary>

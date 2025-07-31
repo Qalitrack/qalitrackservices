@@ -16,6 +16,8 @@ public class UserServiceTests
     private readonly Mock<IRoleService> _mockRoleService;
     private readonly IMapper _mapper;
     private readonly UserService.Core.Services.UserService _userService;
+    private readonly IRoleRepository _mockRoleRepository;
+    
 
     public UserServiceTests()
     {
@@ -28,7 +30,9 @@ public class UserServiceTests
         _userService = new UserService.Core.Services.UserService(
             _mockUserRepository.Object,
             _mockRoleService.Object,
-            _mapper);
+            _mapper,
+            _mockRoleRepository
+            );
     }
 
     [Fact]

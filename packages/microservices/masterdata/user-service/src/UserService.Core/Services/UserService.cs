@@ -1,5 +1,6 @@
 using System.Collections;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.Shift;
@@ -14,12 +15,16 @@ namespace UserService.Core.Services;
         private readonly IUserRepository _userRepository;
         private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
+        private readonly IRoleRepository  _roleRepository;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository userRepository, IRoleService roleService, IMapper mapper)
+        public UserService(IUserRepository userRepository, IRoleService roleService, IMapper mapper,IRoleRepository  roleRepository)
         {
             _userRepository = userRepository;
             _roleService = roleService;
             _mapper = mapper;
+            _roleRepository = roleRepository;
+            _logger = new Logger<UserService>(new LoggerFactory());
         }
 
 
@@ -28,11 +33,30 @@ namespace UserService.Core.Services;
             return await _userRepository.RestoreAsync(id);  
         }
 
-
         public async Task<UserReadDto?> GetByIdAsync(string id)
         {
-            var user = await _userRepository.GetByIdAsync(id,true);
-            return user == null ? null : _mapper.Map<UserReadDto>(user);
+            var user = await _userRepository.GetByIdAsync(id, true);
+    
+            if (user == null) 
+            {
+                _logger.LogInformation("User with ID {UserId} not found", id);
+                return null;
+            }
+
+            _logger.LogInformation("User found. UserRoles count: {Count}", 
+                user.UserRoles?.Count ?? 0);
+        
+            if (user.UserRoles != null)
+            {
+                foreach (var userRole in user.UserRoles)
+                {
+                    _logger.LogInformation("Role: {RoleName}, IsDeleted: {IsDeleted}", 
+                        userRole.Role?.Name, 
+                        userRole.IsDeleted || userRole.Role?.IsDeleted == true);
+                }
+            }
+
+            return _mapper.Map<UserReadDto>(user);
         }
 
         public async Task<UserReadDto> CreateAsync(CreateUserDto dto)
@@ -220,6 +244,17 @@ namespace UserService.Core.Services;
         public async Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
         {
             return await _userRepository.UpdateUserActiveStatusAsync(userId, isActive);
+        }
+
+        public async Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName)
+        {
+            var role = await _roleRepository.GetRoleWithPermissionsAsync(roleName);
+            if (role?.RolePermissions == null)
+                return Enumerable.Empty<string>();
+
+            return role.RolePermissions
+                .Where(rp => rp.Permission != null)
+                .Select(rp => rp.Permission.Name);
         }
     }
 

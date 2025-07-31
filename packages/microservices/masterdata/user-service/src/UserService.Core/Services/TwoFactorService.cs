@@ -12,6 +12,8 @@ public class TwoFactorService : ITwoFactorService
     private readonly IEmailQueueService _emailQueueService;
     private readonly ILogger<TwoFactorService> _logger;
     private static readonly RandomNumberGenerator _secureRandom = RandomNumberGenerator.Create();
+    private const int MAX_ATTEMPTS = 5; // Maximum allowed attempts
+    private const int LOCKOUT_MINUTES = 10; // Lockout duration
 
     public TwoFactorService(
         ICacheService cacheService,
@@ -93,7 +95,7 @@ public class TwoFactorService : ITwoFactorService
         }
     }
 
-    public async Task<ServiceResult> VerifyCodeAsync(string sessionId, string code)
+   public async Task<ServiceResult> VerifyCodeAsync(string sessionId, string code)
     {
         try
         {
@@ -108,17 +110,15 @@ public class TwoFactorService : ITwoFactorService
                 };
             }
 
-            // Check attempt count - max 5 attempts per code
-            var attemptKey = $"2fa_attempts:{userId}";
-            var attemptCount = await _cacheService.GetAsync<int>(attemptKey);
-            
-            if (attemptCount >= 5)
+            // Check attempt count
+            var attemptCount = await GetAttemptCountAsync(userId);
+            if (attemptCount >= MAX_ATTEMPTS)
             {
-                _logger.LogWarning("Too many 2FA verification attempts for user {UserId}", userId);
+                _logger.LogWarning("Account temporarily locked for user {UserId} due to too many 2FA attempts", userId);
                 return new ServiceResult 
                 { 
                     Success = false, 
-                    Message = "Too many failed attempts. Please request a new verification code." 
+                    Message = $"Too many failed attempts. Please try again in {LOCKOUT_MINUTES} minutes." 
                 };
             }
 
@@ -135,17 +135,23 @@ public class TwoFactorService : ITwoFactorService
                 };
             }
 
-            // Increment attempt count
-            await _cacheService.SetAsync(attemptKey, attemptCount + 1, TimeSpan.FromMinutes(5));
-
             // Verify code
             if (storedCode != code)
             {
-                _logger.LogWarning("Invalid 2FA code provided for user {UserId}. Attempt {AttemptCount}/5", userId, attemptCount + 1);
+                // Increment failed attempt count
+                await _cacheService.SetAsync(
+                    $"2fa_attempts_{userId}", 
+                    attemptCount + 1, 
+                    TimeSpan.FromMinutes(LOCKOUT_MINUTES)
+                );
+
+                _logger.LogWarning("Invalid 2FA code for user {UserId}. Attempt {AttemptCount}/{MaxAttempts}", 
+                    userId, attemptCount + 1, MAX_ATTEMPTS);
+                    
                 return new ServiceResult 
                 { 
                     Success = false, 
-                    Message = $"Invalid verification code. {4 - attemptCount} attempts remaining." 
+                    Message = $"Invalid verification code. {MAX_ATTEMPTS - attemptCount - 1} attempts remaining." 
                 };
             }
 
@@ -153,7 +159,7 @@ public class TwoFactorService : ITwoFactorService
             var cleanupOperations = new[]
             {
                 _cacheService.RemoveAsync(codeKey),
-                _cacheService.RemoveAsync(attemptKey),
+                _cacheService.RemoveAsync($"2fa_attempts_{userId}"),
                 _cacheService.RemoveAsync(sessionId)
             };
             
@@ -173,7 +179,7 @@ public class TwoFactorService : ITwoFactorService
             return new ServiceResult 
             { 
                 Success = false, 
-                Message = "Verification failed. Please try again." 
+                Message = "An error occurred during verification. Please try again." 
             };
         }
     }
@@ -199,8 +205,9 @@ public class TwoFactorService : ITwoFactorService
 
     public async Task<int> GetAttemptCountAsync(string userId)
     {
-        var attemptKey = $"2fa_attempts:{userId}";
-        return await _cacheService.GetAsync<int>(attemptKey);
+        var cacheKey = $"2fa_attempts_{userId}";
+        var attempts = await _cacheService.GetAsync<int>(cacheKey);
+        return attempts;
     }
 
     public async Task<bool> IsSessionValidAsync(string sessionId)

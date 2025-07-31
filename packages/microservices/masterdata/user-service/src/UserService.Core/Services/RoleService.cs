@@ -267,51 +267,51 @@ public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string perm
     return true;
 }
 
-public async Task<bool> DoesRoleExistAsync(string roleName)
+/*public async Task<bool> DoesRoleExistAsync(string roleName)
 {
     if (string.IsNullOrEmpty(roleName))
         throw new ArgumentException("Role name is required", nameof(roleName));
 
     var role = await _roleRepository.GetByNameAsync(roleName);
     return role != null;
-}
+}*/
 
-public async Task<IEnumerable<PermissionDto>> GetPermissionsForRoleAsync(string roleId)
-{
-    if (string.IsNullOrEmpty(roleId))
-        throw new ArgumentException("Role ID is required", nameof(roleId));
-
-    try
-    {
-        _logger.LogInformation("Retrieving permissions for role ID: {RoleId}", roleId);
-
-        // Check if role exists
-        var role = await _roleRepository.GetByIdAsync(roleId,true);
-        if (role == null)
-        {
-            _logger.LogWarning("Role with ID {RoleId} not found", roleId);
-            throw new KeyNotFoundException($"Role with ID {roleId} not found");
-        }
-
-        // Get permissions for the role
-        var permissions = await _roleRepository.GetPermissionsForRoleAsync(roleId);
-        
-        _logger.LogInformation("Successfully retrieved {Count} permissions for role ID: {RoleId}", 
-            permissions?.Count() ?? 0, roleId);
-
-        return _mapper.Map<IEnumerable<PermissionDto>>(permissions ?? Enumerable.Empty<Permission>());
-    }
-    catch (KeyNotFoundException)
-    {
-        // Re-throw KeyNotFoundException as it's a valid business case
-        throw;
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error retrieving permissions for role ID: {RoleId}", roleId);
-        throw new ApplicationException("An error occurred while retrieving role permissions. Please try again later.", ex);
-    }
-}
+// public async Task<IEnumerable<PermissionDto>> GetPermissionsForRoleAsync(string roleId)
+// {
+//     if (string.IsNullOrEmpty(roleId))
+//         throw new ArgumentException("Role ID is required", nameof(roleId));
+//
+//     try
+//     {
+//         _logger.LogInformation("Retrieving permissions for role ID: {RoleId}", roleId);
+//
+//         // Check if role exists
+//         var role = await _roleRepository.GetByIdAsync(roleId,true);
+//         if (role == null)
+//         {
+//             _logger.LogWarning("Role with ID {RoleId} not found", roleId);
+//             throw new KeyNotFoundException($"Role with ID {roleId} not found");
+//         }
+//
+//         // Get permissions for the role
+//         var permissions = await _roleRepository.GetPermissionsForRoleAsync(roleId);
+//         
+//         _logger.LogInformation("Successfully retrieved {Count} permissions for role ID: {RoleId}", 
+//             permissions?.Count() ?? 0, roleId);
+//
+//         return _mapper.Map<IEnumerable<PermissionDto>>(permissions ?? Enumerable.Empty<Permission>());
+//     }
+//     catch (KeyNotFoundException)
+//     {
+//         // Re-throw KeyNotFoundException as it's a valid business case
+//         throw;
+//     }
+//     catch (Exception ex)
+//     {
+//         _logger.LogError(ex, "Error retrieving permissions for role ID: {RoleId}", roleId);
+//         throw new ApplicationException("An error occurred while retrieving role permissions. Please try again later.", ex);
+//     }
+// }
 
     public async Task<IEnumerable<Role>> GetRolesByUserIdAsync(string userId)
     {

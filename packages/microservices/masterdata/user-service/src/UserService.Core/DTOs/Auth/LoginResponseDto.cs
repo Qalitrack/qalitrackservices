@@ -17,5 +17,5 @@ public class LoginResponseDto
     
     public string LastName { get; set; }
     
-    public virtual List<string>? UserRoles { get; set; } = new List<string>();
+    public virtual List<string> UserRoles { get; set; } = new List<string>();
 }

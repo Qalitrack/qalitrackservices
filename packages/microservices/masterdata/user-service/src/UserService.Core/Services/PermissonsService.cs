@@ -121,10 +121,11 @@ public class PermissionsService : IPermissionsService
         return await _permissionsRepository.DeleteAsync(id);
     }
 
+    /*
     public async Task<bool> DoesPermissionExistAsync(string name)
     {
         return await _permissionsRepository.DoesPermissionExistAsync(name);
-    }
+    }*/
 
     public async Task<IEnumerable<RoleDto>> GetRolesForPermissionAsync(string permissionId)
     {
@@ -132,15 +133,15 @@ public class PermissionsService : IPermissionsService
         return _mapper.Map<IEnumerable<RoleDto>>(roles);
     }
 
-    public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
+    /*public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
     {
         return await _permissionsRepository.AssignPermissionToRoleAsync(roleId, permissionId);
-    }
+    }*/
 
-    public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
+    /*public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
     {
         return await _permissionsRepository.RemovePermissionFromRoleAsync(roleId, permissionId);
-    }
+    }*/
 
     public async Task<PermissionDto?> GetByIdAsync(string id)
     {
