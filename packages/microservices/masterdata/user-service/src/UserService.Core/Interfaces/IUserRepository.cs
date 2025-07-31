@@ -15,7 +15,7 @@ namespace UserService.Core.Interfaces
         Task<IEnumerable<Permission>> GetUserPermissionsAsync(string userId);
         Task<IEnumerable> GetUsersByRoleAsync(string roleId);
         Task<IEnumerable<UserRole>> GetUserRolesAsync(string userId);
-        Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds);
+     //    Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds);
         Task<User> GetByEmailAsync(string toLower);
         Task<bool> RestoreAsync(string id);
         Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive);

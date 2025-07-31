@@ -25,25 +25,26 @@ public class RolePermissionRepository(UserServiceDbContext dbContext, UserServic
             .ExecuteDeleteAsync() > 0;  
     }
 
-    public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
+    /*public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
     {
         return await context.RolePermissions
             .Where(rp => rp.RoleId == roleId)
             .Select(rp => rp.Permission)
             .ToListAsync();
-    }
+    }*/
 
-    public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
+    /*public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
     {
         return await context.RolePermissions
             .AnyAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);    
-    }
+    }*/
 
-    public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
+    /*public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
     {
         return await context.RolePermissions
             .AnyAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);       
     }
+    */
 
     public async Task<string?> GetByRoleAndPermissionAsync(string roleId, string permissionId)
     {

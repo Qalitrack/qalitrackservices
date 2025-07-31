@@ -56,14 +56,14 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds)
-        {
-            return await _context.Roles
-                .Where(r => roleIds.Contains(r.Id))
-                .ToListAsync();
-        }
-
-        public async Task<User?> GetByFirstNameAsync(string firstName)
+        // public async Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds)
+        // {
+        //     return await _context.Roles
+        //         .Where(r => roleIds.Contains(r.Id))
+        //         .ToListAsync();
+        // 
+        
+        /*public async Task<User?> GetByFirstNameAsync(string firstName)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.FirstName == firstName);
         }
@@ -71,7 +71,7 @@ namespace UserService.Infrastructure.Repositories
         public async Task<User?> GetByLastNameAsync(string lastName)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.LastName == lastName);
-        }
+        }*/
 
         public async Task<User?> GetByEmailAsync(string email)
         {
@@ -82,10 +82,10 @@ namespace UserService.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
         }
 
-        public async Task<User?> GetByMobileNumberAsync(string mobileNumber)
+        /*public async Task<User?> GetByMobileNumberAsync(string mobileNumber)
         { 
             return await _context.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber);
-        }
+        }*/
 
         public async Task<IEnumerable<UserShift>> GetUserShiftsAsync(string userId)
         {
@@ -204,11 +204,67 @@ namespace UserService.Infrastructure.Repositories
             }
         }
 
-        public async Task<User?> GetByIdAsync(string id, bool b)
+        public async Task<User?> GetByIdAsync(string id, bool includeRoles = true)
+{
+    _logger.LogInformation("🔍 GetByIdAsync - Starting for UserId: {UserId}, includeRoles: {IncludeRoles}", id, includeRoles);
+    
+    try
+    {
+        _logger.LogInformation("1. Creating base query...");
+        var query = _context.Users.AsQueryable();
+
+        _logger.LogInformation("2. includeRoles flag is: {IncludeRoles}", includeRoles);
+        
+        if (includeRoles)
         {
-            return await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+            _logger.LogInformation("3. Adding UserRoles and Role includes to query...");
+            query = query
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role);
         }
+
+        _logger.LogInformation("4. Executing query...");
+        var user = await query
+            .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+
+        if (user == null)
+        {
+            _logger.LogWarning("❌ User with ID {UserId} not found or is deleted", id);
+            return null;
+        }
+
+        _logger.LogInformation("✅ User {UserId} found successfully", id);
+        
+        if (includeRoles)
+        {
+            _logger.LogInformation("5. Checking loaded roles...");
+            _logger.LogInformation("   User.UserRoles is null: {IsNull}", user.UserRoles == null);
+            
+            if (user.UserRoles != null)
+            {
+                _logger.LogInformation("6. Number of roles loaded: {RoleCount}", user.UserRoles.Count);
+                
+                foreach (var userRole in user.UserRoles)
+                {
+                    _logger.LogInformation("   - RoleId: {RoleId}, Role is null: {IsRoleNull}", 
+                        userRole.RoleId, 
+                        userRole.Role == null);
+                }
+            }
+            else
+            {
+                _logger.LogInformation("6. UserRoles collection is null");
+            }
+        }
+
+        return user;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "❌ Error in GetByIdAsync for UserId: {UserId}", id);
+        throw;
+    }
+}
 
         public async Task<bool> DeleteAsync(string id)
         {

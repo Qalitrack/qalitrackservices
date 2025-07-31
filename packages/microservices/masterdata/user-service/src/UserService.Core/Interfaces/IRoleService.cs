@@ -15,10 +15,10 @@ namespace UserService.Core.Interfaces
         Task<bool> DeleteAsync(string id);  // Soft delete a role (set IsDeleted = true)
 
         // Role-Specific Operations
-        Task<bool> DoesRoleExistAsync(string roleName);  // Check if a role with a specific name exists
-        Task<IEnumerable<PermissionDto>> GetPermissionsForRoleAsync(string roleId);  // Get all permissions assigned to a role
+       // Task<bool> DoesRoleExistAsync(string roleName);  // Check if a role with a specific name exists
+     //   Task<IEnumerable<PermissionDto>> GetPermissionsForRoleAsync(string roleId);  // Get all permissions assigned to a role
         Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId);  // Assign a permission to a role
         Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);  // Remove a permission from a role
-        Task<IEnumerable<Role>> GetRolesByUserIdAsync(string userDtoId);
+       // Task<IEnumerable<Role>> GetRolesByUserIdAsync(string userDtoId);
     }
 }

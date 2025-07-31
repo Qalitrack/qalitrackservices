@@ -10,14 +10,10 @@ using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
 {
-    public class PermissionsRepository : Repository<Permission>, IPermissionsRepository
+    public class PermissionsRepository(UserServiceDbContext dbContext)
+        : Repository<Permission>(dbContext), IPermissionsRepository
     {
-        private readonly UserServiceDbContext _dbContext;
-
-        public PermissionsRepository(UserServiceDbContext dbContext) : base(dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly UserServiceDbContext _dbContext = dbContext;
 
         public async Task<IEnumerable<Permission>> GetAllAsync()
         {
@@ -53,12 +49,12 @@ namespace UserService.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<Permission?> GetByNameAsync(string name)
-        {
-            return await _dbContext.Permissions
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Name.ToLower() == name.ToLower());
-        }
+        // public async Task<Permission?> GetByNameAsync(string name)
+        // {
+        //     return await _dbContext.Permissions
+        //         .AsNoTracking()
+        //         .FirstOrDefaultAsync(p => p.Name.ToLower() == name.ToLower());
+        // }
 
         public async Task<bool> DoesPermissionExistAsync(string name)
         {
@@ -66,13 +62,13 @@ namespace UserService.Infrastructure.Repositories
                 .AnyAsync(p => p.Name.ToLower() == name.ToLower());
         }
 
-        public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
-        {
-            return await _dbContext.RolePermissions
-                .Where(rp => rp.RoleId == roleId)
-                .Select(rp => rp.Permission)
-                .ToListAsync();
-        }
+        // public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
+        // {
+        //     return await _dbContext.RolePermissions
+        //         .Where(rp => rp.RoleId == roleId)
+        //         .Select(rp => rp.Permission)
+        //         .ToListAsync();
+        // }
 
         public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
         {

@@ -31,4 +31,6 @@ public interface IUserService
     Task<bool> RemoveShiftFromUserAsync(string userId, string shiftId);
     
     // User status management
-    Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive);}
+    Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive);
+    Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName);
+}

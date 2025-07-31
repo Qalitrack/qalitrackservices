@@ -138,99 +138,84 @@ namespace UserService.Api.Controllers
         }
 
         [HttpPost("verify-2fa")]
-        public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorRequestDto request)
-        {
-            try
+            public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorRequestDto request)
             {
-                if (!ModelState.IsValid)
+                try
                 {
-                    return BadRequest(ModelState);
-                }
+                    if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
 
-                // Verify the 2FA code
-                var verifyResult = await _twoFactorService.VerifyCodeAsync(request.SessionId, request.Code);
-                
-                if (!verifyResult.Success)
+                    // Verify the 2FA code
+                    var verifyResult = await _twoFactorService.VerifyCodeAsync(request.SessionId, request.Code);
+
+                    if (!verifyResult.Success)
+                    {
+                        return BadRequest(new { 
+                            Success = false, 
+                            Message = verifyResult.Message, 
+                            Errors = (string[])null, 
+                            StatusCode = 400 
+                        });
+                    }
+
+                    // Get user from session (the same user object used during login)
+                    var userId = await _twoFactorService.GetUserIdFromSessionAsync(request.SessionId);
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        return BadRequest(new { 
+                            Success = false, 
+                            Message = "Invalid or expired session", 
+                            Errors = (string[])null, 
+                            StatusCode = 400 
+                        });
+                    }
+
+                    // You already have the `user` data from the login, so there's no need to query the database again
+                    UserReadDto? user = await _userService.GetByIdAsync(userId); // This line can be skipped if you store the user from login in the session
+                    
+                    // Now continue with the token generation logic as before...
+                    
+                    // Log the user details and roles
+                    _logger.LogInformation("User details - ID: {UserId}, Email: {Email}", user.Id, user.Email);
+                    _logger.LogInformation("User roles count: {RoleCount}", user.Roles?.Count ?? 0);
+                    if (user.Roles != null)
+                    {
+                        foreach (var role in user.Roles)
+                        {
+                            _logger.LogInformation("Role: {RoleName}", role);
+                        }
+                    }
+                    var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(user);
+
+                    await _userService.UpdateUserActiveStatusAsync(userId, true);
+
+                    var response = new LoginResponseDto
+                    {
+                        Token = token.Token,
+                        Id = user.Id.ToString(),
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        UserRoles = user.Roles?.ToList() ?? new List<string>()
+                    };
+
+                    _logger.LogInformation("2FA verification successful, login completed for user {UserId}", userId);
+                    return Ok(response);
+                }
+                catch (Exception ex)
                 {
+                    _logger.LogError(ex, "An error occurred during 2FA verification");
                     return BadRequest(new { 
                         Success = false, 
-                        Message = verifyResult.Message, 
+                        Message = "An error occurred during verification", 
                         Errors = (string[])null, 
                         StatusCode = 400 
                     });
                 }
-
-                // Get user from session
-                var userId = await _twoFactorService.GetUserIdFromSessionAsync(request.SessionId);
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = "Invalid or expired session", 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
-                    });
-                }
-
-                // Get user details for token generation
-                UserReadDto? user = await _userService.GetByIdAsync(userId);
-                if (user == null)
-                {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = "User not found", 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
-                    });
-                }
-
-                // Generate JWT token for already authenticated user (post-2FA)
-                // Get user details for token generation
-                // Get user details for token generation
-                UserReadDto? userDto = await _userService.GetByIdAsync(userId);
-                if (userDto == null)
-                {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = "User not found", 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
-                    });
-                }
-
-// Map UserReadDto to User entity
-                var userEntity = _mapper.Map<User>(userDto);
-
-// Generate JWT token for already authenticated user (post-2FA)
-                var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(userEntity);
-
-// Update user's online status
-                await _userService.UpdateUserActiveStatusAsync(userId, true);
-
-                var response = new LoginResponseDto
-                {
-                    Token = token.Token,
-                    Id = userDto.Id.ToString(),
-                    Email = userDto.Email,
-                    FirstName = userDto.FirstName,
-                    LastName = userDto.LastName,
-                    // UserRoles = userDto.UserRoles?.Select(ur => ur.Role?.Name).ToList() ?? new List<string>()
-                };
-
-                _logger.LogInformation("2FA verification successful, login completed for user {UserId}", userId);
-                return Ok(response);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred during 2FA verification");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred during verification", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
-                });
-            }
-        }
+
 
         [HttpPut("update-password/{userId}")]
         [AllowAnonymous]
@@ -259,7 +244,7 @@ namespace UserService.Api.Controllers
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    UserRoles = user.Roles
+                    UserRoles = user.Roles?.ToList()?? new List<string>(),
                 };
 
                 return Ok(new {

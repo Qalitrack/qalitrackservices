@@ -20,16 +20,16 @@ namespace UserService.Core.Interfaces
         Task<bool> DeleteAsync(string id);
 
         // Get a shift by name
-        Task<Shift?> GetByNameAsync(string shiftName);
+       // Task<Shift?> GetByNameAsync(string shiftName);
 
         // Check if a shift is active based on current time and shift start/end time
         Task<bool> IsShiftActiveAsync(string shiftId);
 
         // Assign a user to a shift
-        Task<bool> AssignUserToShiftAsync(string userId, string shiftId);
+      //  Task<bool> AssignUserToShiftAsync(string userId, string shiftId);
 
         // Remove a user from a shift
-        Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId);
+     //   Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId);
 
     }
 }

@@ -238,125 +238,125 @@ namespace UserService.Core.Services
             return await _userShiftRepository.DeleteAsync(userId, shiftId);
         }
 
-        public async Task<bool> HasActiveStrictShiftAsync()
-        {
-            try
-            {
-                _logger.LogInformation("Checking for any active strict shifts");
-                var shifts = await _shiftRepository.GetAllAsync();
-                
-                // Find any shift that is currently active and either in strict mode or open mode
-                var enumerable = shifts as Shift[] ?? shifts.ToArray();
-                var activeStrictShifts = enumerable
-                    .Where(s => (s.Mode == ShiftMode.Strict || s.IsActive) && s.IsActive)
-                    .ToList();
-                    
-                _logger.LogDebug("All shifts status: {Shifts}", 
-                    string.Join(", ", enumerable.Select(s => $"ID: {s.Id}, Name: {s.Name}, Mode: {s.Mode}, IsActive: {s.IsActive}")));
-                
-                if (activeStrictShifts.Any())
-                {
-                    _logger.LogInformation("Found {Count} active strict shift(s): {Shifts}", 
-                        activeStrictShifts.Count,
-                        string.Join(", ", activeStrictShifts.Select(s => $"ID: {s.Id}, Name: {s.Name}, Start: {s.StartTime}, End: {s.EndTime}")));
-                }
-                else
-                {
-                    _logger.LogInformation("No active strict shifts found at {CurrentTime}", DateTime.UtcNow.TimeOfDay);
-                }
-                
-                return activeStrictShifts.Any();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error checking for active strict shifts");
-                return false; // Default to allowing login if there's an error
-            }
-        }
+        // public async Task<bool> HasActiveStrictShiftAsync()
+        // {
+        //     try
+        //     {
+        //         _logger.LogInformation("Checking for any active strict shifts");
+        //         var shifts = await _shiftRepository.GetAllAsync();
+        //         
+        //         // Find any shift that is currently active and either in strict mode or open mode
+        //         var enumerable = shifts as Shift[] ?? shifts.ToArray();
+        //         var activeStrictShifts = enumerable
+        //             .Where(s => (s.Mode == ShiftMode.Strict || s.IsActive) && s.IsActive)
+        //             .ToList();
+        //             
+        //         _logger.LogDebug("All shifts status: {Shifts}", 
+        //             string.Join(", ", enumerable.Select(s => $"ID: {s.Id}, Name: {s.Name}, Mode: {s.Mode}, IsActive: {s.IsActive}")));
+        //         
+        //         if (activeStrictShifts.Any())
+        //         {
+        //             _logger.LogInformation("Found {Count} active strict shift(s): {Shifts}", 
+        //                 activeStrictShifts.Count,
+        //                 string.Join(", ", activeStrictShifts.Select(s => $"ID: {s.Id}, Name: {s.Name}, Start: {s.StartTime}, End: {s.EndTime}")));
+        //         }
+        //         else
+        //         {
+        //             _logger.LogInformation("No active strict shifts found at {CurrentTime}", DateTime.UtcNow.TimeOfDay);
+        //         }
+        //         
+        //         return activeStrictShifts.Any();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error checking for active strict shifts");
+        //         return false; // Default to allowing login if there's an error
+        //     }
+        // }
 
-        public async Task<bool> HasActiveStrictShiftForUserAsync(string userId)
-        {
-            try
-            {
-                _logger.LogInformation("Checking for active strict shifts for user {UserId}", userId);
-                
-                // Get all user shifts for the specified user
-                var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId,shiftId: null);
+        // public async Task<bool> HasActiveStrictShiftForUserAsync(string userId)
+        // {
+        //     try
+        //     {
+        //         _logger.LogInformation("Checking for active strict shifts for user {UserId}", userId);
+        //         
+        //         // Get all user shifts for the specified user
+        //         var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId,shiftId: null);
+        //
+        //         var enumerable = userShifts as UserShift[] ?? userShifts.ToArray();
+        //         _logger.LogInformation("User {UserId} is assigned to {ShiftCount} shifts", userId, enumerable.Count());
+        //         
+        //         // Check if any of the user's shifts are active and in strict mode
+        //         foreach (var userShift in enumerable)
+        //         {
+        //             if (true)
+        //             {
+        //                 _logger.LogDebug("Checking shift {ShiftId} ({ShiftName}) for user {UserId}. Mode: {Mode}, Start: {StartTime}, End: {EndTime}, IsActive: {IsActive}",
+        //                     userShift.Shift.Id, 
+        //                     userShift.Shift.Name, 
+        //                     userId, 
+        //                     userShift.Shift.Mode,
+        //                     userShift.Shift.StartTime,
+        //                     userShift.Shift.EndTime,
+        //                     userShift.Shift.IsActive);
+        //                     
+        //                 // Check if the shift is currently active and either in strict mode or open mode
+        //                 if ((userShift.Shift.Mode == ShiftMode.Strict || userShift.Shift.IsActive) && userShift.Shift.IsActive)
+        //                 {
+        //                     _logger.LogInformation("User {UserId} has an active strict shift (ID: {ShiftId}, Name: {ShiftName}) assigned",
+        //                         userId, userShift.Shift.Id, userShift.Shift.Name);
+        //                     return true;
+        //                 }
+        //             }
+        //         }
+        //         
+        //         _logger.LogInformation("No active strict shifts found for user {UserId}", userId);
+        //         return false;
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error checking for active strict shifts for user {UserId}", userId);
+        //         return false; // Default to allowing login if there's an error
+        //     }
+        // }
 
-                var enumerable = userShifts as UserShift[] ?? userShifts.ToArray();
-                _logger.LogInformation("User {UserId} is assigned to {ShiftCount} shifts", userId, enumerable.Count());
-                
-                // Check if any of the user's shifts are active and in strict mode
-                foreach (var userShift in enumerable)
-                {
-                    if (true)
-                    {
-                        _logger.LogDebug("Checking shift {ShiftId} ({ShiftName}) for user {UserId}. Mode: {Mode}, Start: {StartTime}, End: {EndTime}, IsActive: {IsActive}",
-                            userShift.Shift.Id, 
-                            userShift.Shift.Name, 
-                            userId, 
-                            userShift.Shift.Mode,
-                            userShift.Shift.StartTime,
-                            userShift.Shift.EndTime,
-                            userShift.Shift.IsActive);
-                            
-                        // Check if the shift is currently active and either in strict mode or open mode
-                        if ((userShift.Shift.Mode == ShiftMode.Strict || userShift.Shift.IsActive) && userShift.Shift.IsActive)
-                        {
-                            _logger.LogInformation("User {UserId} has an active strict shift (ID: {ShiftId}, Name: {ShiftName}) assigned",
-                                userId, userShift.Shift.Id, userShift.Shift.Name);
-                            return true;
-                        }
-                    }
-                }
-                
-                _logger.LogInformation("No active strict shifts found for user {UserId}", userId);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error checking for active strict shifts for user {UserId}", userId);
-                return false; // Default to allowing login if there's an error
-            }
-        }
-
-        public async Task<User?> ValidateUserCredentials(string email, string password)
-        {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-            {
-                return null;
-            }
-
-            // Get user by email (case-insensitive)
-            var user = await _userRepository.GetByEmailAsync(email.Trim().ToLower());
-            if (user == null)
-            {
-                // User not found
-                return null;
-            }
-
-            // Verify password using BCrypt
-            if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
-            {
-                // Invalid password
-                return null;
-            }
-
-            // Check if user is assigned to any active shift
-            var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId:null,shiftId: null);
-            var hasActiveShift = userShifts.Any(us => 
-            {
-                var shift = _shiftRepository.GetByIdAsync(us.ShiftId).Result;
-                return shift != null && shift.IsActive;
-            });
-
-            if (!hasActiveShift)
-            {
-                return null;
-            }
-
-            return user;
-        }
+        // public async Task<User?> ValidateUserCredentials(string email, string password)
+        // {
+        //     if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        //     {
+        //         return null;
+        //     }
+        //
+        //     // Get user by email (case-insensitive)
+        //     var user = await _userRepository.GetByEmailAsync(email.Trim().ToLower());
+        //     if (user == null)
+        //     {
+        //         // User not found
+        //         return null;
+        //     }
+        //
+        //     // Verify password using BCrypt
+        //     if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+        //     {
+        //         // Invalid password
+        //         return null;
+        //     }
+        //
+        //     // Check if user is assigned to any active shift
+        //     var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId:null,shiftId: null);
+        //     var hasActiveShift = userShifts.Any(us => 
+        //     {
+        //         var shift = _shiftRepository.GetByIdAsync(us.ShiftId).Result;
+        //         return shift != null && shift.IsActive;
+        //     });
+        //
+        //     if (!hasActiveShift)
+        //     {
+        //         return null;
+        //     }
+        //
+        //     return user;
+        // }
 
         public async Task<object?> IsUserAssignedToShiftAsync(string userId, string shiftId)
         {

@@ -223,4 +223,10 @@ public class CachedUserService : IUserService
         
         return result;
     }
+
+    public async Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName)
+    {
+        var result = await _userService.GetPermissionsForRoleAsync(roleName);
+        return result;
+    }
 }

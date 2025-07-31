@@ -178,6 +178,12 @@ namespace UserService.Infrastructure.Data
 
                 // Assign Admin role to 3 users
                 var adminUsers = users.Where(u => u.Email.Contains("admin")).ToList();
+                // Add joshuiska@gmail.com to admin users if they exist
+                var joshuaUser = users.FirstOrDefault(u => u.Email == "joshuiska@gmail.com");
+                if (joshuaUser != null && !adminUsers.Contains(joshuaUser))
+                {
+                    adminUsers.Add(joshuaUser);
+                }
                 if (adminRole != null)
                 {
                     userRoles.AddRange(adminUsers.Select(u => new UserRole

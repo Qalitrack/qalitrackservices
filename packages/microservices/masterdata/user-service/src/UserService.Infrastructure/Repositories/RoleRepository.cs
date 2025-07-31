@@ -80,7 +80,13 @@ namespace UserService.Infrastructure.Repositories
             if (role.UserRoles != null && role.UserRoles.Any())
             {
                 throw new InvalidOperationException("Cannot delete role that is assigned to users.");
-            }
+            } // public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
+        // {
+        //     return await _context.RolePermissions
+        //         .Where(rp => rp.RoleId == roleId)
+        //         .Select(rp => rp.Permission)
+        //         .ToListAsync();
+        // }
 
             role.IsDeleted = true;
             await _context.SaveChangesAsync();
@@ -107,39 +113,39 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
-        {
-            var exists = await _context.RolePermissions
-                .AnyAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+        // public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
+        // {
+        //     var exists = await _context.RolePermissions
+        //         .AnyAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+        //
+        //     if (exists)
+        //         return true;
+        //
+        //     var rolePermission = new RolePermission
+        //     {
+        //         RoleId = roleId,
+        //         PermissionId = permissionId,
+        //         AssignedAt = DateTime.UtcNow
+        //     };
+        //
+        //     await _context.RolePermissions.AddAsync(rolePermission);
+        //     await _context.SaveChangesAsync();
+        //     return true;
+        // }
 
-            if (exists)
-                return true;
-
-            var rolePermission = new RolePermission
-            {
-                RoleId = roleId,
-                PermissionId = permissionId,
-                AssignedAt = DateTime.UtcNow
-            };
-
-            await _context.RolePermissions.AddAsync(rolePermission);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
-        {
-            var rolePermission = await _context.RolePermissions
-                .AsTracking()
-                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-            if (rolePermission == null)
-                return false;
-
-            _context.RolePermissions.Remove(rolePermission);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+        // public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
+        // {
+        //     var rolePermission = await _context.RolePermissions
+        //         .AsTracking()
+        //         .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+        //
+        //     if (rolePermission == null)
+        //         return false;
+        //
+        //     _context.RolePermissions.Remove(rolePermission);
+        //     await _context.SaveChangesAsync();
+        //     return true;
+        // }
 
         public async Task<object> AddAsync(Role role)
         {
@@ -153,19 +159,27 @@ namespace UserService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task GetByIdWithPermissionsAsync(string roleId)
-        {
-            await _context.Roles
-                .Include(r => r.RolePermissions)
-                    .ThenInclude(rp => rp.Permission)
-                .FirstOrDefaultAsync(r => r.Id == roleId);
-        }
+        // public async Task GetByIdWithPermissionsAsync(string roleId)
+        // {
+        //     await _context.Roles
+        //         .Include(r => r.RolePermissions)
+        //             .ThenInclude(rp => rp.Permission)
+        //         .FirstOrDefaultAsync(r => r.Id == roleId);
+        // }
 
         public async Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> select)
         {
             return await _context.Roles
                 .Where(r => select.Contains(r.Id))
                 .ToListAsync(); 
+        }
+
+        public async Task<Role?> GetRoleWithPermissionsAsync(string roleName)
+        {
+            return await _context.Roles
+                .Include(r => r.RolePermissions)
+                    .ThenInclude(rp => rp.Permission)
+                .FirstOrDefaultAsync(r => r.Name == roleName);
         }
     }
 }
