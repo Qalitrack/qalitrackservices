@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:virtual_keyboard_multi_language/virtual_keyboard_multi_language.dart';
 import 'package:camera/camera.dart';
 import '../../core/services/camera_service.dart';
@@ -108,6 +110,15 @@ class _DriverRegistrationDialogState extends State<DriverRegistrationDialog>
   
   Future<void> _checkCameraAvailability() async {
     try {
+      // Check platform support first
+      if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+        setState(() {
+          _isCameraAvailable = false;
+          _cameraStatus = 'Camera not supported on desktop platforms - registration will be incomplete';
+        });
+        return;
+      }
+      
       final cameras = await availableCameras();
       setState(() {
         _isCameraAvailable = cameras.isNotEmpty;
@@ -118,7 +129,9 @@ class _DriverRegistrationDialogState extends State<DriverRegistrationDialog>
     } catch (e) {
       setState(() {
         _isCameraAvailable = false;
-        _cameraStatus = 'Camera check failed - registration will be incomplete';
+        _cameraStatus = e.toString().contains('MissingPluginException')
+          ? 'Camera plugin not supported on this platform - registration will be incomplete'
+          : 'Camera check failed - registration will be incomplete';
       });
     }
   }
@@ -674,6 +687,17 @@ class _DriverRegistrationDialogState extends State<DriverRegistrationDialog>
   
   Future<void> _initializeCamera() async {
     try {
+      // Check platform support first
+      if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+        if (mounted) {
+          setState(() {
+            _isCameraAvailable = false;
+            _cameraStatus = 'Camera not supported on desktop platforms';
+          });
+        }
+        return;
+      }
+      
       final cameras = await availableCameras();
       if (cameras.isNotEmpty) {
         // Prefer front camera for facial recognition
@@ -705,7 +729,9 @@ class _DriverRegistrationDialogState extends State<DriverRegistrationDialog>
       if (mounted) {
         setState(() {
           _isCameraAvailable = false;
-          _cameraStatus = 'Camera initialization failed';
+          _cameraStatus = e.toString().contains('MissingPluginException')
+            ? 'Camera plugin not supported on this platform'
+            : 'Camera initialization failed';
         });
       }
     }

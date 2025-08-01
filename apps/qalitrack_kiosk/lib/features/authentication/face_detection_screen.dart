@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:math';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
@@ -48,6 +49,14 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
 
   Future<void> _initializeCamera() async {
     try {
+      // Check platform support first
+      if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+        setState(() {
+          _status = 'Camera not supported on desktop platforms';
+        });
+        return;
+      }
+      
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
         setState(() {
