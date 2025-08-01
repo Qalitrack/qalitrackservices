@@ -137,18 +137,23 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
           children: [
             _buildLanguageSelector(l10n, languageProvider),
             const SizedBox(width: 16),
-            IconButton(
-              onPressed: () => _openSettings(context),
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.white,
-                size: 28,
+            Container(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.3)),
               ),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white.withOpacity(0.2),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              child: IconButton(
+                onPressed: () => _openSettings(context),
+                icon: const Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                  size: 20,
                 ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
               ),
             ),
           ],
@@ -159,7 +164,8 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
 
   Widget _buildLanguageSelector(AppLocalizations? l10n, LanguageProvider languageProvider) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      height: 40,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
