@@ -53,6 +53,10 @@ class KioskConfig {
       'biometric_required': true,
       'receipt_printing_enabled': true,
       'multi_language_enabled': true,
+    },
+    'admin': {
+      'is_first_time_setup': true,
+      'credentials_set': false,
     }
   };
 
@@ -71,7 +75,7 @@ class KioskConfig {
       _logger.i('Kiosk configuration initialized');
     } catch (e) {
       _logger.e('Failed to initialize configuration: $e');
-      _currentConfig = Map.from(_defaultConfig);
+      _currentConfig = _createDeepMutableCopy(_defaultConfig);
       _isInitialized = true;
     }
   }
@@ -95,6 +99,9 @@ class KioskConfig {
   // Set configuration value with path notation
   Future<bool> setValue(String path, dynamic value) async {
     final parts = path.split('.');
+    
+    // Create a deep copy of the config to ensure mutability
+    _currentConfig = _createDeepMutableCopy(_currentConfig);
     Map<String, dynamic> current = _currentConfig;
     
     // Navigate to the parent of the target key
@@ -102,6 +109,9 @@ class KioskConfig {
       final part = parts[i];
       if (!current.containsKey(part) || current[part] is! Map<String, dynamic>) {
         current[part] = <String, dynamic>{};
+      } else {
+        // Ensure nested map is also mutable
+        current[part] = Map<String, dynamic>.from(current[part] as Map<String, dynamic>);
       }
       current = current[part] as Map<String, dynamic>;
     }
@@ -164,7 +174,7 @@ class KioskConfig {
 
   Future<void> resetToDefaults() async {
     _logger.w('Resetting configuration to defaults');
-    _currentConfig = Map.from(_defaultConfig);
+    _currentConfig = _createDeepMutableCopy(_defaultConfig);
     await _saveConfiguration();
     await _logConfigurationChange('Configuration reset to defaults');
   }
@@ -179,15 +189,15 @@ class KioskConfig {
         final configMap = jsonDecode(decrypted) as Map<String, dynamic>;
         
         // Merge with defaults to ensure all keys exist
-        _currentConfig = Map<String, dynamic>.from(_mergeWithDefaults(configMap, _defaultConfig));
+        _currentConfig = _createDeepMutableCopy(_mergeWithDefaults(configMap, _defaultConfig));
         _logger.d('Configuration loaded from storage');
       } else {
         _logger.d('No stored configuration found, using defaults');
-        _currentConfig = Map<String, dynamic>.from(_defaultConfig);
+        _currentConfig = _createDeepMutableCopy(_defaultConfig);
       }
     } catch (e) {
       _logger.e('Failed to load configuration: $e');
-      _currentConfig = Map.from(_defaultConfig);
+      _currentConfig = _createDeepMutableCopy(_defaultConfig);
     }
   }
 
@@ -325,6 +335,21 @@ class KioskConfig {
     config.remove('encryption_keys');
   }
 
+  // Create a deep mutable copy of nested maps
+  Map<String, dynamic> _createDeepMutableCopy(Map<String, dynamic> original) {
+    final copy = <String, dynamic>{};
+    
+    for (final entry in original.entries) {
+      if (entry.value is Map<String, dynamic>) {
+        copy[entry.key] = _createDeepMutableCopy(entry.value as Map<String, dynamic>);
+      } else {
+        copy[entry.key] = entry.value;
+      }
+    }
+    
+    return copy;
+  }
+
   Future<void> _logConfigurationChange(String change) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -347,5 +372,78 @@ class KioskConfig {
     } catch (e) {
       _logger.e('Failed to log configuration change: $e');
     }
+  }
+
+  // Test helper methods (only for testing)
+  void resetConfigForTesting(Map<String, dynamic> testConfig) {
+    _currentConfig = _createDeepMutableCopy(testConfig);
+  }
+
+  Map<String, dynamic> testCreateDeepMutableCopy(Map<String, dynamic> original) {
+    return _createDeepMutableCopy(original);
+  }
+
+  void testSetValueLocally(String path, dynamic value) {
+    final parts = path.split('.');
+    _currentConfig = _createDeepMutableCopy(_currentConfig);
+    Map<String, dynamic> current = _currentConfig;
+    
+    for (int i = 0; i < parts.length - 1; i++) {
+      final part = parts[i];
+      if (!current.containsKey(part) || current[part] is! Map<String, dynamic>) {
+        current[part] = <String, dynamic>{};
+      } else {
+        current[part] = Map<String, dynamic>.from(current[part] as Map<String, dynamic>);
+      }
+      current = current[part] as Map<String, dynamic>;
+    }
+    
+    current[parts.last] = value;
+  }
+
+  dynamic testGetValue(String path) {
+    final parts = path.split('.');
+    dynamic current = _currentConfig;
+    
+    for (final part in parts) {
+      if (current is Map<String, dynamic> && current.containsKey(part)) {
+        current = current[part];
+      } else {
+        return null;
+      }
+    }
+    
+    return current;
+  }
+
+  dynamic testGetDefaultValue(String path) {
+    final parts = path.split('.');
+    dynamic current = _defaultConfig;
+    
+    for (final part in parts) {
+      if (current is Map<String, dynamic> && current.containsKey(part)) {
+        current = current[part];
+      } else {
+        return null;
+      }
+    }
+    
+    return current;
+  }
+
+  // Admin setup management methods
+  bool get isFirstTimeSetup => getValue<bool>('admin.is_first_time_setup', true) ?? true;
+  bool get areCredentialsSet => getValue<bool>('admin.credentials_set', false) ?? false;
+
+  Future<bool> markFirstTimeSetupComplete() async {
+    final success1 = await setValue('admin.is_first_time_setup', false);
+    final success2 = await setValue('admin.credentials_set', true);
+    return success1 && success2;
+  }
+
+  Future<bool> resetFirstTimeSetup() async {
+    final success1 = await setValue('admin.is_first_time_setup', true);
+    final success2 = await setValue('admin.credentials_set', false);
+    return success1 && success2;
   }
 }

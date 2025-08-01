@@ -350,10 +350,12 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
   }
 
   void _openSettings(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AdminLoginDialog(
-        adminProvider: context.read<AdminAccessProvider>(),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AdminLoginDialog(
+          adminProvider: context.read<AdminAccessProvider>(),
+        ),
+        fullscreenDialog: true,
       ),
     ).then((success) {
       if (success == true) {
