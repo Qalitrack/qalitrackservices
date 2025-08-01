@@ -49,32 +49,34 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
 
   Future<void> _initializeCamera() async {
     try {
-      // Check platform support first
-      if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
-        setState(() {
-          _status = 'Camera not supported on desktop platforms';
-        });
-        return;
-      }
+      _logger.i('Attempting to initialize camera for face detection...');
       
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
         setState(() {
-          _status = 'No camera available';
+          _status = 'No camera detected on this system';
         });
+        _logger.w('No cameras found during face detection initialization');
         return;
       }
 
-      // Prefer front camera for kiosk
+      _logger.i('Found ${cameras.length} camera(s) for face detection');
+      
+      // Prefer front camera for kiosk, then back camera
       CameraDescription? frontCamera;
+      CameraDescription? backCamera;
+      
       for (final camera in cameras) {
+        _logger.i('Available camera: ${camera.name} (${camera.lensDirection})');
         if (camera.lensDirection == CameraLensDirection.front) {
           frontCamera = camera;
-          break;
+        } else if (camera.lensDirection == CameraLensDirection.back) {
+          backCamera = camera;
         }
       }
 
-      final selectedCamera = frontCamera ?? cameras.first;
+      final selectedCamera = frontCamera ?? backCamera ?? cameras.first;
+      _logger.i('Selected camera: ${selectedCamera.name} (${selectedCamera.lensDirection})');
       
       _cameraController = CameraController(
         selectedCamera,

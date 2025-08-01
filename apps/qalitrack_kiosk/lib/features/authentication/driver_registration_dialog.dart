@@ -110,23 +110,23 @@ class _DriverRegistrationDialogState extends State<DriverRegistrationDialog>
   
   Future<void> _checkCameraAvailability() async {
     try {
-      // Check platform support first
-      if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
-        setState(() {
-          _isCameraAvailable = false;
-          _cameraStatus = 'Camera not supported on desktop platforms - registration will be incomplete';
-        });
-        return;
-      }
+      print('Checking camera availability for driver registration...');
       
       final cameras = await availableCameras();
+      print('Found ${cameras.length} camera(s) during driver registration check');
+      
+      for (final camera in cameras) {
+        print('Available camera: ${camera.name} (${camera.lensDirection})');
+      }
+      
       setState(() {
         _isCameraAvailable = cameras.isNotEmpty;
         _cameraStatus = _isCameraAvailable 
-          ? 'Camera available for facial recognition'
+          ? 'Camera available for facial recognition (${cameras.length} camera${cameras.length == 1 ? '' : 's'} detected)'
           : 'No camera detected - registration will be incomplete';
       });
     } catch (e) {
+      print('Camera check failed: $e');
       setState(() {
         _isCameraAvailable = false;
         _cameraStatus = e.toString().contains('MissingPluginException')
@@ -687,29 +687,27 @@ class _DriverRegistrationDialogState extends State<DriverRegistrationDialog>
   
   Future<void> _initializeCamera() async {
     try {
-      // Check platform support first
-      if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
-        if (mounted) {
-          setState(() {
-            _isCameraAvailable = false;
-            _cameraStatus = 'Camera not supported on desktop platforms';
-          });
-        }
-        return;
-      }
+      print('Initializing camera for driver registration...');
       
       final cameras = await availableCameras();
       if (cameras.isNotEmpty) {
+        print('Found ${cameras.length} camera(s), selecting best option...');
+        
         // Prefer front camera for facial recognition
         CameraDescription? frontCamera;
+        CameraDescription? backCamera;
+        
         for (final camera in cameras) {
+          print('Evaluating camera: ${camera.name} (${camera.lensDirection})');
           if (camera.lensDirection == CameraLensDirection.front) {
             frontCamera = camera;
-            break;
+          } else if (camera.lensDirection == CameraLensDirection.back) {
+            backCamera = camera;
           }
         }
         
-        final selectedCamera = frontCamera ?? cameras.first;
+        final selectedCamera = frontCamera ?? backCamera ?? cameras.first;
+        print('Selected camera: ${selectedCamera.name} (${selectedCamera.lensDirection})');
         
         _cameraController = CameraController(
           selectedCamera,
@@ -718,20 +716,30 @@ class _DriverRegistrationDialogState extends State<DriverRegistrationDialog>
         );
         
         await _cameraController!.initialize();
+        print('Camera controller initialized successfully');
         
         if (mounted) {
           setState(() {
             _isCameraInitialized = true;
           });
         }
+      } else {
+        print('No cameras available for initialization');
+        if (mounted) {
+          setState(() {
+            _isCameraAvailable = false;
+            _cameraStatus = 'No cameras found during initialization';
+          });
+        }
       }
     } catch (e) {
+      print('Camera initialization failed: $e');
       if (mounted) {
         setState(() {
           _isCameraAvailable = false;
           _cameraStatus = e.toString().contains('MissingPluginException')
             ? 'Camera plugin not supported on this platform'
-            : 'Camera initialization failed';
+            : 'Camera initialization failed: ${e.toString()}';
         });
       }
     }
