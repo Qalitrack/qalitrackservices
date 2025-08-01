@@ -88,27 +88,79 @@ class AdminAccessProvider extends ChangeNotifier {
     try {
       _logger.i('Attempting admin authentication for: $username');
       
-      final loginRequest = LoginRequest(
-        username: username,
-        password: password,
-        deviceId: 'kiosk-admin',
-        deviceType: 'kiosk_admin',
-      );
-      
-      final response = await _authService.login(loginRequest);
-      
-      if (response != null && response.roles.contains('Admin')) {
+      // Try local default credentials first
+      if (_authenticateLocalAdmin(username, password)) {
         _isAdminMode = true;
         _adminSessionStart = DateTime.now();
-        _logger.i('Admin authentication successful');
+        _logger.i('Local admin authentication successful');
         notifyListeners();
         return true;
-      } else {
-        _logger.w('Admin authentication failed: insufficient privileges');
-        return false;
       }
+      
+      // Try remote authentication if local fails
+      try {
+        final loginRequest = LoginRequest(
+          username: username,
+          password: password,
+          deviceId: 'kiosk-admin',
+          deviceType: 'kiosk_admin',
+        );
+        
+        final response = await _authService.login(loginRequest);
+        
+        if (response != null && response.roles.contains('Admin')) {
+          _isAdminMode = true;
+          _adminSessionStart = DateTime.now();
+          _logger.i('Remote admin authentication successful');
+          notifyListeners();
+          return true;
+        }
+      } catch (e) {
+        _logger.w('Remote admin authentication failed: $e');
+      }
+      
+      _logger.w('Admin authentication failed');
+      return false;
     } catch (e) {
       _logger.e('Admin authentication error: $e');
+      return false;
+    }
+  }
+  
+  bool _authenticateLocalAdmin(String username, String password) {
+    final defaultUsername = _config.getValue<String>(
+      'security.default_admin_username', 
+      'admin'
+    ) ?? 'admin';
+    
+    final defaultPassword = _config.getValue<String>(
+      'security.default_admin_password', 
+      'admin123'
+    ) ?? 'admin123';
+    
+    return username == defaultUsername && password == defaultPassword;
+  }
+  
+  Future<bool> updateAdminCredentials(String currentPassword, String newUsername, String newPassword) async {
+    try {
+      // Verify current password
+      final currentUsername = _config.getValue<String>(
+        'security.default_admin_username', 
+        'admin'
+      ) ?? 'admin';
+      
+      if (!_authenticateLocalAdmin(currentUsername, currentPassword)) {
+        return false;
+      }
+      
+      // Update credentials
+      await _config.setValue('security.default_admin_username', newUsername);
+      await _config.setValue('security.default_admin_password', newPassword);
+      
+      _logger.i('Admin credentials updated successfully');
+      return true;
+    } catch (e) {
+      _logger.e('Failed to update admin credentials: $e');
       return false;
     }
   }

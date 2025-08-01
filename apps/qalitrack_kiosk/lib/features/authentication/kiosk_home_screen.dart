@@ -63,7 +63,9 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
     return Consumer2<KioskStateProvider, LanguageProvider>(
       builder: (context, kioskProvider, languageProvider, child) {
         return Scaffold(
-          body: Container(
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -100,6 +102,7 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
               ),
             ),
           ),
+          ),
         );
       },
     );
@@ -109,26 +112,13 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n?.appTitle ?? 'QaliTrack Kiosk',
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Self-Service Weighing Station',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white.withOpacity(0.9),
-              ),
-            ),
-          ],
+        Text(
+          'QaliTrack',
+          style: const TextStyle(
+            fontSize: 42,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         Row(
           children: [
@@ -195,79 +185,71 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 200,
-            height: 200,
+            width: 240,
+            height: 240,
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
               shape: BoxShape.circle,
               border: Border.all(
                 color: Colors.white.withOpacity(0.3),
-                width: 2,
+                width: 3,
               ),
             ),
             child: const Icon(
               Icons.scale,
-              size: 100,
+              size: 120,
               color: Colors.white,
             ),
           ),
           const SizedBox(height: 48),
           Text(
-            l10n?.welcome ?? 'Welcome to QaliTrack',
+            l10n?.welcome ?? 'Welcome',
             style: const TextStyle(
-              fontSize: 36,
+              fontSize: 48,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
-            'Touch the screen to begin weighing process',
+            l10n?.touchToStart ?? 'Touch to Start',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 28,
               color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 64),
           SizedBox(
-            width: 300,
-            height: 80,
+            width: 400,
+            height: 100,
             child: ElevatedButton(
               onPressed: () => _startWeighingProcess(kioskProvider),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF2E8B57),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
+                  borderRadius: BorderRadius.circular(50),
                 ),
-                elevation: 8,
+                elevation: 12,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.camera_alt, size: 32),
-                  const SizedBox(width: 12),
+                  const Icon(Icons.camera_alt, size: 40),
+                  const SizedBox(width: 16),
                   Text(
                     l10n?.startWeighing ?? 'Start Weighing',
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 32),
-          Text(
-            'Face detection will identify you automatically',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withOpacity(0.7),
-            ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -279,36 +261,61 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'QaliTrack © ${DateTime.now().year}',
+          '© ${DateTime.now().year}',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
-            fontSize: 14,
+            color: Colors.white.withOpacity(0.6),
+            fontSize: 16,
           ),
         ),
         Row(
           children: [
-            Icon(
-              Icons.wifi,
-              color: Colors.white.withOpacity(0.7),
-              size: 20,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Connected',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(width: 24),
+            _buildConnectionStatus(),
+            const SizedBox(width: 32),
             Text(
               _getCurrentTime(),
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
-                fontSize: 14,
+                color: Colors.white.withOpacity(0.8),
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectionStatus() {
+    return Row(
+      children: [
+        // Network Status
+        Icon(
+          Icons.wifi,
+          color: Colors.greenAccent,
+          size: 24,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          'Network',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(width: 24),
+        // Backend Status
+        Icon(
+          Icons.cloud_done,
+          color: Colors.greenAccent,
+          size: 24,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          'Services',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 16,
+          ),
         ),
       ],
     );
