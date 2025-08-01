@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:math';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
@@ -10,6 +9,7 @@ import 'package:logger/logger.dart';
 import '../../shared/services/biometric_service.dart';
 import '../../shared/models/biometric_models.dart';
 import '../../core/config/kiosk_config.dart';
+import '../../core/services/camera_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FaceDetectionScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
   final Logger _logger = Logger();
   final BiometricService _biometricService = BiometricService();
   final KioskConfig _config = KioskConfig();
+  final CameraService _cameraService = CameraService();
   
   CameraController? _cameraController;
   FaceDetector? _faceDetector;
@@ -51,12 +52,21 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     try {
       _logger.i('Attempting to initialize camera for face detection...');
       
-      final cameras = await availableCameras();
+      // Check if camera service is healthy and available
+      if (!_cameraService.isCameraHealthy()) {
+        setState(() {
+          _status = 'Camera not available: ${_cameraService.getCameraStatus()}';
+        });
+        _logger.w('Camera service not healthy: ${_cameraService.getCameraStatus()}');
+        return;
+      }
+
+      final cameras = _cameraService.cameras;
       if (cameras.isEmpty) {
         setState(() {
           _status = 'No camera detected on this system';
         });
-        _logger.w('No cameras found during face detection initialization');
+        _logger.w('No cameras found in camera service');
         return;
       }
 
@@ -78,6 +88,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
       final selectedCamera = frontCamera ?? backCamera ?? cameras.first;
       _logger.i('Selected camera: ${selectedCamera.name} (${selectedCamera.lensDirection})');
       
+      // Create a new camera controller since we need different settings for face detection
       _cameraController = CameraController(
         selectedCamera,
         _getCameraResolution(),
@@ -95,7 +106,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     } catch (e) {
       _logger.e('Camera initialization failed: $e');
       setState(() {
-        _status = 'Camera initialization failed';
+        _status = 'Camera initialization failed: ${e.toString()}';
       });
     }
   }

@@ -118,33 +118,19 @@ class CameraService {
       // Get available cameras using standard API
       _cameras = await availableCameras();
       
+      _isInitialized = true;
+      _isPlatformSupported = true;
+      
+      _logger.i('Windows camera initialized. Found ${_cameras?.length ?? 0} cameras');
+      
       if (_cameras?.isNotEmpty == true) {
-        // Create camera instance for Windows
-        final selectedCamera = _cameras!.first;
-        _windowsCameraId = await camera_platform.CameraPlatform.instance.createCamera(
-          selectedCamera,
-          ResolutionPreset.medium,
-          enableAudio: false,
-        );
-        
-        // Initialize the camera
-        await camera_platform.CameraPlatform.instance.initializeCamera(_windowsCameraId!);
-        
-        _isInitialized = true;
-        _isPlatformSupported = true;
-        
-        _logger.i('Windows camera initialized. Found ${_cameras?.length ?? 0} cameras');
-        
         for (final camera in _cameras!) {
           _logger.i('Windows camera found: ${camera.name} (${camera.lensDirection})');
         }
-        _logger.i('Windows desktop camera with frame streaming support enabled');
-        
+        _logger.i('Windows desktop camera platform registered for frame streaming support');
         return true;
       } else {
         _logger.w('No Windows cameras detected');
-        _isInitialized = true;
-        _isPlatformSupported = true;
         return false;
       }
     } catch (e) {
@@ -204,13 +190,25 @@ class CameraService {
   
   // Windows-specific frame streaming methods
   Future<bool> startFrameStreaming(CameraDescription camera, Function(Uint8List) onFrameAvailable) async {
-    if (!supportsFrameStreaming || _windowsCameraId == null) {
+    if (!supportsFrameStreaming) {
       _logger.w('Frame streaming not supported on this platform');
       return false;
     }
     
     try {
       _logger.i('Starting Windows camera frame streaming for: ${camera.name}');
+      
+      // Create camera instance for Windows frame streaming if not exists
+      if (_windowsCameraId == null) {
+        _windowsCameraId = await camera_platform.CameraPlatform.instance.createCamera(
+          camera,
+          ResolutionPreset.medium,
+          enableAudio: false,
+        );
+        
+        // Initialize the camera
+        await camera_platform.CameraPlatform.instance.initializeCamera(_windowsCameraId!);
+      }
       
       // Set up frame streaming subscription using camera_windows API
       _frameSubscription = (camera_platform.CameraPlatform.instance as camera_windows.CameraWindows)
