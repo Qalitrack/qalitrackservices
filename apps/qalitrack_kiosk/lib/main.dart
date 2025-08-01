@@ -13,6 +13,7 @@ import 'core/config/kiosk_config.dart';
 import 'core/api/api_client.dart';
 import 'core/auth/auth_service.dart';
 import 'core/network/service_discovery.dart';
+import 'core/services/camera_service.dart';
 import 'features/authentication/admin_access.dart';
 import 'features/authentication/kiosk_home_screen.dart';
 
@@ -71,6 +72,10 @@ Future<void> _initializeServices() async {
     // Initialize authentication service
     final authService = AuthService();
     await authService.initialize();
+    
+    // Initialize camera service (with proper error handling)
+    final cameraService = CameraService();
+    await cameraService.initialize(); // This won't cause crashes now
     
     // Start service discovery
     final serviceDiscovery = ServiceDiscovery();
