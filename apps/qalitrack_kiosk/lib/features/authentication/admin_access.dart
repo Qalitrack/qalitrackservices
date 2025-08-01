@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
+import 'package:virtual_keyboard_multi_language/virtual_keyboard_multi_language.dart';
 import '../../core/config/kiosk_config.dart';
 import '../../shared/models/auth_models.dart';
 import '../../core/auth/auth_service.dart';
@@ -235,58 +236,213 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
+  bool _showKeyboard = false;
+  bool _isPasswordField = false;
+  late FocusNode _usernameFocus;
+  late FocusNode _passwordFocus;
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameFocus = FocusNode();
+    _passwordFocus = FocusNode();
+    
+    _usernameFocus.addListener(() {
+      if (_usernameFocus.hasFocus) {
+        setState(() {
+          _showKeyboard = true;
+          _isPasswordField = false;
+        });
+      }
+    });
+    
+    _passwordFocus.addListener(() {
+      if (_passwordFocus.hasFocus) {
+        setState(() {
+          _showKeyboard = true;
+          _isPasswordField = true;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _usernameFocus.dispose();
+    _passwordFocus.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Administrator Access'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _usernameController,
-            decoration: const InputDecoration(
-              labelText: 'Username',
-              border: OutlineInputBorder(),
+    return Dialog(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.8,
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            // Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Administrator Access',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
             ),
-            enabled: !_isLoading,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _passwordController,
-            decoration: const InputDecoration(
-              labelText: 'Password',
-              border: OutlineInputBorder(),
+            const SizedBox(height: 24),
+            
+            // Input fields
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _usernameController,
+                    focusNode: _usernameFocus,
+                    decoration: const InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    style: const TextStyle(fontSize: 18),
+                    enabled: !_isLoading,
+                    readOnly: true, // Prevent system keyboard
+                    onTap: () {
+                      _usernameFocus.requestFocus();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _passwordController,
+                    focusNode: _passwordFocus,
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                    style: const TextStyle(fontSize: 18),
+                    obscureText: true,
+                    enabled: !_isLoading,
+                    readOnly: true, // Prevent system keyboard
+                    onTap: () {
+                      _passwordFocus.requestFocus();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Default credentials hint
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.blue),
+                        SizedBox(width: 8),
+                        Text(
+                          'Default: admin / admin123',
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  if (_errorMessage != null) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red.shade200),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.error_outline, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _errorMessage!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
-            obscureText: true,
-            enabled: !_isLoading,
-            onSubmitted: (_) => _handleLogin(),
-          ),
-          if (_errorMessage != null) ...[
+            
+            // Virtual Keyboard
+            if (_showKeyboard) ...[
+              const Divider(),
+              Expanded(
+                flex: 3,
+                child: VirtualKeyboard(
+                  height: 300,
+                  textColor: Colors.black,
+                  textController: _isPasswordField ? _passwordController : _usernameController,
+                  defaultLayouts: const [VirtualKeyboardDefaultLayouts.English],
+                  type: VirtualKeyboardType.Alphanumeric,
+                ),
+              ),
+            ],
+            
+            // Action buttons
             const SizedBox(height: 16),
-            Text(
-              _errorMessage!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (_showKeyboard)
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _showKeyboard = false;
+                      });
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: const Text('Hide Keyboard'),
+                  ),
+                const SizedBox(width: 16),
+                TextButton(
+                  onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Login', style: TextStyle(fontSize: 16)),
+                ),
+              ],
             ),
           ],
-        ],
+        ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _handleLogin,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Login'),
-        ),
-      ],
     );
   }
 
@@ -311,10 +467,4 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
     }
   }
 
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 }
