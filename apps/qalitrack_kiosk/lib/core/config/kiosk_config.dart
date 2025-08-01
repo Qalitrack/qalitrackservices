@@ -103,7 +103,7 @@ class KioskConfig {
       if (!current.containsKey(part) || current[part] is! Map<String, dynamic>) {
         current[part] = <String, dynamic>{};
       }
-      current = current[part];
+      current = current[part] as Map<String, dynamic>;
     }
     
     // Set the value
@@ -179,10 +179,11 @@ class KioskConfig {
         final configMap = jsonDecode(decrypted) as Map<String, dynamic>;
         
         // Merge with defaults to ensure all keys exist
-        _currentConfig = _mergeWithDefaults(configMap, _defaultConfig);
+        _currentConfig = Map<String, dynamic>.from(_mergeWithDefaults(configMap, _defaultConfig));
         _logger.d('Configuration loaded from storage');
       } else {
         _logger.d('No stored configuration found, using defaults');
+        _currentConfig = Map<String, dynamic>.from(_defaultConfig);
       }
     } catch (e) {
       _logger.e('Failed to load configuration: $e');

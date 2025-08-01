@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
   }
 
   @override
@@ -49,10 +49,13 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
             ],
             bottom: TabBar(
               controller: _tabController,
+              isScrollable: true,
               tabs: const [
+                Tab(text: 'Status'),
                 Tab(text: 'Network'),
-                Tab(text: 'Security'),
+                Tab(text: 'Admin'),
                 Tab(text: 'Hardware'),
+                Tab(text: 'Drivers'),
                 Tab(text: 'Features'),
               ],
             ),
@@ -60,9 +63,11 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
           body: TabBarView(
             controller: _tabController,
             children: [
+              _buildStatusTab(),
               _buildNetworkTab(),
-              _buildSecurityTab(),
+              _buildAdminTab(),
               _buildHardwareTab(),
+              _buildDriversTab(),
               _buildFeaturesTab(),
             ],
           ),
@@ -88,13 +93,26 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
-                    initialValue: _config.getValue<String>('api.gateway_url'),
+                    initialValue: _config.getValue<String>('api.gateway_url', 'http://192.168.1.1:8080') ?? 'http://192.168.1.1:8080',
                     decoration: const InputDecoration(
                       labelText: 'Gateway URL',
                       border: OutlineInputBorder(),
+                      hintText: 'e.g., http://192.168.1.1:8080',
                     ),
                     onChanged: (value) {
                       _config.setValue('api.gateway_url', value);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    initialValue: _config.getValue<String>('network.service_discovery_name', 'QaliTrack-Gateway') ?? 'QaliTrack-Gateway',
+                    decoration: const InputDecoration(
+                      labelText: 'Service Discovery Name',
+                      border: OutlineInputBorder(),
+                      hintText: 'Default service name to discover',
+                    ),
+                    onChanged: (value) {
+                      _config.setValue('network.service_discovery_name', value);
                     },
                   ),
                   const SizedBox(height: 16),
@@ -157,59 +175,6 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
     );
   }
 
-  Widget _buildSecurityTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Security Settings',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    initialValue: _config.getValue<int>('security.admin_session_timeout').toString(),
-                    decoration: const InputDecoration(
-                      labelText: 'Admin Session Timeout (seconds)',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      final timeout = int.tryParse(value);
-                      if (timeout != null) {
-                        _config.setValue('security.admin_session_timeout', timeout);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    initialValue: _config.getValue<int>('security.max_failed_attempts').toString(),
-                    decoration: const InputDecoration(
-                      labelText: 'Max Failed Login Attempts',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      final attempts = int.tryParse(value);
-                      if (attempts != null) {
-                        _config.setValue('security.max_failed_attempts', attempts);
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildHardwareTab() {
     return Padding(
@@ -323,6 +288,337 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'System Status',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildStatusItem('Network', true, 'Connected to WiFi'),
+                  _buildStatusItem('Backend Services', true, 'All services online'),
+                  _buildStatusItem('Camera', true, 'Face detection ready'),
+                  _buildStatusItem('Printer', false, 'Not connected'),
+                  _buildStatusItem('Fingerprint Reader', false, 'Not detected'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Connection Details',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow('IP Address', '192.168.1.100'),
+                  _buildInfoRow('Gateway', '192.168.1.1'),
+                  _buildInfoRow('DNS', '8.8.8.8'),
+                  _buildInfoRow('Service Discovery', 'QaliTrack-Gateway'),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusItem(String title, bool isOnline, String status) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(
+            isOnline ? Icons.check_circle : Icons.error_outline,
+            color: isOnline ? Colors.green : Colors.orange,
+            size: 24,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  status,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(value, style: TextStyle(color: Colors.grey[700])),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdminTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Admin Credentials',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Default: admin / admin123',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _showChangeCredentialsDialog,
+                    child: const Text('Change Admin Credentials'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Remote Management',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  SwitchListTile(
+                    title: const Text('Allow Remote Admin Access'),
+                    subtitle: const Text('Enable remote admin login via backend'),
+                    value: _config.getValue<bool>('security.remote_admin_enabled', true) ?? true,
+                    onChanged: (value) {
+                      _config.setValue('security.remote_admin_enabled', value);
+                      setState(() {});
+                    },
+                  ),
+                  SwitchListTile(
+                    title: const Text('Remote Configuration'),
+                    subtitle: const Text('Allow remote configuration updates'),
+                    value: _config.getValue<bool>('security.remote_config_enabled', true) ?? true,
+                    onChanged: (value) {
+                      _config.setValue('security.remote_config_enabled', value);
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDriversTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Driver Registration',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      ElevatedButton(
+                        onPressed: _showDriverRegistrationDialog,
+                        child: const Text('Register New Driver'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Register drivers with facial recognition for secure access to the weighing system.',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Registered Drivers',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  // Placeholder for driver list
+                  const ListTile(
+                    leading: CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                    title: Text('John Doe'),
+                    subtitle: Text('Driver ID: D001'),
+                    trailing: Icon(Icons.verified, color: Colors.green),
+                  ),
+                  const ListTile(
+                    leading: CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                    title: Text('Jane Smith'),
+                    subtitle: Text('Driver ID: D002'),
+                    trailing: Icon(Icons.verified, color: Colors.green),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showChangeCredentialsDialog() {
+    final currentPasswordController = TextEditingController();
+    final newUsernameController = TextEditingController();
+    final newPasswordController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Change Admin Credentials'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: currentPasswordController,
+              decoration: const InputDecoration(labelText: 'Current Password'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: newUsernameController,
+              decoration: const InputDecoration(labelText: 'New Username'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: newPasswordController,
+              decoration: const InputDecoration(labelText: 'New Password'),
+              obscureText: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final adminProvider = context.read<AdminAccessProvider>();
+              final success = await adminProvider.updateAdminCredentials(
+                currentPasswordController.text,
+                newUsernameController.text,
+                newPasswordController.text,
+              );
+              
+              Navigator.of(context).pop();
+              
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(success 
+                    ? 'Credentials updated successfully' 
+                    : 'Failed to update credentials'),
+                  backgroundColor: success ? Colors.green : Colors.red,
+                ),
+              );
+            },
+            child: const Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDriverRegistrationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Register New Driver'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('This feature will capture facial biometrics for driver authentication.'),
+            SizedBox(height: 16),
+            Text('Implementation requires integration with biometric capture system.'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // TODO: Implement driver registration with camera capture
+            },
+            child: const Text('Start Registration'),
           ),
         ],
       ),

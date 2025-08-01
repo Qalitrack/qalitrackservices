@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'core/config/kiosk_config.dart';
 import 'core/api/api_client.dart';
@@ -15,6 +16,26 @@ import 'features/authentication/kiosk_home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize window manager for desktop
+  await windowManager.ensureInitialized();
+  
+  const windowOptions = WindowOptions(
+    size: Size(1920, 1080),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+    fullScreen: true,
+  );
+  
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+    await windowManager.setAsFrameless();
+    await windowManager.setFullScreen(true);
+    await windowManager.setAlwaysOnTop(true);
+  });
   
   // Load environment configuration
   try {
