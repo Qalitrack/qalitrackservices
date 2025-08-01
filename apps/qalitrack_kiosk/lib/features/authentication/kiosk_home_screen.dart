@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,11 +21,13 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  late Timer _timeTimer;
 
   @override
   void initState() {
     super.initState();
     _setupAnimations();
+    _startTimeUpdater();
   }
 
   void _setupAnimations() {
@@ -54,6 +57,16 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
     );
 
     _animationController.forward();
+  }
+
+  void _startTimeUpdater() {
+    _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          // Just trigger rebuild to update time
+        });
+      }
+    });
   }
 
   @override
@@ -124,21 +137,19 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
           children: [
             _buildLanguageSelector(l10n, languageProvider),
             const SizedBox(width: 16),
-            Consumer<AdminAccessProvider>(
-              builder: (context, adminProvider, child) {
-                if (adminProvider.isAdminMode) {
-                  return ElevatedButton.icon(
-                    onPressed: () => _openSettings(context),
-                    icon: const Icon(Icons.settings),
-                    label: const Text('Settings'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF2E8B57),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+            IconButton(
+              onPressed: () => _openSettings(context),
+              icon: const Icon(
+                Icons.settings,
+                color: Colors.white,
+                size: 28,
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white.withOpacity(0.2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
@@ -148,18 +159,18 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
 
   Widget _buildLanguageSelector(AppLocalizations? l10n, LanguageProvider languageProvider) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white.withOpacity(0.3)),
       ),
       child: DropdownButton<String>(
         value: languageProvider.currentLocale.languageCode,
         dropdownColor: const Color(0xFF2E8B57),
         underline: const SizedBox.shrink(),
-        icon: const Icon(Icons.language, color: Colors.white),
-        style: const TextStyle(color: Colors.white, fontSize: 16),
+        icon: const Icon(Icons.language, color: Colors.white, size: 20),
+        style: const TextStyle(color: Colors.white, fontSize: 14),
         items: [
           DropdownMenuItem(
             value: 'en',
@@ -205,45 +216,35 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
           Text(
             l10n?.welcome ?? 'Welcome',
             style: const TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.bold,
+              fontSize: 32,
+              fontWeight: FontWeight.w600,
               color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            l10n?.touchToStart ?? 'Touch to Start',
-            style: TextStyle(
-              fontSize: 28,
-              color: Colors.white.withOpacity(0.9),
-              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 64),
           SizedBox(
-            width: 400,
-            height: 100,
+            width: 420,
+            height: 120,
             child: ElevatedButton(
               onPressed: () => _startWeighingProcess(kioskProvider),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF2E8B57),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(60),
                 ),
                 elevation: 12,
               ),
-              child: Row(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.camera_alt, size: 40),
-                  const SizedBox(width: 16),
+                  const Icon(Icons.camera_alt, size: 36),
+                  const SizedBox(height: 8),
                   Text(
-                    l10n?.startWeighing ?? 'Start Weighing',
+                    l10n?.touchToStart ?? 'Touch to Start',
                     style: const TextStyle(
-                      fontSize: 32,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -367,6 +368,7 @@ class _KioskHomeScreenState extends State<KioskHomeScreen>
 
   @override
   void dispose() {
+    _timeTimer.cancel();
     _animationController.dispose();
     super.dispose();
   }
