@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -17,25 +19,27 @@ import 'features/authentication/kiosk_home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize window manager for desktop
-  await windowManager.ensureInitialized();
-  
-  const windowOptions = WindowOptions(
-    size: Size(1920, 1080),
-    center: true,
-    backgroundColor: Colors.transparent,
-    skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.hidden,
-    fullScreen: true,
-  );
-  
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-    await windowManager.setAsFrameless();
-    await windowManager.setFullScreen(true);
-    await windowManager.setAlwaysOnTop(true);
-  });
+  // Initialize window manager only for desktop platforms
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    await windowManager.ensureInitialized();
+    
+    const windowOptions = WindowOptions(
+      size: Size(1920, 1080),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.hidden,
+      fullScreen: true,
+    );
+    
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+      await windowManager.setAsFrameless();
+      await windowManager.setFullScreen(true);
+      await windowManager.setAlwaysOnTop(true);
+    });
+  }
   
   // Load environment configuration
   try {

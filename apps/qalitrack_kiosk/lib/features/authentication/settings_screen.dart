@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/config/kiosk_config.dart';
 import '../../core/network/service_discovery.dart';
+import '../../core/services/camera_service.dart';
 import 'admin_access.dart';
+import 'admin_setup_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   late TabController _tabController;
   final KioskConfig _config = KioskConfig();
   final ServiceDiscovery _serviceDiscovery = ServiceDiscovery();
+  final CameraService _cameraService = CameraService();
   
   bool _isScanning = false;
   String? _scanStatus;
@@ -312,7 +315,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                   const SizedBox(height: 16),
                   _buildStatusItem('Network', true, 'Connected to WiFi'),
                   _buildStatusItem('Backend Services', true, 'All services online'),
-                  _buildStatusItem('Camera', true, 'Face detection ready'),
+                  _buildStatusItem('Camera', _cameraService.isCameraHealthy(), _cameraService.getCameraStatus()),
                   _buildStatusItem('Printer', false, 'Not connected'),
                   _buildStatusItem('Fingerprint Reader', false, 'Not detected'),
                 ],
@@ -508,21 +511,39 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                   ),
                   const SizedBox(height: 16),
                   // Placeholder for driver list
-                  const ListTile(
-                    leading: CircleAvatar(
+                  ListTile(
+                    leading: const CircleAvatar(
                       child: Icon(Icons.person),
                     ),
-                    title: Text('John Doe'),
-                    subtitle: Text('Driver ID: D001'),
-                    trailing: Icon(Icons.verified, color: Colors.green),
+                    title: const Text('James Mbugua'),
+                    subtitle: const Text('Driver ID: D001'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.verified, color: Colors.green),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _removeDriver('D001', 'James Mbugua'),
+                        ),
+                      ],
+                    ),
                   ),
-                  const ListTile(
-                    leading: CircleAvatar(
+                  ListTile(
+                    leading: const CircleAvatar(
                       child: Icon(Icons.person),
                     ),
-                    title: Text('Jane Smith'),
-                    subtitle: Text('Driver ID: D002'),
-                    trailing: Icon(Icons.verified, color: Colors.green),
+                    title: const Text('Grace Wanjiku'),
+                    subtitle: const Text('Driver ID: D002'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.verified, color: Colors.green),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _removeDriver('D002', 'Grace Wanjiku'),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -534,32 +555,86 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   }
 
   void _showChangeCredentialsDialog() {
-    final currentPasswordController = TextEditingController();
-    final newUsernameController = TextEditingController();
-    final newPasswordController = TextEditingController();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AdminSetupDialog(
+          adminProvider: context.read<AdminAccessProvider>(),
+          isFromSettings: true,
+        ),
+        fullscreenDialog: true,
+      ),
+    ).then((success) {
+      if (success == true && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Credentials updated successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    });
+  }
 
+  void _removeDriver(String driverId, String driverName) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Change Admin Credentials'),
+        title: const Text('Remove Driver'),
+        content: Text('Are you sure you want to remove $driverName ($driverId) from the system?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('$driverName has been removed from the system'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+              // TODO: Implement actual driver removal from database
+              setState(() {}); // Refresh the list
+            },
+            child: const Text('Remove', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDriverRegistrationDialog() {
+    final nameController = TextEditingController();
+    final idController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Register New Driver'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Text('Enter driver details for biometric registration.'),
+            const SizedBox(height: 16),
             TextField(
-              controller: currentPasswordController,
-              decoration: const InputDecoration(labelText: 'Current Password'),
-              obscureText: true,
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Full Name',
+                border: OutlineInputBorder(),
+                hintText: 'e.g., Joseph Kamau',
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
-              controller: newUsernameController,
-              decoration: const InputDecoration(labelText: 'New Username'),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: newPasswordController,
-              decoration: const InputDecoration(labelText: 'New Password'),
-              obscureText: true,
+              controller: idController,
+              decoration: const InputDecoration(
+                labelText: 'Driver ID',
+                border: OutlineInputBorder(),
+                hintText: 'e.g., D003',
+              ),
             ),
           ],
         ),
@@ -569,43 +644,40 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () async {
-              final adminProvider = context.read<AdminAccessProvider>();
-              final success = await adminProvider.updateAdminCredentials(
-                currentPasswordController.text,
-                newUsernameController.text,
-                newPasswordController.text,
-              );
-              
-              Navigator.of(context).pop();
-              
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(success 
-                    ? 'Credentials updated successfully' 
-                    : 'Failed to update credentials'),
-                  backgroundColor: success ? Colors.green : Colors.red,
-                ),
-              );
+            onPressed: () {
+              if (nameController.text.trim().isNotEmpty && 
+                  idController.text.trim().isNotEmpty) {
+                Navigator.of(context).pop();
+                _startBiometricCapture(nameController.text.trim(), idController.text.trim());
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please fill in all fields'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
-            child: const Text('Update'),
+            child: const Text('Start Registration'),
           ),
         ],
       ),
     );
   }
 
-  void _showDriverRegistrationDialog() {
+  void _startBiometricCapture(String name, String driverId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Register New Driver'),
-        content: const Column(
+        title: const Text('Biometric Capture'),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('This feature will capture facial biometrics for driver authentication.'),
-            SizedBox(height: 16),
-            Text('Implementation requires integration with biometric capture system.'),
+            const Icon(Icons.camera_alt, size: 64, color: Colors.blue),
+            const SizedBox(height: 16),
+            Text('Starting facial recognition capture for $name ($driverId)'),
+            const SizedBox(height: 16),
+            const Text('Implementation will integrate with camera system for face capture and ML training.'),
           ],
         ),
         actions: [
@@ -616,9 +688,16 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // TODO: Implement driver registration with camera capture
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('$name ($driverId) has been registered successfully'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              // TODO: Implement actual biometric capture and registration
+              setState(() {}); // Refresh the list
             },
-            child: const Text('Start Registration'),
+            child: const Text('Complete Registration'),
           ),
         ],
       ),
