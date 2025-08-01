@@ -3,10 +3,10 @@ import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'dart:async';
-import 'dart:typed_data';
 
-// Conditional import for Windows camera support
-import 'package:camera_windows/camera_windows.dart' if (dart.library.html) 'dart:typed_data';
+// Platform-specific imports  
+import 'package:camera_windows/camera_windows.dart' if (dart.library.html) 'dart:typed_data' as camera_windows;
+import 'package:camera_platform_interface/camera_platform_interface.dart' as camera_platform;
 
 class CameraService {
   static final CameraService _instance = CameraService._internal();
@@ -20,13 +20,13 @@ class CameraService {
   bool _isWindowsDesktop = false;
   
   // Windows-specific camera support
-  CameraWindowsPlugin? _windowsCameraPlugin;
-  StreamSubscription<FrameAvailabledEvent>? _frameSubscription;
+  int? _windowsCameraId;
+  StreamSubscription<camera_windows.FrameAvailabledEvent>? _frameSubscription;
 
   bool get isInitialized => _isInitialized;
   bool get hasCameras => _cameras?.isNotEmpty ?? false;
   bool get isPlatformSupported => _isPlatformSupported;
-  bool get supportsFrameStreaming => _isWindowsDesktop && _windowsCameraPlugin != null;
+  bool get supportsFrameStreaming => _isWindowsDesktop && Platform.isWindows;
   List<CameraDescription> get cameras => _cameras ?? [];
   
   CameraDescription? get frontCamera {
@@ -112,26 +112,41 @@ class CameraService {
     try {
       _logger.i('Initializing Windows desktop camera...');
       
-      // Try Windows-specific camera plugin first
-      _windowsCameraPlugin = CameraWindowsPlugin();
+      // Register Windows camera platform
+      camera_windows.CameraWindows.registerWith();
       
-      // Get available cameras using Windows plugin
+      // Get available cameras using standard API
       _cameras = await availableCameras();
-      _isInitialized = true;
-      _isPlatformSupported = true;
-      
-      _logger.i('Windows camera initialized. Found ${_cameras?.length ?? 0} cameras');
       
       if (_cameras?.isNotEmpty == true) {
+        // Create camera instance for Windows
+        final selectedCamera = _cameras!.first;
+        _windowsCameraId = await camera_platform.CameraPlatform.instance.createCamera(
+          selectedCamera,
+          ResolutionPreset.medium,
+          enableAudio: false,
+        );
+        
+        // Initialize the camera
+        await camera_platform.CameraPlatform.instance.initializeCamera(_windowsCameraId!);
+        
+        _isInitialized = true;
+        _isPlatformSupported = true;
+        
+        _logger.i('Windows camera initialized. Found ${_cameras?.length ?? 0} cameras');
+        
         for (final camera in _cameras!) {
           _logger.i('Windows camera found: ${camera.name} (${camera.lensDirection})');
         }
         _logger.i('Windows desktop camera with frame streaming support enabled');
+        
+        return true;
       } else {
         _logger.w('No Windows cameras detected');
+        _isInitialized = true;
+        _isPlatformSupported = true;
+        return false;
       }
-      
-      return _cameras?.isNotEmpty ?? false;
     } catch (e) {
       _logger.e('Windows camera initialization failed: $e');
       // Fallback to standard camera attempt
@@ -149,7 +164,7 @@ class CameraService {
   
   Future<bool> _tryStandardCameraFallback() async {
     _logger.i('Trying standard camera fallback...');
-    _windowsCameraPlugin = null;
+    _windowsCameraId = null;
     _isWindowsDesktop = false;
     return await _initializeStandardCamera();
   }
@@ -189,7 +204,7 @@ class CameraService {
   
   // Windows-specific frame streaming methods
   Future<bool> startFrameStreaming(CameraDescription camera, Function(Uint8List) onFrameAvailable) async {
-    if (!supportsFrameStreaming) {
+    if (!supportsFrameStreaming || _windowsCameraId == null) {
       _logger.w('Frame streaming not supported on this platform');
       return false;
     }
@@ -197,13 +212,11 @@ class CameraService {
     try {
       _logger.i('Starting Windows camera frame streaming for: ${camera.name}');
       
-      // Initialize camera controller for Windows
-      final controller = CameraController(camera, ResolutionPreset.medium);
-      await controller.initialize();
-      
-      // Set up frame streaming subscription
-      _frameSubscription = _windowsCameraPlugin!.startLiveDataStream().listen(
-        (FrameAvailabledEvent event) {
+      // Set up frame streaming subscription using camera_windows API
+      _frameSubscription = (camera_platform.CameraPlatform.instance as camera_windows.CameraWindows)
+          .onFrameAvailable(_windowsCameraId!)
+          .listen(
+        (camera_windows.FrameAvailabledEvent event) {
           _logger.d('Frame received: ${event.bytes.length} bytes');
           onFrameAvailable(event.bytes);
         },
@@ -230,6 +243,9 @@ class CameraService {
   
   void dispose() {
     stopFrameStreaming();
-    _windowsCameraPlugin = null;
+    if (_windowsCameraId != null) {
+      camera_platform.CameraPlatform.instance.dispose(_windowsCameraId!);
+      _windowsCameraId = null;
+    }
   }
 }
