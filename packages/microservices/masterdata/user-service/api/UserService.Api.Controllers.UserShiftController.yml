@@ -26,7 +26,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UserShiftController
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 8
+    startLine: 10
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -254,7 +254,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 15
+    startLine: 17
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -288,7 +288,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserShift
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 23
+    startLine: 25
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -365,7 +365,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AssignShiftToUser
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 48
+    startLine: 82
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -442,7 +442,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemoveShiftFromUser
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 77
+    startLine: 169
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -519,7 +519,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: MassAssignShiftToRole
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 106
+    startLine: 245
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -596,7 +596,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: MassRemoveUsersFromShiftByRole
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 124
+    startLine: 301
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -673,7 +673,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUsersAssignedToShift
     path: src/UserService.Api/Controllers/UserShiftController.cs
-    startLine: 142
+    startLine: 356
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers

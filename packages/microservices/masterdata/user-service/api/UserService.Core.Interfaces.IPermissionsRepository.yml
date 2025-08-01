@@ -7,8 +7,6 @@ items:
   children:
   - UserService.Core.Interfaces.IPermissionsRepository.AssignPermissionToRoleAsync(System.String,System.String)
   - UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync(System.String)
-  - UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-  - UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
   - UserService.Core.Interfaces.IPermissionsRepository.GetRolesForPermissionAsync(System.String)
   - UserService.Core.Interfaces.IPermissionsRepository.RemovePermissionFromRoleAsync(System.String,System.String)
   langs:
@@ -38,40 +36,6 @@ items:
   - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.Permission}.CreateAsync(UserService.Core.Entities.Permission)
   - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.Permission}.UpdateAsync(UserService.Core.Entities.Permission)
   - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.Permission}.DeleteAsync(System.String)
-- uid: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-  id: GetByNameAsync(System.String)
-  parent: UserService.Core.Interfaces.IPermissionsRepository
-  langs:
-  - csharp
-  - vb
-  name: GetByNameAsync(string)
-  nameWithType: IPermissionsRepository.GetByNameAsync(string)
-  fullName: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IPermissionsRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetByNameAsync
-    path: src/UserService.Core/Interfaces/IPermissionsRepository.cs
-    startLine: 7
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<Permission?> GetByNameAsync(string name)
-    parameters:
-    - id: name
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{UserService.Core.Entities.Permission}
-    content.vb: Function GetByNameAsync(name As String) As Task(Of Permission)
-  overload: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync*
-  nameWithType.vb: IPermissionsRepository.GetByNameAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(String)
-  name.vb: GetByNameAsync(String)
 - uid: UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync(System.String)
   commentId: M:UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync(System.String)
   id: DoesPermissionExistAsync(System.String)
@@ -106,40 +70,6 @@ items:
   nameWithType.vb: IPermissionsRepository.DoesPermissionExistAsync(String)
   fullName.vb: UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync(String)
   name.vb: DoesPermissionExistAsync(String)
-- uid: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
-  id: GetPermissionsForRoleAsync(System.String)
-  parent: UserService.Core.Interfaces.IPermissionsRepository
-  langs:
-  - csharp
-  - vb
-  name: GetPermissionsForRoleAsync(string)
-  nameWithType: IPermissionsRepository.GetPermissionsForRoleAsync(string)
-  fullName: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IPermissionsRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetPermissionsForRoleAsync
-    path: src/UserService.Core/Interfaces/IPermissionsRepository.cs
-    startLine: 13
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
-    parameters:
-    - id: roleId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.Permission}}
-    content.vb: Function GetPermissionsForRoleAsync(roleId As String) As Task(Of IEnumerable(Of Permission))
-  overload: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync*
-  nameWithType.vb: IPermissionsRepository.GetPermissionsForRoleAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(String)
-  name.vb: GetPermissionsForRoleAsync(String)
 - uid: UserService.Core.Interfaces.IPermissionsRepository.AssignPermissionToRoleAsync(System.String,System.String)
   commentId: M:UserService.Core.Interfaces.IPermissionsRepository.AssignPermissionToRoleAsync(System.String,System.String)
   id: AssignPermissionToRoleAsync(System.String,System.String)
@@ -621,12 +551,12 @@ references:
   - name: " "
   - name: T
   - name: )
-- uid: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync*
-  commentId: Overload:UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync
-  href: UserService.Core.Interfaces.IPermissionsRepository.html#UserService_Core_Interfaces_IPermissionsRepository_GetByNameAsync_System_String_
-  name: GetByNameAsync
-  nameWithType: IPermissionsRepository.GetByNameAsync
-  fullName: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync
+- uid: UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync*
+  commentId: Overload:UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync
+  href: UserService.Core.Interfaces.IPermissionsRepository.html#UserService_Core_Interfaces_IPermissionsRepository_DoesPermissionExistAsync_System_String_
+  name: DoesPermissionExistAsync
+  nameWithType: IPermissionsRepository.DoesPermissionExistAsync
+  fullName: UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync
 - uid: System.String
   commentId: T:System.String
   parent: System
@@ -638,26 +568,27 @@ references:
   nameWithType.vb: String
   fullName.vb: String
   name.vb: String
-- uid: System.Threading.Tasks.Task{UserService.Core.Entities.Permission}
-  commentId: T:System.Threading.Tasks.Task{UserService.Core.Entities.Permission}
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<Permission>
-  nameWithType: Task<Permission>
-  fullName: System.Threading.Tasks.Task<UserService.Core.Entities.Permission>
-  nameWithType.vb: Task(Of Permission)
-  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.Entities.Permission)
-  name.vb: Task(Of Permission)
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: UserService.Core.Entities.Permission
-    name: Permission
-    href: UserService.Core.Entities.Permission.html
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -667,9 +598,10 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: UserService.Core.Entities.Permission
-    name: Permission
-    href: UserService.Core.Entities.Permission.html
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
 - uid: System
   commentId: N:System
@@ -743,100 +675,6 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-- uid: UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync*
-  commentId: Overload:UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync
-  href: UserService.Core.Interfaces.IPermissionsRepository.html#UserService_Core_Interfaces_IPermissionsRepository_DoesPermissionExistAsync_System_String_
-  name: DoesPermissionExistAsync
-  nameWithType: IPermissionsRepository.DoesPermissionExistAsync
-  fullName: UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync
-- uid: System.Threading.Tasks.Task{System.Boolean}
-  commentId: T:System.Threading.Tasks.Task{System.Boolean}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<bool>
-  nameWithType: Task<bool>
-  fullName: System.Threading.Tasks.Task<bool>
-  nameWithType.vb: Task(Of Boolean)
-  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
-  name.vb: Task(Of Boolean)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Boolean
-    name: bool
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Boolean
-    name: Boolean
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: )
-- uid: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync*
-  commentId: Overload:UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync
-  href: UserService.Core.Interfaces.IPermissionsRepository.html#UserService_Core_Interfaces_IPermissionsRepository_GetPermissionsForRoleAsync_System_String_
-  name: GetPermissionsForRoleAsync
-  nameWithType: IPermissionsRepository.GetPermissionsForRoleAsync
-  fullName: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.Permission}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.Permission}}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable<Permission>>
-  nameWithType: Task<IEnumerable<Permission>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.Entities.Permission>>
-  nameWithType.vb: Task(Of IEnumerable(Of Permission))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.Entities.Permission))
-  name.vb: Task(Of IEnumerable(Of Permission))
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
-  - uid: UserService.Core.Entities.Permission
-    name: Permission
-    href: UserService.Core.Entities.Permission.html
-  - name: '>'
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.Entities.Permission
-    name: Permission
-    href: UserService.Core.Entities.Permission.html
-  - name: )
-  - name: )
 - uid: UserService.Core.Interfaces.IPermissionsRepository.AssignPermissionToRoleAsync*
   commentId: Overload:UserService.Core.Interfaces.IPermissionsRepository.AssignPermissionToRoleAsync
   href: UserService.Core.Interfaces.IPermissionsRepository.html#UserService_Core_Interfaces_IPermissionsRepository_AssignPermissionToRoleAsync_System_String_System_String_

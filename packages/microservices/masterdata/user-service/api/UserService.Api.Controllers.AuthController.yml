@@ -5,10 +5,11 @@ items:
   id: AuthController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.ITokenRepository,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService)
+  - UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)
   - UserService.Api.Controllers.AuthController.Login(UserService.Core.DTOs.Auth.LoginDto)
   - UserService.Api.Controllers.AuthController.Logout
   - UserService.Api.Controllers.AuthController.UpdatePassword(System.String,UserService.Core.DTOs.Auth.UpdatePasswordDto)
+  - UserService.Api.Controllers.AuthController.VerifyTwoFactor(UserService.Core.DTOs.Auth.TwoFactorRequestDto)
   langs:
   - csharp
   - vb
@@ -23,7 +24,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AuthController
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 14
+    startLine: 13
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -246,16 +247,16 @@ items:
     arguments:
     - type: System.String
       value: api/[controller]
-- uid: UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.ITokenRepository,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService)
-  commentId: M:UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.ITokenRepository,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService)
-  id: '#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.ITokenRepository,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService)'
+- uid: UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)
+  commentId: M:UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)
+  id: '#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)'
   parent: UserService.Api.Controllers.AuthController
   langs:
   - csharp
   - vb
-  name: AuthController(ITokenService, IUserService, IUserRepository, ITokenRepository, IShiftService, ILogger<AuthController>, IMapper, IUserStatusService)
-  nameWithType: AuthController.AuthController(ITokenService, IUserService, IUserRepository, ITokenRepository, IShiftService, ILogger<AuthController>, IMapper, IUserStatusService)
-  fullName: UserService.Api.Controllers.AuthController.AuthController(UserService.Core.Interfaces.ITokenService, UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.ITokenRepository, UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.AuthController>, AutoMapper.IMapper, UserService.Core.Interfaces.IUserStatusService)
+  name: AuthController(ITokenService, IUserService, IShiftService, ILogger<AuthController>, IMapper, IUserStatusService, ITwoFactorService)
+  nameWithType: AuthController.AuthController(ITokenService, IUserService, IShiftService, ILogger<AuthController>, IMapper, IUserStatusService, ITwoFactorService)
+  fullName: UserService.Api.Controllers.AuthController.AuthController(UserService.Core.Interfaces.ITokenService, UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.AuthController>, AutoMapper.IMapper, UserService.Core.Interfaces.IUserStatusService, UserService.Core.Interfaces.ITwoFactorService)
   type: Constructor
   source:
     remote:
@@ -264,21 +265,17 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 27
+    startLine: 25
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
   syntax:
-    content: public AuthController(ITokenService tokenService, IUserService userService, IUserRepository userRepository, ITokenRepository tokenRepository, IShiftService shiftService, ILogger<AuthController> logger, IMapper mapper, IUserStatusService userStatusService)
+    content: public AuthController(ITokenService tokenService, IUserService userService, IShiftService shiftService, ILogger<AuthController> logger, IMapper mapper, IUserStatusService userStatusService, ITwoFactorService twoFactorService)
     parameters:
     - id: tokenService
       type: UserService.Core.Interfaces.ITokenService
     - id: userService
       type: UserService.Core.Interfaces.IUserService
-    - id: userRepository
-      type: UserService.Core.Interfaces.IUserRepository
-    - id: tokenRepository
-      type: UserService.Core.Interfaces.ITokenRepository
     - id: shiftService
       type: UserService.Core.Interfaces.IShiftService
     - id: logger
@@ -287,11 +284,13 @@ items:
       type: AutoMapper.IMapper
     - id: userStatusService
       type: UserService.Core.Interfaces.IUserStatusService
-    content.vb: Public Sub New(tokenService As ITokenService, userService As IUserService, userRepository As IUserRepository, tokenRepository As ITokenRepository, shiftService As IShiftService, logger As ILogger(Of AuthController), mapper As IMapper, userStatusService As IUserStatusService)
+    - id: twoFactorService
+      type: UserService.Core.Interfaces.ITwoFactorService
+    content.vb: Public Sub New(tokenService As ITokenService, userService As IUserService, shiftService As IShiftService, logger As ILogger(Of AuthController), mapper As IMapper, userStatusService As IUserStatusService, twoFactorService As ITwoFactorService)
   overload: UserService.Api.Controllers.AuthController.#ctor*
-  nameWithType.vb: AuthController.New(ITokenService, IUserService, IUserRepository, ITokenRepository, IShiftService, ILogger(Of AuthController), IMapper, IUserStatusService)
-  fullName.vb: UserService.Api.Controllers.AuthController.New(UserService.Core.Interfaces.ITokenService, UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.ITokenRepository, UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.AuthController), AutoMapper.IMapper, UserService.Core.Interfaces.IUserStatusService)
-  name.vb: New(ITokenService, IUserService, IUserRepository, ITokenRepository, IShiftService, ILogger(Of AuthController), IMapper, IUserStatusService)
+  nameWithType.vb: AuthController.New(ITokenService, IUserService, IShiftService, ILogger(Of AuthController), IMapper, IUserStatusService, ITwoFactorService)
+  fullName.vb: UserService.Api.Controllers.AuthController.New(UserService.Core.Interfaces.ITokenService, UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.AuthController), AutoMapper.IMapper, UserService.Core.Interfaces.IUserStatusService, UserService.Core.Interfaces.ITwoFactorService)
+  name.vb: New(ITokenService, IUserService, IShiftService, ILogger(Of AuthController), IMapper, IUserStatusService, ITwoFactorService)
 - uid: UserService.Api.Controllers.AuthController.Login(UserService.Core.DTOs.Auth.LoginDto)
   commentId: M:UserService.Api.Controllers.AuthController.Login(UserService.Core.DTOs.Auth.LoginDto)
   id: Login(UserService.Core.DTOs.Auth.LoginDto)
@@ -310,7 +309,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Login
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 47
+    startLine: 43
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -339,6 +338,53 @@ items:
     arguments:
     - type: System.String
       value: login
+- uid: UserService.Api.Controllers.AuthController.VerifyTwoFactor(UserService.Core.DTOs.Auth.TwoFactorRequestDto)
+  commentId: M:UserService.Api.Controllers.AuthController.VerifyTwoFactor(UserService.Core.DTOs.Auth.TwoFactorRequestDto)
+  id: VerifyTwoFactor(UserService.Core.DTOs.Auth.TwoFactorRequestDto)
+  parent: UserService.Api.Controllers.AuthController
+  langs:
+  - csharp
+  - vb
+  name: VerifyTwoFactor(TwoFactorRequestDto)
+  nameWithType: AuthController.VerifyTwoFactor(TwoFactorRequestDto)
+  fullName: UserService.Api.Controllers.AuthController.VerifyTwoFactor(UserService.Core.DTOs.Auth.TwoFactorRequestDto)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/AuthController.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: VerifyTwoFactor
+    path: src/UserService.Api/Controllers/AuthController.cs
+    startLine: 139
+  assemblies:
+  - UserService.Api
+  namespace: UserService.Api.Controllers
+  syntax:
+    content: >-
+      [HttpPost("verify-2fa")]
+
+      public Task<IActionResult> VerifyTwoFactor(TwoFactorRequestDto request)
+    parameters:
+    - id: request
+      type: UserService.Core.DTOs.Auth.TwoFactorRequestDto
+      attributes:
+      - type: Microsoft.AspNetCore.Mvc.FromBodyAttribute
+        ctor: Microsoft.AspNetCore.Mvc.FromBodyAttribute.#ctor
+        arguments: []
+    return:
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
+    content.vb: >-
+      <HttpPost("verify-2fa")>
+
+      Public Function VerifyTwoFactor(request As TwoFactorRequestDto) As Task(Of IActionResult)
+  overload: UserService.Api.Controllers.AuthController.VerifyTwoFactor*
+  attributes:
+  - type: Microsoft.AspNetCore.Mvc.HttpPostAttribute
+    ctor: Microsoft.AspNetCore.Mvc.HttpPostAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: verify-2fa
 - uid: UserService.Api.Controllers.AuthController.UpdatePassword(System.String,UserService.Core.DTOs.Auth.UpdatePasswordDto)
   commentId: M:UserService.Api.Controllers.AuthController.UpdatePassword(System.String,UserService.Core.DTOs.Auth.UpdatePasswordDto)
   id: UpdatePassword(System.String,UserService.Core.DTOs.Auth.UpdatePasswordDto)
@@ -357,7 +403,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UpdatePassword
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 106
+    startLine: 219
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -416,7 +462,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Logout
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 152
+    startLine: 297
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -9957,7 +10003,7 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.AuthController.#ctor*
   commentId: Overload:UserService.Api.Controllers.AuthController.#ctor
-  href: UserService.Api.Controllers.AuthController.html#UserService_Api_Controllers_AuthController__ctor_UserService_Core_Interfaces_ITokenService_UserService_Core_Interfaces_IUserService_UserService_Core_Interfaces_IUserRepository_UserService_Core_Interfaces_ITokenRepository_UserService_Core_Interfaces_IShiftService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_AuthController__AutoMapper_IMapper_UserService_Core_Interfaces_IUserStatusService_
+  href: UserService.Api.Controllers.AuthController.html#UserService_Api_Controllers_AuthController__ctor_UserService_Core_Interfaces_ITokenService_UserService_Core_Interfaces_IUserService_UserService_Core_Interfaces_IShiftService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_AuthController__AutoMapper_IMapper_UserService_Core_Interfaces_IUserStatusService_UserService_Core_Interfaces_ITwoFactorService_
   name: AuthController
   nameWithType: AuthController.AuthController
   fullName: UserService.Api.Controllers.AuthController.AuthController
@@ -9978,20 +10024,6 @@ references:
   name: IUserService
   nameWithType: IUserService
   fullName: UserService.Core.Interfaces.IUserService
-- uid: UserService.Core.Interfaces.IUserRepository
-  commentId: T:UserService.Core.Interfaces.IUserRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserRepository.html
-  name: IUserRepository
-  nameWithType: IUserRepository
-  fullName: UserService.Core.Interfaces.IUserRepository
-- uid: UserService.Core.Interfaces.ITokenRepository
-  commentId: T:UserService.Core.Interfaces.ITokenRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ITokenRepository.html
-  name: ITokenRepository
-  nameWithType: ITokenRepository
-  fullName: UserService.Core.Interfaces.ITokenRepository
 - uid: UserService.Core.Interfaces.IShiftService
   commentId: T:UserService.Core.Interfaces.IShiftService
   parent: UserService.Core.Interfaces
@@ -10046,6 +10078,13 @@ references:
   name: IUserStatusService
   nameWithType: IUserStatusService
   fullName: UserService.Core.Interfaces.IUserStatusService
+- uid: UserService.Core.Interfaces.ITwoFactorService
+  commentId: T:UserService.Core.Interfaces.ITwoFactorService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ITwoFactorService.html
+  name: ITwoFactorService
+  nameWithType: ITwoFactorService
+  fullName: UserService.Core.Interfaces.ITwoFactorService
 - uid: UserService.Core.Interfaces
   commentId: N:UserService.Core.Interfaces
   href: UserService.html
@@ -10298,6 +10337,19 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Api.Controllers.AuthController.VerifyTwoFactor*
+  commentId: Overload:UserService.Api.Controllers.AuthController.VerifyTwoFactor
+  href: UserService.Api.Controllers.AuthController.html#UserService_Api_Controllers_AuthController_VerifyTwoFactor_UserService_Core_DTOs_Auth_TwoFactorRequestDto_
+  name: VerifyTwoFactor
+  nameWithType: AuthController.VerifyTwoFactor
+  fullName: UserService.Api.Controllers.AuthController.VerifyTwoFactor
+- uid: UserService.Core.DTOs.Auth.TwoFactorRequestDto
+  commentId: T:UserService.Core.DTOs.Auth.TwoFactorRequestDto
+  parent: UserService.Core.DTOs.Auth
+  href: UserService.Core.DTOs.Auth.TwoFactorRequestDto.html
+  name: TwoFactorRequestDto
+  nameWithType: TwoFactorRequestDto
+  fullName: UserService.Core.DTOs.Auth.TwoFactorRequestDto
 - uid: UserService.Api.Controllers.AuthController.UpdatePassword*
   commentId: Overload:UserService.Api.Controllers.AuthController.UpdatePassword
   href: UserService.Api.Controllers.AuthController.html#UserService_Api_Controllers_AuthController_UpdatePassword_System_String_UserService_Core_DTOs_Auth_UpdatePasswordDto_

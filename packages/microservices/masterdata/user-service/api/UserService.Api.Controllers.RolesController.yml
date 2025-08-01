@@ -27,7 +27,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RolesController
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 15
+    startLine: 8
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -266,7 +266,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 15
+    startLine: 8
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -302,7 +302,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetAll
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 29
+    startLine: 22
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -389,7 +389,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetById
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 49
+    startLine: 42
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -484,7 +484,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Create
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 79
+    startLine: 72
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -587,7 +587,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Update
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 112
+    startLine: 142
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -704,7 +704,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Delete
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 147
+    startLine: 219
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -815,7 +815,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AddPermissionToRole
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 185
+    startLine: 281
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -928,7 +928,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemovePermissionFromRole
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 220
+    startLine: 326
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers

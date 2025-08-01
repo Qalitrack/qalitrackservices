@@ -4,6 +4,7 @@ items:
   commentId: N:UserService.Core.DTOs.Report
   id: UserService.Core.DTOs.Report
   children:
+  - UserService.Core.DTOs.Report.AssignedUserDto
   - UserService.Core.DTOs.Report.ShiftReportDto
   - UserService.Core.DTOs.Report.ShiftReportResponse
   - UserService.Core.DTOs.Report.UserReportDto
@@ -19,6 +20,12 @@ items:
   assemblies:
   - UserService.Core
 references:
+- uid: UserService.Core.DTOs.Report.AssignedUserDto
+  commentId: T:UserService.Core.DTOs.Report.AssignedUserDto
+  href: UserService.Core.DTOs.Report.AssignedUserDto.html
+  name: AssignedUserDto
+  nameWithType: AssignedUserDto
+  fullName: UserService.Core.DTOs.Report.AssignedUserDto
 - uid: UserService.Core.DTOs.Report.ShiftReportDto
   commentId: T:UserService.Core.DTOs.Report.ShiftReportDto
   parent: UserService.Core.DTOs.Report
@@ -28,7 +35,6 @@ references:
   fullName: UserService.Core.DTOs.Report.ShiftReportDto
 - uid: UserService.Core.DTOs.Report.ShiftReportResponse
   commentId: T:UserService.Core.DTOs.Report.ShiftReportResponse
-  parent: UserService.Core.DTOs.Report
   href: UserService.Core.DTOs.Report.ShiftReportResponse.html
   name: ShiftReportResponse
   nameWithType: ShiftReportResponse
@@ -48,7 +54,6 @@ references:
   fullName: UserService.Core.DTOs.Report.UserReportDto
 - uid: UserService.Core.DTOs.Report.UserReportResponse
   commentId: T:UserService.Core.DTOs.Report.UserReportResponse
-  parent: UserService.Core.DTOs.Report
   href: UserService.Core.DTOs.Report.UserReportResponse.html
   name: UserReportResponse
   nameWithType: UserReportResponse

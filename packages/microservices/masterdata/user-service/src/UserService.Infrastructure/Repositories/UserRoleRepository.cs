@@ -42,47 +42,7 @@ namespace UserService.Infrastructure.Repositories
             }
         }
 
-        /*public async Task<UserRole?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                throw new ArgumentException("ID cannot be null or whitespace", nameof(id));
-            }
-
-            try
-            {
-                return await _context.UserRoles
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(ur => ur.Id == id, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while retrieving user role with ID: {Id}", id);
-                throw;
-            }
-        }*/
-
-        // public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
-        // {
-        //     if (string.IsNullOrWhiteSpace(id))
-        //     {
-        //         throw new ArgumentException("ID cannot be null or whitespace", nameof(id));
-        //     }
-        //
-        //     try
-        //     {
-        //         var rowsAffected = await _context.UserRoles
-        //             .Where(ur => ur.Id == id)
-        //             .ExecuteDeleteAsync(cancellationToken);
-        //         
-        //         return rowsAffected > 0;
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError(ex, "Error occurred while deleting user role with ID: {Id}", id);
-        //         throw;
-        //     }
-        // }
+       
 
         public async Task<bool> AssignRoleToUserAsync(
             string userId, 

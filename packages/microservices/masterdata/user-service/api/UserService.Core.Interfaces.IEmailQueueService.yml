@@ -1,0 +1,244 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.IEmailQueueService
+  commentId: T:UserService.Core.Interfaces.IEmailQueueService
+  id: IEmailQueueService
+  parent: UserService.Core.Interfaces
+  children:
+  - UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  - UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  langs:
+  - csharp
+  - vb
+  name: IEmailQueueService
+  nameWithType: IEmailQueueService
+  fullName: UserService.Core.Interfaces.IEmailQueueService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IEmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IEmailQueueService
+    path: src/UserService.Core/Interfaces/IEmailQueueService.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: public interface IEmailQueueService
+    content.vb: Public Interface IEmailQueueService
+- uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  commentId: M:UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  id: EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  parent: UserService.Core.Interfaces.IEmailQueueService
+  langs:
+  - csharp
+  - vb
+  name: EnqueueEmailAsync(EmailRequest)
+  nameWithType: IEmailQueueService.EnqueueEmailAsync(EmailRequest)
+  fullName: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IEmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: EnqueueEmailAsync
+    path: src/UserService.Core/Interfaces/IEmailQueueService.cs
+    startLine: 6
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task EnqueueEmailAsync(EmailRequest emailRequest)
+    parameters:
+    - id: emailRequest
+      type: UserService.Core.DTOs.Common.EmailRequest
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function EnqueueEmailAsync(emailRequest As EmailRequest) As Task
+  overload: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync*
+- uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  id: EnqueueEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Core.Interfaces.IEmailQueueService
+  langs:
+  - csharp
+  - vb
+  name: EnqueueEmailAsync(string, string, string)
+  nameWithType: IEmailQueueService.EnqueueEmailAsync(string, string, string)
+  fullName: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(string, string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IEmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: EnqueueEmailAsync
+    path: src/UserService.Core/Interfaces/IEmailQueueService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task EnqueueEmailAsync(string to, string subject, string body)
+    parameters:
+    - id: to
+      type: System.String
+    - id: subject
+      type: System.String
+    - id: body
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function EnqueueEmailAsync([to] As String, subject As String, body As String) As Task
+  overload: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync*
+  nameWithType.vb: IEmailQueueService.EnqueueEmailAsync(String, String, String)
+  fullName.vb: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(String, String, String)
+  name.vb: EnqueueEmailAsync(String, String, String)
+references:
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync*
+  commentId: Overload:UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync
+  href: UserService.Core.Interfaces.IEmailQueueService.html#UserService_Core_Interfaces_IEmailQueueService_EnqueueEmailAsync_UserService_Core_DTOs_Common_EmailRequest_
+  name: EnqueueEmailAsync
+  nameWithType: IEmailQueueService.EnqueueEmailAsync
+  fullName: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync
+- uid: UserService.Core.DTOs.Common.EmailRequest
+  commentId: T:UserService.Core.DTOs.Common.EmailRequest
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.EmailRequest.html
+  name: EmailRequest
+  nameWithType: EmailRequest
+  fullName: UserService.Core.DTOs.Common.EmailRequest
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System

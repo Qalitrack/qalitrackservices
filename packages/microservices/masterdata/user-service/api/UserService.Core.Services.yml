@@ -4,17 +4,15 @@ items:
   commentId: N:UserService.Core.Services
   id: UserService.Core.Services
   children:
-  - UserService.Core.Services.BackupHealthCheck
-  - UserService.Core.Services.BackupMonitor
-  - UserService.Core.Services.BackupNotificationService
-  - UserService.Core.Services.BackupScheduler
-  - UserService.Core.Services.BackupVerificationService
-  - UserService.Core.Services.DatabaseBackupService
+  - UserService.Core.Services.CachedUserService
+  - UserService.Core.Services.IJwtConfigurationService
+  - UserService.Core.Services.JwtConfigurationService
   - UserService.Core.Services.PermissionsService
   - UserService.Core.Services.RestoreService
   - UserService.Core.Services.RoleService
   - UserService.Core.Services.ShiftService
   - UserService.Core.Services.TokenService
+  - UserService.Core.Services.TwoFactorService
   - UserService.Core.Services.UserRoleService
   - UserService.Core.Services.UserService
   - UserService.Core.Services.UserStatusService
@@ -29,42 +27,25 @@ items:
   assemblies:
   - UserService.Core
 references:
-- uid: UserService.Core.Services.BackupHealthCheck
-  commentId: T:UserService.Core.Services.BackupHealthCheck
-  href: UserService.Core.Services.BackupHealthCheck.html
-  name: BackupHealthCheck
-  nameWithType: BackupHealthCheck
-  fullName: UserService.Core.Services.BackupHealthCheck
-- uid: UserService.Core.Services.BackupMonitor
-  commentId: T:UserService.Core.Services.BackupMonitor
-  href: UserService.Core.Services.BackupMonitor.html
-  name: BackupMonitor
-  nameWithType: BackupMonitor
-  fullName: UserService.Core.Services.BackupMonitor
-- uid: UserService.Core.Services.BackupNotificationService
-  commentId: T:UserService.Core.Services.BackupNotificationService
-  href: UserService.Core.Services.BackupNotificationService.html
-  name: BackupNotificationService
-  nameWithType: BackupNotificationService
-  fullName: UserService.Core.Services.BackupNotificationService
-- uid: UserService.Core.Services.BackupScheduler
-  commentId: T:UserService.Core.Services.BackupScheduler
-  href: UserService.Core.Services.BackupScheduler.html
-  name: BackupScheduler
-  nameWithType: BackupScheduler
-  fullName: UserService.Core.Services.BackupScheduler
-- uid: UserService.Core.Services.BackupVerificationService
-  commentId: T:UserService.Core.Services.BackupVerificationService
-  href: UserService.Core.Services.BackupVerificationService.html
-  name: BackupVerificationService
-  nameWithType: BackupVerificationService
-  fullName: UserService.Core.Services.BackupVerificationService
-- uid: UserService.Core.Services.DatabaseBackupService
-  commentId: T:UserService.Core.Services.DatabaseBackupService
-  href: UserService.Core.Services.DatabaseBackupService.html
-  name: DatabaseBackupService
-  nameWithType: DatabaseBackupService
-  fullName: UserService.Core.Services.DatabaseBackupService
+- uid: UserService.Core.Services.CachedUserService
+  commentId: T:UserService.Core.Services.CachedUserService
+  href: UserService.Core.Services.CachedUserService.html
+  name: CachedUserService
+  nameWithType: CachedUserService
+  fullName: UserService.Core.Services.CachedUserService
+- uid: UserService.Core.Services.IJwtConfigurationService
+  commentId: T:UserService.Core.Services.IJwtConfigurationService
+  parent: UserService.Core.Services
+  href: UserService.Core.Services.IJwtConfigurationService.html
+  name: IJwtConfigurationService
+  nameWithType: IJwtConfigurationService
+  fullName: UserService.Core.Services.IJwtConfigurationService
+- uid: UserService.Core.Services.JwtConfigurationService
+  commentId: T:UserService.Core.Services.JwtConfigurationService
+  href: UserService.Core.Services.JwtConfigurationService.html
+  name: JwtConfigurationService
+  nameWithType: JwtConfigurationService
+  fullName: UserService.Core.Services.JwtConfigurationService
 - uid: UserService.Core.Services.PermissionsService
   commentId: T:UserService.Core.Services.PermissionsService
   href: UserService.Core.Services.PermissionsService.html
@@ -73,7 +54,6 @@ references:
   fullName: UserService.Core.Services.PermissionsService
 - uid: UserService.Core.Services.RestoreService
   commentId: T:UserService.Core.Services.RestoreService
-  parent: UserService.Core.Services
   href: UserService.Core.Services.RestoreService.html
   name: RestoreService
   nameWithType: RestoreService
@@ -96,6 +76,12 @@ references:
   name: TokenService
   nameWithType: TokenService
   fullName: UserService.Core.Services.TokenService
+- uid: UserService.Core.Services.TwoFactorService
+  commentId: T:UserService.Core.Services.TwoFactorService
+  href: UserService.Core.Services.TwoFactorService.html
+  name: TwoFactorService
+  nameWithType: TwoFactorService
+  fullName: UserService.Core.Services.TwoFactorService
 - uid: UserService.Core.Services.UserRoleService
   commentId: T:UserService.Core.Services.UserRoleService
   href: UserService.Core.Services.UserRoleService.html

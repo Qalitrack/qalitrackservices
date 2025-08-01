@@ -592,7 +592,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetRolesForPermission
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 131
+    startLine: 141
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers

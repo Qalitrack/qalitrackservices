@@ -434,7 +434,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Infrastructure/Repositories/UserShiftRepository.cs
-    startLine: 101
+    startLine: 113
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -471,7 +471,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Infrastructure/Repositories/UserShiftRepository.cs
-    startLine: 113
+    startLine: 125
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -510,7 +510,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AssignUserToShiftAsync
     path: src/UserService.Infrastructure/Repositories/UserShiftRepository.cs
-    startLine: 126
+    startLine: 139
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -546,7 +546,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemoveUserFromShiftAsync
     path: src/UserService.Infrastructure/Repositories/UserShiftRepository.cs
-    startLine: 147
+    startLine: 160
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -582,7 +582,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetShiftsForUserAsync
     path: src/UserService.Infrastructure/Repositories/UserShiftRepository.cs
-    startLine: 160
+    startLine: 174
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories

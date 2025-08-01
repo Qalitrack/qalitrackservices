@@ -98,7 +98,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: HandleRequirementAsync
     path: src/UserService.Api/Authorization/PermissionAuthorizationHandler.cs
-    startLine: 21
+    startLine: 22
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Authorization

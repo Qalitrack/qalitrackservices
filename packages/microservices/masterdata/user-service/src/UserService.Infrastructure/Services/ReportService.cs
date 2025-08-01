@@ -38,14 +38,12 @@ namespace UserService.Infrastructure.Services
                     .ThenInclude(us => us.User)
                     .AsNoTracking();
 
-                // Apply search filter
                 if (!string.IsNullOrEmpty(parameters.Search))
                 {
                     query = query.Where(s => s.Name.Contains(parameters.Search) || 
                                            s.Description.Contains(parameters.Search));
                 }
 
-                // Apply sorting
                 query = parameters.SortBy?.ToLower() switch
                 {
                     "name" => parameters.SortDescending ? query.OrderByDescending(s => s.Name) : query.OrderBy(s => s.Name),
@@ -69,7 +67,7 @@ namespace UserService.Infrastructure.Services
                     Description = s.Description,
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
-                    Mode = s.Mode.ToString(),
+                    Mode = s.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected interpretation
                     IsActive = s.IsActive,
                     AssignedUsersCount = s.UserShifts?.Count ?? 0,
                     LastModified = s.UpdatedAt > s.CreatedAt ? s.UpdatedAt : s.CreatedAt,
@@ -109,7 +107,6 @@ namespace UserService.Infrastructure.Services
                     .ThenInclude(us => us.Shift)
                     .AsNoTracking();
 
-                // Apply search filter
                 if (!string.IsNullOrEmpty(parameters.Search))
                 {
                     query = query.Where(u => u.Email.Contains(parameters.Search) || 
@@ -117,7 +114,6 @@ namespace UserService.Infrastructure.Services
                                            u.LastName.Contains(parameters.Search));
                 }
 
-                // Apply sorting
                 query = parameters.SortBy?.ToLower() switch
                 {
                     "email" => parameters.SortDescending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
@@ -146,7 +142,7 @@ namespace UserService.Infrastructure.Services
                                                 {
                                                     ShiftId = us.ShiftId,
                                                     ShiftName = us.Shift?.Name ?? "Unknown",
-                                                    ShiftMode = us.Shift?.Mode.ToString() ?? "Unknown",
+                                                    ShiftMode = us.Shift?.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected
                                                     AssignedAt = us.AssignedAt,
                                                     IsActive = us.Shift?.IsActive ?? false
                                                 }).ToList() ?? new List<UserShiftInfoDto>()
@@ -190,7 +186,7 @@ namespace UserService.Infrastructure.Services
                     Description = shift.Description,
                     StartTime = shift.StartTime,
                     EndTime = shift.EndTime,
-                    Mode = shift.Mode.ToString(),
+                    Mode = shift.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected
                     IsActive = shift.IsActive,
                     AssignedUsersCount = shift.UserShifts?.Count ?? 0,
                     LastModified = shift.UpdatedAt > shift.CreatedAt ? shift.UpdatedAt : shift.CreatedAt,
@@ -240,7 +236,7 @@ namespace UserService.Infrastructure.Services
                     {
                         ShiftId = us.ShiftId,
                         ShiftName = us.Shift?.Name ?? "Unknown",
-                        ShiftMode = us.Shift?.Mode.ToString() ?? "Unknown",
+                        ShiftMode = us.Shift?.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected
                         AssignedAt = us.AssignedAt,
                         IsActive = us.Shift?.IsActive ?? false
                     }).ToList()

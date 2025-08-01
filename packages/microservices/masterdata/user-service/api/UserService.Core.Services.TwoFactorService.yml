@@ -1,0 +1,1195 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Services.TwoFactorService
+  commentId: T:UserService.Core.Services.TwoFactorService
+  id: TwoFactorService
+  parent: UserService.Core.Services
+  children:
+  - UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
+  - UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  - UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  - UserService.Core.Services.TwoFactorService.GetAttemptCountAsync(System.String)
+  - UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync(System.String)
+  - UserService.Core.Services.TwoFactorService.IsSessionValidAsync(System.String)
+  - UserService.Core.Services.TwoFactorService.VerifyCodeAsync(System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: TwoFactorService
+  nameWithType: TwoFactorService
+  fullName: UserService.Core.Services.TwoFactorService
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: TwoFactorService
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  syntax:
+    content: 'public class TwoFactorService : ITwoFactorService'
+    content.vb: Public Class TwoFactorService Implements ITwoFactorService
+  inheritance:
+  - System.Object
+  implements:
+  - UserService.Core.Interfaces.ITwoFactorService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
+  commentId: M:UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
+  id: '#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})'
+  parent: UserService.Core.Services.TwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: TwoFactorService(ICacheService, IEmailQueueService, ILogger<TwoFactorService>)
+  nameWithType: TwoFactorService.TwoFactorService(ICacheService, IEmailQueueService, ILogger<TwoFactorService>)
+  fullName: UserService.Core.Services.TwoFactorService.TwoFactorService(UserService.Core.Interfaces.ICacheService, UserService.Core.Interfaces.IEmailQueueService, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.TwoFactorService>)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 17
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  syntax:
+    content: public TwoFactorService(ICacheService cacheService, IEmailQueueService emailQueueService, ILogger<TwoFactorService> logger)
+    parameters:
+    - id: cacheService
+      type: UserService.Core.Interfaces.ICacheService
+    - id: emailQueueService
+      type: UserService.Core.Interfaces.IEmailQueueService
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService}
+    content.vb: Public Sub New(cacheService As ICacheService, emailQueueService As IEmailQueueService, logger As ILogger(Of TwoFactorService))
+  overload: UserService.Core.Services.TwoFactorService.#ctor*
+  nameWithType.vb: TwoFactorService.New(ICacheService, IEmailQueueService, ILogger(Of TwoFactorService))
+  fullName.vb: UserService.Core.Services.TwoFactorService.New(UserService.Core.Interfaces.ICacheService, UserService.Core.Interfaces.IEmailQueueService, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.TwoFactorService))
+  name.vb: New(ICacheService, IEmailQueueService, ILogger(Of TwoFactorService))
+- uid: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  id: GenerateAndSendCodeAsync(System.String,System.String)
+  parent: UserService.Core.Services.TwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: GenerateAndSendCodeAsync(string, string)
+  nameWithType: TwoFactorService.GenerateAndSendCodeAsync(string, string)
+  fullName: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GenerateAndSendCodeAsync
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 27
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<ServiceResult> GenerateAndSendCodeAsync(string userId, string email)
+    parameters:
+    - id: userId
+      type: System.String
+    - id: email
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+    content.vb: Public Function GenerateAndSendCodeAsync(userId As String, email As String) As Task(Of ServiceResult)
+  overload: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync*
+  implements:
+  - UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  nameWithType.vb: TwoFactorService.GenerateAndSendCodeAsync(String, String)
+  fullName.vb: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(String, String)
+  name.vb: GenerateAndSendCodeAsync(String, String)
+- uid: UserService.Core.Services.TwoFactorService.VerifyCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Services.TwoFactorService.VerifyCodeAsync(System.String,System.String)
+  id: VerifyCodeAsync(System.String,System.String)
+  parent: UserService.Core.Services.TwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: VerifyCodeAsync(string, string)
+  nameWithType: TwoFactorService.VerifyCodeAsync(string, string)
+  fullName: UserService.Core.Services.TwoFactorService.VerifyCodeAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: VerifyCodeAsync
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 97
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<ServiceResult> VerifyCodeAsync(string sessionId, string code)
+    parameters:
+    - id: sessionId
+      type: System.String
+    - id: code
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+    content.vb: Public Function VerifyCodeAsync(sessionId As String, code As String) As Task(Of ServiceResult)
+  overload: UserService.Core.Services.TwoFactorService.VerifyCodeAsync*
+  implements:
+  - UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  nameWithType.vb: TwoFactorService.VerifyCodeAsync(String, String)
+  fullName.vb: UserService.Core.Services.TwoFactorService.VerifyCodeAsync(String, String)
+  name.vb: VerifyCodeAsync(String, String)
+- uid: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  commentId: M:UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  id: CreateTwoFactorSessionAsync(System.String)
+  parent: UserService.Core.Services.TwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: CreateTwoFactorSessionAsync(string)
+  nameWithType: TwoFactorService.CreateTwoFactorSessionAsync(string)
+  fullName: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: CreateTwoFactorSessionAsync
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 186
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<string> CreateTwoFactorSessionAsync(string userId)
+    parameters:
+    - id: userId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.String}
+    content.vb: Public Function CreateTwoFactorSessionAsync(userId As String) As Task(Of String)
+  overload: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync*
+  implements:
+  - UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  nameWithType.vb: TwoFactorService.CreateTwoFactorSessionAsync(String)
+  fullName.vb: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync(String)
+  name.vb: CreateTwoFactorSessionAsync(String)
+- uid: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync(System.String)
+  commentId: M:UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync(System.String)
+  id: GetUserIdFromSessionAsync(System.String)
+  parent: UserService.Core.Services.TwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: GetUserIdFromSessionAsync(string)
+  nameWithType: TwoFactorService.GetUserIdFromSessionAsync(string)
+  fullName: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetUserIdFromSessionAsync
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 199
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<string?> GetUserIdFromSessionAsync(string sessionId)
+    parameters:
+    - id: sessionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.String}
+    content.vb: Public Function GetUserIdFromSessionAsync(sessionId As String) As Task(Of String)
+  overload: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync*
+  implements:
+  - UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  nameWithType.vb: TwoFactorService.GetUserIdFromSessionAsync(String)
+  fullName.vb: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync(String)
+  name.vb: GetUserIdFromSessionAsync(String)
+- uid: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync(System.String)
+  commentId: M:UserService.Core.Services.TwoFactorService.GetAttemptCountAsync(System.String)
+  id: GetAttemptCountAsync(System.String)
+  parent: UserService.Core.Services.TwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: GetAttemptCountAsync(string)
+  nameWithType: TwoFactorService.GetAttemptCountAsync(string)
+  fullName: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetAttemptCountAsync
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 205
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<int> GetAttemptCountAsync(string userId)
+    parameters:
+    - id: userId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+    content.vb: Public Function GetAttemptCountAsync(userId As String) As Task(Of Integer)
+  overload: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync*
+  implements:
+  - UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+  nameWithType.vb: TwoFactorService.GetAttemptCountAsync(String)
+  fullName.vb: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync(String)
+  name.vb: GetAttemptCountAsync(String)
+- uid: UserService.Core.Services.TwoFactorService.IsSessionValidAsync(System.String)
+  commentId: M:UserService.Core.Services.TwoFactorService.IsSessionValidAsync(System.String)
+  id: IsSessionValidAsync(System.String)
+  parent: UserService.Core.Services.TwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: IsSessionValidAsync(string)
+  nameWithType: TwoFactorService.IsSessionValidAsync(string)
+  fullName: UserService.Core.Services.TwoFactorService.IsSessionValidAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: IsSessionValidAsync
+    path: src/UserService.Core/Services/TwoFactorService.cs
+    startLine: 212
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<bool> IsSessionValidAsync(string sessionId)
+    parameters:
+    - id: sessionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function IsSessionValidAsync(sessionId As String) As Task(Of Boolean)
+  overload: UserService.Core.Services.TwoFactorService.IsSessionValidAsync*
+  implements:
+  - UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+  nameWithType.vb: TwoFactorService.IsSessionValidAsync(String)
+  fullName.vb: UserService.Core.Services.TwoFactorService.IsSessionValidAsync(String)
+  name.vb: IsSessionValidAsync(String)
+references:
+- uid: UserService.Core.Services
+  commentId: N:UserService.Core.Services
+  href: UserService.html
+  name: UserService.Core.Services
+  nameWithType: UserService.Core.Services
+  fullName: UserService.Core.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Services
+    name: Services
+    href: UserService.Core.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.Interfaces.ITwoFactorService
+  commentId: T:UserService.Core.Interfaces.ITwoFactorService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ITwoFactorService.html
+  name: ITwoFactorService
+  nameWithType: ITwoFactorService
+  fullName: UserService.Core.Interfaces.ITwoFactorService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Services.TwoFactorService.#ctor*
+  commentId: Overload:UserService.Core.Services.TwoFactorService.#ctor
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService__ctor_UserService_Core_Interfaces_ICacheService_UserService_Core_Interfaces_IEmailQueueService_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_TwoFactorService__
+  name: TwoFactorService
+  nameWithType: TwoFactorService.TwoFactorService
+  fullName: UserService.Core.Services.TwoFactorService.TwoFactorService
+  nameWithType.vb: TwoFactorService.New
+  fullName.vb: UserService.Core.Services.TwoFactorService.New
+  name.vb: New
+- uid: UserService.Core.Interfaces.ICacheService
+  commentId: T:UserService.Core.Interfaces.ICacheService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ICacheService.html
+  name: ICacheService
+  nameWithType: ICacheService
+  fullName: UserService.Core.Interfaces.ICacheService
+- uid: UserService.Core.Interfaces.IEmailQueueService
+  commentId: T:UserService.Core.Interfaces.IEmailQueueService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IEmailQueueService.html
+  name: IEmailQueueService
+  nameWithType: IEmailQueueService
+  fullName: UserService.Core.Interfaces.IEmailQueueService
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TwoFactorService>
+  nameWithType: ILogger<TwoFactorService>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.TwoFactorService>
+  nameWithType.vb: ILogger(Of TwoFactorService)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.TwoFactorService)
+  name.vb: ILogger(Of TwoFactorService)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Core.Services.TwoFactorService
+    name: TwoFactorService
+    href: UserService.Core.Services.TwoFactorService.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Services.TwoFactorService
+    name: TwoFactorService
+    href: UserService.Core.Services.TwoFactorService.html
+  - name: )
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync*
+  commentId: Overload:UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+  name: GenerateAndSendCodeAsync
+  nameWithType: TwoFactorService.GenerateAndSendCodeAsync
+  fullName: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync
+- uid: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.ITwoFactorService
+  isExternal: true
+  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+  name: GenerateAndSendCodeAsync(string, string)
+  nameWithType: ITwoFactorService.GenerateAndSendCodeAsync(string, string)
+  fullName: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(string, string)
+  nameWithType.vb: ITwoFactorService.GenerateAndSendCodeAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(String, String)
+  name.vb: GenerateAndSendCodeAsync(String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+    name: GenerateAndSendCodeAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+    name: GenerateAndSendCodeAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ServiceResult>
+  nameWithType: Task<ServiceResult>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.ServiceResult>
+  nameWithType.vb: Task(Of ServiceResult)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.ServiceResult)
+  name.vb: Task(Of ServiceResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Common.ServiceResult
+    name: ServiceResult
+    href: UserService.Core.DTOs.Common.ServiceResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Common.ServiceResult
+    name: ServiceResult
+    href: UserService.Core.DTOs.Common.ServiceResult.html
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Services.TwoFactorService.VerifyCodeAsync*
+  commentId: Overload:UserService.Core.Services.TwoFactorService.VerifyCodeAsync
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService_VerifyCodeAsync_System_String_System_String_
+  name: VerifyCodeAsync
+  nameWithType: TwoFactorService.VerifyCodeAsync
+  fullName: UserService.Core.Services.TwoFactorService.VerifyCodeAsync
+- uid: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.ITwoFactorService
+  isExternal: true
+  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
+  name: VerifyCodeAsync(string, string)
+  nameWithType: ITwoFactorService.VerifyCodeAsync(string, string)
+  fullName: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(string, string)
+  nameWithType.vb: ITwoFactorService.VerifyCodeAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(String, String)
+  name.vb: VerifyCodeAsync(String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+    name: VerifyCodeAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+    name: VerifyCodeAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync*
+  commentId: Overload:UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService_CreateTwoFactorSessionAsync_System_String_
+  name: CreateTwoFactorSessionAsync
+  nameWithType: TwoFactorService.CreateTwoFactorSessionAsync
+  fullName: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync
+- uid: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  parent: UserService.Core.Interfaces.ITwoFactorService
+  isExternal: true
+  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
+  name: CreateTwoFactorSessionAsync(string)
+  nameWithType: ITwoFactorService.CreateTwoFactorSessionAsync(string)
+  fullName: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(string)
+  nameWithType.vb: ITwoFactorService.CreateTwoFactorSessionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(String)
+  name.vb: CreateTwoFactorSessionAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+    name: CreateTwoFactorSessionAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+    name: CreateTwoFactorSessionAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.String}
+  commentId: T:System.Threading.Tasks.Task{System.String}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<string>
+  nameWithType: Task<string>
+  fullName: System.Threading.Tasks.Task<string>
+  nameWithType.vb: Task(Of String)
+  fullName.vb: System.Threading.Tasks.Task(Of String)
+  name.vb: Task(Of String)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync*
+  commentId: Overload:UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService_GetUserIdFromSessionAsync_System_String_
+  name: GetUserIdFromSessionAsync
+  nameWithType: TwoFactorService.GetUserIdFromSessionAsync
+  fullName: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync
+- uid: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  parent: UserService.Core.Interfaces.ITwoFactorService
+  isExternal: true
+  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
+  name: GetUserIdFromSessionAsync(string)
+  nameWithType: ITwoFactorService.GetUserIdFromSessionAsync(string)
+  fullName: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(string)
+  nameWithType.vb: ITwoFactorService.GetUserIdFromSessionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(String)
+  name.vb: GetUserIdFromSessionAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+    name: GetUserIdFromSessionAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+    name: GetUserIdFromSessionAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync*
+  commentId: Overload:UserService.Core.Services.TwoFactorService.GetAttemptCountAsync
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService_GetAttemptCountAsync_System_String_
+  name: GetAttemptCountAsync
+  nameWithType: TwoFactorService.GetAttemptCountAsync
+  fullName: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync
+- uid: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+  parent: UserService.Core.Interfaces.ITwoFactorService
+  isExternal: true
+  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetAttemptCountAsync_System_String_
+  name: GetAttemptCountAsync(string)
+  nameWithType: ITwoFactorService.GetAttemptCountAsync(string)
+  fullName: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(string)
+  nameWithType.vb: ITwoFactorService.GetAttemptCountAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(String)
+  name.vb: GetAttemptCountAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+    name: GetAttemptCountAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetAttemptCountAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+    name: GetAttemptCountAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetAttemptCountAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Int32}
+  commentId: T:System.Threading.Tasks.Task{System.Int32}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<int>
+  nameWithType: Task<int>
+  fullName: System.Threading.Tasks.Task<int>
+  nameWithType.vb: Task(Of Integer)
+  fullName.vb: System.Threading.Tasks.Task(Of Integer)
+  name.vb: Task(Of Integer)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: UserService.Core.Services.TwoFactorService.IsSessionValidAsync*
+  commentId: Overload:UserService.Core.Services.TwoFactorService.IsSessionValidAsync
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService_IsSessionValidAsync_System_String_
+  name: IsSessionValidAsync
+  nameWithType: TwoFactorService.IsSessionValidAsync
+  fullName: UserService.Core.Services.TwoFactorService.IsSessionValidAsync
+- uid: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+  parent: UserService.Core.Interfaces.ITwoFactorService
+  isExternal: true
+  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_IsSessionValidAsync_System_String_
+  name: IsSessionValidAsync(string)
+  nameWithType: ITwoFactorService.IsSessionValidAsync(string)
+  fullName: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(string)
+  nameWithType.vb: ITwoFactorService.IsSessionValidAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(String)
+  name.vb: IsSessionValidAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+    name: IsSessionValidAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_IsSessionValidAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+    name: IsSessionValidAsync
+    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_IsSessionValidAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )

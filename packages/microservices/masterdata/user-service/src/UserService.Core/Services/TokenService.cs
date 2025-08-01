@@ -29,8 +29,7 @@ namespace UserService.Core.Services
                 new Claim(JwtRegisteredClaimNames.Jti, jti),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Email)
-                
+                new Claim(ClaimTypes.Name, user.Email),
                 
             };
 
@@ -98,7 +97,20 @@ namespace UserService.Core.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Jti, jti),
+                    new Claim   /*public async Task<IEnumerable<string>> GetUsersInRoleAsync(string roleId)
+        {
+            var allUserRoles = await userRoleRepository.GetAllAsync();
+            return allUserRoles
+                .Where(ur => ur.RoleId == roleId)
+                .Select(ur => ur.UserId)
+                .ToList();
+        }*/
+
+        /*public async Task<bool> IsUserInRoleAsync(string userId, string roleId)
+        {
+            var allUserRoles = await userRoleRepository.GetAllAsync();
+            return allUserRoles.Any(ur => ur.UserId == userId && ur.RoleId == roleId);
+        }*/(JwtRegisteredClaimNames.Jti, jti),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, user.Email),
@@ -290,20 +302,7 @@ namespace UserService.Core.Services
                 return false;
             }
         }
-
-        public async Task<bool> RevokeAndDeleteTokenAsync(Guid userId)
-        {
-            var token = await tokenRepository.GetTokenByUserIdAsync(userId);
-
-            if (token != null)
-            {
-                token.IsRevoked = true;
-                await tokenRepository.UpdateAsync(token);
-                return await tokenRepository.DeleteTokenAsync(userId);
-            }
-
-            return false;
-        }
+        
 
         public async Task<bool> DeleteAllTokensForUserAsync(Guid userId)
         {

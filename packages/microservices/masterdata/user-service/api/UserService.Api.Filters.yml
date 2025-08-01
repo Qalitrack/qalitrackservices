@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Api.Filters
+  commentId: N:UserService.Api.Filters
+  id: UserService.Api.Filters
+  children:
+  - UserService.Api.Filters.ModelValidationFilter
+  langs:
+  - csharp
+  - vb
+  name: UserService.Api.Filters
+  nameWithType: UserService.Api.Filters
+  fullName: UserService.Api.Filters
+  type: Namespace
+  assemblies:
+  - UserService.Api
+references:
+- uid: UserService.Api.Filters.ModelValidationFilter
+  commentId: T:UserService.Api.Filters.ModelValidationFilter
+  href: UserService.Api.Filters.ModelValidationFilter.html
+  name: ModelValidationFilter
+  nameWithType: ModelValidationFilter
+  fullName: UserService.Api.Filters.ModelValidationFilter

@@ -56,23 +56,7 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // public async Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds)
-        // {
-        //     return await _context.Roles
-        //         .Where(r => roleIds.Contains(r.Id))
-        //         .ToListAsync();
-        // 
-        
-        /*public async Task<User?> GetByFirstNameAsync(string firstName)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.FirstName == firstName);
-        }
-
-        public async Task<User?> GetByLastNameAsync(string lastName)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.LastName == lastName);
-        }*/
-
+     
         public async Task<User?> GetByEmailAsync(string email)
         {
             return await _context.Users
@@ -82,10 +66,6 @@ namespace UserService.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
         }
 
-        /*public async Task<User?> GetByMobileNumberAsync(string mobileNumber)
-        { 
-            return await _context.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber);
-        }*/
 
         public async Task<IEnumerable<UserShift>> GetUserShiftsAsync(string userId)
         {

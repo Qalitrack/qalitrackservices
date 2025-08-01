@@ -5,8 +5,9 @@ items:
   id: UpdateShiftDto
   parent: UserService.Core.DTOs.Shift
   children:
+  - UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily
   - UserService.Core.DTOs.Shift.UpdateShiftDto.Description
-  - UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime
+  - UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes
   - UserService.Core.DTOs.Shift.UpdateShiftDto.Mode
   - UserService.Core.DTOs.Shift.UpdateShiftDto.Name
   - UserService.Core.DTOs.Shift.UpdateShiftDto.StartTime
@@ -128,35 +129,35 @@ items:
       type: System.DateTime
     content.vb: Public Property StartTime As Date
   overload: UserService.Core.DTOs.Shift.UpdateShiftDto.StartTime*
-- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime
-  commentId: P:UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime
-  id: EndTime
+- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes
+  commentId: P:UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes
+  id: DurationMinutes
   parent: UserService.Core.DTOs.Shift.UpdateShiftDto
   langs:
   - csharp
   - vb
-  name: EndTime
-  nameWithType: UpdateShiftDto.EndTime
-  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime
+  name: DurationMinutes
+  nameWithType: UpdateShiftDto.DurationMinutes
+  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes
   type: Property
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UpdateShiftDto.cs
       branch: main
       repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: EndTime
+    id: DurationMinutes
     path: src/UserService.Core/DTOs/Shift/UpdateShiftDto.cs
     startLine: 9
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Shift
   syntax:
-    content: public DateTime EndTime { get; set; }
+    content: public int? DurationMinutes { get; set; }
     parameters: []
     return:
-      type: System.DateTime
-    content.vb: Public Property EndTime As Date
-  overload: UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime*
+      type: System.Nullable{System.Int32}
+    content.vb: Public Property DurationMinutes As Integer?
+  overload: UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes*
 - uid: UserService.Core.DTOs.Shift.UpdateShiftDto.Mode
   commentId: P:UserService.Core.DTOs.Shift.UpdateShiftDto.Mode
   id: Mode
@@ -186,6 +187,35 @@ items:
       type: System.Nullable{UserService.Core.Entities.ShiftMode}
     content.vb: Public Property Mode As ShiftMode?
   overload: UserService.Core.DTOs.Shift.UpdateShiftDto.Mode*
+- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily
+  commentId: P:UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily
+  id: AutoRepeatDaily
+  parent: UserService.Core.DTOs.Shift.UpdateShiftDto
+  langs:
+  - csharp
+  - vb
+  name: AutoRepeatDaily
+  nameWithType: UpdateShiftDto.AutoRepeatDaily
+  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UpdateShiftDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: AutoRepeatDaily
+    path: src/UserService.Core/DTOs/Shift/UpdateShiftDto.cs
+    startLine: 12
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Shift
+  syntax:
+    content: public bool? AutoRepeatDaily { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Boolean}
+    content.vb: Public Property AutoRepeatDaily As Boolean?
+  overload: UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily*
 references:
 - uid: UserService.Core.DTOs.Shift
   commentId: N:UserService.Core.DTOs.Shift
@@ -502,35 +532,34 @@ references:
   nameWithType.vb: Date
   fullName.vb: Date
   name.vb: Date
-- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime*
-  commentId: Overload:UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime
-  href: UserService.Core.DTOs.Shift.UpdateShiftDto.html#UserService_Core_DTOs_Shift_UpdateShiftDto_EndTime
-  name: EndTime
-  nameWithType: UpdateShiftDto.EndTime
-  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.EndTime
-- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.Mode*
-  commentId: Overload:UserService.Core.DTOs.Shift.UpdateShiftDto.Mode
-  href: UserService.Core.DTOs.Shift.UpdateShiftDto.html#UserService_Core_DTOs_Shift_UpdateShiftDto_Mode
-  name: Mode
-  nameWithType: UpdateShiftDto.Mode
-  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.Mode
-- uid: System.Nullable{UserService.Core.Entities.ShiftMode}
-  commentId: T:System.Nullable{UserService.Core.Entities.ShiftMode}
+- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes*
+  commentId: Overload:UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes
+  href: UserService.Core.DTOs.Shift.UpdateShiftDto.html#UserService_Core_DTOs_Shift_UpdateShiftDto_DurationMinutes
+  name: DurationMinutes
+  nameWithType: UpdateShiftDto.DurationMinutes
+  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.DurationMinutes
+- uid: System.Nullable{System.Int32}
+  commentId: T:System.Nullable{System.Int32}
   parent: System
   definition: System.Nullable`1
-  href: UserService.Core.Entities.ShiftMode.html
-  name: ShiftMode?
-  nameWithType: ShiftMode?
-  fullName: UserService.Core.Entities.ShiftMode?
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int?
+  nameWithType: int?
+  fullName: int?
+  nameWithType.vb: Integer?
+  fullName.vb: Integer?
+  name.vb: Integer?
   spec.csharp:
-  - uid: UserService.Core.Entities.ShiftMode
-    name: ShiftMode
-    href: UserService.Core.Entities.ShiftMode.html
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
   - name: '?'
   spec.vb:
-  - uid: UserService.Core.Entities.ShiftMode
-    name: ShiftMode
-    href: UserService.Core.Entities.ShiftMode.html
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
   - name: '?'
 - uid: System.Nullable`1
   commentId: T:System.Nullable`1
@@ -560,3 +589,56 @@ references:
   - name: " "
   - name: T
   - name: )
+- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.Mode*
+  commentId: Overload:UserService.Core.DTOs.Shift.UpdateShiftDto.Mode
+  href: UserService.Core.DTOs.Shift.UpdateShiftDto.html#UserService_Core_DTOs_Shift_UpdateShiftDto_Mode
+  name: Mode
+  nameWithType: UpdateShiftDto.Mode
+  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.Mode
+- uid: System.Nullable{UserService.Core.Entities.ShiftMode}
+  commentId: T:System.Nullable{UserService.Core.Entities.ShiftMode}
+  parent: System
+  definition: System.Nullable`1
+  href: UserService.Core.Entities.ShiftMode.html
+  name: ShiftMode?
+  nameWithType: ShiftMode?
+  fullName: UserService.Core.Entities.ShiftMode?
+  spec.csharp:
+  - uid: UserService.Core.Entities.ShiftMode
+    name: ShiftMode
+    href: UserService.Core.Entities.ShiftMode.html
+  - name: '?'
+  spec.vb:
+  - uid: UserService.Core.Entities.ShiftMode
+    name: ShiftMode
+    href: UserService.Core.Entities.ShiftMode.html
+  - name: '?'
+- uid: UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily*
+  commentId: Overload:UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily
+  href: UserService.Core.DTOs.Shift.UpdateShiftDto.html#UserService_Core_DTOs_Shift_UpdateShiftDto_AutoRepeatDaily
+  name: AutoRepeatDaily
+  nameWithType: UpdateShiftDto.AutoRepeatDaily
+  fullName: UserService.Core.DTOs.Shift.UpdateShiftDto.AutoRepeatDaily
+- uid: System.Nullable{System.Boolean}
+  commentId: T:System.Nullable{System.Boolean}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool?
+  nameWithType: bool?
+  fullName: bool?
+  nameWithType.vb: Boolean?
+  fullName.vb: Boolean?
+  name.vb: Boolean?
+  spec.csharp:
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '?'
+  spec.vb:
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '?'

@@ -11,15 +11,12 @@ items:
   - UserService.Core.Interfaces.IShiftService.GetAllAsync
   - UserService.Core.Interfaces.IShiftService.GetByIdAsync(System.String)
   - UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(System.String)
-  - UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync
-  - UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync(System.String)
   - UserService.Core.Interfaces.IShiftService.IsShiftActive(System.String)
   - UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
   - UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
   - UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
   - UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
   - UserService.Core.Interfaces.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
-  - UserService.Core.Interfaces.IShiftService.ValidateUserCredentials(System.String,System.String)
   langs:
   - csharp
   - vb
@@ -66,7 +63,7 @@ items:
   syntax:
     content: Task<IEnumerable<ShiftDto>> GetAllAsync()
     return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{ShiftDto}}
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Shift.ShiftDto}}
     content.vb: Function GetAllAsync() As Task(Of IEnumerable(Of ShiftDto))
   overload: UserService.Core.Interfaces.IShiftService.GetAllAsync*
 - uid: UserService.Core.Interfaces.IShiftService.GetByIdAsync(System.String)
@@ -97,7 +94,7 @@ items:
     - id: id
       type: System.String
     return:
-      type: System.Threading.Tasks.Task{ShiftDto}
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Shift.ShiftDto}
     content.vb: Function GetByIdAsync(id As String) As Task(Of ShiftDto)
   overload: UserService.Core.Interfaces.IShiftService.GetByIdAsync*
   nameWithType.vb: IShiftService.GetByIdAsync(String)
@@ -131,7 +128,7 @@ items:
     - id: dto
       type: UserService.Core.DTOs.Shift.CreateShiftDto
     return:
-      type: System.Threading.Tasks.Task{ShiftDto}
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Shift.ShiftDto}
     content.vb: Function CreateAsync(dto As CreateShiftDto) As Task(Of ShiftDto)
   overload: UserService.Core.Interfaces.IShiftService.CreateAsync*
 - uid: UserService.Core.Interfaces.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
@@ -164,7 +161,7 @@ items:
     - id: dto
       type: UserService.Core.DTOs.Shift.UpdateShiftDto
     return:
-      type: System.Threading.Tasks.Task{ShiftDto}
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Shift.ShiftDto}
     content.vb: Function UpdateAsync(id As String, dto As UpdateShiftDto) As Task(Of ShiftDto)
   overload: UserService.Core.Interfaces.IShiftService.UpdateAsync*
   nameWithType.vb: IShiftService.UpdateAsync(String, UpdateShiftDto)
@@ -310,104 +307,6 @@ items:
   nameWithType.vb: IShiftService.RemoveUserFromShiftAsync(String, String)
   fullName.vb: UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(String, String)
   name.vb: RemoveUserFromShiftAsync(String, String)
-- uid: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync
-  commentId: M:UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync
-  id: HasActiveStrictShiftAsync
-  parent: UserService.Core.Interfaces.IShiftService
-  langs:
-  - csharp
-  - vb
-  name: HasActiveStrictShiftAsync()
-  nameWithType: IShiftService.HasActiveStrictShiftAsync()
-  fullName: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IShiftService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: HasActiveStrictShiftAsync
-    path: src/UserService.Core/Interfaces/IShiftService.cs
-    startLine: 19
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<bool> HasActiveStrictShiftAsync()
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Function HasActiveStrictShiftAsync() As Task(Of Boolean)
-  overload: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync*
-- uid: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync(System.String)
-  id: HasActiveStrictShiftForUserAsync(System.String)
-  parent: UserService.Core.Interfaces.IShiftService
-  langs:
-  - csharp
-  - vb
-  name: HasActiveStrictShiftForUserAsync(string)
-  nameWithType: IShiftService.HasActiveStrictShiftForUserAsync(string)
-  fullName: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IShiftService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: HasActiveStrictShiftForUserAsync
-    path: src/UserService.Core/Interfaces/IShiftService.cs
-    startLine: 20
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<bool> HasActiveStrictShiftForUserAsync(string userId)
-    parameters:
-    - id: userId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Function HasActiveStrictShiftForUserAsync(userId As String) As Task(Of Boolean)
-  overload: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync*
-  nameWithType.vb: IShiftService.HasActiveStrictShiftForUserAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync(String)
-  name.vb: HasActiveStrictShiftForUserAsync(String)
-- uid: UserService.Core.Interfaces.IShiftService.ValidateUserCredentials(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.ValidateUserCredentials(System.String,System.String)
-  id: ValidateUserCredentials(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftService
-  langs:
-  - csharp
-  - vb
-  name: ValidateUserCredentials(string, string)
-  nameWithType: IShiftService.ValidateUserCredentials(string, string)
-  fullName: UserService.Core.Interfaces.IShiftService.ValidateUserCredentials(string, string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IShiftService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: ValidateUserCredentials
-    path: src/UserService.Core/Interfaces/IShiftService.cs
-    startLine: 21
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<User?> ValidateUserCredentials(string email, string password)
-    parameters:
-    - id: email
-      type: System.String
-    - id: password
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{UserService.Core.Entities.User}
-    content.vb: Function ValidateUserCredentials(email As String, password As String) As Task(Of User)
-  overload: UserService.Core.Interfaces.IShiftService.ValidateUserCredentials*
-  nameWithType.vb: IShiftService.ValidateUserCredentials(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.ValidateUserCredentials(String, String)
-  name.vb: ValidateUserCredentials(String, String)
 - uid: UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
   commentId: M:UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
   id: IsUserAssignedToShiftAsync(System.String,System.String)
@@ -587,16 +486,16 @@ references:
   name: GetAllAsync
   nameWithType: IShiftService.GetAllAsync
   fullName: UserService.Core.Interfaces.IShiftService.GetAllAsync
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{ShiftDto}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{ShiftDto}}
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Shift.ShiftDto}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Shift.ShiftDto}}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<IEnumerable<ShiftDto>>
   nameWithType: Task<IEnumerable<ShiftDto>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<ShiftDto>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.DTOs.Shift.ShiftDto>>
   nameWithType.vb: Task(Of IEnumerable(Of ShiftDto))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of ShiftDto))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.DTOs.Shift.ShiftDto))
   name.vb: Task(Of IEnumerable(Of ShiftDto))
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
@@ -609,9 +508,9 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   - name: <
-  - uid: ShiftDto
+  - uid: UserService.Core.DTOs.Shift.ShiftDto
     name: ShiftDto
-    href: ShiftDto.html
+    href: UserService.Core.DTOs.Shift.ShiftDto.html
   - name: '>'
   - name: '>'
   spec.vb:
@@ -629,9 +528,9 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: ShiftDto
+  - uid: UserService.Core.DTOs.Shift.ShiftDto
     name: ShiftDto
-    href: ShiftDto.html
+    href: UserService.Core.DTOs.Shift.ShiftDto.html
   - name: )
   - name: )
 - uid: System.Threading.Tasks.Task`1
@@ -716,16 +615,16 @@ references:
   nameWithType.vb: String
   fullName.vb: String
   name.vb: String
-- uid: System.Threading.Tasks.Task{ShiftDto}
-  commentId: T:System.Threading.Tasks.Task{ShiftDto}
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Shift.ShiftDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Shift.ShiftDto}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<ShiftDto>
   nameWithType: Task<ShiftDto>
-  fullName: System.Threading.Tasks.Task<ShiftDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Shift.ShiftDto>
   nameWithType.vb: Task(Of ShiftDto)
-  fullName.vb: System.Threading.Tasks.Task(Of ShiftDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Shift.ShiftDto)
   name.vb: Task(Of ShiftDto)
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
@@ -733,9 +632,9 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: ShiftDto
+  - uid: UserService.Core.DTOs.Shift.ShiftDto
     name: ShiftDto
-    href: ShiftDto.html
+    href: UserService.Core.DTOs.Shift.ShiftDto.html
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -745,9 +644,9 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: ShiftDto
+  - uid: UserService.Core.DTOs.Shift.ShiftDto
     name: ShiftDto
-    href: ShiftDto.html
+    href: UserService.Core.DTOs.Shift.ShiftDto.html
   - name: )
 - uid: System
   commentId: N:System
@@ -879,57 +778,6 @@ references:
   name: RemoveUserFromShiftAsync
   nameWithType: IShiftService.RemoveUserFromShiftAsync
   fullName: UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync
-- uid: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync*
-  commentId: Overload:UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_HasActiveStrictShiftAsync
-  name: HasActiveStrictShiftAsync
-  nameWithType: IShiftService.HasActiveStrictShiftAsync
-  fullName: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftAsync
-- uid: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync*
-  commentId: Overload:UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_HasActiveStrictShiftForUserAsync_System_String_
-  name: HasActiveStrictShiftForUserAsync
-  nameWithType: IShiftService.HasActiveStrictShiftForUserAsync
-  fullName: UserService.Core.Interfaces.IShiftService.HasActiveStrictShiftForUserAsync
-- uid: UserService.Core.Interfaces.IShiftService.ValidateUserCredentials*
-  commentId: Overload:UserService.Core.Interfaces.IShiftService.ValidateUserCredentials
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_ValidateUserCredentials_System_String_System_String_
-  name: ValidateUserCredentials
-  nameWithType: IShiftService.ValidateUserCredentials
-  fullName: UserService.Core.Interfaces.IShiftService.ValidateUserCredentials
-- uid: System.Threading.Tasks.Task{UserService.Core.Entities.User}
-  commentId: T:System.Threading.Tasks.Task{UserService.Core.Entities.User}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<User>
-  nameWithType: Task<User>
-  fullName: System.Threading.Tasks.Task<UserService.Core.Entities.User>
-  nameWithType.vb: Task(Of User)
-  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.Entities.User)
-  name.vb: Task(Of User)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: UserService.Core.Entities.User
-    name: User
-    href: UserService.Core.Entities.User.html
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.Entities.User
-    name: User
-    href: UserService.Core.Entities.User.html
-  - name: )
 - uid: UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync*
   commentId: Overload:UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync
   href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_IsUserAssignedToShiftAsync_System_String_System_String_

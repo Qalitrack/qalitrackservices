@@ -474,7 +474,6 @@ references:
   - name: <
   - uid: UserService.Core.Options.BackupOptions
     name: BackupOptions
-    href: UserService.Core.Options.BackupOptions.html
   - name: '>'
   spec.vb:
   - uid: Microsoft.Extensions.Options.IOptions`1
@@ -486,7 +485,6 @@ references:
   - name: " "
   - uid: UserService.Core.Options.BackupOptions
     name: BackupOptions
-    href: UserService.Core.Options.BackupOptions.html
   - name: )
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1

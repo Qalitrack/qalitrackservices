@@ -1,0 +1,1105 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Services.MemoryCacheService
+  commentId: T:UserService.Infrastructure.Services.MemoryCacheService
+  id: MemoryCacheService
+  parent: UserService.Infrastructure.Services
+  children:
+  - UserService.Infrastructure.Services.MemoryCacheService.#ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.MemoryCacheService})
+  - UserService.Infrastructure.Services.MemoryCacheService.GetAsync``1(System.String)
+  - UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync(System.String)
+  - UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync(System.String)
+  - UserService.Infrastructure.Services.MemoryCacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  langs:
+  - csharp
+  - vb
+  name: MemoryCacheService
+  nameWithType: MemoryCacheService
+  fullName: UserService.Infrastructure.Services.MemoryCacheService
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: MemoryCacheService
+    path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: 'public class MemoryCacheService : ICacheService'
+    content.vb: Public Class MemoryCacheService Implements ICacheService
+  inheritance:
+  - System.Object
+  implements:
+  - UserService.Core.Interfaces.ICacheService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Infrastructure.Services.MemoryCacheService.#ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.MemoryCacheService})
+  commentId: M:UserService.Infrastructure.Services.MemoryCacheService.#ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.MemoryCacheService})
+  id: '#ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.MemoryCacheService})'
+  parent: UserService.Infrastructure.Services.MemoryCacheService
+  langs:
+  - csharp
+  - vb
+  name: MemoryCacheService(IMemoryCache, ILogger<MemoryCacheService>)
+  nameWithType: MemoryCacheService.MemoryCacheService(IMemoryCache, ILogger<MemoryCacheService>)
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.MemoryCacheService(Microsoft.Extensions.Caching.Memory.IMemoryCache, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.MemoryCacheService>)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
+    startLine: 14
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: public MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheService> logger)
+    parameters:
+    - id: memoryCache
+      type: Microsoft.Extensions.Caching.Memory.IMemoryCache
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.MemoryCacheService}
+    content.vb: Public Sub New(memoryCache As IMemoryCache, logger As ILogger(Of MemoryCacheService))
+  overload: UserService.Infrastructure.Services.MemoryCacheService.#ctor*
+  nameWithType.vb: MemoryCacheService.New(IMemoryCache, ILogger(Of MemoryCacheService))
+  fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.New(Microsoft.Extensions.Caching.Memory.IMemoryCache, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.MemoryCacheService))
+  name.vb: New(IMemoryCache, ILogger(Of MemoryCacheService))
+- uid: UserService.Infrastructure.Services.MemoryCacheService.GetAsync``1(System.String)
+  commentId: M:UserService.Infrastructure.Services.MemoryCacheService.GetAsync``1(System.String)
+  id: GetAsync``1(System.String)
+  parent: UserService.Infrastructure.Services.MemoryCacheService
+  langs:
+  - csharp
+  - vb
+  name: GetAsync<T>(string)
+  nameWithType: MemoryCacheService.GetAsync<T>(string)
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.GetAsync<T>(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetAsync
+    path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
+    startLine: 20
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task<T?> GetAsync<T>(string key)
+    parameters:
+    - id: key
+      type: System.String
+    typeParameters:
+    - id: T
+    return:
+      type: System.Threading.Tasks.Task{{T}}
+    content.vb: Public Function GetAsync(Of T)(key As String) As Task(Of T)
+  overload: UserService.Infrastructure.Services.MemoryCacheService.GetAsync*
+  implements:
+  - UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  nameWithType.vb: MemoryCacheService.GetAsync(Of T)(String)
+  fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.GetAsync(Of T)(String)
+  name.vb: GetAsync(Of T)(String)
+- uid: UserService.Infrastructure.Services.MemoryCacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Infrastructure.Services.MemoryCacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  id: SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  parent: UserService.Infrastructure.Services.MemoryCacheService
+  langs:
+  - csharp
+  - vb
+  name: SetAsync<T>(string, T, TimeSpan?)
+  nameWithType: MemoryCacheService.SetAsync<T>(string, T, TimeSpan?)
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: SetAsync
+    path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
+    startLine: 50
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task SetAsync<T>(string key, T value, TimeSpan? expiration = null)
+    parameters:
+    - id: key
+      type: System.String
+    - id: value
+      type: '{T}'
+    - id: expiration
+      type: System.Nullable{System.TimeSpan}
+    typeParameters:
+    - id: T
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function SetAsync(Of T)(key As String, value As T, expiration As TimeSpan? = Nothing) As Task
+  overload: UserService.Infrastructure.Services.MemoryCacheService.SetAsync*
+  implements:
+  - UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
+  nameWithType.vb: MemoryCacheService.SetAsync(Of T)(String, T, TimeSpan?)
+  fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  name.vb: SetAsync(Of T)(String, T, TimeSpan?)
+- uid: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync(System.String)
+  commentId: M:UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync(System.String)
+  id: RemoveAsync(System.String)
+  parent: UserService.Infrastructure.Services.MemoryCacheService
+  langs:
+  - csharp
+  - vb
+  name: RemoveAsync(string)
+  nameWithType: MemoryCacheService.RemoveAsync(string)
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RemoveAsync
+    path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
+    startLine: 95
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task RemoveAsync(string key)
+    parameters:
+    - id: key
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function RemoveAsync(key As String) As Task
+  overload: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync*
+  implements:
+  - UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  nameWithType.vb: MemoryCacheService.RemoveAsync(String)
+  fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync(String)
+  name.vb: RemoveAsync(String)
+- uid: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync(System.String)
+  commentId: M:UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync(System.String)
+  id: RemovePatternAsync(System.String)
+  parent: UserService.Infrastructure.Services.MemoryCacheService
+  langs:
+  - csharp
+  - vb
+  name: RemovePatternAsync(string)
+  nameWithType: MemoryCacheService.RemovePatternAsync(string)
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RemovePatternAsync
+    path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
+    startLine: 112
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task RemovePatternAsync(string pattern)
+    parameters:
+    - id: pattern
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function RemovePatternAsync(pattern As String) As Task
+  overload: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync*
+  implements:
+  - UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  nameWithType.vb: MemoryCacheService.RemovePatternAsync(String)
+  fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync(String)
+  name.vb: RemovePatternAsync(String)
+references:
+- uid: UserService.Infrastructure.Services
+  commentId: N:UserService.Infrastructure.Services
+  href: UserService.html
+  name: UserService.Infrastructure.Services
+  nameWithType: UserService.Infrastructure.Services
+  fullName: UserService.Infrastructure.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.Interfaces.ICacheService
+  commentId: T:UserService.Core.Interfaces.ICacheService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ICacheService.html
+  name: ICacheService
+  nameWithType: ICacheService
+  fullName: UserService.Core.Interfaces.ICacheService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Infrastructure.Services.MemoryCacheService.#ctor*
+  commentId: Overload:UserService.Infrastructure.Services.MemoryCacheService.#ctor
+  href: UserService.Infrastructure.Services.MemoryCacheService.html#UserService_Infrastructure_Services_MemoryCacheService__ctor_Microsoft_Extensions_Caching_Memory_IMemoryCache_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_MemoryCacheService__
+  name: MemoryCacheService
+  nameWithType: MemoryCacheService.MemoryCacheService
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.MemoryCacheService
+  nameWithType.vb: MemoryCacheService.New
+  fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.New
+  name.vb: New
+- uid: Microsoft.Extensions.Caching.Memory.IMemoryCache
+  commentId: T:Microsoft.Extensions.Caching.Memory.IMemoryCache
+  parent: Microsoft.Extensions.Caching.Memory
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory.imemorycache
+  name: IMemoryCache
+  nameWithType: IMemoryCache
+  fullName: Microsoft.Extensions.Caching.Memory.IMemoryCache
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.MemoryCacheService}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.MemoryCacheService}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<MemoryCacheService>
+  nameWithType: ILogger<MemoryCacheService>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.MemoryCacheService>
+  nameWithType.vb: ILogger(Of MemoryCacheService)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.MemoryCacheService)
+  name.vb: ILogger(Of MemoryCacheService)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Infrastructure.Services.MemoryCacheService
+    name: MemoryCacheService
+    href: UserService.Infrastructure.Services.MemoryCacheService.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Infrastructure.Services.MemoryCacheService
+    name: MemoryCacheService
+    href: UserService.Infrastructure.Services.MemoryCacheService.html
+  - name: )
+- uid: Microsoft.Extensions.Caching.Memory
+  commentId: N:Microsoft.Extensions.Caching.Memory
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Caching.Memory
+  nameWithType: Microsoft.Extensions.Caching.Memory
+  fullName: Microsoft.Extensions.Caching.Memory
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Caching
+    name: Caching
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching
+  - name: .
+  - uid: Microsoft.Extensions.Caching.Memory
+    name: Memory
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Caching
+    name: Caching
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching
+  - name: .
+  - uid: Microsoft.Extensions.Caching.Memory
+    name: Memory
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: UserService.Infrastructure.Services.MemoryCacheService.GetAsync*
+  commentId: Overload:UserService.Infrastructure.Services.MemoryCacheService.GetAsync
+  href: UserService.Infrastructure.Services.MemoryCacheService.html#UserService_Infrastructure_Services_MemoryCacheService_GetAsync__1_System_String_
+  name: GetAsync
+  nameWithType: MemoryCacheService.GetAsync
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.GetAsync
+- uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  commentId: M:UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  parent: UserService.Core.Interfaces.ICacheService
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: GetAsync<T>(string)
+  nameWithType: ICacheService.GetAsync<T>(string)
+  fullName: UserService.Core.Interfaces.ICacheService.GetAsync<T>(string)
+  nameWithType.vb: ICacheService.GetAsync(Of T)(String)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.GetAsync(Of T)(String)
+  name.vb: GetAsync(Of T)(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+    name: GetAsync
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+    name: GetAsync
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{{T}}
+  commentId: T:System.Threading.Tasks.Task{`0}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<T>
+  nameWithType: Task<T>
+  fullName: System.Threading.Tasks.Task<T>
+  nameWithType.vb: Task(Of T)
+  fullName.vb: System.Threading.Tasks.Task(Of T)
+  name.vb: Task(Of T)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Infrastructure.Services.MemoryCacheService.SetAsync*
+  commentId: Overload:UserService.Infrastructure.Services.MemoryCacheService.SetAsync
+  href: UserService.Infrastructure.Services.MemoryCacheService.html#UserService_Infrastructure_Services_MemoryCacheService_SetAsync__1_System_String___0_System_Nullable_System_TimeSpan__
+  name: SetAsync
+  nameWithType: MemoryCacheService.SetAsync
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.SetAsync
+- uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  parent: UserService.Core.Interfaces.ICacheService
+  definition: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: SetAsync<T>(string, T, TimeSpan?)
+  nameWithType: ICacheService.SetAsync<T>(string, T, TimeSpan?)
+  fullName: UserService.Core.Interfaces.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  nameWithType.vb: ICacheService.SetAsync(Of T)(String, T, TimeSpan?)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  name.vb: SetAsync(Of T)(String, T, TimeSpan?)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+    name: SetAsync
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+    name: SetAsync
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+  - name: )
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: System.Nullable{System.TimeSpan}
+  commentId: T:System.Nullable{System.TimeSpan}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.timespan
+  name: TimeSpan?
+  nameWithType: TimeSpan?
+  fullName: System.TimeSpan?
+  spec.csharp:
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+  spec.vb:
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: SetAsync<T>(string, T, TimeSpan?)
+  nameWithType: ICacheService.SetAsync<T>(string, T, TimeSpan?)
+  fullName: UserService.Core.Interfaces.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  nameWithType.vb: ICacheService.SetAsync(Of T)(String, T, TimeSpan?)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  name.vb: SetAsync(Of T)(String, T, TimeSpan?)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+    name: SetAsync
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+    name: SetAsync
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+  - name: )
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync*
+  commentId: Overload:UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync
+  href: UserService.Infrastructure.Services.MemoryCacheService.html#UserService_Infrastructure_Services_MemoryCacheService_RemoveAsync_System_String_
+  name: RemoveAsync
+  nameWithType: MemoryCacheService.RemoveAsync
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync
+- uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  parent: UserService.Core.Interfaces.ICacheService
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: RemoveAsync(string)
+  nameWithType: ICacheService.RemoveAsync(string)
+  fullName: UserService.Core.Interfaces.ICacheService.RemoveAsync(string)
+  nameWithType.vb: ICacheService.RemoveAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.RemoveAsync(String)
+  name.vb: RemoveAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+    name: RemoveAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+    name: RemoveAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync*
+  commentId: Overload:UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync
+  href: UserService.Infrastructure.Services.MemoryCacheService.html#UserService_Infrastructure_Services_MemoryCacheService_RemovePatternAsync_System_String_
+  name: RemovePatternAsync
+  nameWithType: MemoryCacheService.RemovePatternAsync
+  fullName: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync
+- uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  parent: UserService.Core.Interfaces.ICacheService
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: RemovePatternAsync(string)
+  nameWithType: ICacheService.RemovePatternAsync(string)
+  fullName: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(string)
+  nameWithType.vb: ICacheService.RemovePatternAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(String)
+  name.vb: RemovePatternAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+    name: RemovePatternAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+    name: RemovePatternAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )

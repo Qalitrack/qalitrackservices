@@ -49,7 +49,7 @@ namespace UserService.Core.Entities
 
     public enum ShiftMode
     {
-        Strict = 0, // Only allowed users can log in
-        Open = 1 // Anyone can log in
+        Strict = 1, // Only allowed users can log in
+        Open = 0 // Anyone can log in
     }
 }

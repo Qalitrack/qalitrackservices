@@ -21,7 +21,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ShiftMode
     path: src/UserService.Core/Entities/Shift.cs
-    startLine: 43
+    startLine: 49
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -46,7 +46,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Strict
     path: src/UserService.Core/Entities/Shift.cs
-    startLine: 45
+    startLine: 51
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -72,7 +72,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Open
     path: src/UserService.Core/Entities/Shift.cs
-    startLine: 46
+    startLine: 52
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities

@@ -6,6 +6,7 @@ items:
   children:
   - UserService.Core.DTOs.Shift.CreateShiftDto
   - UserService.Core.DTOs.Shift.MassAssignShiftResultDto
+  - UserService.Core.DTOs.Shift.ShiftDto
   - UserService.Core.DTOs.Shift.UpdateShiftDto
   - UserService.Core.DTOs.Shift.UserDetailsDto
   - UserService.Core.DTOs.Shift.UsersAssignedToShiftDto
@@ -32,6 +33,13 @@ references:
   name: MassAssignShiftResultDto
   nameWithType: MassAssignShiftResultDto
   fullName: UserService.Core.DTOs.Shift.MassAssignShiftResultDto
+- uid: UserService.Core.DTOs.Shift.ShiftDto
+  commentId: T:UserService.Core.DTOs.Shift.ShiftDto
+  parent: UserService.Core.DTOs.Shift
+  href: UserService.Core.DTOs.Shift.ShiftDto.html
+  name: ShiftDto
+  nameWithType: ShiftDto
+  fullName: UserService.Core.DTOs.Shift.ShiftDto
 - uid: UserService.Core.DTOs.Shift.UpdateShiftDto
   commentId: T:UserService.Core.DTOs.Shift.UpdateShiftDto
   parent: UserService.Core.DTOs.Shift

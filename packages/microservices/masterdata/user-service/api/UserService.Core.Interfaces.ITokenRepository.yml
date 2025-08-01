@@ -10,7 +10,6 @@ items:
   - UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
   - UserService.Core.Interfaces.ITokenRepository.GetTokenByJtiAsync(System.String)
   - UserService.Core.Interfaces.ITokenRepository.GetTokenByUserIdAsync(System.Guid)
-  - UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
   langs:
   - csharp
   - vb
@@ -99,37 +98,6 @@ items:
       type: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
     content.vb: Function CreateAsync(token As PersonalAccessToken) As Task(Of PersonalAccessToken)
   overload: UserService.Core.Interfaces.ITokenRepository.CreateAsync*
-- uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-  commentId: M:UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-  id: RevokeTokenAsync(System.Guid)
-  parent: UserService.Core.Interfaces.ITokenRepository
-  langs:
-  - csharp
-  - vb
-  name: RevokeTokenAsync(Guid)
-  nameWithType: ITokenRepository.RevokeTokenAsync(Guid)
-  fullName: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: RevokeTokenAsync
-    path: src/UserService.Core/Interfaces/ITokenRepository.cs
-    startLine: 8
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<bool> RevokeTokenAsync(Guid userId)
-    parameters:
-    - id: userId
-      type: System.Guid
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Function RevokeTokenAsync(userId As Guid) As Task(Of Boolean)
-  overload: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync*
 - uid: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
   commentId: M:UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
   id: DeleteTokenAsync(System.Guid)
@@ -687,12 +655,12 @@ references:
   name: PersonalAccessToken
   nameWithType: PersonalAccessToken
   fullName: UserService.Core.Interfaces.PersonalAccessToken
-- uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync*
-  commentId: Overload:UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync
-  href: UserService.Core.Interfaces.ITokenRepository.html#UserService_Core_Interfaces_ITokenRepository_RevokeTokenAsync_System_Guid_
-  name: RevokeTokenAsync
-  nameWithType: ITokenRepository.RevokeTokenAsync
-  fullName: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync
+- uid: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync*
+  commentId: Overload:UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync
+  href: UserService.Core.Interfaces.ITokenRepository.html#UserService_Core_Interfaces_ITokenRepository_DeleteTokenAsync_System_Guid_
+  name: DeleteTokenAsync
+  nameWithType: ITokenRepository.DeleteTokenAsync
+  fullName: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync
 - uid: System.Threading.Tasks.Task{System.Boolean}
   commentId: T:System.Threading.Tasks.Task{System.Boolean}
   parent: System.Threading.Tasks
@@ -728,12 +696,6 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
-- uid: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync*
-  commentId: Overload:UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync
-  href: UserService.Core.Interfaces.ITokenRepository.html#UserService_Core_Interfaces_ITokenRepository_DeleteTokenAsync_System_Guid_
-  name: DeleteTokenAsync
-  nameWithType: ITokenRepository.DeleteTokenAsync
-  fullName: UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync
 - uid: UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync*
   commentId: Overload:UserService.Core.Interfaces.ITokenRepository.DeleteAllTokensForUserAsync
   href: UserService.Core.Interfaces.ITokenRepository.html#UserService_Core_Interfaces_ITokenRepository_DeleteAllTokensForUserAsync_System_Guid_

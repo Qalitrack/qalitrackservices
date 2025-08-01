@@ -7,9 +7,7 @@ items:
   children:
   - UserService.Infrastructure.Repositories.UserRoleRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository})
   - UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
-  - UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
   - UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
-  - UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
   - UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
   langs:
   - csharp
@@ -120,84 +118,6 @@ items:
   overload: UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync*
   implements:
   - UserService.Core.Interfaces.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
-- uid: UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
-  commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
-  id: GetByIdAsync(System.String,System.Threading.CancellationToken)
-  parent: UserService.Infrastructure.Repositories.UserRoleRepository
-  langs:
-  - csharp
-  - vb
-  name: GetByIdAsync(string, CancellationToken)
-  nameWithType: UserRoleRepository.GetByIdAsync(string, CancellationToken)
-  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync(string, System.Threading.CancellationToken)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetByIdAsync
-    path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 41
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  example: []
-  syntax:
-    content: public Task<UserRole?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
-    parameters:
-    - id: id
-      type: System.String
-    - id: cancellationToken
-      type: System.Threading.CancellationToken
-    return:
-      type: System.Threading.Tasks.Task{UserService.Core.Entities.UserRole}
-    content.vb: Public Function GetByIdAsync(id As String, cancellationToken As CancellationToken = Nothing) As Task(Of UserRole)
-  overload: UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync*
-  implements:
-  - UserService.Core.Interfaces.IUserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
-  nameWithType.vb: UserRoleRepository.GetByIdAsync(String, CancellationToken)
-  fullName.vb: UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync(String, System.Threading.CancellationToken)
-  name.vb: GetByIdAsync(String, CancellationToken)
-- uid: UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
-  commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
-  id: DeleteAsync(System.String,System.Threading.CancellationToken)
-  parent: UserService.Infrastructure.Repositories.UserRoleRepository
-  langs:
-  - csharp
-  - vb
-  name: DeleteAsync(string, CancellationToken)
-  nameWithType: UserRoleRepository.DeleteAsync(string, CancellationToken)
-  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync(string, System.Threading.CancellationToken)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: DeleteAsync
-    path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 61
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  example: []
-  syntax:
-    content: public Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
-    parameters:
-    - id: id
-      type: System.String
-    - id: cancellationToken
-      type: System.Threading.CancellationToken
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Public Function DeleteAsync(id As String, cancellationToken As CancellationToken = Nothing) As Task(Of Boolean)
-  overload: UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync*
-  implements:
-  - UserService.Core.Interfaces.IUserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
-  nameWithType.vb: UserRoleRepository.DeleteAsync(String, CancellationToken)
-  fullName.vb: UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync(String, System.Threading.CancellationToken)
-  name.vb: DeleteAsync(String, CancellationToken)
 - uid: UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
   commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
   id: AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
@@ -216,7 +136,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AssignRoleToUserAsync
     path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 83
+    startLine: 86
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -257,7 +177,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemoveRoleFromUserAsync
     path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 131
+    startLine: 137
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -1254,179 +1174,6 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-- uid: UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync
-  href: UserService.Infrastructure.Repositories.UserRoleRepository.html#UserService_Infrastructure_Repositories_UserRoleRepository_GetByIdAsync_System_String_System_Threading_CancellationToken_
-  name: GetByIdAsync
-  nameWithType: UserRoleRepository.GetByIdAsync
-  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.GetByIdAsync
-- uid: UserService.Core.Interfaces.IUserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
-  commentId: M:UserService.Core.Interfaces.IUserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
-  parent: UserService.Core.Interfaces.IUserRoleRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: GetByIdAsync(string, CancellationToken)
-  nameWithType: IUserRoleRepository.GetByIdAsync(string, CancellationToken)
-  fullName: UserService.Core.Interfaces.IUserRoleRepository.GetByIdAsync(string, System.Threading.CancellationToken)
-  nameWithType.vb: IUserRoleRepository.GetByIdAsync(String, CancellationToken)
-  fullName.vb: UserService.Core.Interfaces.IUserRoleRepository.GetByIdAsync(String, System.Threading.CancellationToken)
-  name.vb: GetByIdAsync(String, CancellationToken)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
-    name: GetByIdAsync
-  - name: (
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
-  - uid: System.Threading.CancellationToken
-    name: CancellationToken
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.GetByIdAsync(System.String,System.Threading.CancellationToken)
-    name: GetByIdAsync
-  - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
-  - uid: System.Threading.CancellationToken
-    name: CancellationToken
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
-  - name: )
-- uid: System.String
-  commentId: T:System.String
-  parent: System
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: string
-  nameWithType: string
-  fullName: string
-  nameWithType.vb: String
-  fullName.vb: String
-  name.vb: String
-- uid: System.Threading.Tasks.Task{UserService.Core.Entities.UserRole}
-  commentId: T:System.Threading.Tasks.Task{UserService.Core.Entities.UserRole}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<UserRole>
-  nameWithType: Task<UserRole>
-  fullName: System.Threading.Tasks.Task<UserService.Core.Entities.UserRole>
-  nameWithType.vb: Task(Of UserRole)
-  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.Entities.UserRole)
-  name.vb: Task(Of UserRole)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: UserService.Core.Entities.UserRole
-    name: UserRole
-    href: UserService.Core.Entities.UserRole.html
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.Entities.UserRole
-    name: UserRole
-    href: UserService.Core.Entities.UserRole.html
-  - name: )
-- uid: UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync
-  href: UserService.Infrastructure.Repositories.UserRoleRepository.html#UserService_Infrastructure_Repositories_UserRoleRepository_DeleteAsync_System_String_System_Threading_CancellationToken_
-  name: DeleteAsync
-  nameWithType: UserRoleRepository.DeleteAsync
-  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.DeleteAsync
-- uid: UserService.Core.Interfaces.IUserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
-  commentId: M:UserService.Core.Interfaces.IUserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
-  parent: UserService.Core.Interfaces.IUserRoleRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: DeleteAsync(string, CancellationToken)
-  nameWithType: IUserRoleRepository.DeleteAsync(string, CancellationToken)
-  fullName: UserService.Core.Interfaces.IUserRoleRepository.DeleteAsync(string, System.Threading.CancellationToken)
-  nameWithType.vb: IUserRoleRepository.DeleteAsync(String, CancellationToken)
-  fullName.vb: UserService.Core.Interfaces.IUserRoleRepository.DeleteAsync(String, System.Threading.CancellationToken)
-  name.vb: DeleteAsync(String, CancellationToken)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
-    name: DeleteAsync
-  - name: (
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
-  - uid: System.Threading.CancellationToken
-    name: CancellationToken
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.DeleteAsync(System.String,System.Threading.CancellationToken)
-    name: DeleteAsync
-  - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
-  - uid: System.Threading.CancellationToken
-    name: CancellationToken
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
-  - name: )
-- uid: System.Threading.Tasks.Task{System.Boolean}
-  commentId: T:System.Threading.Tasks.Task{System.Boolean}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<bool>
-  nameWithType: Task<bool>
-  fullName: System.Threading.Tasks.Task<bool>
-  nameWithType.vb: Task(Of Boolean)
-  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
-  name.vb: Task(Of Boolean)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Boolean
-    name: bool
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Boolean
-    name: Boolean
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: )
 - uid: UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync
   href: UserService.Infrastructure.Repositories.UserRoleRepository.html#UserService_Infrastructure_Repositories_UserRoleRepository_AssignRoleToUserAsync_System_String_System_String_System_Threading_CancellationToken_
@@ -1485,6 +1232,52 @@ references:
     name: CancellationToken
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
 - uid: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromUserAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromUserAsync

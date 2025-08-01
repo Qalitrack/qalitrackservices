@@ -127,6 +127,7 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<IUserStatusService, UserStatusService>();
     services.AddScoped<IReportService, ReportService>();
     services.AddScoped<ITwoFactorService, TwoFactorService>();
+
     
     // Email queue services for improved performance
     services.AddSingleton<EmailQueueService>();
@@ -145,6 +146,8 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
     services.AddScoped<IUserStatusRepository, UserStatusRepository>();
     services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+    builder.Services.AddScoped<IShiftLoginRestrictionService, ShiftLoginRestrictionService>();
+
 
     // Infrastructure
     services.AddHttpContextAccessor();

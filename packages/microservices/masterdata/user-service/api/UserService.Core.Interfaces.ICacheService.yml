@@ -1,0 +1,409 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.ICacheService
+  commentId: T:UserService.Core.Interfaces.ICacheService
+  id: ICacheService
+  parent: UserService.Core.Interfaces
+  children:
+  - UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  - UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  - UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  - UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  langs:
+  - csharp
+  - vb
+  name: ICacheService
+  nameWithType: ICacheService
+  fullName: UserService.Core.Interfaces.ICacheService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ICacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: ICacheService
+    path: src/UserService.Core/Interfaces/ICacheService.cs
+    startLine: 2
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: public interface ICacheService
+    content.vb: Public Interface ICacheService
+- uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  commentId: M:UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  id: GetAsync``1(System.String)
+  parent: UserService.Core.Interfaces.ICacheService
+  langs:
+  - csharp
+  - vb
+  name: GetAsync<T>(string)
+  nameWithType: ICacheService.GetAsync<T>(string)
+  fullName: UserService.Core.Interfaces.ICacheService.GetAsync<T>(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ICacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetAsync
+    path: src/UserService.Core/Interfaces/ICacheService.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<T?> GetAsync<T>(string key)
+    parameters:
+    - id: key
+      type: System.String
+    typeParameters:
+    - id: T
+    return:
+      type: System.Threading.Tasks.Task{{T}}
+    content.vb: Function GetAsync(Of T)(key As String) As Task(Of T)
+  overload: UserService.Core.Interfaces.ICacheService.GetAsync*
+  nameWithType.vb: ICacheService.GetAsync(Of T)(String)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.GetAsync(Of T)(String)
+  name.vb: GetAsync(Of T)(String)
+- uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  id: SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  parent: UserService.Core.Interfaces.ICacheService
+  langs:
+  - csharp
+  - vb
+  name: SetAsync<T>(string, T, TimeSpan?)
+  nameWithType: ICacheService.SetAsync<T>(string, T, TimeSpan?)
+  fullName: UserService.Core.Interfaces.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ICacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: SetAsync
+    path: src/UserService.Core/Interfaces/ICacheService.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task SetAsync<T>(string key, T value, TimeSpan? expiration = null)
+    parameters:
+    - id: key
+      type: System.String
+    - id: value
+      type: '{T}'
+    - id: expiration
+      type: System.Nullable{System.TimeSpan}
+    typeParameters:
+    - id: T
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function SetAsync(Of T)(key As String, value As T, expiration As TimeSpan? = Nothing) As Task
+  overload: UserService.Core.Interfaces.ICacheService.SetAsync*
+  nameWithType.vb: ICacheService.SetAsync(Of T)(String, T, TimeSpan?)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  name.vb: SetAsync(Of T)(String, T, TimeSpan?)
+- uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  id: RemoveAsync(System.String)
+  parent: UserService.Core.Interfaces.ICacheService
+  langs:
+  - csharp
+  - vb
+  name: RemoveAsync(string)
+  nameWithType: ICacheService.RemoveAsync(string)
+  fullName: UserService.Core.Interfaces.ICacheService.RemoveAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ICacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RemoveAsync
+    path: src/UserService.Core/Interfaces/ICacheService.cs
+    startLine: 6
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task RemoveAsync(string key)
+    parameters:
+    - id: key
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function RemoveAsync(key As String) As Task
+  overload: UserService.Core.Interfaces.ICacheService.RemoveAsync*
+  nameWithType.vb: ICacheService.RemoveAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.RemoveAsync(String)
+  name.vb: RemoveAsync(String)
+- uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  id: RemovePatternAsync(System.String)
+  parent: UserService.Core.Interfaces.ICacheService
+  langs:
+  - csharp
+  - vb
+  name: RemovePatternAsync(string)
+  nameWithType: ICacheService.RemovePatternAsync(string)
+  fullName: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ICacheService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: RemovePatternAsync
+    path: src/UserService.Core/Interfaces/ICacheService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task RemovePatternAsync(string pattern)
+    parameters:
+    - id: pattern
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function RemovePatternAsync(pattern As String) As Task
+  overload: UserService.Core.Interfaces.ICacheService.RemovePatternAsync*
+  nameWithType.vb: ICacheService.RemovePatternAsync(String)
+  fullName.vb: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(String)
+  name.vb: RemovePatternAsync(String)
+references:
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Core.Interfaces.ICacheService.GetAsync*
+  commentId: Overload:UserService.Core.Interfaces.ICacheService.GetAsync
+  href: UserService.Core.Interfaces.ICacheService.html#UserService_Core_Interfaces_ICacheService_GetAsync__1_System_String_
+  name: GetAsync
+  nameWithType: ICacheService.GetAsync
+  fullName: UserService.Core.Interfaces.ICacheService.GetAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{{T}}
+  commentId: T:System.Threading.Tasks.Task{`0}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<T>
+  nameWithType: Task<T>
+  fullName: System.Threading.Tasks.Task<T>
+  nameWithType.vb: Task(Of T)
+  fullName.vb: System.Threading.Tasks.Task(Of T)
+  name.vb: Task(Of T)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.ICacheService.SetAsync*
+  commentId: Overload:UserService.Core.Interfaces.ICacheService.SetAsync
+  href: UserService.Core.Interfaces.ICacheService.html#UserService_Core_Interfaces_ICacheService_SetAsync__1_System_String___0_System_Nullable_System_TimeSpan__
+  name: SetAsync
+  nameWithType: ICacheService.SetAsync
+  fullName: UserService.Core.Interfaces.ICacheService.SetAsync
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: System.Nullable{System.TimeSpan}
+  commentId: T:System.Nullable{System.TimeSpan}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.timespan
+  name: TimeSpan?
+  nameWithType: TimeSpan?
+  fullName: System.TimeSpan?
+  spec.csharp:
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+  spec.vb:
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Core.Interfaces.ICacheService.RemoveAsync*
+  commentId: Overload:UserService.Core.Interfaces.ICacheService.RemoveAsync
+  href: UserService.Core.Interfaces.ICacheService.html#UserService_Core_Interfaces_ICacheService_RemoveAsync_System_String_
+  name: RemoveAsync
+  nameWithType: ICacheService.RemoveAsync
+  fullName: UserService.Core.Interfaces.ICacheService.RemoveAsync
+- uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync*
+  commentId: Overload:UserService.Core.Interfaces.ICacheService.RemovePatternAsync
+  href: UserService.Core.Interfaces.ICacheService.html#UserService_Core_Interfaces_ICacheService_RemovePatternAsync_System_String_
+  name: RemovePatternAsync
+  nameWithType: ICacheService.RemovePatternAsync
+  fullName: UserService.Core.Interfaces.ICacheService.RemovePatternAsync

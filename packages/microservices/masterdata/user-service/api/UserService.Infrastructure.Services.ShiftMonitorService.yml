@@ -21,7 +21,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ShiftMonitorService
     path: src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
-    startLine: 12
+    startLine: 13
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -64,7 +64,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
-    startLine: 17
+    startLine: 18
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -98,7 +98,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ExecuteAsync
     path: src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
-    startLine: 24
+    startLine: 25
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services

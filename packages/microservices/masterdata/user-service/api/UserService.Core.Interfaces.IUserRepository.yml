@@ -7,8 +7,8 @@ items:
   children:
   - UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
   - UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
-  - UserService.Core.Interfaces.IUserRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
-  - UserService.Core.Interfaces.IUserRepository.GetDeletedAsync
+  - UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
   - UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(System.String)
   - UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(System.String)
   - UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
@@ -32,7 +32,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: IUserRepository
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 5
+    startLine: 6
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -63,7 +63,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserShiftsAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 8
+    startLine: 9
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -97,7 +97,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserShiftByShiftIdAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 9
+    startLine: 10
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -133,7 +133,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AssignShiftToUserAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 10
+    startLine: 11
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -169,7 +169,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemoveShiftFromUserAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 11
+    startLine: 12
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -205,7 +205,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: HasPermissionAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 12
+    startLine: 13
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -241,7 +241,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserPermissionsAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 13
+    startLine: 14
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -275,7 +275,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUsersByRoleAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 14
+    startLine: 15
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -309,7 +309,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserRolesAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 15
+    startLine: 16
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -325,40 +325,6 @@ items:
   nameWithType.vb: IUserRepository.GetUserRolesAsync(String)
   fullName.vb: UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(String)
   name.vb: GetUserRolesAsync(String)
-- uid: UserService.Core.Interfaces.IUserRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
-  id: GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
-  parent: UserService.Core.Interfaces.IUserRepository
-  langs:
-  - csharp
-  - vb
-  name: GetByIdsAsync(IEnumerable<string>)
-  nameWithType: IUserRepository.GetByIdsAsync(IEnumerable<string>)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable<string>)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IUserRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetByIdsAsync
-    path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 16
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> roleIds)
-    parameters:
-    - id: roleIds
-      type: System.Collections.Generic.IEnumerable{System.String}
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.Role}}
-    content.vb: Function GetByIdsAsync(roleIds As IEnumerable(Of String)) As Task(Of IEnumerable(Of Role))
-  overload: UserService.Core.Interfaces.IUserRepository.GetByIdsAsync*
-  nameWithType.vb: IUserRepository.GetByIdsAsync(IEnumerable(Of String))
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable(Of String))
-  name.vb: GetByIdsAsync(IEnumerable(Of String))
 - uid: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
   commentId: M:UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
   id: GetByEmailAsync(System.String)
@@ -377,7 +343,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetByEmailAsync
     path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 17
+    startLine: 18
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -393,34 +359,6 @@ items:
   nameWithType.vb: IUserRepository.GetByEmailAsync(String)
   fullName.vb: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(String)
   name.vb: GetByEmailAsync(String)
-- uid: UserService.Core.Interfaces.IUserRepository.GetDeletedAsync
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetDeletedAsync
-  id: GetDeletedAsync
-  parent: UserService.Core.Interfaces.IUserRepository
-  langs:
-  - csharp
-  - vb
-  name: GetDeletedAsync()
-  nameWithType: IUserRepository.GetDeletedAsync()
-  fullName: UserService.Core.Interfaces.IUserRepository.GetDeletedAsync()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IUserRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetDeletedAsync
-    path: src/UserService.Core/Interfaces/IUserRepository.cs
-    startLine: 18
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<IEnumerable<User>> GetDeletedAsync()
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
-    content.vb: Function GetDeletedAsync() As Task(Of IEnumerable(Of User))
-  overload: UserService.Core.Interfaces.IUserRepository.GetDeletedAsync*
 - uid: UserService.Core.Interfaces.IUserRepository.RestoreAsync(System.String)
   commentId: M:UserService.Core.Interfaces.IUserRepository.RestoreAsync(System.String)
   id: RestoreAsync(System.String)
@@ -491,6 +429,68 @@ items:
   nameWithType.vb: IUserRepository.UpdateUserActiveStatusAsync(String, Boolean)
   fullName.vb: UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(String, Boolean)
   name.vb: UpdateUserActiveStatusAsync(String, Boolean)
+- uid: UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.IUserRepository
+  langs:
+  - csharp
+  - vb
+  name: GetPagedAsync(PaginationParameters)
+  nameWithType: IUserRepository.GetPagedAsync(PaginationParameters)
+  fullName: UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IUserRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetPagedAsync
+    path: src/UserService.Core/Interfaces/IUserRepository.cs
+    startLine: 21
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<PagedResult<User>> GetPagedAsync(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.Entities.User}}
+    content.vb: Function GetPagedAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of User))
+  overload: UserService.Core.Interfaces.IUserRepository.GetPagedAsync*
+- uid: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.IUserRepository
+  langs:
+  - csharp
+  - vb
+  name: GetDeletedPagedAsync(PaginationParameters)
+  nameWithType: IUserRepository.GetDeletedPagedAsync(PaginationParameters)
+  fullName: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IUserRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetDeletedPagedAsync
+    path: src/UserService.Core/Interfaces/IUserRepository.cs
+    startLine: 22
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<PagedResult<User>> GetDeletedPagedAsync(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.Entities.User}}
+    content.vb: Function GetDeletedPagedAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of User))
+  overload: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync*
 references:
 - uid: UserService.Core.Interfaces
   commentId: N:UserService.Core.Interfaces
@@ -1241,159 +1241,6 @@ references:
     href: UserService.Core.Entities.UserRole.html
   - name: )
   - name: )
-- uid: UserService.Core.Interfaces.IUserRepository.GetByIdsAsync*
-  commentId: Overload:UserService.Core.Interfaces.IUserRepository.GetByIdsAsync
-  href: UserService.Core.Interfaces.IUserRepository.html#UserService_Core_Interfaces_IUserRepository_GetByIdsAsync_System_Collections_Generic_IEnumerable_System_String__
-  name: GetByIdsAsync
-  nameWithType: IUserRepository.GetByIdsAsync
-  fullName: UserService.Core.Interfaces.IUserRepository.GetByIdsAsync
-- uid: System.Collections.Generic.IEnumerable{System.String}
-  commentId: T:System.Collections.Generic.IEnumerable{System.String}
-  parent: System.Collections.Generic
-  definition: System.Collections.Generic.IEnumerable`1
-  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  name: IEnumerable<string>
-  nameWithType: IEnumerable<string>
-  fullName: System.Collections.Generic.IEnumerable<string>
-  nameWithType.vb: IEnumerable(Of String)
-  fullName.vb: System.Collections.Generic.IEnumerable(Of String)
-  name.vb: IEnumerable(Of String)
-  spec.csharp:
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: '>'
-  spec.vb:
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.Role}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.Role}}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable<Role>>
-  nameWithType: Task<IEnumerable<Role>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.Entities.Role>>
-  nameWithType.vb: Task(Of IEnumerable(Of Role))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.Entities.Role))
-  name.vb: Task(Of IEnumerable(Of Role))
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
-  - uid: UserService.Core.Entities.Role
-    name: Role
-    href: UserService.Core.Entities.Role.html
-  - name: '>'
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.Entities.Role
-    name: Role
-    href: UserService.Core.Entities.Role.html
-  - name: )
-  - name: )
-- uid: System.Collections.Generic.IEnumerable`1
-  commentId: T:System.Collections.Generic.IEnumerable`1
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  name: IEnumerable<T>
-  nameWithType: IEnumerable<T>
-  fullName: System.Collections.Generic.IEnumerable<T>
-  nameWithType.vb: IEnumerable(Of T)
-  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
-  name.vb: IEnumerable(Of T)
-  spec.csharp:
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
-  - name: T
-  - name: '>'
-  spec.vb:
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
-  - name: T
-  - name: )
-- uid: System.Collections.Generic
-  commentId: N:System.Collections.Generic
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
-  name: System.Collections.Generic
-  nameWithType: System.Collections.Generic
-  fullName: System.Collections.Generic
-  spec.csharp:
-  - uid: System
-    name: System
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
-  - name: .
-  - uid: System.Collections
-    name: Collections
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections
-  - name: .
-  - uid: System.Collections.Generic
-    name: Generic
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
-  spec.vb:
-  - uid: System
-    name: System
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
-  - name: .
-  - uid: System.Collections
-    name: Collections
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections
-  - name: .
-  - uid: System.Collections.Generic
-    name: Generic
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
 - uid: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync*
   commentId: Overload:UserService.Core.Interfaces.IUserRepository.GetByEmailAsync
   href: UserService.Core.Interfaces.IUserRepository.html#UserService_Core_Interfaces_IUserRepository_GetByEmailAsync_System_String_
@@ -1433,59 +1280,6 @@ references:
     name: User
     href: UserService.Core.Entities.User.html
   - name: )
-- uid: UserService.Core.Interfaces.IUserRepository.GetDeletedAsync*
-  commentId: Overload:UserService.Core.Interfaces.IUserRepository.GetDeletedAsync
-  href: UserService.Core.Interfaces.IUserRepository.html#UserService_Core_Interfaces_IUserRepository_GetDeletedAsync
-  name: GetDeletedAsync
-  nameWithType: IUserRepository.GetDeletedAsync
-  fullName: UserService.Core.Interfaces.IUserRepository.GetDeletedAsync
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable<User>>
-  nameWithType: Task<IEnumerable<User>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.Entities.User>>
-  nameWithType.vb: Task(Of IEnumerable(Of User))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.Entities.User))
-  name.vb: Task(Of IEnumerable(Of User))
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
-  - uid: UserService.Core.Entities.User
-    name: User
-    href: UserService.Core.Entities.User.html
-  - name: '>'
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.Entities.User
-    name: User
-    href: UserService.Core.Entities.User.html
-  - name: )
-  - name: )
 - uid: UserService.Core.Interfaces.IUserRepository.RestoreAsync*
   commentId: Overload:UserService.Core.Interfaces.IUserRepository.RestoreAsync
   href: UserService.Core.Interfaces.IUserRepository.html#UserService_Core_Interfaces_IUserRepository_RestoreAsync_System_String_
@@ -1509,3 +1303,105 @@ references:
   nameWithType.vb: Boolean
   fullName.vb: Boolean
   name.vb: Boolean
+- uid: UserService.Core.Interfaces.IUserRepository.GetPagedAsync*
+  commentId: Overload:UserService.Core.Interfaces.IUserRepository.GetPagedAsync
+  href: UserService.Core.Interfaces.IUserRepository.html#UserService_Core_Interfaces_IUserRepository_GetPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetPagedAsync
+  nameWithType: IUserRepository.GetPagedAsync
+  fullName: UserService.Core.Interfaces.IUserRepository.GetPagedAsync
+- uid: UserService.Core.DTOs.Common.PaginationParameters
+  commentId: T:UserService.Core.DTOs.Common.PaginationParameters
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.PaginationParameters.html
+  name: PaginationParameters
+  nameWithType: PaginationParameters
+  fullName: UserService.Core.DTOs.Common.PaginationParameters
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.Entities.User}}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.Entities.User}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<PagedResult<User>>
+  nameWithType: Task<PagedResult<User>>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.PagedResult<UserService.Core.Entities.User>>
+  nameWithType.vb: Task(Of PagedResult(Of User))
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.PagedResult(Of UserService.Core.Entities.User))
+  name.vb: Task(Of PagedResult(Of User))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: <
+  - uid: UserService.Core.Entities.User
+    name: User
+    href: UserService.Core.Entities.User.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Entities.User
+    name: User
+    href: UserService.Core.Entities.User.html
+  - name: )
+  - name: )
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+- uid: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync*
+  commentId: Overload:UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync
+  href: UserService.Core.Interfaces.IUserRepository.html#UserService_Core_Interfaces_IUserRepository_GetDeletedPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetDeletedPagedAsync
+  nameWithType: IUserRepository.GetDeletedPagedAsync
+  fullName: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync

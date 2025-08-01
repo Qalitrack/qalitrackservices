@@ -1,0 +1,873 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Services.EmailQueueService
+  commentId: T:UserService.Infrastructure.Services.EmailQueueService
+  id: EmailQueueService
+  parent: UserService.Infrastructure.Services
+  children:
+  - UserService.Infrastructure.Services.EmailQueueService.#ctor(Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.EmailQueueService})
+  - UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  - UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  - UserService.Infrastructure.Services.EmailQueueService.GetEmailReader
+  langs:
+  - csharp
+  - vb
+  name: EmailQueueService
+  nameWithType: EmailQueueService
+  fullName: UserService.Infrastructure.Services.EmailQueueService
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: EmailQueueService
+    path: src/UserService.Infrastructure/Services/EmailQueueService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: 'public class EmailQueueService : IEmailQueueService'
+    content.vb: Public Class EmailQueueService Implements IEmailQueueService
+  inheritance:
+  - System.Object
+  implements:
+  - UserService.Core.Interfaces.IEmailQueueService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Infrastructure.Services.EmailQueueService.#ctor(Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.EmailQueueService})
+  commentId: M:UserService.Infrastructure.Services.EmailQueueService.#ctor(Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.EmailQueueService})
+  id: '#ctor(Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.EmailQueueService})'
+  parent: UserService.Infrastructure.Services.EmailQueueService
+  langs:
+  - csharp
+  - vb
+  name: EmailQueueService(ILogger<EmailQueueService>)
+  nameWithType: EmailQueueService.EmailQueueService(ILogger<EmailQueueService>)
+  fullName: UserService.Infrastructure.Services.EmailQueueService.EmailQueueService(Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.EmailQueueService>)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Infrastructure/Services/EmailQueueService.cs
+    startLine: 12
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: public EmailQueueService(ILogger<EmailQueueService> logger)
+    parameters:
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.EmailQueueService}
+    content.vb: Public Sub New(logger As ILogger(Of EmailQueueService))
+  overload: UserService.Infrastructure.Services.EmailQueueService.#ctor*
+  nameWithType.vb: EmailQueueService.New(ILogger(Of EmailQueueService))
+  fullName.vb: UserService.Infrastructure.Services.EmailQueueService.New(Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.EmailQueueService))
+  name.vb: New(ILogger(Of EmailQueueService))
+- uid: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  commentId: M:UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  id: EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  parent: UserService.Infrastructure.Services.EmailQueueService
+  langs:
+  - csharp
+  - vb
+  name: EnqueueEmailAsync(EmailRequest)
+  nameWithType: EmailQueueService.EnqueueEmailAsync(EmailRequest)
+  fullName: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: EnqueueEmailAsync
+    path: src/UserService.Infrastructure/Services/EmailQueueService.cs
+    startLine: 27
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task EnqueueEmailAsync(EmailRequest emailRequest)
+    parameters:
+    - id: emailRequest
+      type: UserService.Core.DTOs.Common.EmailRequest
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function EnqueueEmailAsync(emailRequest As EmailRequest) As Task
+  overload: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync*
+  implements:
+  - UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+- uid: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  id: EnqueueEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Infrastructure.Services.EmailQueueService
+  langs:
+  - csharp
+  - vb
+  name: EnqueueEmailAsync(string, string, string)
+  nameWithType: EmailQueueService.EnqueueEmailAsync(string, string, string)
+  fullName: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(string, string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: EnqueueEmailAsync
+    path: src/UserService.Infrastructure/Services/EmailQueueService.cs
+    startLine: 41
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task EnqueueEmailAsync(string to, string subject, string body)
+    parameters:
+    - id: to
+      type: System.String
+    - id: subject
+      type: System.String
+    - id: body
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function EnqueueEmailAsync([to] As String, subject As String, body As String) As Task
+  overload: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync*
+  implements:
+  - UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  nameWithType.vb: EmailQueueService.EnqueueEmailAsync(String, String, String)
+  fullName.vb: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(String, String, String)
+  name.vb: EnqueueEmailAsync(String, String, String)
+- uid: UserService.Infrastructure.Services.EmailQueueService.GetEmailReader
+  commentId: M:UserService.Infrastructure.Services.EmailQueueService.GetEmailReader
+  id: GetEmailReader
+  parent: UserService.Infrastructure.Services.EmailQueueService
+  langs:
+  - csharp
+  - vb
+  name: GetEmailReader()
+  nameWithType: EmailQueueService.GetEmailReader()
+  fullName: UserService.Infrastructure.Services.EmailQueueService.GetEmailReader()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetEmailReader
+    path: src/UserService.Infrastructure/Services/EmailQueueService.cs
+    startLine: 54
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: public ChannelReader<EmailRequest> GetEmailReader()
+    return:
+      type: System.Threading.Channels.ChannelReader{UserService.Core.DTOs.Common.EmailRequest}
+    content.vb: Public Function GetEmailReader() As ChannelReader(Of EmailRequest)
+  overload: UserService.Infrastructure.Services.EmailQueueService.GetEmailReader*
+references:
+- uid: UserService.Infrastructure.Services
+  commentId: N:UserService.Infrastructure.Services
+  href: UserService.html
+  name: UserService.Infrastructure.Services
+  nameWithType: UserService.Infrastructure.Services
+  fullName: UserService.Infrastructure.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.Interfaces.IEmailQueueService
+  commentId: T:UserService.Core.Interfaces.IEmailQueueService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IEmailQueueService.html
+  name: IEmailQueueService
+  nameWithType: IEmailQueueService
+  fullName: UserService.Core.Interfaces.IEmailQueueService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces
+  commentId: N:UserService.Core.Interfaces
+  href: UserService.html
+  name: UserService.Core.Interfaces
+  nameWithType: UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+- uid: UserService.Infrastructure.Services.EmailQueueService.#ctor*
+  commentId: Overload:UserService.Infrastructure.Services.EmailQueueService.#ctor
+  href: UserService.Infrastructure.Services.EmailQueueService.html#UserService_Infrastructure_Services_EmailQueueService__ctor_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_EmailQueueService__
+  name: EmailQueueService
+  nameWithType: EmailQueueService.EmailQueueService
+  fullName: UserService.Infrastructure.Services.EmailQueueService.EmailQueueService
+  nameWithType.vb: EmailQueueService.New
+  fullName.vb: UserService.Infrastructure.Services.EmailQueueService.New
+  name.vb: New
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.EmailQueueService}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.EmailQueueService}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<EmailQueueService>
+  nameWithType: ILogger<EmailQueueService>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.EmailQueueService>
+  nameWithType.vb: ILogger(Of EmailQueueService)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.EmailQueueService)
+  name.vb: ILogger(Of EmailQueueService)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Infrastructure.Services.EmailQueueService
+    name: EmailQueueService
+    href: UserService.Infrastructure.Services.EmailQueueService.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Infrastructure.Services.EmailQueueService
+    name: EmailQueueService
+    href: UserService.Infrastructure.Services.EmailQueueService.html
+  - name: )
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync*
+  commentId: Overload:UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync
+  href: UserService.Infrastructure.Services.EmailQueueService.html#UserService_Infrastructure_Services_EmailQueueService_EnqueueEmailAsync_UserService_Core_DTOs_Common_EmailRequest_
+  name: EnqueueEmailAsync
+  nameWithType: EmailQueueService.EnqueueEmailAsync
+  fullName: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync
+- uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  commentId: M:UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  parent: UserService.Core.Interfaces.IEmailQueueService
+  name: EnqueueEmailAsync(EmailRequest)
+  nameWithType: IEmailQueueService.EnqueueEmailAsync(EmailRequest)
+  fullName: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+    name: EnqueueEmailAsync
+  - name: (
+  - uid: UserService.Core.DTOs.Common.EmailRequest
+    name: EmailRequest
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+    name: EnqueueEmailAsync
+  - name: (
+  - uid: UserService.Core.DTOs.Common.EmailRequest
+    name: EmailRequest
+  - name: )
+- uid: UserService.Core.DTOs.Common.EmailRequest
+  commentId: T:UserService.Core.DTOs.Common.EmailRequest
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.EmailRequest.html
+  name: EmailRequest
+  nameWithType: EmailRequest
+  fullName: UserService.Core.DTOs.Common.EmailRequest
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Core.Interfaces.IEmailQueueService
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: EnqueueEmailAsync(string, string, string)
+  nameWithType: IEmailQueueService.EnqueueEmailAsync(string, string, string)
+  fullName: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(string, string, string)
+  nameWithType.vb: IEmailQueueService.EnqueueEmailAsync(String, String, String)
+  fullName.vb: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(String, String, String)
+  name.vb: EnqueueEmailAsync(String, String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+    name: EnqueueEmailAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+    name: EnqueueEmailAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Infrastructure.Services.EmailQueueService.GetEmailReader*
+  commentId: Overload:UserService.Infrastructure.Services.EmailQueueService.GetEmailReader
+  href: UserService.Infrastructure.Services.EmailQueueService.html#UserService_Infrastructure_Services_EmailQueueService_GetEmailReader
+  name: GetEmailReader
+  nameWithType: EmailQueueService.GetEmailReader
+  fullName: UserService.Infrastructure.Services.EmailQueueService.GetEmailReader
+- uid: System.Threading.Channels.ChannelReader{UserService.Core.DTOs.Common.EmailRequest}
+  commentId: T:System.Threading.Channels.ChannelReader{UserService.Core.DTOs.Common.EmailRequest}
+  parent: System.Threading.Channels
+  definition: System.Threading.Channels.ChannelReader`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.channels.channelreader-1
+  name: ChannelReader<EmailRequest>
+  nameWithType: ChannelReader<EmailRequest>
+  fullName: System.Threading.Channels.ChannelReader<UserService.Core.DTOs.Common.EmailRequest>
+  nameWithType.vb: ChannelReader(Of EmailRequest)
+  fullName.vb: System.Threading.Channels.ChannelReader(Of UserService.Core.DTOs.Common.EmailRequest)
+  name.vb: ChannelReader(Of EmailRequest)
+  spec.csharp:
+  - uid: System.Threading.Channels.ChannelReader`1
+    name: ChannelReader
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.channels.channelreader-1
+  - name: <
+  - uid: UserService.Core.DTOs.Common.EmailRequest
+    name: EmailRequest
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Channels.ChannelReader`1
+    name: ChannelReader
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.channels.channelreader-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Common.EmailRequest
+    name: EmailRequest
+  - name: )
+- uid: System.Threading.Channels.ChannelReader`1
+  commentId: T:System.Threading.Channels.ChannelReader`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.channels.channelreader-1
+  name: ChannelReader<T>
+  nameWithType: ChannelReader<T>
+  fullName: System.Threading.Channels.ChannelReader<T>
+  nameWithType.vb: ChannelReader(Of T)
+  fullName.vb: System.Threading.Channels.ChannelReader(Of T)
+  name.vb: ChannelReader(Of T)
+  spec.csharp:
+  - uid: System.Threading.Channels.ChannelReader`1
+    name: ChannelReader
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.channels.channelreader-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Channels.ChannelReader`1
+    name: ChannelReader
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.channels.channelreader-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Threading.Channels
+  commentId: N:System.Threading.Channels
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Channels
+  nameWithType: System.Threading.Channels
+  fullName: System.Threading.Channels
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Channels
+    name: Channels
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.channels
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Channels
+    name: Channels
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.channels

@@ -6,14 +6,12 @@ items:
   parent: UserService.Infrastructure.Repositories
   children:
   - UserService.Infrastructure.Repositories.ShiftRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext)
-  - UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync(System.String,System.String)
   - UserService.Infrastructure.Repositories.ShiftRepository.CreateAsync(UserService.Core.Entities.Shift)
   - UserService.Infrastructure.Repositories.ShiftRepository.DeleteAsync(System.String)
   - UserService.Infrastructure.Repositories.ShiftRepository.GetAllAsync
   - UserService.Infrastructure.Repositories.ShiftRepository.GetByIdAsync(System.String)
   - UserService.Infrastructure.Repositories.ShiftRepository.GetByIdAsync(System.String,System.Boolean)
   - UserService.Infrastructure.Repositories.ShiftRepository.IsShiftActiveAsync(System.String)
-  - UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
   - UserService.Infrastructure.Repositories.ShiftRepository.UpdateAsync(UserService.Core.Entities.Shift)
   langs:
   - csharp
@@ -250,7 +248,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: CreateAsync
     path: src/UserService.Infrastructure/Repositories/ShiftRepository.cs
-    startLine: 41
+    startLine: 43
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -285,7 +283,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UpdateAsync
     path: src/UserService.Infrastructure/Repositories/ShiftRepository.cs
-    startLine: 51
+    startLine: 53
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -320,7 +318,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: IsShiftActiveAsync
     path: src/UserService.Infrastructure/Repositories/ShiftRepository.cs
-    startLine: 61
+    startLine: 83
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -339,84 +337,6 @@ items:
   nameWithType.vb: ShiftRepository.IsShiftActiveAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.ShiftRepository.IsShiftActiveAsync(String)
   name.vb: IsShiftActiveAsync(String)
-- uid: UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync(System.String,System.String)
-  commentId: M:UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync(System.String,System.String)
-  id: AssignUserToShiftAsync(System.String,System.String)
-  parent: UserService.Infrastructure.Repositories.ShiftRepository
-  langs:
-  - csharp
-  - vb
-  name: AssignUserToShiftAsync(string, string)
-  nameWithType: ShiftRepository.AssignUserToShiftAsync(string, string)
-  fullName: UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync(string, string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/ShiftRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: AssignUserToShiftAsync
-    path: src/UserService.Infrastructure/Repositories/ShiftRepository.cs
-    startLine: 70
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  example: []
-  syntax:
-    content: public Task<bool> AssignUserToShiftAsync(string userId, string shiftId)
-    parameters:
-    - id: userId
-      type: System.String
-    - id: shiftId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Public Function AssignUserToShiftAsync(userId As String, shiftId As String) As Task(Of Boolean)
-  overload: UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync*
-  implements:
-  - UserService.Core.Interfaces.IShiftRepository.AssignUserToShiftAsync(System.String,System.String)
-  nameWithType.vb: ShiftRepository.AssignUserToShiftAsync(String, String)
-  fullName.vb: UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync(String, String)
-  name.vb: AssignUserToShiftAsync(String, String)
-- uid: UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
-  commentId: M:UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
-  id: RemoveUserFromShiftAsync(System.String,System.String)
-  parent: UserService.Infrastructure.Repositories.ShiftRepository
-  langs:
-  - csharp
-  - vb
-  name: RemoveUserFromShiftAsync(string, string)
-  nameWithType: ShiftRepository.RemoveUserFromShiftAsync(string, string)
-  fullName: UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync(string, string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/ShiftRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: RemoveUserFromShiftAsync
-    path: src/UserService.Infrastructure/Repositories/ShiftRepository.cs
-    startLine: 101
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  example: []
-  syntax:
-    content: public Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId)
-    parameters:
-    - id: userId
-      type: System.String
-    - id: shiftId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Public Function RemoveUserFromShiftAsync(userId As String, shiftId As String) As Task(Of Boolean)
-  overload: UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync*
-  implements:
-  - UserService.Core.Interfaces.IShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
-  nameWithType.vb: ShiftRepository.RemoveUserFromShiftAsync(String, String)
-  fullName.vb: UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync(String, String)
-  name.vb: RemoveUserFromShiftAsync(String, String)
 references:
 - uid: UserService.Infrastructure.Repositories
   commentId: N:UserService.Infrastructure.Repositories
@@ -1718,100 +1638,6 @@ references:
   - uid: UserService.Core.Interfaces.IShiftRepository.IsShiftActiveAsync(System.String)
     name: IsShiftActiveAsync
   - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-- uid: UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync
-  href: UserService.Infrastructure.Repositories.ShiftRepository.html#UserService_Infrastructure_Repositories_ShiftRepository_AssignUserToShiftAsync_System_String_System_String_
-  name: AssignUserToShiftAsync
-  nameWithType: ShiftRepository.AssignUserToShiftAsync
-  fullName: UserService.Infrastructure.Repositories.ShiftRepository.AssignUserToShiftAsync
-- uid: UserService.Core.Interfaces.IShiftRepository.AssignUserToShiftAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftRepository.AssignUserToShiftAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: AssignUserToShiftAsync(string, string)
-  nameWithType: IShiftRepository.AssignUserToShiftAsync(string, string)
-  fullName: UserService.Core.Interfaces.IShiftRepository.AssignUserToShiftAsync(string, string)
-  nameWithType.vb: IShiftRepository.AssignUserToShiftAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftRepository.AssignUserToShiftAsync(String, String)
-  name.vb: AssignUserToShiftAsync(String, String)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftRepository.AssignUserToShiftAsync(System.String,System.String)
-    name: AssignUserToShiftAsync
-  - name: (
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftRepository.AssignUserToShiftAsync(System.String,System.String)
-    name: AssignUserToShiftAsync
-  - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-- uid: UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync
-  href: UserService.Infrastructure.Repositories.ShiftRepository.html#UserService_Infrastructure_Repositories_ShiftRepository_RemoveUserFromShiftAsync_System_String_System_String_
-  name: RemoveUserFromShiftAsync
-  nameWithType: ShiftRepository.RemoveUserFromShiftAsync
-  fullName: UserService.Infrastructure.Repositories.ShiftRepository.RemoveUserFromShiftAsync
-- uid: UserService.Core.Interfaces.IShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: RemoveUserFromShiftAsync(string, string)
-  nameWithType: IShiftRepository.RemoveUserFromShiftAsync(string, string)
-  fullName: UserService.Core.Interfaces.IShiftRepository.RemoveUserFromShiftAsync(string, string)
-  nameWithType.vb: IShiftRepository.RemoveUserFromShiftAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftRepository.RemoveUserFromShiftAsync(String, String)
-  name.vb: RemoveUserFromShiftAsync(String, String)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
-    name: RemoveUserFromShiftAsync
-  - name: (
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftRepository.RemoveUserFromShiftAsync(System.String,System.String)
-    name: RemoveUserFromShiftAsync
-  - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: ','
-  - name: " "
   - uid: System.String
     name: String
     isExternal: true

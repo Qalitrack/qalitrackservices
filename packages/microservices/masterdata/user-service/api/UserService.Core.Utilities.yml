@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Utilities
+  commentId: N:UserService.Core.Utilities
+  id: UserService.Core.Utilities
+  children:
+  - UserService.Core.Utilities.StringUtils
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Utilities
+  nameWithType: UserService.Core.Utilities
+  fullName: UserService.Core.Utilities
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Utilities.StringUtils
+  commentId: T:UserService.Core.Utilities.StringUtils
+  href: UserService.Core.Utilities.StringUtils.html
+  name: StringUtils
+  nameWithType: StringUtils
+  fullName: UserService.Core.Utilities.StringUtils

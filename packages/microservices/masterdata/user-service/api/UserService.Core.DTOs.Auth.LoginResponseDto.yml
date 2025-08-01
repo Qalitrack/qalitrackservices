@@ -234,7 +234,7 @@ items:
   - UserService.Core
   namespace: UserService.Core.DTOs.Auth
   syntax:
-    content: public virtual List<string>? UserRoles { get; set; }
+    content: public virtual List<string> UserRoles { get; set; }
     parameters: []
     return:
       type: System.Collections.Generic.List{System.String}

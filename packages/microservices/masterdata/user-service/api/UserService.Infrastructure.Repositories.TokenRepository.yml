@@ -14,8 +14,6 @@ items:
   - UserService.Infrastructure.Repositories.TokenRepository.GetByIdAsync(System.String,System.Boolean)
   - UserService.Infrastructure.Repositories.TokenRepository.GetTokenByJtiAsync(System.String)
   - UserService.Infrastructure.Repositories.TokenRepository.GetTokenByUserIdAsync(System.Guid)
-  - UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(System.String)
-  - UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
   langs:
   - csharp
   - vb
@@ -235,40 +233,6 @@ items:
   nameWithType.vb: TokenRepository.DeleteAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.DeleteAsync(String)
   name.vb: DeleteAsync(String)
-- uid: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
-  id: RevokeTokenAsync(System.Guid)
-  parent: UserService.Infrastructure.Repositories.TokenRepository
-  langs:
-  - csharp
-  - vb
-  name: RevokeTokenAsync(Guid)
-  nameWithType: TokenRepository.RevokeTokenAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync(System.Guid)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: RevokeTokenAsync
-    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
-    startLine: 94
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  example: []
-  syntax:
-    content: public Task<bool> RevokeTokenAsync(Guid userId)
-    parameters:
-    - id: userId
-      type: System.Guid
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Public Function RevokeTokenAsync(userId As Guid) As Task(Of Boolean)
-  overload: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync*
-  implements:
-  - UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
 - uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync(System.Guid)
   commentId: M:UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync(System.Guid)
   id: DeleteTokenAsync(System.Guid)
@@ -303,40 +267,6 @@ items:
   overload: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync*
   implements:
   - UserService.Core.Interfaces.ITokenRepository.DeleteTokenAsync(System.Guid)
-- uid: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(System.String)
-  commentId: M:UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(System.String)
-  id: GetUserFromTokenAsync(System.String)
-  parent: UserService.Infrastructure.Repositories.TokenRepository
-  langs:
-  - csharp
-  - vb
-  name: GetUserFromTokenAsync(string)
-  nameWithType: TokenRepository.GetUserFromTokenAsync(string)
-  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/TokenRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetUserFromTokenAsync
-    path: src/UserService.Infrastructure/Repositories/TokenRepository.cs
-    startLine: 169
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  syntax:
-    content: public Task<User?> GetUserFromTokenAsync(string token)
-    parameters:
-    - id: token
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{UserService.Core.Entities.User}
-    content.vb: Public Function GetUserFromTokenAsync(token As String) As Task(Of User)
-  overload: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync*
-  nameWithType.vb: TokenRepository.GetUserFromTokenAsync(String)
-  fullName.vb: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync(String)
-  name.vb: GetUserFromTokenAsync(String)
 - uid: UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync
   commentId: M:UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync
   id: GetAllAsync
@@ -1634,38 +1564,6 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
-- uid: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync
-  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_RevokeTokenAsync_System_Guid_
-  name: RevokeTokenAsync
-  nameWithType: TokenRepository.RevokeTokenAsync
-  fullName: UserService.Infrastructure.Repositories.TokenRepository.RevokeTokenAsync
-- uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-  commentId: M:UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-  parent: UserService.Core.Interfaces.ITokenRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.guid
-  name: RevokeTokenAsync(Guid)
-  nameWithType: ITokenRepository.RevokeTokenAsync(Guid)
-  fullName: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-    name: RevokeTokenAsync
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.ITokenRepository.RevokeTokenAsync(System.Guid)
-    name: RevokeTokenAsync
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
 - uid: UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.DeleteTokenAsync
   href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_DeleteTokenAsync_System_Guid_
@@ -1697,45 +1595,6 @@ references:
     name: Guid
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
-- uid: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync
-  href: UserService.Infrastructure.Repositories.TokenRepository.html#UserService_Infrastructure_Repositories_TokenRepository_GetUserFromTokenAsync_System_String_
-  name: GetUserFromTokenAsync
-  nameWithType: TokenRepository.GetUserFromTokenAsync
-  fullName: UserService.Infrastructure.Repositories.TokenRepository.GetUserFromTokenAsync
-- uid: System.Threading.Tasks.Task{UserService.Core.Entities.User}
-  commentId: T:System.Threading.Tasks.Task{UserService.Core.Entities.User}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<User>
-  nameWithType: Task<User>
-  fullName: System.Threading.Tasks.Task<UserService.Core.Entities.User>
-  nameWithType.vb: Task(Of User)
-  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.Entities.User)
-  name.vb: Task(Of User)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: UserService.Core.Entities.User
-    name: User
-    href: UserService.Core.Entities.User.html
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.Entities.User
-    name: User
-    href: UserService.Core.Entities.User.html
   - name: )
 - uid: UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.TokenRepository.GetAllAsync

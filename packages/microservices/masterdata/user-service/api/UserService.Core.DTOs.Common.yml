@@ -1,0 +1,103 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  id: UserService.Core.DTOs.Common
+  children:
+  - UserService.Core.DTOs.Common.EmailRequest
+  - UserService.Core.DTOs.Common.PagedResult`1
+  - UserService.Core.DTOs.Common.PaginationParameters
+  - UserService.Core.DTOs.Common.ServiceResult
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.DTOs.Common.EmailRequest
+  commentId: T:UserService.Core.DTOs.Common.EmailRequest
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.EmailRequest.html
+  name: EmailRequest
+  nameWithType: EmailRequest
+  fullName: UserService.Core.DTOs.Common.EmailRequest
+- uid: UserService.Core.DTOs.Common.PagedResult`1
+  commentId: T:UserService.Core.DTOs.Common.PagedResult`1
+  href: UserService.Core.DTOs.Common.PagedResult-1.html
+  name: PagedResult<T>
+  nameWithType: PagedResult<T>
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>
+  nameWithType.vb: PagedResult(Of T)
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T)
+  name.vb: PagedResult(Of T)
+  spec.csharp:
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Core.DTOs.Common.PaginationParameters
+  commentId: T:UserService.Core.DTOs.Common.PaginationParameters
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.PaginationParameters.html
+  name: PaginationParameters
+  nameWithType: PaginationParameters
+  fullName: UserService.Core.DTOs.Common.PaginationParameters
+- uid: UserService.Core.DTOs.Common.ServiceResult
+  commentId: T:UserService.Core.DTOs.Common.ServiceResult
+  href: UserService.Core.DTOs.Common.ServiceResult.html
+  name: ServiceResult
+  nameWithType: ServiceResult
+  fullName: UserService.Core.DTOs.Common.ServiceResult
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html

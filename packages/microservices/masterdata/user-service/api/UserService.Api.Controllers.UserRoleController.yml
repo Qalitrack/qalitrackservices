@@ -22,7 +22,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UserRoleController
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 8
+    startLine: 9
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -257,7 +257,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 8
+    startLine: 9
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -291,7 +291,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AddRoleToUser
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 19
+    startLine: 20
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -301,20 +301,40 @@ items:
 
       [Authorize(Policy = "users.manage")]
 
-      public Task AddRoleToUser(string userId, string roleId)
+      [ProducesResponseType(200)]
+
+      [ProducesResponseType(400)]
+
+      [ProducesResponseType(401)]
+
+      [ProducesResponseType(403)]
+
+      [ProducesResponseType(500)]
+
+      public Task<IActionResult> AddRoleToUser(string userId, string roleId)
     parameters:
     - id: userId
       type: System.String
     - id: roleId
       type: System.String
     return:
-      type: System.Threading.Tasks.Task
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
     content.vb: >-
       <HttpPost("{userId}/roles/{roleId}")>
 
       <Authorize(Policy:="users.manage")>
 
-      Public Function AddRoleToUser(userId As String, roleId As String) As Task
+      <ProducesResponseType(200)>
+
+      <ProducesResponseType(400)>
+
+      <ProducesResponseType(401)>
+
+      <ProducesResponseType(403)>
+
+      <ProducesResponseType(500)>
+
+      Public Function AddRoleToUser(userId As String, roleId As String) As Task(Of IActionResult)
   overload: UserService.Api.Controllers.UserRoleController.AddRoleToUser*
   attributes:
   - type: Microsoft.AspNetCore.Mvc.HttpPostAttribute
@@ -329,6 +349,31 @@ items:
     - name: Policy
       type: System.String
       value: users.manage
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 200
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 400
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 401
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 403
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 500
   nameWithType.vb: UserRoleController.AddRoleToUser(String, String)
   fullName.vb: UserService.Api.Controllers.UserRoleController.AddRoleToUser(String, String)
   name.vb: AddRoleToUser(String, String)
@@ -350,7 +395,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemoveRoleFromUser
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 26
+    startLine: 85
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -360,20 +405,40 @@ items:
 
       [Authorize(Policy = "users.manage")]
 
-      public Task RemoveRoleFromUser(string userId, string roleId)
+      [ProducesResponseType(200)]
+
+      [ProducesResponseType(400)]
+
+      [ProducesResponseType(401)]
+
+      [ProducesResponseType(403)]
+
+      [ProducesResponseType(500)]
+
+      public Task<IActionResult> RemoveRoleFromUser(string userId, string roleId)
     parameters:
     - id: userId
       type: System.String
     - id: roleId
       type: System.String
     return:
-      type: System.Threading.Tasks.Task
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
     content.vb: >-
       <HttpDelete("{userId}/roles/{roleId}")>
 
       <Authorize(Policy:="users.manage")>
 
-      Public Function RemoveRoleFromUser(userId As String, roleId As String) As Task
+      <ProducesResponseType(200)>
+
+      <ProducesResponseType(400)>
+
+      <ProducesResponseType(401)>
+
+      <ProducesResponseType(403)>
+
+      <ProducesResponseType(500)>
+
+      Public Function RemoveRoleFromUser(userId As String, roleId As String) As Task(Of IActionResult)
   overload: UserService.Api.Controllers.UserRoleController.RemoveRoleFromUser*
   attributes:
   - type: Microsoft.AspNetCore.Mvc.HttpDeleteAttribute
@@ -388,6 +453,31 @@ items:
     - name: Policy
       type: System.String
       value: users.manage
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 200
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 400
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 401
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 403
+  - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
+    ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Int32)
+    arguments:
+    - type: System.Int32
+      value: 500
   nameWithType.vb: UserRoleController.RemoveRoleFromUser(String, String)
   fullName.vb: UserService.Api.Controllers.UserRoleController.RemoveRoleFromUser(String, String)
   name.vb: RemoveRoleFromUser(String, String)
@@ -9548,14 +9638,69 @@ references:
   nameWithType.vb: String
   fullName.vb: String
   name.vb: String
-- uid: System.Threading.Tasks.Task
-  commentId: T:System.Threading.Tasks.Task
+- uid: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
+  commentId: T:System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
   parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IActionResult>
+  nameWithType: Task<IActionResult>
+  fullName: System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult>
+  nameWithType.vb: Task(Of IActionResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Microsoft.AspNetCore.Mvc.IActionResult)
+  name.vb: Task(Of IActionResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Microsoft.AspNetCore.Mvc.IActionResult
+    name: IActionResult
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Microsoft.AspNetCore.Mvc.IActionResult
+    name: IActionResult
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
-  name: Task
-  nameWithType: Task
-  fullName: System.Threading.Tasks.Task
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
 - uid: System.Threading.Tasks
   commentId: N:System.Threading.Tasks
   isExternal: true

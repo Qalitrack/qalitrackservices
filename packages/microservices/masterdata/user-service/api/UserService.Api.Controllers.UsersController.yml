@@ -8,10 +8,11 @@ items:
   - UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
   - UserService.Api.Controllers.UsersController.Create(UserService.Core.DTOs.User.CreateUserDto)
   - UserService.Api.Controllers.UsersController.Delete(System.String)
-  - UserService.Api.Controllers.UsersController.GetAll
   - UserService.Api.Controllers.UsersController.GetById(System.String)
-  - UserService.Api.Controllers.UsersController.GetDeleted
+  - UserService.Api.Controllers.UsersController.GetDeletedPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Api.Controllers.UsersController.GetPaged(UserService.Core.DTOs.Common.PaginationParameters)
   - UserService.Api.Controllers.UsersController.GetUserPermissions(System.String)
+  - UserService.Api.Controllers.UsersController.GetUserPermissionsDebug(System.String)
   - UserService.Api.Controllers.UsersController.Restore(System.String)
   - UserService.Api.Controllers.UsersController.Update(System.String,UserService.Core.DTOs.User.UpdateUserDto)
   langs:
@@ -28,7 +29,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UsersController
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 13
+    startLine: 17
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -38,7 +39,9 @@ items:
 
       [ApiController]
 
-      [Route("api/[controller]")]
+      [ApiVersion("1.0")]
+
+      [Route("api/v{version:apiVersion}/[controller]")]
 
       public class UsersController : ControllerBase
     content.vb: >-
@@ -46,7 +49,9 @@ items:
 
       <ApiController>
 
-      <Route("api/[controller]")>
+      <ApiVersion("1.0")>
+
+      <Route("api/v{version:apiVersion}/[controller]")>
 
       Public Class UsersController Inherits ControllerBase
   inheritance:
@@ -240,11 +245,16 @@ items:
   - type: Microsoft.AspNetCore.Mvc.ApiControllerAttribute
     ctor: Microsoft.AspNetCore.Mvc.ApiControllerAttribute.#ctor
     arguments: []
+  - type: Asp.Versioning.ApiVersionAttribute
+    ctor: Asp.Versioning.ApiVersionAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: "1.0"
   - type: Microsoft.AspNetCore.Mvc.RouteAttribute
     ctor: Microsoft.AspNetCore.Mvc.RouteAttribute.#ctor(System.String)
     arguments:
     - type: System.String
-      value: api/[controller]
+      value: api/v{version:apiVersion}/[controller]
 - uid: UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
   commentId: M:UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
   id: '#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})'
@@ -263,7 +273,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 23
+    startLine: 17
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -283,106 +293,6 @@ items:
   nameWithType.vb: UsersController.New(IUserService, IUserRoleService, IMapper, ILogger(Of UsersController))
   fullName.vb: UserService.Api.Controllers.UsersController.New(UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IUserRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.UsersController))
   name.vb: New(IUserService, IUserRoleService, IMapper, ILogger(Of UsersController))
-- uid: UserService.Api.Controllers.UsersController.GetAll
-  commentId: M:UserService.Api.Controllers.UsersController.GetAll
-  id: GetAll
-  parent: UserService.Api.Controllers.UsersController
-  langs:
-  - csharp
-  - vb
-  name: GetAll()
-  nameWithType: UsersController.GetAll()
-  fullName: UserService.Api.Controllers.UsersController.GetAll()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetAll
-    path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 35
-  assemblies:
-  - UserService.Api
-  namespace: UserService.Api.Controllers
-  syntax:
-    content: >-
-      [HttpGet]
-
-      [Authorize(Policy = "users.view")]
-
-      public Task<IEnumerable<UserReadDto>> GetAll()
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
-    content.vb: >-
-      <HttpGet>
-
-      <Authorize(Policy:="users.view")>
-
-      Public Function GetAll() As Task(Of IEnumerable(Of UserReadDto))
-  overload: UserService.Api.Controllers.UsersController.GetAll*
-  attributes:
-  - type: Microsoft.AspNetCore.Mvc.HttpGetAttribute
-    ctor: Microsoft.AspNetCore.Mvc.HttpGetAttribute.#ctor
-    arguments: []
-  - type: Microsoft.AspNetCore.Authorization.AuthorizeAttribute
-    ctor: Microsoft.AspNetCore.Authorization.AuthorizeAttribute.#ctor
-    arguments: []
-    namedArguments:
-    - name: Policy
-      type: System.String
-      value: users.view
-- uid: UserService.Api.Controllers.UsersController.GetDeleted
-  commentId: M:UserService.Api.Controllers.UsersController.GetDeleted
-  id: GetDeleted
-  parent: UserService.Api.Controllers.UsersController
-  langs:
-  - csharp
-  - vb
-  name: GetDeleted()
-  nameWithType: UsersController.GetDeleted()
-  fullName: UserService.Api.Controllers.UsersController.GetDeleted()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetDeleted
-    path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 50
-  assemblies:
-  - UserService.Api
-  namespace: UserService.Api.Controllers
-  syntax:
-    content: >-
-      [HttpGet("deleted")]
-
-      [Authorize(Policy = "users.manage")]
-
-      public Task<IEnumerable<UserReadDto>> GetDeleted()
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
-    content.vb: >-
-      <HttpGet("deleted")>
-
-      <Authorize(Policy:="users.manage")>
-
-      Public Function GetDeleted() As Task(Of IEnumerable(Of UserReadDto))
-  overload: UserService.Api.Controllers.UsersController.GetDeleted*
-  attributes:
-  - type: Microsoft.AspNetCore.Mvc.HttpGetAttribute
-    ctor: Microsoft.AspNetCore.Mvc.HttpGetAttribute.#ctor(System.String)
-    arguments:
-    - type: System.String
-      value: deleted
-  - type: Microsoft.AspNetCore.Authorization.AuthorizeAttribute
-    ctor: Microsoft.AspNetCore.Authorization.AuthorizeAttribute.#ctor
-    arguments: []
-    namedArguments:
-    - name: Policy
-      type: System.String
-      value: users.manage
 - uid: UserService.Api.Controllers.UsersController.GetById(System.String)
   commentId: M:UserService.Api.Controllers.UsersController.GetById(System.String)
   id: GetById(System.String)
@@ -401,7 +311,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetById
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 65
+    startLine: 34
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -458,7 +368,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Create
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 77
+    startLine: 46
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -466,9 +376,9 @@ items:
     content: >-
       [HttpPost]
 
-      [AllowAnonymous]
+      [Authorize(Policy = "users.create")]
 
-      public Task<UserReadDto> Create(CreateUserDto createUserDto)
+      public Task<IActionResult> Create(CreateUserDto createUserDto)
     parameters:
     - id: createUserDto
       type: UserService.Core.DTOs.User.CreateUserDto
@@ -477,21 +387,25 @@ items:
         ctor: Microsoft.AspNetCore.Mvc.FromBodyAttribute.#ctor
         arguments: []
     return:
-      type: System.Threading.Tasks.Task{UserService.Core.DTOs.User.UserReadDto}
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
     content.vb: >-
       <HttpPost>
 
-      <AllowAnonymous>
+      <Authorize(Policy:="users.create")>
 
-      Public Function Create(createUserDto As CreateUserDto) As Task(Of UserReadDto)
+      Public Function Create(createUserDto As CreateUserDto) As Task(Of IActionResult)
   overload: UserService.Api.Controllers.UsersController.Create*
   attributes:
   - type: Microsoft.AspNetCore.Mvc.HttpPostAttribute
     ctor: Microsoft.AspNetCore.Mvc.HttpPostAttribute.#ctor
     arguments: []
-  - type: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute
-    ctor: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute.#ctor
+  - type: Microsoft.AspNetCore.Authorization.AuthorizeAttribute
+    ctor: Microsoft.AspNetCore.Authorization.AuthorizeAttribute.#ctor
     arguments: []
+    namedArguments:
+    - name: Policy
+      type: System.String
+      value: users.create
 - uid: UserService.Api.Controllers.UsersController.Update(System.String,UserService.Core.DTOs.User.UpdateUserDto)
   commentId: M:UserService.Api.Controllers.UsersController.Update(System.String,UserService.Core.DTOs.User.UpdateUserDto)
   id: Update(System.String,UserService.Core.DTOs.User.UpdateUserDto)
@@ -510,7 +424,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Update
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 84
+    startLine: 100
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -520,7 +434,7 @@ items:
 
       [Authorize(Policy = "users.manage")]
 
-      public Task<UserReadDto> Update(string id, UpdateUserDto updateUserDto)
+      public Task<IActionResult> Update(string id, UpdateUserDto updateUserDto)
     parameters:
     - id: id
       type: System.String
@@ -531,13 +445,13 @@ items:
         ctor: Microsoft.AspNetCore.Mvc.FromBodyAttribute.#ctor
         arguments: []
     return:
-      type: System.Threading.Tasks.Task{UserService.Core.DTOs.User.UserReadDto}
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
     content.vb: >-
       <HttpPut("{id}")>
 
       <Authorize(Policy:="users.manage")>
 
-      Public Function Update(id As String, updateUserDto As UpdateUserDto) As Task(Of UserReadDto)
+      Public Function Update(id As String, updateUserDto As UpdateUserDto) As Task(Of IActionResult)
   overload: UserService.Api.Controllers.UsersController.Update*
   attributes:
   - type: Microsoft.AspNetCore.Mvc.HttpPutAttribute
@@ -573,7 +487,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Delete
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 96
+    startLine: 163
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -583,18 +497,18 @@ items:
 
       [Authorize(Policy = "users.manage")]
 
-      public Task Delete(string id)
+      public Task<IActionResult> Delete(string id)
     parameters:
     - id: id
       type: System.String
     return:
-      type: System.Threading.Tasks.Task
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
     content.vb: >-
       <HttpDelete("{id}")>
 
       <Authorize(Policy:="users.manage")>
 
-      Public Function Delete(id As String) As Task
+      Public Function Delete(id As String) As Task(Of IActionResult)
   overload: UserService.Api.Controllers.UsersController.Delete*
   attributes:
   - type: Microsoft.AspNetCore.Mvc.HttpDeleteAttribute
@@ -630,7 +544,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Restore
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 107
+    startLine: 210
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -687,7 +601,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserPermissions
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 118
+    startLine: 221
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -697,18 +611,18 @@ items:
 
       [Authorize(Policy = "users.view")]
 
-      public Task<IEnumerable<string>> GetUserPermissions(string userId)
+      public Task<IActionResult> GetUserPermissions(string userId)
     parameters:
     - id: userId
       type: System.String
     return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
     content.vb: >-
       <HttpGet("{userId}/permissions")>
 
       <Authorize(Policy:="users.view")>
 
-      Public Function GetUserPermissions(userId As String) As Task(Of IEnumerable(Of String))
+      Public Function GetUserPermissions(userId As String) As Task(Of IActionResult)
   overload: UserService.Api.Controllers.UsersController.GetUserPermissions*
   attributes:
   - type: Microsoft.AspNetCore.Mvc.HttpGetAttribute
@@ -726,6 +640,179 @@ items:
   nameWithType.vb: UsersController.GetUserPermissions(String)
   fullName.vb: UserService.Api.Controllers.UsersController.GetUserPermissions(String)
   name.vb: GetUserPermissions(String)
+- uid: UserService.Api.Controllers.UsersController.GetUserPermissionsDebug(System.String)
+  commentId: M:UserService.Api.Controllers.UsersController.GetUserPermissionsDebug(System.String)
+  id: GetUserPermissionsDebug(System.String)
+  parent: UserService.Api.Controllers.UsersController
+  langs:
+  - csharp
+  - vb
+  name: GetUserPermissionsDebug(string)
+  nameWithType: UsersController.GetUserPermissionsDebug(string)
+  fullName: UserService.Api.Controllers.UsersController.GetUserPermissionsDebug(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetUserPermissionsDebug
+    path: src/UserService.Api/Controllers/UsersController.cs
+    startLine: 257
+  assemblies:
+  - UserService.Api
+  namespace: UserService.Api.Controllers
+  syntax:
+    content: >-
+      [HttpGet("{userId}/permissions/debug")]
+
+      [Authorize(Policy = "users.manage")]
+
+      public Task<IActionResult> GetUserPermissionsDebug(string userId)
+    parameters:
+    - id: userId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
+    content.vb: >-
+      <HttpGet("{userId}/permissions/debug")>
+
+      <Authorize(Policy:="users.manage")>
+
+      Public Function GetUserPermissionsDebug(userId As String) As Task(Of IActionResult)
+  overload: UserService.Api.Controllers.UsersController.GetUserPermissionsDebug*
+  attributes:
+  - type: Microsoft.AspNetCore.Mvc.HttpGetAttribute
+    ctor: Microsoft.AspNetCore.Mvc.HttpGetAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: '{userId}/permissions/debug'
+  - type: Microsoft.AspNetCore.Authorization.AuthorizeAttribute
+    ctor: Microsoft.AspNetCore.Authorization.AuthorizeAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: Policy
+      type: System.String
+      value: users.manage
+  nameWithType.vb: UsersController.GetUserPermissionsDebug(String)
+  fullName.vb: UserService.Api.Controllers.UsersController.GetUserPermissionsDebug(String)
+  name.vb: GetUserPermissionsDebug(String)
+- uid: UserService.Api.Controllers.UsersController.GetPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Api.Controllers.UsersController.GetPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GetPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Api.Controllers.UsersController
+  langs:
+  - csharp
+  - vb
+  name: GetPaged(PaginationParameters)
+  nameWithType: UsersController.GetPaged(PaginationParameters)
+  fullName: UserService.Api.Controllers.UsersController.GetPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetPaged
+    path: src/UserService.Api/Controllers/UsersController.cs
+    startLine: 276
+  assemblies:
+  - UserService.Api
+  namespace: UserService.Api.Controllers
+  syntax:
+    content: >-
+      [HttpGet("paged")]
+
+      [Authorize(Policy = "users.view")]
+
+      public Task<PagedResult<UserReadDto>> GetPaged(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
+      attributes:
+      - type: Microsoft.AspNetCore.Mvc.FromQueryAttribute
+        ctor: Microsoft.AspNetCore.Mvc.FromQueryAttribute.#ctor
+        arguments: []
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
+    content.vb: >-
+      <HttpGet("paged")>
+
+      <Authorize(Policy:="users.view")>
+
+      Public Function GetPaged(parameters As PaginationParameters) As Task(Of PagedResult(Of UserReadDto))
+  overload: UserService.Api.Controllers.UsersController.GetPaged*
+  attributes:
+  - type: Microsoft.AspNetCore.Mvc.HttpGetAttribute
+    ctor: Microsoft.AspNetCore.Mvc.HttpGetAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: paged
+  - type: Microsoft.AspNetCore.Authorization.AuthorizeAttribute
+    ctor: Microsoft.AspNetCore.Authorization.AuthorizeAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: Policy
+      type: System.String
+      value: users.view
+- uid: UserService.Api.Controllers.UsersController.GetDeletedPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Api.Controllers.UsersController.GetDeletedPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GetDeletedPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Api.Controllers.UsersController
+  langs:
+  - csharp
+  - vb
+  name: GetDeletedPaged(PaginationParameters)
+  nameWithType: UsersController.GetDeletedPaged(PaginationParameters)
+  fullName: UserService.Api.Controllers.UsersController.GetDeletedPaged(UserService.Core.DTOs.Common.PaginationParameters)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetDeletedPaged
+    path: src/UserService.Api/Controllers/UsersController.cs
+    startLine: 291
+  assemblies:
+  - UserService.Api
+  namespace: UserService.Api.Controllers
+  syntax:
+    content: >-
+      [HttpGet("deleted/paged")]
+
+      [Authorize(Policy = "users.manage")]
+
+      public Task<PagedResult<UserReadDto>> GetDeletedPaged(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
+      attributes:
+      - type: Microsoft.AspNetCore.Mvc.FromQueryAttribute
+        ctor: Microsoft.AspNetCore.Mvc.FromQueryAttribute.#ctor
+        arguments: []
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
+    content.vb: >-
+      <HttpGet("deleted/paged")>
+
+      <Authorize(Policy:="users.manage")>
+
+      Public Function GetDeletedPaged(parameters As PaginationParameters) As Task(Of PagedResult(Of UserReadDto))
+  overload: UserService.Api.Controllers.UsersController.GetDeletedPaged*
+  attributes:
+  - type: Microsoft.AspNetCore.Mvc.HttpGetAttribute
+    ctor: Microsoft.AspNetCore.Mvc.HttpGetAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: deleted/paged
+  - type: Microsoft.AspNetCore.Authorization.AuthorizeAttribute
+    ctor: Microsoft.AspNetCore.Authorization.AuthorizeAttribute.#ctor
+    arguments: []
+    namedArguments:
+    - name: Policy
+      type: System.String
+      value: users.manage
 references:
 - uid: UserService.Api.Controllers
   commentId: N:UserService.Api.Controllers
@@ -9886,38 +9973,43 @@ references:
     name: Logging
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
-- uid: UserService.Api.Controllers.UsersController.GetAll*
-  commentId: Overload:UserService.Api.Controllers.UsersController.GetAll
-  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetAll
-  name: GetAll
-  nameWithType: UsersController.GetAll
-  fullName: UserService.Api.Controllers.UsersController.GetAll
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
+- uid: UserService.Api.Controllers.UsersController.GetById*
+  commentId: Overload:UserService.Api.Controllers.UsersController.GetById
+  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetById_System_String_
+  name: GetById
+  nameWithType: UsersController.GetById
+  fullName: UserService.Api.Controllers.UsersController.GetById
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.User.UserReadDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.User.UserReadDto}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable<UserReadDto>>
-  nameWithType: Task<IEnumerable<UserReadDto>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.DTOs.User.UserReadDto>>
-  nameWithType.vb: Task(Of IEnumerable(Of UserReadDto))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.DTOs.User.UserReadDto))
-  name.vb: Task(Of IEnumerable(Of UserReadDto))
+  name: Task<UserReadDto>
+  nameWithType: Task<UserReadDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.User.UserReadDto>
+  nameWithType.vb: Task(Of UserReadDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.User.UserReadDto)
+  name.vb: Task(Of UserReadDto)
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
   - uid: UserService.Core.DTOs.User.UserReadDto
     name: UserReadDto
     href: UserService.Core.DTOs.User.UserReadDto.html
-  - name: '>'
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -9927,17 +10019,9 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
   - uid: UserService.Core.DTOs.User.UserReadDto
     name: UserReadDto
     href: UserService.Core.DTOs.User.UserReadDto.html
-  - name: )
   - name: )
 - uid: System.Threading.Tasks.Task`1
   commentId: T:System.Threading.Tasks.Task`1
@@ -10004,62 +10088,6 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-- uid: UserService.Api.Controllers.UsersController.GetDeleted*
-  commentId: Overload:UserService.Api.Controllers.UsersController.GetDeleted
-  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetDeleted
-  name: GetDeleted
-  nameWithType: UsersController.GetDeleted
-  fullName: UserService.Api.Controllers.UsersController.GetDeleted
-- uid: UserService.Api.Controllers.UsersController.GetById*
-  commentId: Overload:UserService.Api.Controllers.UsersController.GetById
-  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetById_System_String_
-  name: GetById
-  nameWithType: UsersController.GetById
-  fullName: UserService.Api.Controllers.UsersController.GetById
-- uid: System.String
-  commentId: T:System.String
-  parent: System
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: string
-  nameWithType: string
-  fullName: string
-  nameWithType.vb: String
-  fullName.vb: String
-  name.vb: String
-- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.User.UserReadDto}
-  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.User.UserReadDto}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<UserReadDto>
-  nameWithType: Task<UserReadDto>
-  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.User.UserReadDto>
-  nameWithType.vb: Task(Of UserReadDto)
-  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.User.UserReadDto)
-  name.vb: Task(Of UserReadDto)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: UserService.Core.DTOs.User.UserReadDto
-    name: UserReadDto
-    href: UserService.Core.DTOs.User.UserReadDto.html
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.DTOs.User.UserReadDto
-    name: UserReadDto
-    href: UserService.Core.DTOs.User.UserReadDto.html
-  - name: )
 - uid: UserService.Api.Controllers.UsersController.Create*
   commentId: Overload:UserService.Api.Controllers.UsersController.Create
   href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_Create_UserService_Core_DTOs_User_CreateUserDto_
@@ -10073,6 +10101,41 @@ references:
   name: CreateUserDto
   nameWithType: CreateUserDto
   fullName: UserService.Core.DTOs.User.CreateUserDto
+- uid: System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
+  commentId: T:System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IActionResult>
+  nameWithType: Task<IActionResult>
+  fullName: System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult>
+  nameWithType.vb: Task(Of IActionResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Microsoft.AspNetCore.Mvc.IActionResult)
+  name.vb: Task(Of IActionResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Microsoft.AspNetCore.Mvc.IActionResult
+    name: IActionResult
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Microsoft.AspNetCore.Mvc.IActionResult
+    name: IActionResult
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult
+  - name: )
 - uid: UserService.Core.DTOs.User
   commentId: N:UserService.Core.DTOs.User
   href: UserService.html
@@ -10130,6 +10193,12 @@ references:
   name: Delete
   nameWithType: UsersController.Delete
   fullName: UserService.Api.Controllers.UsersController.Delete
+- uid: UserService.Api.Controllers.UsersController.Restore*
+  commentId: Overload:UserService.Api.Controllers.UsersController.Restore
+  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_Restore_System_String_
+  name: Restore
+  nameWithType: UsersController.Restore
+  fullName: UserService.Api.Controllers.UsersController.Restore
 - uid: System.Threading.Tasks.Task
   commentId: T:System.Threading.Tasks.Task
   parent: System.Threading.Tasks
@@ -10138,44 +10207,55 @@ references:
   name: Task
   nameWithType: Task
   fullName: System.Threading.Tasks.Task
-- uid: UserService.Api.Controllers.UsersController.Restore*
-  commentId: Overload:UserService.Api.Controllers.UsersController.Restore
-  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_Restore_System_String_
-  name: Restore
-  nameWithType: UsersController.Restore
-  fullName: UserService.Api.Controllers.UsersController.Restore
 - uid: UserService.Api.Controllers.UsersController.GetUserPermissions*
   commentId: Overload:UserService.Api.Controllers.UsersController.GetUserPermissions
   href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetUserPermissions_System_String_
   name: GetUserPermissions
   nameWithType: UsersController.GetUserPermissions
   fullName: UserService.Api.Controllers.UsersController.GetUserPermissions
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
+- uid: UserService.Api.Controllers.UsersController.GetUserPermissionsDebug*
+  commentId: Overload:UserService.Api.Controllers.UsersController.GetUserPermissionsDebug
+  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetUserPermissionsDebug_System_String_
+  name: GetUserPermissionsDebug
+  nameWithType: UsersController.GetUserPermissionsDebug
+  fullName: UserService.Api.Controllers.UsersController.GetUserPermissionsDebug
+- uid: UserService.Api.Controllers.UsersController.GetPaged*
+  commentId: Overload:UserService.Api.Controllers.UsersController.GetPaged
+  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetPaged_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetPaged
+  nameWithType: UsersController.GetPaged
+  fullName: UserService.Api.Controllers.UsersController.GetPaged
+- uid: UserService.Core.DTOs.Common.PaginationParameters
+  commentId: T:UserService.Core.DTOs.Common.PaginationParameters
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.PaginationParameters.html
+  name: PaginationParameters
+  nameWithType: PaginationParameters
+  fullName: UserService.Core.DTOs.Common.PaginationParameters
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable<string>>
-  nameWithType: Task<IEnumerable<string>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-  nameWithType.vb: Task(Of IEnumerable(Of String))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of String))
-  name.vb: Task(Of IEnumerable(Of String))
+  name: Task<PagedResult<UserReadDto>>
+  nameWithType: Task<PagedResult<UserReadDto>>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.PagedResult<UserService.Core.DTOs.User.UserReadDto>>
+  nameWithType.vb: Task(Of PagedResult(Of UserReadDto))
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.PagedResult(Of UserService.Core.DTOs.User.UserReadDto))
+  name.vb: Task(Of PagedResult(Of UserReadDto))
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
   - name: <
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
+  - uid: UserService.Core.DTOs.User.UserReadDto
+    name: UserReadDto
+    href: UserService.Core.DTOs.User.UserReadDto.html
   - name: '>'
   - name: '>'
   spec.vb:
@@ -10186,16 +10266,58 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
   - name: (
   - name: Of
   - name: " "
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
+  - uid: UserService.Core.DTOs.User.UserReadDto
+    name: UserReadDto
+    href: UserService.Core.DTOs.User.UserReadDto.html
   - name: )
   - name: )
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+- uid: UserService.Api.Controllers.UsersController.GetDeletedPaged*
+  commentId: Overload:UserService.Api.Controllers.UsersController.GetDeletedPaged
+  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController_GetDeletedPaged_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetDeletedPaged
+  nameWithType: UsersController.GetDeletedPaged
+  fullName: UserService.Api.Controllers.UsersController.GetDeletedPaged
