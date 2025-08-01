@@ -5,6 +5,7 @@ import '../../core/network/service_discovery.dart';
 import '../../core/services/camera_service.dart';
 import 'admin_access.dart';
 import 'admin_setup_dialog.dart';
+import 'driver_registration_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -21,6 +22,22 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   
   bool _isScanning = false;
   String? _scanStatus;
+  
+  // Drivers list management
+  List<Map<String, dynamic>> _registeredDrivers = [
+    {
+      'name': 'James Mbugua',
+      'license': 'DL001234567',
+      'isComplete': true,
+      'registrationDate': DateTime.now().subtract(const Duration(days: 5)),
+    },
+    {
+      'name': 'Grace Wanjiku',
+      'license': 'DL009876543',
+      'isComplete': true,
+      'registrationDate': DateTime.now().subtract(const Duration(days: 2)),
+    },
+  ];
 
   @override
   void initState() {
@@ -510,41 +527,64 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  // Placeholder for driver list
-                  ListTile(
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.person),
-                    ),
-                    title: const Text('James Mbugua'),
-                    subtitle: const Text('Driver ID: D001'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.verified, color: Colors.green),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _removeDriver('D001', 'James Mbugua'),
+                  // Dynamic driver list
+                  if (_registeredDrivers.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'No drivers registered yet.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
                         ),
-                      ],
-                    ),
-                  ),
-                  ListTile(
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.person),
-                    ),
-                    title: const Text('Grace Wanjiku'),
-                    subtitle: const Text('Driver ID: D002'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.verified, color: Colors.green),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _removeDriver('D002', 'Grace Wanjiku'),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  else
+                    ..._registeredDrivers.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final driver = entry.value;
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: driver['isComplete'] ? Colors.green.shade100 : Colors.orange.shade100,
+                          child: Icon(
+                            Icons.person,
+                            color: driver['isComplete'] ? Colors.green.shade700 : Colors.orange.shade700,
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
+                        title: Text(driver['name']),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('License: ${driver['license']}'),
+                            Text(
+                              driver['isComplete'] 
+                                ? 'Facial recognition: Complete'
+                                : 'Facial recognition: Incomplete',
+                              style: TextStyle(
+                                color: driver['isComplete'] ? Colors.green : Colors.orange,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              driver['isComplete'] ? Icons.verified : Icons.warning_amber,
+                              color: driver['isComplete'] ? Colors.green : Colors.orange,
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _removeDriver(index, driver['license'], driver['name']),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                 ],
               ),
             ),
@@ -575,12 +615,12 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
     });
   }
 
-  void _removeDriver(String driverId, String driverName) {
+  void _removeDriver(int index, String driverLicense, String driverName) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Remove Driver'),
-        content: Text('Are you sure you want to remove $driverName ($driverId) from the system?'),
+        content: Text('Are you sure you want to remove $driverName ($driverLicense) from the system?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -590,14 +630,34 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
               Navigator.of(context).pop();
+              
+              // Remove driver from list
+              setState(() {
+                _registeredDrivers.removeAt(index);
+              });
+              
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('$driverName has been removed from the system'),
                   backgroundColor: Colors.orange,
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    textColor: Colors.white,
+                    onPressed: () {
+                      // Re-add the driver (simple undo functionality)
+                      setState(() {
+                        _registeredDrivers.insert(index, {
+                          'name': driverName,
+                          'license': driverLicense,
+                          'isComplete': true, // Assume it was complete
+                          'registrationDate': DateTime.now(),
+                        });
+                      });
+                    },
+                  ),
                 ),
               );
               // TODO: Implement actual driver removal from database
-              setState(() {}); // Refresh the list
             },
             child: const Text('Remove', style: TextStyle(color: Colors.white)),
           ),
@@ -607,99 +667,41 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   }
 
   void _showDriverRegistrationDialog() {
-    final nameController = TextEditingController();
-    final idController = TextEditingController();
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Register New Driver'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Enter driver details for biometric registration.'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Full Name',
-                border: OutlineInputBorder(),
-                hintText: 'e.g., Joseph Kamau',
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: idController,
-              decoration: const InputDecoration(
-                labelText: 'Driver ID',
-                border: OutlineInputBorder(),
-                hintText: 'e.g., D003',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nameController.text.trim().isNotEmpty && 
-                  idController.text.trim().isNotEmpty) {
-                Navigator.of(context).pop();
-                _startBiometricCapture(nameController.text.trim(), idController.text.trim());
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please fill in all fields'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            child: const Text('Start Registration'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _startBiometricCapture(String name, String driverId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Biometric Capture'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.camera_alt, size: 64, color: Colors.blue),
-            const SizedBox(height: 16),
-            Text('Starting facial recognition capture for $name ($driverId)'),
-            const SizedBox(height: 16),
-            const Text('Implementation will integrate with camera system for face capture and ML training.'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('$name ($driverId) has been registered successfully'),
-                  backgroundColor: Colors.green,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => DriverRegistrationDialog(
+          onRegistrationComplete: (name, driverLicense, isCaptureComplete) {
+            // Add new driver to the list
+            setState(() {
+              _registeredDrivers.add({
+                'name': name,
+                'license': driverLicense,
+                'isComplete': isCaptureComplete,
+                'registrationDate': DateTime.now(),
+              });
+            });
+            
+            // Show success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  isCaptureComplete 
+                    ? '$name has been registered successfully with facial recognition'
+                    : '$name has been registered (facial recognition incomplete)',
                 ),
-              );
-              // TODO: Implement actual biometric capture and registration
-              setState(() {}); // Refresh the list
-            },
-            child: const Text('Complete Registration'),
-          ),
-        ],
+                backgroundColor: isCaptureComplete ? Colors.green : Colors.orange,
+                action: !isCaptureComplete ? SnackBarAction(
+                  label: 'COMPLETE LATER',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    // TODO: Show dialog to complete facial recognition later
+                  },
+                ) : null,
+              ),
+            );
+          },
+        ),
+        fullscreenDialog: true,
       ),
     );
   }
