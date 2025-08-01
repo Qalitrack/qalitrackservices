@@ -42,43 +42,38 @@ class CameraService {
   
   CameraDescription? get defaultCamera => frontCamera ?? backCamera;
 
-  bool _isPlatformCameraSupported() {
-    // Camera plugin has limited support on desktop platforms
-    if (kIsWeb) return true;
-    if (Platform.isAndroid || Platform.isIOS) return true;
-    
-    // Desktop platforms have limited camera support
-    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
-      _logger.w('Camera support on desktop platforms is limited');
-      return false; // Disable camera on desktop for now
-    }
-    
-    return true;
-  }
-
   Future<bool> initialize() async {
     try {
-      // Check platform support first
-      if (!_isPlatformCameraSupported()) {
-        _logger.w('Camera not supported on this platform');
-        _cameras = [];
-        _isInitialized = true;
-        _isPlatformSupported = false;
-        return false;
-      }
+      _logger.i('Initializing camera service...');
       
+      // Try to get available cameras regardless of platform
       _cameras = await availableCameras();
       _isInitialized = true;
       _isPlatformSupported = true;
       
       _logger.i('Camera service initialized. Found ${_cameras?.length ?? 0} cameras');
-      return true;
+      
+      if (_cameras?.isNotEmpty == true) {
+        for (final camera in _cameras!) {
+          _logger.i('Camera found: ${camera.name} (${camera.lensDirection})');
+        }
+      } else {
+        _logger.w('No cameras detected on this system');
+      }
+      
+      return _cameras?.isNotEmpty ?? false;
     } catch (e) {
       _logger.e('Failed to initialize camera service: $e');
+      
       if (e.toString().contains('MissingPluginException')) {
-        _logger.w('Camera plugin not properly configured for this platform');
+        _logger.w('Camera plugin not available for this platform');
         _isPlatformSupported = false;
+      } else {
+        // Other errors might be temporary, so keep platform as supported
+        _logger.w('Camera initialization failed but platform may support cameras');
+        _isPlatformSupported = true;
       }
+      
       _cameras = [];
       _isInitialized = true;
       return false;
