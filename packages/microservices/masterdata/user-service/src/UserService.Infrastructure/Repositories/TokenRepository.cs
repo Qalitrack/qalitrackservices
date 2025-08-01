@@ -91,51 +91,7 @@ namespace UserService.Infrastructure.Repositories
                 .ExecuteDeleteAsync() > 0;
         }
 
-        // Revoke token by userId
-        // public async Task<bool> RevokeTokenAsync(Guid userId)
-        // {
-        //     string userIdString = userId.ToString();
-        //
-        //     try
-        //     {
-        //         // Find non-revoked tokens
-        //         var tokens = await _dbContext.PersonalAccessTokens
-        //             .Where(t => t.UserId == userIdString && !t.IsRevoked)
-        //             .ToListAsync();
-        //
-        //         if (!tokens.Any())
-        //         {
-        //             var anyToken = await _dbContext.PersonalAccessTokens
-        //                 .AnyAsync(t => t.UserId == userIdString);
-        //
-        //             if (anyToken)
-        //             {
-        //                 _logger.LogInformation("All tokens already revoked for user {UserId}", userId);
-        //                 return true;
-        //             }
-        //
-        //             _logger.LogWarning("No tokens found for user {UserId}", userId);
-        //             return false;
-        //         }
-        //
-        //         // Revoke all active tokens
-        //         foreach (var token in tokens)
-        //         {
-        //             token.IsRevoked = true;
-        //             token.UpdatedAt = DateTime.UtcNow;
-        //         }
-        //
-        //         int changes = await _dbContext.SaveChangesAsync();
-        //         _logger.LogInformation("Revoked {Count} tokens for user {UserId}", tokens.Count, userId);
-        //         return changes > 0;
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError(ex, "Error revoking tokens for user {UserId}", userId);
-        //         return false;
-        //     }
-        // }
-
+       
         // Delete all tokens for user
         public async Task<bool> DeleteTokenAsync(Guid userId)
         {

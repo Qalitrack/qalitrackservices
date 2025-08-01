@@ -20,9 +20,6 @@ items:
   - uid: UserService.Api.Controllers.AuthController
     name: AuthController
     type: Class
-  - uid: UserService.Api.Controllers.BackupController
-    name: BackupController
-    type: Class
   - uid: UserService.Api.Controllers.BaseController
     name: BaseController
     type: Class
@@ -46,6 +43,36 @@ items:
     type: Class
   - uid: UserService.Api.Controllers.UsersController
     name: UsersController
+    type: Class
+- uid: UserService.Api.Filters
+  name: UserService.Api.Filters
+  type: Namespace
+  items:
+  - uid: UserService.Api.Filters.ModelValidationFilter
+    name: ModelValidationFilter
+    type: Class
+- uid: UserService.Api.Middleware
+  name: UserService.Api.Middleware
+  type: Namespace
+  items:
+  - uid: UserService.Api.Middleware.GlobalExceptionMiddleware
+    name: GlobalExceptionMiddleware
+    type: Class
+  - uid: UserService.Api.Middleware.RateLimitMiddleware
+    name: RateLimitMiddleware
+    type: Class
+  - uid: UserService.Api.Middleware.RedisRateLimitMiddleware
+    name: RedisRateLimitMiddleware
+    type: Class
+  - uid: UserService.Api.Middleware.ValidationMiddleware
+    name: ValidationMiddleware
+    type: Class
+- uid: UserService.Core.Configuration
+  name: UserService.Core.Configuration
+  type: Namespace
+  items:
+  - uid: UserService.Core.Configuration.JwtConfiguration
+    name: JwtConfiguration
     type: Class
 - uid: UserService.Core.DTOs
   name: UserService.Core.DTOs
@@ -73,8 +100,30 @@ items:
   - uid: UserService.Core.DTOs.Auth.LoginResponseDto
     name: LoginResponseDto
     type: Class
+  - uid: UserService.Core.DTOs.Auth.TwoFactorRequestDto
+    name: TwoFactorRequestDto
+    type: Class
+  - uid: UserService.Core.DTOs.Auth.TwoFactorResponseDto
+    name: TwoFactorResponseDto
+    type: Class
   - uid: UserService.Core.DTOs.Auth.UpdatePasswordDto
     name: UpdatePasswordDto
+    type: Class
+- uid: UserService.Core.DTOs.Common
+  name: UserService.Core.DTOs.Common
+  type: Namespace
+  items:
+  - uid: UserService.Core.DTOs.Common.EmailRequest
+    name: EmailRequest
+    type: Class
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult<T>
+    type: Class
+  - uid: UserService.Core.DTOs.Common.PaginationParameters
+    name: PaginationParameters
+    type: Class
+  - uid: UserService.Core.DTOs.Common.ServiceResult
+    name: ServiceResult
     type: Class
 - uid: UserService.Core.DTOs.Permissions
   name: UserService.Core.DTOs.Permissions
@@ -96,6 +145,9 @@ items:
   name: UserService.Core.DTOs.Report
   type: Namespace
   items:
+  - uid: UserService.Core.DTOs.Report.AssignedUserDto
+    name: AssignedUserDto
+    type: Class
   - uid: UserService.Core.DTOs.Report.ShiftReportDto
     name: ShiftReportDto
     type: Class
@@ -110,16 +162,6 @@ items:
     type: Class
   - uid: UserService.Core.DTOs.Report.UserShiftInfoDto
     name: UserShiftInfoDto
-    type: Class
-- uid: UserService.Core.DTOs.Role
-  name: UserService.Core.DTOs.Role
-  type: Namespace
-  items:
-  - uid: UserService.Core.DTOs.Role.RoleWithUsersDto
-    name: RoleWithUsersDto
-    type: Class
-  - uid: UserService.Core.DTOs.Role.UserBasicInfoDto
-    name: UserBasicInfoDto
     type: Class
 - uid: UserService.Core.DTOs.RolePermission
   name: UserService.Core.DTOs.RolePermission
@@ -162,6 +204,9 @@ items:
     type: Class
   - uid: UserService.Core.DTOs.Shift.MassAssignShiftResultDto
     name: MassAssignShiftResultDto
+    type: Class
+  - uid: UserService.Core.DTOs.Shift.ShiftDto
+    name: ShiftDto
     type: Class
   - uid: UserService.Core.DTOs.Shift.UpdateShiftDto
     name: UpdateShiftDto
@@ -236,8 +281,14 @@ items:
   - uid: UserService.Core.Interfaces.IBackupVerificationService
     name: IBackupVerificationService
     type: Interface
+  - uid: UserService.Core.Interfaces.ICacheService
+    name: ICacheService
+    type: Interface
   - uid: UserService.Core.Interfaces.IDatabaseBackupService
     name: IDatabaseBackupService
+    type: Interface
+  - uid: UserService.Core.Interfaces.IEmailQueueService
+    name: IEmailQueueService
     type: Interface
   - uid: UserService.Core.Interfaces.IHealthCheckService
     name: IHealthCheckService
@@ -274,6 +325,9 @@ items:
     type: Interface
   - uid: UserService.Core.Interfaces.ITokenService
     name: ITokenService
+    type: Interface
+  - uid: UserService.Core.Interfaces.ITwoFactorService
+    name: ITwoFactorService
     type: Interface
   - uid: UserService.Core.Interfaces.IUserRepository
     name: IUserRepository
@@ -332,23 +386,14 @@ items:
   name: UserService.Core.Services
   type: Namespace
   items:
-  - uid: UserService.Core.Services.BackupHealthCheck
-    name: BackupHealthCheck
+  - uid: UserService.Core.Services.CachedUserService
+    name: CachedUserService
     type: Class
-  - uid: UserService.Core.Services.BackupMonitor
-    name: BackupMonitor
-    type: Class
-  - uid: UserService.Core.Services.BackupNotificationService
-    name: BackupNotificationService
-    type: Class
-  - uid: UserService.Core.Services.BackupScheduler
-    name: BackupScheduler
-    type: Class
-  - uid: UserService.Core.Services.BackupVerificationService
-    name: BackupVerificationService
-    type: Class
-  - uid: UserService.Core.Services.DatabaseBackupService
-    name: DatabaseBackupService
+  - uid: UserService.Core.Services.IJwtConfigurationService
+    name: IJwtConfigurationService
+    type: Interface
+  - uid: UserService.Core.Services.JwtConfigurationService
+    name: JwtConfigurationService
     type: Class
   - uid: UserService.Core.Services.PermissionsService
     name: PermissionsService
@@ -365,6 +410,9 @@ items:
   - uid: UserService.Core.Services.TokenService
     name: TokenService
     type: Class
+  - uid: UserService.Core.Services.TwoFactorService
+    name: TwoFactorService
+    type: Class
   - uid: UserService.Core.Services.UserRoleService
     name: UserRoleService
     type: Class
@@ -376,6 +424,13 @@ items:
     type: Class
   - uid: UserService.Core.Services.UserStatusUpdate
     name: UserStatusUpdate
+    type: Class
+- uid: UserService.Core.Utilities
+  name: UserService.Core.Utilities
+  type: Namespace
+  items:
+  - uid: UserService.Core.Utilities.StringUtils
+    name: StringUtils
     type: Class
 - uid: UserService.Infrastructure.Data
   name: UserService.Infrastructure.Data
@@ -401,13 +456,6 @@ items:
   - uid: UserService.Infrastructure.Interfaces.IEmailService
     name: IEmailService
     type: Interface
-- uid: UserService.Infrastructure.Migrations
-  name: UserService.Infrastructure.Migrations
-  type: Namespace
-  items:
-  - uid: UserService.Infrastructure.Migrations.UpdateDatabaseSchema
-    name: UpdateDatabaseSchema
-    type: Class
 - uid: UserService.Infrastructure.Repositories
   name: UserService.Infrastructure.Repositories
   type: Namespace
@@ -443,16 +491,31 @@ items:
   name: UserService.Infrastructure.Services
   type: Namespace
   items:
+  - uid: UserService.Infrastructure.Services.EmailProcessorService
+    name: EmailProcessorService
+    type: Class
+  - uid: UserService.Infrastructure.Services.EmailQueueService
+    name: EmailQueueService
+    type: Class
   - uid: UserService.Infrastructure.Services.HealthCheckService
     name: HealthCheckService
     type: Class
+  - uid: UserService.Infrastructure.Services.MemoryCacheService
+    name: MemoryCacheService
+    type: Class
   - uid: UserService.Infrastructure.Services.NullEmailService
     name: NullEmailService
+    type: Class
+  - uid: UserService.Infrastructure.Services.RedisCacheService
+    name: RedisCacheService
     type: Class
   - uid: UserService.Infrastructure.Services.ReportService
     name: ReportService
     type: Class
   - uid: UserService.Infrastructure.Services.ShiftMonitorService
     name: ShiftMonitorService
+    type: Class
+  - uid: UserService.Infrastructure.Services.SmtpEmailService
+    name: SmtpEmailService
     type: Class
 memberLayout: SamePage

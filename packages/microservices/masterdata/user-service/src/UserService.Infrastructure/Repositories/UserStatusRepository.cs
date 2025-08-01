@@ -22,5 +22,4 @@ public class UserStatusRepository : IUserStatusRepository
         }
     }
 
-    // You could add more methods if needed to handle more status-related logic, e.g. status history tracking
 }

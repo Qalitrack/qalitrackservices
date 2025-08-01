@@ -5,8 +5,8 @@ items:
   id: IReportService
   parent: UserService.Core.Interfaces
   children:
-  - UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
-  - UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
+  - UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   - UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
   - UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
   langs:
@@ -23,23 +23,23 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: IReportService
     path: src/UserService.Core/Interfaces/IReportService.cs
-    startLine: 5
+    startLine: 6
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
   syntax:
     content: public interface IReportService
     content.vb: Public Interface IReportService
-- uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
-  commentId: M:UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
-  id: GenerateShiftReportAsync
+- uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   parent: UserService.Core.Interfaces.IReportService
   langs:
   - csharp
   - vb
-  name: GenerateShiftReportAsync()
-  nameWithType: IReportService.GenerateShiftReportAsync()
-  fullName: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync()
+  name: GenerateShiftReportAsync(PaginationParameters)
+  nameWithType: IReportService.GenerateShiftReportAsync(PaginationParameters)
+  fullName: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   type: Method
   source:
     remote:
@@ -48,26 +48,29 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GenerateShiftReportAsync
     path: src/UserService.Core/Interfaces/IReportService.cs
-    startLine: 7
+    startLine: 8
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
   syntax:
-    content: Task<ShiftReportResponse> GenerateShiftReportAsync()
+    content: Task<PagedResult<ShiftReportDto>> GenerateShiftReportAsync(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
     return:
-      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
-    content.vb: Function GenerateShiftReportAsync() As Task(Of ShiftReportResponse)
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.Report.ShiftReportDto}}
+    content.vb: Function GenerateShiftReportAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of ShiftReportDto))
   overload: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync*
-- uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
-  commentId: M:UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
-  id: GenerateUserReportAsync
+- uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   parent: UserService.Core.Interfaces.IReportService
   langs:
   - csharp
   - vb
-  name: GenerateUserReportAsync()
-  nameWithType: IReportService.GenerateUserReportAsync()
-  fullName: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync()
+  name: GenerateUserReportAsync(PaginationParameters)
+  nameWithType: IReportService.GenerateUserReportAsync(PaginationParameters)
+  fullName: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   type: Method
   source:
     remote:
@@ -76,15 +79,18 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GenerateUserReportAsync
     path: src/UserService.Core/Interfaces/IReportService.cs
-    startLine: 8
+    startLine: 9
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
   syntax:
-    content: Task<UserReportResponse> GenerateUserReportAsync()
+    content: Task<PagedResult<UserReportDto>> GenerateUserReportAsync(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
     return:
-      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
-    content.vb: Function GenerateUserReportAsync() As Task(Of UserReportResponse)
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.Report.UserReportDto}}
+    content.vb: Function GenerateUserReportAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of UserReportDto))
   overload: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync*
 - uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
   commentId: M:UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
@@ -104,7 +110,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetShiftDetailsReportAsync
     path: src/UserService.Core/Interfaces/IReportService.cs
-    startLine: 9
+    startLine: 10
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -138,7 +144,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserDetailsReportAsync
     path: src/UserService.Core/Interfaces/IReportService.cs
-    startLine: 10
+    startLine: 11
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -187,30 +193,42 @@ references:
     href: UserService.Core.Interfaces.html
 - uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync*
   commentId: Overload:UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
-  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GenerateShiftReportAsync
+  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GenerateShiftReportAsync_UserService_Core_DTOs_Common_PaginationParameters_
   name: GenerateShiftReportAsync
   nameWithType: IReportService.GenerateShiftReportAsync
   fullName: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync
-- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
-  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.ShiftReportResponse}
+- uid: UserService.Core.DTOs.Common.PaginationParameters
+  commentId: T:UserService.Core.DTOs.Common.PaginationParameters
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.PaginationParameters.html
+  name: PaginationParameters
+  nameWithType: PaginationParameters
+  fullName: UserService.Core.DTOs.Common.PaginationParameters
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.Report.ShiftReportDto}}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.Report.ShiftReportDto}}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<ShiftReportResponse>
-  nameWithType: Task<ShiftReportResponse>
-  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.ShiftReportResponse>
-  nameWithType.vb: Task(Of ShiftReportResponse)
-  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.ShiftReportResponse)
-  name.vb: Task(Of ShiftReportResponse)
+  name: Task<PagedResult<ShiftReportDto>>
+  nameWithType: Task<PagedResult<ShiftReportDto>>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.PagedResult<UserService.Core.DTOs.Report.ShiftReportDto>>
+  nameWithType.vb: Task(Of PagedResult(Of ShiftReportDto))
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.PagedResult(Of UserService.Core.DTOs.Report.ShiftReportDto))
+  name.vb: Task(Of PagedResult(Of ShiftReportDto))
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: UserService.Core.DTOs.Report.ShiftReportResponse
-    name: ShiftReportResponse
-    href: UserService.Core.DTOs.Report.ShiftReportResponse.html
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: <
+  - uid: UserService.Core.DTOs.Report.ShiftReportDto
+    name: ShiftReportDto
+    href: UserService.Core.DTOs.Report.ShiftReportDto.html
+  - name: '>'
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -220,10 +238,55 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: UserService.Core.DTOs.Report.ShiftReportResponse
-    name: ShiftReportResponse
-    href: UserService.Core.DTOs.Report.ShiftReportResponse.html
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.ShiftReportDto
+    name: ShiftReportDto
+    href: UserService.Core.DTOs.Report.ShiftReportDto.html
   - name: )
+  - name: )
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
 - uid: System.Threading.Tasks.Task`1
   commentId: T:System.Threading.Tasks.Task`1
   isExternal: true
@@ -291,30 +354,35 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
 - uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync*
   commentId: Overload:UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
-  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GenerateUserReportAsync
+  href: UserService.Core.Interfaces.IReportService.html#UserService_Core_Interfaces_IReportService_GenerateUserReportAsync_UserService_Core_DTOs_Common_PaginationParameters_
   name: GenerateUserReportAsync
   nameWithType: IReportService.GenerateUserReportAsync
   fullName: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync
-- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
-  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Report.UserReportResponse}
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.Report.UserReportDto}}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.Report.UserReportDto}}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<UserReportResponse>
-  nameWithType: Task<UserReportResponse>
-  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Report.UserReportResponse>
-  nameWithType.vb: Task(Of UserReportResponse)
-  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Report.UserReportResponse)
-  name.vb: Task(Of UserReportResponse)
+  name: Task<PagedResult<UserReportDto>>
+  nameWithType: Task<PagedResult<UserReportDto>>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.PagedResult<UserService.Core.DTOs.Report.UserReportDto>>
+  nameWithType.vb: Task(Of PagedResult(Of UserReportDto))
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.PagedResult(Of UserService.Core.DTOs.Report.UserReportDto))
+  name.vb: Task(Of PagedResult(Of UserReportDto))
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: UserService.Core.DTOs.Report.UserReportResponse
-    name: UserReportResponse
-    href: UserService.Core.DTOs.Report.UserReportResponse.html
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: <
+  - uid: UserService.Core.DTOs.Report.UserReportDto
+    name: UserReportDto
+    href: UserService.Core.DTOs.Report.UserReportDto.html
+  - name: '>'
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -324,9 +392,16 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: UserService.Core.DTOs.Report.UserReportResponse
-    name: UserReportResponse
-    href: UserService.Core.DTOs.Report.UserReportResponse.html
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.UserReportDto
+    name: UserReportDto
+    href: UserService.Core.DTOs.Report.UserReportDto.html
+  - name: )
   - name: )
 - uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync*
   commentId: Overload:UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync

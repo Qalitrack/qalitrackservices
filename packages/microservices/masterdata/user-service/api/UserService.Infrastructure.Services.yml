@@ -4,10 +4,15 @@ items:
   commentId: N:UserService.Infrastructure.Services
   id: UserService.Infrastructure.Services
   children:
+  - UserService.Infrastructure.Services.EmailProcessorService
+  - UserService.Infrastructure.Services.EmailQueueService
   - UserService.Infrastructure.Services.HealthCheckService
+  - UserService.Infrastructure.Services.MemoryCacheService
   - UserService.Infrastructure.Services.NullEmailService
+  - UserService.Infrastructure.Services.RedisCacheService
   - UserService.Infrastructure.Services.ReportService
   - UserService.Infrastructure.Services.ShiftMonitorService
+  - UserService.Infrastructure.Services.SmtpEmailService
   langs:
   - csharp
   - vb
@@ -18,18 +23,43 @@ items:
   assemblies:
   - UserService.Infrastructure
 references:
+- uid: UserService.Infrastructure.Services.EmailProcessorService
+  commentId: T:UserService.Infrastructure.Services.EmailProcessorService
+  href: UserService.Infrastructure.Services.EmailProcessorService.html
+  name: EmailProcessorService
+  nameWithType: EmailProcessorService
+  fullName: UserService.Infrastructure.Services.EmailProcessorService
+- uid: UserService.Infrastructure.Services.EmailQueueService
+  commentId: T:UserService.Infrastructure.Services.EmailQueueService
+  parent: UserService.Infrastructure.Services
+  href: UserService.Infrastructure.Services.EmailQueueService.html
+  name: EmailQueueService
+  nameWithType: EmailQueueService
+  fullName: UserService.Infrastructure.Services.EmailQueueService
 - uid: UserService.Infrastructure.Services.HealthCheckService
   commentId: T:UserService.Infrastructure.Services.HealthCheckService
   href: UserService.Infrastructure.Services.HealthCheckService.html
   name: HealthCheckService
   nameWithType: HealthCheckService
   fullName: UserService.Infrastructure.Services.HealthCheckService
+- uid: UserService.Infrastructure.Services.MemoryCacheService
+  commentId: T:UserService.Infrastructure.Services.MemoryCacheService
+  href: UserService.Infrastructure.Services.MemoryCacheService.html
+  name: MemoryCacheService
+  nameWithType: MemoryCacheService
+  fullName: UserService.Infrastructure.Services.MemoryCacheService
 - uid: UserService.Infrastructure.Services.NullEmailService
   commentId: T:UserService.Infrastructure.Services.NullEmailService
   href: UserService.Infrastructure.Services.NullEmailService.html
   name: NullEmailService
   nameWithType: NullEmailService
   fullName: UserService.Infrastructure.Services.NullEmailService
+- uid: UserService.Infrastructure.Services.RedisCacheService
+  commentId: T:UserService.Infrastructure.Services.RedisCacheService
+  href: UserService.Infrastructure.Services.RedisCacheService.html
+  name: RedisCacheService
+  nameWithType: RedisCacheService
+  fullName: UserService.Infrastructure.Services.RedisCacheService
 - uid: UserService.Infrastructure.Services.ReportService
   commentId: T:UserService.Infrastructure.Services.ReportService
   href: UserService.Infrastructure.Services.ReportService.html
@@ -42,3 +72,39 @@ references:
   name: ShiftMonitorService
   nameWithType: ShiftMonitorService
   fullName: UserService.Infrastructure.Services.ShiftMonitorService
+- uid: UserService.Infrastructure.Services.SmtpEmailService
+  commentId: T:UserService.Infrastructure.Services.SmtpEmailService
+  href: UserService.Infrastructure.Services.SmtpEmailService.html
+  name: SmtpEmailService
+  nameWithType: SmtpEmailService
+  fullName: UserService.Infrastructure.Services.SmtpEmailService
+- uid: UserService.Infrastructure.Services
+  commentId: N:UserService.Infrastructure.Services
+  href: UserService.html
+  name: UserService.Infrastructure.Services
+  nameWithType: UserService.Infrastructure.Services
+  fullName: UserService.Infrastructure.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html

@@ -37,7 +37,6 @@ items:
   inheritance:
   - System.Object
   derivedClasses:
-  - UserService.Core.DTOs.Role.RoleWithUsersDto
   - UserService.Core.DTOs.RoleWithPermissionsDto
   inheritedMembers:
   - System.Object.Equals(System.Object)

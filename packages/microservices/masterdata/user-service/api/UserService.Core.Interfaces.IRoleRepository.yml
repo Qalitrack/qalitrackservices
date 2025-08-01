@@ -6,13 +6,10 @@ items:
   parent: UserService.Core.Interfaces
   children:
   - UserService.Core.Interfaces.IRoleRepository.AddAsync(UserService.Core.Entities.Role)
-  - UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync(System.String,System.String)
-  - UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync(System.String)
-  - UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync(System.String)
   - UserService.Core.Interfaces.IRoleRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
   - UserService.Core.Interfaces.IRoleRepository.GetByNameAsync(System.String)
   - UserService.Core.Interfaces.IRoleRepository.GetPermissionsForRoleAsync(System.String)
-  - UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync(System.String,System.String)
+  - UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync(System.String)
   - UserService.Core.Interfaces.IRoleRepository.SaveChangesAsync
   langs:
   - csharp
@@ -75,40 +72,6 @@ items:
   nameWithType.vb: IRoleRepository.GetByNameAsync(String)
   fullName.vb: UserService.Core.Interfaces.IRoleRepository.GetByNameAsync(String)
   name.vb: GetByNameAsync(String)
-- uid: UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync(System.String)
-  id: DoesRoleExistAsync(System.String)
-  parent: UserService.Core.Interfaces.IRoleRepository
-  langs:
-  - csharp
-  - vb
-  name: DoesRoleExistAsync(string)
-  nameWithType: IRoleRepository.DoesRoleExistAsync(string)
-  fullName: UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRoleRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: DoesRoleExistAsync
-    path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 10
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<bool> DoesRoleExistAsync(string roleName)
-    parameters:
-    - id: roleName
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Function DoesRoleExistAsync(roleName As String) As Task(Of Boolean)
-  overload: UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync*
-  nameWithType.vb: IRoleRepository.DoesRoleExistAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync(String)
-  name.vb: DoesRoleExistAsync(String)
 - uid: UserService.Core.Interfaces.IRoleRepository.GetPermissionsForRoleAsync(System.String)
   commentId: M:UserService.Core.Interfaces.IRoleRepository.GetPermissionsForRoleAsync(System.String)
   id: GetPermissionsForRoleAsync(System.String)
@@ -127,7 +90,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetPermissionsForRoleAsync
     path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 13
+    startLine: 12
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -143,78 +106,6 @@ items:
   nameWithType.vb: IRoleRepository.GetPermissionsForRoleAsync(String)
   fullName.vb: UserService.Core.Interfaces.IRoleRepository.GetPermissionsForRoleAsync(String)
   name.vb: GetPermissionsForRoleAsync(String)
-- uid: UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync(System.String,System.String)
-  id: AssignPermissionToRoleAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IRoleRepository
-  langs:
-  - csharp
-  - vb
-  name: AssignPermissionToRoleAsync(string, string)
-  nameWithType: IRoleRepository.AssignPermissionToRoleAsync(string, string)
-  fullName: UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync(string, string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRoleRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: AssignPermissionToRoleAsync
-    path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 14
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
-    parameters:
-    - id: roleId
-      type: System.String
-    - id: permissionId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Function AssignPermissionToRoleAsync(roleId As String, permissionId As String) As Task(Of Boolean)
-  overload: UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync*
-  nameWithType.vb: IRoleRepository.AssignPermissionToRoleAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync(String, String)
-  name.vb: AssignPermissionToRoleAsync(String, String)
-- uid: UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync(System.String,System.String)
-  id: RemovePermissionFromRoleAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IRoleRepository
-  langs:
-  - csharp
-  - vb
-  name: RemovePermissionFromRoleAsync(string, string)
-  nameWithType: IRoleRepository.RemovePermissionFromRoleAsync(string, string)
-  fullName: UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync(string, string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRoleRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: RemovePermissionFromRoleAsync
-    path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 15
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
-    parameters:
-    - id: roleId
-      type: System.String
-    - id: permissionId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Function RemovePermissionFromRoleAsync(roleId As String, permissionId As String) As Task(Of Boolean)
-  overload: UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync*
-  nameWithType.vb: IRoleRepository.RemovePermissionFromRoleAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync(String, String)
-  name.vb: RemovePermissionFromRoleAsync(String, String)
 - uid: UserService.Core.Interfaces.IRoleRepository.AddAsync(UserService.Core.Entities.Role)
   commentId: M:UserService.Core.Interfaces.IRoleRepository.AddAsync(UserService.Core.Entities.Role)
   id: AddAsync(UserService.Core.Entities.Role)
@@ -233,7 +124,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AddAsync
     path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 16
+    startLine: 13
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -264,7 +155,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: SaveChangesAsync
     path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 17
+    startLine: 14
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -274,40 +165,6 @@ items:
       type: System.Threading.Tasks.Task
     content.vb: Function SaveChangesAsync() As Task
   overload: UserService.Core.Interfaces.IRoleRepository.SaveChangesAsync*
-- uid: UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync(System.String)
-  id: GetByIdWithPermissionsAsync(System.String)
-  parent: UserService.Core.Interfaces.IRoleRepository
-  langs:
-  - csharp
-  - vb
-  name: GetByIdWithPermissionsAsync(string)
-  nameWithType: IRoleRepository.GetByIdWithPermissionsAsync(string)
-  fullName: UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRoleRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetByIdWithPermissionsAsync
-    path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 18
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Interfaces
-  syntax:
-    content: Task GetByIdWithPermissionsAsync(string roleId)
-    parameters:
-    - id: roleId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task
-    content.vb: Function GetByIdWithPermissionsAsync(roleId As String) As Task
-  overload: UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync*
-  nameWithType.vb: IRoleRepository.GetByIdWithPermissionsAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync(String)
-  name.vb: GetByIdWithPermissionsAsync(String)
 - uid: UserService.Core.Interfaces.IRoleRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
   commentId: M:UserService.Core.Interfaces.IRoleRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
   id: GetByIdsAsync(System.Collections.Generic.IEnumerable{System.String})
@@ -326,7 +183,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetByIdsAsync
     path: src/UserService.Core/Interfaces/IRoleRepository.cs
-    startLine: 19
+    startLine: 15
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -342,6 +199,40 @@ items:
   nameWithType.vb: IRoleRepository.GetByIdsAsync(IEnumerable(Of String))
   fullName.vb: UserService.Core.Interfaces.IRoleRepository.GetByIdsAsync(System.Collections.Generic.IEnumerable(Of String))
   name.vb: GetByIdsAsync(IEnumerable(Of String))
+- uid: UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync(System.String)
+  id: GetRoleWithPermissionsAsync(System.String)
+  parent: UserService.Core.Interfaces.IRoleRepository
+  langs:
+  - csharp
+  - vb
+  name: GetRoleWithPermissionsAsync(string)
+  nameWithType: IRoleRepository.GetRoleWithPermissionsAsync(string)
+  fullName: UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/IRoleRepository.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetRoleWithPermissionsAsync
+    path: src/UserService.Core/Interfaces/IRoleRepository.cs
+    startLine: 17
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<Role?> GetRoleWithPermissionsAsync(string roleName)
+    parameters:
+    - id: roleName
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Entities.Role}
+    content.vb: Function GetRoleWithPermissionsAsync(roleName As String) As Task(Of Role)
+  overload: UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync*
+  nameWithType.vb: IRoleRepository.GetRoleWithPermissionsAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync(String)
+  name.vb: GetRoleWithPermissionsAsync(String)
 references:
 - uid: UserService.Core.Interfaces
   commentId: N:UserService.Core.Interfaces
@@ -839,47 +730,6 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-- uid: UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync*
-  commentId: Overload:UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync
-  href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_DoesRoleExistAsync_System_String_
-  name: DoesRoleExistAsync
-  nameWithType: IRoleRepository.DoesRoleExistAsync
-  fullName: UserService.Core.Interfaces.IRoleRepository.DoesRoleExistAsync
-- uid: System.Threading.Tasks.Task{System.Boolean}
-  commentId: T:System.Threading.Tasks.Task{System.Boolean}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<bool>
-  nameWithType: Task<bool>
-  fullName: System.Threading.Tasks.Task<bool>
-  nameWithType.vb: Task(Of Boolean)
-  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
-  name.vb: Task(Of Boolean)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Boolean
-    name: bool
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Boolean
-    name: Boolean
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: )
 - uid: UserService.Core.Interfaces.IRoleRepository.GetPermissionsForRoleAsync*
   commentId: Overload:UserService.Core.Interfaces.IRoleRepository.GetPermissionsForRoleAsync
   href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_GetPermissionsForRoleAsync_System_String_
@@ -933,18 +783,6 @@ references:
     href: UserService.Core.Entities.Permission.html
   - name: )
   - name: )
-- uid: UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync*
-  commentId: Overload:UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync
-  href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_AssignPermissionToRoleAsync_System_String_System_String_
-  name: AssignPermissionToRoleAsync
-  nameWithType: IRoleRepository.AssignPermissionToRoleAsync
-  fullName: UserService.Core.Interfaces.IRoleRepository.AssignPermissionToRoleAsync
-- uid: UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync*
-  commentId: Overload:UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync
-  href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_RemovePermissionFromRoleAsync_System_String_System_String_
-  name: RemovePermissionFromRoleAsync
-  nameWithType: IRoleRepository.RemovePermissionFromRoleAsync
-  fullName: UserService.Core.Interfaces.IRoleRepository.RemovePermissionFromRoleAsync
 - uid: UserService.Core.Interfaces.IRoleRepository.AddAsync*
   commentId: Overload:UserService.Core.Interfaces.IRoleRepository.AddAsync
   href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_AddAsync_UserService_Core_Entities_Role_
@@ -1037,12 +875,6 @@ references:
   name: Task
   nameWithType: Task
   fullName: System.Threading.Tasks.Task
-- uid: UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync*
-  commentId: Overload:UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync
-  href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_GetByIdWithPermissionsAsync_System_String_
-  name: GetByIdWithPermissionsAsync
-  nameWithType: IRoleRepository.GetByIdWithPermissionsAsync
-  fullName: UserService.Core.Interfaces.IRoleRepository.GetByIdWithPermissionsAsync
 - uid: UserService.Core.Interfaces.IRoleRepository.GetByIdsAsync*
   commentId: Overload:UserService.Core.Interfaces.IRoleRepository.GetByIdsAsync
   href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_GetByIdsAsync_System_Collections_Generic_IEnumerable_System_String__
@@ -1196,3 +1028,9 @@ references:
     name: Generic
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync*
+  commentId: Overload:UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync
+  href: UserService.Core.Interfaces.IRoleRepository.html#UserService_Core_Interfaces_IRoleRepository_GetRoleWithPermissionsAsync_System_String_
+  name: GetRoleWithPermissionsAsync
+  nameWithType: IRoleRepository.GetRoleWithPermissionsAsync
+  fullName: UserService.Core.Interfaces.IRoleRepository.GetRoleWithPermissionsAsync

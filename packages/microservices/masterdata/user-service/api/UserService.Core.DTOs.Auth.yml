@@ -6,6 +6,8 @@ items:
   children:
   - UserService.Core.DTOs.Auth.LoginDto
   - UserService.Core.DTOs.Auth.LoginResponseDto
+  - UserService.Core.DTOs.Auth.TwoFactorRequestDto
+  - UserService.Core.DTOs.Auth.TwoFactorResponseDto
   - UserService.Core.DTOs.Auth.UpdatePasswordDto
   langs:
   - csharp
@@ -30,6 +32,19 @@ references:
   name: LoginResponseDto
   nameWithType: LoginResponseDto
   fullName: UserService.Core.DTOs.Auth.LoginResponseDto
+- uid: UserService.Core.DTOs.Auth.TwoFactorRequestDto
+  commentId: T:UserService.Core.DTOs.Auth.TwoFactorRequestDto
+  parent: UserService.Core.DTOs.Auth
+  href: UserService.Core.DTOs.Auth.TwoFactorRequestDto.html
+  name: TwoFactorRequestDto
+  nameWithType: TwoFactorRequestDto
+  fullName: UserService.Core.DTOs.Auth.TwoFactorRequestDto
+- uid: UserService.Core.DTOs.Auth.TwoFactorResponseDto
+  commentId: T:UserService.Core.DTOs.Auth.TwoFactorResponseDto
+  href: UserService.Core.DTOs.Auth.TwoFactorResponseDto.html
+  name: TwoFactorResponseDto
+  nameWithType: TwoFactorResponseDto
+  fullName: UserService.Core.DTOs.Auth.TwoFactorResponseDto
 - uid: UserService.Core.DTOs.Auth.UpdatePasswordDto
   commentId: T:UserService.Core.DTOs.Auth.UpdatePasswordDto
   parent: UserService.Core.DTOs.Auth

@@ -5,7 +5,9 @@ items:
   id: ITokenService
   parent: UserService.Core.Interfaces
   children:
+  - UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync(System.Guid)
   - UserService.Core.Interfaces.ITokenService.GenerateTokenAsync(System.String,System.String)
+  - UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync(UserService.Core.DTOs.User.UserReadDto)
   - UserService.Core.Interfaces.ITokenService.GetUserIdFromTokenAsync(System.String)
   - UserService.Core.Interfaces.ITokenService.RevokeTokenAsync(System.String)
   - UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(System.String)
@@ -23,7 +25,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ITokenService
     path: src/UserService.Core/Interfaces/ITokenService.cs
-    startLine: 6
+    startLine: 7
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -48,7 +50,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GenerateTokenAsync
     path: src/UserService.Core/Interfaces/ITokenService.cs
-    startLine: 8
+    startLine: 9
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -66,6 +68,37 @@ items:
   nameWithType.vb: ITokenService.GenerateTokenAsync(String, String)
   fullName.vb: UserService.Core.Interfaces.ITokenService.GenerateTokenAsync(String, String)
   name.vb: GenerateTokenAsync(String, String)
+- uid: UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync(UserService.Core.DTOs.User.UserReadDto)
+  commentId: M:UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync(UserService.Core.DTOs.User.UserReadDto)
+  id: GenerateTokenForAuthenticatedUserAsync(UserService.Core.DTOs.User.UserReadDto)
+  parent: UserService.Core.Interfaces.ITokenService
+  langs:
+  - csharp
+  - vb
+  name: GenerateTokenForAuthenticatedUserAsync(UserReadDto)
+  nameWithType: ITokenService.GenerateTokenForAuthenticatedUserAsync(UserReadDto)
+  fullName: UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync(UserService.Core.DTOs.User.UserReadDto)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GenerateTokenForAuthenticatedUserAsync
+    path: src/UserService.Core/Interfaces/ITokenService.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<PersonalAccessToken> GenerateTokenForAuthenticatedUserAsync(UserReadDto user)
+    parameters:
+    - id: user
+      type: UserService.Core.DTOs.User.UserReadDto
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.Interfaces.PersonalAccessToken}
+    content.vb: Function GenerateTokenForAuthenticatedUserAsync(user As UserReadDto) As Task(Of PersonalAccessToken)
+  overload: UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync*
 - uid: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(System.String)
   commentId: M:UserService.Core.Interfaces.ITokenService.ValidateTokenAsync(System.String)
   id: ValidateTokenAsync(System.String)
@@ -84,7 +117,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ValidateTokenAsync
     path: src/UserService.Core/Interfaces/ITokenService.cs
-    startLine: 9
+    startLine: 11
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -118,7 +151,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserIdFromTokenAsync
     path: src/UserService.Core/Interfaces/ITokenService.cs
-    startLine: 10
+    startLine: 12
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -152,7 +185,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RevokeTokenAsync
     path: src/UserService.Core/Interfaces/ITokenService.cs
-    startLine: 11
+    startLine: 13
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Interfaces
@@ -168,6 +201,37 @@ items:
   nameWithType.vb: ITokenService.RevokeTokenAsync(String)
   fullName.vb: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync(String)
   name.vb: RevokeTokenAsync(String)
+- uid: UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync(System.Guid)
+  commentId: M:UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync(System.Guid)
+  id: DeleteAllTokensForUserAsync(System.Guid)
+  parent: UserService.Core.Interfaces.ITokenService
+  langs:
+  - csharp
+  - vb
+  name: DeleteAllTokensForUserAsync(Guid)
+  nameWithType: ITokenService.DeleteAllTokensForUserAsync(Guid)
+  fullName: UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync(System.Guid)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/ITokenService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: DeleteAllTokensForUserAsync
+    path: src/UserService.Core/Interfaces/ITokenService.cs
+    startLine: 14
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces
+  syntax:
+    content: Task<bool> DeleteAllTokensForUserAsync(Guid userId)
+    parameters:
+    - id: userId
+      type: System.Guid
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function DeleteAllTokensForUserAsync(userId As Guid) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync*
 references:
 - uid: UserService.Core.Interfaces
   commentId: N:UserService.Core.Interfaces
@@ -321,6 +385,57 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync*
+  commentId: Overload:UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync
+  href: UserService.Core.Interfaces.ITokenService.html#UserService_Core_Interfaces_ITokenService_GenerateTokenForAuthenticatedUserAsync_UserService_Core_DTOs_User_UserReadDto_
+  name: GenerateTokenForAuthenticatedUserAsync
+  nameWithType: ITokenService.GenerateTokenForAuthenticatedUserAsync
+  fullName: UserService.Core.Interfaces.ITokenService.GenerateTokenForAuthenticatedUserAsync
+- uid: UserService.Core.DTOs.User.UserReadDto
+  commentId: T:UserService.Core.DTOs.User.UserReadDto
+  parent: UserService.Core.DTOs.User
+  href: UserService.Core.DTOs.User.UserReadDto.html
+  name: UserReadDto
+  nameWithType: UserReadDto
+  fullName: UserService.Core.DTOs.User.UserReadDto
+- uid: UserService.Core.DTOs.User
+  commentId: N:UserService.Core.DTOs.User
+  href: UserService.html
+  name: UserService.Core.DTOs.User
+  nameWithType: UserService.Core.DTOs.User
+  fullName: UserService.Core.DTOs.User
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.User
+    name: User
+    href: UserService.Core.DTOs.User.html
 - uid: UserService.Core.Interfaces.ITokenService.ValidateTokenAsync*
   commentId: Overload:UserService.Core.Interfaces.ITokenService.ValidateTokenAsync
   href: UserService.Core.Interfaces.ITokenService.html#UserService_Core_Interfaces_ITokenService_ValidateTokenAsync_System_String_
@@ -411,3 +526,17 @@ references:
   name: RevokeTokenAsync
   nameWithType: ITokenService.RevokeTokenAsync
   fullName: UserService.Core.Interfaces.ITokenService.RevokeTokenAsync
+- uid: UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync*
+  commentId: Overload:UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync
+  href: UserService.Core.Interfaces.ITokenService.html#UserService_Core_Interfaces_ITokenService_DeleteAllTokensForUserAsync_System_Guid_
+  name: DeleteAllTokensForUserAsync
+  nameWithType: ITokenService.DeleteAllTokensForUserAsync
+  fullName: UserService.Core.Interfaces.ITokenService.DeleteAllTokensForUserAsync
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid

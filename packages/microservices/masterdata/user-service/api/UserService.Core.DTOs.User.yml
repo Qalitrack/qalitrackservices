@@ -33,6 +33,7 @@ references:
   fullName: UserService.Core.DTOs.User.UpdateUserDto
 - uid: UserService.Core.DTOs.User.UserReadDto
   commentId: T:UserService.Core.DTOs.User.UserReadDto
+  parent: UserService.Core.DTOs.User
   href: UserService.Core.DTOs.User.UserReadDto.html
   name: UserReadDto
   nameWithType: UserReadDto

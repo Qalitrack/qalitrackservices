@@ -6,7 +6,9 @@ items:
   children:
   - UserService.Core.Interfaces.IBackupNotificationService
   - UserService.Core.Interfaces.IBackupVerificationService
+  - UserService.Core.Interfaces.ICacheService
   - UserService.Core.Interfaces.IDatabaseBackupService
+  - UserService.Core.Interfaces.IEmailQueueService
   - UserService.Core.Interfaces.IHealthCheckService
   - UserService.Core.Interfaces.IPermissionsRepository
   - UserService.Core.Interfaces.IPermissionsService
@@ -19,6 +21,7 @@ items:
   - UserService.Core.Interfaces.IShiftService
   - UserService.Core.Interfaces.ITokenRepository
   - UserService.Core.Interfaces.ITokenService
+  - UserService.Core.Interfaces.ITwoFactorService
   - UserService.Core.Interfaces.IUserRepository
   - UserService.Core.Interfaces.IUserRoleRepository
   - UserService.Core.Interfaces.IUserRoleService
@@ -46,25 +49,36 @@ references:
   fullName: UserService.Core.Interfaces.PersonalAccessToken
 - uid: UserService.Core.Interfaces.IBackupNotificationService
   commentId: T:UserService.Core.Interfaces.IBackupNotificationService
-  parent: UserService.Core.Interfaces
   href: UserService.Core.Interfaces.IBackupNotificationService.html
   name: IBackupNotificationService
   nameWithType: IBackupNotificationService
   fullName: UserService.Core.Interfaces.IBackupNotificationService
 - uid: UserService.Core.Interfaces.IBackupVerificationService
   commentId: T:UserService.Core.Interfaces.IBackupVerificationService
-  parent: UserService.Core.Interfaces
   href: UserService.Core.Interfaces.IBackupVerificationService.html
   name: IBackupVerificationService
   nameWithType: IBackupVerificationService
   fullName: UserService.Core.Interfaces.IBackupVerificationService
+- uid: UserService.Core.Interfaces.ICacheService
+  commentId: T:UserService.Core.Interfaces.ICacheService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ICacheService.html
+  name: ICacheService
+  nameWithType: ICacheService
+  fullName: UserService.Core.Interfaces.ICacheService
 - uid: UserService.Core.Interfaces.IDatabaseBackupService
   commentId: T:UserService.Core.Interfaces.IDatabaseBackupService
-  parent: UserService.Core.Interfaces
   href: UserService.Core.Interfaces.IDatabaseBackupService.html
   name: IDatabaseBackupService
   nameWithType: IDatabaseBackupService
   fullName: UserService.Core.Interfaces.IDatabaseBackupService
+- uid: UserService.Core.Interfaces.IEmailQueueService
+  commentId: T:UserService.Core.Interfaces.IEmailQueueService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IEmailQueueService.html
+  name: IEmailQueueService
+  nameWithType: IEmailQueueService
+  fullName: UserService.Core.Interfaces.IEmailQueueService
 - uid: UserService.Core.Interfaces.IHealthCheckService
   commentId: T:UserService.Core.Interfaces.IHealthCheckService
   parent: UserService.Core.Interfaces
@@ -167,6 +181,13 @@ references:
   name: ITokenService
   nameWithType: ITokenService
   fullName: UserService.Core.Interfaces.ITokenService
+- uid: UserService.Core.Interfaces.ITwoFactorService
+  commentId: T:UserService.Core.Interfaces.ITwoFactorService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ITwoFactorService.html
+  name: ITwoFactorService
+  nameWithType: ITwoFactorService
+  fullName: UserService.Core.Interfaces.ITwoFactorService
 - uid: UserService.Core.Interfaces.IUserRepository
   commentId: T:UserService.Core.Interfaces.IUserRepository
   parent: UserService.Core.Interfaces

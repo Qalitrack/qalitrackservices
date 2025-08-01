@@ -42,100 +42,116 @@ namespace UserService.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-        {
-            try
+            public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
             {
-                if (!ModelState.IsValid)
+                try
                 {
-                    return BadRequest(ModelState);
+                    if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+
+                    var user = await _userService.ValidateUserCredentials(loginDto.Email, loginDto.Password);
+                    
+                    if (user == null)
+                    {
+                        return Unauthorized(new { message = "Invalid email or password" });
+                    }
+
+                    if (user.IsDeleted)
+                    {
+                        return Unauthorized(new { message = "Account has been deleted" });
+                    }
+
+                    // NEW: Check shift-based login restrictions
+                    var shiftRestrictionService = HttpContext.RequestServices.GetRequiredService<IShiftLoginRestrictionService>();
+                    var (canLogin, restrictionReason) = await shiftRestrictionService.CanUserLoginAsync(user.Id.ToString());
+                    
+                    if (!canLogin)
+                    {
+                        _logger.LogWarning("Login denied for user {UserId} due to shift restriction: {Reason}", user.Id, restrictionReason);
+                        return Unauthorized(new { 
+                            message = restrictionReason,
+                            errorCode = "SHIFT_RESTRICTION"
+                        });
+                    }
+
+                    _logger.LogInformation("User {UserId} passed shift restriction check: {Reason}", user.Id, restrictionReason);
+
+                    // If it's the first login, redirect to password update
+                    if (user.IsFirstLogin)
+                    {
+                        return Ok(new { 
+                            message = "First login detected",
+                            userId = user.Id,
+                            redirectUrl = $"/api/auth/update-password/{user.Id}"
+                        });
+                    }
+
+                    // 2FA is mandatory for all users - create session and send code
+                    var sessionId = await _twoFactorService.CreateTwoFactorSessionAsync(user.Id.ToString());
+                    var codeResult = await _twoFactorService.GenerateAndSendCodeAsync(user.Id.ToString(), user.Email);
+
+                    if (!codeResult.Success)
+                    {
+                        return BadRequest(new { 
+                            Success = false, 
+                            Message = codeResult.Message, 
+                            Errors = (string[])null, 
+                            StatusCode = 400 
+                        });
+                    }
+
+                    var response = new TwoFactorResponseDto
+                    {
+                        Requires2FA = true,
+                        SessionId = sessionId,
+                        Message = "Verification code sent to your email address. Please enter the code to complete login.",
+                        Email = MaskEmail(user.Email)
+                    };
+
+                    _logger.LogInformation("2FA session created for user {UserId}", user.Id);
+                    return Ok(response);
                 }
-
-                var user = await _userService.ValidateUserCredentials(loginDto.Email, loginDto.Password);
-                
-                if (user == null)
+                catch (System.ComponentModel.DataAnnotations.ValidationException ex)
                 {
-                    return Unauthorized(new { message = "Invalid email or password" });
-                }
-
-                if (user.IsDeleted)
-                {
-                    return Unauthorized(new { message = "Account has been deleted" });
-                }
-
-                // If it's the first login, redirect to password update
-                if (user.IsFirstLogin)
-                {
-                    return Ok(new { 
-                        message = "First login detected",
-                        userId = user.Id,
-                        redirectUrl = $"/api/auth/update-password/{user.Id}"
-                    });
-                }
-
-                // 2FA is mandatory for all users - create session and send code
-                var sessionId = await _twoFactorService.CreateTwoFactorSessionAsync(user.Id.ToString());
-                var codeResult = await _twoFactorService.GenerateAndSendCodeAsync(user.Id.ToString(), user.Email);
-
-                if (!codeResult.Success)
-                {
+                    _logger.LogWarning(ex, "Validation error during login for email: {Email}", loginDto?.Email ?? "unknown");
                     return BadRequest(new { 
                         Success = false, 
-                        Message = codeResult.Message, 
+                        Message = ex.Message, 
                         Errors = (string[])null, 
                         StatusCode = 400 
                     });
                 }
-
-                var response = new TwoFactorResponseDto
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
                 {
-                    Requires2FA = true,
-                    SessionId = sessionId,
-                    Message = "Verification code sent to your email address. Please enter the code to complete login.",
-                    Email = MaskEmail(user.Email)
-                };
+                    string errorMessage = pgEx.SqlState switch
+                    {
+                        "23503" => "Referenced record does not exist",
+                        "23514" => "Data validation failed - check constraint violation",
+                        _ => $"Database error: {pgEx.MessageText}"
+                    };
 
-                _logger.LogInformation("2FA session created for user {UserId}", user.Id);
-                return Ok(response);
-            }
-            catch (System.ComponentModel.DataAnnotations.ValidationException ex)
-            {
-                _logger.LogWarning(ex, "Validation error during login for email: {Email}", loginDto?.Email ?? "unknown");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
-                });
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
-            {
-                string errorMessage = pgEx.SqlState switch
+                    _logger.LogWarning(ex, "Database constraint error during login: {ErrorMessage}", errorMessage);
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = errorMessage, 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+                catch (Exception ex)
                 {
-                    "23503" => "Referenced record does not exist",
-                    "23514" => "Data validation failed - check constraint violation",
-                    _ => $"Database error: {pgEx.MessageText}"
-                };
-
-                _logger.LogWarning(ex, "Database constraint error during login: {ErrorMessage}", errorMessage);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = errorMessage, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
-                });
+                    _logger.LogError(ex, "An error occurred during login for email: {Email}", loginDto?.Email ?? "unknown");
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = "An error occurred during login", 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred during login for email: {Email}", loginDto?.Email ?? "unknown");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred during login", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
-                });
-            }
-        }
+            
 
         [HttpPost("verify-2fa")]
             public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorRequestDto request)
@@ -217,7 +233,7 @@ namespace UserService.Api.Controllers
             }
 
 
-        [HttpPut("update-password/{userId}")]
+       [HttpPut("update-password/{userId}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdatePassword(string userId, [FromBody] UpdatePasswordDto dto)
         {
@@ -230,12 +246,11 @@ namespace UserService.Api.Controllers
 
                 var user = await _userService.UpdatePassword(userId, dto);
 
-                // Generate new token after password update
-                var token = await _tokenService.GenerateTokenAsync(user.Email, dto.NewPassword);
+                // Generate new token after password update - using same method as normal login
+                var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(user);
 
                 // Update user's online status using service layer
                 await _userService.UpdateUserActiveStatusAsync(userId, true);
-
 
                 var response = new LoginResponseDto
                 {
@@ -244,7 +259,7 @@ namespace UserService.Api.Controllers
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    UserRoles = user.Roles?.ToList()?? new List<string>(),
+                    UserRoles = user.Roles?.ToList() ?? new List<string>(),
                 };
 
                 return Ok(new {

@@ -11,8 +11,6 @@ items:
   - UserService.Infrastructure.Repositories.PermissionsRepository.DoesPermissionExistAsync(System.String)
   - UserService.Infrastructure.Repositories.PermissionsRepository.GetAllAsync
   - UserService.Infrastructure.Repositories.PermissionsRepository.GetByIdAsync(System.String,System.Boolean)
-  - UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync(System.String)
-  - UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync(System.String)
   - UserService.Infrastructure.Repositories.PermissionsRepository.GetRolesForPermissionAsync(System.String)
   - UserService.Infrastructure.Repositories.PermissionsRepository.RemovePermissionFromRoleAsync(System.String,System.String)
   langs:
@@ -74,7 +72,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 16
+    startLine: 12
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -106,7 +104,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetAllAsync
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 21
+    startLine: 17
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -137,21 +135,21 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetByIdAsync
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 28
+    startLine: 24
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   example: []
   syntax:
-    content: public Task<Permission?> GetByIdAsync(string id, bool b)
+    content: public Task<Permission?> GetByIdAsync(string id, bool includeRelated)
     parameters:
     - id: id
       type: System.String
-    - id: b
+    - id: includeRelated
       type: System.Boolean
     return:
       type: System.Threading.Tasks.Task{UserService.Core.Entities.Permission}
-    content.vb: Public Function GetByIdAsync(id As String, b As Boolean) As Task(Of Permission)
+    content.vb: Public Function GetByIdAsync(id As String, includeRelated As Boolean) As Task(Of Permission)
   overload: UserService.Infrastructure.Repositories.PermissionsRepository.GetByIdAsync*
   implements:
   - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.Permission}.GetByIdAsync(System.String,System.Boolean)
@@ -176,7 +174,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 35
+    startLine: 40
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -195,43 +193,6 @@ items:
   nameWithType.vb: PermissionsRepository.DeleteAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.PermissionsRepository.DeleteAsync(String)
   name.vb: DeleteAsync(String)
-- uid: UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync(System.String)
-  commentId: M:UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync(System.String)
-  id: GetByNameAsync(System.String)
-  parent: UserService.Infrastructure.Repositories.PermissionsRepository
-  langs:
-  - csharp
-  - vb
-  name: GetByNameAsync(string)
-  nameWithType: PermissionsRepository.GetByNameAsync(string)
-  fullName: UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetByNameAsync
-    path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 46
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  example: []
-  syntax:
-    content: public Task<Permission?> GetByNameAsync(string name)
-    parameters:
-    - id: name
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{UserService.Core.Entities.Permission}
-    content.vb: Public Function GetByNameAsync(name As String) As Task(Of Permission)
-  overload: UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync*
-  implements:
-  - UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-  nameWithType.vb: PermissionsRepository.GetByNameAsync(String)
-  fullName.vb: UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync(String)
-  name.vb: GetByNameAsync(String)
 - uid: UserService.Infrastructure.Repositories.PermissionsRepository.DoesPermissionExistAsync(System.String)
   commentId: M:UserService.Infrastructure.Repositories.PermissionsRepository.DoesPermissionExistAsync(System.String)
   id: DoesPermissionExistAsync(System.String)
@@ -250,7 +211,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: DoesPermissionExistAsync
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 53
+    startLine: 58
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -269,43 +230,6 @@ items:
   nameWithType.vb: PermissionsRepository.DoesPermissionExistAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.PermissionsRepository.DoesPermissionExistAsync(String)
   name.vb: DoesPermissionExistAsync(String)
-- uid: UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync(System.String)
-  commentId: M:UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync(System.String)
-  id: GetPermissionsForRoleAsync(System.String)
-  parent: UserService.Infrastructure.Repositories.PermissionsRepository
-  langs:
-  - csharp
-  - vb
-  name: GetPermissionsForRoleAsync(string)
-  nameWithType: PermissionsRepository.GetPermissionsForRoleAsync(string)
-  fullName: UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetPermissionsForRoleAsync
-    path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 59
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  example: []
-  syntax:
-    content: public Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
-    parameters:
-    - id: roleId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.Permission}}
-    content.vb: Public Function GetPermissionsForRoleAsync(roleId As String) As Task(Of IEnumerable(Of Permission))
-  overload: UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync*
-  implements:
-  - UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
-  nameWithType.vb: PermissionsRepository.GetPermissionsForRoleAsync(String)
-  fullName.vb: UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync(String)
-  name.vb: GetPermissionsForRoleAsync(String)
 - uid: UserService.Infrastructure.Repositories.PermissionsRepository.AssignPermissionToRoleAsync(System.String,System.String)
   commentId: M:UserService.Infrastructure.Repositories.PermissionsRepository.AssignPermissionToRoleAsync(System.String,System.String)
   id: AssignPermissionToRoleAsync(System.String,System.String)
@@ -324,7 +248,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AssignPermissionToRoleAsync
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 67
+    startLine: 72
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -363,7 +287,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemovePermissionFromRoleAsync
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 87
+    startLine: 92
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -402,7 +326,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetRolesForPermissionAsync
     path: src/UserService.Infrastructure/Repositories/PermissionsRepository.cs
-    startLine: 100
+    startLine: 105
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -1382,7 +1306,6 @@ references:
   - name: <
   - uid: UserService.Core.Entities.Permission
     name: Permission
-    href: UserService.Core.Entities.Permission.html
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -1394,7 +1317,6 @@ references:
   - name: " "
   - uid: UserService.Core.Entities.Permission
     name: Permission
-    href: UserService.Core.Entities.Permission.html
   - name: )
 - uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
   commentId: M:UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
@@ -1540,41 +1462,6 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
-- uid: UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync
-  href: UserService.Infrastructure.Repositories.PermissionsRepository.html#UserService_Infrastructure_Repositories_PermissionsRepository_GetByNameAsync_System_String_
-  name: GetByNameAsync
-  nameWithType: PermissionsRepository.GetByNameAsync
-  fullName: UserService.Infrastructure.Repositories.PermissionsRepository.GetByNameAsync
-- uid: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-  parent: UserService.Core.Interfaces.IPermissionsRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: GetByNameAsync(string)
-  nameWithType: IPermissionsRepository.GetByNameAsync(string)
-  fullName: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(string)
-  nameWithType.vb: IPermissionsRepository.GetByNameAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(String)
-  name.vb: GetByNameAsync(String)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-    name: GetByNameAsync
-  - name: (
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsRepository.GetByNameAsync(System.String)
-    name: GetByNameAsync
-  - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
 - uid: UserService.Infrastructure.Repositories.PermissionsRepository.DoesPermissionExistAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.PermissionsRepository.DoesPermissionExistAsync
   href: UserService.Infrastructure.Repositories.PermissionsRepository.html#UserService_Infrastructure_Repositories_PermissionsRepository_DoesPermissionExistAsync_System_String_
@@ -1604,41 +1491,6 @@ references:
   spec.vb:
   - uid: UserService.Core.Interfaces.IPermissionsRepository.DoesPermissionExistAsync(System.String)
     name: DoesPermissionExistAsync
-  - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-- uid: UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync
-  href: UserService.Infrastructure.Repositories.PermissionsRepository.html#UserService_Infrastructure_Repositories_PermissionsRepository_GetPermissionsForRoleAsync_System_String_
-  name: GetPermissionsForRoleAsync
-  nameWithType: PermissionsRepository.GetPermissionsForRoleAsync
-  fullName: UserService.Infrastructure.Repositories.PermissionsRepository.GetPermissionsForRoleAsync
-- uid: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
-  parent: UserService.Core.Interfaces.IPermissionsRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: GetPermissionsForRoleAsync(string)
-  nameWithType: IPermissionsRepository.GetPermissionsForRoleAsync(string)
-  fullName: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(string)
-  nameWithType.vb: IPermissionsRepository.GetPermissionsForRoleAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(String)
-  name.vb: GetPermissionsForRoleAsync(String)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
-    name: GetPermissionsForRoleAsync
-  - name: (
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsRepository.GetPermissionsForRoleAsync(System.String)
-    name: GetPermissionsForRoleAsync
   - name: (
   - uid: System.String
     name: String

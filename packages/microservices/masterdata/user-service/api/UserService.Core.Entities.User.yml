@@ -16,6 +16,7 @@ items:
   - UserService.Core.Entities.User.MobileNumber
   - UserService.Core.Entities.User.Password
   - UserService.Core.Entities.User.PersonalAccessTokens
+  - UserService.Core.Entities.User.TwoFactorEnabled
   - UserService.Core.Entities.User.UserPermissions
   - UserService.Core.Entities.User.UserRoles
   - UserService.Core.Entities.User.UserShifts
@@ -338,6 +339,35 @@ items:
       type: System.Boolean
     content.vb: Public Property IsDeleted As Boolean
   overload: UserService.Core.Entities.User.IsDeleted*
+- uid: UserService.Core.Entities.User.TwoFactorEnabled
+  commentId: P:UserService.Core.Entities.User.TwoFactorEnabled
+  id: TwoFactorEnabled
+  parent: UserService.Core.Entities.User
+  langs:
+  - csharp
+  - vb
+  name: TwoFactorEnabled
+  nameWithType: User.TwoFactorEnabled
+  fullName: UserService.Core.Entities.User.TwoFactorEnabled
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: TwoFactorEnabled
+    path: src/UserService.Core/Entities/MainEntity.cs
+    startLine: 21
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Entities
+  syntax:
+    content: public bool TwoFactorEnabled { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property TwoFactorEnabled As Boolean
+  overload: UserService.Core.Entities.User.TwoFactorEnabled*
 - uid: UserService.Core.Entities.User.UserRoles
   commentId: P:UserService.Core.Entities.User.UserRoles
   id: UserRoles
@@ -356,7 +386,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UserRoles
     path: src/UserService.Core/Entities/MainEntity.cs
-    startLine: 23
+    startLine: 24
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -385,7 +415,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UserShifts
     path: src/UserService.Core/Entities/MainEntity.cs
-    startLine: 24
+    startLine: 25
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -414,7 +444,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: PersonalAccessTokens
     path: src/UserService.Core/Entities/MainEntity.cs
-    startLine: 25
+    startLine: 26
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -443,7 +473,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UserPermissions
     path: src/UserService.Core/Entities/MainEntity.cs
-    startLine: 26
+    startLine: 27
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -472,7 +502,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: IsOnline
     path: src/UserService.Core/Entities/MainEntity.cs
-    startLine: 28
+    startLine: 29
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -511,7 +541,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ActiveTokenCount
     path: src/UserService.Core/Entities/MainEntity.cs
-    startLine: 30
+    startLine: 31
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Entities
@@ -912,6 +942,12 @@ references:
   name: IsDeleted
   nameWithType: User.IsDeleted
   fullName: UserService.Core.Entities.User.IsDeleted
+- uid: UserService.Core.Entities.User.TwoFactorEnabled*
+  commentId: Overload:UserService.Core.Entities.User.TwoFactorEnabled
+  href: UserService.Core.Entities.User.html#UserService_Core_Entities_User_TwoFactorEnabled
+  name: TwoFactorEnabled
+  nameWithType: User.TwoFactorEnabled
+  fullName: UserService.Core.Entities.User.TwoFactorEnabled
 - uid: UserService.Core.Entities.User.UserRoles*
   commentId: Overload:UserService.Core.Entities.User.UserRoles
   href: UserService.Core.Entities.User.html#UserService_Core_Entities_User_UserRoles

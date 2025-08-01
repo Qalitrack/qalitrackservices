@@ -5,6 +5,7 @@ items:
   id: ShiftReportDto
   parent: UserService.Core.DTOs.Report
   children:
+  - UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers
   - UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsersCount
   - UserService.Core.DTOs.Report.ShiftReportDto.Description
   - UserService.Core.DTOs.Report.ShiftReportDto.EndTime
@@ -28,7 +29,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ShiftReportDto
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 5
+    startLine: 15
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -63,7 +64,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Id
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 7
+    startLine: 17
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -92,7 +93,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Name
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 8
+    startLine: 18
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -121,7 +122,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Description
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 9
+    startLine: 19
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -150,7 +151,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: StartTime
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 10
+    startLine: 20
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -179,7 +180,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: EndTime
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 11
+    startLine: 21
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -208,7 +209,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Mode
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 12
+    startLine: 22
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -237,7 +238,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 13
+    startLine: 23
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -266,7 +267,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AssignedUsersCount
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 14
+    startLine: 24
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -295,7 +296,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: LastModified
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 15
+    startLine: 25
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -306,6 +307,35 @@ items:
       type: System.Nullable{System.DateTime}
     content.vb: Public Property LastModified As Date?
   overload: UserService.Core.DTOs.Report.ShiftReportDto.LastModified*
+- uid: UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers
+  commentId: P:UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers
+  id: AssignedUsers
+  parent: UserService.Core.DTOs.Report.ShiftReportDto
+  langs:
+  - csharp
+  - vb
+  name: AssignedUsers
+  nameWithType: ShiftReportDto.AssignedUsers
+  fullName: UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/ShiftReportDto.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: AssignedUsers
+    path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
+    startLine: 26
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Report
+  syntax:
+    content: public List<AssignedUserDto>? AssignedUsers { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.List{UserService.Core.DTOs.Report.AssignedUserDto}
+    content.vb: Public Property AssignedUsers As List(Of AssignedUserDto)
+  overload: UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers*
 references:
 - uid: UserService.Core.DTOs.Report
   commentId: N:UserService.Core.DTOs.Report
@@ -728,3 +758,107 @@ references:
   - name: " "
   - name: T
   - name: )
+- uid: UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers*
+  commentId: Overload:UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers
+  href: UserService.Core.DTOs.Report.ShiftReportDto.html#UserService_Core_DTOs_Report_ShiftReportDto_AssignedUsers
+  name: AssignedUsers
+  nameWithType: ShiftReportDto.AssignedUsers
+  fullName: UserService.Core.DTOs.Report.ShiftReportDto.AssignedUsers
+- uid: System.Collections.Generic.List{UserService.Core.DTOs.Report.AssignedUserDto}
+  commentId: T:System.Collections.Generic.List{UserService.Core.DTOs.Report.AssignedUserDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<AssignedUserDto>
+  nameWithType: List<AssignedUserDto>
+  fullName: System.Collections.Generic.List<UserService.Core.DTOs.Report.AssignedUserDto>
+  nameWithType.vb: List(Of AssignedUserDto)
+  fullName.vb: System.Collections.Generic.List(Of UserService.Core.DTOs.Report.AssignedUserDto)
+  name.vb: List(Of AssignedUserDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: UserService.Core.DTOs.Report.AssignedUserDto
+    name: AssignedUserDto
+    href: UserService.Core.DTOs.Report.AssignedUserDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Report.AssignedUserDto
+    name: AssignedUserDto
+    href: UserService.Core.DTOs.Report.AssignedUserDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic

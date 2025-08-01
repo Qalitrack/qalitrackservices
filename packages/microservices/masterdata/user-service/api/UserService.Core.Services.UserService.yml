@@ -5,13 +5,14 @@ items:
   id: UserService
   parent: UserService.Core.Services
   children:
-  - UserService.Core.Services.UserService.#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper)
+  - UserService.Core.Services.UserService.#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,UserService.Core.Interfaces.IRoleRepository)
   - UserService.Core.Services.UserService.AssignShiftToUserAsync(System.String,System.String)
   - UserService.Core.Services.UserService.CreateAsync(UserService.Core.DTOs.User.CreateUserDto)
   - UserService.Core.Services.UserService.DeleteAsync(System.String)
-  - UserService.Core.Services.UserService.GetAllAsync
   - UserService.Core.Services.UserService.GetByIdAsync(System.String)
-  - UserService.Core.Services.UserService.GetDeletedAsync
+  - UserService.Core.Services.UserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Services.UserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Services.UserService.GetPermissionsForRoleAsync(System.String)
   - UserService.Core.Services.UserService.GetUserPermissionsAsync(System.String)
   - UserService.Core.Services.UserService.GetUserShiftByShiftIdAsync(System.String,System.String)
   - UserService.Core.Services.UserService.GetUserShiftsAsync(System.String)
@@ -20,6 +21,7 @@ items:
   - UserService.Core.Services.UserService.RestoreAsync(System.String)
   - UserService.Core.Services.UserService.UpdateAsync(System.String,UserService.Core.DTOs.User.UpdateUserDto)
   - UserService.Core.Services.UserService.UpdatePassword(System.String,UserService.Core.DTOs.Auth.UpdatePasswordDto)
+  - UserService.Core.Services.UserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
   - UserService.Core.Services.UserService.ValidateUserCredentials(System.String,System.String)
   langs:
   - csharp
@@ -35,7 +37,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UserService
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 11
+    startLine: 12
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -54,16 +56,16 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Core.Services.UserService.#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper)
-  commentId: M:UserService.Core.Services.UserService.#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper)
-  id: '#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper)'
+- uid: UserService.Core.Services.UserService.#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,UserService.Core.Interfaces.IRoleRepository)
+  commentId: M:UserService.Core.Services.UserService.#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,UserService.Core.Interfaces.IRoleRepository)
+  id: '#ctor(UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,UserService.Core.Interfaces.IRoleRepository)'
   parent: UserService.Core.Services.UserService
   langs:
   - csharp
   - vb
-  name: UserService(IUserRepository, IRoleService, IMapper)
-  nameWithType: UserService.UserService(IUserRepository, IRoleService, IMapper)
-  fullName: UserService.Core.Services.UserService.UserService(UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.IRoleService, AutoMapper.IMapper)
+  name: UserService(IUserRepository, IRoleService, IMapper, IRoleRepository)
+  nameWithType: UserService.UserService(IUserRepository, IRoleService, IMapper, IRoleRepository)
+  fullName: UserService.Core.Services.UserService.UserService(UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.IRoleService, AutoMapper.IMapper, UserService.Core.Interfaces.IRoleRepository)
   type: Constructor
   source:
     remote:
@@ -72,12 +74,12 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 17
+    startLine: 20
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
   syntax:
-    content: public UserService(IUserRepository userRepository, IRoleService roleService, IMapper mapper)
+    content: public UserService(IUserRepository userRepository, IRoleService roleService, IMapper mapper, IRoleRepository roleRepository)
     parameters:
     - id: userRepository
       type: UserService.Core.Interfaces.IUserRepository
@@ -85,42 +87,13 @@ items:
       type: UserService.Core.Interfaces.IRoleService
     - id: mapper
       type: AutoMapper.IMapper
-    content.vb: Public Sub New(userRepository As IUserRepository, roleService As IRoleService, mapper As IMapper)
+    - id: roleRepository
+      type: UserService.Core.Interfaces.IRoleRepository
+    content.vb: Public Sub New(userRepository As IUserRepository, roleService As IRoleService, mapper As IMapper, roleRepository As IRoleRepository)
   overload: UserService.Core.Services.UserService.#ctor*
-  nameWithType.vb: UserService.New(IUserRepository, IRoleService, IMapper)
-  fullName.vb: UserService.Core.Services.UserService.New(UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.IRoleService, AutoMapper.IMapper)
-  name.vb: New(IUserRepository, IRoleService, IMapper)
-- uid: UserService.Core.Services.UserService.GetAllAsync
-  commentId: M:UserService.Core.Services.UserService.GetAllAsync
-  id: GetAllAsync
-  parent: UserService.Core.Services.UserService
-  langs:
-  - csharp
-  - vb
-  name: GetAllAsync()
-  nameWithType: UserService.GetAllAsync()
-  fullName: UserService.Core.Services.UserService.GetAllAsync()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetAllAsync
-    path: src/UserService.Core/Services/UserService.cs
-    startLine: 24
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Services
-  example: []
-  syntax:
-    content: public Task<IEnumerable<UserReadDto>> GetAllAsync()
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
-    content.vb: Public Function GetAllAsync() As Task(Of IEnumerable(Of UserReadDto))
-  overload: UserService.Core.Services.UserService.GetAllAsync*
-  implements:
-  - UserService.Core.Interfaces.IUserService.GetAllAsync
+  nameWithType.vb: UserService.New(IUserRepository, IRoleService, IMapper, IRoleRepository)
+  fullName.vb: UserService.Core.Services.UserService.New(UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.IRoleService, AutoMapper.IMapper, UserService.Core.Interfaces.IRoleRepository)
+  name.vb: New(IUserRepository, IRoleService, IMapper, IRoleRepository)
 - uid: UserService.Core.Services.UserService.RestoreAsync(System.String)
   commentId: M:UserService.Core.Services.UserService.RestoreAsync(System.String)
   id: RestoreAsync(System.String)
@@ -139,7 +112,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RestoreAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 38
+    startLine: 30
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -158,37 +131,6 @@ items:
   nameWithType.vb: UserService.RestoreAsync(String)
   fullName.vb: UserService.Core.Services.UserService.RestoreAsync(String)
   name.vb: RestoreAsync(String)
-- uid: UserService.Core.Services.UserService.GetDeletedAsync
-  commentId: M:UserService.Core.Services.UserService.GetDeletedAsync
-  id: GetDeletedAsync
-  parent: UserService.Core.Services.UserService
-  langs:
-  - csharp
-  - vb
-  name: GetDeletedAsync()
-  nameWithType: UserService.GetDeletedAsync()
-  fullName: UserService.Core.Services.UserService.GetDeletedAsync()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetDeletedAsync
-    path: src/UserService.Core/Services/UserService.cs
-    startLine: 43
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Services
-  example: []
-  syntax:
-    content: public Task<IEnumerable<UserReadDto>> GetDeletedAsync()
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
-    content.vb: Public Function GetDeletedAsync() As Task(Of IEnumerable(Of UserReadDto))
-  overload: UserService.Core.Services.UserService.GetDeletedAsync*
-  implements:
-  - UserService.Core.Interfaces.IUserService.GetDeletedAsync
 - uid: UserService.Core.Services.UserService.GetByIdAsync(System.String)
   commentId: M:UserService.Core.Services.UserService.GetByIdAsync(System.String)
   id: GetByIdAsync(System.String)
@@ -207,7 +149,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetByIdAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 57
+    startLine: 35
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -244,7 +186,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: CreateAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 63
+    startLine: 61
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -278,7 +220,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UpdateAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 80
+    startLine: 78
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -317,7 +259,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 95
+    startLine: 104
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -354,7 +296,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ValidateUserCredentials
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 100
+    startLine: 109
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -393,7 +335,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: HasPermissionAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 127
+    startLine: 136
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -432,7 +374,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserPermissionsAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 132
+    startLine: 141
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -469,7 +411,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UpdatePassword
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 138
+    startLine: 147
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -508,10 +450,11 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserShiftsAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 164
+    startLine: 173
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
+  example: []
   syntax:
     content: public Task<IEnumerable<UserShiftDto>> GetUserShiftsAsync(string userId)
     parameters:
@@ -521,6 +464,8 @@ items:
       type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.UserShiftDto}}
     content.vb: Public Function GetUserShiftsAsync(userId As String) As Task(Of IEnumerable(Of UserShiftDto))
   overload: UserService.Core.Services.UserService.GetUserShiftsAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.GetUserShiftsAsync(System.String)
   nameWithType.vb: UserService.GetUserShiftsAsync(String)
   fullName.vb: UserService.Core.Services.UserService.GetUserShiftsAsync(String)
   name.vb: GetUserShiftsAsync(String)
@@ -542,10 +487,11 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserShiftByShiftIdAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 170
+    startLine: 179
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
+  example: []
   syntax:
     content: public Task<UserShiftDto?> GetUserShiftByShiftIdAsync(string userId, string shiftId)
     parameters:
@@ -557,6 +503,8 @@ items:
       type: System.Threading.Tasks.Task{UserService.Core.DTOs.UserShiftDto}
     content.vb: Public Function GetUserShiftByShiftIdAsync(userId As String, shiftId As String) As Task(Of UserShiftDto)
   overload: UserService.Core.Services.UserService.GetUserShiftByShiftIdAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.GetUserShiftByShiftIdAsync(System.String,System.String)
   nameWithType.vb: UserService.GetUserShiftByShiftIdAsync(String, String)
   fullName.vb: UserService.Core.Services.UserService.GetUserShiftByShiftIdAsync(String, String)
   name.vb: GetUserShiftByShiftIdAsync(String, String)
@@ -578,10 +526,11 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AssignShiftToUserAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 176
+    startLine: 185
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
+  example: []
   syntax:
     content: public Task<bool> AssignShiftToUserAsync(string userId, string shiftId)
     parameters:
@@ -593,6 +542,8 @@ items:
       type: System.Threading.Tasks.Task{System.Boolean}
     content.vb: Public Function AssignShiftToUserAsync(userId As String, shiftId As String) As Task(Of Boolean)
   overload: UserService.Core.Services.UserService.AssignShiftToUserAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.AssignShiftToUserAsync(System.String,System.String)
   nameWithType.vb: UserService.AssignShiftToUserAsync(String, String)
   fullName.vb: UserService.Core.Services.UserService.AssignShiftToUserAsync(String, String)
   name.vb: AssignShiftToUserAsync(String, String)
@@ -614,10 +565,11 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemoveShiftFromUserAsync
     path: src/UserService.Core/Services/UserService.cs
-    startLine: 181
+    startLine: 190
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
+  example: []
   syntax:
     content: public Task<bool> RemoveShiftFromUserAsync(string userId, string shiftId)
     parameters:
@@ -629,9 +581,155 @@ items:
       type: System.Threading.Tasks.Task{System.Boolean}
     content.vb: Public Function RemoveShiftFromUserAsync(userId As String, shiftId As String) As Task(Of Boolean)
   overload: UserService.Core.Services.UserService.RemoveShiftFromUserAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.RemoveShiftFromUserAsync(System.String,System.String)
   nameWithType.vb: UserService.RemoveShiftFromUserAsync(String, String)
   fullName.vb: UserService.Core.Services.UserService.RemoveShiftFromUserAsync(String, String)
   name.vb: RemoveShiftFromUserAsync(String, String)
+- uid: UserService.Core.Services.UserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Services.UserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Services.UserService
+  langs:
+  - csharp
+  - vb
+  name: GetPagedAsync(PaginationParameters)
+  nameWithType: UserService.GetPagedAsync(PaginationParameters)
+  fullName: UserService.Core.Services.UserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetPagedAsync
+    path: src/UserService.Core/Services/UserService.cs
+    startLine: 195
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<PagedResult<UserReadDto>> GetPagedAsync(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
+    content.vb: Public Function GetPagedAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of UserReadDto))
+  overload: UserService.Core.Services.UserService.GetPagedAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+- uid: UserService.Core.Services.UserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Services.UserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  id: GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Services.UserService
+  langs:
+  - csharp
+  - vb
+  name: GetDeletedPagedAsync(PaginationParameters)
+  nameWithType: UserService.GetDeletedPagedAsync(PaginationParameters)
+  fullName: UserService.Core.Services.UserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetDeletedPagedAsync
+    path: src/UserService.Core/Services/UserService.cs
+    startLine: 219
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<PagedResult<UserReadDto>> GetDeletedPagedAsync(PaginationParameters parameters)
+    parameters:
+    - id: parameters
+      type: UserService.Core.DTOs.Common.PaginationParameters
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
+    content.vb: Public Function GetDeletedPagedAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of UserReadDto))
+  overload: UserService.Core.Services.UserService.GetDeletedPagedAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+- uid: UserService.Core.Services.UserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Services.UserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  id: UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  parent: UserService.Core.Services.UserService
+  langs:
+  - csharp
+  - vb
+  name: UpdateUserActiveStatusAsync(string, bool)
+  nameWithType: UserService.UpdateUserActiveStatusAsync(string, bool)
+  fullName: UserService.Core.Services.UserService.UpdateUserActiveStatusAsync(string, bool)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: UpdateUserActiveStatusAsync
+    path: src/UserService.Core/Services/UserService.cs
+    startLine: 243
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
+    parameters:
+    - id: userId
+      type: System.String
+    - id: isActive
+      type: System.Boolean
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function UpdateUserActiveStatusAsync(userId As String, isActive As Boolean) As Task(Of Boolean)
+  overload: UserService.Core.Services.UserService.UpdateUserActiveStatusAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  nameWithType.vb: UserService.UpdateUserActiveStatusAsync(String, Boolean)
+  fullName.vb: UserService.Core.Services.UserService.UpdateUserActiveStatusAsync(String, Boolean)
+  name.vb: UpdateUserActiveStatusAsync(String, Boolean)
+- uid: UserService.Core.Services.UserService.GetPermissionsForRoleAsync(System.String)
+  commentId: M:UserService.Core.Services.UserService.GetPermissionsForRoleAsync(System.String)
+  id: GetPermissionsForRoleAsync(System.String)
+  parent: UserService.Core.Services.UserService
+  langs:
+  - csharp
+  - vb
+  name: GetPermissionsForRoleAsync(string)
+  nameWithType: UserService.GetPermissionsForRoleAsync(string)
+  fullName: UserService.Core.Services.UserService.GetPermissionsForRoleAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: GetPermissionsForRoleAsync
+    path: src/UserService.Core/Services/UserService.cs
+    startLine: 248
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Services
+  example: []
+  syntax:
+    content: public Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName)
+    parameters:
+    - id: roleName
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
+    content.vb: Public Function GetPermissionsForRoleAsync(roleName As String) As Task(Of IEnumerable(Of String))
+  overload: UserService.Core.Services.UserService.GetPermissionsForRoleAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserService.GetPermissionsForRoleAsync(System.String)
+  nameWithType.vb: UserService.GetPermissionsForRoleAsync(String)
+  fullName.vb: UserService.Core.Services.UserService.GetPermissionsForRoleAsync(String)
+  name.vb: GetPermissionsForRoleAsync(String)
 references:
 - uid: UserService.Core.Services
   commentId: N:UserService.Core.Services
@@ -939,7 +1037,7 @@ references:
     href: UserService.Core.Interfaces.html
 - uid: UserService.Core.Services.UserService.#ctor*
   commentId: Overload:UserService.Core.Services.UserService.#ctor
-  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService__ctor_UserService_Core_Interfaces_IUserRepository_UserService_Core_Interfaces_IRoleService_AutoMapper_IMapper_
+  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService__ctor_UserService_Core_Interfaces_IUserRepository_UserService_Core_Interfaces_IRoleService_AutoMapper_IMapper_UserService_Core_Interfaces_IRoleRepository_
   name: UserService
   nameWithType: UserService.UserService
   fullName: UserService.Core.Services.UserService.UserService
@@ -967,149 +1065,19 @@ references:
   name: IMapper
   nameWithType: IMapper
   fullName: AutoMapper.IMapper
+- uid: UserService.Core.Interfaces.IRoleRepository
+  commentId: T:UserService.Core.Interfaces.IRoleRepository
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IRoleRepository.html
+  name: IRoleRepository
+  nameWithType: IRoleRepository
+  fullName: UserService.Core.Interfaces.IRoleRepository
 - uid: AutoMapper
   commentId: N:AutoMapper
   isExternal: true
   name: AutoMapper
   nameWithType: AutoMapper
   fullName: AutoMapper
-- uid: UserService.Core.Services.UserService.GetAllAsync*
-  commentId: Overload:UserService.Core.Services.UserService.GetAllAsync
-  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_GetAllAsync
-  name: GetAllAsync
-  nameWithType: UserService.GetAllAsync
-  fullName: UserService.Core.Services.UserService.GetAllAsync
-- uid: UserService.Core.Interfaces.IUserService.GetAllAsync
-  commentId: M:UserService.Core.Interfaces.IUserService.GetAllAsync
-  parent: UserService.Core.Interfaces.IUserService
-  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetAllAsync
-  name: GetAllAsync()
-  nameWithType: IUserService.GetAllAsync()
-  fullName: UserService.Core.Interfaces.IUserService.GetAllAsync()
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserService.GetAllAsync
-    name: GetAllAsync
-    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetAllAsync
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IUserService.GetAllAsync
-    name: GetAllAsync
-    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetAllAsync
-  - name: (
-  - name: )
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.User.UserReadDto}}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable<UserReadDto>>
-  nameWithType: Task<IEnumerable<UserReadDto>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.DTOs.User.UserReadDto>>
-  nameWithType.vb: Task(Of IEnumerable(Of UserReadDto))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.DTOs.User.UserReadDto))
-  name.vb: Task(Of IEnumerable(Of UserReadDto))
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
-  - uid: UserService.Core.DTOs.User.UserReadDto
-    name: UserReadDto
-    href: UserService.Core.DTOs.User.UserReadDto.html
-  - name: '>'
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.DTOs.User.UserReadDto
-    name: UserReadDto
-    href: UserService.Core.DTOs.User.UserReadDto.html
-  - name: )
-  - name: )
-- uid: System.Threading.Tasks.Task`1
-  commentId: T:System.Threading.Tasks.Task`1
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<TResult>
-  nameWithType: Task<TResult>
-  fullName: System.Threading.Tasks.Task<TResult>
-  nameWithType.vb: Task(Of TResult)
-  fullName.vb: System.Threading.Tasks.Task(Of TResult)
-  name.vb: Task(Of TResult)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - name: TResult
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - name: TResult
-  - name: )
-- uid: System.Threading.Tasks
-  commentId: N:System.Threading.Tasks
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
-  name: System.Threading.Tasks
-  nameWithType: System.Threading.Tasks
-  fullName: System.Threading.Tasks
-  spec.csharp:
-  - uid: System
-    name: System
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
-  - name: .
-  - uid: System.Threading
-    name: Threading
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
-  - name: .
-  - uid: System.Threading.Tasks
-    name: Tasks
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-  spec.vb:
-  - uid: System
-    name: System
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
-  - name: .
-  - uid: System.Threading
-    name: Threading
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
-  - name: .
-  - uid: System.Threading.Tasks
-    name: Tasks
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
 - uid: UserService.Core.Services.UserService.RestoreAsync*
   commentId: Overload:UserService.Core.Services.UserService.RestoreAsync
   href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_RestoreAsync_System_String_
@@ -1193,31 +1161,71 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
-- uid: UserService.Core.Services.UserService.GetDeletedAsync*
-  commentId: Overload:UserService.Core.Services.UserService.GetDeletedAsync
-  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_GetDeletedAsync
-  name: GetDeletedAsync
-  nameWithType: UserService.GetDeletedAsync
-  fullName: UserService.Core.Services.UserService.GetDeletedAsync
-- uid: UserService.Core.Interfaces.IUserService.GetDeletedAsync
-  commentId: M:UserService.Core.Interfaces.IUserService.GetDeletedAsync
-  parent: UserService.Core.Interfaces.IUserService
-  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetDeletedAsync
-  name: GetDeletedAsync()
-  nameWithType: IUserService.GetDeletedAsync()
-  fullName: UserService.Core.Interfaces.IUserService.GetDeletedAsync()
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserService.GetDeletedAsync
-    name: GetDeletedAsync
-    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetDeletedAsync
-  - name: (
-  - name: )
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserService.GetDeletedAsync
-    name: GetDeletedAsync
-    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetDeletedAsync
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
   - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
 - uid: UserService.Core.Services.UserService.GetByIdAsync*
   commentId: Overload:UserService.Core.Services.UserService.GetByIdAsync
   href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_GetByIdAsync_System_String_
@@ -1768,6 +1776,37 @@ references:
   name: GetUserShiftsAsync
   nameWithType: UserService.GetUserShiftsAsync
   fullName: UserService.Core.Services.UserService.GetUserShiftsAsync
+- uid: UserService.Core.Interfaces.IUserService.GetUserShiftsAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IUserService.GetUserShiftsAsync(System.String)
+  parent: UserService.Core.Interfaces.IUserService
+  isExternal: true
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetUserShiftsAsync_System_String_
+  name: GetUserShiftsAsync(string)
+  nameWithType: IUserService.GetUserShiftsAsync(string)
+  fullName: UserService.Core.Interfaces.IUserService.GetUserShiftsAsync(string)
+  nameWithType.vb: IUserService.GetUserShiftsAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IUserService.GetUserShiftsAsync(String)
+  name.vb: GetUserShiftsAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.GetUserShiftsAsync(System.String)
+    name: GetUserShiftsAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetUserShiftsAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.GetUserShiftsAsync(System.String)
+    name: GetUserShiftsAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetUserShiftsAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
 - uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.UserShiftDto}}
   commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.UserShiftDto}}
   parent: System.Threading.Tasks
@@ -1821,6 +1860,49 @@ references:
   name: GetUserShiftByShiftIdAsync
   nameWithType: UserService.GetUserShiftByShiftIdAsync
   fullName: UserService.Core.Services.UserService.GetUserShiftByShiftIdAsync
+- uid: UserService.Core.Interfaces.IUserService.GetUserShiftByShiftIdAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IUserService.GetUserShiftByShiftIdAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.IUserService
+  isExternal: true
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetUserShiftByShiftIdAsync_System_String_System_String_
+  name: GetUserShiftByShiftIdAsync(string, string)
+  nameWithType: IUserService.GetUserShiftByShiftIdAsync(string, string)
+  fullName: UserService.Core.Interfaces.IUserService.GetUserShiftByShiftIdAsync(string, string)
+  nameWithType.vb: IUserService.GetUserShiftByShiftIdAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.IUserService.GetUserShiftByShiftIdAsync(String, String)
+  name.vb: GetUserShiftByShiftIdAsync(String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.GetUserShiftByShiftIdAsync(System.String,System.String)
+    name: GetUserShiftByShiftIdAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetUserShiftByShiftIdAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.GetUserShiftByShiftIdAsync(System.String,System.String)
+    name: GetUserShiftByShiftIdAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetUserShiftByShiftIdAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
 - uid: System.Threading.Tasks.Task{UserService.Core.DTOs.UserShiftDto}
   commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.UserShiftDto}
   parent: System.Threading.Tasks
@@ -1860,9 +1942,393 @@ references:
   name: AssignShiftToUserAsync
   nameWithType: UserService.AssignShiftToUserAsync
   fullName: UserService.Core.Services.UserService.AssignShiftToUserAsync
+- uid: UserService.Core.Interfaces.IUserService.AssignShiftToUserAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IUserService.AssignShiftToUserAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.IUserService
+  isExternal: true
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_AssignShiftToUserAsync_System_String_System_String_
+  name: AssignShiftToUserAsync(string, string)
+  nameWithType: IUserService.AssignShiftToUserAsync(string, string)
+  fullName: UserService.Core.Interfaces.IUserService.AssignShiftToUserAsync(string, string)
+  nameWithType.vb: IUserService.AssignShiftToUserAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.IUserService.AssignShiftToUserAsync(String, String)
+  name.vb: AssignShiftToUserAsync(String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.AssignShiftToUserAsync(System.String,System.String)
+    name: AssignShiftToUserAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_AssignShiftToUserAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.AssignShiftToUserAsync(System.String,System.String)
+    name: AssignShiftToUserAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_AssignShiftToUserAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
 - uid: UserService.Core.Services.UserService.RemoveShiftFromUserAsync*
   commentId: Overload:UserService.Core.Services.UserService.RemoveShiftFromUserAsync
   href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_RemoveShiftFromUserAsync_System_String_System_String_
   name: RemoveShiftFromUserAsync
   nameWithType: UserService.RemoveShiftFromUserAsync
   fullName: UserService.Core.Services.UserService.RemoveShiftFromUserAsync
+- uid: UserService.Core.Interfaces.IUserService.RemoveShiftFromUserAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.IUserService.RemoveShiftFromUserAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.IUserService
+  isExternal: true
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_RemoveShiftFromUserAsync_System_String_System_String_
+  name: RemoveShiftFromUserAsync(string, string)
+  nameWithType: IUserService.RemoveShiftFromUserAsync(string, string)
+  fullName: UserService.Core.Interfaces.IUserService.RemoveShiftFromUserAsync(string, string)
+  nameWithType.vb: IUserService.RemoveShiftFromUserAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.IUserService.RemoveShiftFromUserAsync(String, String)
+  name.vb: RemoveShiftFromUserAsync(String, String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.RemoveShiftFromUserAsync(System.String,System.String)
+    name: RemoveShiftFromUserAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_RemoveShiftFromUserAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.RemoveShiftFromUserAsync(System.String,System.String)
+    name: RemoveShiftFromUserAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_RemoveShiftFromUserAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Services.UserService.GetPagedAsync*
+  commentId: Overload:UserService.Core.Services.UserService.GetPagedAsync
+  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_GetPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetPagedAsync
+  nameWithType: UserService.GetPagedAsync
+  fullName: UserService.Core.Services.UserService.GetPagedAsync
+- uid: UserService.Core.Interfaces.IUserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.IUserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.IUserService
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetPagedAsync(PaginationParameters)
+  nameWithType: IUserService.GetPagedAsync(PaginationParameters)
+  fullName: UserService.Core.Interfaces.IUserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+    name: GetPagedAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  - name: (
+  - uid: UserService.Core.DTOs.Common.PaginationParameters
+    name: PaginationParameters
+    href: UserService.Core.DTOs.Common.PaginationParameters.html
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+    name: GetPagedAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  - name: (
+  - uid: UserService.Core.DTOs.Common.PaginationParameters
+    name: PaginationParameters
+    href: UserService.Core.DTOs.Common.PaginationParameters.html
+  - name: )
+- uid: UserService.Core.DTOs.Common.PaginationParameters
+  commentId: T:UserService.Core.DTOs.Common.PaginationParameters
+  parent: UserService.Core.DTOs.Common
+  href: UserService.Core.DTOs.Common.PaginationParameters.html
+  name: PaginationParameters
+  nameWithType: PaginationParameters
+  fullName: UserService.Core.DTOs.Common.PaginationParameters
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.PagedResult{UserService.Core.DTOs.User.UserReadDto}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<PagedResult<UserReadDto>>
+  nameWithType: Task<PagedResult<UserReadDto>>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.PagedResult<UserService.Core.DTOs.User.UserReadDto>>
+  nameWithType.vb: Task(Of PagedResult(Of UserReadDto))
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.PagedResult(Of UserService.Core.DTOs.User.UserReadDto))
+  name.vb: Task(Of PagedResult(Of UserReadDto))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: <
+  - uid: UserService.Core.DTOs.User.UserReadDto
+    name: UserReadDto
+    href: UserService.Core.DTOs.User.UserReadDto.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Common.PagedResult`1
+    name: PagedResult
+    href: UserService.Core.DTOs.Common.PagedResult-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.User.UserReadDto
+    name: UserReadDto
+    href: UserService.Core.DTOs.User.UserReadDto.html
+  - name: )
+  - name: )
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+- uid: UserService.Core.Services.UserService.GetDeletedPagedAsync*
+  commentId: Overload:UserService.Core.Services.UserService.GetDeletedPagedAsync
+  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_GetDeletedPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetDeletedPagedAsync
+  nameWithType: UserService.GetDeletedPagedAsync
+  fullName: UserService.Core.Services.UserService.GetDeletedPagedAsync
+- uid: UserService.Core.Interfaces.IUserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.IUserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.IUserService
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetDeletedPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  name: GetDeletedPagedAsync(PaginationParameters)
+  nameWithType: IUserService.GetDeletedPagedAsync(PaginationParameters)
+  fullName: UserService.Core.Interfaces.IUserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+    name: GetDeletedPagedAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetDeletedPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  - name: (
+  - uid: UserService.Core.DTOs.Common.PaginationParameters
+    name: PaginationParameters
+    href: UserService.Core.DTOs.Common.PaginationParameters.html
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+    name: GetDeletedPagedAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetDeletedPagedAsync_UserService_Core_DTOs_Common_PaginationParameters_
+  - name: (
+  - uid: UserService.Core.DTOs.Common.PaginationParameters
+    name: PaginationParameters
+    href: UserService.Core.DTOs.Common.PaginationParameters.html
+  - name: )
+- uid: UserService.Core.Services.UserService.UpdateUserActiveStatusAsync*
+  commentId: Overload:UserService.Core.Services.UserService.UpdateUserActiveStatusAsync
+  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_UpdateUserActiveStatusAsync_System_String_System_Boolean_
+  name: UpdateUserActiveStatusAsync
+  nameWithType: UserService.UpdateUserActiveStatusAsync
+  fullName: UserService.Core.Services.UserService.UpdateUserActiveStatusAsync
+- uid: UserService.Core.Interfaces.IUserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.IUserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  parent: UserService.Core.Interfaces.IUserService
+  isExternal: true
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_UpdateUserActiveStatusAsync_System_String_System_Boolean_
+  name: UpdateUserActiveStatusAsync(string, bool)
+  nameWithType: IUserService.UpdateUserActiveStatusAsync(string, bool)
+  fullName: UserService.Core.Interfaces.IUserService.UpdateUserActiveStatusAsync(string, bool)
+  nameWithType.vb: IUserService.UpdateUserActiveStatusAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.IUserService.UpdateUserActiveStatusAsync(String, Boolean)
+  name.vb: UpdateUserActiveStatusAsync(String, Boolean)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+    name: UpdateUserActiveStatusAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_UpdateUserActiveStatusAsync_System_String_System_Boolean_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+    name: UpdateUserActiveStatusAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_UpdateUserActiveStatusAsync_System_String_System_Boolean_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: UserService.Core.Services.UserService.GetPermissionsForRoleAsync*
+  commentId: Overload:UserService.Core.Services.UserService.GetPermissionsForRoleAsync
+  href: UserService.Core.Services.UserService.html#UserService_Core_Services_UserService_GetPermissionsForRoleAsync_System_String_
+  name: GetPermissionsForRoleAsync
+  nameWithType: UserService.GetPermissionsForRoleAsync
+  fullName: UserService.Core.Services.UserService.GetPermissionsForRoleAsync
+- uid: UserService.Core.Interfaces.IUserService.GetPermissionsForRoleAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IUserService.GetPermissionsForRoleAsync(System.String)
+  parent: UserService.Core.Interfaces.IUserService
+  isExternal: true
+  href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetPermissionsForRoleAsync_System_String_
+  name: GetPermissionsForRoleAsync(string)
+  nameWithType: IUserService.GetPermissionsForRoleAsync(string)
+  fullName: UserService.Core.Interfaces.IUserService.GetPermissionsForRoleAsync(string)
+  nameWithType.vb: IUserService.GetPermissionsForRoleAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IUserService.GetPermissionsForRoleAsync(String)
+  name.vb: GetPermissionsForRoleAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserService.GetPermissionsForRoleAsync(System.String)
+    name: GetPermissionsForRoleAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetPermissionsForRoleAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserService.GetPermissionsForRoleAsync(System.String)
+    name: GetPermissionsForRoleAsync
+    href: UserService.Core.Interfaces.IUserService.html#UserService_Core_Interfaces_IUserService_GetPermissionsForRoleAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<string>>
+  nameWithType: Task<IEnumerable<string>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
+  nameWithType.vb: Task(Of IEnumerable(Of String))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of String))
+  name.vb: Task(Of IEnumerable(Of String))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  - name: )

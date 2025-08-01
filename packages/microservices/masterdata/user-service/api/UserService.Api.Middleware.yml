@@ -1,0 +1,44 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Api.Middleware
+  commentId: N:UserService.Api.Middleware
+  id: UserService.Api.Middleware
+  children:
+  - UserService.Api.Middleware.GlobalExceptionMiddleware
+  - UserService.Api.Middleware.RateLimitMiddleware
+  - UserService.Api.Middleware.RedisRateLimitMiddleware
+  - UserService.Api.Middleware.ValidationMiddleware
+  langs:
+  - csharp
+  - vb
+  name: UserService.Api.Middleware
+  nameWithType: UserService.Api.Middleware
+  fullName: UserService.Api.Middleware
+  type: Namespace
+  assemblies:
+  - UserService.Api
+references:
+- uid: UserService.Api.Middleware.GlobalExceptionMiddleware
+  commentId: T:UserService.Api.Middleware.GlobalExceptionMiddleware
+  href: UserService.Api.Middleware.GlobalExceptionMiddleware.html
+  name: GlobalExceptionMiddleware
+  nameWithType: GlobalExceptionMiddleware
+  fullName: UserService.Api.Middleware.GlobalExceptionMiddleware
+- uid: UserService.Api.Middleware.RateLimitMiddleware
+  commentId: T:UserService.Api.Middleware.RateLimitMiddleware
+  href: UserService.Api.Middleware.RateLimitMiddleware.html
+  name: RateLimitMiddleware
+  nameWithType: RateLimitMiddleware
+  fullName: UserService.Api.Middleware.RateLimitMiddleware
+- uid: UserService.Api.Middleware.RedisRateLimitMiddleware
+  commentId: T:UserService.Api.Middleware.RedisRateLimitMiddleware
+  href: UserService.Api.Middleware.RedisRateLimitMiddleware.html
+  name: RedisRateLimitMiddleware
+  nameWithType: RedisRateLimitMiddleware
+  fullName: UserService.Api.Middleware.RedisRateLimitMiddleware
+- uid: UserService.Api.Middleware.ValidationMiddleware
+  commentId: T:UserService.Api.Middleware.ValidationMiddleware
+  href: UserService.Api.Middleware.ValidationMiddleware.html
+  name: ValidationMiddleware
+  nameWithType: ValidationMiddleware
+  fullName: UserService.Api.Middleware.ValidationMiddleware

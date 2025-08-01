@@ -1,0 +1,689 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Services.SmtpEmailService
+  commentId: T:UserService.Infrastructure.Services.SmtpEmailService
+  id: SmtpEmailService
+  parent: UserService.Infrastructure.Services
+  children:
+  - UserService.Infrastructure.Services.SmtpEmailService.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.SmtpEmailService})
+  - UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync(System.String,System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: SmtpEmailService
+  nameWithType: SmtpEmailService
+  fullName: UserService.Infrastructure.Services.SmtpEmailService
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/SmtpEmailService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: SmtpEmailService
+    path: src/UserService.Infrastructure/Services/SmtpEmailService.cs
+    startLine: 8
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: 'public class SmtpEmailService : IEmailService'
+    content.vb: Public Class SmtpEmailService Implements IEmailService
+  inheritance:
+  - System.Object
+  implements:
+  - UserService.Infrastructure.Interfaces.IEmailService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Infrastructure.Services.SmtpEmailService.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.SmtpEmailService})
+  commentId: M:UserService.Infrastructure.Services.SmtpEmailService.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.SmtpEmailService})
+  id: '#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.SmtpEmailService})'
+  parent: UserService.Infrastructure.Services.SmtpEmailService
+  langs:
+  - csharp
+  - vb
+  name: SmtpEmailService(IConfiguration, ILogger<SmtpEmailService>)
+  nameWithType: SmtpEmailService.SmtpEmailService(IConfiguration, ILogger<SmtpEmailService>)
+  fullName: UserService.Infrastructure.Services.SmtpEmailService.SmtpEmailService(Microsoft.Extensions.Configuration.IConfiguration, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.SmtpEmailService>)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/SmtpEmailService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Infrastructure/Services/SmtpEmailService.cs
+    startLine: 13
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  syntax:
+    content: public SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailService> logger)
+    parameters:
+    - id: configuration
+      type: Microsoft.Extensions.Configuration.IConfiguration
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.SmtpEmailService}
+    content.vb: Public Sub New(configuration As IConfiguration, logger As ILogger(Of SmtpEmailService))
+  overload: UserService.Infrastructure.Services.SmtpEmailService.#ctor*
+  nameWithType.vb: SmtpEmailService.New(IConfiguration, ILogger(Of SmtpEmailService))
+  fullName.vb: UserService.Infrastructure.Services.SmtpEmailService.New(Microsoft.Extensions.Configuration.IConfiguration, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.SmtpEmailService))
+  name.vb: New(IConfiguration, ILogger(Of SmtpEmailService))
+- uid: UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync(System.String,System.String,System.String)
+  id: SendEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Infrastructure.Services.SmtpEmailService
+  langs:
+  - csharp
+  - vb
+  name: SendEmailAsync(string, string, string)
+  nameWithType: SmtpEmailService.SendEmailAsync(string, string, string)
+  fullName: UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync(string, string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/SmtpEmailService.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: SendEmailAsync
+    path: src/UserService.Infrastructure/Services/SmtpEmailService.cs
+    startLine: 19
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Services
+  example: []
+  syntax:
+    content: public Task SendEmailAsync(string to, string subject, string body)
+    parameters:
+    - id: to
+      type: System.String
+    - id: subject
+      type: System.String
+    - id: body
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function SendEmailAsync([to] As String, subject As String, body As String) As Task
+  overload: UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync*
+  implements:
+  - UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  nameWithType.vb: SmtpEmailService.SendEmailAsync(String, String, String)
+  fullName.vb: UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync(String, String, String)
+  name.vb: SendEmailAsync(String, String, String)
+references:
+- uid: UserService.Infrastructure.Services
+  commentId: N:UserService.Infrastructure.Services
+  href: UserService.html
+  name: UserService.Infrastructure.Services
+  nameWithType: UserService.Infrastructure.Services
+  fullName: UserService.Infrastructure.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Services
+    name: Services
+    href: UserService.Infrastructure.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Infrastructure.Interfaces.IEmailService
+  commentId: T:UserService.Infrastructure.Interfaces.IEmailService
+  parent: UserService.Infrastructure.Interfaces
+  href: UserService.Infrastructure.Interfaces.IEmailService.html
+  name: IEmailService
+  nameWithType: IEmailService
+  fullName: UserService.Infrastructure.Interfaces.IEmailService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Infrastructure.Interfaces
+  commentId: N:UserService.Infrastructure.Interfaces
+  href: UserService.html
+  name: UserService.Infrastructure.Interfaces
+  nameWithType: UserService.Infrastructure.Interfaces
+  fullName: UserService.Infrastructure.Interfaces
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Interfaces
+    name: Interfaces
+    href: UserService.Infrastructure.Interfaces.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Interfaces
+    name: Interfaces
+    href: UserService.Infrastructure.Interfaces.html
+- uid: UserService.Infrastructure.Services.SmtpEmailService.#ctor*
+  commentId: Overload:UserService.Infrastructure.Services.SmtpEmailService.#ctor
+  href: UserService.Infrastructure.Services.SmtpEmailService.html#UserService_Infrastructure_Services_SmtpEmailService__ctor_Microsoft_Extensions_Configuration_IConfiguration_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_SmtpEmailService__
+  name: SmtpEmailService
+  nameWithType: SmtpEmailService.SmtpEmailService
+  fullName: UserService.Infrastructure.Services.SmtpEmailService.SmtpEmailService
+  nameWithType.vb: SmtpEmailService.New
+  fullName.vb: UserService.Infrastructure.Services.SmtpEmailService.New
+  name.vb: New
+- uid: Microsoft.Extensions.Configuration.IConfiguration
+  commentId: T:Microsoft.Extensions.Configuration.IConfiguration
+  parent: Microsoft.Extensions.Configuration
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration.iconfiguration
+  name: IConfiguration
+  nameWithType: IConfiguration
+  fullName: Microsoft.Extensions.Configuration.IConfiguration
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.SmtpEmailService}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.SmtpEmailService}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<SmtpEmailService>
+  nameWithType: ILogger<SmtpEmailService>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.SmtpEmailService>
+  nameWithType.vb: ILogger(Of SmtpEmailService)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.SmtpEmailService)
+  name.vb: ILogger(Of SmtpEmailService)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Infrastructure.Services.SmtpEmailService
+    name: SmtpEmailService
+    href: UserService.Infrastructure.Services.SmtpEmailService.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Infrastructure.Services.SmtpEmailService
+    name: SmtpEmailService
+    href: UserService.Infrastructure.Services.SmtpEmailService.html
+  - name: )
+- uid: Microsoft.Extensions.Configuration
+  commentId: N:Microsoft.Extensions.Configuration
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Configuration
+  nameWithType: Microsoft.Extensions.Configuration
+  fullName: Microsoft.Extensions.Configuration
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Configuration
+    name: Configuration
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Configuration
+    name: Configuration
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync*
+  commentId: Overload:UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync
+  href: UserService.Infrastructure.Services.SmtpEmailService.html#UserService_Infrastructure_Services_SmtpEmailService_SendEmailAsync_System_String_System_String_System_String_
+  name: SendEmailAsync
+  nameWithType: SmtpEmailService.SendEmailAsync
+  fullName: UserService.Infrastructure.Services.SmtpEmailService.SendEmailAsync
+- uid: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Infrastructure.Interfaces.IEmailService
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: SendEmailAsync(string, string, string)
+  nameWithType: IEmailService.SendEmailAsync(string, string, string)
+  fullName: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(string, string, string)
+  nameWithType.vb: IEmailService.SendEmailAsync(String, String, String)
+  fullName.vb: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(String, String, String)
+  name.vb: SendEmailAsync(String, String, String)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+    name: SendEmailAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Interfaces.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+    name: SendEmailAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

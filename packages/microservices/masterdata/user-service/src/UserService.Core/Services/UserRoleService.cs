@@ -26,21 +26,7 @@ namespace UserService.Core.Services
                 .ToList();
         }
 
-        /*public async Task<IEnumerable<string>> GetUsersInRoleAsync(string roleId)
-        {
-            var allUserRoles = await userRoleRepository.GetAllAsync();
-            return allUserRoles
-                .Where(ur => ur.RoleId == roleId)
-                .Select(ur => ur.UserId)
-                .ToList();
-        }*/
-
-        /*public async Task<bool> IsUserInRoleAsync(string userId, string roleId)
-        {
-            var allUserRoles = await userRoleRepository.GetAllAsync();
-            return allUserRoles.Any(ur => ur.UserId == userId && ur.RoleId == roleId);
-        }*/
-
+     
         public async Task<ServiceResult> AddUserToRoleAsync(string userId, string roleId)
         {
             // Validate that the user exists and is not soft deleted

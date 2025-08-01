@@ -112,40 +112,7 @@ namespace UserService.Infrastructure.Repositories
                 .Select(rp => rp.Permission)
                 .ToListAsync();
         }
-
-        // public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
-        // {
-        //     var exists = await _context.RolePermissions
-        //         .AnyAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-        //
-        //     if (exists)
-        //         return true;
-        //
-        //     var rolePermission = new RolePermission
-        //     {
-        //         RoleId = roleId,
-        //         PermissionId = permissionId,
-        //         AssignedAt = DateTime.UtcNow
-        //     };
-        //
-        //     await _context.RolePermissions.AddAsync(rolePermission);
-        //     await _context.SaveChangesAsync();
-        //     return true;
-        // }
-
-        // public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
-        // {
-        //     var rolePermission = await _context.RolePermissions
-        //         .AsTracking()
-        //         .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-        //
-        //     if (rolePermission == null)
-        //         return false;
-        //
-        //     _context.RolePermissions.Remove(rolePermission);
-        //     await _context.SaveChangesAsync();
-        //     return true;
-        // }
+        
 
         public async Task<object> AddAsync(Role role)
         {
@@ -159,13 +126,6 @@ namespace UserService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // public async Task GetByIdWithPermissionsAsync(string roleId)
-        // {
-        //     await _context.Roles
-        //         .Include(r => r.RolePermissions)
-        //             .ThenInclude(rp => rp.Permission)
-        //         .FirstOrDefaultAsync(r => r.Id == roleId);
-        // }
 
         public async Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> select)
         {

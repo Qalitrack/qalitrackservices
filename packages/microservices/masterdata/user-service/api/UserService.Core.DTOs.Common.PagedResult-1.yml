@@ -1,0 +1,715 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.DTOs.Common.PagedResult`1
+  commentId: T:UserService.Core.DTOs.Common.PagedResult`1
+  id: PagedResult`1
+  parent: UserService.Core.DTOs.Common
+  children:
+  - UserService.Core.DTOs.Common.PagedResult`1.HasNextPage
+  - UserService.Core.DTOs.Common.PagedResult`1.HasPreviousPage
+  - UserService.Core.DTOs.Common.PagedResult`1.Items
+  - UserService.Core.DTOs.Common.PagedResult`1.Page
+  - UserService.Core.DTOs.Common.PagedResult`1.PageSize
+  - UserService.Core.DTOs.Common.PagedResult`1.TotalCount
+  - UserService.Core.DTOs.Common.PagedResult`1.TotalPages
+  langs:
+  - csharp
+  - vb
+  name: PagedResult<T>
+  nameWithType: PagedResult<T>
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: PagedResult
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 2
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public class PagedResult<T>
+    typeParameters:
+    - id: T
+    content.vb: Public Class PagedResult(Of T)
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  nameWithType.vb: PagedResult(Of T)
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T)
+  name.vb: PagedResult(Of T)
+- uid: UserService.Core.DTOs.Common.PagedResult`1.Items
+  commentId: P:UserService.Core.DTOs.Common.PagedResult`1.Items
+  id: Items
+  parent: UserService.Core.DTOs.Common.PagedResult`1
+  langs:
+  - csharp
+  - vb
+  name: Items
+  nameWithType: PagedResult<T>.Items
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.Items
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Items
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public IEnumerable<T> Items { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.IEnumerable{{T}}
+    content.vb: Public Property Items As IEnumerable(Of T)
+  overload: UserService.Core.DTOs.Common.PagedResult`1.Items*
+  nameWithType.vb: PagedResult(Of T).Items
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).Items
+- uid: UserService.Core.DTOs.Common.PagedResult`1.Page
+  commentId: P:UserService.Core.DTOs.Common.PagedResult`1.Page
+  id: Page
+  parent: UserService.Core.DTOs.Common.PagedResult`1
+  langs:
+  - csharp
+  - vb
+  name: Page
+  nameWithType: PagedResult<T>.Page
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.Page
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: Page
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 5
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public int Page { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Page As Integer
+  overload: UserService.Core.DTOs.Common.PagedResult`1.Page*
+  nameWithType.vb: PagedResult(Of T).Page
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).Page
+- uid: UserService.Core.DTOs.Common.PagedResult`1.PageSize
+  commentId: P:UserService.Core.DTOs.Common.PagedResult`1.PageSize
+  id: PageSize
+  parent: UserService.Core.DTOs.Common.PagedResult`1
+  langs:
+  - csharp
+  - vb
+  name: PageSize
+  nameWithType: PagedResult<T>.PageSize
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.PageSize
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: PageSize
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 6
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public int PageSize { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property PageSize As Integer
+  overload: UserService.Core.DTOs.Common.PagedResult`1.PageSize*
+  nameWithType.vb: PagedResult(Of T).PageSize
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).PageSize
+- uid: UserService.Core.DTOs.Common.PagedResult`1.TotalCount
+  commentId: P:UserService.Core.DTOs.Common.PagedResult`1.TotalCount
+  id: TotalCount
+  parent: UserService.Core.DTOs.Common.PagedResult`1
+  langs:
+  - csharp
+  - vb
+  name: TotalCount
+  nameWithType: PagedResult<T>.TotalCount
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.TotalCount
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: TotalCount
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public int TotalCount { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property TotalCount As Integer
+  overload: UserService.Core.DTOs.Common.PagedResult`1.TotalCount*
+  nameWithType.vb: PagedResult(Of T).TotalCount
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).TotalCount
+- uid: UserService.Core.DTOs.Common.PagedResult`1.TotalPages
+  commentId: P:UserService.Core.DTOs.Common.PagedResult`1.TotalPages
+  id: TotalPages
+  parent: UserService.Core.DTOs.Common.PagedResult`1
+  langs:
+  - csharp
+  - vb
+  name: TotalPages
+  nameWithType: PagedResult<T>.TotalPages
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.TotalPages
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: TotalPages
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public int TotalPages { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property TotalPages As Integer
+  overload: UserService.Core.DTOs.Common.PagedResult`1.TotalPages*
+  nameWithType.vb: PagedResult(Of T).TotalPages
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).TotalPages
+- uid: UserService.Core.DTOs.Common.PagedResult`1.HasPreviousPage
+  commentId: P:UserService.Core.DTOs.Common.PagedResult`1.HasPreviousPage
+  id: HasPreviousPage
+  parent: UserService.Core.DTOs.Common.PagedResult`1
+  langs:
+  - csharp
+  - vb
+  name: HasPreviousPage
+  nameWithType: PagedResult<T>.HasPreviousPage
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.HasPreviousPage
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: HasPreviousPage
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public bool HasPreviousPage { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public ReadOnly Property HasPreviousPage As Boolean
+  overload: UserService.Core.DTOs.Common.PagedResult`1.HasPreviousPage*
+  nameWithType.vb: PagedResult(Of T).HasPreviousPage
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).HasPreviousPage
+- uid: UserService.Core.DTOs.Common.PagedResult`1.HasNextPage
+  commentId: P:UserService.Core.DTOs.Common.PagedResult`1.HasNextPage
+  id: HasNextPage
+  parent: UserService.Core.DTOs.Common.PagedResult`1
+  langs:
+  - csharp
+  - vb
+  name: HasNextPage
+  nameWithType: PagedResult<T>.HasNextPage
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.HasNextPage
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
+      branch: main
+      repo: https://github.com/adarlegendre/qalitrackservices.git
+    id: HasNextPage
+    path: src/UserService.Core/DTOs/Common/PagedResult.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Common
+  syntax:
+    content: public bool HasNextPage { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public ReadOnly Property HasNextPage As Boolean
+  overload: UserService.Core.DTOs.Common.PagedResult`1.HasNextPage*
+  nameWithType.vb: PagedResult(Of T).HasNextPage
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).HasNextPage
+references:
+- uid: UserService.Core.DTOs.Common
+  commentId: N:UserService.Core.DTOs.Common
+  href: UserService.html
+  name: UserService.Core.DTOs.Common
+  nameWithType: UserService.Core.DTOs.Common
+  fullName: UserService.Core.DTOs.Common
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Common
+    name: Common
+    href: UserService.Core.DTOs.Common.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.DTOs.Common.PagedResult`1.Items*
+  commentId: Overload:UserService.Core.DTOs.Common.PagedResult`1.Items
+  href: UserService.Core.DTOs.Common.PagedResult-1.html#UserService_Core_DTOs_Common_PagedResult_1_Items
+  name: Items
+  nameWithType: PagedResult<T>.Items
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.Items
+  nameWithType.vb: PagedResult(Of T).Items
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).Items
+- uid: System.Collections.Generic.IEnumerable{{T}}
+  commentId: T:System.Collections.Generic.IEnumerable{`0}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic.IEnumerable`1
+  commentId: T:System.Collections.Generic.IEnumerable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: UserService.Core.DTOs.Common.PagedResult`1.Page*
+  commentId: Overload:UserService.Core.DTOs.Common.PagedResult`1.Page
+  href: UserService.Core.DTOs.Common.PagedResult-1.html#UserService_Core_DTOs_Common_PagedResult_1_Page
+  name: Page
+  nameWithType: PagedResult<T>.Page
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.Page
+  nameWithType.vb: PagedResult(Of T).Page
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).Page
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: UserService.Core.DTOs.Common.PagedResult`1.PageSize*
+  commentId: Overload:UserService.Core.DTOs.Common.PagedResult`1.PageSize
+  href: UserService.Core.DTOs.Common.PagedResult-1.html#UserService_Core_DTOs_Common_PagedResult_1_PageSize
+  name: PageSize
+  nameWithType: PagedResult<T>.PageSize
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.PageSize
+  nameWithType.vb: PagedResult(Of T).PageSize
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).PageSize
+- uid: UserService.Core.DTOs.Common.PagedResult`1.TotalCount*
+  commentId: Overload:UserService.Core.DTOs.Common.PagedResult`1.TotalCount
+  href: UserService.Core.DTOs.Common.PagedResult-1.html#UserService_Core_DTOs_Common_PagedResult_1_TotalCount
+  name: TotalCount
+  nameWithType: PagedResult<T>.TotalCount
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.TotalCount
+  nameWithType.vb: PagedResult(Of T).TotalCount
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).TotalCount
+- uid: UserService.Core.DTOs.Common.PagedResult`1.TotalPages*
+  commentId: Overload:UserService.Core.DTOs.Common.PagedResult`1.TotalPages
+  href: UserService.Core.DTOs.Common.PagedResult-1.html#UserService_Core_DTOs_Common_PagedResult_1_TotalPages
+  name: TotalPages
+  nameWithType: PagedResult<T>.TotalPages
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.TotalPages
+  nameWithType.vb: PagedResult(Of T).TotalPages
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).TotalPages
+- uid: UserService.Core.DTOs.Common.PagedResult`1.HasPreviousPage*
+  commentId: Overload:UserService.Core.DTOs.Common.PagedResult`1.HasPreviousPage
+  href: UserService.Core.DTOs.Common.PagedResult-1.html#UserService_Core_DTOs_Common_PagedResult_1_HasPreviousPage
+  name: HasPreviousPage
+  nameWithType: PagedResult<T>.HasPreviousPage
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.HasPreviousPage
+  nameWithType.vb: PagedResult(Of T).HasPreviousPage
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).HasPreviousPage
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: UserService.Core.DTOs.Common.PagedResult`1.HasNextPage*
+  commentId: Overload:UserService.Core.DTOs.Common.PagedResult`1.HasNextPage
+  href: UserService.Core.DTOs.Common.PagedResult-1.html#UserService_Core_DTOs_Common_PagedResult_1_HasNextPage
+  name: HasNextPage
+  nameWithType: PagedResult<T>.HasNextPage
+  fullName: UserService.Core.DTOs.Common.PagedResult<T>.HasNextPage
+  nameWithType.vb: PagedResult(Of T).HasNextPage
+  fullName.vb: UserService.Core.DTOs.Common.PagedResult(Of T).HasNextPage

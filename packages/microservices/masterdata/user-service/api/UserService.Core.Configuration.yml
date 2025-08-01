@@ -1,0 +1,54 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Configuration
+  commentId: N:UserService.Core.Configuration
+  id: UserService.Core.Configuration
+  children:
+  - UserService.Core.Configuration.JwtConfiguration
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Configuration
+  nameWithType: UserService.Core.Configuration
+  fullName: UserService.Core.Configuration
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Configuration.JwtConfiguration
+  commentId: T:UserService.Core.Configuration.JwtConfiguration
+  parent: UserService.Core.Configuration
+  href: UserService.Core.Configuration.JwtConfiguration.html
+  name: JwtConfiguration
+  nameWithType: JwtConfiguration
+  fullName: UserService.Core.Configuration.JwtConfiguration
+- uid: UserService.Core.Configuration
+  commentId: N:UserService.Core.Configuration
+  href: UserService.html
+  name: UserService.Core.Configuration
+  nameWithType: UserService.Core.Configuration
+  fullName: UserService.Core.Configuration
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Configuration
+    name: Configuration
+    href: UserService.Core.Configuration.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Configuration
+    name: Configuration
+    href: UserService.Core.Configuration.html

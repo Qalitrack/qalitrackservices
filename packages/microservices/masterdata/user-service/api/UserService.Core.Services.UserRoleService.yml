@@ -5,11 +5,9 @@ items:
   id: UserRoleService
   parent: UserService.Core.Services
   children:
-  - UserService.Core.Services.UserRoleService.#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IRoleRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})
+  - UserService.Core.Services.UserRoleService.#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleRepository,UserService.Core.Interfaces.ICacheService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})
   - UserService.Core.Services.UserRoleService.AddUserToRoleAsync(System.String,System.String)
   - UserService.Core.Services.UserRoleService.GetUserRolesAsync(System.String)
-  - UserService.Core.Services.UserRoleService.GetUsersInRoleAsync(System.String)
-  - UserService.Core.Services.UserRoleService.IsUserInRoleAsync(System.String,System.String)
   - UserService.Core.Services.UserRoleService.RemoveUserFromRoleAsync(System.String,System.String)
   langs:
   - csharp
@@ -25,7 +23,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: UserRoleService
     path: src/UserService.Core/Services/UserRoleService.cs
-    startLine: 10
+    startLine: 11
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -44,16 +42,16 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Core.Services.UserRoleService.#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IRoleRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})
-  commentId: M:UserService.Core.Services.UserRoleService.#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IRoleRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})
-  id: '#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IRoleRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})'
+- uid: UserService.Core.Services.UserRoleService.#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleRepository,UserService.Core.Interfaces.ICacheService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})
+  commentId: M:UserService.Core.Services.UserRoleService.#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleRepository,UserService.Core.Interfaces.ICacheService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})
+  id: '#ctor(UserService.Core.Interfaces.IUserRoleRepository,UserService.Core.Interfaces.IUserRepository,UserService.Core.Interfaces.IRoleRepository,UserService.Core.Interfaces.ICacheService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService})'
   parent: UserService.Core.Services.UserRoleService
   langs:
   - csharp
   - vb
-  name: UserRoleService(IUserRoleRepository, IRoleRepository, ILogger<UserRoleService>)
-  nameWithType: UserRoleService.UserRoleService(IUserRoleRepository, IRoleRepository, ILogger<UserRoleService>)
-  fullName: UserService.Core.Services.UserRoleService.UserRoleService(UserService.Core.Interfaces.IUserRoleRepository, UserService.Core.Interfaces.IRoleRepository, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.UserRoleService>)
+  name: UserRoleService(IUserRoleRepository, IUserRepository, IRoleRepository, ICacheService, ILogger<UserRoleService>)
+  nameWithType: UserRoleService.UserRoleService(IUserRoleRepository, IUserRepository, IRoleRepository, ICacheService, ILogger<UserRoleService>)
+  fullName: UserService.Core.Services.UserRoleService.UserRoleService(UserService.Core.Interfaces.IUserRoleRepository, UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.IRoleRepository, UserService.Core.Interfaces.ICacheService, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.UserRoleService>)
   type: Constructor
   source:
     remote:
@@ -62,24 +60,28 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Services/UserRoleService.cs
-    startLine: 10
+    startLine: 11
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
   syntax:
-    content: public UserRoleService(IUserRoleRepository userRoleRepository, IRoleRepository roleRepository, ILogger<UserRoleService> logger)
+    content: public UserRoleService(IUserRoleRepository userRoleRepository, IUserRepository userRepository, IRoleRepository roleRepository, ICacheService cacheService, ILogger<UserRoleService> logger)
     parameters:
     - id: userRoleRepository
       type: UserService.Core.Interfaces.IUserRoleRepository
+    - id: userRepository
+      type: UserService.Core.Interfaces.IUserRepository
     - id: roleRepository
       type: UserService.Core.Interfaces.IRoleRepository
+    - id: cacheService
+      type: UserService.Core.Interfaces.ICacheService
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService}
-    content.vb: Public Sub New(userRoleRepository As IUserRoleRepository, roleRepository As IRoleRepository, logger As ILogger(Of UserRoleService))
+    content.vb: Public Sub New(userRoleRepository As IUserRoleRepository, userRepository As IUserRepository, roleRepository As IRoleRepository, cacheService As ICacheService, logger As ILogger(Of UserRoleService))
   overload: UserService.Core.Services.UserRoleService.#ctor*
-  nameWithType.vb: UserRoleService.New(IUserRoleRepository, IRoleRepository, ILogger(Of UserRoleService))
-  fullName.vb: UserService.Core.Services.UserRoleService.New(UserService.Core.Interfaces.IUserRoleRepository, UserService.Core.Interfaces.IRoleRepository, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.UserRoleService))
-  name.vb: New(IUserRoleRepository, IRoleRepository, ILogger(Of UserRoleService))
+  nameWithType.vb: UserRoleService.New(IUserRoleRepository, IUserRepository, IRoleRepository, ICacheService, ILogger(Of UserRoleService))
+  fullName.vb: UserService.Core.Services.UserRoleService.New(UserService.Core.Interfaces.IUserRoleRepository, UserService.Core.Interfaces.IUserRepository, UserService.Core.Interfaces.IRoleRepository, UserService.Core.Interfaces.ICacheService, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.UserRoleService))
+  name.vb: New(IUserRoleRepository, IUserRepository, IRoleRepository, ICacheService, ILogger(Of UserRoleService))
 - uid: UserService.Core.Services.UserRoleService.GetUserRolesAsync(System.String)
   commentId: M:UserService.Core.Services.UserRoleService.GetUserRolesAsync(System.String)
   id: GetUserRolesAsync(System.String)
@@ -98,10 +100,11 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetUserRolesAsync
     path: src/UserService.Core/Services/UserRoleService.cs
-    startLine: 16
+    startLine: 19
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
+  example: []
   syntax:
     content: public Task<IEnumerable<string>> GetUserRolesAsync(string userId)
     parameters:
@@ -111,79 +114,11 @@ items:
       type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
     content.vb: Public Function GetUserRolesAsync(userId As String) As Task(Of IEnumerable(Of String))
   overload: UserService.Core.Services.UserRoleService.GetUserRolesAsync*
+  implements:
+  - UserService.Core.Interfaces.IUserRoleService.GetUserRolesAsync(System.String)
   nameWithType.vb: UserRoleService.GetUserRolesAsync(String)
   fullName.vb: UserService.Core.Services.UserRoleService.GetUserRolesAsync(String)
   name.vb: GetUserRolesAsync(String)
-- uid: UserService.Core.Services.UserRoleService.GetUsersInRoleAsync(System.String)
-  commentId: M:UserService.Core.Services.UserRoleService.GetUsersInRoleAsync(System.String)
-  id: GetUsersInRoleAsync(System.String)
-  parent: UserService.Core.Services.UserRoleService
-  langs:
-  - csharp
-  - vb
-  name: GetUsersInRoleAsync(string)
-  nameWithType: UserRoleService.GetUsersInRoleAsync(string)
-  fullName: UserService.Core.Services.UserRoleService.GetUsersInRoleAsync(string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserRoleService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetUsersInRoleAsync
-    path: src/UserService.Core/Services/UserRoleService.cs
-    startLine: 25
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Services
-  syntax:
-    content: public Task<IEnumerable<string>> GetUsersInRoleAsync(string roleId)
-    parameters:
-    - id: roleId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{System.String}}
-    content.vb: Public Function GetUsersInRoleAsync(roleId As String) As Task(Of IEnumerable(Of String))
-  overload: UserService.Core.Services.UserRoleService.GetUsersInRoleAsync*
-  nameWithType.vb: UserRoleService.GetUsersInRoleAsync(String)
-  fullName.vb: UserService.Core.Services.UserRoleService.GetUsersInRoleAsync(String)
-  name.vb: GetUsersInRoleAsync(String)
-- uid: UserService.Core.Services.UserRoleService.IsUserInRoleAsync(System.String,System.String)
-  commentId: M:UserService.Core.Services.UserRoleService.IsUserInRoleAsync(System.String,System.String)
-  id: IsUserInRoleAsync(System.String,System.String)
-  parent: UserService.Core.Services.UserRoleService
-  langs:
-  - csharp
-  - vb
-  name: IsUserInRoleAsync(string, string)
-  nameWithType: UserRoleService.IsUserInRoleAsync(string, string)
-  fullName: UserService.Core.Services.UserRoleService.IsUserInRoleAsync(string, string)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserRoleService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: IsUserInRoleAsync
-    path: src/UserService.Core/Services/UserRoleService.cs
-    startLine: 34
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Services
-  syntax:
-    content: public Task<bool> IsUserInRoleAsync(string userId, string roleId)
-    parameters:
-    - id: userId
-      type: System.String
-    - id: roleId
-      type: System.String
-    return:
-      type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Public Function IsUserInRoleAsync(userId As String, roleId As String) As Task(Of Boolean)
-  overload: UserService.Core.Services.UserRoleService.IsUserInRoleAsync*
-  nameWithType.vb: UserRoleService.IsUserInRoleAsync(String, String)
-  fullName.vb: UserService.Core.Services.UserRoleService.IsUserInRoleAsync(String, String)
-  name.vb: IsUserInRoleAsync(String, String)
 - uid: UserService.Core.Services.UserRoleService.AddUserToRoleAsync(System.String,System.String)
   commentId: M:UserService.Core.Services.UserRoleService.AddUserToRoleAsync(System.String,System.String)
   id: AddUserToRoleAsync(System.String,System.String)
@@ -202,21 +137,21 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: AddUserToRoleAsync
     path: src/UserService.Core/Services/UserRoleService.cs
-    startLine: 40
+    startLine: 43
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
   example: []
   syntax:
-    content: public Task<object> AddUserToRoleAsync(string userId, string roleId)
+    content: public Task<ServiceResult> AddUserToRoleAsync(string userId, string roleId)
     parameters:
     - id: userId
       type: System.String
     - id: roleId
       type: System.String
     return:
-      type: System.Threading.Tasks.Task{System.Object}
-    content.vb: Public Function AddUserToRoleAsync(userId As String, roleId As String) As Task(Of Object)
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+    content.vb: Public Function AddUserToRoleAsync(userId As String, roleId As String) As Task(Of ServiceResult)
   overload: UserService.Core.Services.UserRoleService.AddUserToRoleAsync*
   implements:
   - UserService.Core.Interfaces.IUserRoleService.AddUserToRoleAsync(System.String,System.String)
@@ -241,21 +176,21 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: RemoveUserFromRoleAsync
     path: src/UserService.Core/Services/UserRoleService.cs
-    startLine: 69
+    startLine: 84
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
   example: []
   syntax:
-    content: public Task<object> RemoveUserFromRoleAsync(string userId, string roleId)
+    content: public Task<ServiceResult> RemoveUserFromRoleAsync(string userId, string roleId)
     parameters:
     - id: userId
       type: System.String
     - id: roleId
       type: System.String
     return:
-      type: System.Threading.Tasks.Task{System.Object}
-    content.vb: Public Function RemoveUserFromRoleAsync(userId As String, roleId As String) As Task(Of Object)
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+    content.vb: Public Function RemoveUserFromRoleAsync(userId As String, roleId As String) As Task(Of ServiceResult)
   overload: UserService.Core.Services.UserRoleService.RemoveUserFromRoleAsync*
   implements:
   - UserService.Core.Interfaces.IUserRoleService.RemoveUserFromRoleAsync(System.String,System.String)
@@ -569,7 +504,7 @@ references:
     href: UserService.Core.Interfaces.html
 - uid: UserService.Core.Services.UserRoleService.#ctor*
   commentId: Overload:UserService.Core.Services.UserRoleService.#ctor
-  href: UserService.Core.Services.UserRoleService.html#UserService_Core_Services_UserRoleService__ctor_UserService_Core_Interfaces_IUserRoleRepository_UserService_Core_Interfaces_IRoleRepository_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_UserRoleService__
+  href: UserService.Core.Services.UserRoleService.html#UserService_Core_Services_UserRoleService__ctor_UserService_Core_Interfaces_IUserRoleRepository_UserService_Core_Interfaces_IUserRepository_UserService_Core_Interfaces_IRoleRepository_UserService_Core_Interfaces_ICacheService_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_UserRoleService__
   name: UserRoleService
   nameWithType: UserRoleService.UserRoleService
   fullName: UserService.Core.Services.UserRoleService.UserRoleService
@@ -583,6 +518,13 @@ references:
   name: IUserRoleRepository
   nameWithType: IUserRoleRepository
   fullName: UserService.Core.Interfaces.IUserRoleRepository
+- uid: UserService.Core.Interfaces.IUserRepository
+  commentId: T:UserService.Core.Interfaces.IUserRepository
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.IUserRepository.html
+  name: IUserRepository
+  nameWithType: IUserRepository
+  fullName: UserService.Core.Interfaces.IUserRepository
 - uid: UserService.Core.Interfaces.IRoleRepository
   commentId: T:UserService.Core.Interfaces.IRoleRepository
   parent: UserService.Core.Interfaces
@@ -590,6 +532,13 @@ references:
   name: IRoleRepository
   nameWithType: IRoleRepository
   fullName: UserService.Core.Interfaces.IRoleRepository
+- uid: UserService.Core.Interfaces.ICacheService
+  commentId: T:UserService.Core.Interfaces.ICacheService
+  parent: UserService.Core.Interfaces
+  href: UserService.Core.Interfaces.ICacheService.html
+  name: ICacheService
+  nameWithType: ICacheService
+  fullName: UserService.Core.Interfaces.ICacheService
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserRoleService}
   parent: Microsoft.Extensions.Logging
@@ -694,6 +643,37 @@ references:
   name: GetUserRolesAsync
   nameWithType: UserRoleService.GetUserRolesAsync
   fullName: UserService.Core.Services.UserRoleService.GetUserRolesAsync
+- uid: UserService.Core.Interfaces.IUserRoleService.GetUserRolesAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.IUserRoleService.GetUserRolesAsync(System.String)
+  parent: UserService.Core.Interfaces.IUserRoleService
+  isExternal: true
+  href: UserService.Core.Interfaces.IUserRoleService.html#UserService_Core_Interfaces_IUserRoleService_GetUserRolesAsync_System_String_
+  name: GetUserRolesAsync(string)
+  nameWithType: IUserRoleService.GetUserRolesAsync(string)
+  fullName: UserService.Core.Interfaces.IUserRoleService.GetUserRolesAsync(string)
+  nameWithType.vb: IUserRoleService.GetUserRolesAsync(String)
+  fullName.vb: UserService.Core.Interfaces.IUserRoleService.GetUserRolesAsync(String)
+  name.vb: GetUserRolesAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.IUserRoleService.GetUserRolesAsync(System.String)
+    name: GetUserRolesAsync
+    href: UserService.Core.Interfaces.IUserRoleService.html#UserService_Core_Interfaces_IUserRoleService_GetUserRolesAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.IUserRoleService.GetUserRolesAsync(System.String)
+    name: GetUserRolesAsync
+    href: UserService.Core.Interfaces.IUserRoleService.html#UserService_Core_Interfaces_IUserRoleService_GetUserRolesAsync_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
 - uid: System.String
   commentId: T:System.String
   parent: System
@@ -819,53 +799,6 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-- uid: UserService.Core.Services.UserRoleService.GetUsersInRoleAsync*
-  commentId: Overload:UserService.Core.Services.UserRoleService.GetUsersInRoleAsync
-  href: UserService.Core.Services.UserRoleService.html#UserService_Core_Services_UserRoleService_GetUsersInRoleAsync_System_String_
-  name: GetUsersInRoleAsync
-  nameWithType: UserRoleService.GetUsersInRoleAsync
-  fullName: UserService.Core.Services.UserRoleService.GetUsersInRoleAsync
-- uid: UserService.Core.Services.UserRoleService.IsUserInRoleAsync*
-  commentId: Overload:UserService.Core.Services.UserRoleService.IsUserInRoleAsync
-  href: UserService.Core.Services.UserRoleService.html#UserService_Core_Services_UserRoleService_IsUserInRoleAsync_System_String_System_String_
-  name: IsUserInRoleAsync
-  nameWithType: UserRoleService.IsUserInRoleAsync
-  fullName: UserService.Core.Services.UserRoleService.IsUserInRoleAsync
-- uid: System.Threading.Tasks.Task{System.Boolean}
-  commentId: T:System.Threading.Tasks.Task{System.Boolean}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<bool>
-  nameWithType: Task<bool>
-  fullName: System.Threading.Tasks.Task<bool>
-  nameWithType.vb: Task(Of Boolean)
-  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
-  name.vb: Task(Of Boolean)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Boolean
-    name: bool
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Boolean
-    name: Boolean
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
-  - name: )
 - uid: UserService.Core.Services.UserRoleService.AddUserToRoleAsync*
   commentId: Overload:UserService.Core.Services.UserRoleService.AddUserToRoleAsync
   href: UserService.Core.Services.UserRoleService.html#UserService_Core_Services_UserRoleService_AddUserToRoleAsync_System_String_System_String_
@@ -915,27 +848,26 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
-- uid: System.Threading.Tasks.Task{System.Object}
-  commentId: T:System.Threading.Tasks.Task{System.Object}
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<object>
-  nameWithType: Task<object>
-  fullName: System.Threading.Tasks.Task<object>
-  nameWithType.vb: Task(Of Object)
-  fullName.vb: System.Threading.Tasks.Task(Of Object)
-  name.vb: Task(Of Object)
+  name: Task<ServiceResult>
+  nameWithType: Task<ServiceResult>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.ServiceResult>
+  nameWithType.vb: Task(Of ServiceResult)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.ServiceResult)
+  name.vb: Task(Of ServiceResult)
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: System.Object
-    name: object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
+  - uid: UserService.Core.DTOs.Common.ServiceResult
+    name: ServiceResult
+    href: UserService.Core.DTOs.Common.ServiceResult.html
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -945,10 +877,9 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: System.Object
-    name: Object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
+  - uid: UserService.Core.DTOs.Common.ServiceResult
+    name: ServiceResult
+    href: UserService.Core.DTOs.Common.ServiceResult.html
   - name: )
 - uid: UserService.Core.Services.UserRoleService.RemoveUserFromRoleAsync*
   commentId: Overload:UserService.Core.Services.UserRoleService.RemoveUserFromRoleAsync

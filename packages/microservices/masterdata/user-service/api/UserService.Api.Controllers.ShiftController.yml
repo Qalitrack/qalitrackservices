@@ -25,7 +25,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: ShiftController
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 11
+    startLine: 12
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -273,7 +273,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 19
+    startLine: 20
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -307,7 +307,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetAll
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 25
+    startLine: 26
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -350,7 +350,7 @@ items:
     ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Type,System.Int32)
     arguments:
     - type: System.Type
-      value: System.Collections.Generic.IEnumerable{ShiftDto}
+      value: System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Shift.ShiftDto}
     - type: System.Int32
       value: 200
   - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
@@ -376,7 +376,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: GetById
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 43
+    startLine: 44
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -428,7 +428,7 @@ items:
     ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Type,System.Int32)
     arguments:
     - type: System.Type
-      value: ShiftDto
+      value: UserService.Core.DTOs.Shift.ShiftDto
     - type: System.Int32
       value: 200
   - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
@@ -462,7 +462,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Create
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 62
+    startLine: 73
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -516,7 +516,7 @@ items:
     ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Type,System.Int32)
     arguments:
     - type: System.Type
-      value: ShiftDto
+      value: UserService.Core.DTOs.Shift.ShiftDto
     - type: System.Int32
       value: 201
   - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
@@ -547,7 +547,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Update
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 85
+    startLine: 133
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -609,7 +609,7 @@ items:
     ctor: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute.#ctor(System.Type,System.Int32)
     arguments:
     - type: System.Type
-      value: ShiftDto
+      value: UserService.Core.DTOs.Shift.ShiftDto
     - type: System.Int32
       value: 200
   - type: Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute
@@ -648,7 +648,7 @@ items:
       repo: https://github.com/adarlegendre/qalitrackservices.git
     id: Delete
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 121
+    startLine: 217
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers

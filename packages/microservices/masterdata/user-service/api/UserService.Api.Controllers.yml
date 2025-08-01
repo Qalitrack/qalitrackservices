@@ -5,7 +5,6 @@ items:
   id: UserService.Api.Controllers
   children:
   - UserService.Api.Controllers.AuthController
-  - UserService.Api.Controllers.BackupController
   - UserService.Api.Controllers.BaseController
   - UserService.Api.Controllers.PermissionsController
   - UserService.Api.Controllers.ReportsController
@@ -30,12 +29,6 @@ references:
   name: AuthController
   nameWithType: AuthController
   fullName: UserService.Api.Controllers.AuthController
-- uid: UserService.Api.Controllers.BackupController
-  commentId: T:UserService.Api.Controllers.BackupController
-  href: UserService.Api.Controllers.BackupController.html
-  name: BackupController
-  nameWithType: BackupController
-  fullName: UserService.Api.Controllers.BackupController
 - uid: UserService.Api.Controllers.BaseController
   commentId: T:UserService.Api.Controllers.BaseController
   parent: UserService.Api.Controllers
