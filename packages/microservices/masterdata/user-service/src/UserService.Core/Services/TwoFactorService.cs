@@ -6,24 +6,15 @@ using UserService.Infrastructure.Interfaces;
 
 namespace UserService.Core.Services;
 
-public class TwoFactorService : ITwoFactorService
+public class TwoFactorService(
+    ICacheService cacheService,
+    IEmailQueueService emailQueueService,
+    ILogger<TwoFactorService> logger)
+    : ITwoFactorService
 {
-    private readonly ICacheService _cacheService;
-    private readonly IEmailQueueService _emailQueueService;
-    private readonly ILogger<TwoFactorService> _logger;
-    private static readonly RandomNumberGenerator _secureRandom = RandomNumberGenerator.Create();
-    private const int MAX_ATTEMPTS = 5; // Maximum allowed attempts
-    private const int LOCKOUT_MINUTES = 10; // Lockout duration
-
-    public TwoFactorService(
-        ICacheService cacheService,
-        IEmailQueueService emailQueueService,
-        ILogger<TwoFactorService> logger)
-    {
-        _cacheService = cacheService;
-        _emailQueueService = emailQueueService;
-        _logger = logger;
-    }
+    private static readonly RandomNumberGenerator SecureRandom = RandomNumberGenerator.Create();
+    private const int MaxAttempts = 5; // Maximum allowed attempts
+    private const int LockoutMinutes = 10; // Lockout duration
 
     public async Task<ServiceResult> GenerateAndSendCodeAsync(string userId, string email)
     {
@@ -31,11 +22,11 @@ public class TwoFactorService : ITwoFactorService
         {
             // Check rate limiting - max 3 codes per 15 minutes
             var generationKey = $"2fa_generation:{userId}";
-            var generationCount = await _cacheService.GetAsync<int>(generationKey);
+            var generationCount = await cacheService.GetAsync<int>(generationKey);
             
             if (generationCount >= 3)
             {
-                _logger.LogWarning("Rate limit exceeded for 2FA code generation for user {UserId}", userId);
+                logger.LogWarning("Rate limit exceeded for 2FA code generation for user {UserId}", userId);
                 return new ServiceResult 
                 { 
                     Success = false, 
@@ -52,9 +43,9 @@ public class TwoFactorService : ITwoFactorService
             
             var cacheOperations = new[]
             {
-                _cacheService.SetAsync(codeKey, code, TimeSpan.FromMinutes(5)),
-                _cacheService.RemoveAsync(attemptKey),
-                _cacheService.SetAsync(generationKey, generationCount + 1, TimeSpan.FromMinutes(15))
+                cacheService.SetAsync(codeKey, code, TimeSpan.FromMinutes(5)),
+                cacheService.RemoveAsync(attemptKey),
+                cacheService.SetAsync(generationKey, generationCount + 1, TimeSpan.FromMinutes(15))
             };
             
             await Task.WhenAll(cacheOperations);
@@ -74,9 +65,9 @@ public class TwoFactorService : ITwoFactorService
                 </body>
                 </html>";
 
-            await _emailQueueService.EnqueueEmailAsync(email, emailSubject, emailBody);
+            await emailQueueService.EnqueueEmailAsync(email, emailSubject, emailBody);
 
-            _logger.LogInformation("2FA code generated and email queued for user {UserId}", userId);
+            logger.LogInformation("2FA code generated and email queued for user {UserId}", userId);
             
             return new ServiceResult 
             { 
@@ -86,7 +77,7 @@ public class TwoFactorService : ITwoFactorService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error generating 2FA code for user {UserId}", userId);
+            logger.LogError(ex, "Error generating 2FA code for user {UserId}", userId);
             return new ServiceResult 
             { 
                 Success = false, 
@@ -112,19 +103,19 @@ public class TwoFactorService : ITwoFactorService
 
             // Check attempt count
             var attemptCount = await GetAttemptCountAsync(userId);
-            if (attemptCount >= MAX_ATTEMPTS)
+            if (attemptCount >= MaxAttempts)
             {
-                _logger.LogWarning("Account temporarily locked for user {UserId} due to too many 2FA attempts", userId);
+                logger.LogWarning("Account temporarily locked for user {UserId} due to too many 2FA attempts", userId);
                 return new ServiceResult 
                 { 
                     Success = false, 
-                    Message = $"Too many failed attempts. Please try again in {LOCKOUT_MINUTES} minutes." 
+                    Message = $"Too many failed attempts. Please try again in {LockoutMinutes} minutes." 
                 };
             }
 
             // Get stored code
             var codeKey = $"2fa_code:{userId}";
-            var storedCode = await _cacheService.GetAsync<string>(codeKey);
+            var storedCode = await cacheService.GetAsync<string>(codeKey);
             
             if (string.IsNullOrEmpty(storedCode))
             {
@@ -139,33 +130,33 @@ public class TwoFactorService : ITwoFactorService
             if (storedCode != code)
             {
                 // Increment failed attempt count
-                await _cacheService.SetAsync(
+                await cacheService.SetAsync(
                     $"2fa_attempts_{userId}", 
                     attemptCount + 1, 
-                    TimeSpan.FromMinutes(LOCKOUT_MINUTES)
+                    TimeSpan.FromMinutes(LockoutMinutes)
                 );
 
-                _logger.LogWarning("Invalid 2FA code for user {UserId}. Attempt {AttemptCount}/{MaxAttempts}", 
-                    userId, attemptCount + 1, MAX_ATTEMPTS);
+                logger.LogWarning("Invalid 2FA code for user {UserId}. Attempt {AttemptCount}/{MaxAttempts}", 
+                    userId, attemptCount + 1, MaxAttempts);
                     
                 return new ServiceResult 
                 { 
                     Success = false, 
-                    Message = $"Invalid verification code. {MAX_ATTEMPTS - attemptCount - 1} attempts remaining." 
+                    Message = $"Invalid verification code. {MaxAttempts - attemptCount - 1} attempts remaining." 
                 };
             }
 
             // Success - clean up in parallel
             var cleanupOperations = new[]
             {
-                _cacheService.RemoveAsync(codeKey),
-                _cacheService.RemoveAsync($"2fa_attempts_{userId}"),
-                _cacheService.RemoveAsync(sessionId)
+                cacheService.RemoveAsync(codeKey),
+                cacheService.RemoveAsync($"2fa_attempts_{userId}"),
+                cacheService.RemoveAsync(sessionId)
             };
             
             await Task.WhenAll(cleanupOperations);
 
-            _logger.LogInformation("2FA verification successful for user {UserId}", userId);
+            logger.LogInformation("2FA verification successful for user {UserId}", userId);
             
             return new ServiceResult 
             { 
@@ -175,7 +166,7 @@ public class TwoFactorService : ITwoFactorService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error verifying 2FA code for session {SessionId}", sessionId);
+            logger.LogError(ex, "Error verifying 2FA code for session {SessionId}", sessionId);
             return new ServiceResult 
             { 
                 Success = false, 
@@ -190,9 +181,9 @@ public class TwoFactorService : ITwoFactorService
         var sessionKey = $"2fa_session:{sessionId}";
         
         // Store session with 10-minute expiration
-        await _cacheService.SetAsync(sessionKey, userId, TimeSpan.FromMinutes(10));
+        await cacheService.SetAsync(sessionKey, userId, TimeSpan.FromMinutes(10));
         
-        _logger.LogInformation("2FA session created for user {UserId} with session {SessionId}", userId, sessionId);
+        logger.LogInformation("2FA session created for user {UserId} with session {SessionId}", userId, sessionId);
         
         return sessionId;
     }
@@ -200,13 +191,13 @@ public class TwoFactorService : ITwoFactorService
     public async Task<string?> GetUserIdFromSessionAsync(string sessionId)
     {
         var sessionKey = $"2fa_session:{sessionId}";
-        return await _cacheService.GetAsync<string>(sessionKey);
+        return await cacheService.GetAsync<string>(sessionKey);
     }
 
     public async Task<int> GetAttemptCountAsync(string userId)
     {
         var cacheKey = $"2fa_attempts_{userId}";
-        var attempts = await _cacheService.GetAsync<int>(cacheKey);
+        var attempts = await cacheService.GetAsync<int>(cacheKey);
         return attempts;
     }
 
@@ -224,7 +215,7 @@ public class TwoFactorService : ITwoFactorService
     {
         // Generate 4 random bytes (32 bits)
         var randomBytes = new byte[4];
-        _secureRandom.GetBytes(randomBytes);
+        SecureRandom.GetBytes(randomBytes);
         
         // Convert to unsigned integer and ensure positive value
         var randomInt = Math.Abs(BitConverter.ToInt32(randomBytes, 0));

@@ -13,21 +13,13 @@ using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Services
 {
-    public class ReportService : IReportService
+    public class ReportService(
+        UserServiceDbContext context,
+        ILogger<ReportService> logger)
+        : IReportService
     {
-        private readonly UserServiceDbContext _context;
-        private readonly ILogger<ReportService> _logger;
-        private readonly IMapper _mapper;
-
-        public ReportService(
-            UserServiceDbContext context,
-            ILogger<ReportService> logger,
-            IMapper mapper)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+        private readonly UserServiceDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly ILogger<ReportService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         public async Task<PagedResult<ShiftReportDto>> GenerateShiftReportAsync(PaginationParameters parameters)
         {
@@ -69,6 +61,8 @@ namespace UserService.Infrastructure.Services
                     EndTime = s.EndTime,
                     Mode = s.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected interpretation
                     IsActive = s.IsActive,
+                    CreatedBy = s.CreatedBy,
+                    UpdatedBy = s.UpdatedBy,
                     AssignedUsersCount = s.UserShifts?.Count ?? 0,
                     LastModified = s.UpdatedAt > s.CreatedAt ? s.UpdatedAt : s.CreatedAt,
                     AssignedUsers = s.UserShifts?.Where(us => us.User != null && !us.User.IsDeleted)
@@ -79,7 +73,7 @@ namespace UserService.Infrastructure.Services
                                                     FirstName = us.User.FirstName,
                                                     LastName = us.User.LastName,
                                                     AssignedAt = us.AssignedAt,
-                                                    IsActive = !us.User.IsDeleted
+                                                    IsActive = !us.User.IsDeleted,
                                                 }).ToList() ?? new List<AssignedUserDto>()
                 }).ToList();
 
@@ -137,15 +131,20 @@ namespace UserService.Infrastructure.Services
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     IsActive = !u.IsDeleted,
-                    AssignedShifts = u.UserShifts?.Where(us => us.Shift != null)
-                                                .Select(us => new UserShiftInfoDto
-                                                {
-                                                    ShiftId = us.ShiftId,
-                                                    ShiftName = us.Shift?.Name ?? "Unknown",
-                                                    ShiftMode = us.Shift?.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected
-                                                    AssignedAt = us.AssignedAt,
-                                                    IsActive = us.Shift?.IsActive ?? false
-                                                }).ToList() ?? new List<UserShiftInfoDto>()
+                    CreatedBy = u.CreatedBy,
+                    UpdatedBy = u.UpdatedBy,
+                    LastModified = u.UpdatedAt > u.CreatedAt ? u.UpdatedAt : u.CreatedAt,
+                    AssignedShifts = u.UserShifts
+                        .Where(us => us.Shift != null)
+                        .Select(us => new UserShiftInfoDto
+                        {
+                            ShiftId = us.ShiftId,
+                            ShiftName = us.Shift!.Name,
+                            ShiftMode = us.Shift.Mode == ShiftMode.Open ? "Open" : "Strict",
+                            AssignedAt = us.AssignedAt,
+                            IsActive = us.Shift.IsActive
+                        })
+                        .ToList()
                 }).ToList();
 
                 return new PagedResult<UserReportDto>

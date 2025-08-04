@@ -18,25 +18,24 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
     {
         return await _context.UserShifts.ToListAsync();
     }
-
-    public async Task<UserShift?> GetByIdAsync(string id)
-    {
-        return await _context.UserShifts.FindAsync(id);
-    }
+    
 
     public async Task<UserShift?> GetByIdAsync(string id, bool b)
     {
         return await _context.UserShifts.FindAsync(id);
     }
 
-    public async Task<UserShift> CreateAsync(UserShift userShift)
+    public new  async Task<UserShift> CreateAsync(UserShift userShift)
     {
         if (userShift == null)
             throw new ArgumentNullException(nameof(userShift));
-
-        _context.UserShifts.Add(userShift);
+        // Add the userShift to the context using the base class method
+        userShift.CreatedAt = DateTime.UtcNow;
+        userShift.UpdatedAt = DateTime.UtcNow;
+        userShift.CreatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
+        var createdUserShift = await base.CreateAsync(userShift);
         await _context.SaveChangesAsync();
-        return userShift;
+        return createdUserShift;
     }
 
     public async Task<bool> IsUserAssignedToShiftAsync(string userId, string shiftId)
@@ -70,26 +69,9 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
             })
             .ToListAsync();
     }
+    
 
-    public async Task<IEnumerable<UserShift>> GetUsersAssignedToShiftAsync(string shiftId, bool includeUserDetails)
-    {
-        if (includeUserDetails)
-        {
-            return await _context.UserShifts
-                .Where(us => us.ShiftId == shiftId)
-                .Include(us => us.User)
-                .Include(us => us.Shift)
-                .ToListAsync();
-        }
-        else
-        {
-            return await _context.UserShifts
-                .Where(us => us.ShiftId == shiftId)
-                .ToListAsync();
-        }
-    }
-
-    public async Task<UserShift?> UpdateAsync(UserShift userShift)
+    public new async Task<UserShift?> UpdateAsync(UserShift userShift)
     {
         if (userShift == null)
             throw new ArgumentNullException(nameof(userShift));
@@ -106,6 +88,7 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
         // Only update specific fields to avoid constraint issues
         existingUserShift.AssignedAt = userShift.AssignedAt;
         existingUserShift.UpdatedAt = DateTime.UtcNow;
+        existingUserShift.UpdatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
 
         await _context.SaveChangesAsync();
         return existingUserShift;
@@ -116,8 +99,10 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
         var userShift = await _context.UserShifts.FindAsync(id);
         if (userShift == null)
             return false;
+        userShift.IsDeleted = true;
+        userShift.UpdatedAt = DateTime.UtcNow;
+        userShift.UpdatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
 
-        _context.UserShifts.Remove(userShift);
         await _context.SaveChangesAsync();
         return true;    
     }
@@ -128,54 +113,17 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
         var userShift = await _context.UserShifts
             .AsTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId);
-        
+    
         if (userShift == null)
             return false;
 
-        _context.UserShifts.Remove(userShift);
+        // Set audit fields before removal
+        userShift.IsDeleted = true;
+        userShift.UpdatedAt = DateTime.UtcNow;
+        userShift.UpdatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
+    
         await _context.SaveChangesAsync();
         return true;
     }
-
-    public async Task<bool> AssignUserToShiftAsync(string userId, string shiftId)
-    {
-        // Check if the assignment already exists
-        var exists = await _context.UserShifts
-            .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId);
-            
-        if (exists)
-            return false;
-
-        var userShift = new UserShift
-        {
-            UserId = userId,
-            ShiftId = shiftId,
-            AssignedAt = DateTime.UtcNow
-        };
-
-        _context.UserShifts.Add(userShift);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-
-    public async Task<bool> RemoveUserFromShiftAsync(string userId, string shiftId)
-    {
-        var userShift = await _context.UserShifts
-            .AsTracking()
-            .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId);
-            
-        if (userShift == null)
-            return false;
-
-        _context.UserShifts.Remove(userShift);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-
-    public async Task<IEnumerable<UserShift>> GetShiftsForUserAsync(string userId)
-    {
-        return await _context.UserShifts
-            .Where(us => us.UserId == userId)
-            .ToListAsync();
-    }
+    
 }

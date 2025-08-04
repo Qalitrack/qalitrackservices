@@ -7,12 +7,10 @@ namespace UserService.Core.Services;
 
 public interface IJwtConfigurationService
 {
-    JwtConfiguration GetConfiguration();
     string GetSecretKey();
     string GetIssuer();
     string GetAudience();
     TimeSpan GetTokenExpiration();
-    TimeSpan GetRefreshTokenExpiration();
 }
 
 public class JwtConfigurationService : IJwtConfigurationService

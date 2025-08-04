@@ -3,39 +3,45 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Auth;
-using UserService.Core.DTOs.Shift;
 using UserService.Core.DTOs.User;
 using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
+using UserService.Api.Authorization;
 
-namespace UserService.Core.Services;
-    public class UserService : IUserService
+namespace UserService.Core.Services
+{
+    public class UserService(
+        IUserRepository userRepository,
+        IMapper mapper,
+        IRoleRepository roleRepository,
+        IHttpContextAccessor httpContextAccessor,
+        PasswordPolicyService passwordPolicyService)
+        : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRoleService _roleService;
-        private readonly IMapper _mapper;
-        private readonly IRoleRepository  _roleRepository;
-        private readonly ILogger<UserService> _logger;
-
-        public UserService(IUserRepository userRepository, IRoleService roleService, IMapper mapper,IRoleRepository  roleRepository)
-        {
-            _userRepository = userRepository;
-            _roleService = roleService;
-            _mapper = mapper;
-            _roleRepository = roleRepository;
-            _logger = new Logger<UserService>(new LoggerFactory());
-        }
-
+        private readonly ILogger<UserService> _logger = new Logger<UserService>(new LoggerFactory());
+        private readonly PasswordPolicyService _passwordPolicyService = passwordPolicyService ?? throw new ArgumentNullException(nameof(passwordPolicyService));
 
         public async Task<bool> RestoreAsync(string id)
         {
-            return await _userRepository.RestoreAsync(id);  
+            var user = await userRepository.GetByIdAsync(id, true);
+            if (user == null)
+            {
+                _logger.LogInformation("User with ID {UserId} not found for restore", id);
+                return false;
+            }
+
+            user.IsDeleted = false;
+            user.UpdatedAt = DateTime.UtcNow;
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+
+            return await userRepository.RestoreAsync(id);
         }
 
         public async Task<UserReadDto?> GetByIdAsync(string id)
         {
-            var user = await _userRepository.GetByIdAsync(id, true);
+            var user = await userRepository.GetByIdAsync(id, true);
     
             if (user == null) 
             {
@@ -56,11 +62,12 @@ namespace UserService.Core.Services;
                 }
             }
 
-            return _mapper.Map<UserReadDto>(user);
+            return mapper.Map<UserReadDto>(user);
         }
 
         public async Task<UserReadDto> CreateAsync(CreateUserDto dto)
         {
+            var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
             var user = new User
             {
                 FirstName = dto.FirstName,
@@ -69,23 +76,27 @@ namespace UserService.Core.Services;
                 Email = dto.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 IsFirstLogin = true,
-                IsActive = false
+                IsActive = false,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedBy = currentUserId,
+                UpdatedBy = currentUserId
             };
 
-            await _userRepository.CreateAsync(user);
-            return _mapper.Map<UserReadDto>(user);
+            await userRepository.CreateAsync(user);
+            return mapper.Map<UserReadDto>(user);
         }
 
         public async Task<UserReadDto?> UpdateAsync(string id, UpdateUserDto dto)
         {
-            var existingUser = await _userRepository.GetByIdAsync(id,true);
+            var existingUser = await userRepository.GetByIdAsync(id, true);
             if (existingUser == null)
             {
+                _logger.LogInformation("User with ID {UserId} not found for update", id);
                 return null;
             }
 
-            // Create a new entity with updated values to avoid tracking conflicts
-            // Only update fields that are provided (not null)
+            var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
             var userToUpdate = new User
             {
                 Id = existingUser.Id,
@@ -93,18 +104,29 @@ namespace UserService.Core.Services;
                 LastName = dto.LastName ?? existingUser.LastName,
                 Email = dto.Email ?? existingUser.Email,
                 MobileNumber = dto.MobileNumber ?? existingUser.MobileNumber,
-                Password = existingUser.Password, // Keep existing password
+                Password = existingUser.Password,
                 IsFirstLogin = dto.IsFirstLogin ?? existingUser.IsFirstLogin,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
+                UpdatedBy = currentUserId,
+                CreatedBy = existingUser.CreatedBy
             };
             
-            var updatedUser = await _userRepository.UpdateAsync(userToUpdate);
-            return updatedUser == null ? null : _mapper.Map<UserReadDto>(updatedUser);
+            var updatedUser = await userRepository.UpdateAsync(userToUpdate);
+            return updatedUser == null ? null : mapper.Map<UserReadDto>(updatedUser);
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
-            return await _userRepository.DeleteAsync(id);
+            var user = await userRepository.GetByIdAsync(id, true);
+            if (user == null)
+            {
+                _logger.LogInformation("User with ID {UserId} not found for deletion", id);
+                return false;
+            }
+
+            user.UpdatedAt = DateTime.UtcNow;
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            return await userRepository.DeleteAsync(id);
         }
 
         public async Task<User?> ValidateUserCredentials(string email, string password)
@@ -114,92 +136,92 @@ namespace UserService.Core.Services;
                 return null;
             }
 
-            // Get user by email (case-insensitive)
-            var user = await _userRepository.GetByEmailAsync(email.Trim().ToLower());
+            var user = await userRepository.GetByEmailAsync(email.Trim().ToLower());
             if (user == null || user.IsDeleted)
             {
                 return null;
             }
 
-            // Verify password
             if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 return null;
             }
 
-            // Just update the last login time
             user.UpdatedAt = DateTime.UtcNow;
-            await _userRepository.UpdateAsync(user);
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            await userRepository.UpdateAsync(user);
 
             return user;
         }
 
         public async Task<bool> HasPermissionAsync(string userId, string permissionName)
         {
-            return await _userRepository.HasPermissionAsync(userId, permissionName);
+            return await userRepository.HasPermissionAsync(userId, permissionName);
         }
 
         public async Task<IEnumerable<Permission>> GetUserPermissionsAsync(string userId)
         {
-            return await _userRepository.GetUserPermissionsAsync(userId);  // This returns IEnumerable<Permission>
+            return await userRepository.GetUserPermissionsAsync(userId);
         }
-
 
         public async Task<UserReadDto> UpdatePassword(string userId, UpdatePasswordDto dto)
         {
-            var user = await _userRepository.GetByIdAsync(userId, true);
+            var user = await userRepository.GetByIdAsync(userId, true);
             if (user == null)
             {
                 throw new KeyNotFoundException($"User with ID {userId} not found");
             }
 
-            // Verify current password
             if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Password))
             {
                 throw new InvalidOperationException("Current password is incorrect");
             }
 
-            // Update password
+            // Validate new password against password policy
+            var validationResult = await _passwordPolicyService.ValidatePasswordAsync(dto.NewPassword, userId);
+            if (!validationResult.IsValid)
+            {
+                throw new InvalidOperationException($"New password does not meet policy requirements: {string.Join(", ", validationResult.Errors)}");
+            }
+
             user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
-            user.IsFirstLogin = false;  // Reset first login flag
+            user.IsFirstLogin = false;
             user.UpdatedAt = DateTime.UtcNow;
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
 
-            await _userRepository.UpdateAsync(user);
-            return _mapper.Map<UserReadDto>(user);
+            await userRepository.UpdateAsync(user);
+            return mapper.Map<UserReadDto>(user);
         }
-
-
-        // New Methods for Shift Management
 
         public async Task<IEnumerable<UserShiftDto>> GetUserShiftsAsync(string userId)
         {
-            var userShifts = await _userRepository.GetUserShiftsAsync(userId);
-            return _mapper.Map<IEnumerable<UserShiftDto>>(userShifts);
+            var userShifts = await userRepository.GetUserShiftsAsync(userId);
+            return mapper.Map<IEnumerable<UserShiftDto>>(userShifts);
         }
 
         public async Task<UserShiftDto?> GetUserShiftByShiftIdAsync(string userId, string shiftId)
         {
-            var userShift = await _userRepository.GetUserShiftByShiftIdAsync(userId, shiftId);
-            return userShift == null ? null : _mapper.Map<UserShiftDto>(userShift);
+            var userShift = await userRepository.GetUserShiftByShiftIdAsync(userId, shiftId);
+            return userShift == null ? null : mapper.Map<UserShiftDto>(userShift);
         }
 
         public async Task<bool> AssignShiftToUserAsync(string userId, string shiftId)
         {
-            return await _userRepository.AssignShiftToUserAsync(userId, shiftId);
+            return await userRepository.AssignShiftToUserAsync(userId, shiftId);
         }
 
         public async Task<bool> RemoveShiftFromUserAsync(string userId, string shiftId)
         {
-            return await _userRepository.RemoveShiftFromUserAsync(userId, shiftId);
+            return await userRepository.RemoveShiftFromUserAsync(userId, shiftId);
         }
 
         public async Task<PagedResult<UserReadDto>> GetPagedAsync(PaginationParameters parameters)
         {
-            var pagedUsers = await _userRepository.GetPagedAsync(parameters);
-            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(pagedUsers.Items);
+            var pagedUsers = await userRepository.GetPagedAsync(parameters);
+            var userDtos = mapper.Map<IEnumerable<UserReadDto>>(pagedUsers.Items);
 
-            // Map roles from eagerly loaded data
-            foreach (var userDto in userDtos)
+            var userReadDtos = userDtos as UserReadDto[] ?? userDtos.ToArray();
+            foreach (var userDto in userReadDtos)
             {
                 var user = pagedUsers.Items.FirstOrDefault(u => u.Id == userDto.Id);
                 if (user?.UserRoles != null)
@@ -210,7 +232,7 @@ namespace UserService.Core.Services;
 
             return new PagedResult<UserReadDto>
             {
-                Items = userDtos,
+                Items = userReadDtos,
                 Page = pagedUsers.Page,
                 PageSize = pagedUsers.PageSize,
                 TotalCount = pagedUsers.TotalCount
@@ -219,11 +241,11 @@ namespace UserService.Core.Services;
 
         public async Task<PagedResult<UserReadDto>> GetDeletedPagedAsync(PaginationParameters parameters)
         {
-            var pagedUsers = await _userRepository.GetDeletedPagedAsync(parameters);
-            var userDtos = _mapper.Map<IEnumerable<UserReadDto>>(pagedUsers.Items);
+            var pagedUsers = await userRepository.GetDeletedPagedAsync(parameters);
+            var userDtos = mapper.Map<IEnumerable<UserReadDto>>(pagedUsers.Items);
 
-            // Map roles from eagerly loaded data
-            foreach (var userDto in userDtos)
+            var userReadDtos = userDtos as UserReadDto[] ?? userDtos.ToArray();
+            foreach (var userDto in userReadDtos)
             {
                 var user = pagedUsers.Items.FirstOrDefault(u => u.Id == userDto.Id);
                 if (user?.UserRoles != null)
@@ -234,7 +256,7 @@ namespace UserService.Core.Services;
 
             return new PagedResult<UserReadDto>
             {
-                Items = userDtos,
+                Items = userReadDtos,
                 Page = pagedUsers.Page,
                 PageSize = pagedUsers.PageSize,
                 TotalCount = pagedUsers.TotalCount
@@ -243,12 +265,22 @@ namespace UserService.Core.Services;
 
         public async Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
         {
-            return await _userRepository.UpdateUserActiveStatusAsync(userId, isActive);
+            var user = await userRepository.GetByIdAsync(userId, true);
+            if (user == null)
+            {
+                _logger.LogInformation("User with ID {UserId} not found for status update", userId);
+                return false;
+            }
+
+            user.IsActive = isActive;
+            user.UpdatedAt = DateTime.UtcNow;
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            return await userRepository.UpdateUserActiveStatusAsync(userId, isActive);
         }
 
         public async Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName)
         {
-            var role = await _roleRepository.GetRoleWithPermissionsAsync(roleName);
+            var role = await roleRepository.GetRoleWithPermissionsAsync(roleName);
             if (role?.RolePermissions == null)
                 return Enumerable.Empty<string>();
 
@@ -257,4 +289,4 @@ namespace UserService.Core.Services;
                 .Select(rp => rp.Permission.Name);
         }
     }
-
+}

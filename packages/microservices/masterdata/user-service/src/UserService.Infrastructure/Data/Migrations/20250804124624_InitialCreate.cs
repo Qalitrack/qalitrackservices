@@ -12,6 +12,28 @@ namespace UserService.Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "PasswordPolicies",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    MinimumLength = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 8),
+                    RequireUppercase = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: true),
+                    RequireLowercase = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: true),
+                    RequireDigit = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: true),
+                    RequireSpecialCharacter = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: true),
+                    MaxAgeDays = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 90),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
+                    CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "BOOLEAN", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordPolicies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
                 {
@@ -83,12 +105,12 @@ namespace UserService.Infrastructure.Data.Migrations
                     Password = table.Column<string>(type: "TEXT", nullable: false),
                     IsActive = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: false),
                     IsFirstLogin = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: false),
-                    IsDeleted = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: false),
                     TwoFactorEnabled = table.Column<bool>(type: "BOOLEAN", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true)
+                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -313,6 +335,9 @@ namespace UserService.Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "PasswordPolicies");
+
             migrationBuilder.DropTable(
                 name: "PersonalAccessTokens");
 

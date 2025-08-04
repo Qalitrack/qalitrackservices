@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
@@ -11,19 +12,14 @@ using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
 {
-    public class UserRoleRepository : Repository<UserRole>, IUserRoleRepository
+    public class UserRoleRepository(
+        UserServiceDbContext context,
+        ILogger<UserRoleRepository> logger,
+        IHttpContextAccessor httpContextAccessor)
+        : Repository<UserRole>(context), IUserRoleRepository
     {
-        private readonly UserServiceDbContext _context;
-        private readonly ILogger<UserRoleRepository> _logger;
-
-        public UserRoleRepository(
-            UserServiceDbContext context,
-            ILogger<UserRoleRepository> logger) : base(context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
+        private readonly UserServiceDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly ILogger<UserRoleRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         public async Task<IEnumerable<UserRole>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -75,7 +71,10 @@ namespace UserService.Infrastructure.Repositories
                     AssignedAt = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    IsDeleted = false
+                    CreatedBy = GetCurrentUserId(),
+                    UpdatedBy = GetCurrentUserId(),
+                    IsDeleted = false,
+                    
                 };
                 
                 await _context.UserRoles.AddAsync(userRole, cancellationToken);
@@ -172,6 +171,32 @@ namespace UserService.Infrastructure.Repositories
                     userId);
                 throw;
             }
+        }
+
+        public async Task<int> RemoveRoleFromAllUsersAsync(string roleId)
+        {
+            var currentUserId = GetCurrentUserId();
+            var now = DateTime.UtcNow;
+    
+            // Get all user-role assignments for this role
+            var userRoles = await _context.UserRoles
+                .Where(ur => ur.RoleId == roleId && !ur.IsDeleted)
+                .ToListAsync();
+
+            var count = userRoles.Count;
+            if (count == 0)
+                return 0;
+
+            // Update all in memory
+            foreach (var userRole in userRoles)
+            {
+                userRole.IsDeleted = true;
+                userRole.UpdatedAt = now;
+                userRole.UpdatedBy = currentUserId;
+            }
+
+            await _context.SaveChangesAsync();
+            return count;
         }
     }
 }

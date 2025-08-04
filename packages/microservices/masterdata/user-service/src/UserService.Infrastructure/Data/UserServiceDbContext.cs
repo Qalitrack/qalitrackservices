@@ -29,8 +29,7 @@ public class UserServiceDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; } = null!;
     public DbSet<UserShift> UserShifts { get; set; } = null!;
     public DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; } = null!;
-    // Direct user permissions disabled - using pure RBAC only
-    // public DbSet<UserPermissions> UserPermissions { get; set; } = null!;
+    public DbSet<PasswordPolicy> PasswordPolicies { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +47,7 @@ public class UserServiceDbContext : DbContext
         ConfigureShift(modelBuilder);
         ConfigureUserShift(modelBuilder);
         ConfigurePersonalAccessToken(modelBuilder);
+        ConfigurePasswordPolicy(modelBuilder);
 
         // Configure DateTime properties globally for PostgreSQL
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -58,10 +58,12 @@ public class UserServiceDbContext : DbContext
                 {
                     property.SetColumnType("TIMESTAMPTZ");
                 }
+
                 if (property.ClrType == typeof(bool))
                 {
                     property.SetColumnType("BOOLEAN");
                 }
+
                 if (property.ClrType == typeof(TimeSpan) || property.ClrType == typeof(TimeSpan?))
                 {
                     property.SetColumnType("TIME");
@@ -89,7 +91,7 @@ public class UserServiceDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(false);
             entity.Property(e => e.IsFirstLogin).HasDefaultValue(false);
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
-            
+
         });
     }
 
@@ -125,17 +127,17 @@ public class UserServiceDbContext : DbContext
         modelBuilder.Entity<RolePermission>(entity =>
         {
             entity.HasKey(rp => new { rp.RoleId, rp.PermissionId });
-            
+
             entity.HasOne(rp => rp.Role)
                 .WithMany(r => r.RolePermissions)
                 .HasForeignKey(rp => rp.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             entity.HasOne(rp => rp.Permission)
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             entity.Property(rp => rp.IsDeleted);
         });
     }
@@ -145,17 +147,17 @@ public class UserServiceDbContext : DbContext
         modelBuilder.Entity<UserRole>(entity =>
         {
             entity.HasKey(ur => new { ur.UserId, ur.RoleId });
-            
+
             entity.HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             entity.HasOne(ur => ur.Role)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             entity.Property(ur => ur.AssignedAt).HasDefaultValueSql("NOW()");
             entity.Property(ur => ur.IsDeleted);
         });
@@ -171,7 +173,7 @@ public class UserServiceDbContext : DbContext
                 .IsUnique()
                 .HasFilter("\"IsDeleted\" = false");
             entity.Property(e => e.Description).HasMaxLength(500);
-            
+
             // Configure IsActive as a computed property (not mapped to database)
             entity.Ignore(e => e.IsActive);
             entity.Property(e => e.IsDeleted);
@@ -183,17 +185,17 @@ public class UserServiceDbContext : DbContext
         modelBuilder.Entity<UserShift>(entity =>
         {
             entity.HasKey(us => new { us.UserId, us.ShiftId });
-            
+
             entity.HasOne(us => us.User)
                 .WithMany(u => u.UserShifts)
                 .HasForeignKey(us => us.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             entity.HasOne(us => us.Shift)
                 .WithMany(s => s.UserShifts)
                 .HasForeignKey(us => us.ShiftId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             entity.Property(us => us.AssignedAt).HasDefaultValueSql("NOW()");
             entity.Property(us => us.IsDeleted);
         });
@@ -208,29 +210,26 @@ public class UserServiceDbContext : DbContext
             entity.HasIndex(e => e.Token).IsUnique();
             entity.Property(e => e.IsRevoked).HasDefaultValue(false);
             entity.Property(e => e.IsDeleted);
-            
+
             entity.HasOne(pat => pat.User)
                 .WithMany(u => u.PersonalAccessTokens)
                 .HasForeignKey(pat => pat.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
-    
-    // Direct user permissions disabled - using pure RBAC only
-    // public static void ConfigureUserPermissions(ModelBuilder modelBuilder)
-    // {
-    //     modelBuilder.Entity<UserPermissions>(entity =>
-    //     {
-    //         entity.HasKey(up => new { up.UserId, up.Id });
-    //         entity.HasOne(up => up.User)
-    //             .WithMany(u => u.UserPermissions)
-    //             .HasForeignKey(up => up.UserId)
-    //             .OnDelete(DeleteBehavior.Cascade);
-    //         entity.HasOne(up => up.Permission)
-    //             .WithMany(p => p.UserPermissions)
-    //             .HasForeignKey(up => up.Id)
-    //             .OnDelete(DeleteBehavior.Cascade);
-    //         entity.Property(up => up.IsDeleted);
-    //     });
-    // }
+
+    //lets configure password policy
+    private static void ConfigurePasswordPolicy(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PasswordPolicy>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MinimumLength).HasDefaultValue(8);
+            entity.Property(e => e.RequireUppercase).HasDefaultValue(true);
+            entity.Property(e => e.RequireLowercase).HasDefaultValue(true);
+            entity.Property(e => e.RequireDigit).HasDefaultValue(true);
+            entity.Property(e => e.RequireSpecialCharacter).HasDefaultValue(true);
+            entity.Property(e => e.MaxAgeDays).HasDefaultValue(90);
+        });
+    }
 }

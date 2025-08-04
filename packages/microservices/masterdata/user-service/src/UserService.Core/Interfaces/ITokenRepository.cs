@@ -16,6 +16,6 @@ namespace UserService.Core.Interfaces
         /// <returns>True if any tokens were deleted, false otherwise</returns>
         Task<bool> DeleteAllTokensForUserAsync(Guid userId);
 
-        Task<PersonalAccessToken> GetTokenByJtiAsync(string jti);
+        Task<PersonalAccessToken?> GetTokenByJtiAsync(string jti);
     }
 }

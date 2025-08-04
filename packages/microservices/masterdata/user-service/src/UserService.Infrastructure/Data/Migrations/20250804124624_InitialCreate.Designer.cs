@@ -11,7 +11,7 @@ using UserService.Infrastructure.Data;
 namespace UserService.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(UserServiceDbContext))]
-    [Migration("20250730084122_InitialCreate")]
+    [Migration("20250804124624_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -19,6 +19,61 @@ namespace UserService.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
+
+            modelBuilder.Entity("UserService.Core.Entities.PasswordPolicy", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TIMESTAMPTZ");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("BOOLEAN");
+
+                    b.Property<int>("MaxAgeDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(90);
+
+                    b.Property<int>("MinimumLength")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(8);
+
+                    b.Property<bool>("RequireDigit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BOOLEAN")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("RequireLowercase")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BOOLEAN")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("RequireSpecialCharacter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BOOLEAN")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("RequireUppercase")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BOOLEAN")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TIMESTAMPTZ");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PasswordPolicies");
+                });
 
             modelBuilder.Entity("UserService.Core.Entities.Permission", b =>
                 {

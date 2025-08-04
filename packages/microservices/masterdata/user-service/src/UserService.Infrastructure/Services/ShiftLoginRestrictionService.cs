@@ -26,6 +26,15 @@ namespace UserService.Infrastructure.Services
             try
             {
                 _logger.LogInformation("[START] Login restriction check for user {UserId}", userId);
+                
+                // Check if user is an admin first (bypass all restrictions)
+                var isPrivilegedUser = await IsUserAdminAsync(userId);
+                if (isPrivilegedUser)
+                {
+                    _logger.LogInformation("[END] Privileged user {UserId} - bypassing shift restrictions", userId);
+                    return (true, "Privileged access - shift restrictions bypassed");
+                }
+
                 var currentTime = TimeOnly.FromDateTime(DateTime.UtcNow);
 
                 // 1. Get all currently running shifts (both Strict and Open)
@@ -43,7 +52,6 @@ namespace UserService.Infrastructure.Services
 
                 // 2. Separate Strict and Open shifts
                 var strictShifts = runningShifts.Where(s => s.Mode == ShiftMode.Strict).ToList();
-                var openShifts = runningShifts.Where(s => s.Mode == ShiftMode.Open).ToList();
 
                 // 3. Get user assignments (like ReportService does)
                 var userAssignments = await _context.UserShifts
@@ -117,6 +125,29 @@ namespace UserService.Infrastructure.Services
                       s.EndTime >= currentTimeOfDay))
                 )
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// Determines if a user is an admin and should bypass shift restrictions
+        /// Checks if user has Admin, Manager, or Supervisor roles
+        /// </summary>
+        private async Task<bool> IsUserAdminAsync(string userId)
+        {
+            var userRoles = await _context.UserRoles
+                .Include(ur => ur.Role)
+                .Where(ur => ur.UserId == userId)
+                .Select(ur => ur.Role.Name)
+                .ToListAsync();
+
+            // Allow Admin, Manager, and Supervisor roles to bypass shift restrictions
+            var privilegedRoles = new HashSet<string>
+            {
+                "Admin",
+                "Manager", 
+                "Supervisor"
+            };
+
+            return userRoles.Any(role => privilegedRoles.Contains(role));
         }
     }
 }
