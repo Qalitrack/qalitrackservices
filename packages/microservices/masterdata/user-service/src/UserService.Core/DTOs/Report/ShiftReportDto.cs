@@ -25,6 +25,9 @@ namespace UserService.Core.DTOs.Report
         public int AssignedUsersCount { get; set; }
         public DateTime? LastModified { get; set; }
         public List<AssignedUserDto>? AssignedUsers { get; set; } = new List<AssignedUserDto>();
+        public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
+        
     }
 
     public class ShiftReportResponse

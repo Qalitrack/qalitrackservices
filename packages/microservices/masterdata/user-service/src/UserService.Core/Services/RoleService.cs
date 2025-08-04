@@ -128,24 +128,23 @@ public async Task<RoleDto?> UpdateAsync(string id, DTOs.Roles.UpdateRoleDto dto)
         _logger.LogInformation("Deactivating role {RoleId}. Checking for user assignments.", id);
         
         // Get all users assigned to this role
-        var usersWithRole = (await _userRepository.GetUsersByRoleAsync(id)).Cast<User>();
-        if (usersWithRole != null && usersWithRole.Any())
+        // Get users count with this role
+        var users = await _userRepository.GetUsersByRoleAsync(id);
+        var userCount = users.Count();  // This should work if GetUsersByRoleAsync returns IEnumerable<>
+        if (userCount > 0)
         {
-            var userCount = usersWithRole.Count();
             _logger.LogInformation("Removing {UserCount} user assignments from deactivated role {RoleId}", userCount, id);
-            
-            // Remove all user-role assignments
-            foreach (var user in usersWithRole)
+    
+            // Use the existing method to remove role from all users
+            var removedCount = await _userRoleRepository.RemoveRoleFromAllUsersAsync(id);
+    
+            if (removedCount > 0)
             {
-                var removed = await _userRoleRepository.RemoveRoleFromUserAsync(user.Id, id);
-                if (removed)
-                {
-                    _logger.LogInformation("Successfully removed role {RoleId} from user {UserId}", id, user.Id);
-                }
-                else
-                {
-                    _logger.LogWarning("Failed to remove role {RoleId} from user {UserId}", id, user.Id);
-                }
+                _logger.LogInformation("Successfully removed role {RoleId} from {RemovedCount} users", id, removedCount);
+            }
+            else
+            {
+                _logger.LogWarning("No users were removed from role {RoleId}", id);
             }
         }
     }

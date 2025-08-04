@@ -275,7 +275,23 @@ namespace UserService.Infrastructure.Data
                 }
             }
 
-            // Seed PersonalAccessTokens (Optional, depending on use case
+            // Seed PasswordPolicies
+            if (!context.PasswordPolicies.Any())
+            {
+                var passwordPolicy = new PasswordPolicy
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    MinimumLength = 8,
+                    RequireUppercase = true,
+                    RequireLowercase = true,
+                    RequireDigit = true,
+                    RequireSpecialCharacter = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await context.PasswordPolicies.AddAsync(passwordPolicy);
+                await context.SaveChangesAsync();
+            }
         }
+        
     }
 }

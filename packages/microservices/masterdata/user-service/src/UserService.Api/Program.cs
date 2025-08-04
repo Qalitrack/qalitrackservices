@@ -127,7 +127,8 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<IUserStatusService, UserStatusService>();
     services.AddScoped<IReportService, ReportService>();
     services.AddScoped<ITwoFactorService, TwoFactorService>();
-
+    services.AddScoped<PasswordPolicyService>();
+    services.AddScoped<IPasswordPolicyRepository, PasswordPolicyRepository>();
     
     // Email queue services for improved performance
     services.AddSingleton<EmailQueueService>();
@@ -178,7 +179,7 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     
     // Register our health check service
     services.AddScoped<IHealthCheckService, HealthCheckService>();
-    
+    builder.Services.AddHttpContextAccessor();
     // Register cache service based on configuration
     if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
     {
@@ -206,7 +207,7 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<IEmailService, SmtpEmailService>();
 
     Log.Information("Application services registered.");
-}
+}    
 
 static void ConfigureDatabase(WebApplicationBuilder builder)
 {

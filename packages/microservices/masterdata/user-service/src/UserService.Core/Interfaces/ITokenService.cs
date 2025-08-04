@@ -7,7 +7,6 @@ namespace UserService.Core.Interfaces
 {
     public interface ITokenService
     {
-        Task<PersonalAccessToken> GenerateTokenAsync(string email, string password);
         Task<PersonalAccessToken> GenerateTokenForAuthenticatedUserAsync(UserReadDto user);
         Task<bool> ValidateTokenAsync(string token);
         Task<Guid?> GetUserIdFromTokenAsync(string token);

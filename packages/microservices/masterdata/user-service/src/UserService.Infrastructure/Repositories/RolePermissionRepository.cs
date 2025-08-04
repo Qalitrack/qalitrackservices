@@ -20,9 +20,7 @@ public class RolePermissionRepository(UserServiceDbContext dbContext, UserServic
 
     public async Task<bool> DeleteAsync(string id)
     {
-        return await context.RolePermissions
-            .Where(rp => rp.Id == id)
-            .ExecuteDeleteAsync() > 0;  
+        return await base.DeleteAsync(id);
     }
     
 
@@ -36,10 +34,19 @@ public class RolePermissionRepository(UserServiceDbContext dbContext, UserServic
 
     public async Task AddAsync(RolePermission rolePermission)
     {
+        var currentUserId = GetCurrentUserId();
+        var now = DateTime.UtcNow;
+    
+        rolePermission.Id = Guid.NewGuid().ToString();
+        rolePermission.CreatedAt = now;
+        rolePermission.UpdatedAt = now;
+        rolePermission.CreatedBy = currentUserId;
+        rolePermission.UpdatedBy = currentUserId;
+        rolePermission.IsDeleted = false;
+
         await context.RolePermissions.AddAsync(rolePermission);
     }
-
-    public async Task SaveChangesAsync()
+    public new async Task  SaveChangesAsync()
     {
         await context.SaveChangesAsync();
         

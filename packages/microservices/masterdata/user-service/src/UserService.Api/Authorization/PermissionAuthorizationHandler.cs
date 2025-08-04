@@ -39,7 +39,6 @@ namespace UserService.Api.Authorization
                     // 2. Check authentication status
                     if (context.User?.Identity?.IsAuthenticated != true)
                     {
-                        // Authentication check failed - proceeding to token validation
                         
                         // 3. Check for token in Authorization header
                         var authorizationToken = GetTokenFromRequest();  // Renamed token to authorizationToken
@@ -92,17 +91,7 @@ namespace UserService.Api.Authorization
             }
         }
 
-        // Log request headers for debugging
-        private void LogRequestHeaders(HttpContext httpContext)
-        {
-            if (httpContext?.Request.Headers != null)
-            {
-                foreach (var header in httpContext.Request.Headers)
-                {
-                    _logger.LogInformation($"  {header.Key}: {header.Value}");
-                }
-            }
-        }
+       
 
         // Extract the token from the request header
         private string GetTokenFromRequest()
@@ -198,57 +187,6 @@ namespace UserService.Api.Authorization
                 context.Fail();
             }
         }
-
-        // Extract UserId from claims
-        private static string GetUserIdFromClaims(ClaimsPrincipal user)
-        {
-            if (user == null) return null;
-
-            var claimTypes = new[]
-            {
-                JwtRegisteredClaimNames.Sub,
-                ClaimTypes.NameIdentifier,
-                "sub",
-                "nameid",
-                ClaimTypes.Upn,
-                ClaimTypes.Email,
-                "user_id",
-                "uid",
-                "id"
-            };
-
-            foreach (var claimType in claimTypes)
-            {
-                var claim = user.FindFirst(claimType);
-                if (claim != null && !string.IsNullOrWhiteSpace(claim.Value))
-                {
-                    return claim.Value;
-                }
-            }
-
-            return null;
-        }
-
-        // Get permission name from permission object
-        private static string GetPermissionName(object permission)
-        {
-            if (permission == null) return string.Empty;
-            if (permission is string str) return str;
-
-            try
-            {
-                var type = permission.GetType();
-                var property = type.GetProperty("Name") ?? 
-                             type.GetProperty("PermissionName") ??
-                             type.GetProperty("Code") ??
-                             type.GetProperty("Value");
-
-                return property?.GetValue(permission)?.ToString() ?? string.Empty;
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
+        
     }
 }

@@ -2,14 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using UserService.Core.Interfaces;
 using UserService.Infrastructure.Data;
 
-public class UserStatusRepository : IUserStatusRepository
-{
-    private readonly UserServiceDbContext _context;
+namespace UserService.Infrastructure.Repositories;
 
-    public UserStatusRepository(UserServiceDbContext context)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-    }
+public class UserStatusRepository(UserServiceDbContext context) : IUserStatusRepository
+{
+    private readonly UserServiceDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
     public async Task UpdateUserStatusAsync(string userId, bool isActive)
     {
@@ -18,6 +15,7 @@ public class UserStatusRepository : IUserStatusRepository
         {
             user.IsActive = isActive;
             user.UpdatedAt = DateTime.UtcNow;
+            user.UpdatedBy = userId;
             await _context.SaveChangesAsync();
         }
     }

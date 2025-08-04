@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using UserService.Api.Authorization;
+using UserService.Core.Entities;
 using UserService.Infrastructure.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,27 +10,37 @@ namespace UserService.Infrastructure.Repositories
 {
     public abstract class Repository<T> where T : class
     {
-        protected readonly UserServiceDbContext _dbContext;
-        protected readonly DbSet<T> _dbSet;
+        private readonly UserServiceDbContext _dbContext;
+        private readonly DbSet<T> _dbSet;
+        protected readonly IHttpContextAccessor HttpContextAccessor;
 
-        public Repository(UserServiceDbContext dbContext)
+        protected Repository(UserServiceDbContext dbContext, IHttpContextAccessor httpContextAccessor = null)
         {
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<T>();
-        }
-
-        public async Task<IQueryable<T>> GetAllAsync()
-        {
-            return _dbSet.AsQueryable();
-        }
-
-        public async Task<T?> GetByIdAsync(Guid id)
-        {
-            return await _dbSet.FindAsync(id);
+            HttpContextAccessor = httpContextAccessor;
         }
 
         public async Task<T> CreateAsync(T entity)
         {
+            // Set audit fields if entity implements IBaseEntity
+            if (entity is BaseEntity baseEntity)
+            {
+                var currentUserId = GetCurrentUserId();
+                var now = DateTime.UtcNow;
+
+                if (string.IsNullOrEmpty(baseEntity.Id))
+                {
+                    baseEntity.Id = Guid.NewGuid().ToString();
+                }
+                
+                baseEntity.CreatedAt = now;
+                baseEntity.UpdatedAt = now;
+                baseEntity.CreatedBy = currentUserId;
+                baseEntity.UpdatedBy = currentUserId;
+                baseEntity.IsDeleted = false;
+            }
+
             await _dbSet.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
             return entity;
@@ -40,6 +53,14 @@ namespace UserService.Infrastructure.Repositories
 
             try
             {
+                // Set audit fields if entity implements IBaseEntity
+                if (entity is BaseEntity baseEntity)
+                {
+                    var currentUserId = GetCurrentUserId();
+                    baseEntity.UpdatedAt = DateTime.UtcNow;
+                    baseEntity.UpdatedBy = currentUserId;
+                }
+
                 // Detach any existing tracked entity with the same ID
                 var existingEntity = await _dbSet.FindAsync(GetEntityId(entity));
                 if (existingEntity != null)
@@ -63,7 +84,56 @@ namespace UserService.Infrastructure.Repositories
             }
         }
 
-// Helper method to get the entity's ID
+        // Soft delete method
+        public virtual async Task<bool> DeleteAsync(object id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            if (entity == null)
+                return false;
+
+            if (entity is BaseEntity baseEntity)
+            {
+                // Soft delete
+                var currentUserId = GetCurrentUserId();
+                baseEntity.IsDeleted = true;
+                baseEntity.UpdatedAt = DateTime.UtcNow;
+                baseEntity.UpdatedBy = currentUserId;
+                
+                await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                // Hard delete for entities that don't support soft delete
+                _dbSet.Remove(entity);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return true;
+        }
+
+        // Restore method for soft-deleted entities
+        public virtual async Task<bool> RestoreAsync(object id)
+        {
+            var entity = await _dbSet.IgnoreQueryFilters().Cast<BaseEntity>().FirstOrDefaultAsync(e => e.Id.Equals(id.ToString()));
+            if (entity == null || !entity.IsDeleted)
+                return false;
+
+            var currentUserId = GetCurrentUserId();
+            entity.IsDeleted = false;
+            entity.UpdatedAt = DateTime.UtcNow;
+            entity.UpdatedBy = currentUserId;
+
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        // Helper method to get current user ID
+        protected string GetCurrentUserId()
+        {
+            return AuthUtils.GetUserIdFromClaims(HttpContextAccessor?.HttpContext?.User) ?? "System";
+        }
+
+        // Helper method to get the entity's ID
         private object GetEntityId(T entity)
         {
             var key = _dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey();
@@ -79,15 +149,18 @@ namespace UserService.Infrastructure.Repositories
 
             return id;
         }
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            var entity = await _dbSet.FindAsync(id);
-            if (entity == null)
-                return false;
 
-            _dbSet.Remove(entity);
-            await _dbContext.SaveChangesAsync();
-            return true;
+        // Common helper methods
+        protected async Task<bool> ExistsAsync(object id)
+        {
+            return await _dbSet.FindAsync(id) != null;
         }
+        
+        protected async Task<int> SaveChangesAsync()
+        {
+            return await _dbContext.SaveChangesAsync();
+        }
+        
+        protected IQueryable<T> Query => _dbSet.AsQueryable();
     }
 }

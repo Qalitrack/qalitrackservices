@@ -209,6 +209,8 @@ namespace UserService.Core.Services
             };
 
             var result = await _userShiftRepository.CreateAsync(userShift);
+            if (result == null)
+                throw new Exception("Failed to assign user to shift");
             return true;
         }
 
@@ -266,7 +268,7 @@ namespace UserService.Core.Services
         try
         {
             // Get all users with the specified role
-            var users = (await _userRepository.GetUsersByRoleAsync(roleId)).Cast<User>().ToList();
+            var users = (await _userRepository.GetUsersByRoleAsync(roleId)).ToList();
             result.TotalUsersProcessed = users.Count;
 
             foreach (var user in users)
@@ -361,7 +363,7 @@ namespace UserService.Core.Services
             try
             {
                 // Get all users with the specified role
-                var users = (await _userRepository.GetUsersByRoleAsync(roleId)).Cast<User>().ToList();
+                var users = (await _userRepository.GetUsersByRoleAsync(roleId)).ToList();
                 result.TotalUsersProcessed = users.Count;
 
                 foreach (var user in users)

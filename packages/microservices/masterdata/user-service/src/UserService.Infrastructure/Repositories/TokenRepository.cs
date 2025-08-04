@@ -42,7 +42,7 @@ namespace UserService.Infrastructure.Repositories
         }
 
         // Create a new token and save it
-        public async Task<PersonalAccessToken> CreateAsync(PersonalAccessToken token)
+        public new async Task<PersonalAccessToken> CreateAsync(PersonalAccessToken token)
         {
             try
             {
@@ -64,6 +64,7 @@ namespace UserService.Infrastructure.Repositories
                 token.IsRevoked = false;
                 token.CreatedAt = DateTime.UtcNow;
                 token.UpdatedAt = DateTime.UtcNow;
+                token.CreatedBy = token.UserId;
 
                 await _dbContext.PersonalAccessTokens.AddAsync(token);
                 int changes = await _dbContext.SaveChangesAsync();
@@ -121,30 +122,7 @@ namespace UserService.Infrastructure.Repositories
                 return false;
             }
         }
-
-        // Retrieve user based on token
-        // public async Task<User?> GetUserFromTokenAsync(string token)
-        // {
-        //     try
-        //     {
-        //         var tokenHandler = new JwtSecurityTokenHandler();
-        //         var jwtToken = tokenHandler.ReadJwtToken(token);
-        //
-        //         var userIdClaim = jwtToken?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        //         if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
-        //         {
-        //             return await _dbContext.Users.FirstOrDefaultAsync(u => Equals(u.Id, userId));
-        //         }
-        //
-        //         _logger.LogWarning("No valid user ID found in token");
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError(ex, "Error getting user from token");
-        //     }
-        //
-        //     return null;
-        // }
+        
 
         // Get all non-revoked tokens
         public async Task<IEnumerable<PersonalAccessToken>> GetAllAsync()

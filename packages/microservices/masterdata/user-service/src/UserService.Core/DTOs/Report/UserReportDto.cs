@@ -22,6 +22,9 @@ namespace UserService.Core.DTOs.Report
         public List<UserShiftInfoDto>? AssignedShifts { get; set; } = new List<UserShiftInfoDto>();
         public int TotalShiftsAssigned => AssignedShifts?.Count ?? 0;
         public int ActiveShiftsAssigned => AssignedShifts?.Count(s => s.IsActive) ?? 0;
+        public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
+        public DateTime LastModified { get; set; }
     }
 
     public class UserReportResponse

@@ -10,8 +10,6 @@ namespace UserService.Core.Interfaces
     {
      
         Task<IEnumerable<UserRole>> GetAllAsync(CancellationToken cancellationToken = default); 
-        //  Task<UserRole?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
-      //  Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default);
         Task<bool> AssignRoleToUserAsync(
            string userId, 
            string roleId, CancellationToken cancellationToken = default);
@@ -19,5 +17,7 @@ namespace UserService.Core.Interfaces
             string userId, 
             string roleId, 
             CancellationToken cancellationToken = default);
+
+        Task<int> RemoveRoleFromAllUsersAsync(string id);
     }
 }

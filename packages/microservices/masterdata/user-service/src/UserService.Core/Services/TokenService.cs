@@ -11,65 +11,9 @@ using UserService.Core.Entities;
 
 namespace UserService.Core.Services
 {
-    public class TokenService(IUserService userService, IJwtConfigurationService jwtConfigService, ITokenRepository tokenRepository)
+    public class TokenService( IJwtConfigurationService jwtConfigService, ITokenRepository tokenRepository)
         : ITokenService
     {
-        public async Task<PersonalAccessToken> GenerateTokenAsync(string email, string password)
-        {
-            var user = await userService.ValidateUserCredentials(email, password);
-            if (user == null)
-                throw new UnauthorizedAccessException("Invalid email or password.");
-
-            var jti = Guid.NewGuid().ToString(); // Generate unique token ID
-
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, jti),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Email),
-                
-            };
-
-            var secretKey = jwtConfigService.GetSecretKey();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var issuer = jwtConfigService.GetIssuer();
-            var audience = jwtConfigService.GetAudience();
-            var expiration = jwtConfigService.GetTokenExpiration();
-            
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: DateTime.UtcNow.Add(expiration),
-                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-            );
-
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-            var personalAccessToken = new PersonalAccessToken
-            {
-                Token = tokenString,
-                UserId = user.Id.ToString(),
-                Jti = jti,
-                IsRevoked = false,
-            };
-
-            try
-            {
-                var savedToken = await tokenRepository.CreateAsync(personalAccessToken);
-                Log.Information("Token created and saved for user {UserId}", user.Id);
-                return savedToken;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Failed to save token to database for user {UserId}", user.Id);
-                throw new InvalidOperationException("Failed to create token", ex);
-            }
-        }
-
         public async Task<PersonalAccessToken> GenerateTokenForAuthenticatedUserAsync(UserReadDto user)
         {
             if (user == null)
@@ -97,20 +41,7 @@ namespace UserService.Core.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                    new Claim   /*public async Task<IEnumerable<string>> GetUsersInRoleAsync(string roleId)
-        {
-            var allUserRoles = await userRoleRepository.GetAllAsync();
-            return allUserRoles
-                .Where(ur => ur.RoleId == roleId)
-                .Select(ur => ur.UserId)
-                .ToList();
-        }*/
-
-        /*public async Task<bool> IsUserInRoleAsync(string userId, string roleId)
-        {
-            var allUserRoles = await userRoleRepository.GetAllAsync();
-            return allUserRoles.Any(ur => ur.UserId == userId && ur.RoleId == roleId);
-        }*/(JwtRegisteredClaimNames.Jti, jti),
+                    new Claim(JwtRegisteredClaimNames.Jti, jti),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, user.Email),
@@ -162,7 +93,7 @@ namespace UserService.Core.Services
                 var personalAccessToken = new PersonalAccessToken
                 {
                     Token = tokenString,
-                    UserId = user.Id.ToString(),
+                    UserId = user.Id,
                     Jti = jti,
                     IsRevoked = false,
                 };
@@ -247,10 +178,10 @@ namespace UserService.Core.Services
             }
         }
 
-        public async Task<Guid?> GetUserIdFromTokenAsync(string token)
+        public Task<Guid?> GetUserIdFromTokenAsync(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
-                return null;
+                return Task.FromResult<Guid?>(null);
 
             try
             {
@@ -263,14 +194,14 @@ namespace UserService.Core.Services
                     c.Type == JwtRegisteredClaimNames.Sub);
 
                 if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
-                    return userId;
+                    return Task.FromResult<Guid?>(userId);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Error parsing token for user ID");
             }
 
-            return null;
+            return Task.FromResult<Guid?>(null);
         }
 
         public async Task<bool> RevokeTokenAsync(string token)

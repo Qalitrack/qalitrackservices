@@ -45,4 +45,8 @@ public class UserReadDto
     // Helper method to get full name
     [JsonIgnore]
     public string FullName => $"{FirstName} {LastName}";
+    
+    public string? CreatedBy { get; set; }
+    
+    public string? UpdatedBy { get; set; }
 }

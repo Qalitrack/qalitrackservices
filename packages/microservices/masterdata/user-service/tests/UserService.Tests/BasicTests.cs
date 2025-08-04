@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using UserService.Core.DTOs.Auth;
@@ -17,21 +18,27 @@ public class UserServiceTests
     private readonly IMapper _mapper;
     private readonly UserService.Core.Services.UserService _userService;
     private readonly IRoleRepository _mockRoleRepository;
+    private readonly ILogger<UserService.Core.Services.UserService> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly UserService.Core.Services.PasswordPolicyService _passwordPolicyService;
     
 
     public UserServiceTests()
     {
         _mockUserRepository = new Mock<IUserRepository>();
         _mockRoleService = new Mock<IRoleService>();
+        _logger = new Logger<UserService.Core.Services.UserService>(new LoggerFactory());
+        _httpContextAccessor = new HttpContextAccessor();
         
         var config = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>());
         _mapper = config.CreateMapper();
         
         _userService = new UserService.Core.Services.UserService(
             _mockUserRepository.Object,
-            _mockRoleService.Object,
             _mapper,
-            _mockRoleRepository
+            _mockRoleRepository,
+            _httpContextAccessor,
+            _passwordPolicyService
             );
     }
 

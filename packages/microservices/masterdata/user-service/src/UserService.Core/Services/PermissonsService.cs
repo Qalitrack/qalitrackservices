@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Permissions;
@@ -10,21 +11,15 @@ namespace UserService.Core.Services;
 
 
 
-public class PermissionsService : IPermissionsService
+public class PermissionsService(
+    IPermissionsRepository permissionsRepository,
+    IMapper mapper,
+    ILogger<PermissionsService> logger)
+    : IPermissionsService
 {
-    private readonly IPermissionsRepository _permissionsRepository;
-    private readonly IMapper _mapper;
-    private readonly ILogger<PermissionsService> _logger;
-
-    public PermissionsService(
-        IPermissionsRepository permissionsRepository, 
-        IMapper mapper,
-        ILogger<PermissionsService> logger)
-    {
-        _permissionsRepository = permissionsRepository ?? throw new ArgumentNullException(nameof(permissionsRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IPermissionsRepository _permissionsRepository = permissionsRepository ?? throw new ArgumentNullException(nameof(permissionsRepository));
+    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    private readonly ILogger<PermissionsService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<IEnumerable<PermissionDto>> GetAllAsync()
     {
@@ -33,7 +28,7 @@ public class PermissionsService : IPermissionsService
     }
     
 
-    public async Task<PermissionDto> CreateAsync(DTOs.Permissions.CreatePermissionDto dto)
+    public async Task<PermissionDto> CreateAsync(CreatePermissionDto dto)
     {
         if (dto == null)
             throw new ArgumentNullException(nameof(dto));
@@ -76,7 +71,7 @@ public class PermissionsService : IPermissionsService
                 Name = dto.Name,
                 Description = dto.Description,
                 CreatedAt = existingPermission.CreatedAt, // Preserve original creation date
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
             };
 
             // 4. Update the permission

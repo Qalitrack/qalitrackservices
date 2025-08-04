@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using UserService.Api.Authorization;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Core.DTOs.Common;
@@ -9,18 +12,13 @@ using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
 {
-    public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository(
+        UserServiceDbContext context,
+        ILogger<UserRepository> logger,
+        IHttpContextAccessor httpContextAccessor)
+        : Repository<User>(context), IUserRepository
     {
-        private readonly UserServiceDbContext _context;
-        private readonly ILogger<UserRepository> _logger;
-
-        public UserRepository(UserServiceDbContext context, ILogger<UserRepository> logger) : base(context)
-        {
-            _context = context;
-            _logger = logger;
-        }
-        // In IUserRepository.cs
-        // In UserRepository.cs
+        private readonly UserServiceDbContext _context = context;
         public async Task<IEnumerable<Permission>>GetUserPermissionsAsync(string userId)
         {
             // Get permissions ONLY from roles (pure RBAC)
@@ -30,7 +28,7 @@ namespace UserService.Infrastructure.Repositories
                     .ThenInclude(r => r.RolePermissions)
                         .ThenInclude(rp => rp.Permission)
                 .SelectMany(ur => ur.Role.RolePermissions)
-                .Where(rp => !rp.IsDeleted && rp.Role != null && !rp.Role.IsDeleted)
+                .Where(rp => !rp.IsDeleted  && !rp.Role.IsDeleted)
                 .Select(rp => rp.Permission)
                 .Where(p => !p.IsDeleted)
                 .Distinct()
@@ -41,10 +39,12 @@ namespace UserService.Infrastructure.Repositories
 
 
 
-        public async Task<IEnumerable> GetUsersByRoleAsync(string roleId)
+        public async Task<IEnumerable<User>> GetUsersByRoleAsync(string roleId)
         {
-            return await _context.Users
-                .Where(u => u.UserRoles.Any(ur => ur.RoleId == roleId))
+            return await _context.UserRoles
+                .Where(ur => ur.RoleId == roleId && !ur.IsDeleted)
+                .Select(ur => ur.User)
+                .Where(u => u != null && !u.IsDeleted)
                 .ToListAsync();
         }
 
@@ -143,6 +143,7 @@ namespace UserService.Infrastructure.Repositories
             user.IsDeleted = false;
             user.IsActive = true;  // Ensure user is active after restoration
             user.UpdatedAt = DateTime.UtcNow;
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
             await _context.SaveChangesAsync();
             return true;
         }
@@ -174,6 +175,8 @@ namespace UserService.Infrastructure.Repositories
                     
                     user.IsActive = isActive;
                     user.UpdatedAt = DateTime.UtcNow;
+                    user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+                    
                     
                     return await _context.SaveChangesAsync() > 0;
                 }
@@ -185,66 +188,69 @@ namespace UserService.Infrastructure.Repositories
         }
 
         public async Task<User?> GetByIdAsync(string id, bool includeRoles = true)
-{
-    _logger.LogInformation("🔍 GetByIdAsync - Starting for UserId: {UserId}, includeRoles: {IncludeRoles}", id, includeRoles);
-    
-    try
-    {
-        _logger.LogInformation("1. Creating base query...");
-        var query = _context.Users.AsQueryable();
-
-        _logger.LogInformation("2. includeRoles flag is: {IncludeRoles}", includeRoles);
-        
-        if (includeRoles)
-        {
-            _logger.LogInformation("3. Adding UserRoles and Role includes to query...");
-            query = query
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role);
-        }
-
-        _logger.LogInformation("4. Executing query...");
-        var user = await query
-            .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
-
-        if (user == null)
-        {
-            _logger.LogWarning("❌ User with ID {UserId} not found or is deleted", id);
-            return null;
-        }
-
-        _logger.LogInformation("✅ User {UserId} found successfully", id);
-        
-        if (includeRoles)
-        {
-            _logger.LogInformation("5. Checking loaded roles...");
-            _logger.LogInformation("   User.UserRoles is null: {IsNull}", user.UserRoles == null);
+             {
+            logger.LogInformation("🔍 GetByIdAsync - Starting for UserId: {UserId}, includeRoles: {IncludeRoles}", id, includeRoles);
             
-            if (user.UserRoles != null)
+            try
             {
-                _logger.LogInformation("6. Number of roles loaded: {RoleCount}", user.UserRoles.Count);
+                logger.LogInformation("1. Creating base query...");
+                var query = _context.Users.AsQueryable();
+
+                logger.LogInformation("2. includeRoles flag is: {IncludeRoles}", includeRoles);
                 
-                foreach (var userRole in user.UserRoles)
+                if (includeRoles)
                 {
-                    _logger.LogInformation("   - RoleId: {RoleId}, Role is null: {IsRoleNull}", 
-                        userRole.RoleId, 
-                        userRole.Role == null);
+                    logger.LogInformation("3. Adding UserRoles and Role includes to query...");
+                    query = query
+                        .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role);
                 }
+
+                logger.LogInformation("4. Executing query...");
+                var user = await query.Include(user => user.UserRoles).ThenInclude(userRole => userRole.Role)
+                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+
+                if (user == null)
+                {
+                    logger.LogWarning("❌ User with ID {UserId} not found or is deleted", id);
+                    return null;
+                }
+
+                logger.LogInformation("✅ User {UserId} found successfully", id);
+                
+                if (includeRoles)
+                {
+                    logger.LogInformation("5. Checking loaded roles...");
+    
+                    // Use pattern matching for cleaner null checks
+                    if (user.UserRoles is { Count: > 0 } userRoles)
+                    {
+                        logger.LogInformation("6. Number of roles loaded: {RoleCount}", userRoles.Count);
+        
+                        foreach (var userRole in userRoles)
+                        {
+                            // Use null-conditional operator and pattern matching
+                            var roleInfo = userRole.Role is { } role 
+                                ? $"RoleId: {userRole.RoleId}, RoleName: {role.Name}" 
+                                : $"RoleId: {userRole.RoleId}, Role is null";
+            
+                            logger.LogInformation("   - {RoleInfo}", roleInfo);
+                        }
+                    }
+                    else
+                    {
+                        logger.LogInformation("6. No roles found for user");
+                    }
+                }
+
+                return user;
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogInformation("6. UserRoles collection is null");
+                logger.LogError(ex, "❌ Error in GetByIdAsync for UserId: {UserId}", id);
+                throw;
             }
         }
-
-        return user;
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "❌ Error in GetByIdAsync for UserId: {UserId}", id);
-        throw;
-    }
-}
 
         public async Task<bool> DeleteAsync(string id)
         {
@@ -266,7 +272,7 @@ namespace UserService.Infrastructure.Repositories
                 if (user.UserShifts?.Any() == true)
                 {
                     var shiftCount = user.UserShifts.Count();
-                    _logger.LogInformation("Soft deleting user {UserId} - removing from {ShiftCount} shifts", id, shiftCount);
+                    logger.LogInformation("Soft deleting user {UserId} - removing from {ShiftCount} shifts", id, shiftCount);
                     
                     // Remove user from all shifts
                     _context.UserShifts.RemoveRange(user.UserShifts);
@@ -275,7 +281,7 @@ namespace UserService.Infrastructure.Repositories
                 if (user.UserRoles?.Any() == true)
                 {
                     var roleCount = user.UserRoles.Count();
-                    _logger.LogInformation("Soft deleting user {UserId} - removing {RoleCount} role assignments", id, roleCount);
+                    logger.LogInformation("Soft deleting user {UserId} - removing {RoleCount} role assignments", id, roleCount);
                     
                     // Remove all role assignments
                     _context.UserRoles.RemoveRange(user.UserRoles);
@@ -284,17 +290,18 @@ namespace UserService.Infrastructure.Repositories
                 // Perform soft delete
                 user.IsDeleted = true;
                 user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
                 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 
-                _logger.LogInformation("Successfully soft deleted user {UserId} with cascading cleanup", id);
+                logger.LogInformation("Successfully soft deleted user {UserId} with cascading cleanup", id);
                 return true;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError(ex, "Error soft deleting user {UserId}", id);
+                logger.LogError(ex, "Error soft deleting user {UserId}", id);
                 throw;
             }
         }
@@ -437,7 +444,7 @@ namespace UserService.Infrastructure.Repositories
             existingUser.IsActive = entity.IsActive;
             existingUser.IsFirstLogin = entity.IsFirstLogin;
             existingUser.UpdatedAt = DateTime.UtcNow;
-
+            existingUser.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
             await _context.SaveChangesAsync();
             return existingUser;
         }

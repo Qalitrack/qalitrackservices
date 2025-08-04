@@ -3,20 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using UserService.Api.Authorization;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
 {
-    public class RoleRepository : IRepository<Role>, IRoleRepository
+    public class RoleRepository(UserServiceDbContext context, IHttpContextAccessor httpContextAccessor)
+        : IRoleRepository
     {
-        private readonly UserServiceDbContext _context;
-
-        public RoleRepository(UserServiceDbContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
+        private readonly UserServiceDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 
         public async Task<IEnumerable<Role>> GetAllAsync()
         {
@@ -40,9 +39,8 @@ namespace UserService.Infrastructure.Repositories
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            await _context.Roles.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            //use  the create method in the base class
+            return await CreateAsync(entity);
         }
 
         public async Task<Role?> UpdateAsync(Role entity)
@@ -62,6 +60,7 @@ namespace UserService.Infrastructure.Repositories
             existingRole.Description = entity.Description; 
             existingRole.IsActive = entity.IsActive;
             existingRole.UpdatedAt = DateTime.UtcNow;
+            existingRole.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User) ?? "System";
             
             await _context.SaveChangesAsync();
             return existingRole;
@@ -80,14 +79,8 @@ namespace UserService.Infrastructure.Repositories
             if (role.UserRoles != null && role.UserRoles.Any())
             {
                 throw new InvalidOperationException("Cannot delete role that is assigned to users.");
-            } // public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
-        // {
-        //     return await _context.RolePermissions
-        //         .Where(rp => rp.RoleId == roleId)
-        //         .Select(rp => rp.Permission)
-        //         .ToListAsync();
-        // }
-
+            }
+        
             role.IsDeleted = true;
             await _context.SaveChangesAsync();
             return true;
@@ -116,9 +109,8 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<object> AddAsync(Role role)
         {
-            await _context.Roles.AddAsync(role);
-            await _context.SaveChangesAsync();
-            return role;
+            //use the create method in the base class
+            return await CreateAsync(role);
         }
 
         public async Task SaveChangesAsync()
