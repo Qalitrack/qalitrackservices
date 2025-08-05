@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using UserService.Api.Authorization;
+using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Utilities;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories;
 
 public class ShiftRepository(
     UserServiceDbContext dbContext,
-    IHttpContextAccessor httpContextAccessor)
-    : Repository<Shift>(dbContext), IShiftRepository
+    IHttpContextAccessor httpContextAccessor,ILogger<ShiftRepository> logger)
+    : Repository<Shift>(dbContext, httpContextAccessor,logger), IShiftRepository
 {
     private readonly UserServiceDbContext _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
@@ -42,7 +43,7 @@ public class ShiftRepository(
         // Perform soft delete
         shift.IsDeleted = true;
         shift.UpdatedAt = DateTime.UtcNow;
-        shift.UpdatedBy = _httpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
+        shift.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
         await _context.SaveChangesAsync();
         return true;
     }

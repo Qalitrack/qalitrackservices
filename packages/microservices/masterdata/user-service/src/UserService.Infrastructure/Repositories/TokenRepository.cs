@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
@@ -17,9 +18,10 @@ namespace UserService.Infrastructure.Repositories
     {
         private readonly UserServiceDbContext _dbContext;
         private readonly ILogger<TokenRepository> _logger;
+        
 
-        public TokenRepository(UserServiceDbContext dbContext, ILogger<TokenRepository> logger)
-            : base(dbContext)
+        public TokenRepository(UserServiceDbContext dbContext, ILogger<TokenRepository> logger, IHttpContextAccessor httpContextAccessor)
+            : base(dbContext, httpContextAccessor, logger)
         {
             _dbContext = dbContext;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

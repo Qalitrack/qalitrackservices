@@ -27,6 +27,8 @@ namespace UserService.Core.DTOs.Report
         public List<AssignedUserDto>? AssignedUsers { get; set; } = new List<AssignedUserDto>();
         public string? CreatedBy { get; set; }
         public string? UpdatedBy { get; set; }
+      
+        
         
     }
 

@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using UserService.Api.Authorization;
 using UserService.Core.Entities;
 using UserService.Infrastructure.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using UserService.Core.Utilities;
 
 namespace UserService.Infrastructure.Repositories
 {
@@ -13,12 +14,14 @@ namespace UserService.Infrastructure.Repositories
         private readonly UserServiceDbContext _dbContext;
         private readonly DbSet<T> _dbSet;
         protected readonly IHttpContextAccessor HttpContextAccessor;
+        protected readonly ILogger<Repository<T>> _logger;
 
-        protected Repository(UserServiceDbContext dbContext, IHttpContextAccessor httpContextAccessor = null)
+        protected Repository(UserServiceDbContext dbContext, IHttpContextAccessor httpContextAccessor, ILogger<Repository<T>> logger)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _dbSet = _dbContext.Set<T>();
-            HttpContextAccessor = httpContextAccessor;
+            HttpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<T> CreateAsync(T entity)
@@ -130,7 +133,29 @@ namespace UserService.Infrastructure.Repositories
         // Helper method to get current user ID
         protected string GetCurrentUserId()
         {
-            return AuthUtils.GetUserIdFromClaims(HttpContextAccessor?.HttpContext?.User) ?? "System";
+            try
+            {
+                if (HttpContextAccessor?.HttpContext?.User?.Identity?.IsAuthenticated != true)
+                {
+                    _logger.LogWarning("No authenticated user context available, defaulting to 'System' for CreatedBy/UpdatedBy");
+                    return "System";
+                }
+
+                var userId = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext.User);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogWarning("User ID not found in claims, defaulting to 'System'");
+                    return "System";
+                }
+
+                _logger.LogInformation("Retrieved user ID: {UserId}", userId);
+                return userId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving current user ID, defaulting to 'System'");
+                return "System";
+            }
         }
 
         // Helper method to get the entity's ID

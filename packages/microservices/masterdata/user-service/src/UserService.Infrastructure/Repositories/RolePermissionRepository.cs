@@ -1,12 +1,14 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories;
 
-public class RolePermissionRepository(UserServiceDbContext dbContext, UserServiceDbContext context)
-    : Repository<RolePermission>(dbContext), IRolePermissionRepository
+public class RolePermissionRepository(UserServiceDbContext dbContext, UserServiceDbContext context, ILogger<RolePermissionRepository> logger, IHttpContextAccessor httpContextAccessor)
+    : Repository<RolePermission>(dbContext, httpContextAccessor, logger), IRolePermissionRepository
 {
     public async Task<IEnumerable<RolePermission>> GetAllAsync()
     {

@@ -15,7 +15,7 @@ namespace UserService.Infrastructure.Services
    {
        private readonly ILogger<ShiftMonitorService> _logger;
        private readonly IServiceScopeFactory _serviceScopeFactory;
-
+       
        public ShiftMonitorService(
            ILogger<ShiftMonitorService> logger,
            IServiceScopeFactory serviceScopeFactory)

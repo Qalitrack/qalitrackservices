@@ -218,14 +218,16 @@ static void ConfigureDatabase(WebApplicationBuilder builder)
         try
         {
             Directory.CreateDirectory(backupOptions.Path);
-            builder.Logging.AddConsole().Services.BuildServiceProvider()
+            builder.Logging.AddConsole();
+            builder.Logging.Services.BuildServiceProvider()
                 .GetRequiredService<ILogger<Program>>()
                 .LogInformation("Created backup directory: {BackupPath}", 
                     Path.GetFullPath(backupOptions.Path));
         }
         catch (Exception ex)
         {
-            builder.Logging.AddConsole().Services.BuildServiceProvider()
+            builder.Logging.AddConsole();
+            builder.Logging.Services.BuildServiceProvider()
                 .GetRequiredService<ILogger<Program>>()
                 .LogError(ex, "Failed to create backup directory: {BackupPath}", 
                     backupOptions.Path);
@@ -302,8 +304,8 @@ static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
     // Clear default claim type mappings to prevent conflicts
-    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-    JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
+    // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+    // JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
     builder.Services.AddAuthentication(options =>
     {
@@ -394,7 +396,7 @@ static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
                 if (context.Exception is SecurityTokenExpiredException)
                 {
                     Log.Warning("Token has expired");
-                    context.Response.Headers.Add("Token-Expired", "true");
+                    context.Response.Headers.Append("Token-Expired", "true");
                 }
                 else if (context.Exception is SecurityTokenInvalidSignatureException)
                 {

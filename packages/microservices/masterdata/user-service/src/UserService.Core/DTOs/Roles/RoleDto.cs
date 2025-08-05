@@ -18,6 +18,9 @@ namespace UserService.Core.DTOs.Roles
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
+        public string? IsDeleted { get; set; }
         public List<UserBasicInfoDto> Users { get; set; } = new List<UserBasicInfoDto>();
         public int TotalUsers { get; set; }
     }
