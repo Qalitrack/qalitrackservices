@@ -6,6 +6,7 @@ using UserService.Core.DTOs.Permissions;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Utilities;
 
 namespace UserService.Core.Services;
 
@@ -14,12 +15,14 @@ namespace UserService.Core.Services;
 public class PermissionsService(
     IPermissionsRepository permissionsRepository,
     IMapper mapper,
-    ILogger<PermissionsService> logger)
+    ILogger<PermissionsService> logger,
+    IHttpContextAccessor httpContextAccessor)
     : IPermissionsService
-{
+{ 
     private readonly IPermissionsRepository _permissionsRepository = permissionsRepository ?? throw new ArgumentNullException(nameof(permissionsRepository));
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly ILogger<PermissionsService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor??throw new ArgumentException();
 
     public async Task<IEnumerable<PermissionDto>> GetAllAsync()
     {
@@ -38,6 +41,8 @@ public class PermissionsService(
             throw new InvalidOperationException($"A permission with name '{dto.Name}' already exists.");
 
         var permission = _mapper.Map<Permission>(dto);
+        permission.CreatedAt = DateTime.UtcNow;
+        permission.CreatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
         var createdPermission = await _permissionsRepository.CreateAsync(permission);
         return _mapper.Map<PermissionDto>(createdPermission);
     }
@@ -71,6 +76,8 @@ public class PermissionsService(
                 Name = dto.Name,
                 Description = dto.Description,
                 CreatedAt = existingPermission.CreatedAt, // Preserve original creation date
+                UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User),
+                CreatedBy = existingPermission.CreatedBy,
                 UpdatedAt = DateTime.UtcNow,
             };
 

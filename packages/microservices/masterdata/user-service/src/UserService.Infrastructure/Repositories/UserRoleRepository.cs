@@ -16,7 +16,7 @@ namespace UserService.Infrastructure.Repositories
         UserServiceDbContext context,
         ILogger<UserRoleRepository> logger,
         IHttpContextAccessor httpContextAccessor)
-        : Repository<UserRole>(context), IUserRoleRepository
+        : Repository<UserRole>(context, httpContextAccessor, logger), IUserRoleRepository
     {
         private readonly UserServiceDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
         private readonly ILogger<UserRoleRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));

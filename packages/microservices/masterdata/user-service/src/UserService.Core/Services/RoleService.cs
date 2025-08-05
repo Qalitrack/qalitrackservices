@@ -83,6 +83,7 @@ public async Task<RoleDto> CreateAsync(DTOs.Roles.CreateRoleDto dto)
     }
 
     var role = _mapper.Map<Role>(dto);
+    role.CreatedAt = DateTime.UtcNow;
     var createdRole = await _roleRepository.AddAsync(role);
     await _roleRepository.SaveChangesAsync();
 

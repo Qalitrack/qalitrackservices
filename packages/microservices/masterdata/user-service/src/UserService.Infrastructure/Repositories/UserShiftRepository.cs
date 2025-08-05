@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Utilities;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories;
@@ -8,10 +11,14 @@ namespace UserService.Infrastructure.Repositories;
 public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
 {
     private readonly UserServiceDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<UserShiftRepository> logger;
 
-    public UserShiftRepository(UserServiceDbContext context) : base(context)
+    public UserShiftRepository(UserServiceDbContext context) : base(context, new HttpContextAccessor(), new LoggerFactory().CreateLogger<UserShiftRepository>())
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        _httpContextAccessor = (IHttpContextAccessor)GetType().GetField("_httpContextAccessor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
+        logger = (ILogger<UserShiftRepository>)GetType().GetField("logger", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
     }
 
     public async Task<IEnumerable<UserShift>> GetAllAsync()
@@ -32,7 +39,7 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
         // Add the userShift to the context using the base class method
         userShift.CreatedAt = DateTime.UtcNow;
         userShift.UpdatedAt = DateTime.UtcNow;
-        userShift.CreatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
+        userShift.CreatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
         var createdUserShift = await base.CreateAsync(userShift);
         await _context.SaveChangesAsync();
         return createdUserShift;
@@ -88,7 +95,7 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
         // Only update specific fields to avoid constraint issues
         existingUserShift.AssignedAt = userShift.AssignedAt;
         existingUserShift.UpdatedAt = DateTime.UtcNow;
-        existingUserShift.UpdatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
+        existingUserShift.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
 
         await _context.SaveChangesAsync();
         return existingUserShift;
@@ -101,7 +108,7 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
             return false;
         userShift.IsDeleted = true;
         userShift.UpdatedAt = DateTime.UtcNow;
-        userShift.UpdatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
+        userShift.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
 
         await _context.SaveChangesAsync();
         return true;    
@@ -120,7 +127,7 @@ public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
         // Set audit fields before removal
         userShift.IsDeleted = true;
         userShift.UpdatedAt = DateTime.UtcNow;
-        userShift.UpdatedBy = HttpContextAccessor?.HttpContext?.User?.FindFirst("sub")?.Value ?? "System";
+        userShift.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
     
         await _context.SaveChangesAsync();
         return true;

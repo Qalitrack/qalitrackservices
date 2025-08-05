@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Utilities;
 
 namespace UserService.Core.Services
 {
@@ -11,6 +13,7 @@ namespace UserService.Core.Services
         IShiftRepository shiftRepository,
         IUserShiftRepository userShiftRepository,
         IUserRepository userRepository,
+        IHttpContextAccessor httpContextAccessor,
         IMapper mapper,
         ILogger<ShiftService> logger)
         : IShiftService
@@ -63,6 +66,11 @@ namespace UserService.Core.Services
             
             // Set calculated EndTime
             shift.EndTime = calculatedEndTime.TimeOfDay;
+            shift.CreatedAt = DateTime.UtcNow;
+            shift.UpdatedAt = DateTime.UtcNow;
+            shift.CreatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+            shift.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User); 
+            
             
             var createdShift = await _shiftRepository.CreateAsync(shift);
             return _mapper.Map<ShiftDto>(createdShift);
@@ -123,7 +131,7 @@ namespace UserService.Core.Services
                 existingShift.AutoRepeatDaily = dto.AutoRepeatDaily.Value;
                 
             existingShift.UpdatedAt = DateTime.UtcNow;
-
+            existingShift.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             var updatedShift = await _shiftRepository.UpdateAsync(existingShift);
             return _mapper.Map<ShiftDto>(updatedShift);
         }

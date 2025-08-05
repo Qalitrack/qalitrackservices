@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using UserService.Api.Authorization;
+using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
@@ -14,8 +14,8 @@ namespace UserService.Infrastructure.Repositories
 {
     public class PermissionsRepository(
         UserServiceDbContext dbContext,
-        IHttpContextAccessor httpContextAccessor)
-        : Repository<Permission>(dbContext, httpContextAccessor), IPermissionsRepository
+        IHttpContextAccessor httpContextAccessor,ILogger<PermissionsRepository> logger)
+        : Repository<Permission>(dbContext, httpContextAccessor, logger), IPermissionsRepository
     {
         private readonly UserServiceDbContext _dbContext = dbContext;
         public async Task<IEnumerable<Permission>> GetAllAsync()

@@ -8,7 +8,7 @@ using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
-using UserService.Api.Authorization;
+using UserService.Core.Utilities;
 
 namespace UserService.Core.Services
 {
@@ -34,7 +34,7 @@ namespace UserService.Core.Services
 
             user.IsDeleted = false;
             user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
 
             return await userRepository.RestoreAsync(id);
         }
@@ -67,7 +67,7 @@ namespace UserService.Core.Services
 
         public async Task<UserReadDto> CreateAsync(CreateUserDto dto)
         {
-            var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             var user = new User
             {
                 FirstName = dto.FirstName,
@@ -96,7 +96,7 @@ namespace UserService.Core.Services
                 return null;
             }
 
-            var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             var userToUpdate = new User
             {
                 Id = existingUser.Id,
@@ -125,7 +125,7 @@ namespace UserService.Core.Services
             }
 
             user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             return await userRepository.DeleteAsync(id);
         }
 
@@ -148,7 +148,7 @@ namespace UserService.Core.Services
             }
 
             user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             await userRepository.UpdateAsync(user);
 
             return user;
@@ -274,7 +274,7 @@ namespace UserService.Core.Services
 
             user.IsActive = isActive;
             user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             return await userRepository.UpdateUserActiveStatusAsync(userId, isActive);
         }
 

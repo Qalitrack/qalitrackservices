@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using UserService.Api.Authorization;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Utilities;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
@@ -110,6 +110,10 @@ namespace UserService.Infrastructure.Repositories
         public async Task<object> AddAsync(Role role)
         {
             //use the create method in the base class
+            role.CreatedAt = DateTime.UtcNow;
+            role.CreatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
+            role.UpdatedAt = role.CreatedAt;
+            role.UpdatedBy = role.CreatedBy;
             return await CreateAsync(role);
         }
 

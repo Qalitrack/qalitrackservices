@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using UserService.Api.Authorization;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Core.DTOs.Common;
+using UserService.Core.Utilities;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
@@ -16,7 +16,7 @@ namespace UserService.Infrastructure.Repositories
         UserServiceDbContext context,
         ILogger<UserRepository> logger,
         IHttpContextAccessor httpContextAccessor)
-        : Repository<User>(context), IUserRepository
+        : Repository<User>(context, httpContextAccessor, logger), IUserRepository
     {
         private readonly UserServiceDbContext _context = context;
         public async Task<IEnumerable<Permission>>GetUserPermissionsAsync(string userId)
@@ -143,7 +143,7 @@ namespace UserService.Infrastructure.Repositories
             user.IsDeleted = false;
             user.IsActive = true;  // Ensure user is active after restoration
             user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -175,7 +175,7 @@ namespace UserService.Infrastructure.Repositories
                     
                     user.IsActive = isActive;
                     user.UpdatedAt = DateTime.UtcNow;
-                    user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+                    user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
                     
                     
                     return await _context.SaveChangesAsync() > 0;
@@ -290,7 +290,7 @@ namespace UserService.Infrastructure.Repositories
                 // Perform soft delete
                 user.IsDeleted = true;
                 user.UpdatedAt = DateTime.UtcNow;
-                user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+                user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
                 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -444,7 +444,7 @@ namespace UserService.Infrastructure.Repositories
             existingUser.IsActive = entity.IsActive;
             existingUser.IsFirstLogin = entity.IsFirstLogin;
             existingUser.UpdatedAt = DateTime.UtcNow;
-            existingUser.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User) ?? "System";
+            existingUser.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             await _context.SaveChangesAsync();
             return existingUser;
         }
