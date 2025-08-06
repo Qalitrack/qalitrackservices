@@ -74,37 +74,56 @@
 
         <div class="api-grid">
             <div class="api-card">
-                <h3>Sales Order API (OData v4)</h3>
-                <span class="status active">Active</span>
-                <div class="endpoint">GET /sap/opu/odata4/sap/api_salesorder/srvd_a2x/sap/salesorder/0001/SalesOrder</div>
-                <p>SAP_COM_0109 compatible sales order processing with Bamburi business scenarios.</p>
+                <h3>📋 Sales Orders API</h3>
+                <span class="status active">CRUD</span>
+                <div class="endpoint">GET/POST/PUT /api/sales-orders</div>
+                <p>Complete sales order management with Bamburi business scenarios and KES pricing.</p>
             </div>
 
             <div class="api-card">
-                <h3>Business Partner API (OData v2)</h3>
-                <span class="status active">Active</span>
-                <div class="endpoint">GET /sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner</div>
-                <p>Customer/vendor master data with Kenyan addresses and KES pricing.</p>
+                <h3>⚖️ Weight Measurements API</h3>
+                <span class="status active">CRUD</span>
+                <div class="endpoint">GET/POST /api/weight-measurements</div>
+                <p>Weighbridge operations: truck entry/exit weights, net weight calculations, plant transfers.</p>
             </div>
 
             <div class="api-card">
-                <h3>Material API (OData v2)</h3>
-                <span class="status active">Active</span>
-                <div class="endpoint">GET /sap/opu/odata/sap/API_MATERIAL/A_Product</div>
-                <p>Complete cement portfolio: PowerMax, Nguvu, Fundi, BamburiBlox, Readymix.</p>
+                <h3>🚛 Deliveries API</h3>
+                <span class="status active">CRUD</span>
+                <div class="endpoint">GET/POST/PUT /api/deliveries</div>
+                <p>Delivery tracking with vehicle management and weight measurement integration.</p>
             </div>
 
             <div class="api-card">
-                <h3>Plant API (OData v2)</h3>
-                <span class="status active">Active</span>
-                <div class="endpoint">GET /sap/opu/odata/sap/API_PLANT/A_Plant</div>
-                <p>3-plant geographic distribution across Kenya with operational details.</p>
+                <h3>👥 Business Partners API</h3>
+                <span class="status active">Read</span>
+                <div class="endpoint">GET /api/business-partners</div>
+                <p>Customer/vendor master data with Kenyan addresses and credit limits.</p>
+            </div>
+
+            <div class="api-card">
+                <h3>📦 Materials API</h3>
+                <span class="status active">Read</span>
+                <div class="endpoint">GET /api/materials</div>
+                <p>Complete cement portfolio: PowerMax, Nguvu, Fundi, BamburiBlox, Readymix with weights.</p>
+            </div>
+
+            <div class="api-card">
+                <h3>🏭 Plants & Transfers API</h3>
+                <span class="status active">CRUD</span>
+                <div class="endpoint">GET /api/plants, /api/plant-transfers</div>
+                <p>3-plant operations with inter-plant transfer capabilities and weighbridge management.</p>
             </div>
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
             <p><strong>Status:</strong> <span class="status active">Mock Server Running</span></p>
-            <p><small>Built with SAP UI5 Middleware • Powered by QaliTrack Systems</small></p>
+            <div style="margin: 20px 0;">
+                <a href="/api-docs" style="display: inline-block; background: #00ff88; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">📖 Swagger UI</a>
+                <a href="/redoc" style="display: inline-block; background: #007acc; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">📚 ReDoc</a>
+                <a href="/health" style="display: inline-block; background: rgba(255,255,255,0.2); color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">🏥 Health Check</a>
+            </div>
+            <p><small>Built with Express.js & Swagger UI • Powered by QaliTrack Systems</small></p>
         </div>
     </div>
 

@@ -1,0 +1,1143 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "S/4HANA Mock Server - Bamburi Cement Integration API",
+    "description": "Complete mock server for SAP S/4HANA integration with Bamburi Cement business processes including weight measurements, sales orders, and plant operations.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "QaliTrack Systems",
+      "url": "https://github.com/adarlegendre/qalitrackservices"
+    }
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Dynamic server - uses current host and port"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Server health and status endpoints"
+    },
+    {
+      "name": "Master Data",
+      "description": "Core business entities (Read-only)"
+    },
+    {
+      "name": "Sales Orders",
+      "description": "Sales order management (CRUD)"
+    },
+    {
+      "name": "Weight Measurements",
+      "description": "Weighbridge operations and truck weighing"
+    },
+    {
+      "name": "Deliveries",
+      "description": "Delivery tracking and vehicle management"
+    },
+    {
+      "name": "Plant Operations",
+      "description": "Plant-to-plant transfers and inventory"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Server health check",
+        "description": "Returns server status and available APIs",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-partners": {
+      "get": {
+        "tags": ["Master Data"],
+        "summary": "Get all business partners",
+        "description": "Retrieve all customers and vendors",
+        "responses": {
+          "200": {
+            "description": "List of business partners",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BusinessPartner"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-partners/{id}": {
+      "get": {
+        "tags": ["Master Data"],
+        "summary": "Get business partner by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business partner details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessPartner"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Business partner not found"
+          }
+        }
+      }
+    },
+    "/api/materials": {
+      "get": {
+        "tags": ["Master Data"],
+        "summary": "Get all materials",
+        "description": "Retrieve cement product catalog",
+        "responses": {
+          "200": {
+            "description": "List of materials/products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Material"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plants": {
+      "get": {
+        "tags": ["Master Data"],
+        "summary": "Get all plants",
+        "description": "Retrieve plant locations and details",
+        "responses": {
+          "200": {
+            "description": "List of plants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plant"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales-orders": {
+      "get": {
+        "tags": ["Sales Orders"],
+        "summary": "Get all sales orders",
+        "responses": {
+          "200": {
+            "description": "List of sales orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SalesOrder"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Sales Orders"],
+        "summary": "Create new sales order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SalesOrderCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sales order created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalesOrder"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/api/sales-orders/{orderId}": {
+      "get": {
+        "tags": ["Sales Orders"],
+        "summary": "Get sales order by ID",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sales order details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalesOrder"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sales order not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Sales Orders"],
+        "summary": "Update sales order",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SalesOrderUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sales order updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalesOrder"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sales order not found"
+          }
+        }
+      }
+    },
+    "/api/weight-measurements": {
+      "get": {
+        "tags": ["Weight Measurements"],
+        "summary": "Get all weight measurements",
+        "parameters": [
+          {
+            "name": "vehicleNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by vehicle number"
+          },
+          {
+            "name": "plantId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by plant"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["entry", "exit", "completed"]
+            },
+            "description": "Filter by measurement status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of weight measurements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeightMeasurement"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Weight Measurements"],
+        "summary": "Create new weight measurement",
+        "description": "Record truck entry or exit weight at weighbridge",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeightMeasurementCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Weight measurement recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeightMeasurement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid measurement data"
+          }
+        }
+      }
+    },
+    "/api/weight-measurements/{measurementId}": {
+      "get": {
+        "tags": ["Weight Measurements"],
+        "summary": "Get weight measurement by ID",
+        "parameters": [
+          {
+            "name": "measurementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Weight measurement details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeightMeasurement"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Measurement not found"
+          }
+        }
+      }
+    },
+    "/api/deliveries": {
+      "get": {
+        "tags": ["Deliveries"],
+        "summary": "Get all deliveries",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["planned", "in_progress", "loaded", "delivered", "completed"]
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of deliveries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Delivery"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Deliveries"],
+        "summary": "Create new delivery",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeliveryCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Delivery created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Delivery"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/deliveries/{deliveryId}": {
+      "get": {
+        "tags": ["Deliveries"],
+        "summary": "Get delivery by ID",
+        "parameters": [
+          {
+            "name": "deliveryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delivery details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Delivery"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Delivery not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Deliveries"],
+        "summary": "Update delivery status",
+        "parameters": [
+          {
+            "name": "deliveryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeliveryUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delivery updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Delivery"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plant-transfers": {
+      "get": {
+        "tags": ["Plant Operations"],
+        "summary": "Get all plant-to-plant transfers",
+        "responses": {
+          "200": {
+            "description": "List of plant transfers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlantTransfer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Plant Operations"],
+        "summary": "Create plant transfer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlantTransferCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Plant transfer created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantTransfer"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "healthy"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "service": {
+            "type": "string",
+            "example": "s4hana-mock-server"
+          },
+          "client": {
+            "type": "string",
+            "example": "bamburi"
+          },
+          "apis": {
+            "type": "object",
+            "properties": {
+              "salesOrder": {
+                "type": "string",
+                "example": "active"
+              },
+              "businessPartner": {
+                "type": "string",
+                "example": "active"
+              },
+              "material": {
+                "type": "string",
+                "example": "active"
+              },
+              "plant": {
+                "type": "string",
+                "example": "active"
+              },
+              "weightMeasurement": {
+                "type": "string",
+                "example": "active"
+              }
+            }
+          }
+        }
+      },
+      "BusinessPartner": {
+        "type": "object",
+        "properties": {
+          "BusinessPartner": {
+            "type": "string",
+            "example": "BP001"
+          },
+          "BusinessPartnerName": {
+            "type": "string",
+            "example": "Central Region Building Contractors"
+          },
+          "BusinessPartnerType": {
+            "type": "string",
+            "enum": ["Customer", "Vendor"],
+            "example": "Customer"
+          },
+          "Industry": {
+            "type": "string",
+            "example": "Construction"
+          },
+          "Country": {
+            "type": "string",
+            "example": "KE"
+          },
+          "Region": {
+            "type": "string",
+            "example": "Central"
+          },
+          "CreditLimit": {
+            "type": "number",
+            "example": 50000000
+          },
+          "Currency": {
+            "type": "string",
+            "example": "KES"
+          }
+        }
+      },
+      "Material": {
+        "type": "object",
+        "properties": {
+          "MaterialCode": {
+            "type": "string",
+            "example": "PWRMAX50"
+          },
+          "MaterialDescription": {
+            "type": "string",
+            "example": "PowerMax Cement 50KG"
+          },
+          "MaterialType": {
+            "type": "string",
+            "example": "Cement"
+          },
+          "BaseUnit": {
+            "type": "string",
+            "example": "BAG"
+          },
+          "StandardPrice": {
+            "type": "number",
+            "example": 1250.00
+          },
+          "Currency": {
+            "type": "string",
+            "example": "KES"
+          },
+          "WeightPerUnit": {
+            "type": "number",
+            "example": 50,
+            "description": "Weight in KG per bag"
+          }
+        }
+      },
+      "Plant": {
+        "type": "object",
+        "properties": {
+          "PlantCode": {
+            "type": "string",
+            "example": "1000"
+          },
+          "PlantName": {
+            "type": "string",
+            "example": "Bamburi Mombasa Plant"
+          },
+          "Location": {
+            "type": "string",
+            "example": "Mombasa"
+          },
+          "Address": {
+            "type": "string",
+            "example": "Bamburi Road, Mombasa, Kenya"
+          },
+          "WeighbridgeCount": {
+            "type": "integer",
+            "example": 2
+          },
+          "MaxVehicleCapacity": {
+            "type": "number",
+            "example": 30000,
+            "description": "Maximum vehicle capacity in KG"
+          }
+        }
+      },
+      "SalesOrder": {
+        "type": "object",
+        "properties": {
+          "SalesOrderNumber": {
+            "type": "string",
+            "example": "SO001"
+          },
+          "SoldToParty": {
+            "type": "string",
+            "example": "BP001"
+          },
+          "OrderDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "RequestedDeliveryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "Plant": {
+            "type": "string",
+            "example": "1000"
+          },
+          "TotalValue": {
+            "type": "number",
+            "example": 16675000.00
+          },
+          "Currency": {
+            "type": "string",
+            "example": "KES"
+          },
+          "Status": {
+            "type": "string",
+            "enum": ["Open", "In_Progress", "Delivered", "Completed"],
+            "example": "Open"
+          },
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SalesOrderItem"
+            }
+          }
+        }
+      },
+      "SalesOrderItem": {
+        "type": "object",
+        "properties": {
+          "ItemNumber": {
+            "type": "string",
+            "example": "10"
+          },
+          "MaterialCode": {
+            "type": "string",
+            "example": "PWRMAX50"
+          },
+          "OrderQuantity": {
+            "type": "number",
+            "example": 10000
+          },
+          "Unit": {
+            "type": "string",
+            "example": "BAG"
+          },
+          "NetPrice": {
+            "type": "number",
+            "example": 1250.00
+          },
+          "NetValue": {
+            "type": "number",
+            "example": 12500000.00
+          },
+          "DeliveredQuantity": {
+            "type": "number",
+            "example": 0
+          },
+          "RemainingQuantity": {
+            "type": "number",
+            "example": 10000
+          }
+        }
+      },
+      "SalesOrderCreate": {
+        "type": "object",
+        "required": ["SoldToParty", "Plant", "Items"],
+        "properties": {
+          "SoldToParty": {
+            "type": "string",
+            "example": "BP001"
+          },
+          "RequestedDeliveryDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-08-15"
+          },
+          "Plant": {
+            "type": "string",
+            "example": "1000"
+          },
+          "Items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "MaterialCode": {
+                  "type": "string",
+                  "example": "PWRMAX50"
+                },
+                "OrderQuantity": {
+                  "type": "number",
+                  "example": 1000
+                }
+              }
+            }
+          }
+        }
+      },
+      "SalesOrderUpdate": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "enum": ["Open", "In_Progress", "Delivered", "Completed"]
+          },
+          "RequestedDeliveryDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "WeightMeasurement": {
+        "type": "object",
+        "properties": {
+          "MeasurementId": {
+            "type": "string",
+            "example": "WM001"
+          },
+          "VehicleNumber": {
+            "type": "string",
+            "example": "KCA 123A"
+          },
+          "DriverName": {
+            "type": "string",
+            "example": "John Mwangi"
+          },
+          "PlantCode": {
+            "type": "string",
+            "example": "1000"
+          },
+          "WeighbridgeId": {
+            "type": "string",
+            "example": "WB1"
+          },
+          "MeasurementType": {
+            "type": "string",
+            "enum": ["Entry", "Exit", "Transfer_Out", "Transfer_In"],
+            "example": "Entry"
+          },
+          "Weight": {
+            "type": "number",
+            "example": 15000,
+            "description": "Weight in KG"
+          },
+          "TareWeight": {
+            "type": "number",
+            "example": 8000,
+            "description": "Empty truck weight in KG"
+          },
+          "NetWeight": {
+            "type": "number",
+            "example": 7000,
+            "description": "Calculated net cargo weight in KG"
+          },
+          "Timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "SalesOrderNumber": {
+            "type": "string",
+            "example": "SO001"
+          },
+          "DeliveryNumber": {
+            "type": "string",
+            "example": "DEL001"
+          },
+          "Status": {
+            "type": "string",
+            "enum": ["Pending_Exit", "Completed"],
+            "example": "Pending_Exit"
+          },
+          "Operator": {
+            "type": "string",
+            "example": "Mary Wanjiku"
+          }
+        }
+      },
+      "WeightMeasurementCreate": {
+        "type": "object",
+        "required": ["VehicleNumber", "PlantCode", "MeasurementType", "Weight"],
+        "properties": {
+          "VehicleNumber": {
+            "type": "string",
+            "example": "KCA 123A"
+          },
+          "DriverName": {
+            "type": "string",
+            "example": "John Mwangi"
+          },
+          "PlantCode": {
+            "type": "string",
+            "example": "1000"
+          },
+          "WeighbridgeId": {
+            "type": "string",
+            "example": "WB1"
+          },
+          "MeasurementType": {
+            "type": "string",
+            "enum": ["Entry", "Exit", "Transfer_Out", "Transfer_In"],
+            "example": "Entry"
+          },
+          "Weight": {
+            "type": "number",
+            "example": 15000
+          },
+          "SalesOrderNumber": {
+            "type": "string",
+            "example": "SO001"
+          },
+          "DeliveryNumber": {
+            "type": "string",
+            "example": "DEL001"
+          },
+          "Operator": {
+            "type": "string",
+            "example": "Mary Wanjiku"
+          }
+        }
+      },
+      "Delivery": {
+        "type": "object",
+        "properties": {
+          "DeliveryNumber": {
+            "type": "string",
+            "example": "DEL001"
+          },
+          "SalesOrderNumber": {
+            "type": "string",
+            "example": "SO001"
+          },
+          "VehicleNumber": {
+            "type": "string",
+            "example": "KCA 123A"
+          },
+          "DriverName": {
+            "type": "string",
+            "example": "John Mwangi"
+          },
+          "SourcePlant": {
+            "type": "string",
+            "example": "1000"
+          },
+          "Destination": {
+            "type": "string",
+            "example": "Customer Site - Nairobi"
+          },
+          "Status": {
+            "type": "string",
+            "enum": ["Planned", "In_Progress", "Loaded", "In_Transit", "Delivered", "Completed"],
+            "example": "Planned"
+          },
+          "PlannedWeight": {
+            "type": "number",
+            "example": 25000,
+            "description": "Expected delivery weight in KG"
+          },
+          "ActualWeight": {
+            "type": "number",
+            "example": 24850,
+            "description": "Actual delivered weight in KG"
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "DeliveredDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "WeightMeasurements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WeightMeasurement"
+            }
+          }
+        }
+      },
+      "DeliveryCreate": {
+        "type": "object",
+        "required": ["SalesOrderNumber", "VehicleNumber", "SourcePlant"],
+        "properties": {
+          "SalesOrderNumber": {
+            "type": "string",
+            "example": "SO001"
+          },
+          "VehicleNumber": {
+            "type": "string",
+            "example": "KCA 123A"
+          },
+          "DriverName": {
+            "type": "string",
+            "example": "John Mwangi"
+          },
+          "SourcePlant": {
+            "type": "string",
+            "example": "1000"
+          },
+          "Destination": {
+            "type": "string",
+            "example": "Customer Site - Nairobi"
+          },
+          "PlannedWeight": {
+            "type": "number",
+            "example": 25000
+          }
+        }
+      },
+      "DeliveryUpdate": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "enum": ["Planned", "In_Progress", "Loaded", "In_Transit", "Delivered", "Completed"]
+          },
+          "ActualWeight": {
+            "type": "number"
+          },
+          "DeliveredDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PlantTransfer": {
+        "type": "object",
+        "properties": {
+          "TransferNumber": {
+            "type": "string",
+            "example": "TRF001"
+          },
+          "SourcePlant": {
+            "type": "string",
+            "example": "1000"
+          },
+          "DestinationPlant": {
+            "type": "string",
+            "example": "1100"
+          },
+          "VehicleNumber": {
+            "type": "string",
+            "example": "KCB 456B"
+          },
+          "MaterialCode": {
+            "type": "string",
+            "example": "PWRMAX50"
+          },
+          "TransferQuantity": {
+            "type": "number",
+            "example": 500
+          },
+          "Unit": {
+            "type": "string",
+            "example": "BAG"
+          },
+          "Status": {
+            "type": "string",
+            "enum": ["Planned", "In_Transit", "Completed"],
+            "example": "Planned"
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "CompletedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PlantTransferCreate": {
+        "type": "object",
+        "required": ["SourcePlant", "DestinationPlant", "MaterialCode", "TransferQuantity"],
+        "properties": {
+          "SourcePlant": {
+            "type": "string",
+            "example": "1000"
+          },
+          "DestinationPlant": {
+            "type": "string",
+            "example": "1100"
+          },
+          "VehicleNumber": {
+            "type": "string",
+            "example": "KCB 456B"
+          },
+          "MaterialCode": {
+            "type": "string",
+            "example": "PWRMAX50"
+          },
+          "TransferQuantity": {
+            "type": "number",
+            "example": 500
+          },
+          "Unit": {
+            "type": "string",
+            "example": "BAG"
+          }
+        }
+      }
+    }
+  }
+}
