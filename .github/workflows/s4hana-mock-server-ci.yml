@@ -2,12 +2,12 @@ name: S/4HANA Mock Server CI
 
 on:
   push:
-    branches: [ main, develop, qalitrackservices-s4hanna ]
+    branches: [ main ]
     paths:
       - 'apps/s4hana-mock-server/**'
       - '.github/workflows/s4hana-mock-server-ci.yml'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - 'apps/s4hana-mock-server/**'
 
@@ -195,12 +195,12 @@ jobs:
         name: container-logs
         path: apps/s4hana-mock-server/logs/
 
-  # Push Docker Image (only on main branch)
+  # Push Docker Image
   push-image:
     name: Push Docker Image
     runs-on: ubuntu-latest
     needs: [test, build-and-scan, integration-test]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push'
     
     steps:
     - name: Checkout code
