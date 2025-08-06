@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # S/4HANA Mock Server
+  s4hana-mock-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${S4HANA_MOCK_SERVER_IMAGE:-ghcr.io/adarlegendre/s4hana-mock-server:latest}
+    container_name: s4hana-mock-server
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+    ports:
+      - "${S4HANA_MOCK_PORT:-5001}:5001"
+    volumes:
+      - ./webapp/localService/data:/usr/src/app/webapp/localService/data:ro
+      - ./data:/usr/src/app/data:ro
+    networks:
+      - s4hana-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    labels:
+      - "com.qalitrack.service=s4hana-mock-server"
+      - "com.qalitrack.client=bamburi"
+      - "com.qalitrack.environment=development"
+
+networks:
+  s4hana-network:
+    driver: bridge
+    name: s4hana-network
+
+volumes:
+  s4hana_data:
+    driver: local
+    name: s4hana_data

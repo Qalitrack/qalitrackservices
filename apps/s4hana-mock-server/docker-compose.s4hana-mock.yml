@@ -1,0 +1,72 @@
+version: '3.8'
+
+# S/4HANA Mock Server - Bamburi Cement Integration Development
+services:
+  s4hana-mock-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: qalitrack/s4hana-mock-server:latest
+    container_name: s4hana-mock-server
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - UI5_SERVE_PORT=8080
+      - CLIENT_CODE=bamburi
+      - BAMBURI_COMPANY_CODE=1710
+      - BAMBURI_SALES_ORG=1710
+      - DEFAULT_CURRENCY=KES
+      - MOCK_DATA_REFRESH_INTERVAL=300000
+      - LOG_LEVEL=info
+    volumes:
+      - ./webapp/localService/data:/usr/src/app/webapp/localService/data:ro
+      - ./data/bamburi-master-data:/usr/src/app/data/bamburi-master-data:ro
+      - mock_logs:/usr/src/app/logs
+    networks:
+      - qalitrack-network
+    labels:
+      - "com.qalitrack.service=s4hana-mock-server"
+      - "com.qalitrack.environment=development"
+      - "com.qalitrack.client=bamburi"
+      - "traefik.enable=true"
+      - "traefik.http.routers.s4hana-mock.rule=Host(`s4hana-mock.local`)"
+      - "traefik.http.routers.s4hana-mock.entrypoints=web"
+      - "traefik.http.services.s4hana-mock.loadbalancer.server.port=8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - redis
+      
+  # Redis for caching mock data and session management
+  redis:
+    image: redis:7-alpine
+    container_name: s4hana-mock-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - qalitrack-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  mock_logs:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  qalitrack-network:
+    external: true
