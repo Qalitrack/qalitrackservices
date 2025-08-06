@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using CustomerService.Core.Entities;
 using CustomerService.Core.Interfaces;
 using CustomerService.Infrastructure.Data;
+using System.Linq.Expressions;
 
 namespace CustomerService.Infrastructure.Repositories;
 
@@ -24,6 +25,16 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<T?> GetByIdAsync(string id)
     {
         return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+    }
+
+    public virtual async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
+
+    public virtual async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
     }
 
     public virtual async Task<T> CreateAsync(T entity)

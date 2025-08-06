@@ -1,0 +1,24 @@
+{
+  "name": "s4hana-bamburi-data-setup",
+  "version": "1.0.0",
+  "description": "Automated Bamburi Cement sample data creation for S/4HANA trial",
+  "main": "s4hana-bamburi-data-setup.js",
+  "scripts": {
+    "setup": "node s4hana-bamburi-data-setup.js",
+    "install-deps": "npm install playwright",
+    "install-playwright": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
+  "keywords": [
+    "s4hana",
+    "bamburi",
+    "cement",
+    "automation",
+    "playwright",
+    "sample-data"
+  ],
+  "author": "QaliTrack Development Team",
+  "license": "MIT"
+}

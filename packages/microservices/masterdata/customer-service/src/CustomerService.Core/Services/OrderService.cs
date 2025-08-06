@@ -2,6 +2,7 @@ using AutoMapper;
 using CustomerService.Core.DTOs;
 using CustomerService.Core.Entities;
 using CustomerService.Core.Interfaces;
+using System.Linq;
 
 namespace CustomerService.Core.Services;
 

@@ -27,8 +27,8 @@ run_service_tests() {
     echo -e "${YELLOW}Testing $service_name...${NC}"
     echo "----------------------------------------"
     
-    if [ -f "$service_path/tests/${service_name}Tests.cs" ]; then
-        cd "$service_path" || exit 1
+    if [ -d "$service_path/tests" ]; then
+        cd "$service_path/tests" || exit 1
         
         # Run tests and capture output
         test_output=$(dotnet test --verbosity quiet 2>&1)
@@ -46,7 +46,7 @@ run_service_tests() {
         SERVICES_TESTED=$((SERVICES_TESTED + 1))
         cd - > /dev/null || exit 1
     else
-        echo -e "${YELLOW}⚠️  No test file found for $service_name${NC}"
+        echo -e "${YELLOW}⚠️  No test directory found for $service_name${NC}"
     fi
 }
 
