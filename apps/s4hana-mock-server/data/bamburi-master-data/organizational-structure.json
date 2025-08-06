@@ -1,0 +1,90 @@
+{
+  "companyStructure": {
+    "companyCode": "1710",
+    "companyName": "Bamburi Cement Limited",
+    "currency": "KES",
+    "country": "KE",
+    "language": "EN",
+    "timeZone": "EAT",
+    "fiscalYearVariant": "K4"
+  },
+  "salesStructure": {
+    "salesOrganization": "1710",
+    "salesOrganizationName": "Bamburi Sales Organization",
+    "distributionChannel": "10",
+    "distributionChannelName": "Direct Sales",
+    "division": "00", 
+    "divisionName": "Cement & Concrete"
+  },
+  "plantStructure": {
+    "plants": [
+      {
+        "plantCode": "1000",
+        "plantName": "Bamburi Mombasa Plant",
+        "region": "47",
+        "regionName": "Coast Province",
+        "primaryFunction": "Main production facility",
+        "operationalCapacity": {
+          "cementPerDay": 5000,
+          "cementUnit": "BAG",
+          "concretePerDay": 200,
+          "concreteUnit": "M3"
+        }
+      },
+      {
+        "plantCode": "1100", 
+        "plantName": "Bamburi Athi River Plant",
+        "region": "01",
+        "regionName": "Central Province",
+        "primaryFunction": "Regional distribution center",
+        "operationalCapacity": {
+          "cementPerDay": 4000,
+          "cementUnit": "BAG", 
+          "concretePerDay": 150,
+          "concreteUnit": "M3"
+        }
+      },
+      {
+        "plantCode": "1200",
+        "plantName": "Bamburi Nairobi Grinding Plant", 
+        "region": "01",
+        "regionName": "Central Province",
+        "primaryFunction": "Specialty products & grinding",
+        "operationalCapacity": {
+          "cementPerDay": 2000,
+          "cementUnit": "BAG",
+          "blocksPerDay": 10000,
+          "blocksUnit": "PC",
+          "concretePerDay": 100,
+          "concreteUnit": "M3"
+        }
+      }
+    ]
+  },
+  "systemConfiguration": {
+    "defaultCurrency": "KES",
+    "defaultLanguage": "EN", 
+    "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    "businessHours": {
+      "start": "07:00",
+      "end": "17:00",
+      "timezone": "EAT"
+    },
+    "taxConfiguration": {
+      "standardVATRate": 16.0,
+      "taxClassification": "MWST",
+      "taxReporting": "KRA"
+    }
+  },
+  "integrationSettings": {
+    "mockServerEnabled": true,
+    "apiVersions": {
+      "salesOrderAPI": "v4",
+      "businessPartnerAPI": "v2", 
+      "materialAPI": "v2",
+      "plantAPI": "v2"
+    },
+    "authenticationMode": "mock",
+    "dataRefreshInterval": 300000
+  }
+}

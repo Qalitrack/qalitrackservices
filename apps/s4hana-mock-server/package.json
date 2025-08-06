@@ -1,0 +1,55 @@
+{
+  "name": "s4hana-mock-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SAP S/4HANA OData v4 Mock Server for Bamburi Cement Integration Development",
+  "keywords": [
+    "sap",
+    "s4hana",
+    "odata",
+    "mockserver",
+    "bamburi",
+    "cement"
+  ],
+  "main": "webapp/index.html",
+  "scripts": {
+    "start": "node server.js",
+    "start-ui5": "ui5 serve --config ui5-mock.yaml",
+    "start-local": "ui5 serve --config ui5-local.yaml",
+    "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
+    "lint": "eslint ./",
+    "test": "echo \"Tests to be implemented\"",
+    "docker:build": "docker build -t qalitrack/s4hana-mock-server .",
+    "docker:run": "docker-compose -f docker-compose.s4hana-mock.yml up -d"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.14.7",
+    "@sap-ux/ui5-middleware-fe-mockserver": "^2.2.99",
+    "@sap/eslint-plugin-ui5-jsdocs": "^2.0.5",
+    "@sap/ux-specification": "UI5-1.84",
+    "@sap/ux-ui5-tooling": "^1.7.0",
+    "@sapui5/ts-types": "^1.92.2",
+    "@ui5/cli": "^3.3.4",
+    "eslint": "^7.32.0",
+    "eslint-plugin-fiori-custom": "^2.2.1"
+  },
+  "ui5": {
+    "dependencies": [
+      "@sap/ux-ui5-tooling",
+      "@sap-ux/ui5-middleware-fe-mockserver"
+    ]
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adarlegendre/qalitrackservices"
+  },
+  "author": "QaliTrack Systems",
+  "license": "UNLICENSED"
+}
