@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "2.5"
+metadata:
+  name: s4hana-mock-server
+type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    # Sales Order API Mock
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        service:
+          urlPath: /sap/opu/odata4/sap/api_salesorder/srvd_a2x/sap/salesorder/0001
+          metadataXmlPath: ./webapp/localService/metadata/salesorder-metadata.xml
+          mockdataRootPath: ./webapp/localService/data
+          generateMockData: false
+    # Business Partner API Mock  
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        service:
+          urlPath: /sap/opu/odata/sap/API_BUSINESS_PARTNER
+          metadataXmlPath: ./webapp/localService/metadata/businesspartner-metadata.xml
+          mockdataRootPath: ./webapp/localService/data
+          generateMockData: false
+    # Material API Mock
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        service:
+          urlPath: /sap/opu/odata/sap/API_MATERIAL
+          metadataXmlPath: ./webapp/localService/metadata/material-metadata.xml
+          mockdataRootPath: ./webapp/localService/data
+          generateMockData: false
+    # Plant API Mock
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        service:
+          urlPath: /sap/opu/odata/sap/API_PLANT
+          metadataXmlPath: ./webapp/localService/metadata/plant-metadata.xml
+          mockdataRootPath: ./webapp/localService/data
+          generateMockData: false

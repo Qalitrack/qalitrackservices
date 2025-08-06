@@ -1,0 +1,99 @@
+[
+  {
+    "Plant": "1000",
+    "PlantName": "Bamburi Mombasa Plant",
+    "CompanyCode": "1710",
+    "Country": "KE",
+    "Region": "47",
+    "RegionName": "Coast Province",
+    "CityName": "Mombasa",
+    "StreetAddress": "Industrial Area, Mombasa",
+    "PostalCode": "80100",
+    "Language": "EN",
+    "Currency": "KES",
+    "TimeZone": "EAT",
+    "PlantStatus": "Active",
+    "FactoryCalendar": "K1",
+    "PurchasingOrganization": "1710",
+    "SalesOrganization": "1710",
+    "PrimaryProducts": ["PWRMAX50", "NGUVU50", "RMX-M25"],
+    "Capacity": {
+      "CementPerDay": "5000 BAG",
+      "ConcretePerDay": "200 M3"
+    },
+    "OperationalScope": "All cement types, bulk operations, coastal distribution",
+    "GeoCoordinates": {
+      "Latitude": -4.0435,
+      "Longitude": 39.6682
+    },
+    "ContactInfo": {
+      "Phone": "+254-41-3434000",
+      "Email": "mombasa.plant@bamburi.co.ke"
+    }
+  },
+  {
+    "Plant": "1100",
+    "PlantName": "Bamburi Athi River Plant",
+    "CompanyCode": "1710",
+    "Country": "KE",
+    "Region": "01",
+    "RegionName": "Central Province",
+    "CityName": "Athi River", 
+    "StreetAddress": "Athi River Industrial Area",
+    "PostalCode": "00204",
+    "Language": "EN",
+    "Currency": "KES",
+    "TimeZone": "EAT",
+    "PlantStatus": "Active",
+    "FactoryCalendar": "K1",
+    "PurchasingOrganization": "1710",
+    "SalesOrganization": "1710",
+    "PrimaryProducts": ["NGUVU50", "FUNDI50", "RMX-M25"],
+    "Capacity": {
+      "CementPerDay": "4000 BAG",
+      "ConcretePerDay": "150 M3"
+    },
+    "OperationalScope": "General purpose cement, regional distribution, Nairobi supply",
+    "GeoCoordinates": {
+      "Latitude": -1.4518,
+      "Longitude": 36.9690
+    },
+    "ContactInfo": {
+      "Phone": "+254-20-2020000",
+      "Email": "athiriver.plant@bamburi.co.ke"
+    }
+  },
+  {
+    "Plant": "1200",
+    "PlantName": "Bamburi Nairobi Grinding Plant",
+    "CompanyCode": "1710",
+    "Country": "KE",
+    "Region": "01",
+    "RegionName": "Central Province",
+    "CityName": "Machakos",
+    "StreetAddress": "Katani Quarry, Machakos County",
+    "PostalCode": "90100",
+    "Language": "EN",
+    "Currency": "KES",
+    "TimeZone": "EAT",
+    "PlantStatus": "Active",
+    "FactoryCalendar": "K1",
+    "PurchasingOrganization": "1710",
+    "SalesOrganization": "1710",
+    "PrimaryProducts": ["FUNDI50", "BBLOX01", "RMX-M25"],
+    "Capacity": {
+      "CementPerDay": "2000 BAG",
+      "BlocksPerDay": "10000 PC",
+      "ConcretePerDay": "100 M3"
+    },
+    "OperationalScope": "Specialty products, concrete blocks, grinding operations",
+    "GeoCoordinates": {
+      "Latitude": -1.5177,
+      "Longitude": 37.2634
+    },
+    "ContactInfo": {
+      "Phone": "+254-44-2121000", 
+      "Email": "nairobi.grinding@bamburi.co.ke"
+    }
+  }
+]
