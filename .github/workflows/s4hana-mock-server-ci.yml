@@ -161,7 +161,7 @@ jobs:
         cd apps/s4hana-mock-server
         # Override image in docker-compose for testing
         export S4HANA_MOCK_SERVER_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep s4hana-mock-server | head -n1)
-        docker-compose up -d
+        docker compose up -d
         
         # Wait for service to be ready
         sleep 15
@@ -176,17 +176,17 @@ jobs:
         curl -s http://localhost:5001/health | jq . || exit 1
         
         # Check container is running
-        docker-compose ps
+        docker compose ps
         
         # Cleanup
-        docker-compose down -v
+        docker compose down -v
 
     - name: Collect container logs
       if: failure()
       run: |
         cd apps/s4hana-mock-server
         mkdir -p logs
-        docker-compose logs s4hana-mock-server > logs/s4hana-mock-server.log
+        docker compose logs s4hana-mock-server > logs/s4hana-mock-server.log
 
     - name: Upload container logs
       if: failure()
