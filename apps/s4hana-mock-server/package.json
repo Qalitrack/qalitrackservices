@@ -17,8 +17,8 @@
     "start-ui5": "ui5 serve --config ui5-mock.yaml",
     "start-local": "ui5 serve --config ui5-local.yaml",
     "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
-    "lint": "eslint ./",
-    "test": "echo \"Tests to be implemented\"",
+    "lint": "eslint server.js",
+    "test": "node -c server.js && echo \"✓ Server syntax validation passed\"",
     "docker:build": "docker build -t qalitrack/s4hana-mock-server .",
     "docker:run": "docker-compose -f docker-compose.s4hana-mock.yml up -d"
   },

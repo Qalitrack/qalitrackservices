@@ -13,7 +13,7 @@ app.get('/health', (req, res) => {
         client: 'bamburi',
         apis: {
             salesOrder: 'active',
-            businessPartner: 'active', 
+            businessPartner: 'active',
             material: 'active',
             plant: 'active'
         },
