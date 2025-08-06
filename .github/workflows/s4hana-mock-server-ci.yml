@@ -200,7 +200,6 @@ jobs:
     name: Push Docker Image
     runs-on: ubuntu-latest
     needs: [test, build-and-scan, integration-test]
-    if: github.event_name == 'push'
     
     steps:
     - name: Checkout code
