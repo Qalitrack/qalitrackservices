@@ -15,6 +15,11 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: s4hana-mock-server
 
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
 jobs:
   # Code Quality and Testing
   test:
@@ -112,8 +117,9 @@ jobs:
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       if: always()
+      continue-on-error: true
       with:
         sarif_file: 'trivy-results.sarif'
 
