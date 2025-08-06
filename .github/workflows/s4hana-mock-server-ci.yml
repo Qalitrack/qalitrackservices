@@ -2,18 +2,23 @@ name: S/4HANA Mock Server CI
 
 on:
   push:
-    branches: [ main, develop, qalitrackservices-s4hanna ]
+    branches: [ main ]
     paths:
       - 'apps/s4hana-mock-server/**'
       - '.github/workflows/s4hana-mock-server-ci.yml'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - 'apps/s4hana-mock-server/**'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: s4hana-mock-server
+
+permissions:
+  contents: read
+  packages: write
+  security-events: write
 
 jobs:
   # Code Quality and Testing
@@ -98,7 +103,7 @@ jobs:
         outputs: type=docker,dest=/tmp/s4hana-mock-server-image.tar
 
     - name: Upload Docker image artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: s4hana-mock-server-image
         path: /tmp/s4hana-mock-server-image.tar
@@ -112,8 +117,9 @@ jobs:
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       if: always()
+      continue-on-error: true
       with:
         sarif_file: 'trivy-results.sarif'
 
@@ -125,7 +131,7 @@ jobs:
         output: 'trivy-results.json'
 
     - name: Upload Trivy JSON results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: trivy-scan-results
@@ -142,7 +148,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Download Docker image
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: s4hana-mock-server-image
         path: /tmp
@@ -155,7 +161,7 @@ jobs:
         cd apps/s4hana-mock-server
         # Override image in docker-compose for testing
         export S4HANA_MOCK_SERVER_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep s4hana-mock-server | head -n1)
-        docker-compose up -d
+        docker compose up -d
         
         # Wait for service to be ready
         sleep 15
@@ -170,31 +176,30 @@ jobs:
         curl -s http://localhost:5001/health | jq . || exit 1
         
         # Check container is running
-        docker-compose ps
+        docker compose ps
         
         # Cleanup
-        docker-compose down -v
+        docker compose down -v
 
     - name: Collect container logs
       if: failure()
       run: |
         cd apps/s4hana-mock-server
         mkdir -p logs
-        docker-compose logs s4hana-mock-server > logs/s4hana-mock-server.log
+        docker compose logs s4hana-mock-server > logs/s4hana-mock-server.log
 
     - name: Upload container logs
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: container-logs
         path: apps/s4hana-mock-server/logs/
 
-  # Push Docker Image (only on main branch)
+  # Push Docker Image
   push-image:
     name: Push Docker Image
     runs-on: ubuntu-latest
     needs: [test, build-and-scan, integration-test]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
     - name: Checkout code
@@ -234,6 +239,7 @@ jobs:
 
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v1
+      continue-on-error: true
       with:
         subject-name: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
         subject-digest: ${{ steps.build-and-push.outputs.digest }}
