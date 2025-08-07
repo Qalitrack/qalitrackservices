@@ -1,23 +1,42 @@
-# S/4HANA Mock Server - Bamburi Cement Integration
+# S/4HANA Public Edition Integration
 
-A comprehensive SAP S/4HANA OData v4 mock server designed specifically for Bamburi Cement integration development. Built using SAP's official `@sap-ux/ui5-middleware-fe-mockserver` with realistic Kenyan business data and multi-plant operations.
+Complete integration server implementation for SAP S/4HANA Public Edition with enterprise business processes, including weight measurements, sales orders, and plant operations.
 
-## 🏗️ Architecture Overview
+## Features
 
-This mock server provides a complete S/4HANA API simulation environment without requiring production system access. It includes:
+- 🏗️ **Comprehensive API Endpoints** - Full REST API for all S/4HANA business objects
+- ⚖️ **Weight Measurement Business Logic** - Entry/exit weighbridge operations with automatic calculations
+- 📖 **Dual API Documentation** - Swagger UI and ReDoc interfaces
+- 🎨 **SAP S/4HANA Branding** - Themed UI with SAP colors and favicon
+- 🔒 **SSL-Ready Nginx Proxy** - Automatic Let's Encrypt certificate management
+- 🐳 **Docker Containerization** - Production-ready deployment with Docker Compose
 
-- **Multi-API Support**: Sales Order, Business Partner, Material Master, and Plant APIs
-- **Bamburi-Specific Data**: 3 plants, 5 business partners, 5 products, realistic scenarios
-- **Kenyan Localization**: KES currency, Kenyan addresses, local business practices
-- **Docker Integration**: Seamless container deployment with existing infrastructure
+## Quick Start
 
-## 🚀 Quick Start
+### Development Mode
+```bash
+npm install
+npm start
+```
+Access at: http://localhost:5001
 
-### Prerequisites
+### Docker Deployment (Basic)
+```bash
+npm run docker:build
+npm run docker:run
+```
 
-- Node.js 18+ 
-- Docker & Docker Compose
-- npm 6+
+### Docker Deployment with SSL Nginx Proxy
+```bash
+# For production deployment with qalibrated.cseco.co.ke domain
+npm run docker:run-nginx
+```
+
+## API Documentation
+
+- **Swagger UI**: https://qalibrated.cseco.co.ke/api-docs
+- **ReDoc**: https://qalibrated.cseco.co.ke/redoc  
+- **Health Check**: https://qalibrated.cseco.co.ke/health
 
 ### 1. Installation
 
@@ -41,15 +60,15 @@ Once running, the following APIs are available:
 - **Material API**: http://localhost:8080/sap/opu/odata/sap/API_MATERIAL
 - **Plant API**: http://localhost:8080/sap/opu/odata/sap/API_PLANT
 
-## 📊 Bamburi Master Data
+## 📊 Enterprise Master Data
 
 ### 🏭 Plants (3 Locations)
 
 | Plant Code | Name | Location | Products |
 |------------|------|----------|----------|
-| 1000 | Bamburi Mombasa Plant | Industrial Area, Mombasa | Premium & General cement, Readymix |
-| 1100 | Bamburi Athi River Plant | Athi River Industrial Area | General & Economy cement, Readymix |
-| 1200 | Bamburi Nairobi Grinding Plant | Katani Quarry, Machakos | Economy cement, Concrete blocks |
+| 1000 | Manufacturing Plant A | Industrial Area, Region A | Premium & Standard products, Readymix |
+| 1100 | Manufacturing Plant B | Regional Industrial Area | Standard & Economy products, Readymix |
+| 1200 | Manufacturing Plant C | Distribution Center | Economy products, Specialty items |
 
 ### 👥 Business Partners
 

@@ -1,0 +1,89 @@
+# Docker Compose configuration for S/4HANA Mock Server with Nginx SSL Proxy
+
+services:
+  s4hana-mock-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: s4hana-mock-server
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+    volumes:
+      - ./logs:/usr/src/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - s4hana-network
+    labels:
+      - "com.docker.compose.project=s4hana-mock-server"
+      - "com.docker.compose.service=app"
+    # Only expose internally to nginx - no external ports
+    expose:
+      - "5001"
+
+  nginx:
+    image: nginx:alpine
+    container_name: s4hana-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/templates:/etc/nginx/templates
+      - ./nginx/domains.txt:/etc/nginx/domains.txt:ro
+      - ./nginx/entrypoint.sh:/docker-entrypoint.d/30-setup-ssl.sh:ro
+      - ./logs/nginx:/var/log/nginx
+      - certbot-web:/var/www/certbot
+      - certbot-certs:/etc/letsencrypt
+    environment:
+      - NGINX_HOST=${NGINX_HOST:-qalibrated.cseco.co.ke}
+      - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/templates
+    depends_on:
+      s4hana-mock-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - s4hana-network
+    labels:
+      - "com.docker.compose.project=s4hana-mock-server"
+      - "com.docker.compose.service=nginx"
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: s4hana-certbot
+    volumes:
+      - certbot-web:/var/www/certbot
+      - certbot-certs:/etc/letsencrypt
+    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@qalibrated.cseco.co.ke --agree-tos --no-eff-email -d qalibrated.cseco.co.ke
+    depends_on:
+      - nginx
+    networks:
+      - s4hana-network
+    labels:
+      - "com.docker.compose.project=s4hana-mock-server"
+      - "com.docker.compose.service=certbot"
+
+networks:
+  s4hana-network:
+    driver: bridge
+    name: s4hana-network
+
+volumes:
+  certbot-web:
+    name: s4hana-certbot-web
+  certbot-certs:
+    name: s4hana-certbot-certs

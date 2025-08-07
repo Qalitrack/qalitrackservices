@@ -1,15 +1,15 @@
 {
-  "name": "s4hana-mock-server",
+  "name": "s4hana-public-edition-integration",
   "version": "1.0.0",
   "private": true,
-  "description": "SAP S/4HANA OData v4 Mock Server for Bamburi Cement Integration Development",
+  "description": "SAP S/4HANA Public Edition OData v4 Integration Server for Development and Testing",
   "keywords": [
     "sap",
     "s4hana",
     "odata",
-    "mockserver",
-    "bamburi",
-    "cement"
+    "integration",
+    "public-edition",
+    "development"
   ],
   "main": "webapp/index.html",
   "scripts": {
@@ -20,10 +20,13 @@
     "lint": "eslint server.js",
     "test": "node -c server.js && echo \"✓ Server syntax validation passed\"",
     "docker:build": "docker build -t qalitrack/s4hana-mock-server .",
-    "docker:run": "docker-compose -f docker-compose.s4hana-mock.yml up -d"
+    "docker:run": "docker-compose -f docker-compose.s4hana-mock.yml up -d",
+    "docker:run-nginx": "docker-compose -f docker-compose.s4hana-nginx.yml up -d",
+    "docker:stop-nginx": "docker-compose -f docker-compose.s4hana-nginx.yml down"
   },
   "dependencies": {
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "redoc-express": "^2.1.0",
     "swagger-ui-express": "^5.0.1"
   },

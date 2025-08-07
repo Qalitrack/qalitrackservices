@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S/4HANA Public Edition Authentication Demo</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.ico">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #008866 0%, #112620 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 { color: #fff; text-align: center; margin-bottom: 30px; }
+        .auth-section {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff88;
+        }
+        .auth-section h3 { margin-top: 0; color: #00ff88; }
+        .code-block { 
+            font-family: monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        .button {
+            background: #00ff88;
+            color: #000;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .button:hover {
+            background: #00cc66;
+        }
+        .response {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error { border-left: 4px solid #ff4444; }
+        .success { border-left: 4px solid #00ff88; }
+        .warning {
+            background: rgba(255, 165, 0, 0.2);
+            border-left: 4px solid #FFA500;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .user-card {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 S/4HANA Public Edition Authentication Demo</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Business Users cannot access S/4HANA APIs. Only Communication Users are permitted for system-to-system integration as per SAP requirements (Issue #15).
+        </div>
+
+        <div class="auth-section">
+            <h3>📋 Available Communication Users</h3>
+            <div class="users-grid">
+                <div class="user-card">
+                    <h4>QALI_API_USER (Full Access)</h4>
+                    <p><strong>Password:</strong> QaliTrack2025!</p>
+                    <p><strong>Permissions:</strong> Read/Create/Update</p>
+                    <p><strong>Auth Methods:</strong> Basic, OAuth 2.0</p>
+                    <p><strong>Arrangement:</strong> QALITRACK_SALES_ORDER_API</p>
+                </div>
+                <div class="user-card">
+                    <h4>QALI_READ_USER (Read-Only)</h4>
+                    <p><strong>Password:</strong> ReadOnly2025!</p>
+                    <p><strong>Permissions:</strong> Read-only</p>
+                    <p><strong>Auth Methods:</strong> Basic, OAuth 2.0, API Key</p>
+                    <p><strong>Arrangement:</strong> QALITRACK_READ_API</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-section">
+            <h3>🔑 Method 1: Basic Authentication</h3>
+            <p>Communication User Basic Authentication (Production Pattern)</p>
+            <div class="code-block">curl -X POST /auth/communicate/basic \
+  -H "Authorization: Basic $(echo -n 'QALI_API_USER:QaliTrack2025!' | base64)"</div>
+            <button class="button" onclick="testBasicAuth()">Test Basic Auth</button>
+            <div id="basic-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="auth-section">
+            <h3>🚀 Method 2: OAuth 2.0</h3>
+            <p>Communication User OAuth 2.0 Flow (Enterprise Pattern)</p>
+            <div class="code-block">curl -X POST /auth/oauth2/token \
+  -H "Content-Type: application/json" \
+  -d '{
+    "grant_type": "password",
+    "username": "QALI_API_USER",
+    "password": "QaliTrack2025!"
+  }'</div>
+            <button class="button" onclick="testOAuth()">Test OAuth 2.0</button>
+            <div id="oauth-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="auth-section">
+            <h3>🔐 Method 3: API Key (Read-Only)</h3>
+            <p>API Key Authentication for Read-Only Operations</p>
+            <div class="code-block">curl -X POST /auth/authenticate/apikey \
+  -H "Content-Type: application/json" \
+  -d '{
+    "api_key": "QALI_READ_UUFMSV9SRUFEX1VTRVI6MTY0MTQwNDgwMA=="
+  }'</div>
+            <button class="button" onclick="testAPIKey()">Test API Key</button>
+            <div id="apikey-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="auth-section">
+            <h3>📊 Test Protected API Access</h3>
+            <p>Test API access with your authentication token</p>
+            <input type="text" id="auth-token" placeholder="Paste your access token here..." style="width: 100%; padding: 10px; margin: 10px 0; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 5px;">
+            <button class="button" onclick="testAPIAccess()">Test API Access</button>
+            <div id="api-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="auth-section">
+            <h3>🏗️ Communication Arrangements</h3>
+            <p>View configured Communication Arrangements (SAP Configuration)</p>
+            <button class="button" onclick="viewArrangements()">View Arrangements</button>
+            <div id="arrangements-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" class="button">← Back to Main Interface</a>
+            <a href="/api-docs" class="button">📖 API Documentation</a>
+        </div>
+    </div>
+
+    <script>
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                return { success: response.ok, status: response.status, data };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function displayResponse(elementId, result) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `response ${result.success ? 'success' : 'error'}`;
+            element.innerHTML = `
+                <strong>Status:</strong> ${result.status || 'Error'}<br>
+                <strong>Response:</strong><br>
+                <pre>${JSON.stringify(result.data || result.error, null, 2)}</pre>
+            `;
+        }
+
+        async function testBasicAuth() {
+            const credentials = btoa('QALI_API_USER:QaliTrack2025!');
+            const result = await makeRequest('/auth/communicate/basic', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Basic ${credentials}`
+                }
+            });
+            displayResponse('basic-response', result);
+        }
+
+        async function testOAuth() {
+            const result = await makeRequest('/auth/oauth2/token', {
+                method: 'POST',
+                body: JSON.stringify({
+                    grant_type: 'password',
+                    username: 'QALI_API_USER',
+                    password: 'QaliTrack2025!'
+                })
+            });
+            displayResponse('oauth-response', result);
+        }
+
+        async function testAPIKey() {
+            const result = await makeRequest('/auth/authenticate/apikey', {
+                method: 'POST',
+                body: JSON.stringify({
+                    api_key: 'QALI_READ_UUFMSV9SRUFEX1VTRVI6MTY0MTQwNDgwMA=='
+                })
+            });
+            displayResponse('apikey-response', result);
+        }
+
+        async function testAPIAccess() {
+            const token = document.getElementById('auth-token').value.trim();
+            if (!token) {
+                alert('Please enter an access token first');
+                return;
+            }
+
+            const result = await makeRequest('/api/sales-orders', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            displayResponse('api-response', result);
+        }
+
+        async function viewArrangements() {
+            const result = await makeRequest('/auth/communication/arrangements');
+            displayResponse('arrangements-response', result);
+        }
+
+        // Auto-generate API key example
+        document.addEventListener('DOMContentLoaded', function() {
+            const keyData = btoa('QALI_READ_USER:' + Date.now());
+            const apiKey = 'QALI_READ_' + keyData;
+            
+            // Update the API key example in the code block
+            const codeBlocks = document.querySelectorAll('.code-block');
+            codeBlocks[2].innerHTML = codeBlocks[2].innerHTML.replace(
+                'QALI_READ_UUFMSV9SRUFEX1VTRVI6MTY0MTQwNDgwMA==',
+                keyData
+            );
+        });
+    </script>
+</body>
+</html>
