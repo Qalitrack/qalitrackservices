@@ -4,6 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const redoc = require('redoc-express');
 const swaggerDocument = require('./swagger.json');
 const apiRoutes = require('./routes/api');
+const { router: authRoutes } = require('./routes/auth');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -14,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 // API Documentation - Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'S/4HANA Mock Server API - Bamburi Cement',
+    customSiteTitle: 'S/4HANA Public Edition Integration API',
     customfavIcon: '/favicon.ico',
     swaggerOptions: {
         persistAuthorization: true,
@@ -24,7 +25,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 
 // API Documentation - ReDoc
 app.get('/redoc', redoc({
-    title: 'S/4HANA Mock Server API - ReDoc',
+    title: 'S/4HANA Public Edition Integration API - ReDoc',
     specUrl: '/swagger.json'
 }));
 
@@ -33,7 +34,10 @@ app.get('/swagger.json', (req, res) => {
     res.json(swaggerDocument);
 });
 
-// API Routes
+// Authentication Routes (public - no auth required)
+app.use('/auth', authRoutes);
+
+// API Routes (protected - authentication required)
 app.use('/api', apiRoutes);
 
 // Health endpoint
@@ -42,8 +46,8 @@ app.get('/health', (req, res) => {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         version: '1.0.0',
-        service: 's4hana-mock-server',
-        client: 'bamburi',
+        service: 's4hana-public-edition-integration',
+        client: 'development',
         apis: {
             salesOrder: 'active',
             businessPartner: 'active',
@@ -65,7 +69,19 @@ app.get('/health', (req, res) => {
             redoc: '/redoc',
             swagger: '/swagger.json',
             health: '/health',
-            api: '/api'
+            api: '/api',
+            authentication: '/auth'
+        },
+        authentication: {
+            communicationUsers: {
+                total: 2,
+                endpoints: [
+                    'POST /auth/communicate/basic - Communication User Basic Authentication',
+                    'POST /auth/oauth2/token - Communication User OAuth 2.0',
+                    'POST /auth/authenticate/apikey - API Key Authentication (Read-only)'
+                ]
+            },
+            note: 'Business Users cannot access APIs - only Communication Users as per SAP S/4HANA Cloud requirements'
         }
     });
 });
@@ -79,7 +95,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 S/4HANA Mock Server running on port ${PORT}`);
+    console.log(`🚀 S/4HANA Public Edition Integration running on port ${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
     console.log(`🌐 Web interface: http://localhost:${PORT}/`);
     console.log(`🌍 External access: http://[your-ip]:${PORT}/`);
