@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "S/4HANA Mock Server - Bamburi Cement Integration API",
-    "description": "Complete mock server for SAP S/4HANA integration with Bamburi Cement business processes including weight measurements, sales orders, and plant operations.",
+    "title": "S/4HANA Public Edition Integration API",
+    "description": "Complete integration server for SAP S/4HANA Public Edition with enterprise business processes including weight measurements, sales orders, and plant operations.",
     "version": "1.0.0",
     "contact": {
       "name": "QaliTrack Systems",
