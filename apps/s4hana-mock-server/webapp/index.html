@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S/4HANA Mock Server - Bamburi Cement Integration</title>
+    <title>S/4HANA Public Edition Integration</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="alternate icon" href="/favicon.ico">
     <style>
@@ -11,7 +11,7 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #008866 0%, #112620 100%);
+            background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%);
             color: white;
             min-height: 100vh;
         }
@@ -34,9 +34,9 @@
             background: rgba(255,255,255,0.2);
             padding: 20px;
             border-radius: 10px;
-            border-left: 4px solid #00ff88;
+            border-left: 4px solid #0088ff;
         }
-        .api-card h3 { margin-top: 0; color: #00ff88; }
+        .api-card h3 { margin-top: 0; color: #0088ff; }
         .endpoint { 
             font-family: monospace;
             background: rgba(0,0,0,0.3);
@@ -62,15 +62,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>🏗️ S/4HANA Mock Server - Bamburi Cement Integration</h1>
+        <h1>🏗️ S/4HANA Public Edition Integration</h1>
         
         <div class="data-summary">
-            <h2>📊 Bamburi Master Data Summary</h2>
+            <h2>📊 S/4HANA Public Edition Mock Data</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <div><strong>🏭 Plants:</strong> 3 locations<br><small>Mombasa, Athi River, Nairobi</small></div>
-                <div><strong>👥 Customers:</strong> 3 segments<br><small>Large, Regional, Individual</small></div>
-                <div><strong>📦 Products:</strong> 5 items<br><small>Cement & Concrete portfolio</small></div>
-                <div><strong>📋 Orders:</strong> 3 scenarios<br><small>16.675M, 2.56M, 75K KES</small></div>
+                <div><strong>🏭 Plants:</strong> 3 locations<br><small>Multi-plant operations</small></div>
+                <div><strong>👥 Customers:</strong> 3 segments<br><small>Enterprise, Regional, Individual</small></div>
+                <div><strong>📦 Products:</strong> 5 items<br><small>Manufacturing portfolio</small></div>
+                <div><strong>📋 Orders:</strong> 3 scenarios<br><small>Large, Medium, Small orders</small></div>
             </div>
         </div>
 
@@ -79,7 +79,7 @@
                 <h3>📋 Sales Orders API</h3>
                 <span class="status active">CRUD</span>
                 <div class="endpoint">GET/POST/PUT /api/sales-orders</div>
-                <p>Complete sales order management with Bamburi business scenarios and KES pricing.</p>
+                <p>Complete sales order management with enterprise business scenarios and multi-currency support.</p>
             </div>
 
             <div class="api-card">
@@ -100,14 +100,14 @@
                 <h3>👥 Business Partners API</h3>
                 <span class="status active">Read</span>
                 <div class="endpoint">GET /api/business-partners</div>
-                <p>Customer/vendor master data with Kenyan addresses and credit limits.</p>
+                <p>Customer/vendor master data with international addresses and credit limits.</p>
             </div>
 
             <div class="api-card">
                 <h3>📦 Materials API</h3>
                 <span class="status active">Read</span>
                 <div class="endpoint">GET /api/materials</div>
-                <p>Complete cement portfolio: PowerMax, Nguvu, Fundi, BamburiBlox, Readymix with weights.</p>
+                <p>Complete manufacturing portfolio with product hierarchies, pricing, and inventory data.</p>
             </div>
 
             <div class="api-card">
@@ -119,9 +119,10 @@
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
-            <p><strong>Status:</strong> <span class="status active">Mock Server Running</span></p>
+            <p><strong>Status:</strong> <span class="status active">Integration Server Running</span></p>
             <div style="margin: 20px 0;">
-                <a href="/api-docs" style="display: inline-block; background: #00ff88; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">📖 Swagger UI</a>
+                <a href="/auth-demo.html" style="display: inline-block; background: #ff6600; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">🔐 Authentication Demo</a>
+                <a href="/api-docs" style="display: inline-block; background: #0088ff; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">📖 Swagger UI</a>
                 <a href="/redoc" style="display: inline-block; background: #007acc; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">📚 ReDoc</a>
                 <a href="/health" style="display: inline-block; background: rgba(255,255,255,0.2); color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 5px;">🏥 Health Check</a>
             </div>

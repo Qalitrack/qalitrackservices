@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
+const { validateToken } = require('./auth');
 
 // In-memory data stores (mock persistence)
 let salesOrders = [];
@@ -147,12 +148,31 @@ function calculateNetWeight(weight, tareWeight) {
     return Math.max(0, weight - (tareWeight || 0));
 }
 
+// Apply authentication middleware to all API routes
+router.use(validateToken);
+
+// Permission check middleware
+const requirePermission = (permission) => {
+    return (req, res, next) => {
+        if (!req.user.permissions.includes(permission)) {
+            return res.status(403).json({
+                error: 'INSUFFICIENT_PERMISSIONS',
+                message: `Required permission: ${permission}`,
+                userPermissions: req.user.permissions,
+                communicationUser: req.user.sub,
+                hint: 'Contact administrator to update Communication User permissions in Communication Arrangement'
+            });
+        }
+        next();
+    };
+};
+
 // Master Data Endpoints (Read-only)
-router.get('/business-partners', (req, res) => {
+router.get('/business-partners', requirePermission('businesspartner:read'), (req, res) => {
     res.json(initialData.businessPartners);
 });
 
-router.get('/business-partners/:id', (req, res) => {
+router.get('/business-partners/:id', requirePermission('businesspartner:read'), (req, res) => {
     const partner = initialData.businessPartners.find(bp => bp.BusinessPartner === req.params.id);
     if (!partner) {
         return res.status(404).json({ error: 'Business partner not found' });
@@ -160,11 +180,11 @@ router.get('/business-partners/:id', (req, res) => {
     res.json(partner);
 });
 
-router.get('/materials', (req, res) => {
+router.get('/materials', requirePermission('material:read'), (req, res) => {
     res.json(initialData.materials);
 });
 
-router.get('/materials/:id', (req, res) => {
+router.get('/materials/:id', requirePermission('material:read'), (req, res) => {
     const material = initialData.materials.find(m => m.MaterialCode === req.params.id);
     if (!material) {
         return res.status(404).json({ error: 'Material not found' });
@@ -172,11 +192,11 @@ router.get('/materials/:id', (req, res) => {
     res.json(material);
 });
 
-router.get('/plants', (req, res) => {
+router.get('/plants', requirePermission('plant:read'), (req, res) => {
     res.json(initialData.plants);
 });
 
-router.get('/plants/:id', (req, res) => {
+router.get('/plants/:id', requirePermission('plant:read'), (req, res) => {
     const plant = initialData.plants.find(p => p.PlantCode === req.params.id);
     if (!plant) {
         return res.status(404).json({ error: 'Plant not found' });
@@ -185,11 +205,11 @@ router.get('/plants/:id', (req, res) => {
 });
 
 // Sales Orders (CRUD)
-router.get('/sales-orders', (req, res) => {
+router.get('/sales-orders', requirePermission('salesorder:read'), (req, res) => {
     res.json(salesOrders);
 });
 
-router.get('/sales-orders/:orderId', (req, res) => {
+router.get('/sales-orders/:orderId', requirePermission('salesorder:read'), (req, res) => {
     const order = salesOrders.find(so => so.SalesOrderNumber === req.params.orderId);
     if (!order) {
         return res.status(404).json({ error: 'Sales order not found' });
@@ -197,7 +217,7 @@ router.get('/sales-orders/:orderId', (req, res) => {
     res.json(order);
 });
 
-router.post('/sales-orders', (req, res) => {
+router.post('/sales-orders', requirePermission('salesorder:create'), (req, res) => {
     try {
         const { SoldToParty, RequestedDeliveryDate, Plant, Items } = req.body;
         
@@ -252,7 +272,7 @@ router.post('/sales-orders', (req, res) => {
     }
 });
 
-router.put('/sales-orders/:orderId', (req, res) => {
+router.put('/sales-orders/:orderId', requirePermission('salesorder:update'), (req, res) => {
     const orderIndex = salesOrders.findIndex(so => so.SalesOrderNumber === req.params.orderId);
     if (orderIndex === -1) {
         return res.status(404).json({ error: 'Sales order not found' });
