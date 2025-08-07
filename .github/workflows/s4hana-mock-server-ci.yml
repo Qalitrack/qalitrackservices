@@ -170,7 +170,7 @@ jobs:
         curl -f http://localhost:5001/health || exit 1
         
         # Test web interface
-        curl -f http://localhost:5001/ | grep "S/4HANA Mock Server" || exit 1
+        curl -f http://localhost:5001/ | grep "S/4HANA Public Edition Integration" || exit 1
         
         # Test API endpoints structure (check if JSON response is valid)
         curl -s http://localhost:5001/health | jq . || exit 1
