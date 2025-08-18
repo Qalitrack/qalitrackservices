@@ -1,135 +1,170 @@
-// src/components/WeighingForm.jsx
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { startWeighing } from "../store/weighingSlice";
-import { Truck, Package, User } from "lucide-react";
+import { addTransaction } from "../store/weighingSlice";
+import { Truck, ClipboardList, User, Package } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function WeighingForm() {
   const dispatch = useDispatch();
 
-  const [transactionType, setTransactionType] = useState("inbound");
-  const [plate, setPlate] = useState("");
-  const [orderId, setOrderId] = useState("");
-  const [driverName, setDriverName] = useState("");
-  const [batchNo, setBatchNo] = useState("");
-  const [w1, setW1] = useState("");
+  const [form, setForm] = useState({
+    type: "inbound",
+    plate: "",
+    driver: "",
+    orderId: "",
+    batch: "",
+    w1: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!plate || !orderId || !w1) {
-      alert("Plate, Order ID, and Weight 1 are required.");
+
+    if (!form.plate || !form.driver || !form.orderId || !form.w1) {
+      toast.error("Please fill all required fields");
       return;
     }
 
     dispatch(
-      startWeighing({
-        type: transactionType,
-        plate,
-        orderId,
-        driverName,
-        batchNo,
-        w1: parseFloat(w1),
+      addTransaction({
+        ...form,
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        w1: parseFloat(form.w1),
+        w2: null,
+        ttat: null,
+        deactivated: false,
       })
     );
 
-    // Reset
-    setPlate("");
-    setOrderId("");
-    setDriverName("");
-    setBatchNo("");
-    setW1("");
+    toast.success("Transaction saved");
+
+    setForm({
+      type: "inbound",
+      plate: "",
+      driver: "",
+      orderId: "",
+      batch: "",
+      w1: "",
+    });
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white shadow rounded-lg p-4 space-y-4 border"
+      className="bg-white shadow-md rounded-lg p-4 border space-y-4"
     >
-      <h2 className="text-lg font-semibold text-gray-700">New Weighing Transaction</h2>
+      <h2 className="text-xl font-bold text-amber-600 flex items-center gap-2">
+        <ClipboardList className="w-5 h-5" /> New Weighing Transaction
+      </h2>
 
       {/* Transaction Type */}
-      <div className="flex items-center gap-4">
-        <label className="font-medium text-gray-600">Transaction Type:</label>
+      <div>
+        <label className="block font-medium text-gray-700">Transaction Type</label>
         <select
-          value={transactionType}
-          onChange={(e) => setTransactionType(e.target.value)}
-          className="border rounded px-3 py-2"
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+          className="border rounded px-3 py-2 w-full"
         >
           <option value="inbound">Inbound</option>
           <option value="outbound">Outbound</option>
         </select>
       </div>
 
-      {/* ERP Integration placeholder */}
-      {/* 
-        In future, fetch order, driver, and batch details from ERP based on orderId.
-      */}
-
-      {/* Plate & Order */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {/* Plate Number */}
+      <div>
+        <label className="block font-medium text-gray-700">Plate Number</label>
         <div className="flex items-center border rounded px-2">
-          <Truck className="w-5 h-5 text-gray-500 mr-2" />
+          <Truck className="w-4 h-4 text-gray-500 mr-2" />
           <input
             type="text"
-            placeholder="Plate Number"
-            value={plate}
-            onChange={(e) => setPlate(e.target.value)}
-            className="w-full py-2 outline-none"
-          />
-        </div>
-        <div className="flex items-center border rounded px-2">
-          <Package className="w-5 h-5 text-gray-500 mr-2" />
-          <input
-            type="text"
-            placeholder="Order ID"
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
-            className="w-full py-2 outline-none"
+            name="plate"
+            value={form.plate}
+            onChange={handleChange}
+            className="flex-1 py-2 outline-none"
+            placeholder="e.g. KAA 123A"
+            required
           />
         </div>
       </div>
 
-      {/* Driver & Batch */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {/* Driver Name */}
+      <div>
+        <label className="block font-medium text-gray-700">Driver Name</label>
         <div className="flex items-center border rounded px-2">
-          <User className="w-5 h-5 text-gray-500 mr-2" />
+          <User className="w-4 h-4 text-gray-500 mr-2" />
           <input
             type="text"
-            placeholder="Driver Name"
-            value={driverName}
-            onChange={(e) => setDriverName(e.target.value)}
-            className="w-full py-2 outline-none"
-          />
-        </div>
-        <div className="flex items-center border rounded px-2">
-          <Package className="w-5 h-5 text-gray-500 mr-2" />
-          <input
-            type="text"
-            placeholder="Batch No."
-            value={batchNo}
-            onChange={(e) => setBatchNo(e.target.value)}
-            className="w-full py-2 outline-none"
+            name="driver"
+            value={form.driver}
+            onChange={handleChange}
+            className="flex-1 py-2 outline-none"
+            placeholder="Driver full name"
+            required
           />
         </div>
       </div>
 
-      {/* Weight 1 */}
-      <div className="flex items-center border rounded px-2">
+      {/* Order ID */}
+      <div>
+        <label className="block font-medium text-gray-700">Order ID</label>
+        <div className="flex items-center border rounded px-2">
+          <Package className="w-4 h-4 text-gray-500 mr-2" />
+          <input
+            type="text"
+            name="orderId"
+            value={form.orderId}
+            onChange={handleChange}
+            className="flex-1 py-2 outline-none"
+            placeholder="Order number"
+            required
+          />
+        </div>
+      </div>
+
+      {/* Batch */}
+      <div>
+        <label className="block font-medium text-gray-700">Batch</label>
         <input
-          type="number"
-          placeholder="Weight 1 (kg)"
-          value={w1}
-          onChange={(e) => setW1(e.target.value)}
-          className="w-full py-2 outline-none"
+          type="text"
+          name="batch"
+          value={form.batch}
+          onChange={handleChange}
+          className="border rounded px-3 py-2 w-full"
+          placeholder="Batch number"
         />
       </div>
 
+      {/* Weight 1 */}
+      <div>
+        <label className="block font-medium text-gray-700">Weight 1 (Tons)</label>
+        <input
+          type="number"
+          name="w1"
+          value={form.w1}
+          onChange={handleChange}
+          className="border rounded px-3 py-2 w-full"
+          placeholder="First weight"
+          required
+        />
+      </div>
+
+      {/* Submit */}
       <button
         type="submit"
-        className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600"
+        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded w-full font-semibold"
       >
-        Start Weighing
+        Save Transaction
       </button>
+
+      <p className="text-xs text-gray-500">
+        * ERP Integration for fetching driver/order/batch info will be added later.
+      </p>
     </form>
   );
 }

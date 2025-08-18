@@ -1,54 +1,57 @@
-// src/store/weighingSlice.js
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const weighingSlice = createSlice({
-  name: 'weighing',
+  name: "weighing",
   initialState: {
     transactions: [],
   },
   reducers: {
-    startWeighing: {
-      reducer(state, action) {
-        state.transactions.push(action.payload);
-      },
-      prepare({ type, driver, plate, orderId, batch, w1 }) {
-        return {
-          payload: {
-            id: nanoid(),
-            type,
-            driver,
-            plate,
-            orderId,
-            batch,
-            w1,
-            w2: null,
-            ttat: null,
-            status: 'active', // active | deactivated
-            date: new Date().toISOString(),
-          },
-        };
-      },
+    addTransaction: (state, action) => {
+      state.transactions.push({
+        ...action.payload,
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        w2: null,
+        net: null,
+        ttat: null,
+        deactivated: false,
+      });
     },
-    completeWeighing(state, action) {
+    completeWeighing: (state, action) => {
       const { id, w2 } = action.payload;
-      const tx = state.transactions.find(t => t.id === id);
+      const tx = state.transactions.find((t) => t.id === id);
+
       if (tx) {
+        // Business rules
+        if (tx.direction === "inbound" && w2 >= tx.w1) {
+          throw new Error("Inbound transaction invalid: W2 must be less than W1.");
+        }
+        if (tx.direction === "outbound" && w2 <= tx.w1) {
+          throw new Error("Outbound transaction invalid: W2 must be greater than W1.");
+        }
+
+        // Valid transaction → update
         tx.w2 = w2;
-        // Example TTAT: seconds between now & creation
-        const start = new Date(tx.date).getTime();
-        const end = Date.now();
-        tx.ttat = Math.round((end - start) / 1000);
+        tx.ttat = Math.floor((Date.now() - new Date(tx.date)) / 1000);
+
+        // Auto calculate net
+        if (tx.direction === "inbound") {
+          tx.net = tx.w1 - w2;
+        } else if (tx.direction === "outbound") {
+          tx.net = w2 - tx.w1;
+        }
       }
     },
-    deactivateTransaction(state, action) {
-      const id = action.payload;
-      const tx = state.transactions.find(t => t.id === id);
-      if (tx && !tx.w2) {
-        tx.status = 'deactivated';
+    deactivateTransaction: (state, action) => {
+      const tx = state.transactions.find((t) => t.id === action.payload);
+      if (tx) {
+        tx.deactivated = true;
       }
     },
   },
 });
 
-export const { startWeighing, completeWeighing, deactivateTransaction } = weighingSlice.actions;
+export const { addTransaction, completeWeighing, deactivateTransaction } =
+  weighingSlice.actions;
+
 export default weighingSlice.reducer;

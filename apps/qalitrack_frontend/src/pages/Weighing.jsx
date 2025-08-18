@@ -1,18 +1,19 @@
-// src/pages/Weighing.jsx
 import { Suspense, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { deactivateTransaction, completeWeighing } from "../store/weighingSlice";
 import { Loader2 } from "lucide-react";
+import { deactivateTransaction, completeWeighing } from "../store/weighingSlice";
 
-// Lazy load heavy sections
-const WeighingForm = lazy(() => import("../components/WeighingForm"));
-const WeighingTable = lazy(() => import("../components/WeighingTable"));
+// Lazy load heavy components
+const WeighbridgePanel = lazy(() => import("../components/WeighbridgePanel"));
 const CameraGrid = lazy(() => import("../components/CameraGrid"));
-
+const WeighingForm = lazy(() => import("../components/WeighingForm"));
+const TransactionList = lazy(() => import("../components/TransactionList"));
+const HardwareControls = lazy(() => import("../components/HardwareControls"));
 export default function Weighing() {
   const dispatch = useDispatch();
   const transactions = useSelector((state) => state.weighing.transactions);
 
+  // Handlers
   const handleDeactivate = (id) => {
     if (window.confirm("Deactivate this transaction?")) {
       dispatch(deactivateTransaction(id));
@@ -20,26 +21,44 @@ export default function Weighing() {
   };
 
   const handleComplete = (id, w2) => {
+    if (!w2) {
+      alert("Second weight missing!");
+      return;
+    }
     dispatch(completeWeighing({ id, w2 }));
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold text-amber-600">Weighing Module</h1>
+    <div className="p-4 space-y-6">
+      <h1 className="text-2xl font-bold text-amber-600">Factory Weighing</h1>
 
-      {/* Form Section */}
-      <Suspense fallback={<SectionLoader title="Loading form..." />}>
-        <WeighingForm />
-      </Suspense>
+      {/* Top Section: Weighbridge + Cameras + Form */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Left: Weighbridge + Cameras */}
+        <div className="lg:col-span-2 space-y-4">
+          <Suspense fallback={<SectionLoader title="Loading weighbridge..." />}>
+            <WeighbridgePanel />
+          </Suspense>
+          <Suspense fallback={<SectionLoader title="Loading cameras..." />}>
+            <CameraGrid refreshMs={1500} />
+          </Suspense>
+          <Suspense fallback={<SectionLoader title="Loading controls..." />}>
+            <HardwareControls refreshMs={1500} />
+          </Suspense>
+        
+        </div>
 
-      {/* Cameras */}
-      <Suspense fallback={<SectionLoader title="Loading cameras..." />}>
-        <CameraGrid refreshMs={1500} />
-      </Suspense>
+        {/* Right: Transaction Form */}
+        <div>
+          <Suspense fallback={<SectionLoader title="Loading form..." />}>
+            <WeighingForm />
+          </Suspense>
+        </div>
+      </div>
 
-      {/* Transactions Table */}
+      {/* Bottom: Transaction List */}
       <Suspense fallback={<SectionLoader title="Loading transactions..." />}>
-        <WeighingTable
+        <TransactionList
           transactions={transactions}
           onDeactivate={handleDeactivate}
           onComplete={handleComplete}
