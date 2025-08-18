@@ -1,8 +1,11 @@
-// src/components/WeighingTable.jsx
-import { useState, useMemo, lazy } from "react";
+import { useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { completeWeighing, deactivateTransaction } from "../store/weighingSlice";
-import { FileDown, FileSpreadsheet, Ban } from "lucide-react";
+import { FileDown, FileSpreadsheet, Ban, Ticket } from "lucide-react";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import toast from "react-hot-toast";
 
 export default function WeighingTable() {
   const dispatch = useDispatch();
@@ -29,22 +32,35 @@ export default function WeighingTable() {
     });
   }, [transactions, statusFilter, searchQuery]);
 
-  const handleCompleteWeighing = (id) => {
-    const w2 = parseFloat(w2Inputs[id]);
+  const handleCompleteWeighing = (tx) => {
+    const w2 = parseFloat(w2Inputs[tx.id]);
     if (!w2) {
-      alert("Please enter Weight 2");
+      toast.error("Please enter Weight 2");
       return;
     }
-    dispatch(completeWeighing({ id, w2 }));
-    setW2Inputs((prev) => ({ ...prev, [id]: "" }));
+
+    if (tx.type === "inbound" && w2 >= tx.w1) {
+      toast.error("Inbound: Weight 2 must be less than Weight 1");
+      return;
+    }
+    if (tx.type === "outbound" && w2 <= tx.w1) {
+      toast.error("Outbound: Weight 2 must be greater than Weight 1");
+      return;
+    }
+
+    dispatch(completeWeighing({ id: tx.id, w2 }));
+    setW2Inputs((prev) => ({ ...prev, [tx.id]: "" }));
+    toast.success("Weighing completed");
+    generateTicket({ ...tx, w2 });
   };
 
-  const exportToExcel = async () => {
-    const XLSX = await import("xlsx");
+  const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(
       filteredTransactions.map((tx) => ({
         Plate: tx.plate,
         OrderID: tx.orderId,
+        Type: tx.type,
+        Batch: tx.batch,
         Weight1: tx.w1,
         Weight2: tx.w2 ?? "",
         NetWeight: tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "",
@@ -62,26 +78,78 @@ export default function WeighingTable() {
     XLSX.writeFile(wb, "weighing_data.xlsx");
   };
 
-  const exportToPDF = async () => {
-    const jsPDF = (await import("jspdf")).default;
-    const autoTable = (await import("jspdf-autotable")).default;
+  const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text("Weighing Transactions Report", 14, 10);
-    autoTable(doc, {
-      head: [["Plate", "Order ID", "W1", "W2", "Net", "TTAT", "Status", "Date"]],
+    doc.autoTable({
+      head: [["Plate", "Order ID", "Type", "Batch", "W1", "W2", "Net", "TTAT", "Status", "Date"]],
       body: filteredTransactions.map((tx) => [
         tx.plate,
         tx.orderId,
+        tx.type,
+        tx.batch || "-",
         tx.w1,
-        tx.w2 ?? "",
-        tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "",
-        tx.ttat ? formatSeconds(tx.ttat) : "",
-        tx.deactivated ? "Deactivated" : tx.w2 ? "Completed" : "In Queue",
+        tx.w2 ?? "-",
+        tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "-",
+        tx.ttat ? formatSeconds(tx.ttat) : "-",
+        tx.deactivated
+          ? "Deactivated"
+          : tx.w2
+          ? "Completed"
+          : "In Queue",
         new Date(tx.date).toLocaleString(),
       ]),
       startY: 20,
     });
     doc.save("weighing_report.pdf");
+  };
+
+  const generateTicket = (tx) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("Qalibrated Systems Limited", 105, 15, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text("Weighbridge Ticket", 105, 25, { align: "center" });
+
+    doc.line(14, 30, 196, 30);
+
+    doc.setFontSize(10);
+    doc.text(`Ticket No: ${tx.id}`, 14, 40);
+    doc.text(`Date: ${new Date(tx.date).toLocaleString()}`, 150, 40);
+
+    doc.autoTable({
+      startY: 50,
+      head: [["Field", "Value"]],
+      body: [
+        ["Plate Number", tx.plate],
+        ["Driver", tx.driver || "-"],
+        ["Order ID", tx.orderId],
+        ["Transaction Type", tx.type],
+        ["Batch Info", tx.batch || "-"],
+        ["Weight 1 (T)", tx.w1],
+        ["Weight 2 (T)", tx.w2 ?? "-"],
+        ["Net Weight (T)", tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "-"],
+        ["TTAT", tx.ttat ? formatSeconds(tx.ttat) : "-"],
+        [
+          "Status",
+          tx.deactivated ? "Deactivated" : tx.w2 ? "Completed" : "In Queue",
+        ],
+      ],
+      headStyles: { fillColor: [255, 193, 7], textColor: 0 },
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 15;
+    doc.setFontSize(11);
+    doc.text("Weighed & Verified By: ____________________", 14, finalY);
+
+    doc.setFontSize(10);
+    doc.text("Thank you for using Qalibrated Systems Weighbridge", 105, finalY + 20, { align: "center" });
+
+    doc.save(`ticket_${tx.plate}_${tx.orderId}.pdf`);
   };
 
   return (
@@ -126,6 +194,8 @@ export default function WeighingTable() {
             <tr className="bg-gray-100 text-left">
               <th className="px-4 py-2 border">Plate</th>
               <th className="px-4 py-2 border">Order ID</th>
+              <th className="px-4 py-2 border">Type</th>
+              <th className="px-4 py-2 border">Batch Info</th>
               <th className="px-4 py-2 border">Weight 1</th>
               <th className="px-4 py-2 border">Weight 2</th>
               <th className="px-4 py-2 border">Net</th>
@@ -137,31 +207,26 @@ export default function WeighingTable() {
           </thead>
           <tbody>
             {filteredTransactions.map((tx) => (
-              <tr
-                key={tx.id}
-                className={`hover:bg-gray-50 ${
-                  tx.deactivated ? "bg-amber-50 text-gray-500" : ""
-                }`}
-              >
+              <tr key={tx.id} className="hover:bg-gray-50">
                 <td className="px-4 py-2 border">{tx.plate}</td>
                 <td className="px-4 py-2 border">{tx.orderId}</td>
+                <td className="px-4 py-2 border">{tx.type}</td>
+                <td className="px-4 py-2 border">{tx.batch || "-"}</td>
                 <td className="px-4 py-2 border">{tx.w1 ?? "-"}</td>
                 <td className="px-4 py-2 border">
                   {tx.w2 ?? (
-                    !tx.deactivated && (
-                      <input
-                        type="number"
-                        placeholder="Enter W2"
-                        value={w2Inputs[tx.id] || ""}
-                        onChange={(e) =>
-                          setW2Inputs((prev) => ({
-                            ...prev,
-                            [tx.id]: e.target.value,
-                          }))
-                        }
-                        className="border rounded px-2 py-1 w-24"
-                      />
-                    )
+                    <input
+                      type="number"
+                      placeholder="Enter W2"
+                      value={w2Inputs[tx.id] || ""}
+                      onChange={(e) =>
+                        setW2Inputs((prev) => ({
+                          ...prev,
+                          [tx.id]: e.target.value,
+                        }))
+                      }
+                      className="border rounded px-2 py-1 w-24"
+                    />
                   )}
                 </td>
                 <td className="px-4 py-2 border">
@@ -185,27 +250,32 @@ export default function WeighingTable() {
                     <>
                       <button
                         className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onClick={() => handleCompleteWeighing(tx.id)}
+                        onClick={() => handleCompleteWeighing(tx)}
                       >
                         Complete
                       </button>
                       <button
-                        className="px-3 py-1 bg-amber-500 text-white rounded hover:bg-amber-600 flex items-center gap-1"
+                        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center gap-1"
                         onClick={() => dispatch(deactivateTransaction(tx.id))}
                       >
                         <Ban size={14} /> Deactivate
                       </button>
                     </>
                   )}
+                  {tx.w2 && (
+                    <button
+                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 flex items-center gap-1"
+                      onClick={() => generateTicket(tx)}
+                    >
+                      <Ticket size={14} /> Ticket
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
             {filteredTransactions.length === 0 && (
               <tr>
-                <td
-                  colSpan="9"
-                  className="px-4 py-3 text-center text-gray-500"
-                >
+                <td colSpan="11" className="px-4 py-3 text-center text-gray-500">
                   No transactions found.
                 </td>
               </tr>
