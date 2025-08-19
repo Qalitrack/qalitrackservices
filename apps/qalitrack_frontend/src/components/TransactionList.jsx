@@ -1,31 +1,12 @@
-import { Ban, Printer, Search } from "lucide-react";
-import jsPDF from "jspdf";
 import { useState, useMemo } from "react";
-import toast from "react-hot-toast";
+import { Ban, Printer } from "lucide-react";
+import jsPDF from "jspdf";
 
 export default function TransactionList({ transactions, onDeactivate, onComplete }) {
-  const [w2Inputs, setW2Inputs] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Filtering logic
-  const filteredTransactions = useMemo(() => {
-    return transactions.filter((tx) => {
-      const matchesSearch =
-        tx.plate?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tx.orderId?.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesStatus =
-        statusFilter === "all" ||
-        (statusFilter === "inqueue" && tx.w1 && !tx.w2 && !tx.deactivated) ||
-        (statusFilter === "completed" && tx.w2) ||
-        (statusFilter === "deactivated" && tx.deactivated);
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [transactions, searchQuery, statusFilter]);
-
-  // Ticket printer
   const printTicket = (tx) => {
     const doc = new jsPDF();
     doc.text("Weighing Ticket", 20, 20);
@@ -42,8 +23,28 @@ export default function TransactionList({ transactions, onDeactivate, onComplete
     );
     doc.text(`Date: ${new Date(tx.date).toLocaleString()}`, 20, 110);
     doc.save(`ticket_${tx.plate}_${tx.id}.pdf`);
-    toast.success("Ticket downloaded");
   };
+
+  // Apply filters
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((tx) => {
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "inqueue" && !tx.w2 && !tx.deactivated) ||
+        (statusFilter === "completed" && tx.w2) ||
+        (statusFilter === "deactivated" && tx.deactivated);
+
+      const matchesType =
+        typeFilter === "all" || tx.type === typeFilter;
+
+      const matchesSearch =
+        !searchQuery ||
+        tx.plate?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tx.orderId?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return matchesStatus && matchesType && matchesSearch;
+    });
+  }, [transactions, statusFilter, typeFilter, searchQuery]);
 
   return (
     <div className="bg-white shadow rounded-lg p-4 border">
@@ -52,29 +53,32 @@ export default function TransactionList({ transactions, onDeactivate, onComplete
       </h2>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-2 mb-4">
-        {/* Search */}
-        <div className="flex items-center border rounded px-2 flex-1">
-          <Search size={16} className="text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by Plate or Order ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 px-2 py-1 outline-none"
-          />
-        </div>
-
-        {/* Status Filter */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Search Plate / Order ID"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border rounded px-3 py-2"
+        />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="border rounded px-3 py-2"
         >
-          <option value="all">All</option>
+          <option value="all">All Statuses</option>
           <option value="inqueue">In Queue</option>
           <option value="completed">Completed</option>
           <option value="deactivated">Deactivated</option>
+        </select>
+        <select
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="all">All Types</option>
+          <option value="inbound">Inbound</option>
+          <option value="outbound">Outbound</option>
         </select>
       </div>
 
@@ -99,22 +103,7 @@ export default function TransactionList({ transactions, onDeactivate, onComplete
                 <td className="px-3 py-2 border">{tx.plate}</td>
                 <td className="px-3 py-2 border">{tx.type}</td>
                 <td className="px-3 py-2 border">{tx.w1}</td>
-                <td className="px-3 py-2 border">
-                  {tx.w2 ?? (
-                    <input
-                      type="number"
-                      placeholder="Enter W2"
-                      value={w2Inputs[tx.id] || ""}
-                      onChange={(e) =>
-                        setW2Inputs((prev) => ({
-                          ...prev,
-                          [tx.id]: e.target.value,
-                        }))
-                      }
-                      className="border rounded px-2 py-1 w-24"
-                    />
-                  )}
-                </td>
+                <td className="px-3 py-2 border">{tx.w2 ?? "-"}</td>
                 <td className="px-3 py-2 border">
                   {tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "-"}
                 </td>
@@ -130,20 +119,20 @@ export default function TransactionList({ transactions, onDeactivate, onComplete
                 </td>
                 <td className="px-3 py-2 border space-x-2">
                   {!tx.w2 && !tx.deactivated && (
-                    <>
-                      <button
-                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onClick={() => onComplete(tx.id, w2Inputs[tx.id])}
-                      >
-                        Complete
-                      </button>
-                      <button
-                        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center gap-1"
-                        onClick={() => onDeactivate(tx.id)}
-                      >
-                        <Ban size={14} /> Deactivate
-                      </button>
-                    </>
+                    <button
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      onClick={() => onComplete(tx.id, 10800)}
+                    >
+                      Complete
+                    </button>
+                  )}
+                  {!tx.deactivated && (
+                    <button
+                      className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center gap-1"
+                      onClick={() => onDeactivate(tx.id)}
+                    >
+                      <Ban size={14} /> Deactivate
+                    </button>
                   )}
                   {tx.w2 && (
                     <button
