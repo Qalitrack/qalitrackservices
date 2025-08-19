@@ -45,6 +45,30 @@ export default function TransactionList({ transactions, onDeactivate, onComplete
     toast.success("Ticket downloaded");
   };
 
+  // Validation before completing
+  const validateAndComplete = (tx) => {
+    const w2 = parseFloat(w2Inputs[tx.id]);
+    if (!w2) {
+      toast.error("Please enter the second weight (W2).");
+      return;
+    }
+
+    if (tx.type === "inbound" && w2 >= tx.w1) {
+      toast.error("Inbound transaction rule failed! W2 must be less than W1.");
+      return;
+    }
+
+    if (tx.type === "outbound" && w2 <= tx.w1) {
+      toast.error("Outbound transaction rule failed! W2 must be greater than W1.");
+      return;
+    }
+
+    // If valid
+    onComplete(tx.id, w2);
+    setW2Inputs((prev) => ({ ...prev, [tx.id]: "" }));
+    toast.success("Transaction completed successfully!");
+  };
+
   return (
     <div className="bg-white shadow rounded-lg p-4 border">
       <h2 className="text-lg font-semibold text-amber-600 mb-4">
@@ -95,7 +119,16 @@ export default function TransactionList({ transactions, onDeactivate, onComplete
           </thead>
           <tbody>
             {filteredTransactions.map((tx) => (
-              <tr key={tx.id} className="hover:bg-gray-50">
+              <tr
+                key={tx.id}
+                className={`hover:bg-gray-50 ${
+                  // highlight row if rule would fail
+                  (tx.type === "inbound" && w2Inputs[tx.id] >= tx.w1) ||
+                  (tx.type === "outbound" && w2Inputs[tx.id] <= tx.w1)
+                    ? "bg-red-100"
+                    : ""
+                }`}
+              >
                 <td className="px-3 py-2 border">{tx.plate}</td>
                 <td className="px-3 py-2 border">{tx.type}</td>
                 <td className="px-3 py-2 border">{tx.w1}</td>
@@ -133,7 +166,7 @@ export default function TransactionList({ transactions, onDeactivate, onComplete
                     <>
                       <button
                         className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onClick={() => onComplete(tx.id, w2Inputs[tx.id])}
+                        onClick={() => validateAndComplete(tx)}
                       >
                         Complete
                       </button>
