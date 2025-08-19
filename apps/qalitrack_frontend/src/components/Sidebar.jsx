@@ -21,12 +21,6 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <img
-        src={Logo}
-        alt="Logo"
-        className="w-20 h-20 mx-auto mt-2 mb-1"
-      />
-      {/* <div className="px-4 py-4 font-bold text-xl">Bamburi</div> */}
 
       <nav className="flex-1 px-2 space-y-1">
         {/* Dashboard */}
