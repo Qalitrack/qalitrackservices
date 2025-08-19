@@ -8,6 +8,8 @@ using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 using UserService.Core.Utilities;
 
 namespace UserService.Core.Services

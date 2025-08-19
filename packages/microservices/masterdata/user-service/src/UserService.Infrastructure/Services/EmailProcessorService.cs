@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Common;
-using UserService.Infrastructure.Interfaces;
+using UserService.Core.Interfaces.Emails;
 
 namespace UserService.Infrastructure.Services;
 

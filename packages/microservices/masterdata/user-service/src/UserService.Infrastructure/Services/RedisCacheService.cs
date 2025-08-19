@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Infrastructure.Services;
 

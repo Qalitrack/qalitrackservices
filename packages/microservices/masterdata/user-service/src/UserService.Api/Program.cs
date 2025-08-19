@@ -1,23 +1,31 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using UserService.Api.Authorization;
-using UserService.Core.Interfaces;
 using UserService.Core.Mappings;
-using UserService.Core.Options;
 using UserService.Core.Services;
 using UserService.Infrastructure.Data;
-using UserService.Infrastructure.Interfaces;
 using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Services;
 using UserService.Api.Middleware;
 using UserService.Api.Filters;
+using UserService.Core.Interfaces.Emails;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
+using UserService.Infrastructure.Backup;
+using System.IO.Abstractions;
+using Messaging.Contracts.Messaging.contracts;
+using Messaging.Contracts.Messaging.contracts.Enums;
+using UserService.Infrastructure.Messaging;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
@@ -43,7 +51,8 @@ try
             options.Filters.Add<ModelValidationFilter>();
         })
         .AddJsonOptions(options =>
-        {
+        {        
+
             options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve property casing
         });
     
@@ -83,9 +92,7 @@ try
     // Configure CORS
     ConfigureCors(builder.Services);
     
-    // Add health checks
-    // builder.Services.AddHealthChecks()
-    //     .AddCheck<BackupHealthCheck>("backup");
+    //Add health checks
     
     var app = builder.Build();
     
@@ -136,7 +143,7 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     
     // JWT Configuration Service
     services.AddScoped<IJwtConfigurationService, JwtConfigurationService>();
-
+   
     // Repositories
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRoleRepository, RoleRepository>();
@@ -148,8 +155,7 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<IUserStatusRepository, UserStatusRepository>();
     services.AddScoped<IUserRoleRepository, UserRoleRepository>();
     builder.Services.AddScoped<IShiftLoginRestrictionService, ShiftLoginRestrictionService>();
-
-
+    // In Program.cs or your DI configuration class
     // Infrastructure
     services.AddHttpContextAccessor();
     services.AddAutoMapper(typeof(UserProfile));
@@ -175,10 +181,7 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     }
     
     // Register BackupOptions from configuration
-    services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
-    
     // Register our health check service
-    services.AddScoped<IHealthCheckService, HealthCheckService>();
     builder.Services.AddHttpContextAccessor();
     // Register cache service based on configuration
     if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
@@ -189,20 +192,25 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     {
         services.AddScoped<ICacheService, MemoryCacheService>();
     }
-    
-    // Backup Services
-    // services.Configure<BackupOptions>(builder.Configuration.GetSection(BackupOptions.SectionName));
-    // services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
-    // services.AddScoped<RestoreService>();
-    // services.AddScoped<IBackupNotificationService, BackupNotificationService>();
-    // services.AddScoped<IBackupVerificationService, BackupVerificationService>();
-    //
-    // // Background  Services
-    // services.AddHostedService<BackupScheduler>();
-    // services.AddHostedService<BackupMonitor>();
+    // Add MassTransit with RabbitMQ
+   // Configure MassTransit with RabbitMQ
+   // Replace your current MassTransit configuration with this:
+   services.ConfigureMassTransit(builder.Configuration, Log.Logger);
+        // Backup Services
+        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupCreationService, UserService.Infrastructure.Backup.BackupCreationService>();
+        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupMetadataService, UserService.Infrastructure.Backup.BackupMetadataService>();
+        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupRestoreService, UserService.Infrastructure.Backup.BackupRestoreService>();
+        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupVerificationService, UserService.Infrastructure.Backup.BackupVerificationService>();
+        services.AddSingleton<IFileSystem, FileSystem>();
+        services.AddSingleton<IDatabaseBackupService,DatabaseBackupService>();
+        // Register the backup event consumer
+        
+        
+        
+  
     services.AddHostedService<ShiftMonitorService>();
     services.AddHostedService<EmailProcessorService>();
-        
+  
     // Register SMTP Email Service for 2FA
     services.AddScoped<IEmailService, SmtpEmailService>();
 
@@ -211,30 +219,6 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
 
 static void ConfigureDatabase(WebApplicationBuilder builder)
 {
-    // Ensure backup directory exists
-    var backupOptions = builder.Configuration.GetSection(BackupOptions.SectionName).Get<BackupOptions>();
-    if (backupOptions?.Path != null && !Directory.Exists(backupOptions.Path))
-    {
-        try
-        {
-            Directory.CreateDirectory(backupOptions.Path);
-            builder.Logging.AddConsole();
-            builder.Logging.Services.BuildServiceProvider()
-                .GetRequiredService<ILogger<Program>>()
-                .LogInformation("Created backup directory: {BackupPath}", 
-                    Path.GetFullPath(backupOptions.Path));
-        }
-        catch (Exception ex)
-        {
-            builder.Logging.AddConsole();
-            builder.Logging.Services.BuildServiceProvider()
-                .GetRequiredService<ILogger<Program>>()
-                .LogError(ex, "Failed to create backup directory: {BackupPath}", 
-                    backupOptions.Path);
-            throw;
-        }
-    }
-
     // Configure database - PostgreSQL for production, SQLite for development
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     var usePostgreSQL = builder.Configuration.GetValue<bool>("UsePostgreSQL", false);
