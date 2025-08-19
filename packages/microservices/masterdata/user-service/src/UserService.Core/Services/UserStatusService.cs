@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
+
 namespace UserService.Core.Services
 {
     public class UserStatusService : BackgroundService, IUserStatusService

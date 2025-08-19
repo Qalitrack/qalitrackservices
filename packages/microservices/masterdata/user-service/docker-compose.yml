@@ -10,7 +10,6 @@ services:
       POSTGRES_USER: userservice
       POSTGRES_PASSWORD: userservice123
       PGDATA: /var/lib/postgresql/data/pgdata
-      # Database optimization for 1000+ concurrent users
       POSTGRES_SHARED_BUFFERS: 512MB
       POSTGRES_MAX_CONNECTIONS: 600
       POSTGRES_WORK_MEM: 2MB
@@ -20,6 +19,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/pgdata
       - ./scripts:/docker-entrypoint-initdb.d
+      - pg_wal_archive:/var/lib/postgresql/data/pg_wal_archive   # ✅ added
     networks:
       - userservice-network
     restart: unless-stopped
@@ -28,9 +28,6 @@ services:
         limits:
           memory: 2G
           cpus: '2.0'
-        reservations:
-          memory: 1G
-          cpus: '1.0'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U userservice -d userservicedb"]
       interval: 30s
@@ -39,8 +36,7 @@ services:
       start_period: 30s
     dns:
       - 8.8.8.8
-      - 8.8.4.4 
-        
+      - 8.8.4.4
 
   redis-cache:
     image: redis:7-alpine
@@ -58,9 +54,6 @@ services:
         limits:
           memory: 1G
           cpus: '1.0'
-        reservations:
-          memory: 512M
-          cpus: '0.5'
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 30s
@@ -85,6 +78,12 @@ services:
       - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
       - JWT_ISSUER=UserService
       - JWT_AUDIENCE=UserService
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=admin
+      - RABBITMQ_PASSWORD=securepassword
+      - Backup__Path=/app/Backups
+      - Backup__WalArchivePath=/var/lib/postgresql/data/pg_wal_archive
     ports:
       - "8081:8081"
     depends_on:
@@ -92,9 +91,14 @@ services:
         condition: service_healthy
       redis-cache:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
+      - ./var/run/docker.sock:/var/run/docker.sock
+      - ./backups:/app/Backups                       # ✅ added
+      - pg_wal_archive:/var/lib/postgresql/data/pg_wal_archive   # ✅ added
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
       interval: 30s
@@ -103,7 +107,27 @@ services:
       start_period: 60s
     dns:
       - 8.8.8.8
-      - 8.8.4.4
+      - 8.8.8.4
+    networks:
+      - userservice-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # AMQP port for MassTransit
+      - "15672:15672" # Management UI port
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=securepassword
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
     networks:
       - userservice-network
 
@@ -112,9 +136,12 @@ volumes:
     driver: local
   redis_data:
     driver: local
+  rabbitmq_data:
+    driver: local
+  pg_wal_archive:                # ✅ added
+    driver: local
 
 networks:
   userservice-network:
     name: userservice-network
     driver: bridge
-

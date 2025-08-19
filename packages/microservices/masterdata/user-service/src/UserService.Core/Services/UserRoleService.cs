@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Core.Services
 {

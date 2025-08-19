@@ -2,7 +2,8 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Common;
 using UserService.Core.Interfaces;
-using UserService.Infrastructure.Interfaces;
+using UserService.Core.Interfaces.Emails;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Core.Services;
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Interfaces;
 using Microsoft.Extensions.Logging;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
 {
@@ -12,7 +13,7 @@ namespace UserService.Api.Controllers
     [Route("api/[controller]")]
     public class UserShiftController : ControllerBase
     {
-        private readonly UserService.Core.Interfaces.IShiftService _shiftService;
+        private readonly IShiftService _shiftService;
         private readonly ILogger<UserShiftController> _logger;
 
         public UserShiftController(
