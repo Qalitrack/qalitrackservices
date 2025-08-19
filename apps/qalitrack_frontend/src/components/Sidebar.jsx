@@ -14,13 +14,13 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import Logo from "../assets/logoo.jpg"; // Assuming you have a logo image
 
 export default function Sidebar() {
   const [openWeighing, setOpenWeighing] = useState(false);
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <div className="px-4 py-4 font-bold text-2xl">Qalitrack</div>
 
       <nav className="flex-1 px-2 space-y-1">
         {/* Dashboard */}
