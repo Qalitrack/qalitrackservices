@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Report;
 using UserService.Core.DTOs.Common;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
 {

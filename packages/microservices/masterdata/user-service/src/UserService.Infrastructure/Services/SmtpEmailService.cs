@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using UserService.Infrastructure.Interfaces;
+using UserService.Core.Interfaces.Emails;
 
 namespace UserService.Infrastructure.Services;
 

@@ -9,6 +9,7 @@ using UserService.Core.DTOs.Report;
 using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Services;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Services

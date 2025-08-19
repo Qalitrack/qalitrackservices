@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 using UserService.Core.Utilities;
 
 namespace UserService.Core.Services

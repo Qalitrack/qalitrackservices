@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using UserService.Core.Interfaces.Repositories;
 
 namespace UserService.Infrastructure.Repositories
 {
