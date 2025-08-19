@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
 {

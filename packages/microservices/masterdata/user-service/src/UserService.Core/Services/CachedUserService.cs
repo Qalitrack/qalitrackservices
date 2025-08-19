@@ -5,6 +5,7 @@ using UserService.Core.DTOs.Shift;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Core.Services;
 

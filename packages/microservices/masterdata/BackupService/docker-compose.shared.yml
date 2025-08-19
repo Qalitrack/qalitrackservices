@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  shared-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: shared-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=securepassword
+    volumes:
+      - shared_rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - shared-services-network
+
+networks:
+  shared-services-network:
+    name: shared-services-network
+    driver: bridge
+
+volumes:
+  shared_rabbitmq_data:
+    driver: local

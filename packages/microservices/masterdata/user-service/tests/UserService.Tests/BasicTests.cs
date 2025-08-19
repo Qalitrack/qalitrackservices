@@ -6,6 +6,8 @@ using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 using UserService.Core.Mappings;
 using Xunit;
 

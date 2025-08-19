@@ -8,6 +8,8 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Entities;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Infrastructure.Services
 {

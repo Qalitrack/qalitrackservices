@@ -8,6 +8,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using UserService.Core.DTOs.User;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
 {
