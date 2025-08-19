@@ -9,6 +9,8 @@ using UserService.Core.DTOs.Permissions;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 using UserBasicInfoDto = UserService.Core.DTOs.Roles.UserBasicInfoDto;
 
 namespace UserService.Core.Services;

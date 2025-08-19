@@ -12,6 +12,7 @@ using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
 {

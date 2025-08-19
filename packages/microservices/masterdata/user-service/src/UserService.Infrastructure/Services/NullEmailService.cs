@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Interfaces;
-using UserService.Infrastructure.Interfaces;
+using UserService.Core.Interfaces.Emails;
 
 namespace UserService.Infrastructure.Services;
 

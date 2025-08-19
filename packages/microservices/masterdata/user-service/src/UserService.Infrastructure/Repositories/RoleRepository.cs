@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Utilities;
 using UserService.Infrastructure.Data;
 
