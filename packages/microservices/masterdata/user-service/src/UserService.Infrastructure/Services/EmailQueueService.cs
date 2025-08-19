@@ -2,6 +2,7 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Common;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Emails;
 
 namespace UserService.Infrastructure.Services;
 

@@ -8,6 +8,7 @@ using UserService.Core.Services;
 using Serilog;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
+using UserService.Core.Interfaces.Repositories;
 
 namespace UserService.Core.Services
 {
