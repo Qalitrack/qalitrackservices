@@ -3,6 +3,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Authorization
 {

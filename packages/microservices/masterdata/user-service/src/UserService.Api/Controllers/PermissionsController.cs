@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Permissions;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
 {

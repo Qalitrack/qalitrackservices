@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Core.Services
 {

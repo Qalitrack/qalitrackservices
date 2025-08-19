@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
 {
