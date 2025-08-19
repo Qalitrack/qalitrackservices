@@ -1,145 +1,132 @@
-// src/pages/Vehicle.jsx
+// src/pages/Vehicles.jsx
 import { useState } from "react";
-import { Plus, Trash2, Edit3, Truck } from "lucide-react";
+import { Car, PlusCircle, Trash2 } from "lucide-react";
 
-export default function Vehicle() {
-  const [vehicles, setVehicles] = useState([
-    { id: 1, plate: "KAA 123A", type: "Truck", capacity: 15000 },
-    { id: 2, plate: "KBX 456B", type: "Trailer", capacity: 30000 },
-  ]);
-  const [form, setForm] = useState({ plate: "", type: "", capacity: "" });
-  const [editingId, setEditingId] = useState(null);
+export default function Vehicles() {
+  const [vehicles, setVehicles] = useState([]);
+  const [form, setForm] = useState({
+    plate: "",
+    brand: "",
+    model: "",
+    capacity: "",
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleAdd = (e) => {
     e.preventDefault();
-    if (!form.plate || !form.type || !form.capacity) return;
-
-    if (editingId) {
-      setVehicles((prev) =>
-        prev.map((v) =>
-          v.id === editingId ? { ...v, ...form, capacity: parseInt(form.capacity) } : v
-        )
-      );
-      setEditingId(null);
-    } else {
-      setVehicles((prev) => [
-        ...prev,
-        { id: Date.now(), ...form, capacity: parseInt(form.capacity) },
-      ]);
-    }
-
-    setForm({ plate: "", type: "", capacity: "" });
-  };
-
-  const handleEdit = (vehicle) => {
-    setForm({ plate: vehicle.plate, type: vehicle.type, capacity: vehicle.capacity });
-    setEditingId(vehicle.id);
+    if (!form.plate || !form.brand || !form.model) return;
+    setVehicles([...vehicles, { ...form, id: Date.now() }]);
+    setForm({ plate: "", brand: "", model: "", capacity: "" });
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this vehicle?")) {
-      setVehicles((prev) => prev.filter((v) => v.id !== id));
-    }
+    setVehicles(vehicles.filter((v) => v.id !== id));
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-amber-600 flex items-center gap-2">
-        <Truck className="w-6 h-6" /> Vehicle Management
-      </h1>
+    <div className="p-4 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-2 text-amber-600">
+        <Car className="w-8 h-8" />
+        <h1 className="text-2xl font-bold">Vehicles Management</h1>
+      </div>
 
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white border rounded p-4 shadow space-y-4 max-w-lg"
-      >
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Plate</label>
+      {/* Form Section */}
+      <div className="bg-white shadow-lg rounded-lg border p-6">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Add New Vehicle
+        </h2>
+        <form
+          onSubmit={handleAdd}
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
+        >
           <input
             type="text"
             name="plate"
             value={form.plate}
             onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="e.g. KAA 123A"
+            placeholder="Plate Number"
+            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Type</label>
           <input
             type="text"
-            name="type"
-            value={form.type}
+            name="brand"
+            value={form.brand}
             onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="e.g. Truck / Trailer"
+            placeholder="Brand"
+            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Capacity (kg)</label>
+          <input
+            type="text"
+            name="model"
+            value={form.model}
+            onChange={handleChange}
+            placeholder="Model"
+            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
+          />
           <input
             type="number"
             name="capacity"
             value={form.capacity}
             onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="e.g. 15000"
+            placeholder="Capacity (tons)"
+            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
           />
-        </div>
+          <button
+            type="submit"
+            className="flex items-center justify-center gap-2 bg-amber-500 text-white rounded px-4 py-2 hover:bg-amber-600 transition"
+          >
+            <PlusCircle size={18} /> Add Vehicle
+          </button>
+        </form>
+      </div>
 
-        <button
-          type="submit"
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          <Plus className="w-4 h-4" />
-          {editingId ? "Update Vehicle" : "Add Vehicle"}
-        </button>
-      </form>
-
-      {/* Table */}
-      <div className="bg-white border rounded shadow overflow-x-auto">
+      {/* Vehicle List */}
+      <div className="bg-white shadow-lg rounded-lg border overflow-x-auto">
+        <h2 className="text-lg font-semibold text-gray-700 p-4 border-b">
+          Vehicle List
+        </h2>
         <table className="min-w-full text-sm">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-50 text-gray-600">
             <tr>
               <th className="px-4 py-2 border">Plate</th>
-              <th className="px-4 py-2 border">Type</th>
-              <th className="px-4 py-2 border">Capacity</th>
+              <th className="px-4 py-2 border">Brand</th>
+              <th className="px-4 py-2 border">Model</th>
+              <th className="px-4 py-2 border">Capacity (tons)</th>
               <th className="px-4 py-2 border">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((v) => (
-              <tr key={v.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{v.plate}</td>
-                <td className="px-4 py-2 border">{v.type}</td>
-                <td className="px-4 py-2 border">{v.capacity} kg</td>
-                <td className="px-4 py-2 border space-x-2">
-                  <button
-                    onClick={() => handleEdit(v)}
-                    className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 inline-flex items-center gap-1"
-                  >
-                    <Edit3 size={14} /> Edit
-                  </button>
+            {vehicles.map((v, i) => (
+              <tr
+                key={v.id}
+                className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
+              >
+                <td className="px-4 py-2 border font-medium">{v.plate}</td>
+                <td className="px-4 py-2 border">{v.brand}</td>
+                <td className="px-4 py-2 border">{v.model}</td>
+                <td className="px-4 py-2 border text-center">{v.capacity}</td>
+                <td className="px-4 py-2 border text-center">
                   <button
                     onClick={() => handleDelete(v.id)}
-                    className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 inline-flex items-center gap-1"
+                    className="flex items-center gap-1 px-3 py-1 text-red-600 bg-red-50 rounded hover:bg-red-100 transition"
                   >
-                    <Trash2 size={14} /> Delete
+                    <Trash2 size={16} /> Remove
                   </button>
                 </td>
               </tr>
             ))}
             {vehicles.length === 0 && (
               <tr>
-                <td colSpan="4" className="text-center py-4 text-gray-500">
-                  No vehicles registered yet.
+                <td
+                  colSpan="5"
+                  className="text-center py-6 text-gray-500 italic"
+                >
+                  No vehicles added yet 🚚
                 </td>
               </tr>
             )}
