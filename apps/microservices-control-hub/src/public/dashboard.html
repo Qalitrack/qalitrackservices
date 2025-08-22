@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Control Hub</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='20'>🎛️</text></svg>">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 id="mainTitle">🎛️ Control Hub</h1>
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn btn-primary">🔄 Refresh</button>
+                <a href="/docs" class="btn btn-secondary">📋 API Docs</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Status Overview -->
+            <section class="status-overview">
+                <div class="stat-card overall-status" id="overallStatus">
+                    <div class="stat-icon">💚</div>
+                    <div class="stat-content">
+                        <h3>Overall Status</h3>
+                        <div class="stat-value" id="overallStatusValue">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🏃</div>
+                    <div class="stat-content">
+                        <h3>Healthy Services</h3>
+                        <div class="stat-value" id="healthyCount">-</div>
+                        <div class="stat-detail" id="healthyPercentage">-</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <h3>Total Services</h3>
+                        <div class="stat-value" id="totalServices">-</div>
+                        <div class="stat-detail" id="avgResponseTime">-</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-content">
+                        <h3>API Endpoints</h3>
+                        <div class="stat-value" id="totalEndpoints">-</div>
+                        <div class="stat-detail" id="docsCoverage">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Service Groups -->
+            <section class="service-groups" id="serviceGroups">
+                <h2>Service Groups</h2>
+                <div id="groupsContainer" class="groups-container">
+                    <div class="loading">Loading service groups...</div>
+                </div>
+            </section>
+
+            <!-- Services List -->
+            <section class="services-list">
+                <div class="section-header">
+                    <h2>Services</h2>
+                    <div class="filters">
+                        <select id="groupFilter" class="filter-select">
+                            <option value="">All Groups</option>
+                        </select>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="healthy">Healthy</option>
+                            <option value="unhealthy">Unhealthy</option>
+                            <option value="down">Down</option>
+                            <option value="unknown">Unknown</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="servicesContainer" class="services-container">
+                    <div class="loading">Loading services...</div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Last updated: <span id="lastUpdated">-</span> | 
+               <a href="/health">Health API</a> | 
+               <a href="/docs">Documentation</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Service Detail Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalServiceName">Service Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Service details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

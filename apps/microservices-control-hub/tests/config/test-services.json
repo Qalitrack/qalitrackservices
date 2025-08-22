@@ -1,0 +1,85 @@
+{
+  "environment": "test",
+  "version": "1.0.0",
+  "applicationName": "Test Control Hub",
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Test Environment"
+    },
+    {
+      "url": "http://164.68.116.82:8090",
+      "description": "External Test Server"
+    }
+  ],
+  "external": {
+    "host": "localhost",
+    "protocol": "http",
+    "gatewayPort": "3000"
+  },
+  "services": [
+    {
+      "name": "sample-service-1",
+      "host": "sample-service-1",
+      "port": 3001,
+      "group": "application",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/service1",
+      "description": "Sample service 1 for testing health checks and swagger aggregation"
+    },
+    {
+      "name": "sample-service-2",
+      "host": "sample-service-2", 
+      "port": 3001,
+      "group": "application",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/service2",
+      "description": "Sample service 2 for testing health checks and swagger aggregation"
+    },
+    {
+      "name": "sample-service-3",
+      "host": "sample-service-3",
+      "port": 3001, 
+      "group": "application",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/service3",
+      "description": "Sample service 3 for testing health checks and swagger aggregation"
+    },
+    {
+      "name": "test-redis",
+      "host": "test-redis",
+      "port": 6379,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "Redis cache for testing TCP health checks"
+    },
+    {
+      "name": "test-postgres",
+      "host": "test-postgres",
+      "port": 5432,
+      "group": "infrastructure", 
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "PostgreSQL database for testing TCP health checks"
+    },
+    {
+      "name": "external-test-service", 
+      "url": "http://164.68.116.82:8090",
+      "group": "external",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/external",
+      "description": "External HTTP service for testing URL-based configuration (uses external IP to simulate real external API)"
+    }
+  ]
+}
