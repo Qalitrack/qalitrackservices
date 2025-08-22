@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">API Documentation - Control Hub</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.5/swagger-ui.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='20'>📋</text></svg>">
+    <style>
+        html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
+        *, *:before, *:after { box-sizing: inherit; }
+        body { margin:0; background: #fafafa; }
+        
+        .swagger-ui .topbar { 
+            background-color: #2563eb; 
+            border-bottom: 3px solid #1d4ed8;
+        }
+        .swagger-ui .topbar .download-url-wrapper { display: none; }
+        
+        .custom-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .custom-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .custom-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .nav-links {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.2s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 3rem;
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 0.5rem;
+            margin: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-header">
+        <div class="nav-links">
+            <a href="/">🏠 Dashboard</a>
+            <a href="/api/health">💚 Health</a>
+        </div>
+        <h1 id="swaggerTitle">📋 API Documentation</h1>
+        <p id="swaggerSubtitle">Unified API documentation for all microservices</p>
+    </div>
+    
+    <div id="swagger-ui"></div>
+    
+    <div id="loading" class="loading">
+        <h3>🔄 Loading API Documentation...</h3>
+        <p>Aggregating documentation from all microservices</p>
+    </div>
+    
+    <div id="error" class="error" style="display: none;">
+        <h3>❌ Failed to Load Documentation</h3>
+        <p id="errorMessage">Unable to load API documentation. Please check that services are running.</p>
+        <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer;">
+            🔄 Retry
+        </button>
+    </div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5.10.5/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.10.5/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const errorMessageEl = document.getElementById('errorMessage');
+            
+            // Load project configuration first
+            fetch('/api/config')
+                .then(response => response.json())
+                .then(config => {
+                    const projectName = config.projectName || 'Microservices';
+                    const applicationName = config.applicationName || projectName;
+                    document.getElementById('pageTitle').textContent = `API Documentation - ${applicationName} Control Hub`;
+                    document.getElementById('swaggerTitle').textContent = `📋 ${applicationName} API Documentation`;
+                    document.getElementById('swaggerSubtitle').textContent = `Unified API documentation for all ${applicationName.toLowerCase()} services`;
+                })
+                .catch(error => {
+                    console.warn('Failed to load config for swagger page:', error.message);
+                });
+            
+            // Test if swagger docs are available
+            fetch('/api/docs/swagger.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(spec => {
+                    // Hide loading, show Swagger UI
+                    loadingEl.style.display = 'none';
+                    
+                    const ui = SwaggerUIBundle({
+                        url: '/api/docs/swagger.json',
+                        dom_id: '#swagger-ui',
+                        deepLinking: true,
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIStandalonePreset
+                        ],
+                        plugins: [
+                            SwaggerUIBundle.plugins.DownloadUrl
+                        ],
+                        layout: "StandaloneLayout",
+                        docExpansion: "list",
+                        defaultModelsExpandDepth: 2,
+                        defaultModelExpandDepth: 2,
+                        tryItOutEnabled: true,
+                        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+                        onComplete: function() {
+                            console.log('✅ API Documentation loaded successfully');
+                        },
+                        onFailure: function(error) {
+                            console.error('❌ Swagger UI initialization failed:', error);
+                            showError('Swagger UI initialization failed');
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('❌ Failed to load swagger docs:', error);
+                    showError(error.message);
+                });
+            
+            function showError(message) {
+                loadingEl.style.display = 'none';
+                errorMessageEl.textContent = message;
+                errorEl.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
