@@ -1,0 +1,147 @@
+{
+  "environment": "development",
+  "version": "1.0.0",
+  "applicationName": "QaliTrack",
+  "servers": [
+    {
+      "url": "http://localhost:7000",
+      "description": "Local Development"
+    },
+    {
+      "url": "https://api-staging.qalitrack.com",
+      "description": "Staging Environment"
+    }
+  ],
+  "external": {
+    "host": "localhost",
+    "protocol": "http",
+    "gatewayPort": "7000"
+  },
+  "services": [
+    {
+      "name": "api-gateway",
+      "host": "api-gateway",
+      "port": 80,
+      "group": "gateway",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "",
+      "description": "API Gateway - Central routing and authentication"
+    },
+    {
+      "name": "user-service",
+      "host": "user-service",
+      "port": 80,
+      "group": "application",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/users",
+      "description": "User management and authentication service",
+      "pathTransformations": [
+        {
+          "pattern": "/api/users",
+          "operation": "strip",
+          "except": ["/oauth", "/o/"],
+          "description": "Gateway strips /api/users prefix from service endpoints, except OAuth paths"
+        },
+        {
+          "pattern": "/oauth",
+          "operation": "add",
+          "replacement": "/api/users",
+          "description": "Gateway adds /api/users prefix to OAuth endpoints"
+        }
+      ]
+    },
+    {
+      "name": "customer-service",
+      "host": "customer-service",
+      "port": 80,
+      "group": "application",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/customers",
+      "description": "Customer relationship management",
+      "pathTransformations": [
+        {
+          "pattern": "/api/customers",
+          "operation": "strip",
+          "description": "Gateway strips /api/customers prefix"
+        },
+        {
+          "pattern": "/reports",
+          "operation": "add", 
+          "replacement": "/api/customers",
+          "description": "Gateway adds /api/customers prefix to report endpoints"
+        }
+      ]
+    },
+    {
+      "name": "product-service",
+      "host": "product-service",
+      "port": 80,
+      "group": "application",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/products",
+      "description": "Product catalog and inventory management",
+      "pathTransformations": [
+        {
+          "pattern": "/v1/products",
+          "operation": "replace",
+          "replacement": "/api/products",
+          "description": "Gateway replaces /v1/products with /api/products"
+        },
+        {
+          "pattern": "/inventory",
+          "operation": "add",
+          "replacement": "/api/products",
+          "description": "Gateway adds /api/products prefix to inventory endpoints"
+        }
+      ]
+    },
+    {
+      "name": "postgres",
+      "host": "postgres",
+      "port": 5432,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "PostgreSQL primary database"
+    },
+    {
+      "name": "redis",
+      "host": "redis",
+      "port": 6379,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "Redis cache and session store"
+    },
+    {
+      "name": "rabbitmq",
+      "host": "rabbitmq",
+      "port": 5672,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "RabbitMQ message broker"
+    },
+    {
+      "name": "mailpit",
+      "host": "mailpit",
+      "port": 1025,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "Mailpit email testing service"
+    }
+  ]
+}
