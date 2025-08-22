@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+  # Microservices Control Hub - Main Dashboard
+  microservices-control-hub:
+    build: 
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - CONFIG_PATH=/app/config/services.json
+    volumes:
+      # Mount your service configuration
+      - ./config:/app/config:ro
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Example API Gateway
+  api-gateway:
+    image: your-registry/api-gateway:latest
+    ports:
+      - "7000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  # Example Microservices
+  user-service:
+    image: your-registry/user-service:latest
+    ports:
+      - "7001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  customer-service:
+    image: your-registry/customer-service:latest
+    ports:
+      - "7002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  product-service:
+    image: your-registry/product-service:latest
+    ports:
+      - "7003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  # Infrastructure Services
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=microservices
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+      - MP_MAX_MESSAGES=5000
+    volumes:
+      - mailpit_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  mailpit_data:
+
+networks:
+  microservices:
+    driver: bridge
+
+# Usage:
+# 1. Copy this file to your project root
+# 2. Copy ../config/services.json to ./config/services.json
+# 3. Modify the service configurations to match your setup
+# 4. Run: docker-compose up -d
+# 5. Access:
+#    - Dashboard: http://localhost:3000
+#    - API Docs: http://localhost:3000/docs
+#    - Health API: http://localhost:3000/api/health

@@ -1,0 +1,150 @@
+
+services:
+  # Microservices Control Hub - Main Dashboard
+  microservices-control-hub:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=test
+      - PORT=3000
+      - CONFIG_PATH=/app/config/services.json
+      - PROJECT_NAME=QaliTrack
+    volumes:
+      # Mount test configuration
+      - ./config/test-services.json:/app/config/services.json:ro
+    networks:
+      - test-network
+    depends_on:
+      - sample-service-1
+      - sample-service-2
+      - sample-service-3
+      - test-redis
+      - test-postgres
+      - external-test-service
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Sample Services for Testing
+  sample-service-1:
+    build:
+      context: ./sample-service
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_NAME=sample-service-1
+      - PORT=3001
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  sample-service-2:
+    build:
+      context: ./sample-service
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_NAME=sample-service-2
+      - PORT=3001
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  sample-service-3:
+    build:
+      context: ./sample-service
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_NAME=sample-service-3
+      - PORT=3001
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Infrastructure Services for TCP Health Check Testing
+  test-redis:
+    image: redis:7-alpine
+    networks:
+      - test-network
+    restart: unless-stopped
+
+  test-postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=testdb
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test123
+    networks:
+      - test-network
+    restart: unless-stopped
+
+  # External service to test URL-based configuration (simulates external API)
+  external-test-service:
+    build:
+      context: ./sample-service
+      dockerfile: Dockerfile
+    ports:
+      - "8090:3001"  # Use port 8090 instead of 8080 to avoid conflicts
+    environment:
+      - SERVICE_NAME=external-test-service
+      - PORT=3001
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  test-network:
+    driver: bridge
+
+# Testing Instructions:
+# 
+# 1. Run the test environment:
+#    docker-compose -f tests/docker-compose.test.yml up -d
+#
+# 2. Access the dashboard:
+#    http://localhost:3000
+#
+# 3. Check health monitoring:
+#    http://localhost:3000/api/health
+#
+# 4. View aggregated Swagger docs:
+#    http://localhost:3000/docs
+#
+# 5. Test individual services:
+#    - Sample Service 1: http://localhost:3000/api/service1/items
+#    - Sample Service 2: http://localhost:3000/api/service2/items  
+#    - Sample Service 3: http://localhost:3000/api/service3/items
+#    - External Service: http://164.68.116.82:8090/health (direct) or http://localhost:3000/api/external/items (via control hub)
+#
+# 6. Verify health checks for all services show as "healthy" (including external service)
+#
+# 7. Verify Swagger UI shows APIs for all 4 services (3 internal + 1 external)
+#    with proper API root prefixes (/api/service1, /api/service2, /api/service3, /api/external)
+#
+# 8. Stop test environment:
+#    docker-compose -f tests/docker-compose.test.yml down
