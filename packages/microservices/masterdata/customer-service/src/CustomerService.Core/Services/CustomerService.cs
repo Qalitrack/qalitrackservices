@@ -5,14 +5,14 @@ using CustomerService.Core.Interfaces;
 
 namespace CustomerService.Core.Services;
 
-public class CustomerService : ICustomerService
+public class CustomerManagementService : ICustomerService
 {
     private readonly ICustomerRepository _customerRepository;
     private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Contract> _contractRepository;
     private readonly IMapper _mapper;
 
-    public CustomerService(
+    public CustomerManagementService(
         ICustomerRepository customerRepository,
         IRepository<Contact> contactRepository,
         IRepository<Contract> contractRepository,
@@ -57,7 +57,7 @@ public class CustomerService : ICustomerService
             }
         }
 
-        var customer = _mapper.Map<CustomerService.Core.Entities.Customer>(dto);
+        var customer = _mapper.Map<Customer>(dto);
         customer.CreatedAt = DateTime.UtcNow;
         customer.UpdatedAt = DateTime.UtcNow;
         
@@ -100,49 +100,48 @@ public class CustomerService : ICustomerService
         return await _customerRepository.IsNameAvailableAsync(name);
     }
 
-    // Customer status management
-    public async Task<bool> ActivateCustomerAsync(string id)
+    public async Task<CustomerReadDto?> ActivateCustomerAsync(string id)
     {
         var customer = await _customerRepository.GetByIdAsync(id);
-        if (customer == null) return false;
+        if (customer == null) return null;
 
         customer.Status = CustomerStatus.Active;
         customer.UpdatedAt = DateTime.UtcNow;
-        await _customerRepository.UpdateAsync(customer);
-        return true;
+        var updatedCustomer = await _customerRepository.UpdateAsync(customer);
+        return updatedCustomer == null ? null : _mapper.Map<CustomerReadDto>(updatedCustomer);
     }
 
-    public async Task<bool> DeactivateCustomerAsync(string id)
+    public async Task<CustomerReadDto?> DeactivateCustomerAsync(string id)
     {
         var customer = await _customerRepository.GetByIdAsync(id);
-        if (customer == null) return false;
+        if (customer == null) return null;
 
         customer.Status = CustomerStatus.Inactive;
         customer.UpdatedAt = DateTime.UtcNow;
-        await _customerRepository.UpdateAsync(customer);
-        return true;
+        var updatedCustomer = await _customerRepository.UpdateAsync(customer);
+        return updatedCustomer == null ? null : _mapper.Map<CustomerReadDto>(updatedCustomer);
     }
 
-    // Dual-role support (customer-as-transporter)
-    public async Task<bool> EnableTransporterRoleAsync(string customerId, string transporterId)
+    public async Task<CustomerReadDto?> EnableTransporterRoleAsync(string id, string transporterId)
     {
-        var customer = await _customerRepository.GetByIdAsync(customerId);
-        if (customer == null) return false;
+        var customer = await _customerRepository.GetByIdAsync(id);
+        if (customer == null) return null;
 
+        // Enable transporter role for this customer
         customer.TransporterId = transporterId;
         customer.UpdatedAt = DateTime.UtcNow;
-        await _customerRepository.UpdateAsync(customer);
-        return true;
+        var updatedCustomer = await _customerRepository.UpdateAsync(customer);
+        return updatedCustomer == null ? null : _mapper.Map<CustomerReadDto>(updatedCustomer);
     }
 
-    public async Task<bool> SetPreferredTransporterAsync(string customerId, string transporterId)
+    public async Task<CustomerReadDto?> SetPreferredTransporterAsync(string id, string transporterId)
     {
-        var customer = await _customerRepository.GetByIdAsync(customerId);
-        if (customer == null) return false;
+        var customer = await _customerRepository.GetByIdAsync(id);
+        if (customer == null) return null;
 
         customer.PreferredTransporterId = transporterId;
         customer.UpdatedAt = DateTime.UtcNow;
-        await _customerRepository.UpdateAsync(customer);
-        return true;
+        var updatedCustomer = await _customerRepository.UpdateAsync(customer);
+        return updatedCustomer == null ? null : _mapper.Map<CustomerReadDto>(updatedCustomer);
     }
 }
