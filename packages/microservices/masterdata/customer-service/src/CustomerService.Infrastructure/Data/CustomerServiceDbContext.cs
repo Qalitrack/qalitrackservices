@@ -13,10 +13,7 @@ public class CustomerServiceDbContext : DbContext
     public DbSet<CustomerService.Core.Entities.Customer> Customers { get; set; }
     public DbSet<Contact> Contacts { get; set; }
     public DbSet<Contract> Contracts { get; set; }
-    public DbSet<ContractRenewal> ContractRenewals { get; set; }
     public DbSet<Order> Orders { get; set; }
-    public DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
-    public DbSet<ContactCommunication> ContactCommunications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
