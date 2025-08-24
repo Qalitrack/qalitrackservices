@@ -115,7 +115,12 @@ public class OrdersController : BaseController
     {
         try
         {
-            var result = await _orderService.UpdateOrderStatusAsync(id, request.Status, request.Reason, request.ChangedBy);
+            if (!Enum.TryParse<OrderStatus>(request.Status, true, out var orderStatus))
+            {
+                return BadRequest("Invalid order status");
+            }
+            
+            var result = await _orderService.UpdateOrderStatusAsync(id, orderStatus, request.Reason, request.ChangedBy);
             if (!result)
             {
                 return NotFound("Order not found");
