@@ -1,0 +1,257 @@
+name: Generate Documentation with DocFX
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/**'
+      - 'docs/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/**'
+      - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install DocFX
+        run: dotnet tool install -g docfx
+
+      - name: Create DocFX config for services
+        run: |
+          # Create master docfx.json for all services
+          cat > docfx.json << 'EOF'
+          {
+            "metadata": [
+              {
+                "src": [
+                  {
+                    "files": ["packages/microservices/masterdata/*/src/**/*.csproj"],
+                    "exclude": ["**/bin/**", "**/obj/**"]
+                  },
+                  {
+                    "files": ["packages/microservices/datamanager/*/src/**/*.csproj"],
+                    "exclude": ["**/bin/**", "**/obj/**"]
+                  }
+                ],
+                "dest": "api",
+                "includePrivateMembers": false,
+                "disableGitFeatures": false,
+                "disableDefaultFilter": false,
+                "noRestore": false,
+                "namespaceLayout": "flattened",
+                "memberLayout": "SamePage",
+                "EnumSortOrder": "alphabetic",
+                "allowCompilationErrors": true
+              }
+            ],
+            "build": {
+              "content": [
+                {
+                  "files": ["api/**.yml", "api/index.md"]
+                },
+                {
+                  "files": ["docs/**.md", "*.md"],
+                  "exclude": ["**/bin/**", "**/obj/**"]
+                },
+                {
+                  "files": ["packages/microservices/masterdata/*/docs/**.md"],
+                  "dest": "services/masterdata"
+                },
+                {
+                  "files": ["packages/microservices/datamanager/*/docs/**.md"],
+                  "dest": "services/datamanager"
+                }
+              ],
+              "resource": [
+                {
+                  "files": ["images/**"]
+                },
+                {
+                  "files": ["docs/c4/assets/**"],
+                  "dest": "assets"
+                }
+              ],
+              "overwrite": [
+                {
+                  "files": ["apidoc/**.md"],
+                  "exclude": ["**/bin/**", "**/obj/**"]
+                }
+              ],
+              "dest": "_site",
+              "globalMetadataFiles": [],
+              "fileMetadataFiles": [],
+              "template": ["default"],
+              "postProcessors": [],
+              "markdownEngineName": "markdig",
+              "noLangKeyword": false,
+              "keepFileLink": false,
+              "cleanupCacheHistory": false,
+              "disableGitFeatures": false,
+              "globalMetadata": {
+                "_appTitle": "QaliTrack Microservices Documentation",
+                "_appName": "QaliTrack",
+                "_appFooter": "QaliTrack - Quality Tracking Platform",
+                "_enableSearch": true,
+                "_enableNewTab": true
+              }
+            }
+          }
+          EOF
+
+      - name: Restore NuGet packages for all services
+        run: |
+          find packages/microservices -name "*.sln" -exec dotnet restore {} \;
+
+      - name: Generate API metadata
+        run: |
+          docfx metadata docfx.json --warningsAsErrors false || echo "API metadata generation completed with warnings"
+
+      - name: Build documentation
+        run: |
+          docfx build docfx.json --warningsAsErrors false || echo "Documentation build completed with warnings"
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: _site/
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          force_orphan: true
+
+  generate-service-docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - { name: "customer-service", path: "packages/microservices/masterdata/customer-service" }
+          - { name: "driver-service", path: "packages/microservices/masterdata/driver-service" }
+          - { name: "product-service", path: "packages/microservices/masterdata/product-service" }
+          - { name: "report-service", path: "packages/microservices/masterdata/report-service" }
+          - { name: "route-service", path: "packages/microservices/masterdata/route-service" }
+          - { name: "sacco-service", path: "packages/microservices/masterdata/sacco-service" }
+          - { name: "supplier-service", path: "packages/microservices/masterdata/supplier-service" }
+          - { name: "transporter-service", path: "packages/microservices/masterdata/transporter-service" }
+          - { name: "vehicle-service", path: "packages/microservices/masterdata/vehicle-service" }
+          - { name: "weighbridge-service", path: "packages/microservices/masterdata/weighbridge-service" }
+          - { name: "compliance-service", path: "packages/microservices/datamanager/compliance-service" }
+          - { name: "operational-data-service", path: "packages/microservices/datamanager/operational-data-service" }
+          - { name: "transaction-service", path: "packages/microservices/datamanager/transaction-service" }
+          - { name: "weight-data-service", path: "packages/microservices/datamanager/weight-data-service" }
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install DocFX
+        run: dotnet tool install -g docfx
+
+      - name: Check if service exists
+        id: check-service
+        run: |
+          if [ -d "${{ matrix.service.path }}" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create service-specific DocFX config
+        if: steps.check-service.outputs.exists == 'true'
+        run: |
+          cd "${{ matrix.service.path }}"
+          
+          # Create docfx.json if it doesn't exist
+          if [ ! -f "docfx.json" ]; then
+            cat > docfx.json << EOF
+          {
+            "metadata": [
+              {
+                "src": [
+                  {
+                    "files": ["src/**/*.csproj"],
+                    "exclude": ["**/bin/**", "**/obj/**"]
+                  }
+                ],
+                "dest": "api",
+                "includePrivateMembers": false,
+                "disableGitFeatures": false,
+                "disableDefaultFilter": false,
+                "noRestore": false,
+                "namespaceLayout": "flattened",
+                "memberLayout": "SamePage",
+                "allowCompilationErrors": true
+              }
+            ],
+            "build": {
+              "content": [
+                {
+                  "files": ["api/**.yml", "api/index.md"]
+                },
+                {
+                  "files": ["docs/**.md", "*.md"],
+                  "exclude": ["**/bin/**", "**/obj/**"]
+                }
+              ],
+              "resource": [
+                {
+                  "files": ["images/**"]
+                }
+              ],
+              "dest": "_site",
+              "template": ["default"],
+              "globalMetadata": {
+                "_appTitle": "${{ matrix.service.name }} Documentation",
+                "_appName": "${{ matrix.service.name }}",
+                "_appFooter": "QaliTrack - ${{ matrix.service.name }}",
+                "_enableSearch": true
+              }
+            }
+          }
+          EOF
+          fi
+
+      - name: Restore dependencies
+        if: steps.check-service.outputs.exists == 'true'
+        run: |
+          cd "${{ matrix.service.path }}"
+          if [ -f "*.sln" ]; then
+            dotnet restore *.sln
+          fi
+
+      - name: Generate service documentation
+        if: steps.check-service.outputs.exists == 'true'
+        run: |
+          cd "${{ matrix.service.path }}"
+          docfx metadata docfx.json --warningsAsErrors false || echo "Metadata generation completed"
+          docfx build docfx.json --warningsAsErrors false || echo "Documentation build completed"
+
+      - name: Upload service documentation
+        if: steps.check-service.outputs.exists == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.service.name }}-docs
+          path: ${{ matrix.service.path }}/_site/
