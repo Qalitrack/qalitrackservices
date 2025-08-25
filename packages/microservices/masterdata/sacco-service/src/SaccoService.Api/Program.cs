@@ -11,6 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(SaccoProfile));
 
@@ -40,14 +43,20 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sacco Service API v1");
+    c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+});
 
-app.UseHttpsRedirection();
+// Comment out HTTPS redirect as requested
+// app.UseHttpsRedirection();
 app.UseAuthorization();
+
+// Map health check endpoint
+app.MapHealthChecks("/health");
+
 app.MapControllers();
 
 app.Run();

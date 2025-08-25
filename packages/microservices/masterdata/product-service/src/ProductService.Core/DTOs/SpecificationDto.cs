@@ -186,18 +186,4 @@ public class UpdateSpecificationDto
     // Approval Workflow
     public bool RequiresApproval { get; set; } = false;
     public SpecificationStatus Status { get; set; } = SpecificationStatus.Active;
-}public
- class SpecificationReadDto
-{
-    public string Id { get; set; } = string.Empty;
-    public string ProductId { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string Type { get; set; } = string.Empty;
-    public string Category { get; set; } = string.Empty;
-    public string Value { get; set; } = string.Empty;
-    public string? Unit { get; set; }
-    public bool IsRequired { get; set; }
-    public bool IsVisible { get; set; }
-    public string Status { get; set; } = string.Empty;
 }

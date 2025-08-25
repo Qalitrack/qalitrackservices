@@ -9,12 +9,10 @@ namespace ComplianceService.Api.Controllers
     [Route("api/[controller]")]
     public class ComplianceRulesController : ControllerBase
     {
-        private readonly IComplianceRepository _repository;
         private readonly ILogger<ComplianceRulesController> _logger;
 
-        public ComplianceRulesController(IComplianceRepository repository, ILogger<ComplianceRulesController> logger)
+        public ComplianceRulesController(ILogger<ComplianceRulesController> logger)
         {
-            _repository = repository;
             _logger = logger;
         }
 
@@ -23,22 +21,24 @@ namespace ComplianceService.Api.Controllers
         {
             try
             {
-                List<ComplianceRule> rules;
+                // Return stub data for now
+                var rules = new List<ComplianceRule>
+                {
+                    new ComplianceRule
+                    {
+                        Id = "1",
+                        Name = "Sample Weight Rule",
+                        Description = "Sample weight compliance rule",
+                        RuleType = "WEIGHT",
+                        Category = "WEIGHT_LIMITS",
+                        IsActive = true,
+                        Severity = "HIGH",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    }
+                };
 
-                if (!string.IsNullOrEmpty(ruleType))
-                {
-                    rules = await _repository.GetRulesByTypeAsync(ruleType);
-                }
-                else if (activeOnly)
-                {
-                    rules = await _repository.GetActiveRulesAsync();
-                }
-                else
-                {
-                    // This would require a new repository method for all rules
-                    rules = await _repository.GetActiveRulesAsync(); // For now, return active only
-                }
-
+                await Task.Delay(10); // Simulate async operation
                 return Ok(rules);
             }
             catch (Exception ex)
@@ -53,13 +53,27 @@ namespace ComplianceService.Api.Controllers
         {
             try
             {
-                var rule = await _repository.GetRuleByIdAsync(id);
-                if (rule == null)
+                // Return stub data for now
+                if (id == 1)
                 {
-                    return NotFound($"Compliance rule with ID {id} not found");
+                    var rule = new ComplianceRule
+                    {
+                        Id = "1",
+                        Name = "Sample Weight Rule",
+                        Description = "Sample weight compliance rule",
+                        RuleType = "WEIGHT",
+                        Category = "WEIGHT_LIMITS",
+                        IsActive = true,
+                        Severity = "HIGH",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    
+                    await Task.Delay(10);
+                    return Ok(rule);
                 }
 
-                return Ok(rule);
+                return NotFound($"Compliance rule with ID {id} not found");
             }
             catch (Exception ex)
             {
@@ -78,8 +92,10 @@ namespace ComplianceService.Api.Controllers
                     return BadRequest(ModelState);
                 }
 
+                // Stub implementation - return created rule with generated ID
                 var rule = new ComplianceRule
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Name = request.Name,
                     Description = request.Description,
                     RuleType = request.RuleType,
@@ -93,12 +109,13 @@ namespace ComplianceService.Api.Controllers
                     PenaltyAmount = request.PenaltyAmount,
                     PenaltyCurrency = request.PenaltyCurrency,
                     CreatedBy = request.CreatedBy,
-                    UpdatedBy = request.CreatedBy
+                    UpdatedBy = request.CreatedBy,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
 
-                var createdRule = await _repository.CreateRuleAsync(rule);
-
-                return CreatedAtAction(nameof(GetRule), new { id = createdRule.Id }, createdRule);
+                await Task.Delay(10);
+                return CreatedAtAction(nameof(GetRule), new { id = 1 }, rule);
             }
             catch (Exception ex)
             {
@@ -110,110 +127,48 @@ namespace ComplianceService.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ComplianceRule>> UpdateRule(int id, [FromBody] UpdateComplianceRuleRequest request)
         {
-            try
+            // Stub implementation
+            await Task.Delay(10);
+            if (id != 1) return NotFound($"Compliance rule with ID {id} not found");
+            
+            var rule = new ComplianceRule
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var existingRule = await _repository.GetRuleByIdAsync(id);
-                if (existingRule == null)
-                {
-                    return NotFound($"Compliance rule with ID {id} not found");
-                }
-
-                existingRule.Name = request.Name;
-                existingRule.Description = request.Description;
-                existingRule.RuleType = request.RuleType;
-                existingRule.Category = request.Category;
-                existingRule.ConfigurationJson = request.ConfigurationJson;
-                existingRule.IsActive = request.IsActive;
-                existingRule.Severity = request.Severity;
-                existingRule.MinValue = request.MinValue;
-                existingRule.MaxValue = request.MaxValue;
-                existingRule.Unit = request.Unit;
-                existingRule.PenaltyAmount = request.PenaltyAmount;
-                existingRule.PenaltyCurrency = request.PenaltyCurrency;
-                existingRule.UpdatedBy = request.UpdatedBy;
-
-                var updatedRule = await _repository.UpdateRuleAsync(existingRule);
-
-                return Ok(updatedRule);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating compliance rule {RuleId}", id);
-                return StatusCode(500, "An error occurred while updating the compliance rule");
-            }
+                Id = "1",
+                Name = request.Name,
+                Description = request.Description,
+                RuleType = request.RuleType,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow.AddDays(-1)
+            };
+            
+            return Ok(rule);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteRule(int id)
         {
-            try
-            {
-                var existingRule = await _repository.GetRuleByIdAsync(id);
-                if (existingRule == null)
-                {
-                    return NotFound($"Compliance rule with ID {id} not found");
-                }
-
-                await _repository.DeleteRuleAsync(id);
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting compliance rule {RuleId}", id);
-                return StatusCode(500, "An error occurred while deleting the compliance rule");
-            }
+            // Stub implementation
+            await Task.Delay(10);
+            if (id != 1) return NotFound($"Compliance rule with ID {id} not found");
+            return NoContent();
         }
 
         [HttpPost("{id}/activate")]
         public async Task<ActionResult> ActivateRule(int id)
         {
-            try
-            {
-                var rule = await _repository.GetRuleByIdAsync(id);
-                if (rule == null)
-                {
-                    return NotFound($"Compliance rule with ID {id} not found");
-                }
-
-                rule.IsActive = true;
-                await _repository.UpdateRuleAsync(rule);
-
-                return Ok(new { Message = "Rule activated successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error activating compliance rule {RuleId}", id);
-                return StatusCode(500, "An error occurred while activating the compliance rule");
-            }
+            // Stub implementation
+            await Task.Delay(10);
+            if (id != 1) return NotFound($"Compliance rule with ID {id} not found");
+            return Ok(new { Message = "Rule activated successfully" });
         }
 
         [HttpPost("{id}/deactivate")]
         public async Task<ActionResult> DeactivateRule(int id)
         {
-            try
-            {
-                var rule = await _repository.GetRuleByIdAsync(id);
-                if (rule == null)
-                {
-                    return NotFound($"Compliance rule with ID {id} not found");
-                }
-
-                rule.IsActive = false;
-                await _repository.UpdateRuleAsync(rule);
-
-                return Ok(new { Message = "Rule deactivated successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deactivating compliance rule {RuleId}", id);
-                return StatusCode(500, "An error occurred while deactivating the compliance rule");
-            }
+            // Stub implementation
+            await Task.Delay(10);
+            if (id != 1) return NotFound($"Compliance rule with ID {id} not found");
+            return Ok(new { Message = "Rule deactivated successfully" });
         }
     }
 

@@ -1,0 +1,83 @@
+@host = https://localhost:7001
+@baseUrl = {{host}}/api
+
+### Health Check
+GET {{host}}/health
+
+### Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "TestPassword123!",
+  "confirmPassword": "TestPassword123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "+1234567890"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "TestPassword123!",
+  "rememberMe": false
+}
+
+### Get User Profile (requires authentication)
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{accessToken}}
+
+### Check Username Availability
+GET {{baseUrl}}/users/check-username/testuser2
+
+### Check Email Availability
+GET {{baseUrl}}/users/check-email/test2@example.com
+
+### Refresh Token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Change Password (requires authentication)
+POST {{baseUrl}}/auth/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "TestPassword123!",
+  "newPassword": "NewTestPassword123!",
+  "confirmNewPassword": "NewTestPassword123!"
+}
+
+### Reset Password Request
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+  "email": "test@example.com"
+}
+
+### Logout (requires authentication)
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Get User Sessions (requires authentication)
+GET {{baseUrl}}/users/sessions
+Authorization: Bearer {{accessToken}}
+
+### Get User Roles (requires authentication)
+GET {{baseUrl}}/users/roles
+Authorization: Bearer {{accessToken}}

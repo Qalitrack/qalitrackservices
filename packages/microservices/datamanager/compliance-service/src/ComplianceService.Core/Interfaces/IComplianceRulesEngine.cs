@@ -10,5 +10,6 @@ namespace ComplianceService.Core.Interfaces
         Task<ComplianceResultDto> EvaluateProductComplianceAsync(string productId, string vehicleId);
         Task<List<ComplianceViolationDto>> DetectViolationsAsync(string transactionId);
         Task<ComplianceResultDto> EvaluateAllComplianceAsync(TransactionComplianceDto transaction);
+        Task<ComplianceResultDto> EvaluateRulesAsync(string entityType, string entityId, List<object> rules);
     }
 }

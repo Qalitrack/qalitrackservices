@@ -9,7 +9,7 @@ namespace OperationalDataService.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v{version:apiVersion}/products")]
-// [ApiVersion("1.0")]
+[ApiVersion("1.0")]
 public class ProductManagementController : BaseController
 {
     private readonly IProductCatalogService _productService;

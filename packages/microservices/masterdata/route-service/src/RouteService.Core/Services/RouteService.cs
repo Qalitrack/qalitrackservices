@@ -394,7 +394,7 @@ public class RouteService : IRouteService
         return _mapper.Map<IEnumerable<RouteConditionDto>>(conditions);
     }
 
-    public async Task<RouteConditionDto> UpdateConditionAsync(string routeId, string conditionId, UpdateRouteConditionRequest request)
+    public Task<RouteConditionDto> UpdateConditionAsync(string routeId, string conditionId, UpdateRouteConditionRequest request)
     {
         // Implementation similar to other update methods
         throw new NotImplementedException("Full implementation continues...");
@@ -575,7 +575,7 @@ public class RouteService : IRouteService
         };
     }
 
-    private async Task<List<TrafficIncidentDto>> SimulateTrafficIncidents(string routeId)
+    private Task<List<TrafficIncidentDto>> SimulateTrafficIncidents(string routeId)
     {
         // Simulate random incidents
         var incidents = new List<TrafficIncidentDto>();
@@ -596,10 +596,10 @@ public class RouteService : IRouteService
             });
         }
 
-        return incidents;
+        return Task.FromResult(incidents);
     }
 
-    private async Task<RouteMapDto> SimulateRouteOptimization(RouteMapDto currentRoute, RouteOptimizationRequestDto request)
+    private Task<RouteMapDto> SimulateRouteOptimization(RouteMapDto currentRoute, RouteOptimizationRequestDto request)
     {
         // Simulate optimization by reducing distance and time
         var optimizedRoute = new RouteMapDto
@@ -617,7 +617,7 @@ public class RouteService : IRouteService
             LastUpdated = DateTime.UtcNow
         };
 
-        return optimizedRoute;
+        return Task.FromResult(optimizedRoute);
     }
 
     private string GenerateOptimizationReason(RouteOptimizationRequestDto request)

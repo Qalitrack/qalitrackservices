@@ -19,7 +19,23 @@ public class SupplierProduct : BaseEntity
     public string? QualityCertifications { get; set; }
     public string? ComplianceStandards { get; set; }
     public string? Notes { get; set; }
+    public ProductAvailabilityStatus Status { get; set; } = ProductAvailabilityStatus.Available;
+    public string? SupplierSKU { get; set; }
+    public bool IsPreferred { get; set; }
+    public int CurrentStock { get; set; }
+    public DateTime? LastRestockDate { get; set; }
+    public int ReorderLevel { get; set; }
 
     // Navigation Properties
     public virtual Supplier Supplier { get; set; } = null!;
+    public virtual ICollection<SupplierPricing> Pricing { get; set; } = new List<SupplierPricing>();
+}
+
+public enum ProductAvailabilityStatus
+{
+    Available,
+    Discontinued,
+    OutOfStock,
+    BackOrder,
+    Seasonal
 }

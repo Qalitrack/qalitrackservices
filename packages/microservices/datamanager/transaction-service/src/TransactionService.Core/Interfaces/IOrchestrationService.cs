@@ -9,6 +9,8 @@ public interface IOrchestrationService
     Task<bool> ValidateWithMasterDataAsync(string transactionId);
     Task<bool> ProcessWithWeightDataAsync(string transactionId);
     Task<bool> AdvanceWorkflowAsync(string transactionId, string workflowStep, string userId);
+    Task<bool> StartOrchestrationAsync(string transactionId, string userId);
+    Task<bool> CompleteCurrentStepAsync(string transactionId, string notes, string userId);
     Task<bool> RequiresApprovalAsync(string transactionId);
     Task<bool> ApproveTransactionAsync(string transactionId, string approvedBy, string? reason = null);
     Task<bool> RejectTransactionAsync(string transactionId, string rejectedBy, string reason);

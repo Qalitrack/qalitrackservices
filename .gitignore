@@ -133,13 +133,77 @@ nbdist/
 
 # Database files
 *.db
+*.db-wal
+*.db-shm
+*.db-journal
 *.sqlite
 *.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
 *.mdf
 *.ldf
 *.bak
 *.dacpac
 *.bacpac
+
+# Service-specific database files
+*service*.db*
+customer*.db*
+user*.db*
+product*.db*
+driver*.db*
+vehicle*.db*
+route*.db*
+supplier*.db*
+transporter*.db*
+weighbridge*.db*
+sacco*.db*
+report*.db*
+compliance*.db*
+operational*.db*
+transaction*.db*
+weight*.db*
+
+# Database directories and logs
+data/
+logs/
+db-logs/
+database-backups/
+migrations/backups/
+backups/
+*.log
+*-log/
+
+# Docker database volumes
+postgres-data/
+mysql-data/
+redis-data/
+mongodb-data/
+
+# Entity Framework / ORM files
+Migrations/
+*.migrations.sql
+*.migration.sql
+*Migration*.sql
+
+# H2 Database (Java)
+*.h2.db
+*.trace.db
+*.lock.db
+
+# Redis dump files
+dump.rdb
+appendonly.aof
+*.rdb
+*.aof
+
+# MongoDB files  
+*.wt
+*.lock
+WiredTiger*
+mongod.lock
+journal/
 
 # SQL Server
 *.mdf

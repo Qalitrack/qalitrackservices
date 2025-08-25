@@ -6,7 +6,7 @@ namespace ComplianceService.Core.Entities
     {
         public int Id { get; set; }
         
-        public int ComplianceRuleId { get; set; }
+        public string ComplianceRuleId { get; set; } = string.Empty;
         
         [Required]
         [StringLength(100)]

@@ -92,17 +92,4 @@ public class UpdateCategoryDto
     public string? MetaDescription { get; set; }
     public string? Keywords { get; set; }
     public string? DisplayName { get; set; }
-}p
-ublic class CategoryReadDto
-{
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string Code { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
-    public string? ParentCategoryId { get; set; }
-    public int Level { get; set; }
-    public string Path { get; set; } = string.Empty;
-    public bool IsVisible { get; set; }
-    public bool AllowProducts { get; set; }
 }

@@ -41,4 +41,21 @@ public class StateRepository : Repository<TransactionState>, IStateRepository
         // For now, we'll use the business logic from StateService
         return await Task.FromResult(true);
     }
+
+    public async Task<List<TransactionState>> GetTransitionStatisticsAsync(DateTime? fromDate, DateTime? toDate)
+    {
+        var query = _dbSet.Where(s => !s.IsDeleted);
+        
+        if (fromDate.HasValue)
+        {
+            query = query.Where(s => s.TransitionDate >= fromDate.Value);
+        }
+        
+        if (toDate.HasValue)
+        {
+            query = query.Where(s => s.TransitionDate <= toDate.Value);
+        }
+        
+        return await query.OrderBy(s => s.TransitionDate).ToListAsync();
+    }
 }

@@ -4,11 +4,23 @@
 - name: API Overview
   href: api-overview.md
 
-- name: Deployment
-  href: deployment.md
+- name: Customer Management
+  href: customer-management.md
+
+- name: Contact Management
+  href: contact-management.md
+
+- name: Contract Management
+  href: contract-management.md
+
+- name: Order Management
+  href: order-management.md
 
 - name: Error Handling
   href: error-handling.md
 
 - name: Security
   href: security.md
+  
+- name: Deployment
+  href: deployment.md

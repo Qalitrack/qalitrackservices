@@ -22,9 +22,39 @@ public class SupplierPerformance : BaseEntity
     public int ResolvedComplaints { get; set; } = 0;
     public decimal? CustomerSatisfactionScore { get; set; }
     public string? Comments { get; set; }
+    public string? Notes { get; set; }
     public DateTime EvaluationDate { get; set; } = DateTime.UtcNow;
     public string? EvaluatedBy { get; set; }
+    public PerformanceMetricType MetricType { get; set; }
+    public decimal Score { get; set; }
+    public string Period { get; set; } = string.Empty;
+    public DateTime PeriodStart { get; set; }
+    public DateTime PeriodEnd { get; set; }
+    public int DataPoints { get; set; } = 1;
 
     // Navigation Properties
     public virtual Supplier Supplier { get; set; } = null!;
+}
+
+public enum PerformanceMetricType
+{
+    Quality,
+    Delivery,
+    Service,
+    Cost,
+    Overall,
+    DeliveryTime,
+    ResponseTime,
+    Reliability,
+    PriceCompetitiveness,
+    Communication
+}
+
+public enum PerformancePeriod
+{
+    Monthly,
+    Quarterly,
+    Yearly,
+    Weekly,
+    Daily
 }

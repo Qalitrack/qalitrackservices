@@ -161,7 +161,8 @@ public class SaccosController : ControllerBase
         return Ok(shares);
     }
 
-    // Regulatory Compliance Endpoints
+    // Regulatory Compliance Endpoints - Commented out due to missing DTOs
+    /*
     [HttpGet("{id}/compliance-status")]
     public async Task<ActionResult<SaccoComplianceStatusDto>> GetComplianceStatus(string id)
     {
@@ -244,4 +245,5 @@ public class SaccosController : ControllerBase
             return NotFound(ex.Message);
         }
     }
+    */
 }

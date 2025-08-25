@@ -9,7 +9,7 @@ namespace OperationalDataService.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v{version:apiVersion}/routes")]
-// [ApiVersion("1.0")]
+[ApiVersion("1.0")]
 public class RouteManagementController : BaseController
 {
     private readonly IRouteOptimizationService _routeService;

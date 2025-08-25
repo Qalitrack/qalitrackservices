@@ -44,6 +44,9 @@ builder.Services.AddScoped<ISupplierProductService, SupplierProductService>();
 builder.Services.AddScoped<ISupplierPricingService, SupplierPricingService>();
 builder.Services.AddScoped<ISupplierPerformanceService, SupplierPerformanceService>();
 
+// Health Checks
+builder.Services.AddHealthChecks();
+
 // API Documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -54,14 +57,20 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+// Always enable Swagger
+app.UseSwagger();
+app.UseSwaggerUI(c => 
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Supplier Service API v1"));
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Supplier Service API v1");
+    c.RoutePrefix = string.Empty; // Make Swagger UI available at root /
+});
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Commented out as requested
 app.UseRouting();
+
+// Health endpoint
+app.MapHealthChecks("/health");
+
 app.MapControllers();
 
 // Database Migration and Seeding

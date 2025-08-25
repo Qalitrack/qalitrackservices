@@ -1,6 +1,6 @@
-# ProductService
+# Product Service
 
-Product Catalog Management
+A comprehensive Product Management microservice for the QaliTrack platform, providing product catalog management, categorization, pricing, and specification features.
 
 ## Service Type: Masterdata
 

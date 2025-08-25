@@ -126,4 +126,74 @@ public class SupplierProductService : ISupplierProductService
         await _supplierProductRepository.UpdateAsync(product);
         return true;
     }
+
+    public async Task<SupplierProductDto> CreateProductAsync(string supplierId, CreateSupplierProductRequest request)
+    {
+        var supplier = await _supplierRepository.GetByIdAsync(supplierId);
+        if (supplier == null)
+            throw new InvalidOperationException($"Supplier with ID '{supplierId}' not found");
+
+        var supplierProduct = _mapper.Map<SupplierProduct>(request);
+        supplierProduct.SupplierId = supplierId;
+
+        var createdProduct = await _supplierProductRepository.AddAsync(supplierProduct);
+        return _mapper.Map<SupplierProductDto>(createdProduct);
+    }
+
+    public async Task<IEnumerable<SupplierProductDto>> GetSupplierProductsAsync(string supplierId)
+    {
+        var products = await _supplierProductRepository.GetBySupplierId(supplierId);
+        return _mapper.Map<IEnumerable<SupplierProductDto>>(products);
+    }
+
+    public async Task<IEnumerable<SupplierProductDto>> GetActiveProductsAsync(string supplierId)
+    {
+        var products = await _supplierProductRepository.GetBySupplierId(supplierId);
+        var activeProducts = products.Where(p => p.IsActive);
+        return _mapper.Map<IEnumerable<SupplierProductDto>>(activeProducts);
+    }
+
+    public async Task<SupplierProductDto?> GetProductByIdAsync(string id)
+    {
+        var product = await _supplierProductRepository.GetByIdAsync(id);
+        return product == null ? null : _mapper.Map<SupplierProductDto>(product);
+    }
+
+    public async Task<bool> DeleteProductAsync(string id)
+    {
+        var product = await _supplierProductRepository.GetByIdAsync(id);
+        if (product == null)
+            return false;
+
+        await _supplierProductRepository.DeleteAsync(id);
+        return true;
+    }
+
+    public async Task<SupplierProductDto?> UpdateProductAsync(string id, UpdateSupplierProductDto dto)
+    {
+        var product = await _supplierProductRepository.GetByIdAsync(id);
+        if (product == null)
+            return null;
+
+        _mapper.Map(dto, product);
+        product.UpdatedAt = DateTime.UtcNow;
+
+        var updatedProduct = await _supplierProductRepository.UpdateAsync(product);
+        return _mapper.Map<SupplierProductDto>(updatedProduct);
+    }
+
+    // Additional methods expected by controllers
+    public async Task<IEnumerable<SupplierProductDto>> GetAllAsync()
+    {
+        var products = await _supplierProductRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<SupplierProductDto>>(products);
+    }
+
+    public async Task<SupplierProductDto> CreateAsync(CreateSupplierProductDto dto)
+    {
+        var supplierProduct = _mapper.Map<SupplierProduct>(dto);
+        var createdProduct = await _supplierProductRepository.AddAsync(supplierProduct);
+        return _mapper.Map<SupplierProductDto>(createdProduct);
+    }
+
 }
