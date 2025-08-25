@@ -124,15 +124,15 @@ services:
     restart: unless-stopped
 
   # QaliTrack Datamanager Services
-#  compliance-service:
-#    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/compliance-service:latest
-#    ports:
-#      - "7011:80"
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#    networks:
-#      - microservices
-#    restart: unless-stopped
+  compliance-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/compliance-service:latest
+    ports:
+      - "7011:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
 
   operational-data-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/operational-data-service:latest
