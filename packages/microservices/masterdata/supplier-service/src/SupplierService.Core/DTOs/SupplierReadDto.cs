@@ -6,6 +6,7 @@ public class SupplierReadDto
 {
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
     public string? TaxNumber { get; set; }
     public string? RegistrationNumber { get; set; }
     public string ContactEmail { get; set; } = string.Empty;
@@ -25,6 +26,20 @@ public class SupplierReadDto
     public string? UpdatedBy { get; set; }
     
     // Test compatibility properties
+    public string Email 
+    { 
+        get => ContactEmail; 
+        set => ContactEmail = value; 
+    }
+    
+    public string? ContactPerson { get; set; }
+    
+    public string? Phone 
+    { 
+        get => ContactPhone; 
+        set => ContactPhone = value; 
+    }
+    
     public string Type 
     { 
         get => SupplierType.ToString(); 

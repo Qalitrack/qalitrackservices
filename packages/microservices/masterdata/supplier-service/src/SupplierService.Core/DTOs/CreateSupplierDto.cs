@@ -43,6 +43,6 @@ public class CreateSupplierDto
     public string Status 
     { 
         get => "Active"; // Default for new suppliers
-        set => { /* New suppliers are always active initially */ }
+        set { /* New suppliers are always active initially */ }
     }
 }
