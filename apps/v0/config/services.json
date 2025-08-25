@@ -23,56 +23,158 @@
   },
   "services": [
     {
-      "name": "api-gateway",
-      "host": "api-gateway",
-      "port": 80,
-      "group": "gateway",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "",
-      "description": "API Gateway - Central routing and authentication"
-    },
-    {
-      "name": "user-service",
-      "host": "user-service",
-      "port": 80,
-      "group": "application",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/users",
-      "description": "User management and authentication service",
-      "pathTransformations": [
-        {
-          "pattern": "/api/users",
-          "operation": "strip-all-except",
-          "except": ["/oauth", "/o/"],
-          "description": "Gateway strips /api/users prefix from all endpoints except OAuth paths"
-        }
-      ]
-    },
-    {
       "name": "customer-service",
       "host": "customer-service",
       "port": 80,
-      "group": "application",
+      "group": "masterdata",
       "enabled": true,
       "healthPath": "/health",
       "swaggerPath": "/swagger/v1/swagger.json",
       "apiRoot": "/api/customers",
-      "description": "Customer relationship management"
+      "description": "Customer management service"
+    },
+    {
+      "name": "driver-service",
+      "host": "driver-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/drivers",
+      "description": "Driver management service"
     },
     {
       "name": "product-service",
       "host": "product-service",
       "port": 80,
-      "group": "application",
+      "group": "masterdata",
       "enabled": true,
       "healthPath": "/health",
       "swaggerPath": "/swagger/v1/swagger.json",
       "apiRoot": "/api/products",
       "description": "Product catalog and inventory management"
+    },
+    {
+      "name": "report-service",
+      "host": "report-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/reports",
+      "description": "Reporting service"
+    },
+    {
+      "name": "route-service",
+      "host": "route-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/routes",
+      "description": "Route management service"
+    },
+    {
+      "name": "sacco-service",
+      "host": "sacco-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/saccos",
+      "description": "SACCO integration service"
+    },
+    {
+      "name": "supplier-service",
+      "host": "supplier-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/suppliers",
+      "description": "Supplier management service"
+    },
+    {
+      "name": "transporter-service",
+      "host": "transporter-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/transporters",
+      "description": "Transporter management service"
+    },
+    {
+      "name": "vehicle-service",
+      "host": "vehicle-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/vehicles",
+      "description": "Vehicle management service"
+    },
+    {
+      "name": "weighbridge-service",
+      "host": "weighbridge-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/weighbridges",
+      "description": "Weighbridge management service"
+    },
+    {
+      "name": "compliance-service",
+      "host": "compliance-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/compliance",
+      "description": "Compliance monitoring service"
+    },
+    {
+      "name": "operational-data-service",
+      "host": "operational-data-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/operational-data",
+      "description": "Operational data processing service"
+    },
+    {
+      "name": "transaction-service",
+      "host": "transaction-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/transactions",
+      "description": "Transaction processing service"
+    },
+    {
+      "name": "weight-data-service",
+      "host": "weight-data-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/weight-data",
+      "description": "Weight data processing service"
     },
     {
       "name": "postgres",

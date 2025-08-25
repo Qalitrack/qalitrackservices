@@ -10,6 +10,7 @@ namespace ComplianceService.Infrastructure.Data
         }
 
         // DbSets
+        public DbSet<Compliance> Compliances { get; set; }
         public DbSet<ComplianceRule> ComplianceRules { get; set; }
         public DbSet<ComplianceViolation> ComplianceViolations { get; set; }
         public DbSet<ComplianceCheck> ComplianceChecks { get; set; }
@@ -22,6 +23,38 @@ namespace ComplianceService.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Configure Compliance
+            modelBuilder.Entity<Compliance>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ComplianceName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.EntityType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.EntityId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.OrganizationId).HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(500);
+                entity.Property(e => e.AssignedUserId).HasMaxLength(50);
+                entity.Property(e => e.AssignedUserName).HasMaxLength(100);
+                entity.Property(e => e.RiskAssessment).HasMaxLength(1000);
+                entity.Property(e => e.RegulatoryFramework).HasMaxLength(100);
+                entity.Property(e => e.RegulatoryBody).HasMaxLength(100);
+                entity.Property(e => e.ComplianceStandardId).HasMaxLength(50);
+                entity.Property(e => e.NonComplianceReason).HasMaxLength(1000);
+                entity.Property(e => e.RecommendedActions).HasMaxLength(1000);
+                entity.Property(e => e.CompletedActions).HasMaxLength(1000);
+                entity.Property(e => e.Notes).HasMaxLength(2000);
+                
+                entity.Property(e => e.RiskScore).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.ComplianceScore).HasColumnType("decimal(18,2)");
+
+                entity.HasIndex(e => e.EntityType);
+                entity.HasIndex(e => e.EntityId);
+                entity.HasIndex(e => e.OrganizationId);
+                entity.HasIndex(e => e.Status);
+                entity.HasIndex(e => e.ComplianceType);
+                entity.HasIndex(e => e.CheckDate);
+                entity.HasIndex(e => e.DueDate);
+            });
 
             // Configure ComplianceRule
             modelBuilder.Entity<ComplianceRule>(entity =>
