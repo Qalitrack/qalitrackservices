@@ -286,7 +286,7 @@ namespace ComplianceService.Infrastructure.Data
             modelBuilder.Entity<WeightLimits>().HasData(
                 new WeightLimits
                 {
-                    Id = 1,
+                    Id = "1",
                     Name = "Standard Truck Weight Limits",
                     Description = "Standard weight limits for trucks in Kenya",
                     VehicleType = "TRUCK",
@@ -311,7 +311,7 @@ namespace ComplianceService.Infrastructure.Data
             modelBuilder.Entity<ComplianceRule>().HasData(
                 new ComplianceRule
                 {
-                    Id = 1,
+                    Id = "1",
                     Name = "Gross Weight Compliance",
                     Description = "Check if vehicle gross weight exceeds legal limits",
                     RuleType = "WEIGHT",
@@ -330,7 +330,7 @@ namespace ComplianceService.Infrastructure.Data
                 },
                 new ComplianceRule
                 {
-                    Id = 2,
+                    Id = "2",
                     Name = "License Expiry Check",
                     Description = "Monitor driver license expiry dates",
                     RuleType = "LICENSE",

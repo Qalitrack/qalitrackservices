@@ -1,0 +1,223 @@
+services:
+  # Microservices Control Hub - Main Dashboard
+  microservices-control-hub:
+    image: ghcr.io/ghtestminutes/microservices-control-hub:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - CONFIG_PATH=/app/config/services.json
+    volumes:
+      # Mount your service configuration
+      - ./config:/app/config:ro
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Available QaliTrack Services (13 services from your list)
+  customer-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/customer-service:latest
+    ports:
+      - "7001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  driver-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/driver-service:latest
+    ports:
+      - "7002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  product-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/product-service:latest
+    ports:
+      - "7003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  report-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/report-service:latest
+    ports:
+      - "7004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  route-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/route-service:latest
+    ports:
+      - "7005:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  sacco-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/sacco-service:latest
+    ports:
+      - "7006:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  supplier-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/supplier-service:latest
+    ports:
+      - "7007:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  transporter-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/transporter-service:latest
+    ports:
+      - "7008:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  vehicle-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/vehicle-service:latest
+    ports:
+      - "7009:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  weighbridge-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/weighbridge-service:latest
+    ports:
+      - "7010:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  transaction-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/transaction-service:latest
+    ports:
+      - "7011:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  weight-data-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/weight-data-service:latest
+    ports:
+      - "7012:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  operational-data-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/operational-data-service:latest
+    ports:
+      - "7013:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  # Infrastructure Services
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=microservices
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+      - MP_MAX_MESSAGES=5000
+    volumes:
+      - mailpit_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  mailpit_data:
+
+networks:
+  microservices:
+    driver: bridge
+
+# Usage:
+# 1. Run: docker-compose -f docker-compose-available.yml up -d
+# 2. Access:
+#    - Dashboard: http://localhost:3000
+#    - Services: http://localhost:7001-7013
