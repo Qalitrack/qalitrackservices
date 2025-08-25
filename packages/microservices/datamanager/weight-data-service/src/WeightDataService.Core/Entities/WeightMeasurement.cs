@@ -19,7 +19,7 @@ public class WeightMeasurement : BaseEntity
     public bool IsDeleted { get; set; } = false;
     
     // Real-time streaming fields
-    public string? StreamingSessionId { get; set; }
+    public Guid? StreamingSessionId { get; set; }
     public DateTime? StreamingStartTime { get; set; }
     public DateTime? StreamingEndTime { get; set; }
     public bool IsStreaming { get; set; } = false;

@@ -87,7 +87,9 @@ builder.Services.AddAutoMapper(typeof(ReportProfile));
 // Add Entity Framework
 builder.Services.AddDbContext<ReportServiceDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-    "Data Source=report-service.db"));
+    "Data Source=report-service.db")
+    .ConfigureWarnings(warnings => 
+        warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.AccidentalEntityType)));
 
 // TODO: Add authentication if needed for this service
 // For authentication services, uncomment and configure JWT
@@ -126,15 +128,16 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 // TODO: Add additional repositories as needed
-// builder.Services.AddScoped<IAnotherRepository, AnotherRepository>();
+// builder.Services.AddScoped<IExportRepository, ExportRepository>();
+// builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+// builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 
-// Add services
+// Add services - temporarily only including the basic ReportService
 builder.Services.AddScoped<IReportService, ReportService.Core.Services.ReportService>();
-// TODO: Add additional services as needed
-// builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-// builder.Services.AddScoped<IJwtService, JwtService>();
-// builder.Services.AddScoped<IPasswordService, PasswordService>();
-// builder.Services.AddScoped<IEmailService, EmailService>();
+// TODO: Add additional services when interfaces are complete
+// builder.Services.AddScoped<IExportService, ExportService>();
+// builder.Services.AddScoped<IScheduleService, ScheduleService>();
+// builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -166,7 +169,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Commented out as requested
 app.UseCors("AllowAll");
 
 // Use Serilog request logging

@@ -141,7 +141,8 @@ public class Report : BaseEntity
     public string? StyleJson { get; set; }
     public string? MetadataJson { get; set; }
     
-    // Computed properties
+    // Computed properties - temporarily commented out to avoid EF Core mapping issues
+    /*
     public Dictionary<string, object>? Configuration
     {
         get => string.IsNullOrEmpty(ConfigurationJson) ? null : JsonConvert.DeserializeObject<Dictionary<string, object>>(ConfigurationJson);
@@ -201,6 +202,7 @@ public class Report : BaseEntity
         get => string.IsNullOrEmpty(Tags) ? null : JsonConvert.DeserializeObject<List<string>>(Tags);
         set => Tags = value == null ? null : JsonConvert.SerializeObject(value);
     }
+    */
     
     // Navigation Properties
     public virtual Template? Template { get; set; }

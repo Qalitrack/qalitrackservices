@@ -1,4 +1,5 @@
 using ProductService.Core.DTOs;
+using ProductService.Core.Entities;
 
 namespace ProductService.Core.Interfaces;
 

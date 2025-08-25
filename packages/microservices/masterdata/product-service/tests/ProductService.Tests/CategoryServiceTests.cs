@@ -40,7 +40,7 @@ public class CategoryServiceTests : IDisposable
     public async Task CreateCategory_ShouldCreateCategorySuccessfully()
     {
         // Arrange
-        var categoryDto = new CategoryDto
+        var categoryDto = new CreateCategoryDto
         {
             Name = "Electronics",
             Description = "Electronic products",
@@ -65,7 +65,7 @@ public class CategoryServiceTests : IDisposable
     {
         // Arrange
         var parentCategory = await CreateTestCategory("Electronics", "ELEC", null);
-        var subCategoryDto = new CategoryDto
+        var subCreateCategoryDto = new CreateCategoryDto
         {
             Name = "Computers",
             Description = "Computer products",
@@ -76,7 +76,7 @@ public class CategoryServiceTests : IDisposable
         };
 
         // Act
-        var result = await _categoryService.CreateAsync(subCategoryDto);
+        var result = await _categoryService.CreateAsync(subCreateCategoryDto);
 
         // Assert
         Assert.NotNull(result);
@@ -94,7 +94,7 @@ public class CategoryServiceTests : IDisposable
         await CreateTestCategory("Computers", "COMP", rootCategory1.Id);
 
         // Act
-        var result = await _categoryService.GetHierarchyAsync();
+        var result = await _categoryService.GetRootCategoriesAsync();
 
         // Assert
         Assert.NotNull(result);
@@ -139,9 +139,8 @@ public class CategoryServiceTests : IDisposable
     {
         // Arrange
         var category = await CreateTestCategory("Original Category", "ORIG", null);
-        var updateDto = new CategoryDto
+        var updateDto = new UpdateCategoryDto
         {
-            Id = category.Id,
             Name = "Updated Category",
             Description = "Updated Description",
             Code = category.Code,

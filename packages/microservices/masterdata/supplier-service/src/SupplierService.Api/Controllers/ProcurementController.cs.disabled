@@ -1,0 +1,315 @@
+using Microsoft.AspNetCore.Mvc;
+using SupplierService.Core.DTOs;
+using SupplierService.Core.Entities;
+using SupplierService.Core.Interfaces;
+
+namespace SupplierService.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ProcurementController : BaseController
+{
+    private readonly IProcurementService _procurementService;
+
+    public ProcurementController(IProcurementService procurementService)
+    {
+        _procurementService = procurementService;
+    }
+
+    /// <summary>
+    /// Get all procurements
+    /// </summary>
+    [HttpGet]
+    public async Task<ActionResult<ApiResponseDto<IEnumerable<ProcurementDto>>>> GetAll()
+    {
+        try
+        {
+            var procurements = await _procurementService.GetAllProcurementsAsync();
+            return Ok(ApiResponseDto<IEnumerable<ProcurementDto>>.SuccessResponse(procurements));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get procurement by ID
+    /// </summary>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ApiResponseDto<ProcurementDto>>> GetById(string id)
+    {
+        try
+        {
+            var procurement = await _procurementService.GetProcurementByIdAsync(id);
+            if (procurement == null)
+                return NotFound(ApiResponseDto<ProcurementDto>.ErrorResponse("Procurement not found"));
+
+            return Ok(ApiResponseDto<ProcurementDto>.SuccessResponse(procurement));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<ProcurementDto>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get procurements by supplier
+    /// </summary>
+    [HttpGet("supplier/{supplierId}")]
+    public async Task<ActionResult<ApiResponseDto<IEnumerable<ProcurementDto>>>> GetBySupplier(string supplierId)
+    {
+        try
+        {
+            var procurements = await _procurementService.GetProcurementsBySupplierAsync(supplierId);
+            return Ok(ApiResponseDto<IEnumerable<ProcurementDto>>.SuccessResponse(procurements));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get procurements by status
+    /// </summary>
+    [HttpGet("status/{status}")]
+    public async Task<ActionResult<ApiResponseDto<IEnumerable<ProcurementDto>>>> GetByStatus(ProcurementStatus status)
+    {
+        try
+        {
+            var procurements = await _procurementService.GetProcurementsByStatusAsync(status);
+            return Ok(ApiResponseDto<IEnumerable<ProcurementDto>>.SuccessResponse(procurements));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get pending approvals
+    /// </summary>
+    [HttpGet("pending-approvals")]
+    public async Task<ActionResult<ApiResponseDto<IEnumerable<ProcurementDto>>>> GetPendingApprovals()
+    {
+        try
+        {
+            var procurements = await _procurementService.GetPendingApprovalsAsync();
+            return Ok(ApiResponseDto<IEnumerable<ProcurementDto>>.SuccessResponse(procurements));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Get overdue deliveries
+    /// </summary>
+    [HttpGet("overdue-deliveries")]
+    public async Task<ActionResult<ApiResponseDto<IEnumerable<ProcurementDto>>>> GetOverdueDeliveries()
+    {
+        try
+        {
+            var procurements = await _procurementService.GetOverdueDeliveriesAsync();
+            return Ok(ApiResponseDto<IEnumerable<ProcurementDto>>.SuccessResponse(procurements));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Create a new procurement
+    /// </summary>
+    [HttpPost]
+    public async Task<ActionResult<ApiResponseDto<ProcurementDto>>> Create([FromBody] CreateProcurementRequest request)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponseDto<ProcurementDto>.ErrorResponse("Invalid model state", GetModelStateErrors()));
+
+            var procurement = await _procurementService.CreateProcurementAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = procurement.Id }, 
+                ApiResponseDto<ProcurementDto>.SuccessResponse(procurement));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Update an existing procurement
+    /// </summary>
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ApiResponseDto<ProcurementDto>>> Update(string id, [FromBody] UpdateProcurementRequest request)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponseDto<ProcurementDto>.ErrorResponse("Invalid model state", GetModelStateErrors()));
+
+            var procurement = await _procurementService.UpdateProcurementAsync(id, request);
+            return Ok(ApiResponseDto<ProcurementDto>.SuccessResponse(procurement));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(ApiResponseDto<ProcurementDto>.ErrorResponse("Procurement not found"));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Approve a procurement
+    /// </summary>
+    [HttpPost("{id}/approve")]
+    public async Task<ActionResult<ApiResponseDto<ProcurementDto>>> Approve(string id, [FromBody] ApprovalRequest request)
+    {
+        try
+        {
+            var procurement = await _procurementService.ApproveProcurementAsync(id, request.ApprovedBy);
+            return Ok(ApiResponseDto<ProcurementDto>.SuccessResponse(procurement));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(ApiResponseDto<ProcurementDto>.ErrorResponse("Procurement not found"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponseDto<ProcurementDto>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Reject a procurement
+    /// </summary>
+    [HttpPost("{id}/reject")]
+    public async Task<ActionResult<ApiResponseDto<ProcurementDto>>> Reject(string id, [FromBody] RejectionRequest request)
+    {
+        try
+        {
+            var procurement = await _procurementService.RejectProcurementAsync(id, request.RejectedBy, request.Reason);
+            return Ok(ApiResponseDto<ProcurementDto>.SuccessResponse(procurement));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(ApiResponseDto<ProcurementDto>.ErrorResponse("Procurement not found"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponseDto<ProcurementDto>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Mark procurement as ordered
+    /// </summary>
+    [HttpPost("{id}/order")]
+    public async Task<ActionResult<ApiResponseDto<ProcurementDto>>> MarkAsOrdered(string id, [FromBody] OrderRequest request)
+    {
+        try
+        {
+            var procurement = await _procurementService.MarkAsOrderedAsync(id, request.PurchaseOrderNumber);
+            return Ok(ApiResponseDto<ProcurementDto>.SuccessResponse(procurement));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(ApiResponseDto<ProcurementDto>.ErrorResponse("Procurement not found"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponseDto<ProcurementDto>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Mark procurement as delivered
+    /// </summary>
+    [HttpPost("{id}/deliver")]
+    public async Task<ActionResult<ApiResponseDto<ProcurementDto>>> MarkAsDelivered(string id, [FromBody] DeliveryRequest request)
+    {
+        try
+        {
+            var procurement = await _procurementService.MarkAsDeliveredAsync(id, request.DeliveryDate, request.ActualValue);
+            return Ok(ApiResponseDto<ProcurementDto>.SuccessResponse(procurement));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(ApiResponseDto<ProcurementDto>.ErrorResponse("Procurement not found"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponseDto<ProcurementDto>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+
+    /// <summary>
+    /// Delete a procurement
+    /// </summary>
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ApiResponseDto<bool>>> Delete(string id)
+    {
+        try
+        {
+            await _procurementService.DeleteProcurementAsync(id);
+            return Ok(ApiResponseDto<bool>.SuccessResponse(true));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(ApiResponseDto<bool>.ErrorResponse("Procurement not found"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponseDto<bool>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return HandleException<ApiResponseDto<IEnumerable<ProcurementDto>>>(ex);
+        }
+    }
+}
+
+public class ApprovalRequest
+{
+    public string ApprovedBy { get; set; } = string.Empty;
+}
+
+public class RejectionRequest
+{
+    public string RejectedBy { get; set; } = string.Empty;
+    public string Reason { get; set; } = string.Empty;
+}
+
+public class OrderRequest
+{
+    public string PurchaseOrderNumber { get; set; } = string.Empty;
+}
+
+public class DeliveryRequest
+{
+    public DateTime DeliveryDate { get; set; }
+    public decimal? ActualValue { get; set; }
+}

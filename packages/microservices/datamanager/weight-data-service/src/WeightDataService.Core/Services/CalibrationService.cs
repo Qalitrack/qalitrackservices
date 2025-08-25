@@ -89,7 +89,7 @@ public class CalibrationService : ICalibrationService
         };
     }
 
-    public async Task<CalibrationDriftDto> DetectDriftAsync(string weighbridgeId, decimal currentWeight, decimal referenceWeight)
+    public Task<CalibrationDriftDto> DetectDriftAsync(string weighbridgeId, decimal currentWeight, decimal referenceWeight)
     {
         var drift = currentWeight - referenceWeight;
         var driftPercentage = referenceWeight != 0 ? (drift / referenceWeight) * 100 : 0;
@@ -101,7 +101,7 @@ public class CalibrationService : ICalibrationService
             recommendedAction = Math.Abs(driftPercentage) > 1.0m ? "Immediate Calibration Required" : "Schedule Calibration";
         }
 
-        return new CalibrationDriftDto
+        return Task.FromResult(new CalibrationDriftDto
         {
             WeighbridgeId = weighbridgeId,
             CurrentDrift = drift,
@@ -109,7 +109,7 @@ public class CalibrationService : ICalibrationService
             DriftDetected = driftDetected,
             RecommendedAction = recommendedAction,
             DetectionTime = DateTime.UtcNow
-        };
+        });
     }
 
     public async Task<bool> PerformAutomaticCalibrationAsync(string weighbridgeId, string organizationId)

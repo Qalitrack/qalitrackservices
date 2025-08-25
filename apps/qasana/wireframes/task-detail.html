@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Detail - Qasana Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .search-box {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 300px;
+        }
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 15px 20px;
+            margin-top: 60px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        /* Task Content */
+        .task-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e1e8ed;
+        }
+
+        /* Task Header */
+        .task-header {
+            padding: 25px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        .task-status-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .task-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+        .task-description {
+            margin-top: 15px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* Task Meta */
+        .task-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .meta-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            min-width: 80px;
+        }
+        .meta-value {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .assignee-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        .priority-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .priority-high { background: #e74c3c; }
+        .priority-medium { background: #f39c12; }
+        .priority-low { background: #27ae60; }
+
+        /* Subtasks */
+        .subtasks-section {
+            padding: 25px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .subtask-item:last-child {
+            border-bottom: none;
+        }
+        .subtask-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #bdc3c7;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .subtask-checkbox.completed {
+            background: #27ae60;
+            border-color: #27ae60;
+            position: relative;
+        }
+        .subtask-checkbox.completed::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            top: -2px;
+            left: 2px;
+        }
+        .subtask-text {
+            flex: 1;
+            font-size: 14px;
+        }
+        .subtask-text.completed {
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+        .add-subtask {
+            margin-top: 10px;
+            color: #3498db;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Comments */
+        .comments-section {
+            padding: 25px;
+        }
+        .comment-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .comment-author {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        .comment-time {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+        .comment-input {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e8ed;
+        }
+        .comment-textarea {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Sidebar */
+        .task-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sidebar-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e1e8ed;
+        }
+        .sidebar-header {
+            padding: 20px 20px 0 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .sidebar-content {
+            padding: 15px 20px 20px 20px;
+        }
+
+        /* Properties */
+        .property-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .property-item:last-child {
+            border-bottom: none;
+        }
+        .property-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .property-value {
+            font-size: 14px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Activity */
+        .activity-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ecf0f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .activity-text {
+            flex: 1;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .activity-time {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        /* Attachments */
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .attachment-item:last-child {
+            border-bottom: none;
+        }
+        .attachment-icon {
+            width: 32px;
+            height: 32px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .attachment-info {
+            flex: 1;
+        }
+        .attachment-name {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+        .attachment-size {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: 1px solid;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .btn-secondary {
+            background: white;
+            color: #3498db;
+            border-color: #3498db;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Wireframes</a>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🎯 Qasana</div>
+        <div class="header-actions">
+            <input type="text" class="search-box" placeholder="Search tasks...">
+            <button class="btn btn-primary">+ Add Task</button>
+            <div class="user-avatar">JD</div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="#dashboard">Development Team</a> > 
+        <a href="#project">Website Redesign</a> > 
+        <span>Create wireframes for homepage</span>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Task Content -->
+        <div class="task-content">
+            <!-- Task Header -->
+            <div class="task-header">
+                <div class="task-status-row">
+                    <div class="task-checkbox"></div>
+                    <h1 class="task-title">Create wireframes for homepage</h1>
+                </div>
+                <p class="task-description">
+                    Design comprehensive low-fidelity wireframes for the new homepage layout. This should include the hero section, navigation menu, feature highlights, testimonials section, and footer. Focus on user flow and information hierarchy rather than visual design details.
+                </p>
+                <div class="task-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Assignee:</span>
+                        <div class="assignee-avatar" style="background: #9b59b6;">CW</div>
+                        <span class="meta-value">Carol Wilson</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Due Date:</span>
+                        <span class="meta-value">December 18, 2024</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Priority:</span>
+                        <div class="priority-indicator priority-high"></div>
+                        <span class="meta-value">High</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Status:</span>
+                        <span class="meta-value">To Do</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subtasks -->
+            <div class="subtasks-section">
+                <h3 class="section-title">Subtasks (3/5 completed)</h3>
+                <div class="subtask-item">
+                    <div class="subtask-checkbox completed"></div>
+                    <div class="subtask-text completed">Research homepage requirements</div>
+                </div>
+                <div class="subtask-item">
+                    <div class="subtask-checkbox completed"></div>
+                    <div class="subtask-text completed">Create user flow diagram</div>
+                </div>
+                <div class="subtask-item">
+                    <div class="subtask-checkbox completed"></div>
+                    <div class="subtask-text completed">Draft initial layout concepts</div>
+                </div>
+                <div class="subtask-item">
+                    <div class="subtask-checkbox"></div>
+                    <div class="subtask-text">Design navigation wireframe</div>
+                </div>
+                <div class="subtask-item">
+                    <div class="subtask-checkbox"></div>
+                    <div class="subtask-text">Create responsive layout variants</div>
+                </div>
+                <div class="add-subtask">
+                    <span>+</span> Add subtask
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="comments-section">
+                <h3 class="section-title">Comments & Updates</h3>
+                
+                <div class="comment-item">
+                    <div class="comment-avatar" style="background: #3498db;">JD</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">John Doe</span>
+                            <span class="comment-time">2 hours ago</span>
+                        </div>
+                        <p class="comment-text">
+                            Great progress on the initial concepts! Please make sure to include the mobile navigation patterns we discussed in yesterday's meeting. The hamburger menu should be accessible and follow our design system guidelines.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar" style="background: #9b59b6;">CW</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Carol Wilson</span>
+                            <span class="comment-time">4 hours ago</span>
+                        </div>
+                        <p class="comment-text">
+                            I've completed the user flow diagram and uploaded it to the attachments. The next step is to start working on the actual wireframes. I'm planning to use Figma for this - let me know if that works for everyone.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar" style="background: #e74c3c;">AS</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Alice Smith</span>
+                            <span class="comment-time">1 day ago</span>
+                        </div>
+                        <p class="comment-text">
+                            Looking forward to seeing the wireframes! Don't forget to consider the technical constraints we discussed. Some of the animations might be challenging to implement, so let's keep that in mind during the design phase.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="comment-input">
+                    <div class="comment-avatar" style="background: #3498db;">JD</div>
+                    <textarea class="comment-textarea" placeholder="Add a comment..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary">Post Comment</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="task-sidebar">
+            <!-- Properties -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">Properties</div>
+                <div class="sidebar-content">
+                    <div class="property-item">
+                        <span class="property-label">Project</span>
+                        <span class="property-value">Website Redesign</span>
+                    </div>
+                    <div class="property-item">
+                        <span class="property-label">Created</span>
+                        <span class="property-value">Dec 10, 2024</span>
+                    </div>
+                    <div class="property-item">
+                        <span class="property-label">Updated</span>
+                        <span class="property-value">2 hours ago</span>
+                    </div>
+                    <div class="property-item">
+                        <span class="property-label">Time Tracked</span>
+                        <span class="property-value">8h 30m</span>
+                    </div>
+                    <div class="property-item">
+                        <span class="property-label">Dependencies</span>
+                        <span class="property-value">2 tasks</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attachments -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">Attachments (3)</div>
+                <div class="sidebar-content">
+                    <div class="attachment-item">
+                        <div class="attachment-icon">📊</div>
+                        <div class="attachment-info">
+                            <div class="attachment-name">user-flow-diagram.pdf</div>
+                            <div class="attachment-size">2.4 MB</div>
+                        </div>
+                    </div>
+                    <div class="attachment-item">
+                        <div class="attachment-icon">🎨</div>
+                        <div class="attachment-info">
+                            <div class="attachment-name">homepage-concepts.fig</div>
+                            <div class="attachment-size">5.1 MB</div>
+                        </div>
+                    </div>
+                    <div class="attachment-item">
+                        <div class="attachment-icon">📝</div>
+                        <div class="attachment-info">
+                            <div class="attachment-name">requirements.docx</div>
+                            <div class="attachment-size">156 KB</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; padding-top: 10px; border-top: 1px solid #f1f1f1; margin-top: 10px;">
+                        <button class="btn btn-secondary">📎 Add Attachment</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">Recent Activity</div>
+                <div class="sidebar-content">
+                    <div class="activity-item">
+                        <div class="activity-icon">💬</div>
+                        <div>
+                            <div class="activity-text">John added a comment</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">✅</div>
+                        <div>
+                            <div class="activity-text">Carol completed "Draft initial layout concepts"</div>
+                            <div class="activity-time">4 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📎</div>
+                        <div>
+                            <div class="activity-text">Carol uploaded user-flow-diagram.pdf</div>
+                            <div class="activity-time">4 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">✅</div>
+                        <div>
+                            <div class="activity-text">Carol completed "Create user flow diagram"</div>
+                            <div class="activity-time">6 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">👤</div>
+                        <div>
+                            <div class="activity-text">Task assigned to Carol Wilson</div>
+                            <div class="activity-time">2 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

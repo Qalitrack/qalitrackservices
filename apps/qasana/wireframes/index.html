@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qasana Wireframes - Index</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .wireframe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .wireframe-card {
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        .wireframe-card:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+        .wireframe-card h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        .wireframe-card p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        .wireframe-card a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .wireframe-card a:hover {
+            background-color: #2980b9;
+        }
+        .description {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Qasana Wireframes</h1>
+        
+        <div class="description">
+            <p><strong>Welcome to Qasana Wireframes!</strong></p>
+            <p>This collection of HTML wireframes represents the core user interface mockups for our Asana clone project. Each wireframe demonstrates the layout, structure, and functionality of key application pages.</p>
+        </div>
+
+        <div class="wireframe-grid">
+            <div class="wireframe-card">
+                <h3>📊 Dashboard</h3>
+                <p>Main landing page with workspace overview, recent projects, and quick actions</p>
+                <a href="dashboard.html">View Dashboard</a>
+            </div>
+
+            <div class="wireframe-card">
+                <h3>🏢 Workspace Overview</h3>
+                <p>Team workspace management with projects, members, and settings</p>
+                <a href="workspace.html">View Workspace</a>
+            </div>
+
+            <div class="wireframe-card">
+                <h3>📋 Project Board</h3>
+                <p>Kanban-style project view with drag-and-drop task management</p>
+                <a href="project-board.html">View Project Board</a>
+            </div>
+
+            <div class="wireframe-card">
+                <h3>📝 Task Detail</h3>
+                <p>Detailed task view with comments, attachments, and subtasks</p>
+                <a href="task-detail.html">View Task Detail</a>
+            </div>
+
+            <div class="wireframe-card">
+                <h3>👥 Team Management</h3>
+                <p>Member management with roles, permissions, and invitations</p>
+                <a href="team-management.html">View Team Management</a>
+            </div>
+
+            <div class="wireframe-card">
+                <h3>⚙️ Settings</h3>
+                <p>User profile settings, workspace preferences, and notifications</p>
+                <a href="settings.html">View Settings</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

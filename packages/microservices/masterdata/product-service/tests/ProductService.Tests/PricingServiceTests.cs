@@ -41,7 +41,7 @@ public class PricingServiceTests : IDisposable
     {
         // Arrange
         var product = await CreateTestProduct();
-        var pricingDto = new PricingDto
+        var pricingDto = new CreatePricingDto
         {
             ProductId = product.Id,
             Type = PricingType.Standard,
@@ -88,7 +88,7 @@ public class PricingServiceTests : IDisposable
         var customerPricing = await CreateTestPricing(product.Id, PricingType.CustomerSpecific, 89.99m, customerId: customerId);
 
         // Act
-        var result = await _pricingService.GetCustomerPricingAsync(product.Id, customerId);
+        var result = await _pricingService.GetEffectivePricingAsync(product.Id, customerId);
 
         // Assert
         Assert.NotNull(result);
@@ -121,7 +121,7 @@ public class PricingServiceTests : IDisposable
         await CreateTestPricing(product.Id, PricingType.CustomerSpecific, 79.99m, customerId: customerId);
 
         // Act
-        var result = await _pricingService.CalculateEffectivePriceAsync(product.Id, customerId);
+        var result = await _pricingService.CalculateEffectivePriceAsync(product.Id, 1, customerId);
 
         // Assert
         Assert.Equal(79.99m, result);

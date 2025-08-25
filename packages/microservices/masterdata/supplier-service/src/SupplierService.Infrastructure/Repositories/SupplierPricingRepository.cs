@@ -83,4 +83,28 @@ public class SupplierPricingRepository : Repository<SupplierPricing>, ISupplierP
             .OrderBy(sp => sp.ValidTo)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<SupplierPricing>> GetBySupplierProductIdAsync(string supplierProductId)
+    {
+        return await GetBySupplierProductId(supplierProductId);
+    }
+
+    public async Task<IEnumerable<SupplierPricing>> GetActiveBySupplierProductIdAsync(string supplierProductId)
+    {
+        var now = DateTime.UtcNow;
+        return await _dbSet
+            .Where(sp => sp.SupplierProductId == supplierProductId && 
+                        sp.IsActive && 
+                        sp.ValidFrom <= now && 
+                        (sp.ValidTo == null || sp.ValidTo >= now) &&
+                        !sp.IsDeleted)
+            .OrderBy(sp => sp.Priority)
+            .ThenBy(sp => sp.MinQuantity)
+            .ToListAsync();
+    }
+
+    public async Task<SupplierPricing?> GetCurrentPricingAsync(string supplierProductId)
+    {
+        return await GetActivePricing(supplierProductId, 1);
+    }
 }

@@ -432,5 +432,51 @@ namespace ComplianceService.Core.Services
                 return currentTime >= restrictedFrom || currentTime <= restrictedTo;
             }
         }
+
+        public async Task<List<ComplianceViolation>> DetectViolationsAsync(ComplianceResultDto result)
+        {
+            // Basic implementation - detect violations based on compliance result
+            var violations = new List<ComplianceViolation>();
+            
+            if (!result.IsCompliant && result.Violations?.Any() == true)
+            {
+                // Convert existing violations from DTO to entity format
+                foreach (var violationDto in result.Violations)
+                {
+                    var violation = new ComplianceViolation
+                    {
+                        ComplianceRuleId = violationDto.ComplianceRuleId,
+                        ViolationType = violationDto.ViolationType,
+                        TransactionId = violationDto.TransactionId,
+                        VehicleId = violationDto.VehicleId,
+                        DriverId = violationDto.DriverId,
+                        WeighbridgeId = violationDto.WeighbridgeId,
+                        OrganizationId = violationDto.OrganizationId,
+                        Status = violationDto.Status,
+                        Severity = violationDto.Severity,
+                        ActualValue = violationDto.ActualValue,
+                        LimitValue = violationDto.LimitValue,
+                        ExcessValue = violationDto.ExcessValue,
+                        Unit = violationDto.Unit,
+                        PenaltyAmount = violationDto.PenaltyAmount,
+                        PenaltyCurrency = violationDto.PenaltyCurrency,
+                        Description = violationDto.Description,
+                        Details = violationDto.Details,
+                        DetectedAt = violationDto.DetectedAt,
+                        ResolvedAt = violationDto.ResolvedAt,
+                        ResolvedBy = violationDto.ResolvedBy,
+                        ResolutionNotes = violationDto.ResolutionNotes,
+                        IsAcknowledged = violationDto.IsAcknowledged,
+                        AcknowledgedAt = violationDto.AcknowledgedAt,
+                        AcknowledgedBy = violationDto.AcknowledgedBy,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    violations.Add(violation);
+                }
+            }
+            
+            return await Task.FromResult(violations);
+        }
     }
 }

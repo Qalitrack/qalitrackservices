@@ -114,4 +114,75 @@ public class SupplierPricingService : ISupplierPricingService
 
         return Math.Max(0, effectivePrice); // Ensure price doesn't go negative
     }
+
+    public async Task<SupplierPricingDto> CreatePricingAsync(CreateSupplierPricingDto dto)
+    {
+        var pricing = _mapper.Map<SupplierPricing>(dto);
+        var createdPricing = await _pricingRepository.AddAsync(pricing);
+        return _mapper.Map<SupplierPricingDto>(createdPricing);
+    }
+
+    public async Task<SupplierPricingDto?> UpdatePricingAsync(string id, UpdateSupplierPricingDto dto)
+    {
+        var pricing = await _pricingRepository.GetByIdAsync(id);
+        if (pricing == null)
+            return null;
+
+        _mapper.Map(dto, pricing);
+        pricing.UpdatedAt = DateTime.UtcNow;
+
+        var updatedPricing = await _pricingRepository.UpdateAsync(pricing);
+        return _mapper.Map<SupplierPricingDto>(updatedPricing);
+    }
+
+    public async Task<IEnumerable<SupplierPricingDto>> GetPricingByProductAsync(string supplierProductId)
+    {
+        var pricing = await _pricingRepository.GetBySupplierProductIdAsync(supplierProductId);
+        return _mapper.Map<IEnumerable<SupplierPricingDto>>(pricing);
+    }
+
+    public async Task<IEnumerable<SupplierPricingDto>> GetActivePricingByProductAsync(string supplierProductId)
+    {
+        var pricing = await _pricingRepository.GetActiveBySupplierProductIdAsync(supplierProductId);
+        return _mapper.Map<IEnumerable<SupplierPricingDto>>(pricing);
+    }
+
+    public async Task<SupplierPricingDto?> GetCurrentPricingAsync(string supplierProductId)
+    {
+        var pricing = await _pricingRepository.GetCurrentPricingAsync(supplierProductId);
+        return pricing == null ? null : _mapper.Map<SupplierPricingDto>(pricing);
+    }
+
+    public async Task<bool> DeletePricingAsync(string id)
+    {
+        var pricing = await _pricingRepository.GetByIdAsync(id);
+        if (pricing == null)
+            return false;
+
+        await _pricingRepository.DeleteAsync(id);
+        return true;
+    }
+
+    // Additional methods expected by controllers
+    public async Task<IEnumerable<SupplierPricingDto>> GetAllAsync()
+    {
+        var pricing = await _pricingRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<SupplierPricingDto>>(pricing);
+    }
+
+    public async Task<SupplierPricingDto> CreateAsync(CreateSupplierPricingDto dto)
+    {
+        return await CreatePricingAsync(dto);
+    }
+
+    public async Task<IEnumerable<SupplierPricingDto>> GetActivePricingAsync(string supplierProductId)
+    {
+        return await GetActivePricingByProductAsync(supplierProductId);
+    }
+
+    public async Task<decimal> CalculateEffectivePriceAsync(string supplierProductId, int quantity, DateTime? effectiveDate = null)
+    {
+        return await CalculateEffectivePriceAsync(supplierProductId, quantity);
+    }
+
 }

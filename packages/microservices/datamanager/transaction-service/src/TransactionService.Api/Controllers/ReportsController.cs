@@ -55,7 +55,7 @@ public class ReportsController : BaseController
                     .ToDictionary(g => g.Key.ToString(), g => g.Count()),
                 TotalWeight = transactions.Where(t => t.NetWeight.HasValue).Sum(t => t.NetWeight.Value),
                 AverageWeight = transactions.Where(t => t.NetWeight.HasValue).Any() 
-                    ? transactions.Where(t => t.NetWeight.HasValue).Average(t => t.NetWeight!.Value) 
+                    ? transactions.Where(t => t.NetWeight.HasValue).Average(t => t.NetWeight.Value) 
                     : 0m,
                 StartDate = start,
                 EndDate = end

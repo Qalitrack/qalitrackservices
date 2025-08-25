@@ -64,4 +64,72 @@ public class SupplierRepository : Repository<Supplier>, ISupplierRepository
             .Include(s => s.PerformanceMetrics.Where(pm => !pm.IsDeleted))
             .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
     }
+
+    public async Task<Supplier?> GetByNameAsync(string name)
+    {
+        return await _dbSet.FirstOrDefaultAsync(s => s.Name == name && !s.IsDeleted);
+    }
+
+    public async Task<Supplier?> GetByTaxNumberAsync(string taxNumber)
+    {
+        return await _dbSet.FirstOrDefaultAsync(s => s.TaxNumber == taxNumber && !s.IsDeleted);
+    }
+
+    public async Task<Supplier?> GetByRegistrationNumberAsync(string registrationNumber)
+    {
+        return await _dbSet.FirstOrDefaultAsync(s => s.RegistrationNumber == registrationNumber && !s.IsDeleted);
+    }
+
+    public async Task<IEnumerable<Supplier>> SearchAsync(string searchTerm)
+    {
+        return await SearchSuppliersAsync(searchTerm);
+    }
+
+    public async Task<Supplier?> GetWithContactsAsync(string id)
+    {
+        return await _dbSet
+            .Include(s => s.Contacts.Where(c => !c.IsDeleted))
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+    }
+
+    public async Task<Supplier?> GetWithContractsAsync(string id)
+    {
+        return await _dbSet
+            .Include(s => s.Contracts.Where(c => !c.IsDeleted))
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+    }
+
+    public async Task<Supplier?> GetWithProductsAsync(string id)
+    {
+        return await _dbSet
+            .Include(s => s.Products.Where(p => !p.IsDeleted))
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+    }
+
+    public async Task<Supplier?> GetWithPerformanceAsync(string id)
+    {
+        return await _dbSet
+            .Include(s => s.Performance)
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+    }
+
+    public async Task<Supplier?> GetWithFinancialAsync(string id)
+    {
+        return await _dbSet
+            .Include(s => s.Financial)
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+    }
+
+    public async Task<Supplier?> GetCompleteAsync(string id)
+    {
+        return await _dbSet
+            .Include(s => s.Addresses.Where(a => !a.IsDeleted))
+            .Include(s => s.Contacts.Where(c => !c.IsDeleted))
+            .Include(s => s.Contracts.Where(c => !c.IsDeleted))
+            .Include(s => s.Products.Where(p => !p.IsDeleted))
+            .Include(s => s.PerformanceMetrics.Where(pm => !pm.IsDeleted))
+            .Include(s => s.Performance)
+            .Include(s => s.Financial)
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+    }
 }

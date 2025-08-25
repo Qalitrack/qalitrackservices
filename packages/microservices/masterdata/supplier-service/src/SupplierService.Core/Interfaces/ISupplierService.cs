@@ -9,11 +9,17 @@ public interface ISupplierService
     Task<SupplierDto> RegisterSupplierAsync(RegisterSupplierRequest request);
     Task<SupplierDto> UpdateSupplierAsync(string id, UpdateSupplierRequest request);
     Task<SupplierDto?> GetSupplierByIdAsync(string id);
+    Task<SupplierReadDto?> GetByIdAsync(string id);
     Task<IEnumerable<SupplierDto>> GetAllSuppliersAsync();
-    Task<IEnumerable<SupplierDto>> SearchSuppliersAsync(string searchTerm);
+    Task<IEnumerable<SupplierReadDto>> GetAllAsync();
+    Task<IEnumerable<SupplierReadDto>> SearchSuppliersAsync(string searchTerm);
     Task<IEnumerable<SupplierDto>> GetSuppliersByStatusAsync(SupplierStatus status);
     Task<IEnumerable<SupplierDto>> GetSuppliersByTypeAsync(SupplierType type);
     Task DeleteSupplierAsync(string id);
+    
+    // Additional controller methods (compatible with existing implementations)
+    Task<bool> VerifySupplierAsync(string id);
+    Task<SupplierReadDto?> GetByCodeAsync(string code);
 
     // Contact Management
     Task<SupplierContactDto> CreateContactAsync(string supplierId, CreateSupplierContactRequest request);
@@ -43,4 +49,11 @@ public interface ISupplierService
     // Financial Management
     Task<SupplierFinancialDto> UpdateFinancialAsync(string supplierId, UpdateSupplierFinancialRequest request);
     Task<SupplierFinancialDto?> GetSupplierFinancialAsync(string supplierId);
+
+    // Additional methods needed by SuppliersController
+    Task<SupplierReadDto> CreateAsync(CreateSupplierDto dto);
+    Task<SupplierReadDto?> UpdateAsync(string id, UpdateSupplierDto dto);
+    Task<bool> DeleteAsync(string id);
+    Task<IEnumerable<SupplierReadDto>> GetByStatusAsync(SupplierStatus status);
+    Task<IEnumerable<SupplierReadDto>> GetByTypeAsync(SupplierType type);
 }

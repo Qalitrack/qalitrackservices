@@ -79,6 +79,25 @@ public abstract class BaseController : ControllerBase
         });
     }
 
+    protected IActionResult HandleException(Exception ex)
+    {
+        // Log the exception here if you have a logger
+        return StatusCode(500, new ApiResponseDto
+        {
+            Success = false,
+            Message = "An error occurred while processing your request",
+            StatusCode = 500
+        });
+    }
+
+    protected List<string> GetModelStateErrors()
+    {
+        return ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .ToList();
+    }
+
     // TODO: Add authentication-related helper methods if needed
     // Example methods for JWT claims:
     // protected string? GetCurrentUserId()

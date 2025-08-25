@@ -183,7 +183,10 @@ public class OrchestrationService : IOrchestrationService
 
     public async Task<bool> AdvanceWorkflowAsync(string transactionId, string workflowStep, string userId)
     {
-        var workflow = await _workflowRepository.GetByTransactionAndStepAsync(transactionId, workflowStep);
+        if (!Enum.TryParse<WorkflowStep>(workflowStep, out var step))
+            return false;
+            
+        var workflow = await _workflowRepository.GetByTransactionAndStepAsync(transactionId, step);
         if (workflow == null) return false;
 
         workflow.Status = StepStatus.Completed;
@@ -289,6 +292,45 @@ public class OrchestrationService : IOrchestrationService
         // This would implement actual external service calls
         // For now, simulate success
         await Task.Delay(100); // Simulate network call
+        return true;
+    }
+
+    public async Task<bool> StartOrchestrationAsync(string transactionId, string userId)
+    {
+        var transaction = await _transactionRepository.GetByIdAsync(transactionId);
+        if (transaction == null) return false;
+
+        // Create initial workflow steps
+        var workflowSteps = new List<TransactionWorkflow>
+        {
+            new() { TransactionId = transactionId, WorkflowStep = WorkflowStep.DocumentCheck, Status = StepStatus.NotStarted, CreatedBy = userId },
+            new() { TransactionId = transactionId, WorkflowStep = WorkflowStep.EntryWeighing, Status = StepStatus.NotStarted, CreatedBy = userId },
+            new() { TransactionId = transactionId, WorkflowStep = WorkflowStep.LoadingUnloading, Status = StepStatus.NotStarted, CreatedBy = userId },
+            new() { TransactionId = transactionId, WorkflowStep = WorkflowStep.ExitWeighing, Status = StepStatus.NotStarted, CreatedBy = userId }
+        };
+
+        foreach (var step in workflowSteps)
+        {
+            await _workflowRepository.AddAsync(step);
+        }
+
+        await _auditService.LogWorkflowAdvanceAsync(transactionId, "Orchestration Started", userId);
+        return true;
+    }
+
+    public async Task<bool> CompleteCurrentStepAsync(string transactionId, string notes, string userId)
+    {
+        var currentStep = await _workflowRepository.GetCurrentStepAsync(transactionId);
+        if (currentStep == null) return false;
+
+        currentStep.Status = StepStatus.Completed;
+        currentStep.CompletedAt = DateTime.UtcNow;
+        currentStep.ProcessedBy = userId;
+        currentStep.Notes = notes;
+
+        await _workflowRepository.UpdateAsync(currentStep);
+        await _auditService.LogWorkflowAdvanceAsync(transactionId, $"Step Completed: {currentStep.WorkflowStep}", userId);
+
         return true;
     }
 }

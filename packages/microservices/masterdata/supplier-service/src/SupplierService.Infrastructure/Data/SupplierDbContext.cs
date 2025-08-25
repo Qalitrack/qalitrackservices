@@ -14,6 +14,7 @@ public class SupplierDbContext : DbContext
     public DbSet<SupplierProduct> SupplierProducts { get; set; } = null!;
     public DbSet<SupplierPricing> SupplierPricing { get; set; } = null!;
     public DbSet<SupplierPerformance> SupplierPerformances { get; set; } = null!;
+    public DbSet<Procurement> Procurements { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

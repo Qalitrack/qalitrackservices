@@ -20,10 +20,15 @@ public class ReportServiceDbContext : DbContext
         modelBuilder.Entity<Report>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.ReportName).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Description).HasMaxLength(1000);
 
-            entity.HasIndex(e => e.Name).IsUnique();
+            entity.HasIndex(e => e.ReportName).IsUnique();
+            
+            // Ignore navigation properties to prevent mapping issues
+            entity.Ignore(e => e.Template);
+            entity.Ignore(e => e.Schedule);
+            entity.Ignore(e => e.Exports);
         });
 
         // TODO: Configure additional entities here

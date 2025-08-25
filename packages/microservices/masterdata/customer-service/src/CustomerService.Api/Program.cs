@@ -124,7 +124,7 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Add services
-builder.Services.AddScoped<ICustomerService, CustomerService.Core.Services.CustomerService>();
+builder.Services.AddScoped<ICustomerService, CustomerService.Core.Services.CustomerManagementService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IContractService, ContractService>();

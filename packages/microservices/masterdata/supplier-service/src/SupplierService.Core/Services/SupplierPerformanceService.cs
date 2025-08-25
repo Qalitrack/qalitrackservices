@@ -146,4 +146,53 @@ public class SupplierPerformanceService : ISupplierPerformanceService
 
         return summary;
     }
+
+    public async Task<SupplierPerformanceDto> CreatePerformanceAsync(string supplierId, CreateSupplierPerformanceRequest request)
+    {
+        var supplier = await _supplierRepository.GetByIdAsync(supplierId);
+        if (supplier == null)
+            throw new InvalidOperationException($"Supplier with ID '{supplierId}' not found");
+
+        var performance = _mapper.Map<SupplierPerformance>(request);
+        performance.SupplierId = supplierId;
+
+        var createdPerformance = await _performanceRepository.AddAsync(performance);
+        return _mapper.Map<SupplierPerformanceDto>(createdPerformance);
+    }
+
+    public async Task<IEnumerable<SupplierPerformanceDto>> GetSupplierPerformanceAsync(string supplierId)
+    {
+        var performances = await _performanceRepository.GetBySupplierId(supplierId);
+        return _mapper.Map<IEnumerable<SupplierPerformanceDto>>(performances);
+    }
+
+    public async Task<decimal?> GetAverageRatingAsync(string supplierId, int? months = null)
+    {
+        var performances = await _performanceRepository.GetBySupplierId(supplierId);
+        
+        if (months.HasValue)
+        {
+            var cutoffDate = DateTime.UtcNow.AddMonths(-months.Value);
+            performances = performances.Where(p => p.CreatedAt >= cutoffDate);
+        }
+
+        if (!performances.Any())
+            return null;
+
+        return performances.Average(p => p.OverallRating ?? 0);
+    }
+
+    // Additional methods expected by controllers
+    public async Task<IEnumerable<SupplierPerformanceDto>> GetAllAsync()
+    {
+        var performances = await _performanceRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<SupplierPerformanceDto>>(performances);
+    }
+
+    public async Task<SupplierPerformanceDto> CreateAsync(CreateSupplierPerformanceDto dto)
+    {
+        var performance = _mapper.Map<SupplierPerformance>(dto);
+        var createdPerformance = await _performanceRepository.AddAsync(performance);
+        return _mapper.Map<SupplierPerformanceDto>(createdPerformance);
+    }
 }

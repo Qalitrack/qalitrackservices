@@ -10,5 +10,6 @@ namespace ComplianceService.Core.Interfaces
         Task<List<ComplianceViolation>> DetectRouteViolationsAsync(string routeId, string vehicleId, DateTime timestamp);
         Task<List<ComplianceViolation>> DetectProductViolationsAsync(string productId, string vehicleId);
         Task<List<ComplianceViolation>> DetectAllViolationsAsync(TransactionComplianceDto transaction);
+        Task<List<ComplianceViolation>> DetectViolationsAsync(ComplianceResultDto result);
     }
 }

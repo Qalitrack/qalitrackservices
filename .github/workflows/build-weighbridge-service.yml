@@ -1,0 +1,84 @@
+name: Build Weighbridge Service
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/masterdata/weighbridge-service/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/masterdata/weighbridge-service/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  DOCKER_BUILDKIT: 1
+  SERVICE_NAME: weighbridge-service
+  SERVICE_PATH: packages/microservices/masterdata/weighbridge-service
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          dotnet restore --verbosity normal
+
+      - name: Build application
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          dotnet build --no-restore -c Release --verbosity normal
+
+      - name: Run tests
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          dotnet test --no-build -c Release --verbosity normal
+        continue-on-error: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+

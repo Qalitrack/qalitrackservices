@@ -19,6 +19,7 @@ public class StateTransitionRequest
 {
     public string TransactionId { get; set; } = string.Empty;
     public string Trigger { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
     public string? Reason { get; set; }
     public Dictionary<string, object>? TransitionData { get; set; }
 }
