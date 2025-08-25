@@ -19,12 +19,12 @@ public class CategoriesController : BaseController
     /// Get all categories
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<CategoryDto>>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         try
         {
             var categories = await _categoryService.GetAllAsync();
-            return Ok(ApiResponseDto<IEnumerable<CategoryDto>>.Success(categories));
+            return Ok(categories);
         }
         catch (Exception ex)
         {
@@ -36,12 +36,12 @@ public class CategoriesController : BaseController
     /// Get category hierarchy (root categories with subcategories)
     /// </summary>
     [HttpGet("hierarchy")]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<CategoryDto>>>> GetHierarchy()
+    public async Task<IActionResult> GetHierarchy()
     {
         try
         {
-            var hierarchy = await _categoryService.GetHierarchyAsync();
-            return Ok(ApiResponseDto<IEnumerable<CategoryDto>>.Success(hierarchy));
+            var hierarchy = await _categoryService.GetRootCategoriesAsync();
+            return Ok(hierarchy);
         }
         catch (Exception ex)
         {
@@ -53,12 +53,12 @@ public class CategoriesController : BaseController
     /// Get subcategories for a parent category
     /// </summary>
     [HttpGet("{parentId}/subcategories")]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<CategoryDto>>>> GetSubCategories(string parentId)
+    public async Task<IActionResult> GetSubCategories(string parentId)
     {
         try
         {
             var subCategories = await _categoryService.GetSubCategoriesAsync(parentId);
-            return Ok(ApiResponseDto<IEnumerable<CategoryDto>>.Success(subCategories));
+            return Ok(subCategories);
         }
         catch (Exception ex)
         {
@@ -70,17 +70,17 @@ public class CategoriesController : BaseController
     /// Get category by ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ApiResponseDto<CategoryDto>>> GetById(string id)
+    public async Task<IActionResult> GetById(string id)
     {
         try
         {
             var category = await _categoryService.GetByIdAsync(id);
             if (category == null)
             {
-                return NotFound(ApiResponseDto<CategoryDto>.Error("Category not found"));
+                return NotFound("Category not found");
             }
 
-            return Ok(ApiResponseDto<CategoryDto>.Success(category));
+            return Ok(category);
         }
         catch (Exception ex)
         {
@@ -92,18 +92,17 @@ public class CategoriesController : BaseController
     /// Create a new category
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<ApiResponseDto<CategoryDto>>> Create([FromBody] CategoryDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
     {
         try
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ApiResponseDto<CategoryDto>.Error("Invalid model state", GetModelStateErrors()));
+                return BadRequest("Invalid model state", GetModelStateErrors());
             }
 
             var category = await _categoryService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, 
-                ApiResponseDto<CategoryDto>.Success(category));
+            return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
         }
         catch (Exception ex)
         {
@@ -115,22 +114,22 @@ public class CategoriesController : BaseController
     /// Update an existing category
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<ActionResult<ApiResponseDto<CategoryDto>>> Update(string id, [FromBody] CategoryDto dto)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateCategoryDto dto)
     {
         try
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ApiResponseDto<CategoryDto>.Error("Invalid model state", GetModelStateErrors()));
+                return BadRequest("Invalid model state", GetModelStateErrors());
             }
 
             var category = await _categoryService.UpdateAsync(id, dto);
             if (category == null)
             {
-                return NotFound(ApiResponseDto<CategoryDto>.Error("Category not found"));
+                return NotFound("Category not found");
             }
 
-            return Ok(ApiResponseDto<CategoryDto>.Success(category));
+            return Ok(category);
         }
         catch (Exception ex)
         {
@@ -142,17 +141,17 @@ public class CategoriesController : BaseController
     /// Delete a category
     /// </summary>
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ApiResponseDto<bool>>> Delete(string id)
+    public async Task<IActionResult> Delete(string id)
     {
         try
         {
             var result = await _categoryService.DeleteAsync(id);
             if (!result)
             {
-                return NotFound(ApiResponseDto<bool>.Error("Category not found"));
+                return NotFound("Category not found");
             }
 
-            return Ok(ApiResponseDto<bool>.Success(true));
+            return Ok(true);
         }
         catch (Exception ex)
         {

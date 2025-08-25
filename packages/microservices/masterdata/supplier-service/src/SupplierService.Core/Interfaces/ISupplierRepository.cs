@@ -16,4 +16,8 @@ public interface ISupplierRepository : IRepository<Supplier>
     Task<Supplier?> GetWithPerformanceAsync(string id);
     Task<Supplier?> GetWithFinancialAsync(string id);
     Task<Supplier?> GetCompleteAsync(string id);
+    Task<Supplier?> GetByCodeAsync(string code);
+    Task<bool> IsNameUniqueAsync(string name);
+    Task<bool> IsCodeUniqueAsync(string code);
+    Task<IEnumerable<Supplier>> SearchSuppliersAsync(string searchTerm);
 }

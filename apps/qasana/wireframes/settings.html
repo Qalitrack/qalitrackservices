@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Qasana Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .search-box {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 300px;
+        }
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Main Layout */
+        .main-content {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Settings Sidebar */
+        .settings-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e1e8ed;
+            padding: 30px 0;
+        }
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+        .sidebar-title {
+            padding: 0 25px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 25px;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-right: 3px solid transparent;
+        }
+        .sidebar-item:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+        .sidebar-item.active {
+            background: #e3f2fd;
+            color: #3498db;
+            border-right-color: #3498db;
+        }
+        .sidebar-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Settings Content */
+        .settings-content {
+            flex: 1;
+            padding: 30px;
+        }
+        .content-header {
+            margin-bottom: 30px;
+        }
+        .content-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .content-subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+        }
+        .section-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f1f1;
+            background: #fafafa;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        .section-description {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        .section-content {
+            padding: 25px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-description {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 4px;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .profile-upload {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .upload-btn {
+            font-size: 12px;
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .profile-form {
+            flex: 1;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .toggle-group:last-child {
+            border-bottom: none;
+        }
+        .toggle-info {
+            flex: 1;
+        }
+        .toggle-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+        .toggle-description {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #bdc3c7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.active {
+            background: #3498db;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .btn-secondary {
+            background: white;
+            color: #3498db;
+            border-color: #3498db;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f1f1;
+        }
+
+        /* Theme Selector */
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .theme-option {
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .theme-option.active {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+        .theme-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            overflow: hidden;
+        }
+        .theme-light { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+        .theme-dark { background: linear-gradient(135deg, #2c3e50, #34495e); }
+        .theme-auto { background: linear-gradient(135deg, #f8f9fa 50%, #2c3e50 50%); }
+        .theme-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Wireframes</a>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🎯 Qasana</div>
+        <div class="header-actions">
+            <input type="text" class="search-box" placeholder="Search settings...">
+            <div class="user-avatar">JD</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Settings Sidebar -->
+        <nav class="settings-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Personal</div>
+                <div class="sidebar-item active">
+                    <span class="sidebar-icon">👤</span>
+                    <span>Profile</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">🔔</span>
+                    <span>Notifications</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">🎨</span>
+                    <span>Appearance</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">🔒</span>
+                    <span>Privacy & Security</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Workspace</div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">🏢</span>
+                    <span>General</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">👥</span>
+                    <span>Members</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span>Permissions</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">🔗</span>
+                    <span>Integrations</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Account</div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">💳</span>
+                    <span>Billing</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">📊</span>
+                    <span>Usage</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-icon">⚠️</span>
+                    <span>Advanced</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Settings Content -->
+        <main class="settings-content">
+            <div class="content-header">
+                <h1 class="content-title">Profile Settings</h1>
+                <p class="content-subtitle">Manage your personal information and preferences</p>
+            </div>
+
+            <!-- Basic Information -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <div class="section-title">Basic Information</div>
+                    <div class="section-description">Update your profile details and contact information</div>
+                </div>
+                <div class="section-content">
+                    <div class="profile-section">
+                        <div>
+                            <div class="profile-avatar">JD</div>
+                            <div class="profile-upload">
+                                <a href="#" class="upload-btn">Change Photo</a>
+                            </div>
+                        </div>
+                        <div class="profile-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-input" value="John">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-input" value="Doe">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" value="john.doe@company.com">
+                                <div class="form-description">Your email address is used for account login and notifications</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Job Title</label>
+                                <input type="text" class="form-input" value="Team Lead & Senior Developer">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Bio</label>
+                                <textarea class="form-textarea" placeholder="Tell us about yourself...">Passionate software engineer with 8+ years of experience in full-stack development. Love building scalable applications and leading development teams.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Preferences -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <div class="section-title">Work Preferences</div>
+                    <div class="section-description">Configure your working hours and availability</div>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Timezone</label>
+                            <select class="form-select">
+                                <option>UTC-05:00 Eastern Time</option>
+                                <option>UTC-06:00 Central Time</option>
+                                <option>UTC-07:00 Mountain Time</option>
+                                <option>UTC-08:00 Pacific Time</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Start of Week</label>
+                            <select class="form-select">
+                                <option>Monday</option>
+                                <option>Sunday</option>
+                                <option>Saturday</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Working Hours Start</label>
+                            <input type="time" class="form-input" value="09:00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Working Hours End</label>
+                            <input type="time" class="form-input" value="17:00">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <div class="section-title">Email Notifications</div>
+                    <div class="section-description">Choose which email notifications you want to receive</div>
+                </div>
+                <div class="section-content">
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <div class="toggle-title">Task Assignments</div>
+                            <div class="toggle-description">Get notified when you're assigned to new tasks</div>
+                        </div>
+                        <div class="toggle-switch active"></div>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <div class="toggle-title">Due Date Reminders</div>
+                            <div class="toggle-description">Receive reminders for upcoming task deadlines</div>
+                        </div>
+                        <div class="toggle-switch active"></div>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <div class="toggle-title">Project Updates</div>
+                            <div class="toggle-description">Stay informed about project progress and changes</div>
+                        </div>
+                        <div class="toggle-switch"></div>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <div class="toggle-title">Team Mentions</div>
+                            <div class="toggle-description">Get notified when someone mentions you in comments</div>
+                        </div>
+                        <div class="toggle-switch active"></div>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <div class="toggle-title">Weekly Summary</div>
+                            <div class="toggle-description">Receive a weekly summary of your tasks and progress</div>
+                        </div>
+                        <div class="toggle-switch"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appearance Settings -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <div class="section-title">Appearance</div>
+                    <div class="section-description">Customize how Qasana looks and feels</div>
+                </div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label class="form-label">Theme</label>
+                        <div class="theme-options">
+                            <div class="theme-option active">
+                                <div class="theme-preview theme-light"></div>
+                                <div class="theme-name">Light</div>
+                            </div>
+                            <div class="theme-option">
+                                <div class="theme-preview theme-dark"></div>
+                                <div class="theme-name">Dark</div>
+                            </div>
+                            <div class="theme-option">
+                                <div class="theme-preview theme-auto"></div>
+                                <div class="theme-name">Auto</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Language</label>
+                        <select class="form-select">
+                            <option>English (US)</option>
+                            <option>English (UK)</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                            <option>German</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <div class="section-title">Security</div>
+                    <div class="section-description">Manage your account security and privacy</div>
+                </div>
+                <div class="section-content">
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <div class="toggle-title">Two-Factor Authentication</div>
+                            <div class="toggle-description">Add an extra layer of security to your account</div>
+                        </div>
+                        <div class="toggle-switch"></div>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <div class="toggle-title">Login Notifications</div>
+                            <div class="toggle-description">Get notified when someone logs into your account</div>
+                        </div>
+                        <div class="toggle-switch active"></div>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f1f1;">
+                        <button class="btn btn-secondary" style="margin-right: 10px;">Change Password</button>
+                        <button class="btn btn-secondary">Download Data</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <div class="section-title">Danger Zone</div>
+                    <div class="section-description">Irreversible actions for your account</div>
+                </div>
+                <div class="section-content">
+                    <div style="padding: 15px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px;">
+                        <div style="font-weight: 600; color: #e74c3c; margin-bottom: 8px;">Delete Account</div>
+                        <div style="font-size: 14px; color: #7f8c8d; margin-bottom: 15px;">
+                            Once you delete your account, there is no going back. Please be certain.
+                        </div>
+                        <button class="btn btn-danger">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Actions -->
+            <div class="btn-group">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary">Save Changes</button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

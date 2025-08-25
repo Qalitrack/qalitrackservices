@@ -1,6 +1,6 @@
-# CustomerService
+# Customer Service
 
-Customer Relationship Management
+A comprehensive Customer Relationship Management (CRM) microservice for the QaliTrack platform, providing customer data management, contract handling, and order processing capabilities.
 
 ## Service Type: Masterdata
 
@@ -49,13 +49,35 @@ dotnet run --project src/CustomerService.Api
 
 ### API Endpoints
 
-The service provides RESTful endpoints for Customer management:
+The service provides comprehensive RESTful endpoints for Customer management:
 
-- `GET /api/customers` - Get all customers
+#### Customer Management
+- `GET /api/customers` - Get all customers with pagination
 - `GET /api/customers/{id}` - Get customer by ID
 - `POST /api/customers` - Create new customer
 - `PUT /api/customers/{id}` - Update customer
 - `DELETE /api/customers/{id}` - Delete customer
+
+#### Contact Management
+- `GET /api/contacts` - Get all customer contacts
+- `GET /api/contacts/{id}` - Get contact by ID
+- `POST /api/contacts` - Create new contact
+- `PUT /api/contacts/{id}` - Update contact
+- `DELETE /api/contacts/{id}` - Delete contact
+
+#### Contract Management
+- `GET /api/contracts` - Get all contracts
+- `GET /api/contracts/{id}` - Get contract by ID
+- `POST /api/contracts` - Create new contract
+- `PUT /api/contracts/{id}` - Update contract
+- `DELETE /api/contracts/{id}` - Delete contract
+
+#### Order Management
+- `GET /api/orders` - Get all orders
+- `GET /api/orders/{id}` - Get order by ID
+- `POST /api/orders` - Create new order
+- `PUT /api/orders/{id}` - Update order
+- `DELETE /api/orders/{id}` - Delete order
 
 ### Integration with Gateway
 

@@ -16,19 +16,19 @@ public class CategoryService : ICategoryService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetAllAsync()
+    public async Task<IEnumerable<CategoryReadDto>> GetAllAsync()
     {
         var categories = await _categoryRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<CategoryDto>>(categories);
+        return _mapper.Map<IEnumerable<CategoryReadDto>>(categories);
     }
 
-    public async Task<CategoryDto?> GetByIdAsync(string id)
+    public async Task<CategoryReadDto?> GetByIdAsync(string id)
     {
         var category = await _categoryRepository.GetByIdAsync(id);
-        return category == null ? null : _mapper.Map<CategoryDto>(category);
+        return category == null ? null : _mapper.Map<CategoryReadDto>(category);
     }
 
-    public async Task<CategoryDto> CreateAsync(CategoryDto dto)
+    public async Task<CategoryReadDto> CreateAsync(CreateCategoryDto dto)
     {
         var category = _mapper.Map<Category>(dto);
         category.CreatedAt = DateTime.UtcNow;
@@ -51,10 +51,10 @@ public class CategoryService : ICategoryService
         }
         
         var createdCategory = await _categoryRepository.CreateAsync(category);
-        return _mapper.Map<CategoryDto>(createdCategory);
+        return _mapper.Map<CategoryReadDto>(createdCategory);
     }
 
-    public async Task<CategoryDto?> UpdateAsync(string id, CategoryDto dto)
+    public async Task<CategoryReadDto?> UpdateAsync(string id, UpdateCategoryDto dto)
     {
         var existingCategory = await _categoryRepository.GetByIdAsync(id);
         if (existingCategory == null)
@@ -66,7 +66,7 @@ public class CategoryService : ICategoryService
         existingCategory.UpdatedAt = DateTime.UtcNow;
         
         var updatedCategory = await _categoryRepository.UpdateAsync(existingCategory);
-        return updatedCategory == null ? null : _mapper.Map<CategoryDto>(updatedCategory);
+        return updatedCategory == null ? null : _mapper.Map<CategoryReadDto>(updatedCategory);
     }
 
     public async Task<bool> DeleteAsync(string id)
@@ -74,16 +74,52 @@ public class CategoryService : ICategoryService
         return await _categoryRepository.DeleteAsync(id);
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetHierarchyAsync()
+    public async Task<IEnumerable<CategoryReadDto>> GetRootCategoriesAsync()
     {
         var categories = await _categoryRepository.GetAllAsync();
         var rootCategories = categories.Where(c => c.IsRootCategory).ToList();
-        return _mapper.Map<IEnumerable<CategoryDto>>(rootCategories);
+        return _mapper.Map<IEnumerable<CategoryReadDto>>(rootCategories);
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetSubCategoriesAsync(string parentId)
+    public async Task<IEnumerable<CategoryReadDto>> GetSubCategoriesAsync(string parentId)
     {
         var subCategories = await _categoryRepository.GetSubCategoriesAsync(parentId);
-        return _mapper.Map<IEnumerable<CategoryDto>>(subCategories);
+        return _mapper.Map<IEnumerable<CategoryReadDto>>(subCategories);
+    }
+
+    public async Task<bool> IsNameAvailableAsync(string name)
+    {
+        var categories = await _categoryRepository.GetAllAsync();
+        return !categories.Any(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public async Task<IEnumerable<CategoryReadDto>> GetCategoryHierarchyAsync(string categoryId)
+    {
+        var category = await _categoryRepository.GetByIdAsync(categoryId);
+        if (category == null) return new List<CategoryReadDto>();
+
+        var hierarchy = new List<Category>();
+        var current = category;
+        
+        while (current != null)
+        {
+            hierarchy.Insert(0, current);
+            if (!string.IsNullOrEmpty(current.ParentCategoryId))
+            {
+                current = await _categoryRepository.GetByIdAsync(current.ParentCategoryId);
+            }
+            else
+            {
+                current = null;
+            }
+        }
+
+        return _mapper.Map<IEnumerable<CategoryReadDto>>(hierarchy);
+    }
+
+    public async Task<bool> CanDeleteCategoryAsync(string categoryId)
+    {
+        var subCategories = await _categoryRepository.GetSubCategoriesAsync(categoryId);
+        return !subCategories.Any();
     }
 }

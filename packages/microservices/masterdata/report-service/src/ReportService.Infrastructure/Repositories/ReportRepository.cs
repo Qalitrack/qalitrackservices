@@ -13,12 +13,12 @@ public class ReportRepository : Repository<Report>, IReportRepository
 
     public async Task<bool> IsNameAvailableAsync(string name)
     {
-        return !await _dbSet.AnyAsync(e => e.Name.ToLower() == name.ToLower() && !e.IsDeleted);
+        return !await _dbSet.AnyAsync(e => e.ReportName.ToLower() == name.ToLower() && !e.IsDeleted);
     }
 
     public async Task<Report?> GetByNameAsync(string name)
     {
-        return await _dbSet.FirstOrDefaultAsync(e => e.Name.ToLower() == name.ToLower() && !e.IsDeleted);
+        return await _dbSet.FirstOrDefaultAsync(e => e.ReportName.ToLower() == name.ToLower() && !e.IsDeleted);
     }
     
     // TODO: Add domain-specific repository methods here

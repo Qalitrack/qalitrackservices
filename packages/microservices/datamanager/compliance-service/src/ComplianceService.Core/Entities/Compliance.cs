@@ -70,6 +70,9 @@ public class Compliance : BaseEntity
     [StringLength(1000)]
     public string? CompletedActions { get; set; }
     
+    [StringLength(2000)]
+    public string? Notes { get; set; }
+    
     // Monitoring
     public bool RequiresContinuousMonitoring { get; set; } = false;
     public DateTime? NextCheckDate { get; set; }

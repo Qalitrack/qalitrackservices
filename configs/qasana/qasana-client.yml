@@ -1,0 +1,133 @@
+# Qasana Configuration
+client:
+  name: "Qasana - Project Management Platform"
+  code: "qasana"
+  description: "Modern Asana-inspired project management platform"
+
+deployment:
+  environment: "development"
+  domain: "localhost"
+  ports:
+    gateway: 7000
+    frontend: 3000
+
+services:
+  # Core infrastructure services
+  gateway:
+    enabled: true
+    port: 7000
+    image: "qalitrack/gateway:latest"
+    replicas: 1
+    
+  user-service:
+    enabled: true
+    port: 7001
+    image: "qalitrack/user-service:latest"
+    replicas: 1
+    description: "Reuse existing authentication and user management"
+    
+  service-discovery:
+    enabled: true
+    port: 7019
+    image: "qalitrack/service-discovery:latest"
+    replicas: 1
+
+  # Qasana-specific services
+  qasana-workspace-service:
+    enabled: true
+    port: 7020
+    image: "qasana/workspace-service:latest"
+    replicas: 1
+    description: "Workspace and team management"
+    api_root: "/workspaces"
+    health_check: true
+    
+  qasana-project-service:
+    enabled: true
+    port: 7021
+    image: "qasana/project-service:latest"
+    replicas: 1
+    description: "Project management operations"
+    api_root: "/projects"
+    health_check: true
+    
+  qasana-task-service:
+    enabled: true
+    port: 7022
+    image: "qasana/task-service:latest"
+    replicas: 1
+    description: "Task and subtask management"
+    api_root: "/tasks"
+    health_check: true
+    
+  qasana-comment-service:
+    enabled: true
+    port: 7023
+    image: "qasana/comment-service:latest"
+    replicas: 1
+    description: "Comments and activity feeds"
+    api_root: "/comments"
+    health_check: true
+    
+  qasana-notification-service:
+    enabled: true
+    port: 7024
+    image: "qasana/notification-service:latest"
+    replicas: 1
+    description: "Real-time notifications via SignalR"
+    api_root: "/notifications"
+    health_check: true
+    signalr_enabled: true
+
+  # Frontend application
+  qasana-frontend:
+    enabled: true
+    port: 3000
+    image: "qasana/frontend:latest"
+    replicas: 1
+    description: "Next.js frontend application"
+    type: "frontend"
+    build_command: "pnpm build"
+    start_command: "pnpm start"
+
+features:
+  multi_tenant: true
+  real_time_collaboration: true
+  file_attachments: true
+  email_notifications: true
+  mobile_responsive: true
+  drag_and_drop: true
+  advanced_search: false
+  reporting_analytics: false
+  api_webhooks: false
+  third_party_integrations: false
+  
+database:
+  type: "postgresql"
+  host: "localhost"
+  port: 5432
+  databases:
+    qasana_workspace: "qasana_workspace_db"
+    qasana_project: "qasana_project_db" 
+    qasana_task: "qasana_task_db"
+    qasana_comment: "qasana_comment_db"
+    qasana_notification: "qasana_notification_db"
+
+monitoring:
+  metrics: true
+  logging: true
+  alerting: false
+  health_checks: true
+  performance_tracking: true
+
+authentication:
+  provider: "user-service"
+  jwt_enabled: true
+  required_roles: ["User"]
+  session_timeout: 3600
+
+development:
+  hot_reload: true
+  debug_mode: true
+  mock_services: false
+  sample_data: true

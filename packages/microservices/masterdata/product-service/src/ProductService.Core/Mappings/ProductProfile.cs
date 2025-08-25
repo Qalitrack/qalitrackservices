@@ -15,19 +15,22 @@ public class ProductProfile : Profile
         CreateMap<ProductService.Core.Entities.Product, ProductDto>().ReverseMap();
 
         // Category mappings
-        CreateMap<Category, CategoryDto>().ReverseMap();
         CreateMap<Category, CategoryReadDto>();
+        CreateMap<CreateCategoryDto, Category>();
+        CreateMap<UpdateCategoryDto, Category>();
 
         // Pricing mappings
-        CreateMap<Pricing, PricingDto>().ReverseMap();
         CreateMap<Pricing, PricingReadDto>()
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
             .ForMember(dest => dest.Strategy, opt => opt.MapFrom(src => src.Strategy.ToString()));
+        CreateMap<CreatePricingDto, Pricing>();
+        CreateMap<UpdatePricingDto, Pricing>();
 
         // Specification mappings
-        CreateMap<Specification, SpecificationDto>().ReverseMap();
         CreateMap<Specification, SpecificationReadDto>()
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+        CreateMap<CreateSpecificationDto, Specification>();
+        CreateMap<UpdateSpecificationDto, Specification>();
     }
 }

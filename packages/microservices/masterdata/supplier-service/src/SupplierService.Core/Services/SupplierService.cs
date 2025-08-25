@@ -123,4 +123,155 @@ public class SupplierService : ISupplierService
         await _supplierRepository.UpdateAsync(supplier);
         return true;
     }
+
+    // ISupplierService interface methods
+    public async Task<SupplierDto> RegisterSupplierAsync(RegisterSupplierRequest request)
+    {
+        var supplier = _mapper.Map<Supplier>(request);
+        var createdSupplier = await _supplierRepository.AddAsync(supplier);
+        return _mapper.Map<SupplierDto>(createdSupplier);
+    }
+
+    public async Task<SupplierDto> UpdateSupplierAsync(string id, UpdateSupplierRequest request)
+    {
+        var supplier = await _supplierRepository.GetByIdAsync(id);
+        if (supplier == null)
+            throw new InvalidOperationException($"Supplier with ID '{id}' not found");
+
+        _mapper.Map(request, supplier);
+        supplier.UpdatedAt = DateTime.UtcNow;
+
+        var updatedSupplier = await _supplierRepository.UpdateAsync(supplier);
+        return _mapper.Map<SupplierDto>(updatedSupplier);
+    }
+
+    public async Task<SupplierDto?> GetSupplierByIdAsync(string id)
+    {
+        var supplier = await _supplierRepository.GetByIdAsync(id);
+        return supplier == null ? null : _mapper.Map<SupplierDto>(supplier);
+    }
+
+    public async Task<IEnumerable<SupplierDto>> GetAllSuppliersAsync()
+    {
+        var suppliers = await _supplierRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<SupplierDto>>(suppliers);
+    }
+
+    public async Task<IEnumerable<SupplierDto>> GetSuppliersByStatusAsync(SupplierStatus status)
+    {
+        var suppliers = await _supplierRepository.GetByStatusAsync(status);
+        return _mapper.Map<IEnumerable<SupplierDto>>(suppliers);
+    }
+
+    public async Task<IEnumerable<SupplierDto>> GetSuppliersByTypeAsync(SupplierType type)
+    {
+        var suppliers = await _supplierRepository.GetByTypeAsync(type);
+        return _mapper.Map<IEnumerable<SupplierDto>>(suppliers);
+    }
+
+    public async Task DeleteSupplierAsync(string id)
+    {
+        await _supplierRepository.DeleteAsync(id);
+    }
+
+    // Contact Management
+    public async Task<SupplierContactDto> CreateContactAsync(string supplierId, CreateSupplierContactRequest request)
+    {
+        throw new NotImplementedException("Contact management requires separate repository");
+    }
+
+    public async Task<SupplierContactDto> UpdateContactAsync(string contactId, UpdateSupplierContactRequest request)
+    {
+        throw new NotImplementedException("Contact management requires separate repository");
+    }
+
+    public async Task<IEnumerable<SupplierContactDto>> GetSupplierContactsAsync(string supplierId)
+    {
+        throw new NotImplementedException("Contact management requires separate repository");
+    }
+
+    public async Task<SupplierContactDto?> GetPrimaryContactAsync(string supplierId)
+    {
+        throw new NotImplementedException("Contact management requires separate repository");
+    }
+
+    public async Task DeleteContactAsync(string contactId)
+    {
+        throw new NotImplementedException("Contact management requires separate repository");
+    }
+
+    // Contract Management
+    public async Task<SupplierContractDto> CreateContractAsync(string supplierId, CreateSupplierContractRequest request)
+    {
+        throw new NotImplementedException("Contract management requires separate repository");
+    }
+
+    public async Task<SupplierContractDto> UpdateContractAsync(string contractId, UpdateSupplierContractRequest request)
+    {
+        throw new NotImplementedException("Contract management requires separate repository");
+    }
+
+    public async Task<IEnumerable<SupplierContractDto>> GetSupplierContractsAsync(string supplierId)
+    {
+        throw new NotImplementedException("Contract management requires separate repository");
+    }
+
+    public async Task<IEnumerable<SupplierContractDto>> GetActiveContractsAsync(string supplierId)
+    {
+        throw new NotImplementedException("Contract management requires separate repository");
+    }
+
+    public async Task<IEnumerable<SupplierContractDto>> GetExpiringContractsAsync(DateTime date)
+    {
+        throw new NotImplementedException("Contract management requires separate repository");
+    }
+
+    public async Task DeleteContractAsync(string contractId)
+    {
+        throw new NotImplementedException("Contract management requires separate repository");
+    }
+
+    // Product Management
+    public async Task<SupplierProductDto> CreateProductAsync(string supplierId, CreateSupplierProductRequest request)
+    {
+        throw new NotImplementedException("Product management requires separate service");
+    }
+
+    public async Task<IEnumerable<SupplierProductDto>> GetSupplierProductsAsync(string supplierId)
+    {
+        throw new NotImplementedException("Product management requires separate service");
+    }
+
+    public async Task<IEnumerable<SupplierProductDto>> GetActiveProductsAsync(string supplierId)
+    {
+        throw new NotImplementedException("Product management requires separate service");
+    }
+
+    // Performance Management
+    public async Task<SupplierPerformanceDto> CreatePerformanceAsync(string supplierId, CreateSupplierPerformanceRequest request)
+    {
+        throw new NotImplementedException("Performance management requires separate service");
+    }
+
+    public async Task<IEnumerable<SupplierPerformanceDto>> GetSupplierPerformanceAsync(string supplierId)
+    {
+        throw new NotImplementedException("Performance management requires separate service");
+    }
+
+    public async Task<decimal?> GetAverageRatingAsync(string supplierId, int? months = null)
+    {
+        throw new NotImplementedException("Performance management requires separate service");
+    }
+
+    // Financial Management
+    public async Task<SupplierFinancialDto> UpdateFinancialAsync(string supplierId, UpdateSupplierFinancialRequest request)
+    {
+        throw new NotImplementedException("Financial management requires separate repository");
+    }
+
+    public async Task<SupplierFinancialDto?> GetSupplierFinancialAsync(string supplierId)
+    {
+        throw new NotImplementedException("Financial management requires separate repository");
+    }
+
 }

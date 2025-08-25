@@ -10,23 +10,23 @@ public class SupplierProfile : Profile
     {
         // Supplier mappings
         CreateMap<Supplier, SupplierDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+            .ForMember(dest => dest.SupplierType, opt => opt.MapFrom(src => src.SupplierType));
 
         CreateMap<Supplier, SupplierReadDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
-            .ForMember(dest => dest.ProductCount, opt => opt.MapFrom(src => src.Products.Count))
-            .ForMember(dest => dest.AveragePerformanceScore, opt => opt.MapFrom(src => 
-                src.PerformanceMetrics.Any() ? src.PerformanceMetrics.Average(p => p.Score) : 0));
+            .ForMember(dest => dest.SupplierType, opt => opt.MapFrom(src => src.SupplierType))
+            .ForMember(dest => dest.SupplierStatusValue, opt => opt.MapFrom(src => src.Status));
 
         CreateMap<CreateSupplierDto, Supplier>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<SupplierStatus>(src.Type, true)))
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<SupplierType>(src.Type, true)));
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.ContactEmail))
+            .ForMember(dest => dest.ContactPerson, opt => opt.Ignore())
+            .ForMember(dest => dest.TaxIdentificationNumber, opt => opt.MapFrom(src => src.TaxNumber))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.SupplierType))
+            .ForMember(dest => dest.IsVerified, opt => opt.Ignore())
+            .ForMember(dest => dest.VerificationDate, opt => opt.Ignore());
 
         CreateMap<UpdateSupplierDto, Supplier>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -34,21 +34,21 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status != null ? Enum.Parse<SupplierStatus>(src.Status, true) : (SupplierStatus?)null))
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type != null ? Enum.Parse<SupplierType>(src.Type, true) : (SupplierType?)null))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.ContactEmail))
+            .ForMember(dest => dest.ContactPerson, opt => opt.Ignore())
+            .ForMember(dest => dest.TaxIdentificationNumber, opt => opt.MapFrom(src => src.TaxNumber))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.SupplierType))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
         // Address mappings
-        CreateMap<Address, AddressDto>()
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+        CreateMap<Address, AddressDto>();
 
         CreateMap<CreateAddressDto, Address>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.SupplierId, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<AddressType>(src.Type, true)));
+            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
 
         CreateMap<UpdateAddressDto, Address>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -56,12 +56,10 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type != null ? Enum.Parse<AddressType>(src.Type, true) : (AddressType?)null))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
         // SupplierProduct mappings
-        CreateMap<SupplierProduct, SupplierProductDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+        CreateMap<SupplierProduct, SupplierProductDto>();
 
         CreateMap<CreateSupplierProductDto, SupplierProduct>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -69,7 +67,11 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ProductAvailabilityStatus>(src.Status, true)));
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => 
+                Enum.Parse<ProductAvailabilityStatus>(src.Status, true)))
+            .ForMember(dest => dest.LeadTimeDays, opt => opt.MapFrom(src => src.LeadTime))
+            .ForMember(dest => dest.MinimumOrderQuantity, opt => opt.MapFrom(src => src.MinOrderQuantity))
+            .ForMember(dest => dest.ProductName, opt => opt.Ignore());
 
         CreateMap<UpdateSupplierProductDto, SupplierProduct>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -78,12 +80,15 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status != null ? Enum.Parse<ProductAvailabilityStatus>(src.Status, true) : (ProductAvailabilityStatus?)null))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => 
+                src.Status != null ? Enum.Parse<ProductAvailabilityStatus>(src.Status, true) : (ProductAvailabilityStatus?)null))
+            .ForMember(dest => dest.LeadTimeDays, opt => opt.MapFrom(src => src.LeadTime))
+            .ForMember(dest => dest.MinimumOrderQuantity, opt => opt.MapFrom(src => src.MinOrderQuantity))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
+
         // SupplierPricing mappings
-        CreateMap<SupplierPricing, SupplierPricingDto>()
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+        CreateMap<SupplierPricing, SupplierPricingDto>();
 
         CreateMap<CreateSupplierPricingDto, SupplierPricing>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -91,7 +96,8 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<PricingType>(src.Type, true)));
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => 
+                Enum.Parse<PricingType>(src.Type, true)));
 
         CreateMap<UpdateSupplierPricingDto, SupplierPricing>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -99,13 +105,12 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type != null ? Enum.Parse<PricingType>(src.Type, true) : (PricingType?)null))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => 
+                src.Type != null ? Enum.Parse<PricingType>(src.Type, true) : (PricingType?)null))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
         // SupplierPerformance mappings
-        CreateMap<SupplierPerformance, SupplierPerformanceDto>()
-            .ForMember(dest => dest.MetricType, opt => opt.MapFrom(src => src.MetricType.ToString()))
-            .ForMember(dest => dest.Period, opt => opt.MapFrom(src => src.Period.ToString()));
+        CreateMap<SupplierPerformance, SupplierPerformanceDto>();
 
         CreateMap<CreateSupplierPerformanceDto, SupplierPerformance>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -113,8 +118,10 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.MetricType, opt => opt.MapFrom(src => Enum.Parse<PerformanceMetricType>(src.MetricType, true)))
-            .ForMember(dest => dest.Period, opt => opt.MapFrom(src => Enum.Parse<PerformancePeriod>(src.Period, true)));
+            .ForMember(dest => dest.MetricType, opt => opt.MapFrom(src => 
+                Enum.Parse<PerformanceMetricType>(src.MetricType, true)))
+            .ForMember(dest => dest.Year, opt => opt.Ignore())
+            .ForMember(dest => dest.Month, opt => opt.Ignore());
 
         CreateMap<UpdateSupplierPerformanceDto, SupplierPerformance>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -122,8 +129,8 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.MetricType, opt => opt.MapFrom(src => src.MetricType != null ? Enum.Parse<PerformanceMetricType>(src.MetricType, true) : (PerformanceMetricType?)null))
-            .ForMember(dest => dest.Period, opt => opt.MapFrom(src => src.Period != null ? Enum.Parse<PerformancePeriod>(src.Period, true) : (PerformancePeriod?)null))
+            .ForMember(dest => dest.MetricType, opt => opt.MapFrom(src => 
+                src.MetricType != null ? Enum.Parse<PerformanceMetricType>(src.MetricType, true) : (PerformanceMetricType?)null))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

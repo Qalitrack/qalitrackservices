@@ -13,5 +13,13 @@ namespace ComplianceService.Core.DTOs
         public DateTime CheckedAt { get; set; } = DateTime.UtcNow;
         public string CheckedBy { get; set; } = string.Empty;
         public Dictionary<string, object> AdditionalData { get; set; } = new();
+        
+        // Additional properties needed by ComplianceService
+        public string ComplianceId { get; set; } = string.Empty;
+        public string EntityType { get; set; } = string.Empty;
+        public string EntityId { get; set; } = string.Empty;
+        public double ComplianceScore { get; set; }
+        public DateTime CheckDate { get; set; } = DateTime.UtcNow;
+        public Dictionary<string, object> RuleResults { get; set; } = new();
     }
 }

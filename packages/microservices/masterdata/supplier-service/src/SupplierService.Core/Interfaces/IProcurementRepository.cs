@@ -7,6 +7,7 @@ public interface IProcurementRepository : IRepository<Procurement>
     Task<IEnumerable<Procurement>> GetBySupplierIdAsync(string supplierId);
     Task<Procurement?> GetByProcurementNumberAsync(string procurementNumber);
     Task<IEnumerable<Procurement>> GetByStatusAsync(ProcurementStatus status);
+    Task<IEnumerable<Procurement>> GetByRequestedByAsync(string requestedBy);
     Task<IEnumerable<Procurement>> GetByPriorityAsync(ProcurementPriority priority);
     Task<IEnumerable<Procurement>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
     Task<IEnumerable<Procurement>> GetPendingApprovalsAsync();

@@ -11,5 +11,8 @@ public interface ICustomerService
     Task<bool> DeleteAsync(string id);
     Task<bool> IsNameAvailableAsync(string name);
     
-    // TODO: Add domain-specific service methods here
+    Task<CustomerReadDto?> ActivateCustomerAsync(string id);
+    Task<CustomerReadDto?> DeactivateCustomerAsync(string id);
+    Task<CustomerReadDto?> EnableTransporterRoleAsync(string id, string transporterId);
+    Task<CustomerReadDto?> SetPreferredTransporterAsync(string id, string transporterId);
 }

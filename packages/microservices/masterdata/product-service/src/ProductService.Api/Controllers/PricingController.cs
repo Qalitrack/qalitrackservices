@@ -19,12 +19,12 @@ public class PricingController : BaseController
     /// Get all pricing records
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<PricingDto>>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         try
         {
             var pricings = await _pricingService.GetAllAsync();
-            return Ok(ApiResponseDto<IEnumerable<PricingDto>>.Success(pricings));
+            return Ok(pricings);
         }
         catch (Exception ex)
         {
@@ -36,17 +36,17 @@ public class PricingController : BaseController
     /// Get pricing by ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ApiResponseDto<PricingDto>>> GetById(string id)
+    public async Task<IActionResult> GetById(string id)
     {
         try
         {
             var pricing = await _pricingService.GetByIdAsync(id);
             if (pricing == null)
             {
-                return NotFound(ApiResponseDto<PricingDto>.Error("Pricing not found"));
+                return NotFound("Pricing not found");
             }
 
-            return Ok(ApiResponseDto<PricingDto>.Success(pricing));
+            return Ok(pricing);
         }
         catch (Exception ex)
         {
@@ -58,12 +58,12 @@ public class PricingController : BaseController
     /// Get pricing for a specific product
     /// </summary>
     [HttpGet("product/{productId}")]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<PricingDto>>>> GetByProductId(string productId)
+    public async Task<IActionResult> GetByProductId(string productId)
     {
         try
         {
             var pricings = await _pricingService.GetByProductIdAsync(productId);
-            return Ok(ApiResponseDto<IEnumerable<PricingDto>>.Success(pricings));
+            return Ok(pricings);
         }
         catch (Exception ex)
         {
@@ -75,17 +75,17 @@ public class PricingController : BaseController
     /// Get customer-specific pricing for a product
     /// </summary>
     [HttpGet("product/{productId}/customer/{customerId}")]
-    public async Task<ActionResult<ApiResponseDto<PricingDto>>> GetCustomerPricing(string productId, string customerId)
+    public async Task<IActionResult> GetCustomerPricing(string productId, string customerId)
     {
         try
         {
-            var pricing = await _pricingService.GetCustomerPricingAsync(productId, customerId);
+            var pricing = await _pricingService.GetEffectivePricingAsync(productId, customerId);
             if (pricing == null)
             {
-                return NotFound(ApiResponseDto<PricingDto>.Error("Customer-specific pricing not found"));
+                return NotFound("Customer-specific pricing not found");
             }
 
-            return Ok(ApiResponseDto<PricingDto>.Success(pricing));
+            return Ok(pricing);
         }
         catch (Exception ex)
         {
@@ -97,15 +97,15 @@ public class PricingController : BaseController
     /// Calculate effective price for a product
     /// </summary>
     [HttpGet("product/{productId}/effective-price")]
-    public async Task<ActionResult<ApiResponseDto<decimal>>> GetEffectivePrice(
+    public async Task<IActionResult> GetEffectivePrice(
         string productId, 
         [FromQuery] string? customerId = null, 
         [FromQuery] int quantity = 1)
     {
         try
         {
-            var effectivePrice = await _pricingService.CalculateEffectivePriceAsync(productId, customerId, quantity);
-            return Ok(ApiResponseDto<decimal>.Success(effectivePrice));
+            var effectivePrice = await _pricingService.CalculateEffectivePriceAsync(productId, quantity, customerId);
+            return Ok(effectivePrice);
         }
         catch (Exception ex)
         {
@@ -117,18 +117,17 @@ public class PricingController : BaseController
     /// Create a new pricing record
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<ApiResponseDto<PricingDto>>> Create([FromBody] PricingDto dto)
+    public async Task<IActionResult> Create([FromBody] CreatePricingDto dto)
     {
         try
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ApiResponseDto<PricingDto>.Error("Invalid model state", GetModelStateErrors()));
+                return BadRequest("Invalid model state", GetModelStateErrors());
             }
 
             var pricing = await _pricingService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = pricing.Id }, 
-                ApiResponseDto<PricingDto>.Success(pricing));
+            return CreatedAtAction(nameof(GetById), new { id = pricing.Id }, pricing);
         }
         catch (Exception ex)
         {
@@ -140,22 +139,22 @@ public class PricingController : BaseController
     /// Update an existing pricing record
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<ActionResult<ApiResponseDto<PricingDto>>> Update(string id, [FromBody] PricingDto dto)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdatePricingDto dto)
     {
         try
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ApiResponseDto<PricingDto>.Error("Invalid model state", GetModelStateErrors()));
+                return BadRequest("Invalid model state", GetModelStateErrors());
             }
 
             var pricing = await _pricingService.UpdateAsync(id, dto);
             if (pricing == null)
             {
-                return NotFound(ApiResponseDto<PricingDto>.Error("Pricing not found"));
+                return NotFound("Pricing not found");
             }
 
-            return Ok(ApiResponseDto<PricingDto>.Success(pricing));
+            return Ok(pricing);
         }
         catch (Exception ex)
         {
@@ -167,17 +166,17 @@ public class PricingController : BaseController
     /// Delete a pricing record
     /// </summary>
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ApiResponseDto<bool>>> Delete(string id)
+    public async Task<IActionResult> Delete(string id)
     {
         try
         {
             var result = await _pricingService.DeleteAsync(id);
             if (!result)
             {
-                return NotFound(ApiResponseDto<bool>.Error("Pricing not found"));
+                return NotFound("Pricing not found");
             }
 
-            return Ok(ApiResponseDto<bool>.Success(true));
+            return Ok(true);
         }
         catch (Exception ex)
         {

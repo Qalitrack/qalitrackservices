@@ -68,4 +68,30 @@ public class SupplierProductRepository : Repository<SupplierProduct>, ISupplierP
             .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
             .FirstOrDefaultAsync(sp => sp.Id == id && !sp.IsDeleted);
     }
+
+    public async Task<IEnumerable<SupplierProduct>> GetBySupplierIdAsync(string supplierId)
+    {
+        return await GetBySupplierId(supplierId);
+    }
+
+    public async Task<IEnumerable<SupplierProduct>> GetByProductIdAsync(string productId)
+    {
+        return await GetByProductId(productId);
+    }
+
+    public async Task<IEnumerable<SupplierProduct>> GetByCategoryAsync(string category)
+    {
+        return await _dbSet
+            .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
+            .Where(sp => sp.Category == category && !sp.IsDeleted)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<SupplierProduct>> GetActiveProductsAsync(string supplierId)
+    {
+        return await _dbSet
+            .Include(sp => sp.Pricing.Where(p => !p.IsDeleted))
+            .Where(sp => sp.SupplierId == supplierId && sp.IsActive && !sp.IsDeleted)
+            .ToListAsync();
+    }
 }

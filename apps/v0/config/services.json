@@ -1,0 +1,220 @@
+{
+  "environment": "development",
+  "version": "1.0.0",
+  "applicationName": "QaliTrack",
+  "servers": [
+    {
+      "url": "http://localhost:7000",
+      "description": "Local Development"
+    },
+    {
+      "url": "https://api-staging.qalitrack.com",
+      "description": "Staging Environment"
+    },
+    {
+      "url": "https://api.qalitrack.com", 
+      "description": "Production Environment"
+    }
+  ],
+  "external": {
+    "host": "localhost",
+    "protocol": "http",
+    "gatewayPort": "7000"
+  },
+  "services": [
+    {
+      "name": "customer-service",
+      "host": "customer-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/customers",
+      "description": "Customer management service"
+    },
+    {
+      "name": "driver-service",
+      "host": "driver-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/drivers",
+      "description": "Driver management service"
+    },
+    {
+      "name": "product-service",
+      "host": "product-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/products",
+      "description": "Product catalog and inventory management"
+    },
+    {
+      "name": "report-service",
+      "host": "report-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/reports",
+      "description": "Reporting service"
+    },
+    {
+      "name": "route-service",
+      "host": "route-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/routes",
+      "description": "Route management service"
+    },
+    {
+      "name": "sacco-service",
+      "host": "sacco-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/saccos",
+      "description": "SACCO integration service"
+    },
+    {
+      "name": "supplier-service",
+      "host": "supplier-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/suppliers",
+      "description": "Supplier management service"
+    },
+    {
+      "name": "transporter-service",
+      "host": "transporter-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/transporters",
+      "description": "Transporter management service"
+    },
+    {
+      "name": "vehicle-service",
+      "host": "vehicle-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/vehicles",
+      "description": "Vehicle management service"
+    },
+    {
+      "name": "weighbridge-service",
+      "host": "weighbridge-service",
+      "port": 80,
+      "group": "masterdata",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/weighbridges",
+      "description": "Weighbridge management service"
+    },
+    {
+      "name": "compliance-service",
+      "host": "compliance-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/compliance",
+      "description": "Compliance monitoring service"
+    },
+    {
+      "name": "operational-data-service",
+      "host": "operational-data-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/operational-data",
+      "description": "Operational data processing service"
+    },
+    {
+      "name": "transaction-service",
+      "host": "transaction-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/transactions",
+      "description": "Transaction processing service"
+    },
+    {
+      "name": "weight-data-service",
+      "host": "weight-data-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/weight-data",
+      "description": "Weight data processing service"
+    },
+    {
+      "name": "postgres",
+      "host": "postgres",
+      "port": 5432,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "PostgreSQL primary database"
+    },
+    {
+      "name": "redis",
+      "host": "redis",
+      "port": 6379,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "Redis cache and session store"
+    },
+    {
+      "name": "rabbitmq",
+      "host": "rabbitmq",
+      "port": 5672,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "RabbitMQ message broker"
+    },
+    {
+      "name": "mailpit",
+      "host": "mailpit",
+      "port": 1025,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": null,
+      "swaggerPath": null,
+      "description": "Mailpit email testing service"
+    }
+  ]
+}

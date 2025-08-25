@@ -72,13 +72,18 @@ public class OperationalDataService : IOperationalDataService
 
         operation.UpdatedAt = DateTime.UtcNow;
 
-        var updatedOperation = await _operationalRepository.UpdateAsync(operation);
-        return _mapper.Map<OperationalDto>(updatedOperation);
+        await _operationalRepository.UpdateAsync(operation);
+        return _mapper.Map<OperationalDto>(operation);
     }
 
     public async Task<bool> DeleteOperationAsync(string operationId)
     {
-        return await _operationalRepository.DeleteByIdAsync(operationId);
+        var operation = await _operationalRepository.GetByIdAsync(operationId);
+        if (operation == null)
+            return false;
+            
+        await _operationalRepository.DeleteAsync(operation);
+        return true;
     }
 
     public async Task<List<OperationalDto>> GetOperationsByOrganizationAsync(string organizationId)

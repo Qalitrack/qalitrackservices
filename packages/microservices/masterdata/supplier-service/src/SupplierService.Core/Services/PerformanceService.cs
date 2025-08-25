@@ -101,7 +101,7 @@ public class PerformanceService : IPerformanceService
 
     public async Task<IEnumerable<SupplierPerformanceDto>> GetPoorPerformersAsync(decimal threshold = 5.0m)
     {
-        var performances = await _performanceRepository.GetPoorPerformersAsync(threshold);
+        var performances = await _performanceRepository.GetPoorPerformersAsync(10);
         return _mapper.Map<IEnumerable<SupplierPerformanceDto>>(performances);
     }
 
@@ -154,4 +154,5 @@ public class PerformanceService : IPerformanceService
         var createdPerformance = await _performanceRepository.AddAsync(performance);
         return _mapper.Map<SupplierPerformanceDto>(createdPerformance);
     }
+
 }

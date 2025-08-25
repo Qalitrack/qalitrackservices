@@ -16,19 +16,19 @@ public class SpecificationService : ISpecificationService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<SpecificationDto>> GetAllAsync()
+    public async Task<IEnumerable<SpecificationReadDto>> GetAllAsync()
     {
         var specifications = await _specificationRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<SpecificationDto>>(specifications);
+        return _mapper.Map<IEnumerable<SpecificationReadDto>>(specifications);
     }
 
-    public async Task<SpecificationDto?> GetByIdAsync(string id)
+    public async Task<SpecificationReadDto?> GetByIdAsync(string id)
     {
         var specification = await _specificationRepository.GetByIdAsync(id);
-        return specification == null ? null : _mapper.Map<SpecificationDto>(specification);
+        return specification == null ? null : _mapper.Map<SpecificationReadDto>(specification);
     }
 
-    public async Task<SpecificationDto> CreateAsync(SpecificationDto dto)
+    public async Task<SpecificationReadDto> CreateAsync(CreateSpecificationDto dto)
     {
         var specification = _mapper.Map<Specification>(dto);
         specification.CreatedAt = DateTime.UtcNow;
@@ -41,10 +41,10 @@ public class SpecificationService : ISpecificationService
         }
         
         var createdSpecification = await _specificationRepository.CreateAsync(specification);
-        return _mapper.Map<SpecificationDto>(createdSpecification);
+        return _mapper.Map<SpecificationReadDto>(createdSpecification);
     }
 
-    public async Task<SpecificationDto?> UpdateAsync(string id, SpecificationDto dto)
+    public async Task<SpecificationReadDto?> UpdateAsync(string id, UpdateSpecificationDto dto)
     {
         var existingSpecification = await _specificationRepository.GetByIdAsync(id);
         if (existingSpecification == null)
@@ -62,7 +62,7 @@ public class SpecificationService : ISpecificationService
         }
         
         var updatedSpecification = await _specificationRepository.UpdateAsync(existingSpecification);
-        return updatedSpecification == null ? null : _mapper.Map<SpecificationDto>(updatedSpecification);
+        return updatedSpecification == null ? null : _mapper.Map<SpecificationReadDto>(updatedSpecification);
     }
 
     public async Task<bool> DeleteAsync(string id)
@@ -70,17 +70,17 @@ public class SpecificationService : ISpecificationService
         return await _specificationRepository.DeleteAsync(id);
     }
 
-    public async Task<IEnumerable<SpecificationDto>> GetByProductIdAsync(string productId)
+    public async Task<IEnumerable<SpecificationReadDto>> GetByProductIdAsync(string productId)
     {
         var specifications = await _specificationRepository.GetByProductIdAsync(productId);
-        return _mapper.Map<IEnumerable<SpecificationDto>>(specifications);
+        return _mapper.Map<IEnumerable<SpecificationReadDto>>(specifications);
     }
 
-    public async Task<IEnumerable<SpecificationDto>> GetComplianceSpecificationsAsync(string productId)
+    public async Task<IEnumerable<SpecificationReadDto>> GetComplianceSpecificationsAsync(string productId)
     {
         var specifications = await _specificationRepository.GetByProductIdAsync(productId);
         var complianceSpecs = specifications.Where(s => s.IsComplianceRequired).ToList();
-        return _mapper.Map<IEnumerable<SpecificationDto>>(complianceSpecs);
+        return _mapper.Map<IEnumerable<SpecificationReadDto>>(complianceSpecs);
     }
 
     public async Task<bool> ValidateComplianceAsync(string productId)
@@ -91,14 +91,23 @@ public class SpecificationService : ISpecificationService
         return complianceSpecs.All(spec => spec.IsCompliant && !spec.IsCertificationExpired);
     }
 
-    public async Task<IEnumerable<SpecificationDto>> GetExpiringCertificationsAsync(int daysAhead = 30)
+    public async Task<IEnumerable<SpecificationReadDto>> GetExpiredCertificationsAsync()
     {
         var specifications = await _specificationRepository.GetAllAsync();
-        var expiringSpecs = specifications.Where(s => 
+        var expiredSpecs = specifications.Where(s => 
             s.CertificationExpiry.HasValue && 
-            s.CertificationExpiry.Value <= DateTime.UtcNow.AddDays(daysAhead) &&
-            s.CertificationExpiry.Value > DateTime.UtcNow).ToList();
+            s.CertificationExpiry.Value < DateTime.UtcNow).ToList();
         
-        return _mapper.Map<IEnumerable<SpecificationDto>>(expiringSpecs);
+        return _mapper.Map<IEnumerable<SpecificationReadDto>>(expiredSpecs);
+    }
+
+    public async Task<IEnumerable<SpecificationReadDto>> GetTestsDueAsync()
+    {
+        var specifications = await _specificationRepository.GetAllAsync();
+        var testsDue = specifications.Where(s => 
+            s.NextTestDue.HasValue && 
+            s.NextTestDue.Value <= DateTime.UtcNow.AddDays(7)).ToList();
+        
+        return _mapper.Map<IEnumerable<SpecificationReadDto>>(testsDue);
     }
 }

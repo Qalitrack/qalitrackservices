@@ -91,15 +91,12 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weight Data Service API v1");
-        c.RoutePrefix = string.Empty; // Make Swagger the default page
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weight Data Service API v1");
+    c.RoutePrefix = string.Empty; // Make Swagger the default page
+});
 
 app.UseRouting();
 app.UseCors("AllowAll");
@@ -121,3 +118,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+// Make Program class accessible for integration tests
+public partial class Program { }

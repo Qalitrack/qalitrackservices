@@ -156,12 +156,12 @@ public class CustomersController : BaseController
         try
         {
             var result = await _customerService.ActivateCustomerAsync(id);
-            if (!result)
+            if (result == null)
             {
                 return NotFound("Customer not found");
             }
 
-            return Ok<object?>(null, "Customer activated successfully");
+            return Ok(result, "Customer activated successfully");
         }
         catch (Exception ex)
         {
@@ -179,12 +179,12 @@ public class CustomersController : BaseController
         try
         {
             var result = await _customerService.DeactivateCustomerAsync(id);
-            if (!result)
+            if (result == null)
             {
                 return NotFound("Customer not found");
             }
 
-            return Ok<object?>(null, "Customer deactivated successfully");
+            return Ok(result, "Customer deactivated successfully");
         }
         catch (Exception ex)
         {
@@ -202,12 +202,12 @@ public class CustomersController : BaseController
         try
         {
             var result = await _customerService.EnableTransporterRoleAsync(id, request.TransporterId);
-            if (!result)
+            if (result == null)
             {
                 return NotFound("Customer not found");
             }
 
-            return Ok<object?>(null, "Transporter role enabled successfully");
+            return Ok(result, "Transporter role enabled successfully");
         }
         catch (Exception ex)
         {
@@ -225,12 +225,12 @@ public class CustomersController : BaseController
         try
         {
             var result = await _customerService.SetPreferredTransporterAsync(id, request.TransporterId);
-            if (!result)
+            if (result == null)
             {
                 return NotFound("Customer not found");
             }
 
-            return Ok<object?>(null, "Preferred transporter set successfully");
+            return Ok(result, "Preferred transporter set successfully");
         }
         catch (Exception ex)
         {

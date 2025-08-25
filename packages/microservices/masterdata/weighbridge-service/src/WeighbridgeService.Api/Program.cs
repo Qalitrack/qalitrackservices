@@ -11,6 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(WeighbridgeService.Core.Mappings.WeighbridgeProfile));
 
@@ -51,13 +54,20 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => 
+    {
+        c.RoutePrefix = string.Empty;
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "WeighbridgeService API V1");
+    });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Commented out as requested
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
+
+// Map health endpoint
+app.MapHealthChecks("/health");
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())

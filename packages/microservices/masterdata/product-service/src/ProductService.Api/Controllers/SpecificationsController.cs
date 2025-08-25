@@ -19,12 +19,12 @@ public class SpecificationsController : BaseController
     /// Get all specifications
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<SpecificationDto>>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         try
         {
             var specifications = await _specificationService.GetAllAsync();
-            return Ok(ApiResponseDto<IEnumerable<SpecificationDto>>.Success(specifications));
+            return Ok(specifications);
         }
         catch (Exception ex)
         {
@@ -36,17 +36,17 @@ public class SpecificationsController : BaseController
     /// Get specification by ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ApiResponseDto<SpecificationDto>>> GetById(string id)
+    public async Task<IActionResult> GetById(string id)
     {
         try
         {
             var specification = await _specificationService.GetByIdAsync(id);
             if (specification == null)
             {
-                return NotFound(ApiResponseDto<SpecificationDto>.Error("Specification not found"));
+                return NotFound("Specification not found");
             }
 
-            return Ok(ApiResponseDto<SpecificationDto>.Success(specification));
+            return Ok(specification);
         }
         catch (Exception ex)
         {
@@ -58,12 +58,12 @@ public class SpecificationsController : BaseController
     /// Get specifications for a specific product
     /// </summary>
     [HttpGet("product/{productId}")]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<SpecificationDto>>>> GetByProductId(string productId)
+    public async Task<IActionResult> GetByProductId(string productId)
     {
         try
         {
             var specifications = await _specificationService.GetByProductIdAsync(productId);
-            return Ok(ApiResponseDto<IEnumerable<SpecificationDto>>.Success(specifications));
+            return Ok(specifications);
         }
         catch (Exception ex)
         {
@@ -75,12 +75,12 @@ public class SpecificationsController : BaseController
     /// Get compliance specifications for a product
     /// </summary>
     [HttpGet("product/{productId}/compliance")]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<SpecificationDto>>>> GetComplianceSpecifications(string productId)
+    public async Task<IActionResult> GetComplianceSpecifications(string productId)
     {
         try
         {
             var specifications = await _specificationService.GetComplianceSpecificationsAsync(productId);
-            return Ok(ApiResponseDto<IEnumerable<SpecificationDto>>.Success(specifications));
+            return Ok(specifications);
         }
         catch (Exception ex)
         {
@@ -92,12 +92,12 @@ public class SpecificationsController : BaseController
     /// Validate compliance for a product
     /// </summary>
     [HttpGet("product/{productId}/compliance/validate")]
-    public async Task<ActionResult<ApiResponseDto<bool>>> ValidateCompliance(string productId)
+    public async Task<IActionResult> ValidateCompliance(string productId)
     {
         try
         {
             var isCompliant = await _specificationService.ValidateComplianceAsync(productId);
-            return Ok(ApiResponseDto<bool>.Success(isCompliant));
+            return Ok(isCompliant);
         }
         catch (Exception ex)
         {
@@ -109,12 +109,12 @@ public class SpecificationsController : BaseController
     /// Get specifications with expiring certifications
     /// </summary>
     [HttpGet("expiring-certifications")]
-    public async Task<ActionResult<ApiResponseDto<IEnumerable<SpecificationDto>>>> GetExpiringCertifications([FromQuery] int daysAhead = 30)
+    public async Task<IActionResult> GetExpiringCertifications([FromQuery] int daysAhead = 30)
     {
         try
         {
-            var specifications = await _specificationService.GetExpiringCertificationsAsync(daysAhead);
-            return Ok(ApiResponseDto<IEnumerable<SpecificationDto>>.Success(specifications));
+            var specifications = await _specificationService.GetExpiredCertificationsAsync();
+            return Ok(specifications);
         }
         catch (Exception ex)
         {
@@ -126,18 +126,17 @@ public class SpecificationsController : BaseController
     /// Create a new specification
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<ApiResponseDto<SpecificationDto>>> Create([FromBody] SpecificationDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateSpecificationDto dto)
     {
         try
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ApiResponseDto<SpecificationDto>.Error("Invalid model state", GetModelStateErrors()));
+                return BadRequest("Invalid model state", GetModelStateErrors());
             }
 
             var specification = await _specificationService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = specification.Id }, 
-                ApiResponseDto<SpecificationDto>.Success(specification));
+            return CreatedAtAction(nameof(GetById), new { id = specification.Id }, specification);
         }
         catch (Exception ex)
         {
@@ -149,22 +148,22 @@ public class SpecificationsController : BaseController
     /// Update an existing specification
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<ActionResult<ApiResponseDto<SpecificationDto>>> Update(string id, [FromBody] SpecificationDto dto)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateSpecificationDto dto)
     {
         try
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ApiResponseDto<SpecificationDto>.Error("Invalid model state", GetModelStateErrors()));
+                return BadRequest("Invalid model state", GetModelStateErrors());
             }
 
             var specification = await _specificationService.UpdateAsync(id, dto);
             if (specification == null)
             {
-                return NotFound(ApiResponseDto<SpecificationDto>.Error("Specification not found"));
+                return NotFound("Specification not found");
             }
 
-            return Ok(ApiResponseDto<SpecificationDto>.Success(specification));
+            return Ok(specification);
         }
         catch (Exception ex)
         {
@@ -176,17 +175,17 @@ public class SpecificationsController : BaseController
     /// Delete a specification
     /// </summary>
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ApiResponseDto<bool>>> Delete(string id)
+    public async Task<IActionResult> Delete(string id)
     {
         try
         {
             var result = await _specificationService.DeleteAsync(id);
             if (!result)
             {
-                return NotFound(ApiResponseDto<bool>.Error("Specification not found"));
+                return NotFound("Specification not found");
             }
 
-            return Ok(ApiResponseDto<bool>.Success(true));
+            return Ok(true);
         }
         catch (Exception ex)
         {
