@@ -4,18 +4,18 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'packages/microservices/masterdata/weight-data-service/**'
+      - 'packages/microservices/datamanager/weight-data-service/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'packages/microservices/masterdata/weight-data-service/**'
+      - 'packages/microservices/datamanager/weight-data-service/**'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
   SERVICE_NAME: weight-data-service
-  SERVICE_PATH: packages/microservices/masterdata/weight-data-service
+  SERVICE_PATH: packages/microservices/datamanager/weight-data-service
 
 jobs:
   build:
