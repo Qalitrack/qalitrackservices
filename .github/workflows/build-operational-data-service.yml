@@ -4,18 +4,18 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'packages/microservices/masterdata/operational-data-service/**'
+      - 'packages/microservices/datamanager/operational-data-service/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'packages/microservices/masterdata/operational-data-service/**'
+      - 'packages/microservices/datamanager/operational-data-service/**'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
   SERVICE_NAME: operational-data-service
-  SERVICE_PATH: packages/microservices/masterdata/operational-data-service
+  SERVICE_PATH: packages/microservices/datamanager/operational-data-service
 
 jobs:
   build:

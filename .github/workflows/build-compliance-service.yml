@@ -4,18 +4,18 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'packages/microservices/masterdata/compliance-service/**'
+      - 'packages/microservices/datamanager/compliance-service/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'packages/microservices/masterdata/compliance-service/**'
+      - 'packages/microservices/datamanager/compliance-service/**'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
   SERVICE_NAME: compliance-service
-  SERVICE_PATH: packages/microservices/masterdata/compliance-service
+  SERVICE_PATH: packages/microservices/datamanager/compliance-service
 
 jobs:
   build:
