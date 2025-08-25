@@ -18,7 +18,7 @@ namespace ComplianceService.Infrastructure.Repositories
         }
 
         // Compliance Rules
-        public async Task<ComplianceRule?> GetRuleByIdAsync(int id)
+        public async Task<ComplianceRule?> GetRuleByIdAsync(string id)
         {
             return await _context.ComplianceRules
                 .Include(r => r.Violations)
@@ -390,7 +390,7 @@ namespace ComplianceService.Infrastructure.Repositories
         public async Task<List<Compliance>> GetByTypeAsync(ComplianceType complianceType)
         {
             return await _context.Compliances
-                .Where(c => c.Type == complianceType)
+                .Where(c => c.ComplianceType == complianceType)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
         }
@@ -434,9 +434,8 @@ namespace ComplianceService.Infrastructure.Repositories
 
         public async Task<List<ComplianceRule>> GetRulesByIdsAsync(List<string> ruleIds)
         {
-            var intRuleIds = ruleIds.Select(id => int.Parse(id)).ToList();
             return await _context.ComplianceRules
-                .Where(r => intRuleIds.Contains(r.Id))
+                .Where(r => ruleIds.Contains(r.Id))
                 .ToListAsync();
         }
 
