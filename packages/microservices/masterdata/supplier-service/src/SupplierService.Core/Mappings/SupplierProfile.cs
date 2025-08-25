@@ -13,7 +13,8 @@ public class SupplierProfile : Profile
             .ForMember(dest => dest.SupplierType, opt => opt.MapFrom(src => src.SupplierType));
 
         CreateMap<Supplier, SupplierReadDto>()
-            .ForMember(dest => dest.SupplierType, opt => opt.MapFrom(src => src.SupplierType));
+            .ForMember(dest => dest.SupplierType, opt => opt.MapFrom(src => src.SupplierType))
+            .ForMember(dest => dest.SupplierStatusValue, opt => opt.MapFrom(src => src.Status));
 
         CreateMap<CreateSupplierDto, Supplier>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
