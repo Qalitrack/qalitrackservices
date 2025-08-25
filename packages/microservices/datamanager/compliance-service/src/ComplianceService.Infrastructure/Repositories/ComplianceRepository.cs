@@ -18,12 +18,12 @@ namespace ComplianceService.Infrastructure.Repositories
         }
 
         // Compliance Rules
-        public async Task<ComplianceRule?> GetRuleByIdAsync(string id)
+        public async Task<ComplianceRule?> GetRuleByIdAsync(int id)
         {
             return await _context.ComplianceRules
                 .Include(r => r.Violations)
                 .Include(r => r.ComplianceChecks)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id.ToString());
         }
 
         public async Task<List<ComplianceRule>> GetActiveRulesAsync()
@@ -68,7 +68,7 @@ namespace ComplianceService.Infrastructure.Repositories
 
         public async Task DeleteRuleAsync(int id)
         {
-            var rule = await _context.ComplianceRules.FindAsync(id);
+            var rule = await _context.ComplianceRules.FindAsync(id.ToString());
             if (rule != null)
             {
                 // Soft delete by setting IsActive to false
