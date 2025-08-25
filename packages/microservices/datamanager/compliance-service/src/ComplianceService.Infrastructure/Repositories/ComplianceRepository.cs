@@ -409,7 +409,7 @@ namespace ComplianceService.Infrastructure.Repositories
         {
             return await _context.Compliances
                 .Where(c => c.OrganizationId == organizationId && 
-                           c.RiskLevel == "HIGH")
+                           (c.RiskLevel == RiskLevel.High || c.RiskLevel == RiskLevel.Critical || c.RiskLevel == RiskLevel.Extreme))
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
         }
@@ -417,8 +417,8 @@ namespace ComplianceService.Infrastructure.Repositories
         public async Task<List<Compliance>> GetItemsRequiringMonitoringAsync()
         {
             return await _context.Compliances
-                .Where(c => c.RequiresMonitoring && c.Status != ComplianceStatus.Compliant)
-                .OrderBy(c => c.NextReviewDate)
+                .Where(c => c.RequiresContinuousMonitoring && c.Status != ComplianceStatus.Compliant)
+                .OrderBy(c => c.NextCheckDate)
                 .ToListAsync();
         }
 
@@ -426,9 +426,9 @@ namespace ComplianceService.Infrastructure.Repositories
         {
             return await _context.Compliances
                 .Where(c => c.OrganizationId == organizationId && 
-                           c.RequiresMonitoring &&
-                           c.NextReviewDate <= DateTime.UtcNow.AddDays(30))
-                .OrderBy(c => c.NextReviewDate)
+                           c.RequiresContinuousMonitoring &&
+                           c.NextCheckDate <= DateTime.UtcNow.AddDays(30))
+                .OrderBy(c => c.NextCheckDate)
                 .ToListAsync();
         }
 
@@ -443,7 +443,7 @@ namespace ComplianceService.Infrastructure.Repositories
         public async Task<List<ComplianceRule>> GetRulesByEntityTypeAsync(string entityType)
         {
             return await _context.ComplianceRules
-                .Where(r => r.EntityType == entityType && r.IsActive)
+                .Where(r => r.RuleType == entityType && r.IsActive)
                 .OrderBy(r => r.Name)
                 .ToListAsync();
         }

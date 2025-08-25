@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # Microservices Control Hub - Main Dashboard
@@ -23,20 +22,9 @@ services:
       retries: 3
       start_period: 40s
 
-  # Example API Gateway
-  api-gateway:
-    image: your-registry/api-gateway:latest
-    ports:
-      - "7000:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  # Example Microservices
-  user-service:
-    image: your-registry/user-service:latest
+  # QaliTrack Masterdata Services
+  customer-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/customer-service:latest
     ports:
       - "7001:80"
     environment:
@@ -45,8 +33,8 @@ services:
       - microservices
     restart: unless-stopped
 
-  customer-service:
-    image: your-registry/customer-service:latest
+  driver-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/driver-service:latest
     ports:
       - "7002:80"
     environment:
@@ -56,9 +44,120 @@ services:
     restart: unless-stopped
 
   product-service:
-    image: your-registry/product-service:latest
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/product-service:latest
     ports:
       - "7003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  report-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/report-service:latest
+    ports:
+      - "7004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  route-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/route-service:latest
+    ports:
+      - "7005:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  sacco-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/sacco-service:latest
+    ports:
+      - "7006:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  supplier-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/supplier-service:latest
+    ports:
+      - "7007:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  transporter-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/transporter-service:latest
+    ports:
+      - "7008:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  vehicle-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/vehicle-service:latest
+    ports:
+      - "7009:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  weighbridge-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/weighbridge-service:latest
+    ports:
+      - "7010:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  # QaliTrack Datamanager Services
+  compliance-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/compliance-service:latest
+    ports:
+      - "7011:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  operational-data-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/operational-data-service:latest
+    ports:
+      - "7012:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  transaction-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/transaction-service:latest
+    ports:
+      - "7013:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  weight-data-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/weight-data-service:latest
+    ports:
+      - "7014:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
