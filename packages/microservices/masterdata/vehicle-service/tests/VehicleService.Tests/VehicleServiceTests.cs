@@ -256,7 +256,7 @@ public class VehicleServiceTests : IDisposable
             Name = "Heavy Truck",
             Description = "Heavy duty trucks for construction",
             Category = "Commercial",
-            MaxWeightCapacity = 15000m
+            MaxWeightLimit = 15000m
         };
 
         // Act
@@ -347,7 +347,7 @@ public class VehicleServiceTests : IDisposable
             Name = name ?? "Test Vehicle Type",
             Description = "Test vehicle type description",
             Category = "Commercial",
-            MaxWeightCapacity = 10000m
+            MaxWeightLimit = 10000m
         };
 
         return await _vehicleService.CreateVehicleTypeAsync(request);
