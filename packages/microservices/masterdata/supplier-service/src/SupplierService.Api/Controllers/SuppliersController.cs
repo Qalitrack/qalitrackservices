@@ -288,7 +288,7 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var products = await _supplierProductService.GetAllAsync(id);
+            var products = await _supplierProductService.GetSupplierProductsAsync(id);
             return Ok(ApiResponseDto<IEnumerable<SupplierProductDto>>.SuccessResponse(products));
         }
         catch (Exception ex)
@@ -301,11 +301,11 @@ public class SuppliersController : BaseController
     /// Create supplier product
     /// </summary>
     [HttpPost("{id}/products")]
-    public async Task<IActionResult> CreateSupplierProduct(string id, [FromBody] CreateSupplierProductDto request)
+    public async Task<IActionResult> CreateSupplierProduct(string id, [FromBody] CreateSupplierProductRequest request)
     {
         try
         {
-            var product = await _supplierProductService.CreateAsync(id, request);
+            var product = await _supplierProductService.CreateProductAsync(id, request);
             return CreatedAtAction(nameof(GetSupplierProducts), new { id }, 
                 ApiResponseDto<SupplierProductDto>.SuccessResponse(product, "Product created successfully"));
         }
@@ -363,7 +363,7 @@ public class SuppliersController : BaseController
     {
         try
         {
-            var performance = await _performanceService.GetAllAsync(id);
+            var performance = await _performanceService.GetSupplierPerformanceAsync(id);
             return Ok(ApiResponseDto<IEnumerable<SupplierPerformanceDto>>.SuccessResponse(performance));
         }
         catch (Exception ex)
@@ -376,11 +376,11 @@ public class SuppliersController : BaseController
     /// Create supplier performance record
     /// </summary>
     [HttpPost("{id}/performance")]
-    public async Task<IActionResult> CreateSupplierPerformance(string id, [FromBody] CreateSupplierPerformanceDto request)
+    public async Task<IActionResult> CreateSupplierPerformance(string id, [FromBody] CreateSupplierPerformanceRequest request)
     {
         try
         {
-            var performance = await _performanceService.CreateAsync(id, request);
+            var performance = await _performanceService.CreatePerformanceAsync(id, request);
             return CreatedAtAction(nameof(GetSupplierPerformance), new { id }, 
                 ApiResponseDto<SupplierPerformanceDto>.SuccessResponse(performance, "Performance record created successfully"));
         }

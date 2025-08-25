@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ComplianceService.Core\ComplianceService.Core.csproj" />
-    <ProjectReference Include="..\ComplianceService.Infrastructure\ComplianceService.Infrastructure.csproj" />
+    <!-- <ProjectReference Include="..\ComplianceService.Infrastructure\ComplianceService.Infrastructure.csproj" /> -->
   </ItemGroup>
 
 </Project>

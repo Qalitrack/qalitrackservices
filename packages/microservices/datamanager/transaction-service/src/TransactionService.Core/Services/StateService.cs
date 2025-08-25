@@ -216,4 +216,41 @@ public class StateService : IStateService
 
         return await Task.FromResult(errors);
     }
+
+    public Task<bool> ValidateTransitionAsync(string fromState, string toState, string trigger)
+    {
+        if (!StateTransitions.ContainsKey(fromState))
+            return Task.FromResult(false);
+
+        return Task.FromResult(StateTransitions[fromState].ContainsKey(trigger) && 
+               StateTransitions[fromState][trigger] == toState);
+    }
+
+    public async Task<TransactionStateDto> TriggerTransitionAsync(string transactionId, string trigger, string reason, string userId)
+    {
+        var request = new StateTransitionRequest
+        {
+            TransactionId = transactionId,
+            Trigger = trigger,
+            Reason = reason,
+            UserId = userId
+        };
+
+        return await TransitionStateAsync(request, userId);
+    }
+
+    public async Task<object> GetTransitionStatisticsAsync(DateTime? fromDate, DateTime? toDate)
+    {
+        var statistics = await _stateRepository.GetTransitionStatisticsAsync(fromDate, toDate);
+        return new
+        {
+            TotalTransitions = statistics.Count,
+            TransitionsByState = statistics.GroupBy(s => s.FromState)
+                .ToDictionary(g => g.Key, g => g.Count()),
+            TransitionsByTrigger = statistics.GroupBy(s => s.Trigger)
+                .ToDictionary(g => g.Key, g => g.Count()),
+            MostFrequentTransition = statistics.GroupBy(s => $"{s.FromState} -> {s.ToState}")
+                .OrderByDescending(g => g.Count()).FirstOrDefault()?.Key ?? "None"
+        };
+    }
 }

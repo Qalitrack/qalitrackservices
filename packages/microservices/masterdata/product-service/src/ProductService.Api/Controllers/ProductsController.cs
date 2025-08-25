@@ -93,7 +93,7 @@ public class ProductsController : BaseController
                 Code = GenerateProductCode(request.Name),
                 SKU = GenerateProductSKU(request.Name),
                 Brand = "Default Brand",
-                CategoryId = await GetOrCreateCategoryId(request.Category)
+                CategoryId = GetOrCreateCategoryId(request.Category)
             };
 
             var product = await _productService.CreateAsync(createDto);
@@ -101,7 +101,7 @@ public class ProductsController : BaseController
             // Create base pricing
             if (request.BasePrice > 0)
             {
-                var pricingDto = new PricingDto
+                var pricingDto = new CreatePricingDto
                 {
                     ProductId = product.Id,
                     Type = Core.Entities.PricingType.Standard,
@@ -129,7 +129,7 @@ public class ProductsController : BaseController
                 UpdatedAt = product.UpdatedAt
             };
 
-            return Ok(ApiResponseDto<ProductDto>.Success(responseDto));
+            return Ok(responseDto);
         }
         catch (Exception ex)
         {
@@ -242,7 +242,7 @@ public class ProductsController : BaseController
                 }
             }
 
-            return Ok(ApiResponseDto<List<ProductPricingDto>>.Success(pricingDtos));
+            return Ok(pricingDtos);
         }
         catch (Exception ex)
         {
@@ -267,7 +267,7 @@ public class ProductsController : BaseController
         return $"SKU-{sku}-{DateTime.UtcNow.Ticks % 10000:D4}";
     }
 
-    private async Task<string> GetOrCreateCategoryId(string categoryName)
+    private string GetOrCreateCategoryId(string categoryName)
     {
         // For now, return empty string - in a full implementation, 
         // this would create or find the category

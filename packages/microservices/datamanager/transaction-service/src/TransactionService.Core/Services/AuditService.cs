@@ -116,4 +116,22 @@ public class AuditService : IAuditService
 
         await CreateAuditLogAsync(request, userId);
     }
+
+    public async Task<List<TransactionAuditDto>> GetAuditTrailAsync(string entityType, string entityId)
+    {
+        var auditTrail = await _auditRepository.GetAuditsByEntityAsync(entityType, entityId);
+        return _mapper.Map<List<TransactionAuditDto>>(auditTrail);
+    }
+
+    public async Task<List<TransactionAuditDto>> GetAuditsByUserAsync(string userId, DateTime? fromDate = null, DateTime? toDate = null)
+    {
+        var auditHistory = await _auditRepository.GetAuditsByUserAsync(userId, fromDate, toDate);
+        return _mapper.Map<List<TransactionAuditDto>>(auditHistory);
+    }
+
+    public async Task<List<TransactionAuditDto>> GetTransactionAuditHistoryAsync(string transactionId)
+    {
+        var auditTrail = await _auditRepository.GetTransactionAuditTrailAsync(transactionId);
+        return _mapper.Map<List<TransactionAuditDto>>(auditTrail);
+    }
 }

@@ -135,8 +135,8 @@ public class UpdateProductDto
     // Category
     public string CategoryId { get; set; } = string.Empty;
 }
-// DT
-Os for integration compatibility
+
+// DTOs for integration compatibility
 public class ProductDto
 {
     public string Id { get; set; } = string.Empty;

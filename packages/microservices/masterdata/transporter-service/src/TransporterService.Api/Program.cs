@@ -36,6 +36,9 @@ builder.Services.AddScoped<ITransporterPerformanceRepository, TransporterPerform
 // Service Registration
 builder.Services.AddScoped<ITransporterService, TransporterService.Core.Services.TransporterService>();
 
+// Health Checks
+builder.Services.AddHealthChecks();
+
 // API Documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -49,12 +52,17 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transporter Service API v1"));
+    app.UseSwaggerUI(c => 
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transporter Service API v1");
+        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+    });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Commented out HTTPS redirect
 app.UseRouting();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 // Database Migration and Seeding
 using (var scope = app.Services.CreateScope())

@@ -16,6 +16,24 @@ public abstract class BaseController : ControllerBase
         return Ok(ApiResponseDto<T>.SuccessResponse(data, message));
     }
 
+    protected ActionResult<T> HandleException<T>(Exception ex)
+    {
+        var errors = new List<string> { ex.Message };
+        
+        if (ex.InnerException != null)
+        {
+            errors.Add(ex.InnerException.Message);
+        }
+
+        return ex switch
+        {
+            KeyNotFoundException => NotFound(ApiResponseDto<object>.ErrorResponse("Resource not found", errors)),
+            InvalidOperationException => BadRequest(ApiResponseDto<object>.ErrorResponse("Invalid operation", errors)),
+            ArgumentException => BadRequest(ApiResponseDto<object>.ErrorResponse("Invalid arguments", errors)),
+            _ => StatusCode(500, ApiResponseDto<object>.ErrorResponse("An error occurred", errors))
+        };
+    }
+    
     protected IActionResult HandleException(Exception ex)
     {
         var errors = new List<string> { ex.Message };
@@ -32,5 +50,18 @@ public abstract class BaseController : ControllerBase
             ArgumentException => BadRequest(ApiResponseDto<object>.ErrorResponse("Invalid arguments", errors)),
             _ => StatusCode(500, ApiResponseDto<object>.ErrorResponse("An error occurred", errors))
         };
+    }
+    
+    protected List<string> GetModelStateErrors()
+    {
+        var errors = new List<string>();
+        foreach (var modelState in ModelState.Values)
+        {
+            foreach (var error in modelState.Errors)
+            {
+                errors.Add(error.ErrorMessage);
+            }
+        }
+        return errors;
     }
 }

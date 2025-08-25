@@ -115,7 +115,7 @@ public class WeightDataContext : DbContext
 
             entity.HasMany(e => e.Measurements)
                   .WithOne()
-                  .HasForeignKey("StreamingSessionId")
+                  .HasForeignKey(m => m.StreamingSessionId)
                   .OnDelete(DeleteBehavior.SetNull);
         });
 

@@ -3,7 +3,7 @@ namespace ComplianceService.Core.DTOs
     public class ComplianceViolationDto
     {
         public int Id { get; set; }
-        public int ComplianceRuleId { get; set; }
+        public string ComplianceRuleId { get; set; } = string.Empty;
         public string ViolationType { get; set; } = string.Empty;
         public string TransactionId { get; set; } = string.Empty;
         public string VehicleId { get; set; } = string.Empty;

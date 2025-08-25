@@ -95,7 +95,7 @@ public class LoadBalancingMetric
     public string? Description { get; set; }
     
     [Required]
-    public MetricType Type { get; set; }
+    public CapacityMetricType Type { get; set; }
 }
 
 public class CapacityAlert
@@ -169,7 +169,7 @@ public enum RecommendationPriority
     Urgent
 }
 
-public enum MetricType
+public enum CapacityMetricType
 {
     Utilization,
     Throughput,

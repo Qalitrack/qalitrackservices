@@ -1,0 +1,298 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/workspaces",
+      "DownstreamPathTemplate": "/api/workspaces",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-workspace-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "RequiredPermissions": [
+          "read:workspaces"
+        ],
+        "ServiceName": "qasana-workspace-service",
+        "Description": "Workspace operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-workspace-list"
+    },
+    {
+      "UpstreamPathTemplate": "/api/workspaces/{everything}",
+      "DownstreamPathTemplate": "/api/workspaces/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-workspace-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "qasana-workspace-service",
+        "Description": "Workspace management operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-workspace-detail"
+    },
+    {
+      "UpstreamPathTemplate": "/api/projects",
+      "DownstreamPathTemplate": "/api/projects",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-project-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "RequiredPermissions": [
+          "read:projects"
+        ],
+        "ServiceName": "qasana-project-service",
+        "Description": "Project operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-project-list"
+    },
+    {
+      "UpstreamPathTemplate": "/api/projects/{everything}",
+      "DownstreamPathTemplate": "/api/projects/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-project-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "qasana-project-service",
+        "Description": "Project management operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-project-detail"
+    },
+    {
+      "UpstreamPathTemplate": "/api/tasks",
+      "DownstreamPathTemplate": "/api/tasks",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-task-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "RequiredPermissions": [
+          "read:tasks"
+        ],
+        "ServiceName": "qasana-task-service",
+        "Description": "Task operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-task-list"
+    },
+    {
+      "UpstreamPathTemplate": "/api/tasks/{everything}",
+      "DownstreamPathTemplate": "/api/tasks/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-task-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "qasana-task-service",
+        "Description": "Task management operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-task-detail"
+    },
+    {
+      "UpstreamPathTemplate": "/api/comments",
+      "DownstreamPathTemplate": "/api/comments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-comment-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "RequiredPermissions": [
+          "read:comments"
+        ],
+        "ServiceName": "qasana-comment-service",
+        "Description": "Comment operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-comment-list"
+    },
+    {
+      "UpstreamPathTemplate": "/api/comments/{everything}",
+      "DownstreamPathTemplate": "/api/comments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-comment-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "qasana-comment-service",
+        "Description": "Comment management operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-comment-detail"
+    },
+    {
+      "UpstreamPathTemplate": "/api/notifications",
+      "DownstreamPathTemplate": "/api/notifications",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-notification-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "RequiredPermissions": [
+          "read:notifications"
+        ],
+        "ServiceName": "qasana-notification-service",
+        "Description": "Notification operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-notification-list"
+    },
+    {
+      "UpstreamPathTemplate": "/api/notifications/{everything}",
+      "DownstreamPathTemplate": "/api/notifications/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-notification-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "qasana-notification-service",
+        "Description": "Notification management operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-notification-detail"
+    },
+    {
+      "UpstreamPathTemplate": "/api/activity/{everything}",
+      "DownstreamPathTemplate": "/api/activity/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-comment-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "qasana-comment-service",
+        "Description": "Activity feed operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-activity-feed"
+    },
+    {
+      "UpstreamPathTemplate": "/api/invitations/{everything}",
+      "DownstreamPathTemplate": "/api/invitations/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "qasana-workspace-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "Metadata": {
+        "RequiredRoles": [
+          "User"
+        ],
+        "ServiceName": "qasana-workspace-service",
+        "Description": "Workspace invitation operations"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Key": "qasana-invitations"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:7000"
+  }
+}

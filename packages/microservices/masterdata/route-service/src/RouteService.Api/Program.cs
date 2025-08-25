@@ -48,19 +48,27 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Add Health Checks
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Route Service API V1");
+        c.RoutePrefix = string.Empty; // Set Swagger UI at root
+    });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())

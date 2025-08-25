@@ -168,21 +168,4 @@ public class UpdatePricingDto
     // Cost Information
     public decimal? CostPrice { get; set; }
     public decimal? MarginPercentage { get; set; }
-}public cla
-ss PricingReadDto
-{
-    public string Id { get; set; } = string.Empty;
-    public string ProductId { get; set; } = string.Empty;
-    public string Type { get; set; } = string.Empty;
-    public string Strategy { get; set; } = string.Empty;
-    public decimal BasePrice { get; set; }
-    public decimal SalePrice { get; set; }
-    public string Currency { get; set; } = string.Empty;
-    public string? CustomerId { get; set; }
-    public int MinQuantity { get; set; }
-    public int? MaxQuantity { get; set; }
-    public DateTime ValidFrom { get; set; }
-    public DateTime? ValidTo { get; set; }
-    public bool IsActive { get; set; }
-    public decimal EffectivePrice { get; set; }
 }

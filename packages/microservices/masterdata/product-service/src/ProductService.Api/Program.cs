@@ -165,7 +165,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Commented out for development
 app.UseCors("AllowAll");
 
 // Use Serilog request logging

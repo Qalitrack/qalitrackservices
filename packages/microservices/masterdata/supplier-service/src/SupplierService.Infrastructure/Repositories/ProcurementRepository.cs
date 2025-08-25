@@ -41,6 +41,16 @@ public class ProcurementRepository : Repository<Procurement>, IProcurementReposi
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Procurement>> GetByPriorityAsync(ProcurementPriority priority)
+    {
+        return await _context.Procurements
+            .Where(p => p.Priority == priority)
+            .Include(p => p.Supplier)
+            .Include(p => p.Items)
+            .OrderByDescending(p => p.RequestDate)
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Procurement>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
     {
         return await _context.Procurements
