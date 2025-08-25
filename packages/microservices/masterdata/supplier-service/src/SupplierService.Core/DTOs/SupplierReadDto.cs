@@ -23,4 +23,15 @@ public class SupplierReadDto
     public DateTime UpdatedAt { get; set; }
     public string? CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
+    
+    // Test compatibility properties
+    public string Type 
+    { 
+        get => SupplierType.ToString(); 
+        set => SupplierType = Enum.TryParse<SupplierType>(value, out var result) ? result : SupplierType.Manufacturer; 
+    }
+    
+    public bool IsVerified { get; set; } = false;
+    
+    public DateTime? VerificationDate { get; set; }
 }

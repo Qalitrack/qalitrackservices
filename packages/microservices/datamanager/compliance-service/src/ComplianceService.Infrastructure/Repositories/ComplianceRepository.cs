@@ -361,5 +361,217 @@ namespace ComplianceService.Infrastructure.Repositories
                 return false;
             }
         }
+
+        // Missing IRepository<Compliance> base methods - these need to be implemented
+        public async Task<List<Compliance>> GetByEntityAsync(string entityType, string entityId)
+        {
+            return await _context.Compliances
+                .Where(c => c.EntityType == entityType && c.EntityId == entityId)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Compliance>> GetByOrganizationAsync(string organizationId)
+        {
+            return await _context.Compliances
+                .Where(c => c.OrganizationId == organizationId)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Compliance>> GetByStatusAsync(ComplianceStatus status)
+        {
+            return await _context.Compliances
+                .Where(c => c.Status == status)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Compliance>> GetByTypeAsync(ComplianceType complianceType)
+        {
+            return await _context.Compliances
+                .Where(c => c.Type == complianceType)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Compliance>> GetByOrganizationAndDateRangeAsync(string organizationId, DateTime fromDate, DateTime toDate)
+        {
+            return await _context.Compliances
+                .Where(c => c.OrganizationId == organizationId && 
+                           c.CreatedAt >= fromDate && 
+                           c.CreatedAt <= toDate)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Compliance>> GetHighRiskItemsAsync(string organizationId)
+        {
+            return await _context.Compliances
+                .Where(c => c.OrganizationId == organizationId && 
+                           c.RiskLevel == "HIGH")
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Compliance>> GetItemsRequiringMonitoringAsync()
+        {
+            return await _context.Compliances
+                .Where(c => c.RequiresMonitoring && c.Status != ComplianceStatus.Compliant)
+                .OrderBy(c => c.NextReviewDate)
+                .ToListAsync();
+        }
+
+        public async Task<List<Compliance>> GetMonitoringScheduleAsync(string organizationId)
+        {
+            return await _context.Compliances
+                .Where(c => c.OrganizationId == organizationId && 
+                           c.RequiresMonitoring &&
+                           c.NextReviewDate <= DateTime.UtcNow.AddDays(30))
+                .OrderBy(c => c.NextReviewDate)
+                .ToListAsync();
+        }
+
+        public async Task<List<ComplianceRule>> GetRulesByIdsAsync(List<string> ruleIds)
+        {
+            var intRuleIds = ruleIds.Select(id => int.Parse(id)).ToList();
+            return await _context.ComplianceRules
+                .Where(r => intRuleIds.Contains(r.Id))
+                .ToListAsync();
+        }
+
+        public async Task<List<ComplianceRule>> GetRulesByEntityTypeAsync(string entityType)
+        {
+            return await _context.ComplianceRules
+                .Where(r => r.EntityType == entityType && r.IsActive)
+                .OrderBy(r => r.Name)
+                .ToListAsync();
+        }
+
+        // Base IRepository<Compliance> interface methods
+        public async Task<Compliance?> GetByIdAsync(string id)
+        {
+            return await _context.Compliances
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<IEnumerable<Compliance>> GetAllAsync()
+        {
+            return await _context.Compliances
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Compliance>> FindAsync(System.Linq.Expressions.Expression<Func<Compliance, bool>> predicate)
+        {
+            return await _context.Compliances
+                .Where(predicate)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<Compliance?> FirstOrDefaultAsync(System.Linq.Expressions.Expression<Func<Compliance, bool>> predicate)
+        {
+            return await _context.Compliances
+                .FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<bool> ExistsAsync(System.Linq.Expressions.Expression<Func<Compliance, bool>> predicate)
+        {
+            return await _context.Compliances
+                .AnyAsync(predicate);
+        }
+
+        public async Task<int> CountAsync(System.Linq.Expressions.Expression<Func<Compliance, bool>>? predicate = null)
+        {
+            if (predicate == null)
+                return await _context.Compliances.CountAsync();
+                
+            return await _context.Compliances
+                .CountAsync(predicate);
+        }
+
+        public async Task<Compliance> AddAsync(Compliance entity)
+        {
+            entity.CreatedAt = DateTime.UtcNow;
+            entity.UpdatedAt = DateTime.UtcNow;
+
+            _context.Compliances.Add(entity);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created compliance record {ComplianceId} for {EntityType} {EntityId}", 
+                entity.Id, entity.EntityType, entity.EntityId);
+
+            return entity;
+        }
+
+        public async Task<IEnumerable<Compliance>> AddRangeAsync(IEnumerable<Compliance> entities)
+        {
+            var entitiesList = entities.ToList();
+            var now = DateTime.UtcNow;
+
+            foreach (var entity in entitiesList)
+            {
+                entity.CreatedAt = now;
+                entity.UpdatedAt = now;
+            }
+
+            _context.Compliances.AddRange(entitiesList);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created {Count} compliance records", entitiesList.Count);
+
+            return entitiesList;
+        }
+
+        public async Task<Compliance> UpdateAsync(Compliance entity)
+        {
+            entity.UpdatedAt = DateTime.UtcNow;
+
+            _context.Compliances.Update(entity);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Updated compliance record {ComplianceId}", entity.Id);
+
+            return entity;
+        }
+
+        public async Task<Compliance> DeleteAsync(Compliance entity)
+        {
+            _context.Compliances.Remove(entity);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Deleted compliance record {ComplianceId}", entity.Id);
+
+            return entity;
+        }
+
+        public async Task<bool> DeleteByIdAsync(string id)
+        {
+            var entity = await _context.Compliances.FindAsync(id);
+            if (entity == null)
+                return false;
+
+            _context.Compliances.Remove(entity);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Deleted compliance record {ComplianceId}", id);
+
+            return true;
+        }
+
+        public async Task<IEnumerable<Compliance>> GetPagedAsync(int pageNumber, int pageSize, System.Linq.Expressions.Expression<Func<Compliance, bool>>? predicate = null)
+        {
+            var query = _context.Compliances.AsQueryable();
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return await query
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
     }
 }
