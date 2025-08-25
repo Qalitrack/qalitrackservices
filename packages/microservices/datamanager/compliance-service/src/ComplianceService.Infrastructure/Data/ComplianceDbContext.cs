@@ -286,7 +286,7 @@ namespace ComplianceService.Infrastructure.Data
             modelBuilder.Entity<WeightLimits>().HasData(
                 new WeightLimits
                 {
-                    Id = "1",
+                    Id = 1,
                     Name = "Standard Truck Weight Limits",
                     Description = "Standard weight limits for trucks in Kenya",
                     VehicleType = "TRUCK",
