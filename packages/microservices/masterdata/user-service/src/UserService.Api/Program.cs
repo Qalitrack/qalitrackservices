@@ -1,11 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -20,11 +17,8 @@ using UserService.Api.Filters;
 using UserService.Core.Interfaces.Emails;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
-using UserService.Infrastructure.Backup;
 using System.IO.Abstractions;
-using Messaging.Contracts.Messaging.contracts;
-using Messaging.Contracts.Messaging.contracts.Enums;
-using UserService.Infrastructure.Messaging;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -192,17 +186,7 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     {
         services.AddScoped<ICacheService, MemoryCacheService>();
     }
-    // Add MassTransit with RabbitMQ
-   // Configure MassTransit with RabbitMQ
-   // Replace your current MassTransit configuration with this:
-   services.ConfigureMassTransit(builder.Configuration, Log.Logger);
-        // Backup Services
-        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupCreationService, UserService.Infrastructure.Backup.BackupCreationService>();
-        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupMetadataService, UserService.Infrastructure.Backup.BackupMetadataService>();
-        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupRestoreService, UserService.Infrastructure.Backup.BackupRestoreService>();
-        services.AddSingleton<Messaging.Contracts.Messaging.contracts.IBackupVerificationService, UserService.Infrastructure.Backup.BackupVerificationService>();
-        services.AddSingleton<IFileSystem, FileSystem>();
-        services.AddSingleton<IDatabaseBackupService,DatabaseBackupService>();
+    services.AddSingleton<IFileSystem, FileSystem>();
         // Register the backup event consumer
         
         
