@@ -113,13 +113,9 @@ public class PermissionsService(
             if (activeRoles.Any())
             {
                 var activeRoleNames = string.Join(", ", activeRoles.Select(rp => rp.Role?.Name ?? "Unknown"));
-                _logger.LogWarning("Cannot delete permission {PermissionId} - assigned to {ActiveRoleCount} active roles: {RoleNames}", 
-                    id, activeRoles.Count, activeRoleNames);
                 throw new InvalidOperationException($"Cannot delete permission assigned to active roles: {activeRoleNames}. Please remove from active roles first.");
             }
 
-            var totalRoleCount = permission.RolePermissions.Count();
-            _logger.LogInformation("Deleting permission {PermissionId} which is assigned to {RoleCount} inactive roles. Role-permission assignments will be removed automatically.", id, totalRoleCount);
         }
 
         return await _permissionsRepository.DeleteAsync(id);

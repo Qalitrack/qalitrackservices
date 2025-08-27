@@ -205,11 +205,11 @@ static void ConfigureDatabase(WebApplicationBuilder builder)
 {
     // Configure database - PostgreSQL for production, SQLite for development
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    var usePostgreSQL = builder.Configuration.GetValue<bool>("UsePostgreSQL", false);
+    var usePostgreSql = builder.Configuration.GetValue<bool>("UsePostgreSQL", false);
     
     builder.Services.AddDbContext<UserServiceDbContext>(options =>
     {
-        if (usePostgreSQL && !string.IsNullOrEmpty(connectionString))
+        if (usePostgreSql && !string.IsNullOrEmpty(connectionString))
         {
             options.UseNpgsql(connectionString, sqlOptions =>
             {
@@ -271,11 +271,7 @@ static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
 
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
-    // Clear default claim type mappings to prevent conflicts
-    // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-    // JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
-
-    builder.Services.AddAuthentication(options =>
+  builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -322,7 +318,6 @@ static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
                     var tokenPreview = token.Length > 10 
                         ? token.Substring(0, 10) + "..." 
                         : "[invalid]";
-                    Log.Debug("JWT Token found: {TokenPreview}", tokenPreview);
                 }
                 else
                 {
@@ -346,13 +341,10 @@ static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
                         if (!identity.HasClaim(c => c.Type == ClaimTypes.Name))
                             identity.AddClaim(new Claim(ClaimTypes.Name, sub));
                     }
-
-                    Log.Debug("User claims after validation: {Claims}",
-                        string.Join(", ", identity.Claims.Select(c => $"{c.Type}={c.Value}")));
+                    
                 }
 
                 var userId = context.Principal?.FindFirst("sub")?.Value;
-                Log.Information("JWT Token validated for user: {UserId}", userId);
                 
                 return Task.CompletedTask;
             },
@@ -381,13 +373,10 @@ static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
             OnForbidden = context =>
             {
                 var userId = context.Principal?.FindFirst("sub")?.Value ?? "unknown";
-                Log.Warning("Forbidden: User {UserId} is authenticated but lacks required permissions", userId);
                 return Task.CompletedTask;
             }
         };
     });
-    
-    Log.Information("JWT Authentication configured. Issuer: {Issuer}, Audience: {Audience}", issuer, audience);
 }
 
 
@@ -410,7 +399,6 @@ static void ConfigureAuthorization(IServiceCollection services)
                   .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
     });
     
-    Log.Information("Authorization configured.");
 }
 
 static void ConfigureSwagger(IServiceCollection services)

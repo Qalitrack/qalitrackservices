@@ -24,7 +24,7 @@ namespace UserService.Api.Authorization
             // No need to pre-register policies!
             var policy = new AuthorizationPolicyBuilder();
             policy.AddRequirements(new PermissionRequirement(policyName));
-            return Task.FromResult(policy.Build());
+            return Task.FromResult(policy.Build())!;
         }
     }
 }

@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
-using UserService.Core.DTOs;
-using UserService.Core.DTOs.Permissions;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Entities;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserBasicInfoDto = UserService.Core.DTOs.Roles.UserBasicInfoDto;
@@ -105,13 +98,8 @@ public async Task<RoleDto?> UpdateAsync(string id, DTOs.Roles.UpdateRoleDto dto)
 
     // Check if another role with the same name exists
     var roleWithSameName = await _roleRepository.GetByNameAsync(dto.Name);
-    _logger.LogInformation("Checking for duplicate role name '{Name}'. Found role: {FoundRole}, Current ID: {CurrentId}", 
-        dto.Name, roleWithSameName?.Id, id);
-    
     if (roleWithSameName != null && roleWithSameName.Id != id)
     {
-        _logger.LogWarning("Role name '{Name}' already exists for role ID {ExistingId}, cannot update role {CurrentId}", 
-            dto.Name, roleWithSameName.Id, id);
         throw new InvalidOperationException("A role with this name already exists.");
     }
 
@@ -128,27 +116,16 @@ public async Task<RoleDto?> UpdateAsync(string id, DTOs.Roles.UpdateRoleDto dto)
     // If deactivating the role, remove all user assignments
     if (existingRole.IsActive && !dto.IsActive)
     {
-        _logger.LogInformation("Deactivating role {RoleId}. Checking for user assignments.", id);
         
-        // Get all users assigned to this role
         // Get users count with this role
         var users = await _userRepository.GetUsersByRoleAsync(id);
-        var userCount = users.Count();  // This should work if GetUsersByRoleAsync returns IEnumerable<>
+        var userCount = users.Count();
         if (userCount > 0)
         {
-            _logger.LogInformation("Removing {UserCount} user assignments from deactivated role {RoleId}", userCount, id);
     
             // Use the existing method to remove role from all users
             var removedCount = await _userRoleRepository.RemoveRoleFromAllUsersAsync(id);
-    
-            if (removedCount > 0)
-            {
-                _logger.LogInformation("Successfully removed role {RoleId} from {RemovedCount} users", id, removedCount);
-            }
-            else
-            {
-                _logger.LogWarning("No users were removed from role {RoleId}", id);
-            }
+            
         }
     }
 
@@ -170,21 +147,7 @@ public async Task<bool> DeleteAsync(string id)
     {
         return false;
     }
-
-    // Log if role is assigned to users - cascade delete will handle cleanup
-    if (role.UserRoles != null && role.UserRoles.Cast<UserRole>().Any())
-    {
-        var userCount = role.UserRoles.Cast<UserRole>().Count();
-        _logger.LogInformation("Deleting role {RoleId} which is assigned to {UserCount} users. User-role assignments will be removed automatically.", id, userCount);
-    }
-
-    // Log if role has permissions - cascade delete will handle cleanup
-    if (role.RolePermissions != null && role.RolePermissions.Cast<RolePermission>().Any())
-    {
-        var permissionCount = role.RolePermissions.Cast<RolePermission>().Count();
-        _logger.LogInformation("Deleting role {RoleId} which has {PermissionCount} permissions. Role-permission assignments will be removed automatically.", id, permissionCount);
-    }
-
+     
     await _roleRepository.DeleteAsync(id);
     await _roleRepository.SaveChangesAsync();
     return true;

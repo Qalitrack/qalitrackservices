@@ -1,7 +1,8 @@
 using AutoMapper;
-using UserService.Core.Entities;
-using UserService.Core.DTOs;
 using UserService.Core.DTOs.Roles;
+using UserService.Core.Entities;
+
+namespace UserService.Core.Mappings;
 
 public class UserRoleProfile : Profile
 {

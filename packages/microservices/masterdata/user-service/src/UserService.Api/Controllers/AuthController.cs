@@ -71,15 +71,12 @@ namespace UserService.Api.Controllers
                     
                     if (!canLogin)
                     {
-                        _logger.LogWarning("Login denied for user {UserId} due to shift restriction: {Reason}", user.Id, restrictionReason);
                         return Unauthorized(new { 
                             message = restrictionReason,
                             errorCode = "SHIFT_RESTRICTION"
                         });
                     }
-
-                    _logger.LogInformation("User {UserId} passed shift restriction check: {Reason}", user.Id, restrictionReason);
-
+                    
                     // If it's the first login, redirect to password update
                     if (user.IsFirstLogin)
                     {
@@ -112,7 +109,6 @@ namespace UserService.Api.Controllers
                         Email = MaskEmail(user.Email)
                     };
 
-                    _logger.LogInformation("2FA session created for user {UserId}", user.Id);
                     return Ok(response);
                 }
                 catch (System.ComponentModel.DataAnnotations.ValidationException ex)
@@ -134,7 +130,6 @@ namespace UserService.Api.Controllers
                         _ => $"Database error: {pgEx.MessageText}"
                     };
 
-                    _logger.LogWarning(ex, "Database constraint error during login: {ErrorMessage}", errorMessage);
                     return BadRequest(new { 
                         Success = false, 
                         Message = errorMessage, 
@@ -144,7 +139,6 @@ namespace UserService.Api.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An error occurred during login for email: {Email}", loginDto?.Email ?? "unknown");
                     return BadRequest(new { 
                         Success = false, 
                         Message = "An error occurred during login", 
@@ -193,11 +187,7 @@ namespace UserService.Api.Controllers
                     // You already have the `user` data from the login, so there's no need to query the database again
                     UserReadDto? user = await _userService.GetByIdAsync(userId); // This line can be skipped if you store the user from login in the session
                     
-                    // Now continue with the token generation logic as before...
                     
-                    // Log the user details and roles
-                    _logger.LogInformation("User details - ID: {UserId}, Email: {Email}", user.Id, user.Email);
-                    _logger.LogInformation("User roles count: {RoleCount}", user.Roles?.Count ?? 0);
                     if (user.Roles != null)
                     {
                         foreach (var role in user.Roles)
@@ -219,12 +209,10 @@ namespace UserService.Api.Controllers
                         UserRoles = user.Roles?.ToList() ?? new List<string>()
                     };
 
-                    _logger.LogInformation("2FA verification successful, login completed for user {UserId}", userId);
                     return Ok(response);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An error occurred during 2FA verification");
                     return BadRequest(new { 
                         Success = false, 
                         Message = "An error occurred during verification", 
@@ -271,7 +259,6 @@ namespace UserService.Api.Controllers
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
-                _logger.LogWarning(ex, "Validation error updating password for user {UserId}", userId);
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
@@ -288,7 +275,6 @@ namespace UserService.Api.Controllers
                     _ => $"Database error: {pgEx.MessageText}"
                 };
 
-                _logger.LogWarning(ex, "Database constraint error updating password: {ErrorMessage}", errorMessage);
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
@@ -344,13 +330,11 @@ namespace UserService.Api.Controllers
                         }
                         else
                         {
-                            _logger.LogWarning("Could not extract user ID from token");
                             return BadRequest(new { message = "Invalid token format" });
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Failed to parse token");
                         return BadRequest(new { message = "Invalid token" });
                     }
                 }
@@ -366,12 +350,10 @@ namespace UserService.Api.Controllers
                 
                 if (tokensDeleted)
                 {
-                    _logger.LogInformation("Successfully logged out user {UserId} and deleted all tokens", userId.Value);
                     return (ActionResult)Ok(new { message = "Successfully logged out" });
                 }
                 else
                 {
-                    _logger.LogInformation("User {UserId} logged out, but no tokens were found to delete", userId.Value);
                     return (ActionResult)Ok(new { message = "Successfully logged out (no active sessions found)" });
                 }
             }
@@ -384,7 +366,6 @@ namespace UserService.Api.Controllers
                     _ => $"Database error: {pgEx.MessageText}"
                 };
 
-                _logger.LogWarning(ex, "Database constraint error during logout: {ErrorMessage}", errorMessage);
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 

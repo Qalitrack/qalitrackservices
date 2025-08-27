@@ -39,8 +39,6 @@ public class EmailProcessorService(
         try
         {
             await emailService.SendEmailAsync(emailRequest.To, emailRequest.Subject, emailRequest.Body);
-            logger.LogInformation("Email sent successfully to {To} with subject '{Subject}'", 
-                emailRequest.To, emailRequest.Subject);
         }
         catch (Exception ex)
         {

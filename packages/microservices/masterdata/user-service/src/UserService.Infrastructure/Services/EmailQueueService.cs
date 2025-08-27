@@ -31,7 +31,6 @@ public class EmailQueueService : IEmailQueueService
         try
         {
             await _emailChannel.Writer.WriteAsync(emailRequest);
-            _logger.LogDebug("Email queued for {To} with subject '{Subject}'", emailRequest.To, emailRequest.Subject);
         }
         catch (Exception ex)
         {
