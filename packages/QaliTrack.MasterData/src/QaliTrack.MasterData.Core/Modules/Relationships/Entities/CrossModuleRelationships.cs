@@ -21,9 +21,9 @@ public class DriverSaccoMembership : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Driver Driver { get; set; } = null!;
-    // public virtual Sacco Sacco { get; set; } = null!;
+    // Navigation properties
+    public virtual Driver.Entities.Driver? Driver { get; set; }
+    public virtual Sacco.Entities.Sacco? Sacco { get; set; }
 }
 
 /// <summary>
@@ -44,9 +44,9 @@ public class VehicleTransporterOwnership : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Vehicle Vehicle { get; set; } = null!;
-    // public virtual TransporterProfile TransporterProfile { get; set; } = null!;
+    // Navigation properties
+    public virtual Vehicle.Entities.Vehicle? Vehicle { get; set; }
+    public virtual BusinessEntities.Entities.TransporterProfile? TransporterProfile { get; set; }
 }
 
 /// <summary>
@@ -67,9 +67,9 @@ public class DriverVehicleAssignment : BaseEntity
     public string? UnassignedBy { get; set; }
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Driver Driver { get; set; } = null!;
-    // public virtual Vehicle Vehicle { get; set; } = null!;
+    // Navigation properties
+    public virtual Driver.Entities.Driver? Driver { get; set; }
+    public virtual Vehicle.Entities.Vehicle? Vehicle { get; set; }
 }
 
 /// <summary>
@@ -92,9 +92,9 @@ public class DriverTransporterEmployment : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Driver Driver { get; set; } = null!;
-    // public virtual TransporterProfile TransporterProfile { get; set; } = null!;
+    // Navigation properties
+    public virtual Driver.Entities.Driver? Driver { get; set; }
+    public virtual BusinessEntities.Entities.TransporterProfile? TransporterProfile { get; set; }
 }
 
 /// <summary>
@@ -121,9 +121,9 @@ public class ProductSupplierCatalog : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Product Product { get; set; } = null!;
-    // public virtual SupplierProfile SupplierProfile { get; set; } = null!;
+    // Navigation properties
+    public virtual Product.Entities.Product? Product { get; set; }
+    public virtual BusinessEntities.Entities.SupplierProfile? SupplierProfile { get; set; }
 }
 
 /// <summary>
@@ -144,9 +144,9 @@ public class RouteWeighbridgeAssociation : BaseEntity
     public string? Conditions { get; set; } // JSON array of conditions/restrictions
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Route Route { get; set; } = null!;
-    // public virtual Weighbridge Weighbridge { get; set; } = null!;
+    // Navigation properties
+    public virtual Route.Entities.Route? Route { get; set; }
+    public virtual Weighbridge.Entities.Weighbridge? Weighbridge { get; set; }
 }
 
 /// <summary>
@@ -167,9 +167,9 @@ public class OrganizationWeighbridgeOwnership : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Organization Organization { get; set; } = null!;
-    // public virtual Weighbridge Weighbridge { get; set; } = null!;
+    // Navigation properties
+    public virtual Organization.Entities.Organization? Organization { get; set; }
+    public virtual Weighbridge.Entities.Weighbridge? Weighbridge { get; set; }
 }
 
 /// <summary>
@@ -190,9 +190,9 @@ public class VehicleSaccoRegistration : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual Vehicle Vehicle { get; set; } = null!;
-    // public virtual Sacco Sacco { get; set; } = null!;
+    // Navigation properties
+    public virtual Vehicle.Entities.Vehicle? Vehicle { get; set; }
+    public virtual Sacco.Entities.Sacco? Sacco { get; set; }
 }
 
 /// <summary>
@@ -212,10 +212,11 @@ public class UserOrganizationRole : BaseEntity
     public string? Permissions { get; set; } // JSON array of specific permissions
     public string? Notes { get; set; }
 
-    // Navigation properties will be resolved via the DbContext configuration
-    // public virtual User User { get; set; } = null!;
-    // public virtual Organization Organization { get; set; } = null!;
-    // public virtual Role Role { get; set; } = null!;
+    // Navigation properties
+    // Note: User and Role entities are not defined in this module
+    // public virtual User? User { get; set; };
+    public virtual Organization.Entities.Organization? Organization { get; set; }
+    // public virtual Role? Role { get; set; }
 }
 
 // Enumerations for relationship entities

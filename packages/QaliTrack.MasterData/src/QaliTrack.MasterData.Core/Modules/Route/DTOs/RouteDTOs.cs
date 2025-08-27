@@ -43,6 +43,27 @@ public record UpdateRouteDto(
     string? Notes = null
 );
 
+public record PatchRouteDto(
+    string? Name = null,
+    string? StartLocation = null,
+    string? EndLocation = null,
+    decimal? Distance = null,
+    int? EstimatedDurationMinutes = null,
+    string? Status = null,
+    string? RouteType = null,
+    string? RoadType = null,
+    string? Description = null,
+    string? Coordinates = null,
+    string? TrafficConditions = null,
+    string? WeatherRestrictions = null,
+    string? VehicleRestrictions = null,
+    decimal? TollFee = null,
+    string? FuelStations = null,
+    string? RestAreas = null,
+    bool? IsActive = null,
+    string? Notes = null
+);
+
 public record RouteSummaryDto
 {
     public Guid Id { get; init; }
@@ -122,6 +143,22 @@ public record UpdateRouteWaypointDto(
     string? Notes = null
 );
 
+public record PatchRouteWaypointDto(
+    string? Name = null,
+    decimal? Latitude = null,
+    decimal? Longitude = null,
+    int? SequenceOrder = null,
+    string? WaypointType = null,
+    bool? IsMandatory = null,
+    int? EstimatedDurationMinutes = null,
+    decimal? DistanceFromPrevious = null,
+    string? Instructions = null,
+    string? Restrictions = null,
+    string? Services = null,
+    bool? IsActive = null,
+    string? Notes = null
+);
+
 public record RouteWaypointDto
 {
     public Guid Id { get; init; }
@@ -170,6 +207,20 @@ public record UpdateRouteScheduleDto(
     string? Notes = null
 );
 
+public record PatchRouteScheduleDto(
+    string? ScheduleName = null,
+    TimeSpan? DepartureTime = null,
+    TimeSpan? ArrivalTime = null,
+    string[]? DaysOfWeek = null,
+    DateTime? EffectiveDate = null,
+    int? Frequency = null,
+    string? ScheduleType = null,
+    DateTime? ExpiryDate = null,
+    decimal? PriceModifier = null,
+    bool? IsActive = null,
+    string? Notes = null
+);
+
 public record RouteScheduleDto
 {
     public Guid Id { get; init; }
@@ -198,6 +249,50 @@ public record CreateRouteHistoryDto(
     decimal ActualDistance,
     decimal FuelConsumed,
     string TripStatus = "Completed",
+    string? DriverId = null,
+    string? VehicleId = null,
+    string? DelayReason = null,
+    int? DelayMinutes = null,
+    decimal? FuelCost = null,
+    decimal? TollsPaid = null,
+    string? Incidents = null,
+    string? WeatherConditions = null,
+    string? TrafficConditions = null,
+    int? PassengerCount = null,
+    decimal? Revenue = null,
+    string? Notes = null
+);
+
+public record UpdateRouteHistoryDto(
+    DateTime TripDate,
+    TimeSpan ActualDepartureTime,
+    TimeSpan ActualArrivalTime,
+    int ActualDurationMinutes,
+    decimal ActualDistance,
+    decimal FuelConsumed,
+    string TripStatus,
+    string? DriverId = null,
+    string? VehicleId = null,
+    string? DelayReason = null,
+    int? DelayMinutes = null,
+    decimal? FuelCost = null,
+    decimal? TollsPaid = null,
+    string? Incidents = null,
+    string? WeatherConditions = null,
+    string? TrafficConditions = null,
+    int? PassengerCount = null,
+    decimal? Revenue = null,
+    string? Notes = null
+);
+
+public record PatchRouteHistoryDto(
+    DateTime? TripDate = null,
+    TimeSpan? ActualDepartureTime = null,
+    TimeSpan? ActualArrivalTime = null,
+    int? ActualDurationMinutes = null,
+    decimal? ActualDistance = null,
+    decimal? FuelConsumed = null,
+    string? TripStatus = null,
     string? DriverId = null,
     string? VehicleId = null,
     string? DelayReason = null,

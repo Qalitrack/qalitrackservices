@@ -353,6 +353,141 @@ public class ProductController : ControllerBase
     }
 
     /// <summary>
+    /// Update product specification
+    /// </summary>
+    [HttpPut("{id}/specifications")]
+    public async Task<ActionResult<ApiResponse<ProductSpecificationDto>>> UpdateProductSpecification(Guid id, UpdateProductSpecificationDto dto)
+    {
+        try
+        {
+            var specification = await _context.ProductSpecifications
+                .FirstOrDefaultAsync(s => s.ProductId == id);
+
+            if (specification == null)
+            {
+                return NotFound(ApiResponse<ProductSpecificationDto>.ErrorResponse("Product specification not found"));
+            }
+
+            specification.SpecificationName = dto.SpecificationName;
+            specification.SpecificationValue = dto.SpecificationValue;
+            specification.Unit = dto.Unit;
+            specification.SpecificationType = dto.SpecificationType;
+            specification.IsCritical = dto.IsCritical;
+            specification.ToleranceRange = dto.ToleranceRange;
+            specification.TestMethod = dto.TestMethod;
+            specification.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new ProductSpecificationDto
+            {
+                Id = specification.Id,
+                ProductId = specification.ProductId,
+                SpecificationName = specification.SpecificationName,
+                SpecificationValue = specification.SpecificationValue,
+                Unit = specification.Unit,
+                SpecificationType = specification.SpecificationType,
+                IsCritical = specification.IsCritical,
+                ToleranceRange = specification.ToleranceRange,
+                TestMethod = specification.TestMethod,
+                Notes = specification.Notes,
+                CreatedAt = specification.CreatedAt
+            };
+
+            return Ok(ApiResponse<ProductSpecificationDto>.SuccessResponse(responseDto, "Product specification updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<ProductSpecificationDto>.ErrorResponse("Error updating product specification", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update product specification
+    /// </summary>
+    [HttpPatch("{id}/specifications")]
+    public async Task<ActionResult<ApiResponse<ProductSpecificationDto>>> PatchProductSpecification(Guid id, PatchProductSpecificationDto dto)
+    {
+        try
+        {
+            var specification = await _context.ProductSpecifications
+                .FirstOrDefaultAsync(s => s.ProductId == id);
+
+            if (specification == null)
+            {
+                return NotFound(ApiResponse<ProductSpecificationDto>.ErrorResponse("Product specification not found"));
+            }
+
+            if (dto.SpecificationName != null)
+                specification.SpecificationName = dto.SpecificationName;
+            if (dto.SpecificationValue != null)
+                specification.SpecificationValue = dto.SpecificationValue;
+            if (dto.Unit != null)
+                specification.Unit = dto.Unit;
+            if (dto.SpecificationType != null)
+                specification.SpecificationType = dto.SpecificationType;
+            if (dto.IsCritical.HasValue)
+                specification.IsCritical = dto.IsCritical.Value;
+            if (dto.ToleranceRange != null)
+                specification.ToleranceRange = dto.ToleranceRange;
+            if (dto.TestMethod != null)
+                specification.TestMethod = dto.TestMethod;
+            if (dto.Notes != null)
+                specification.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new ProductSpecificationDto
+            {
+                Id = specification.Id,
+                ProductId = specification.ProductId,
+                SpecificationName = specification.SpecificationName,
+                SpecificationValue = specification.SpecificationValue,
+                Unit = specification.Unit,
+                SpecificationType = specification.SpecificationType,
+                IsCritical = specification.IsCritical,
+                ToleranceRange = specification.ToleranceRange,
+                TestMethod = specification.TestMethod,
+                Notes = specification.Notes,
+                CreatedAt = specification.CreatedAt
+            };
+
+            return Ok(ApiResponse<ProductSpecificationDto>.SuccessResponse(responseDto, "Product specification updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<ProductSpecificationDto>.ErrorResponse("Error updating product specification", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete product specification
+    /// </summary>
+    [HttpDelete("{id}/specifications")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteProductSpecification(Guid id)
+    {
+        try
+        {
+            var specification = await _context.ProductSpecifications
+                .FirstOrDefaultAsync(s => s.ProductId == id);
+
+            if (specification == null)
+            {
+                return NotFound(ApiResponse.CreateError("Product specification not found"));
+            }
+
+            _context.ProductSpecifications.Remove(specification);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Product specification deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting product specification", ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Add specification to product
     /// </summary>
     [HttpPost("{id}/specifications")]
@@ -446,6 +581,163 @@ public class ProductController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, ApiResponse<PagedResult<ProductDocumentDto>>.ErrorResponse("Error retrieving product documents", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Update product document
+    /// </summary>
+    [HttpPut("{id}/documents/{documentId}")]
+    public async Task<ActionResult<ApiResponse<ProductDocumentDto>>> UpdateProductDocument(Guid id, Guid documentId, UpdateProductDocumentDto dto)
+    {
+        try
+        {
+            var document = await _context.ProductDocuments
+                .FirstOrDefaultAsync(d => d.Id == documentId && d.ProductId == id);
+
+            if (document == null)
+            {
+                return NotFound(ApiResponse<ProductDocumentDto>.ErrorResponse("Product document not found"));
+            }
+
+            document.FileName = dto.FileName;
+            document.OriginalFileName = dto.OriginalFileName;
+            document.ContentType = dto.ContentType;
+            document.FilePath = dto.FilePath;
+            document.FileUrl = dto.FileUrl;
+            document.FileSize = dto.FileSize;
+            document.Category = dto.Category;
+            document.Description = dto.Description;
+            document.Version = dto.Version;
+            document.ExpiryDate = dto.ExpiryDate;
+            document.IsActive = dto.IsActive;
+            document.UploadedBy = dto.UploadedBy;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new ProductDocumentDto
+            {
+                Id = document.Id,
+                ProductId = document.ProductId,
+                FileName = document.FileName,
+                OriginalFileName = document.OriginalFileName,
+                ContentType = document.ContentType,
+                FilePath = document.FilePath,
+                FileUrl = document.FileUrl,
+                FileSize = document.FileSize,
+                Category = document.Category,
+                Description = document.Description,
+                Version = document.Version,
+                ExpiryDate = document.ExpiryDate,
+                IsActive = document.IsActive,
+                UploadedBy = document.UploadedBy,
+                UploadedAt = document.UploadedAt,
+                IsExpired = document.ExpiryDate.HasValue && document.ExpiryDate < DateTime.Today
+            };
+
+            return Ok(ApiResponse<ProductDocumentDto>.SuccessResponse(responseDto, "Product document updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<ProductDocumentDto>.ErrorResponse("Error updating product document", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update product document
+    /// </summary>
+    [HttpPatch("{id}/documents/{documentId}")]
+    public async Task<ActionResult<ApiResponse<ProductDocumentDto>>> PatchProductDocument(Guid id, Guid documentId, PatchProductDocumentDto dto)
+    {
+        try
+        {
+            var document = await _context.ProductDocuments
+                .FirstOrDefaultAsync(d => d.Id == documentId && d.ProductId == id);
+
+            if (document == null)
+            {
+                return NotFound(ApiResponse<ProductDocumentDto>.ErrorResponse("Product document not found"));
+            }
+
+            if (dto.FileName != null)
+                document.FileName = dto.FileName;
+            if (dto.OriginalFileName != null)
+                document.OriginalFileName = dto.OriginalFileName;
+            if (dto.ContentType != null)
+                document.ContentType = dto.ContentType;
+            if (dto.FilePath != null)
+                document.FilePath = dto.FilePath;
+            if (dto.FileSize.HasValue)
+                document.FileSize = dto.FileSize.Value;
+            if (dto.UploadedBy != null)
+                document.UploadedBy = dto.UploadedBy;
+            if (dto.Category != null)
+                document.Category = dto.Category;
+            if (dto.Description != null)
+                document.Description = dto.Description;
+            if (dto.Version != null)
+                document.Version = dto.Version;
+            if (dto.ExpiryDate.HasValue)
+                document.ExpiryDate = dto.ExpiryDate.Value;
+            if (dto.FileUrl != null)
+                document.FileUrl = dto.FileUrl;
+            if (dto.IsActive.HasValue)
+                document.IsActive = dto.IsActive.Value;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new ProductDocumentDto
+            {
+                Id = document.Id,
+                ProductId = document.ProductId,
+                FileName = document.FileName,
+                OriginalFileName = document.OriginalFileName,
+                ContentType = document.ContentType,
+                FilePath = document.FilePath,
+                FileUrl = document.FileUrl,
+                FileSize = document.FileSize,
+                Category = document.Category,
+                Description = document.Description,
+                Version = document.Version,
+                ExpiryDate = document.ExpiryDate,
+                IsActive = document.IsActive,
+                UploadedBy = document.UploadedBy,
+                UploadedAt = document.UploadedAt,
+                IsExpired = document.ExpiryDate.HasValue && document.ExpiryDate < DateTime.Today
+            };
+
+            return Ok(ApiResponse<ProductDocumentDto>.SuccessResponse(responseDto, "Product document updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<ProductDocumentDto>.ErrorResponse("Error updating product document", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete product document
+    /// </summary>
+    [HttpDelete("{id}/documents/{documentId}")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteProductDocument(Guid id, Guid documentId)
+    {
+        try
+        {
+            var document = await _context.ProductDocuments
+                .FirstOrDefaultAsync(d => d.Id == documentId && d.ProductId == id);
+
+            if (document == null)
+            {
+                return NotFound(ApiResponse.CreateError("Product document not found"));
+            }
+
+            _context.ProductDocuments.Remove(document);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Product document deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting product document", ex.Message));
         }
     }
 

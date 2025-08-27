@@ -111,6 +111,28 @@ public class CreateCustomerProfileDto
     public string? BillingAddress { get; set; }
 }
 
+public class UpdateCustomerProfileDto
+{
+    public decimal CreditLimit { get; set; }
+    public int PaymentTermsDays { get; set; }
+    public string Currency { get; set; } = "USD";
+    public string PreferredContactMethod { get; set; } = "Email";
+    public string? BillingAddress { get; set; }
+    public string Status { get; set; } = "Active";
+    public string? Notes { get; set; }
+}
+
+public class PatchCustomerProfileDto
+{
+    public decimal? CreditLimit { get; set; }
+    public int? PaymentTermsDays { get; set; }
+    public string? Currency { get; set; }
+    public string? PreferredContactMethod { get; set; }
+    public string? BillingAddress { get; set; }
+    public string? Status { get; set; }
+    public string? Notes { get; set; }
+}
+
 public class CustomerProfileDto
 {
     public Guid Id { get; set; }
@@ -141,6 +163,28 @@ public class CreateSupplierProfileDto
     public int LeadTimeDays { get; set; } = 7;
     public decimal MinOrderValue { get; set; } = 0;
     public string PaymentTerms { get; set; } = "Net 30";
+}
+
+public class UpdateSupplierProfileDto
+{
+    public string SupplierType { get; set; } = "Standard";
+    public string QualityRating { get; set; } = "Unrated";
+    public int LeadTimeDays { get; set; } = 7;
+    public decimal MinOrderValue { get; set; } = 0;
+    public string PaymentTerms { get; set; } = "Net 30";
+    public string Status { get; set; } = "Active";
+    public string? Notes { get; set; }
+}
+
+public class PatchSupplierProfileDto
+{
+    public string? SupplierType { get; set; }
+    public string? QualityRating { get; set; }
+    public int? LeadTimeDays { get; set; }
+    public decimal? MinOrderValue { get; set; }
+    public string? PaymentTerms { get; set; }
+    public string? Status { get; set; }
+    public string? Notes { get; set; }
 }
 
 public class SupplierProfileDto
@@ -174,6 +218,32 @@ public class CreateTransporterProfileDto
     public string RateStructure { get; set; } = "Per Mile";
 }
 
+public class UpdateTransporterProfileDto
+{
+    public string TransporterType { get; set; } = "General";
+    public int FleetSize { get; set; } = 0;
+    public string OperatingLicense { get; set; } = string.Empty;
+    public DateTime? LicenseExpiryDate { get; set; }
+    public string ServiceAreas { get; set; } = string.Empty;
+    public decimal BaseRate { get; set; } = 0;
+    public string RateStructure { get; set; } = "Per Mile";
+    public string Status { get; set; } = "Active";
+    public string? Notes { get; set; }
+}
+
+public class PatchTransporterProfileDto
+{
+    public string? TransporterType { get; set; }
+    public int? FleetSize { get; set; }
+    public string? OperatingLicense { get; set; }
+    public DateTime? LicenseExpiryDate { get; set; }
+    public string? ServiceAreas { get; set; }
+    public decimal? BaseRate { get; set; }
+    public string? RateStructure { get; set; }
+    public string? Status { get; set; }
+    public string? Notes { get; set; }
+}
+
 public class TransporterProfileDto
 {
     public Guid Id { get; set; }
@@ -203,6 +273,32 @@ public class CreateContactDto
     public string Position { get; set; } = string.Empty;
     public string ContactType { get; set; } = "General";
     public bool IsPrimary { get; set; } = false;
+}
+
+public class UpdateContactDto
+{
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Position { get; set; } = string.Empty;
+    public string ContactType { get; set; } = "General";
+    public bool IsPrimary { get; set; } = false;
+    public bool IsActive { get; set; } = true;
+    public string? Notes { get; set; }
+}
+
+public class PatchContactDto
+{
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+    public string? Position { get; set; }
+    public string? ContactType { get; set; }
+    public bool? IsPrimary { get; set; }
+    public bool? IsActive { get; set; }
+    public string? Notes { get; set; }
 }
 
 public class ContactDto

@@ -323,6 +323,154 @@ public class BusinessEntityController : ControllerBase
     }
 
     /// <summary>
+    /// Update customer profile for business entity
+    /// </summary>
+    [HttpPut("{id}/customer-profile")]
+    public async Task<ActionResult<ApiResponse<CustomerProfileDto>>> UpdateCustomerProfile(Guid id, UpdateCustomerProfileDto dto)
+    {
+        try
+        {
+            var profile = await _context.CustomerProfiles
+                .FirstOrDefaultAsync(cp => cp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse<CustomerProfileDto>.ErrorResponse("Customer profile not found"));
+            }
+
+            profile.CreditLimit = dto.CreditLimit;
+            profile.AvailableCredit = dto.CreditLimit - profile.UsedCredit;
+            profile.PaymentTermsDays = dto.PaymentTermsDays;
+            profile.Currency = dto.Currency;
+            profile.PreferredContactMethod = dto.PreferredContactMethod;
+            profile.BillingAddress = dto.BillingAddress ?? string.Empty;
+            profile.Status = dto.Status;
+            profile.Notes = dto.Notes ?? string.Empty;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new CustomerProfileDto
+            {
+                Id = profile.Id,
+                BusinessEntityId = profile.BusinessEntityId,
+                CreditLimit = profile.CreditLimit,
+                AvailableCredit = profile.AvailableCredit,
+                UsedCredit = profile.UsedCredit,
+                PaymentTermsDays = profile.PaymentTermsDays,
+                Currency = profile.Currency,
+                CreditRating = profile.CreditRating,
+                LastCreditReview = profile.LastCreditReview,
+                NextCreditReview = profile.NextCreditReview,
+                SecurityDeposit = profile.SecurityDeposit,
+                PreferredContactMethod = profile.PreferredContactMethod,
+                PreferredLanguage = profile.PreferredLanguage,
+                BillingAddress = profile.BillingAddress,
+                Status = profile.Status,
+                Notes = profile.Notes,
+                CreatedAt = profile.CreatedAt
+            };
+
+            return Ok(ApiResponse<CustomerProfileDto>.SuccessResponse(responseDto, "Customer profile updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<CustomerProfileDto>.ErrorResponse("Error updating customer profile", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update customer profile for business entity
+    /// </summary>
+    [HttpPatch("{id}/customer-profile")]
+    public async Task<ActionResult<ApiResponse<CustomerProfileDto>>> PatchCustomerProfile(Guid id, PatchCustomerProfileDto dto)
+    {
+        try
+        {
+            var profile = await _context.CustomerProfiles
+                .FirstOrDefaultAsync(cp => cp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse<CustomerProfileDto>.ErrorResponse("Customer profile not found"));
+            }
+
+            if (dto.CreditLimit.HasValue)
+            {
+                profile.CreditLimit = dto.CreditLimit.Value;
+                profile.AvailableCredit = dto.CreditLimit.Value - profile.UsedCredit;
+            }
+            if (dto.PaymentTermsDays.HasValue)
+                profile.PaymentTermsDays = dto.PaymentTermsDays.Value;
+            if (dto.Currency != null)
+                profile.Currency = dto.Currency;
+            if (dto.PreferredContactMethod != null)
+                profile.PreferredContactMethod = dto.PreferredContactMethod;
+            if (dto.BillingAddress != null)
+                profile.BillingAddress = dto.BillingAddress;
+            if (dto.Status != null)
+                profile.Status = dto.Status;
+            if (dto.Notes != null)
+                profile.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new CustomerProfileDto
+            {
+                Id = profile.Id,
+                BusinessEntityId = profile.BusinessEntityId,
+                CreditLimit = profile.CreditLimit,
+                AvailableCredit = profile.AvailableCredit,
+                UsedCredit = profile.UsedCredit,
+                PaymentTermsDays = profile.PaymentTermsDays,
+                Currency = profile.Currency,
+                CreditRating = profile.CreditRating,
+                LastCreditReview = profile.LastCreditReview,
+                NextCreditReview = profile.NextCreditReview,
+                SecurityDeposit = profile.SecurityDeposit,
+                PreferredContactMethod = profile.PreferredContactMethod,
+                PreferredLanguage = profile.PreferredLanguage,
+                BillingAddress = profile.BillingAddress,
+                Status = profile.Status,
+                Notes = profile.Notes,
+                CreatedAt = profile.CreatedAt
+            };
+
+            return Ok(ApiResponse<CustomerProfileDto>.SuccessResponse(responseDto, "Customer profile updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<CustomerProfileDto>.ErrorResponse("Error updating customer profile", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete customer profile for business entity
+    /// </summary>
+    [HttpDelete("{id}/customer-profile")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteCustomerProfile(Guid id)
+    {
+        try
+        {
+            var profile = await _context.CustomerProfiles
+                .FirstOrDefaultAsync(cp => cp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse.CreateError("Customer profile not found"));
+            }
+
+            _context.CustomerProfiles.Remove(profile);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Customer profile deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting customer profile", ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Get customer profile for business entity
     /// </summary>
     [HttpGet("{id}/customer-profile")]
@@ -414,6 +562,144 @@ public class BusinessEntityController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, ApiResponse<SupplierProfileDto>.ErrorResponse("Error creating supplier profile", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Update supplier profile for business entity
+    /// </summary>
+    [HttpPut("{id}/supplier-profile")]
+    public async Task<ActionResult<ApiResponse<SupplierProfileDto>>> UpdateSupplierProfile(Guid id, UpdateSupplierProfileDto dto)
+    {
+        try
+        {
+            var profile = await _context.SupplierProfiles
+                .FirstOrDefaultAsync(sp => sp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse<SupplierProfileDto>.ErrorResponse("Supplier profile not found"));
+            }
+
+            profile.SupplierType = dto.SupplierType;
+            profile.QualityRating = dto.QualityRating;
+            profile.LeadTimeDays = dto.LeadTimeDays;
+            profile.MinOrderValue = dto.MinOrderValue;
+            profile.PaymentTerms = dto.PaymentTerms;
+            profile.Status = dto.Status;
+            profile.Notes = dto.Notes ?? string.Empty;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new SupplierProfileDto
+            {
+                Id = profile.Id,
+                BusinessEntityId = profile.BusinessEntityId,
+                SupplierType = profile.SupplierType,
+                QualityRating = profile.QualityRating,
+                DeliveryRating = profile.DeliveryRating,
+                IsVerified = profile.IsVerified,
+                VerificationDate = profile.VerificationDate,
+                CertificationLevel = profile.CertificationLevel,
+                LeadTimeDays = profile.LeadTimeDays,
+                MinOrderValue = profile.MinOrderValue,
+                PaymentTerms = profile.PaymentTerms,
+                Status = profile.Status,
+                Notes = profile.Notes,
+                CreatedAt = profile.CreatedAt
+            };
+
+            return Ok(ApiResponse<SupplierProfileDto>.SuccessResponse(responseDto, "Supplier profile updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<SupplierProfileDto>.ErrorResponse("Error updating supplier profile", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update supplier profile for business entity
+    /// </summary>
+    [HttpPatch("{id}/supplier-profile")]
+    public async Task<ActionResult<ApiResponse<SupplierProfileDto>>> PatchSupplierProfile(Guid id, PatchSupplierProfileDto dto)
+    {
+        try
+        {
+            var profile = await _context.SupplierProfiles
+                .FirstOrDefaultAsync(sp => sp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse<SupplierProfileDto>.ErrorResponse("Supplier profile not found"));
+            }
+
+            if (dto.SupplierType != null)
+                profile.SupplierType = dto.SupplierType;
+            if (dto.QualityRating != null)
+                profile.QualityRating = dto.QualityRating;
+            if (dto.LeadTimeDays.HasValue)
+                profile.LeadTimeDays = dto.LeadTimeDays.Value;
+            if (dto.MinOrderValue.HasValue)
+                profile.MinOrderValue = dto.MinOrderValue.Value;
+            if (dto.PaymentTerms != null)
+                profile.PaymentTerms = dto.PaymentTerms;
+            if (dto.Status != null)
+                profile.Status = dto.Status;
+            if (dto.Notes != null)
+                profile.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new SupplierProfileDto
+            {
+                Id = profile.Id,
+                BusinessEntityId = profile.BusinessEntityId,
+                SupplierType = profile.SupplierType,
+                QualityRating = profile.QualityRating,
+                DeliveryRating = profile.DeliveryRating,
+                IsVerified = profile.IsVerified,
+                VerificationDate = profile.VerificationDate,
+                CertificationLevel = profile.CertificationLevel,
+                LeadTimeDays = profile.LeadTimeDays,
+                MinOrderValue = profile.MinOrderValue,
+                PaymentTerms = profile.PaymentTerms,
+                Status = profile.Status,
+                Notes = profile.Notes,
+                CreatedAt = profile.CreatedAt
+            };
+
+            return Ok(ApiResponse<SupplierProfileDto>.SuccessResponse(responseDto, "Supplier profile updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<SupplierProfileDto>.ErrorResponse("Error updating supplier profile", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete supplier profile for business entity
+    /// </summary>
+    [HttpDelete("{id}/supplier-profile")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteSupplierProfile(Guid id)
+    {
+        try
+        {
+            var profile = await _context.SupplierProfiles
+                .FirstOrDefaultAsync(sp => sp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse.CreateError("Supplier profile not found"));
+            }
+
+            _context.SupplierProfiles.Remove(profile);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Supplier profile deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting supplier profile", ex.Message));
         }
     }
 
@@ -514,6 +800,150 @@ public class BusinessEntityController : ControllerBase
     }
 
     /// <summary>
+    /// Update transporter profile for business entity
+    /// </summary>
+    [HttpPut("{id}/transporter-profile")]
+    public async Task<ActionResult<ApiResponse<TransporterProfileDto>>> UpdateTransporterProfile(Guid id, UpdateTransporterProfileDto dto)
+    {
+        try
+        {
+            var profile = await _context.TransporterProfiles
+                .FirstOrDefaultAsync(tp => tp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse<TransporterProfileDto>.ErrorResponse("Transporter profile not found"));
+            }
+
+            profile.TransporterType = dto.TransporterType;
+            profile.FleetSize = dto.FleetSize;
+            profile.OperatingLicense = dto.OperatingLicense;
+            profile.LicenseExpiryDate = dto.LicenseExpiryDate;
+            profile.ServiceAreas = dto.ServiceAreas;
+            profile.BaseRate = dto.BaseRate;
+            profile.RateStructure = dto.RateStructure;
+            profile.Status = dto.Status;
+            profile.Notes = dto.Notes ?? string.Empty;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new TransporterProfileDto
+            {
+                Id = profile.Id,
+                BusinessEntityId = profile.BusinessEntityId,
+                TransporterType = profile.TransporterType,
+                FleetSize = profile.FleetSize,
+                OperatingLicense = profile.OperatingLicense,
+                LicenseExpiryDate = profile.LicenseExpiryDate,
+                Rating = (int)(profile.Rating ?? 0),
+                ServiceAreas = profile.ServiceAreas,
+                SpecializedServices = profile.SpecializedServices,
+                BaseRate = profile.BaseRate ?? 0,
+                RateStructure = profile.RateStructure,
+                Status = profile.Status,
+                Notes = profile.Notes,
+                CreatedAt = profile.CreatedAt
+            };
+
+            return Ok(ApiResponse<TransporterProfileDto>.SuccessResponse(responseDto, "Transporter profile updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<TransporterProfileDto>.ErrorResponse("Error updating transporter profile", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update transporter profile for business entity
+    /// </summary>
+    [HttpPatch("{id}/transporter-profile")]
+    public async Task<ActionResult<ApiResponse<TransporterProfileDto>>> PatchTransporterProfile(Guid id, PatchTransporterProfileDto dto)
+    {
+        try
+        {
+            var profile = await _context.TransporterProfiles
+                .FirstOrDefaultAsync(tp => tp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse<TransporterProfileDto>.ErrorResponse("Transporter profile not found"));
+            }
+
+            if (dto.TransporterType != null)
+                profile.TransporterType = dto.TransporterType;
+            if (dto.FleetSize.HasValue)
+                profile.FleetSize = dto.FleetSize.Value;
+            if (dto.OperatingLicense != null)
+                profile.OperatingLicense = dto.OperatingLicense;
+            if (dto.LicenseExpiryDate.HasValue)
+                profile.LicenseExpiryDate = dto.LicenseExpiryDate.Value;
+            if (dto.ServiceAreas != null)
+                profile.ServiceAreas = dto.ServiceAreas;
+            if (dto.BaseRate.HasValue)
+                profile.BaseRate = dto.BaseRate.Value;
+            if (dto.RateStructure != null)
+                profile.RateStructure = dto.RateStructure;
+            if (dto.Status != null)
+                profile.Status = dto.Status;
+            if (dto.Notes != null)
+                profile.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new TransporterProfileDto
+            {
+                Id = profile.Id,
+                BusinessEntityId = profile.BusinessEntityId,
+                TransporterType = profile.TransporterType,
+                FleetSize = profile.FleetSize,
+                OperatingLicense = profile.OperatingLicense,
+                LicenseExpiryDate = profile.LicenseExpiryDate,
+                Rating = (int)(profile.Rating ?? 0),
+                ServiceAreas = profile.ServiceAreas,
+                SpecializedServices = profile.SpecializedServices,
+                BaseRate = profile.BaseRate ?? 0,
+                RateStructure = profile.RateStructure,
+                Status = profile.Status,
+                Notes = profile.Notes,
+                CreatedAt = profile.CreatedAt
+            };
+
+            return Ok(ApiResponse<TransporterProfileDto>.SuccessResponse(responseDto, "Transporter profile updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<TransporterProfileDto>.ErrorResponse("Error updating transporter profile", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete transporter profile for business entity
+    /// </summary>
+    [HttpDelete("{id}/transporter-profile")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteTransporterProfile(Guid id)
+    {
+        try
+        {
+            var profile = await _context.TransporterProfiles
+                .FirstOrDefaultAsync(tp => tp.BusinessEntityId == id);
+
+            if (profile == null)
+            {
+                return NotFound(ApiResponse.CreateError("Transporter profile not found"));
+            }
+
+            _context.TransporterProfiles.Remove(profile);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Transporter profile deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting transporter profile", ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Get transporter profile for business entity
     /// </summary>
     [HttpGet("{id}/transporter-profile")]
@@ -597,6 +1027,150 @@ public class BusinessEntityController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, ApiResponse<PagedResult<ContactDto>>.ErrorResponse("Error retrieving contacts", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update contact for business entity
+    /// </summary>
+    [HttpPatch("{id}/contacts/{contactId}")]
+    public async Task<ActionResult<ApiResponse<ContactDto>>> PatchBusinessEntityContact(Guid id, Guid contactId, PatchContactDto dto)
+    {
+        try
+        {
+            var contact = await _context.BusinessEntityContacts
+                .FirstOrDefaultAsync(c => c.Id == contactId && c.BusinessEntityId == id);
+
+            if (contact == null)
+            {
+                return NotFound(ApiResponse<ContactDto>.ErrorResponse("Contact not found"));
+            }
+
+            if (dto.FirstName != null)
+                contact.FirstName = dto.FirstName;
+            if (dto.LastName != null)
+                contact.LastName = dto.LastName;
+            if (dto.Email != null)
+                contact.Email = dto.Email;
+            if (dto.Phone != null)
+                contact.Phone = dto.Phone;
+            if (dto.Position != null)
+                contact.Position = dto.Position;
+            if (dto.ContactType != null)
+                contact.ContactType = dto.ContactType;
+            if (dto.IsPrimary.HasValue)
+                contact.IsPrimary = dto.IsPrimary.Value;
+            if (dto.IsActive.HasValue)
+                contact.IsActive = dto.IsActive.Value;
+            if (dto.Notes != null)
+                contact.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new ContactDto
+            {
+                Id = contact.Id,
+                BusinessEntityId = contact.BusinessEntityId,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
+                Email = contact.Email,
+                Phone = contact.Phone,
+                Mobile = contact.Mobile,
+                Position = contact.Position,
+                Department = contact.Department,
+                ContactType = contact.ContactType,
+                IsPrimary = contact.IsPrimary,
+                IsActive = contact.IsActive,
+                Notes = contact.Notes,
+                CreatedAt = contact.CreatedAt
+            };
+
+            return Ok(ApiResponse<ContactDto>.SuccessResponse(responseDto, "Contact updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<ContactDto>.ErrorResponse("Error updating contact", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete contact for business entity
+    /// </summary>
+    [HttpDelete("{id}/contacts/{contactId}")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteBusinessEntityContact(Guid id, Guid contactId)
+    {
+        try
+        {
+            var contact = await _context.BusinessEntityContacts
+                .FirstOrDefaultAsync(c => c.Id == contactId && c.BusinessEntityId == id);
+
+            if (contact == null)
+            {
+                return NotFound(ApiResponse.CreateError("Contact not found"));
+            }
+
+            _context.BusinessEntityContacts.Remove(contact);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Contact deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting contact", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Update contact for business entity
+    /// </summary>
+    [HttpPut("{id}/contacts/{contactId}")]
+    public async Task<ActionResult<ApiResponse<ContactDto>>> UpdateBusinessEntityContact(Guid id, Guid contactId, UpdateContactDto dto)
+    {
+        try
+        {
+            var contact = await _context.BusinessEntityContacts
+                .FirstOrDefaultAsync(c => c.Id == contactId && c.BusinessEntityId == id);
+
+            if (contact == null)
+            {
+                return NotFound(ApiResponse<ContactDto>.ErrorResponse("Contact not found"));
+            }
+
+            contact.FirstName = dto.FirstName;
+            contact.LastName = dto.LastName;
+            contact.Email = dto.Email;
+            contact.Phone = dto.Phone;
+            contact.Position = dto.Position;
+            contact.ContactType = dto.ContactType;
+            contact.IsPrimary = dto.IsPrimary;
+            contact.IsActive = dto.IsActive;
+            contact.Notes = dto.Notes ?? string.Empty;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new ContactDto
+            {
+                Id = contact.Id,
+                BusinessEntityId = contact.BusinessEntityId,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
+                Email = contact.Email,
+                Phone = contact.Phone,
+                Mobile = contact.Mobile,
+                Position = contact.Position,
+                Department = contact.Department,
+                ContactType = contact.ContactType,
+                IsPrimary = contact.IsPrimary,
+                IsActive = contact.IsActive,
+                Notes = contact.Notes,
+                CreatedAt = contact.CreatedAt
+            };
+
+            return Ok(ApiResponse<ContactDto>.SuccessResponse(responseDto, "Contact updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<ContactDto>.ErrorResponse("Error updating contact", ex.Message));
         }
     }
 

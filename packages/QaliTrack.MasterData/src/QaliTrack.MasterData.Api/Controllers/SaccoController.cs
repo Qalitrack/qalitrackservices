@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using QaliTrack.MasterData.Core.Common;
 using QaliTrack.MasterData.Core.Modules.Sacco.Entities;
 using QaliTrack.MasterData.Core.Modules.Sacco.DTOs;
+using QaliTrack.MasterData.Core.Modules.Relationships.DTOs;
+using QaliTrack.MasterData.Core.Modules.Relationships.Entities;
 using QaliTrack.MasterData.Infrastructure.Data;
 
 namespace QaliTrack.MasterData.Api.Controllers;
@@ -668,6 +670,217 @@ public class SaccoController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, ApiResponse<PagedResult<SaccoLoanDto>>.ErrorResponse("Error retrieving SACCO loans", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Get all drivers who are members of this SACCO
+    /// </summary>
+    [HttpGet("{id}/drivers")]
+    public async Task<ActionResult<ApiResponse<PagedResult<DriverSaccoMembershipDto>>>> GetSaccoDrivers(
+        Guid id, [FromQuery] QueryParameters queryParams)
+    {
+        try
+        {
+            if (!await SaccoExists(id))
+            {
+                return NotFound(ApiResponse<PagedResult<DriverSaccoMembershipDto>>.ErrorResponse("SACCO not found"));
+            }
+
+            var query = _context.DriverSaccoMemberships
+                .Where(m => m.SaccoId == id)
+                .Select(m => new DriverSaccoMembershipDto
+                {
+                    Id = m.Id,
+                    DriverId = m.DriverId,
+                    SaccoId = m.SaccoId,
+                    MembershipDate = m.MembershipDate,
+                    ExpiryDate = m.ExpiryDate,
+                    MembershipNumber = m.MembershipNumber,
+                    Status = m.Status,
+                    ShareContribution = m.ShareContribution,
+                    MonthlyContribution = m.MonthlyContribution,
+                    MembershipType = m.MembershipType,
+                    Benefits = m.Benefits,
+                    IsActive = m.IsActive,
+                    Notes = m.Notes,
+                    CreatedAt = m.CreatedAt,
+                    UpdatedAt = m.UpdatedAt,
+                    IsExpired = m.ExpiryDate.HasValue && m.ExpiryDate < DateTime.Today,
+                    DriverName = "Driver Name", // TODO: Join with Driver entity when implemented
+                    SaccoName = "SACCO Name" // TODO: Join with SACCO entity when implemented
+                })
+                .AsQueryable();
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+            var pagedResult = await query.ToPagedResultAsync(queryParams, baseUrl);
+
+            return Ok(ApiResponse<PagedResult<DriverSaccoMembershipDto>>.SuccessResponse(pagedResult));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<PagedResult<DriverSaccoMembershipDto>>.ErrorResponse("Error retrieving SACCO drivers", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Add a driver membership to this SACCO
+    /// </summary>
+    [HttpPost("{id}/drivers")]
+    public async Task<ActionResult<ApiResponse<DriverSaccoMembershipDto>>> AddDriverToSacco(
+        Guid id, CreateDriverSaccoMembershipDto dto)
+    {
+        try
+        {
+            if (!await SaccoExists(id))
+            {
+                return NotFound(ApiResponse<DriverSaccoMembershipDto>.ErrorResponse("SACCO not found"));
+            }
+
+            if (dto.SaccoId != id)
+            {
+                return BadRequest(ApiResponse<DriverSaccoMembershipDto>.ErrorResponse("SACCO ID mismatch"));
+            }
+
+            // Check if driver is already a member
+            var existingMembership = await _context.DriverSaccoMemberships
+                .FirstOrDefaultAsync(m => m.DriverId == dto.DriverId && m.SaccoId == id && m.IsActive);
+            
+            if (existingMembership != null)
+            {
+                return BadRequest(ApiResponse<DriverSaccoMembershipDto>.ErrorResponse("Driver is already a member of this SACCO"));
+            }
+
+            var membership = new DriverSaccoMembership
+            {
+                Id = Guid.NewGuid(),
+                DriverId = dto.DriverId,
+                SaccoId = dto.SaccoId,
+                MembershipDate = dto.MembershipDate,
+                MembershipNumber = dto.MembershipNumber,
+                ShareContribution = dto.ShareContribution,
+                Status = dto.Status,
+                ExpiryDate = dto.ExpiryDate,
+                MonthlyContribution = dto.MonthlyContribution,
+                MembershipType = dto.MembershipType,
+                Benefits = dto.Benefits,
+                Notes = dto.Notes
+            };
+
+            _context.DriverSaccoMemberships.Add(membership);
+            await _context.SaveChangesAsync();
+
+            var responseDto = new DriverSaccoMembershipDto
+            {
+                Id = membership.Id,
+                DriverId = membership.DriverId,
+                SaccoId = membership.SaccoId,
+                MembershipDate = membership.MembershipDate,
+                ExpiryDate = membership.ExpiryDate,
+                MembershipNumber = membership.MembershipNumber,
+                Status = membership.Status,
+                ShareContribution = membership.ShareContribution,
+                MonthlyContribution = membership.MonthlyContribution,
+                MembershipType = membership.MembershipType,
+                Benefits = membership.Benefits,
+                IsActive = membership.IsActive,
+                Notes = membership.Notes,
+                CreatedAt = membership.CreatedAt,
+                UpdatedAt = membership.UpdatedAt,
+                IsExpired = membership.ExpiryDate.HasValue && membership.ExpiryDate < DateTime.Today,
+                DriverName = "Driver Name", // TODO: Join with Driver entity when implemented
+                SaccoName = "SACCO Name" // TODO: Join with SACCO entity when implemented
+            };
+
+            return Ok(ApiResponse<DriverSaccoMembershipDto>.SuccessResponse(responseDto, "Driver added to SACCO successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<DriverSaccoMembershipDto>.ErrorResponse("Error adding driver to SACCO", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Remove a driver membership from this SACCO
+    /// </summary>
+    [HttpDelete("{id}/drivers/{driverId}")]
+    public async Task<ActionResult<ApiResponse<object>>> RemoveDriverFromSacco(Guid id, Guid driverId)
+    {
+        try
+        {
+            if (!await SaccoExists(id))
+            {
+                return NotFound(ApiResponse.CreateError("SACCO not found"));
+            }
+
+            var membership = await _context.DriverSaccoMemberships
+                .FirstOrDefaultAsync(m => m.DriverId == driverId && m.SaccoId == id && m.IsActive);
+
+            if (membership == null)
+            {
+                return NotFound(ApiResponse.CreateError("Driver membership not found"));
+            }
+
+            membership.IsActive = false;
+            membership.Status = "Inactive";
+            membership.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Driver removed from SACCO successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error removing driver from SACCO", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Get all vehicles registered under this SACCO
+    /// </summary>
+    [HttpGet("{id}/vehicles")]
+    public async Task<ActionResult<ApiResponse<PagedResult<VehicleSaccoRegistrationDto>>>> GetSaccoVehicles(
+        Guid id, [FromQuery] QueryParameters queryParams)
+    {
+        try
+        {
+            if (!await SaccoExists(id))
+            {
+                return NotFound(ApiResponse<PagedResult<VehicleSaccoRegistrationDto>>.ErrorResponse("SACCO not found"));
+            }
+
+            var query = _context.VehicleSaccoRegistrations
+                .Where(r => r.SaccoId == id)
+                .Select(r => new VehicleSaccoRegistrationDto
+                {
+                    Id = r.Id,
+                    VehicleId = r.VehicleId,
+                    SaccoId = r.SaccoId,
+                    RegistrationDate = r.RegistrationDate,
+                    ExpiryDate = r.ExpiryDate,
+                    RegistrationNumber = r.RegistrationNumber,
+                    Status = r.Status,
+                    RegistrationFee = r.RegistrationFee,
+                    CertificateNumber = r.CertificateNumber,
+                    Conditions = r.Conditions,
+                    IsActive = r.IsActive,
+                    Notes = r.Notes,
+                    CreatedAt = r.CreatedAt,
+                    UpdatedAt = r.UpdatedAt,
+                    IsExpired = r.ExpiryDate.HasValue && r.ExpiryDate < DateTime.Today,
+                    VehicleRegistrationNumber = "Vehicle Reg", // TODO: Join with Vehicle entity when implemented
+                    SaccoName = "SACCO Name" // TODO: Join with SACCO entity when implemented
+                })
+                .AsQueryable();
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+            var pagedResult = await query.ToPagedResultAsync(queryParams, baseUrl);
+
+            return Ok(ApiResponse<PagedResult<VehicleSaccoRegistrationDto>>.SuccessResponse(pagedResult));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<PagedResult<VehicleSaccoRegistrationDto>>.ErrorResponse("Error retrieving SACCO vehicles", ex.Message));
         }
     }
 
