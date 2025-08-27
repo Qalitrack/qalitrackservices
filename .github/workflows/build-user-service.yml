@@ -57,13 +57,7 @@ jobs:
         ports:
           - 6379:6379
         options: >-
-          --appendonly yes
-          --requirepass $REDIS_PASSWORD
-          --maxmemory 1gb
-          --maxmemory-policy allkeys-lru
-          --tcp-keepalive 60
-          --timeout 300
-          --health-cmd "redis-cli --raw incr ping"
+          --health-cmd "redis-cli -a $REDIS_PASSWORD --raw incr ping"
           --health-interval 30s
           --health-timeout 10s
           --health-retries 3
