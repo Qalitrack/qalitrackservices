@@ -86,13 +86,24 @@ app.get('/guides', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'guides.html'));
 });
 
-// Debug middleware for guides routes
-app.use('/guides/*', (req, res, next) => {
-  console.log(`[DEBUG] Guides route hit: ${req.method} ${req.path}`);
-  console.log(`[DEBUG] Full URL: ${req.url}`);
-  console.log(`[DEBUG] Original URL: ${req.originalUrl}`);
-  next();
+// Handle static assets that browsers request at wrong paths due to relative URLs
+// This MUST come before ANY other /guides/* routes
+app.use('/guides/public/*', (req, res) => {
+  console.log(`[STATIC-REDIRECT] Misrouted static asset: ${req.originalUrl}`);
+  // Redirect to the correct path with the service name
+  // For now, assume qalitrack-masterdata is the main service
+  const correctedPath = req.originalUrl.replace('/guides/public/', '/guides/qalitrack-masterdata/public/');
+  console.log(`[STATIC-REDIRECT] Redirecting to: ${correctedPath}`);
+  res.redirect(301, correctedPath);
 });
+
+// Debug middleware for guides routes (disabled to avoid interfering with specific routes)
+// app.use('/guides/*', (req, res, next) => {
+//   console.log(`[DEBUG] Guides route hit: ${req.method} ${req.path}`);
+//   console.log(`[DEBUG] Full URL: ${req.url}`);
+//   console.log(`[DEBUG] Original URL: ${req.originalUrl}`);
+//   next();
+// });
 
 // Reverse proxy for service guides
 app.use('/guides/:serviceKey', (req, res, next) => {
