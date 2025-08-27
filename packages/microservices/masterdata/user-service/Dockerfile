@@ -20,12 +20,9 @@ RUN apt-get update && \
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# 1️⃣ Copy Messaging.Contracts from BackupService and pack
-COPY ./Messaging.Contracts/ Messaging.Contracts/
-RUN dotnet pack "Messaging.Contracts/Messaging.Contracts.csproj" -c Release -o /src/nuget
 
 # 2️⃣ Add local NuGet source
-RUN dotnet nuget add source "/src/nuget" --name LocalContracts
+# RUN dotnet nuget add source "/src/nuget" --name LocalContracts
 
 # 3️⃣ Copy UserService project files
 COPY ["src/UserService.Api/UserService.Api.csproj", "UserService.Api/"]
