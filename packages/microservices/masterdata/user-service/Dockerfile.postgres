@@ -13,9 +13,6 @@ RUN mkdir -p /var/lib/postgresql/data/pgdata
 # Create init directory for database initialization scripts
 RUN mkdir -p /docker-entrypoint-initdb.d
 
-# Copy initialization script if needed
-COPY scripts/init-db.sql /docker-entrypoint-initdb.d/
-
 # Expose PostgreSQL port
 EXPOSE 5432
 
