@@ -1,4 +1,3 @@
-
 services:
   # Microservices Control Hub - Main Dashboard
   microservices-control-hub:
@@ -22,7 +21,7 @@ services:
       retries: 3
       start_period: 40s
 
-  # QaliTrack Masterdata Services
+  # Available QaliTrack Services (14 services including backup)
   customer-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/customer-service:latest
     ports:
@@ -123,31 +122,10 @@ services:
       - microservices
     restart: unless-stopped
 
-  # QaliTrack Datamanager Services
-  compliance-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/compliance-service:latest
-    ports:
-      - "7011:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  operational-data-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/operational-data-service:latest
-    ports:
-      - "7012:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
   transaction-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/transaction-service:latest
     ports:
-      - "7013:80"
+      - "7011:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
@@ -157,9 +135,47 @@ services:
   weight-data-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/weight-data-service:latest
     ports:
+      - "7012:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  operational-data-service:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/operational-data-service:latest
+    ports:
+      - "7013:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  # Backup Service - NEW ADDITION
+  backup-service:
+    image: ghcr.io/adarlegendre/qalitrackservices/backup-service:latest
+    ports:
       - "7014:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=backupservicedb;Username=backupservice;Password=backupservice123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60
+      - UsePostgreSQL=true
+      - UseRedis=false
+      - Email__FromEmail=noreply@qalitrack.com
+      - Email__FromName=QaliTrack System
+      - Email__SmtpHost=mailpit
+      - Email__SmtpPort=1025
+      - Email__SmtpUsername=
+      - Email__SmtpPassword=
+      - Email__EnableSsl=false
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./backups:/app/backups
+    depends_on:
+      - postgres
+      - mailpit
     networks:
       - microservices
     restart: unless-stopped
@@ -173,8 +189,11 @@ services:
       - POSTGRES_DB=microservices
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password
+      # Additional databases for backup service
+      - POSTGRES_MULTIPLE_DATABASES=backupservicedb:backupservice:backupservice123
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
       - microservices
     restart: unless-stopped
@@ -229,10 +248,8 @@ networks:
     driver: bridge
 
 # Usage:
-# 1. Copy the services configuration to ./config/services.json
-# 2. Modify the service configurations to match your setup
-# 3. Run: docker-compose up -d
-# 4. Access:
+# 1. Run: docker-compose -f docker-compose-available.yml up -d
+# 2. Access:
 #    - Dashboard: http://localhost:3000
-#    - API Docs: http://localhost:3000/docs
-#    - Health API: http://localhost:3000/api/health
+#    - Services: http://localhost:7001-7014
+#    - Backup Service: http://localhost:7014

@@ -1,0 +1,286 @@
+
+name: Build User Service
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/masterdata/user-service/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/masterdata/user-service/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  DOCKER_BUILDKIT: 1
+  SERVICE_NAME: user-service
+  SERVICE_PATH: packages/microservices/masterdata/user-service
+  POSTGRES_USER: userservice
+  POSTGRES_PASSWORD: userservice123
+  POSTGRES_DB: userservicedb
+  REDIS_PASSWORD: userservice123
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_SHARED_BUFFERS: 512MB
+          POSTGRES_MAX_CONNECTIONS: 600
+          POSTGRES_WORK_MEM: 2MB
+          POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
+        ports:
+          - 5434:5432
+        options: >-
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=1g
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+          --health-cmd pg_isready
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+          --health-start-period 30s
+      
+      redis:
+        image: redis:7-alpine
+        env:
+          REDIS_PASSWORD: ${{ env.REDIS_PASSWORD }}
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli -a $REDIS_PASSWORD --raw incr ping"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL..."
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5434 -U ${{ env.POSTGRES_USER }}; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 2
+          done
+      
+      - name: Wait for Redis
+        run: |
+          echo "Waiting for Redis..."
+          for i in {1..30}; do
+            if redis-cli -h localhost -p 6379 -a ${{ env.REDIS_PASSWORD }} ping | grep -q PONG; then
+              echo "Redis is ready!"
+              break
+            fi
+            echo "Waiting for Redis... ($i/30)"
+            sleep 2
+          done
+      
+      - name: Restore dependencies
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          dotnet restore src/UserService.Api/UserService.Api.csproj --verbosity normal
+      
+      - name: Build application
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          dotnet build src/UserService.Api/UserService.Api.csproj --no-restore -c Release --verbosity normal
+          dotnet build tests/UserService.Tests/UserService.Tests.csproj --no-restore -c Release --verbosity normal
+
+      - name: Verify test project
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          echo "Checking if test DLL exists..."
+          ls -la tests/UserService.Tests/bin/Release/net8.0/
+          echo "Checking test project for any build issues..."
+          dotnet list tests/UserService.Tests/UserService.Tests.csproj package
+      
+      - name: Run unit tests
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5434;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300"
+          ConnectionStrings__Redis: "localhost:6379,password=${{ env.REDIS_PASSWORD }}"
+          UsePostgreSQL: "true"
+          UseRedis: "true"
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          echo "Running unit tests..."
+          dotnet test tests/UserService.Tests/UserService.Tests.csproj -c Release --verbosity normal --logger "console;verbosity=detailed" --results-directory TestResults/ --blame
+        continue-on-error: false
+      
+      - name: Run database migrations
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5434;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          if [ -d "src/UserService.Infrastructure/Migrations" ] || [ -d "src/UserService.Api/Migrations" ]; then
+            echo "Running database migrations..."
+            dotnet ef database update --project src/UserService.Api/UserService.Api.csproj --verbose
+          else
+            echo "No Entity Framework migrations found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Run integration tests
+        env:
+          ASPNETCORE_ENVIRONMENT: "Testing"
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5434;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"
+          ConnectionStrings__Redis: "localhost:6379,password=${{ env.REDIS_PASSWORD }}"
+          UsePostgreSQL: "true"
+          UseRedis: "true"
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          find . -name "*.IntegrationTests.csproj" | while read testproject; do
+            echo "Running integration tests for: $testproject"
+            dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
+          done
+        continue-on-error: true
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ${{ env.SERVICE_PATH }}/TestResults/
+  
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata for User Service
+        id: meta-user
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=User Service
+            org.opencontainers.image.description=QaliTrack User Microservice with PostgreSQL and Redis support
+            org.opencontainers.image.vendor=QaliTrack
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+      
+      - name: Build and push User Service Docker image
+        id: build-user
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          file: ${{ env.SERVICE_PATH }}/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta-user.outputs.tags }}
+          labels: ${{ steps.meta-user.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+      
+      - name: Extract metadata for PostgreSQL
+        id: meta-postgres
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/userservice-postgres
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=User Service PostgreSQL
+            org.opencontainers.image.description=PostgreSQL database for QaliTrack User Service
+            org.opencontainers.image.vendor=QaliTrack
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+      
+      - name: Build and push PostgreSQL Docker image
+        id: build-postgres
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          file: ${{ env.SERVICE_PATH }}/Dockerfile.postgres
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta-postgres.outputs.tags }}
+          labels: ${{ steps.meta-postgres.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+  deploy-compose:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create deployment artifact
+        run: |
+          mkdir -p deployment
+          cp ${{ env.SERVICE_PATH }}/docker-compose.yml deployment/
+          cp -r ${{ env.SERVICE_PATH }}/scripts deployment/scripts
+          USER_IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:main-${{ github.sha }}"
+          POSTGRES_IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/userservice-postgres:main-${{ github.sha }}"
+          sed -i "s|build:|# build:|g" deployment/docker-compose.yml
+          sed -i "s|context: .|# context: .|g" deployment/docker-compose.yml
+          sed -i "s|dockerfile: Dockerfile|# dockerfile: Dockerfile|g" deployment/docker-compose.yml
+          sed -i "/# build:/a\\      image: $USER_IMAGE_TAG" deployment/docker-compose.yml
+          sed -i "s|build:|# build:|g" deployment/docker-compose.yml
+          sed -i "s|context: .|# context: .|g" deployment/docker-compose.yml
+          sed -i "s|dockerfile: Dockerfile.postgres|# dockerfile: Dockerfile.postgres|g" deployment/docker-compose.yml
+          sed -i "/# build:/a\\      image: $POSTGRES_IMAGE_TAG" deployment/docker-compose.yml
+      
+      - name: Upload deployment files
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-files
+          path: deployment/
+      
+      - name: Validate Docker Compose
+        run: |
+          cd deployment
+          docker-compose config
