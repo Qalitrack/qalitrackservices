@@ -16,24 +16,13 @@ public interface IDatabaseBackupService
     /// </summary>
     Task<RestoreResult> RestoreBackupAsync(string microservice, string backupFilePath, CancellationToken ct = default);
     
-    /// <summary>
-    /// Previews what would happen during a restore operation
-    /// </summary>
-    Task<RestorePreviewResult> PreviewRestoreAsync(string microservice, string backupFilePath, CancellationToken ct = default);
-    
-    /// <summary>
-    /// Gets all backup chains (simplified for SQL dumps - each backup is its own "chain")
-    /// </summary>
-    
+ 
     /// <summary>
     /// Gets list of available backup files
     /// </summary>
     Task<List<BackupFileInfo>> GetAvailableBackupsAsync(string? microservice = null, CancellationToken ct = default);
     
-    /// <summary>
-    /// Validates backup files integrity
-    /// </summary>
-    Task ValidateAllBackupsAsync(string? microservice = null, CancellationToken ct = default);
+    
     
     /// <summary>
     /// Gets backup statistics

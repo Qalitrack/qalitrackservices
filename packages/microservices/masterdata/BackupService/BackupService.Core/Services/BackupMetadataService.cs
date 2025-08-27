@@ -99,32 +99,7 @@ namespace BackupService.Core.Services
             _logger.LogInformation("Added full backup chain for {Microservice}: {BackupFile}, LSN: {Lsn}, Timeline: {Timeline}", 
                 microservice, backupResult.FileName, backupResult.Lsn, backupResult.Timeline);
         }
-
-        // Overload for backward compatibility
-        public async Task UpdateMetadataWithFullBackupAsync(string backupFileName, string microservice, CancellationToken ct = default)
-        {
-            await EnsureMetadataLoaded(ct);
-
-            var chain = new BackupChain
-            {
-                Id = GenerateNewChainId(),
-                MicroserviceName = microservice,
-                FullBackupFile = backupFileName,
-                Timestamp = DateTime.UtcNow,
-                Incrementals = new List<string>()
-            };
-
-            _metadata.Chains.Add(chain);
-            await SaveMetadataAsync(_metadata, ct);
-            _logger.LogWarning("Added full backup chain for {Microservice}: {BackupFile} without LSN/Timeline information", 
-                microservice, backupFileName);
-        }
-
         
-        
-        
-     
-
         public async Task<List<BackupChain>> GetAllBackupChainsAsync(string? microservice = null, CancellationToken ct = default)
         {
             await EnsureMetadataLoaded(ct);
@@ -175,29 +150,7 @@ namespace BackupService.Core.Services
         }
         
 
-
-        public async Task ValidateMetadataIntegrityAsync(string? microservice = null, CancellationToken ct = default)
-        {
-            await EnsureMetadataLoaded(ct);
-            
-            var chains = microservice == null 
-                ? _metadata.Chains 
-                : _metadata.Chains.Where(c => c.MicroserviceName == microservice).ToList();
-
-            foreach (var chain in chains)
-            {
-                if (string.IsNullOrEmpty(chain.FullBackupFile) && chain.Incrementals.Count > 0)
-                {
-                    _logger.LogWarning("Invalid chain {ChainId}: No full backup", chain.Id);
-                }
-
-                if (string.IsNullOrEmpty(chain.Lsn) || chain.Timeline == null)
-                {
-                    _logger.LogWarning("Chain {ChainId} missing LSN or Timeline information", chain.Id);
-                }
-            }
-        }
-
+        
         
     
 

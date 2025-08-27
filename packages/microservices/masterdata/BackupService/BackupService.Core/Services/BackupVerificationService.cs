@@ -37,63 +37,6 @@ public async Task VerifyBackupIntegrityAsync(string backupPath, BackupType backu
 }
 
 
-public async Task VerifyDatabaseIntegrityAsync(string connectionString, CancellationToken ct = default)
-{
-    _logger.LogWarning("Database integrity check not fully implemented for {ConnectionString}", connectionString);
-    await Task.CompletedTask;
-}
-
-
-async Task<BackupHealthReport> IBackupVerificationService.GenerateBackupHealthReportAsync(List<string> backupPaths, CancellationToken ct)
-{
-    return await GenerateBackupHealthReportAsync(backupPaths, ct);
-}
-
-public async Task<BackupHealthReport> GenerateBackupHealthReportAsync(List<string> backupPaths, CancellationToken ct = default)
-{
-    var results = new List<BackupHealthResult>();
-    int healthy = 0, unhealthy = 0;
-
-    foreach (var path in backupPaths)
-    {
-        var result = new BackupHealthResult
-        {
-            BackupPath = path,
-            BackupName = Path.GetFileName(path),
-            BackupType = BackupType.Full,
-            LastModified = _fileSystem.File.Exists(path) ? _fileSystem.FileInfo.New(path).LastWriteTimeUtc : DateTime.UtcNow,
-            FileSizeBytes = _fileSystem.File.Exists(path) ? _fileSystem.FileInfo.New(path).Length : 0
-        };
-
-        try
-        {
-            await VerifyBackupIntegrityAsync(path, result.BackupType, ct);
-            result.IsHealthy = true;
-            result.HealthMessage = "Backup is valid";
-            healthy++;
-        }
-        catch (Exception ex)
-        {
-            result.IsHealthy = false;
-            result.HealthMessage = "Backup verification failed";
-            result.ErrorDetails = ex.Message;
-            unhealthy++;
-        }
-
-        results.Add(result);
-    }
-
-    return new BackupHealthReport
-    {
-        GeneratedAt = DateTime.UtcNow,
-        TotalBackupsChecked = backupPaths.Count,
-        HealthyBackups = healthy,
-        UnhealthyBackups = unhealthy,
-        OverallHealthPercentage = backupPaths.Count > 0 ? (healthy * 100.0 / backupPaths.Count) : 0,
-        BackupResults = results
-    };
-}
-
 private async Task ExecuteCommandAsync(string command, string arguments, CancellationToken ct)
 {
     using var process = new Process
