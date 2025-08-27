@@ -1,7 +1,7 @@
 services:
   # Microservices Control Hub - Main Dashboard
   microservices-control-hub:
-    image: ghcr.io/ghtestminutes/microservices-control-hub:latest
+    image: microservices-control-hub:local
     ports:
       - "3000:3000"
     environment:
@@ -21,117 +21,17 @@ services:
       retries: 3
       start_period: 40s
 
-  # Available QaliTrack Services (14 services including backup)
-  customer-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/customer-service:latest
+  # QaliTrack Services (4 services including backup)
+  # Consolidated MasterData Service (replaces 10 individual services)
+  qalitrack-masterdata:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/qalitrack-masterdata:latest
     ports:
       - "7001:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  user-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/user-service:latest
-    ports:
-      - "7015:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - POSTGRES_USER=userService
-      - POSTGRES_PASSWORD=userService123
-      - POSTGRES_DB=userServicedb
-      - POSTGRES_HOST=postgres
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  driver-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/driver-service:latest
-    ports:
-      - "7002:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  product-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/product-service:latest
-    ports:
-      - "7003:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  report-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/report-service:latest
-    ports:
-      - "7004:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  route-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/route-service:latest
-    ports:
-      - "7005:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  sacco-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/sacco-service:latest
-    ports:
-      - "7006:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  supplier-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/supplier-service:latest
-    ports:
-      - "7007:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  transporter-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/transporter-service:latest
-    ports:
-      - "7008:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  vehicle-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/vehicle-service:latest
-    ports:
-      - "7009:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
-
-  weighbridge-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/weighbridge-service:latest
-    ports:
-      - "7010:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=masterdata;Username=masterdata;Password=masterdata123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60
+    depends_on:
+      - postgres
     networks:
       - microservices
     restart: unless-stopped
@@ -139,7 +39,7 @@ services:
   transaction-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/transaction-service:latest
     ports:
-      - "7011:80"
+      - "7002:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
@@ -149,50 +49,52 @@ services:
   weight-data-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/weight-data-service:latest
     ports:
-      - "7012:80"
+      - "7003:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - microservices
     restart: unless-stopped
 
-  operational-data-service:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/operational-data-service:latest
-    ports:
-      - "7013:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - microservices
-    restart: unless-stopped
+  # DISABLED - HttpClient DI registration issue
+  # operational-data-service:
+  #   image: ghcr.io/t-qs-builds/qalitrack-microservices-build/operational-data-service:latest
+  #   ports:
+  #     - "7004:80"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   networks:
+  #     - microservices
+  #   restart: unless-stopped
 
-  # Backup Service - NEW ADDITION
-  backup-service:
-    image: ghcr.io/adarlegendre/qalitrackservices/backup-service:latest
-    ports:
-      - "7014:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=backupservicedb;Username=backupservice;Password=backupservice123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60
-      - UsePostgreSQL=true
-      - UseRedis=false
-      - Email__FromEmail=noreply@qalitrack.com
-      - Email__FromName=QaliTrack System
-      - Email__SmtpHost=mailpit
-      - Email__SmtpPort=1025
-      - Email__SmtpUsername=
-      - Email__SmtpPassword=
-      - Email__EnableSsl=false
-    volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
-      - ./backups:/app/backups
-    depends_on:
-      - postgres
-      - mailpit
-    networks:
-      - microservices
-    restart: unless-stopped
+  # DISABLED - Database authentication issue
+  # # Backup Service - NEW ADDITION
+  # backup-service:
+  #   image: ghcr.io/adarlegendre/qalitrackservices/backup-service:latest
+  #   ports:
+  #     - "7005:80"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ConnectionStrings__DefaultConnection=Host=postgres;Database=backupservicedb;Username=backupservice;Password=backupservice123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60
+  #     - UsePostgreSQL=true
+  #     - UseRedis=false
+  #     - Email__FromEmail=noreply@qalitrack.com
+  #     - Email__FromName=QaliTrack System
+  #     - Email__SmtpHost=mailpit
+  #     - Email__SmtpPort=1025
+  #     - Email__SmtpUsername=
+  #     - Email__SmtpPassword=
+  #     - Email__EnableSsl=false
+  #   volumes:
+  #     - ./data:/app/data
+  #     - ./logs:/app/logs
+  #     - ./backups:/app/backups
+  #   depends_on:
+  #     - postgres
+  #     - mailpit
+  #   networks:
+  #     - microservices
+  #   restart: unless-stopped
 
   # Infrastructure Services
   postgres:
@@ -262,8 +164,11 @@ networks:
     driver: bridge
 
 # Usage:
-# 1. Run: docker-compose -f docker-compose-available.yml up -d
+# 1. Run: docker-compose -f docker-compose.yml up -d
 # 2. Access:
 #    - Dashboard: http://localhost:3000
-#    - Services: http://localhost:7001-7014
-#    - Backup Service: http://localhost:7014
+#    - QaliTrack MasterData: http://localhost:7001 (consolidated service)
+#    - Transaction Service: http://localhost:7002
+#    - Weight Data Service: http://localhost:7003
+#    - Operational Data Service: http://localhost:7004
+#    - Backup Service: http://localhost:7005
