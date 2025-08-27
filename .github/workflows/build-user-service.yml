@@ -289,4 +289,4 @@ jobs:
       - name: Validate Docker Compose
         run: |
           cd deployment
-          docker-compose config
+          docker compose config
