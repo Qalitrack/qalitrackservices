@@ -1,13 +1,10 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using UserService.Core.Interfaces;
-using UserService.Core.Services;
 using Serilog;
 using UserService.Core.DTOs.User;
-using UserService.Core.Entities;
 using UserService.Core.Interfaces.Repositories;
 
 namespace UserService.Core.Services
@@ -56,13 +53,7 @@ namespace UserService.Core.Services
                         claims.Add(new Claim(ClaimTypes.Role, role));
                     }
                 }
-
-
-                // Log all claims being added to the token
-                Log.Debug("All claims being added to token for user {UserId}: {Claims}", 
-                    user.Id,
-                    string.Join(" | ", claims.Select(c => $"{c.Type}: {c.Value}")));
-
+                
                 var secretKey = jwtConfigService.GetSecretKey();
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
                 var issuer = jwtConfigService.GetIssuer();
@@ -85,12 +76,6 @@ namespace UserService.Core.Services
                     .Where(c => c.Type == ClaimTypes.Role || c.Type == "role")
                     .ToList();
 
-                Log.Information("Token generated for user {UserId} with role claims: {TokenRoles}", 
-                    user.Id,
-                    tokenRoleClaims.Any()
-                        ? string.Join(", ", tokenRoleClaims.Select(rc => $"{rc.Type}: {rc.Value}"))
-                        : "No role claims found in token");
-
                 var personalAccessToken = new PersonalAccessToken
                 {
                     Token = tokenString,
@@ -102,8 +87,6 @@ namespace UserService.Core.Services
                 try
                 {
                     var savedToken = await tokenRepository.CreateAsync(personalAccessToken);
-                    Log.Information("Token created and saved for user {UserId} with JTI: {Jti}", 
-                        user.Id, jti);
                     return savedToken;
                 }
                 catch (Exception ex)
@@ -125,7 +108,6 @@ namespace UserService.Core.Services
                 var tokenParts = token.Split('.');
                 if (tokenParts.Length != 3)
                 {
-                    Log.Warning("Invalid token format: token does not have 3 parts");
                     return false;
                 }
 

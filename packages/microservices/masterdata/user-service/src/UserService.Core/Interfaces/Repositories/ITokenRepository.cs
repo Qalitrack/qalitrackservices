@@ -2,10 +2,7 @@ namespace UserService.Core.Interfaces.Repositories
 {
     public interface ITokenRepository: IRepository<PersonalAccessToken>
     {
-        Task<PersonalAccessToken?> GetTokenByUserIdAsync(Guid userId);
-        Task<PersonalAccessToken> CreateAsync(PersonalAccessToken token);
-       // Task<bool> RevokeTokenAsync(Guid userId);
-        Task<bool> DeleteTokenAsync(Guid userId);
+        new Task<PersonalAccessToken> CreateAsync(PersonalAccessToken token);
         
         /// <summary>
         /// Deletes all tokens for a specific user

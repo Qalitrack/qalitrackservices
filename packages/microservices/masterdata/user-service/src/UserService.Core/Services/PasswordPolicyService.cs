@@ -1,11 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
-using UserService.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 
@@ -60,7 +55,6 @@ namespace UserService.Core.Services
             var fallbackPolicy = _configuration.GetSection("PasswordPolicy").Get<PasswordPolicy>();
             if (fallbackPolicy == null)
             {
-                _logger.LogWarning("No password policy in configuration; using default");
                 fallbackPolicy = new PasswordPolicy
                 {
                     MinimumLength = 8,
@@ -85,7 +79,6 @@ namespace UserService.Core.Services
             {
                 await _policyRepository.UpdatePolicyAsync(policy);
                 await _cacheService.SetAsync(CacheKey, policy, TimeSpan.FromHours(1));
-                _logger.LogInformation("Password policy updated and cached");
             }
             catch (Exception ex)
             {

@@ -183,7 +183,6 @@ namespace UserService.Core.Services
             var user = await _userRepository.GetByIdAsync(userId, true);
             if (user == null)
             {
-                _logger.LogWarning("User {UserId} does not exist or is deleted", userId);
                 throw new Exception("User does not exist or is deleted");
             }
 
@@ -236,7 +235,6 @@ namespace UserService.Core.Services
             var user = await _userRepository.GetByIdAsync(userId, true);
             if (user == null)
             {
-                _logger.LogWarning("User {UserId} does not exist or is deleted", userId);
                 throw new Exception("User does not exist or is deleted");
             }
 

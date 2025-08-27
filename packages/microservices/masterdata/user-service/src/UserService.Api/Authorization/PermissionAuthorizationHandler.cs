@@ -1,8 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using System.Text.Json;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 
@@ -40,29 +37,14 @@ namespace UserService.Api.Authorization
                 {
                     // 2. Check authentication status
                     if (context.User?.Identity?.IsAuthenticated != true)
-                    {
-                        
-                        // 3. Check for token in Authorization header
-                        var authorizationToken = GetTokenFromRequest();  // Renamed token to authorizationToken
-                        if (authorizationToken != null)
-                        {
-                            LogTokenDetails(authorizationToken);  // Use authorizationToken here
-                        }
-                        else
-                        {
-                            _logger.LogWarning("No JWT token found in the request");
-                        }
-                        
+                    { 
                         context.Fail();
                         return;
                     }
 
-                    // 4. If we get here, user is authenticated
-                    _logger.LogInformation("User is authenticated");
-                    // 5. Validate permission requirement
+                  // 5. Validate permission requirement
                     if (requirement == null || string.IsNullOrWhiteSpace(requirement.Permission))
                     {
-                        _logger.LogWarning("Invalid permission requirement");
                         context.Fail();
                         return;
                     }
@@ -71,19 +53,15 @@ namespace UserService.Api.Authorization
                     var authorizationTokenForValidation = GetTokenFromRequest();  // Renamed to avoid conflict
                     if (authorizationTokenForValidation == null || !await _tokenService.ValidateTokenAsync(authorizationTokenForValidation))
                     {
-                        _logger.LogWarning("Token is either invalid or revoked.");
                         context.Fail();
                         return;
                     }
 
-                    _logger.LogInformation("Token validated successfully.");
 
-                    // 7. Check user permissions
                     await CheckUserPermission(context, requirement);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Unexpected error during permission check");
                     context.Fail();
                 }
                 finally
@@ -119,30 +97,6 @@ namespace UserService.Api.Authorization
             return null;
         }
 
-        // Log the details of the JWT token for debugging
-        private void LogTokenDetails(string token)
-        {
-            try
-            {
-                var handler = new JwtSecurityTokenHandler();
-                if (handler.CanReadToken(token))
-                {
-                    var jwtToken = handler.ReadJwtToken(token);
-            
-                    // Only log token expiration in development
-                    if (jwtToken.ValidTo < DateTime.UtcNow)
-                    {
-                        _logger.LogWarning("Token expired at {ExpirationTime}", jwtToken.ValidTo);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogDebug(ex, "Error processing JWT token");
-            }
-        }
-
-        // Check the user's permissions based on the provided requirement
         private async Task CheckUserPermission(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
             // Get roles from claims
@@ -153,7 +107,6 @@ namespace UserService.Api.Authorization
 
             if (!roles.Any())
             {
-                _logger.LogDebug("No roles found for user");
                 context.Fail();
                 return;
             }
@@ -174,12 +127,10 @@ namespace UserService.Api.Authorization
 
                 if (hasPermission)
                 {
-                    _logger.LogDebug("Permission {Permission} granted via role", requirement.Permission);
                     context.Succeed(requirement);
                 }
                 else
                 {
-                    _logger.LogDebug("No role grants permission {Permission}", requirement.Permission);
                     context.Fail();
                 }
             }

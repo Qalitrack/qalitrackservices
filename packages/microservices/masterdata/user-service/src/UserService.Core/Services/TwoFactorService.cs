@@ -27,7 +27,6 @@ public class TwoFactorService(
             
             if (generationCount >= 3)
             {
-                logger.LogWarning("Rate limit exceeded for 2FA code generation for user {UserId}", userId);
                 return new ServiceResult 
                 { 
                     Success = false, 
@@ -67,8 +66,6 @@ public class TwoFactorService(
                 </html>";
 
             await emailQueueService.EnqueueEmailAsync(email, emailSubject, emailBody);
-
-            logger.LogInformation("2FA code generated and email queued for user {UserId}", userId);
             
             return new ServiceResult 
             { 
@@ -106,7 +103,6 @@ public class TwoFactorService(
             var attemptCount = await GetAttemptCountAsync(userId);
             if (attemptCount >= MaxAttempts)
             {
-                logger.LogWarning("Account temporarily locked for user {UserId} due to too many 2FA attempts", userId);
                 return new ServiceResult 
                 { 
                     Success = false, 
@@ -137,10 +133,7 @@ public class TwoFactorService(
                     TimeSpan.FromMinutes(LockoutMinutes)
                 );
 
-                logger.LogWarning("Invalid 2FA code for user {UserId}. Attempt {AttemptCount}/{MaxAttempts}", 
-                    userId, attemptCount + 1, MaxAttempts);
-                    
-                return new ServiceResult 
+             return new ServiceResult 
                 { 
                     Success = false, 
                     Message = $"Invalid verification code. {MaxAttempts - attemptCount - 1} attempts remaining." 
@@ -156,8 +149,6 @@ public class TwoFactorService(
             };
             
             await Task.WhenAll(cleanupOperations);
-
-            logger.LogInformation("2FA verification successful for user {UserId}", userId);
             
             return new ServiceResult 
             { 
@@ -183,8 +174,6 @@ public class TwoFactorService(
         
         // Store session with 10-minute expiration
         await cacheService.SetAsync(sessionKey, userId, TimeSpan.FromMinutes(10));
-        
-        logger.LogInformation("2FA session created for user {UserId} with session {SessionId}", userId, sessionId);
         
         return sessionId;
     }

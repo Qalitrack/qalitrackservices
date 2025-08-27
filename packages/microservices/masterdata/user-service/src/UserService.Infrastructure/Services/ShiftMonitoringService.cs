@@ -29,8 +29,6 @@ namespace UserService.Infrastructure.Services
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            _logger.LogInformation("Monitoring strict shifts for logouts.");
-
             try
             {
                 // Create a new scope for this operation
@@ -56,8 +54,6 @@ namespace UserService.Infrastructure.Services
         var activeShifts = await shiftService.GetAllAsync();
 
         var currentTime = DateTime.UtcNow.TimeOfDay;
-        _logger.LogDebug("Current time: {CurrentTime}", currentTime);
-
         // Filter for shifts in strict mode and whose end time has passed
         var strictShifts = activeShifts
             .Where(s => s.Mode == ShiftMode.Strict)
@@ -80,13 +76,9 @@ namespace UserService.Infrastructure.Services
             })
             .ToList();
 
-        _logger.LogInformation("Found {Count} strict shifts that have ended", strictShifts.Count());
 
         foreach (ShiftDto shift in strictShifts)
         {
-            _logger.LogInformation("Processing ended strict shift: {ShiftName} (End: {EndTime})", 
-                shift.Name, shift.EndTime.TimeOfDay);
-
             // Create a new scope for logging out users
             using var logoutScope = _serviceScopeFactory.CreateScope();
             var userShiftRepository = logoutScope.ServiceProvider.GetRequiredService<IUserShiftRepository>();
@@ -112,15 +104,6 @@ namespace UserService.Infrastructure.Services
 
             // Revoke the user's token (ensure the token service works with user id)
             var success = await tokenService.RevokeTokenAsync(userId);
-
-            if (success)
-            {
-                logger.LogInformation("Successfully logged out user {UserId} from shift {ShiftName}", userId, shift.Name);
-            }
-            else
-            {
-                logger.LogWarning("Failed to log out user {UserId} from shift {ShiftName}", userId, shift.Name);
-            }
         }
     }
 }
