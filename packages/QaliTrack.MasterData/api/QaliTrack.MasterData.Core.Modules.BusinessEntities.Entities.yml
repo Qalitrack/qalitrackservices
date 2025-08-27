@@ -1,0 +1,292 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  id: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityContact
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityDocument
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityLocation
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityStatus
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityType
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractStatus
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractType
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerContract
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerOrder
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerProfile
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerStatus
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.DocumentCategory
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.OrderStatus
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierStatus
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterContract
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterInsurance
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterPerformance
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterProfile
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterType
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity.html
+  name: BusinessEntity
+  nameWithType: BusinessEntity
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerProfile
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerProfile
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerProfile.html
+  name: CustomerProfile
+  nameWithType: CustomerProfile
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerProfile
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html
+  name: SupplierProfile
+  nameWithType: SupplierProfile
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterProfile
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterProfile
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterProfile.html
+  name: TransporterProfile
+  nameWithType: TransporterProfile
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterProfile
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityContact
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityContact
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityContact.html
+  name: BusinessEntityContact
+  nameWithType: BusinessEntityContact
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityContact
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityLocation
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityLocation
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityLocation.html
+  name: BusinessEntityLocation
+  nameWithType: BusinessEntityLocation
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityLocation
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityDocument
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityDocument
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityDocument.html
+  name: BusinessEntityDocument
+  nameWithType: BusinessEntityDocument
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityDocument
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerContract
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerContract
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerContract.html
+  name: CustomerContract
+  nameWithType: CustomerContract
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerContract
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerOrder
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerOrder
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerOrder.html
+  name: CustomerOrder
+  nameWithType: CustomerOrder
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerOrder
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract.html
+  name: SupplierContract
+  nameWithType: SupplierContract
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance.html
+  name: SupplierPerformance
+  nameWithType: SupplierPerformance
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterContract
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterContract
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterContract.html
+  name: TransporterContract
+  nameWithType: TransporterContract
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterContract
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterPerformance
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterPerformance
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterPerformance.html
+  name: TransporterPerformance
+  nameWithType: TransporterPerformance
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterPerformance
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterInsurance
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterInsurance
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterInsurance.html
+  name: TransporterInsurance
+  nameWithType: TransporterInsurance
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterInsurance
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityType.html
+  name: BusinessEntityType
+  nameWithType: BusinessEntityType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityStatus.html
+  name: BusinessEntityStatus
+  nameWithType: BusinessEntityStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntityStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.html
+  name: ContactMethod
+  nameWithType: ContactMethod
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerStatus.html
+  name: CustomerStatus
+  nameWithType: CustomerStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.html
+  name: SupplierType
+  nameWithType: SupplierType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierStatus.html
+  name: SupplierStatus
+  nameWithType: SupplierStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterType.html
+  name: TransporterType
+  nameWithType: TransporterType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.html
+  name: TransporterStatus
+  nameWithType: TransporterStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.html
+  name: ContactType
+  nameWithType: ContactType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.html
+  name: BusinessLocationTypes
+  nameWithType: BusinessLocationTypes
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.DocumentCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.DocumentCategory
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.DocumentCategory.html
+  name: DocumentCategory
+  nameWithType: DocumentCategory
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractStatus.html
+  name: ContractStatus
+  nameWithType: ContractStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractType.html
+  name: ContractType
+  nameWithType: ContractType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContractType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.OrderStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.OrderStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.OrderStatus.html
+  name: OrderStatus
+  nameWithType: OrderStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.OrderStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.html
+  name: InsuranceStatus
+  nameWithType: InsuranceStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html

@@ -1,0 +1,520 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+  id: ReportExecutionRequestDto
+  parent: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.#ctor(System.String,System.String)
+  - QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy
+  - QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters
+  langs:
+  - csharp
+  - vb
+  name: ReportExecutionRequestDto
+  nameWithType: ReportExecutionRequestDto
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ReportExecutionRequestDto
+    path: src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+    startLine: 251
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  syntax:
+    content: 'public record ReportExecutionRequestDto : IEquatable<ReportExecutionRequestDto>'
+    content.vb: Public Class ReportExecutionRequestDto Implements IEquatable(Of ReportExecutionRequestDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.#ctor(System.String,System.String)
+  commentId: M:QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.#ctor(System.String,System.String)
+  id: '#ctor(System.String,System.String)'
+  parent: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+  langs:
+  - csharp
+  - vb
+  name: ReportExecutionRequestDto(string?, string?)
+  nameWithType: ReportExecutionRequestDto.ReportExecutionRequestDto(string?, string?)
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ReportExecutionRequestDto(string?, string?)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+    startLine: 251
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  syntax:
+    content: public ReportExecutionRequestDto(string? Parameters = null, string? ExecutedBy = null)
+    parameters:
+    - id: Parameters
+      type: System.String
+    - id: ExecutedBy
+      type: System.String
+    content.vb: Public Sub New(Parameters As String = Nothing, ExecutedBy As String = Nothing)
+  overload: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.#ctor*
+  nameWithType.vb: ReportExecutionRequestDto.New(String, String)
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.New(String, String)
+  name.vb: New(String, String)
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters
+  commentId: P:QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters
+  id: Parameters
+  parent: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+  langs:
+  - csharp
+  - vb
+  name: Parameters
+  nameWithType: ReportExecutionRequestDto.Parameters
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Parameters
+    path: src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+    startLine: 252
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  syntax:
+    content: public string? Parameters { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Parameters As String
+  overload: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters*
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy
+  commentId: P:QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy
+  id: ExecutedBy
+  parent: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+  langs:
+  - csharp
+  - vb
+  name: ExecutedBy
+  nameWithType: ReportExecutionRequestDto.ExecutedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ExecutedBy
+    path: src/QaliTrack.MasterData.Core/Modules/Report/DTOs/ReportDTOs.cs
+    startLine: 253
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  syntax:
+    content: public string? ExecutedBy { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ExecutedBy As String
+  overload: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Report.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Report
+    name: Report
+    href: QaliTrack.MasterData.Core.Modules.Report.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Report.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Report.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Report
+    name: Report
+    href: QaliTrack.MasterData.Core.Modules.Report.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Report.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Report.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<ReportExecutionRequestDto>
+  nameWithType: IEquatable<ReportExecutionRequestDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto>
+  nameWithType.vb: IEquatable(Of ReportExecutionRequestDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto)
+  name.vb: IEquatable(Of ReportExecutionRequestDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+    name: ReportExecutionRequestDto
+    href: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto
+    name: ReportExecutionRequestDto
+    href: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.#ctor
+  href: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.html#QaliTrack_MasterData_Core_Modules_Report_DTOs_ReportExecutionRequestDto__ctor_System_String_System_String_
+  name: ReportExecutionRequestDto
+  nameWithType: ReportExecutionRequestDto.ReportExecutionRequestDto
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ReportExecutionRequestDto
+  nameWithType.vb: ReportExecutionRequestDto.New
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.New
+  name.vb: New
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters
+  href: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.html#QaliTrack_MasterData_Core_Modules_Report_DTOs_ReportExecutionRequestDto_Parameters
+  name: Parameters
+  nameWithType: ReportExecutionRequestDto.Parameters
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.Parameters
+- uid: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy
+  href: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.html#QaliTrack_MasterData_Core_Modules_Report_DTOs_ReportExecutionRequestDto_ExecutedBy
+  name: ExecutedBy
+  nameWithType: ReportExecutionRequestDto.ExecutedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto.ExecutedBy

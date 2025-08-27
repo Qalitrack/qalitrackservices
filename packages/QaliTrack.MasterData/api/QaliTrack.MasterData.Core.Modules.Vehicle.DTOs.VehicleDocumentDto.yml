@@ -1,0 +1,973 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  id: VehicleDocumentDto
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId
+  langs:
+  - csharp
+  - vb
+  name: VehicleDocumentDto
+  nameWithType: VehicleDocumentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleDocumentDto
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 543
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public class VehicleDocumentDto
+    content.vb: Public Class VehicleDocumentDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id
+  id: Id
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: VehicleDocumentDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Id
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 545
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public Guid Id { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property Id As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId
+  id: VehicleId
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: VehicleId
+  nameWithType: VehicleDocumentDto.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleId
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 546
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public Guid VehicleId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property VehicleId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName
+  id: FileName
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: FileName
+  nameWithType: VehicleDocumentDto.FileName
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FileName
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 547
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string FileName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FileName As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName
+  id: OriginalFileName
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: OriginalFileName
+  nameWithType: VehicleDocumentDto.OriginalFileName
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: OriginalFileName
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 548
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string OriginalFileName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property OriginalFileName As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType
+  id: ContentType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: ContentType
+  nameWithType: VehicleDocumentDto.ContentType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ContentType
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 549
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string ContentType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ContentType As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath
+  id: FilePath
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: FilePath
+  nameWithType: VehicleDocumentDto.FilePath
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FilePath
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 550
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string FilePath { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FilePath As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl
+  id: FileUrl
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: FileUrl
+  nameWithType: VehicleDocumentDto.FileUrl
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FileUrl
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 551
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string? FileUrl { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FileUrl As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize
+  id: FileSize
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: FileSize
+  nameWithType: VehicleDocumentDto.FileSize
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FileSize
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 552
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public long FileSize { get; set; }
+    parameters: []
+    return:
+      type: System.Int64
+    content.vb: Public Property FileSize As Long
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category
+  id: Category
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: Category
+  nameWithType: VehicleDocumentDto.Category
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Category
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 553
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string Category { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Category As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description
+  id: Description
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: Description
+  nameWithType: VehicleDocumentDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Description
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 554
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string? Description { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Description As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate
+  id: ExpiryDate
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: ExpiryDate
+  nameWithType: VehicleDocumentDto.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ExpiryDate
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 555
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public DateTime? ExpiryDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property ExpiryDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive
+  id: IsActive
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: VehicleDocumentDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsActive
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 556
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public bool IsActive { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsActive As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy
+  id: UploadedBy
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: UploadedBy
+  nameWithType: VehicleDocumentDto.UploadedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UploadedBy
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 557
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string UploadedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UploadedBy As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt
+  id: UploadedAt
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: UploadedAt
+  nameWithType: VehicleDocumentDto.UploadedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UploadedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 558
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public DateTime UploadedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property UploadedAt As Date
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired
+  id: IsExpired
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto
+  langs:
+  - csharp
+  - vb
+  name: IsExpired
+  nameWithType: VehicleDocumentDto.IsExpired
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsExpired
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 559
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public bool IsExpired { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsExpired As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_Id
+  name: Id
+  nameWithType: VehicleDocumentDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Id
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_VehicleId
+  name: VehicleId
+  nameWithType: VehicleDocumentDto.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.VehicleId
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_FileName
+  name: FileName
+  nameWithType: VehicleDocumentDto.FileName
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileName
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_OriginalFileName
+  name: OriginalFileName
+  nameWithType: VehicleDocumentDto.OriginalFileName
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.OriginalFileName
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_ContentType
+  name: ContentType
+  nameWithType: VehicleDocumentDto.ContentType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ContentType
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_FilePath
+  name: FilePath
+  nameWithType: VehicleDocumentDto.FilePath
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FilePath
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_FileUrl
+  name: FileUrl
+  nameWithType: VehicleDocumentDto.FileUrl
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileUrl
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_FileSize
+  name: FileSize
+  nameWithType: VehicleDocumentDto.FileSize
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.FileSize
+- uid: System.Int64
+  commentId: T:System.Int64
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int64
+  name: long
+  nameWithType: long
+  fullName: long
+  nameWithType.vb: Long
+  fullName.vb: Long
+  name.vb: Long
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_Category
+  name: Category
+  nameWithType: VehicleDocumentDto.Category
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Category
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_Description
+  name: Description
+  nameWithType: VehicleDocumentDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.Description
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_ExpiryDate
+  name: ExpiryDate
+  nameWithType: VehicleDocumentDto.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.ExpiryDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_IsActive
+  name: IsActive
+  nameWithType: VehicleDocumentDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsActive
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_UploadedBy
+  name: UploadedBy
+  nameWithType: VehicleDocumentDto.UploadedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedBy
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_UploadedAt
+  name: UploadedAt
+  nameWithType: VehicleDocumentDto.UploadedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.UploadedAt
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleDocumentDto_IsExpired
+  name: IsExpired
+  nameWithType: VehicleDocumentDto.IsExpired
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDocumentDto.IsExpired

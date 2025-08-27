@@ -1,0 +1,928 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  id: CreateRouteWeighbridgeAssociationDto
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.#ctor(System.Guid,System.Guid,System.Int32,System.String,System.Boolean,System.String,System.Nullable{System.Int32},System.Nullable{System.Decimal},System.String,System.String)
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+  langs:
+  - csharp
+  - vb
+  name: CreateRouteWeighbridgeAssociationDto
+  nameWithType: CreateRouteWeighbridgeAssociationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreateRouteWeighbridgeAssociationDto
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 331
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: 'public record CreateRouteWeighbridgeAssociationDto : IEquatable<CreateRouteWeighbridgeAssociationDto>'
+    content.vb: Public Class CreateRouteWeighbridgeAssociationDto Implements IEquatable(Of CreateRouteWeighbridgeAssociationDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.#ctor(System.Guid,System.Guid,System.Int32,System.String,System.Boolean,System.String,System.Nullable{System.Int32},System.Nullable{System.Decimal},System.String,System.String)
+  commentId: M:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.#ctor(System.Guid,System.Guid,System.Int32,System.String,System.Boolean,System.String,System.Nullable{System.Int32},System.Nullable{System.Decimal},System.String,System.String)
+  id: '#ctor(System.Guid,System.Guid,System.Int32,System.String,System.Boolean,System.String,System.Nullable{System.Int32},System.Nullable{System.Decimal},System.String,System.String)'
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: CreateRouteWeighbridgeAssociationDto(Guid, Guid, int, string, bool, string?, int?, decimal?, string?, string?)
+  nameWithType: CreateRouteWeighbridgeAssociationDto.CreateRouteWeighbridgeAssociationDto(Guid, Guid, int, string, bool, string?, int?, decimal?, string?, string?)
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.CreateRouteWeighbridgeAssociationDto(System.Guid, System.Guid, int, string, bool, string?, int?, decimal?, string?, string?)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 331
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public CreateRouteWeighbridgeAssociationDto(Guid RouteId, Guid WeighbridgeId, int SequenceOrder, string AssociationType = "Intermediate", bool IsMandatory = true, string? Instructions = null, int? EstimatedDurationMinutes = null, decimal? Distance = null, string? Conditions = null, string? Notes = null)
+    parameters:
+    - id: RouteId
+      type: System.Guid
+    - id: WeighbridgeId
+      type: System.Guid
+    - id: SequenceOrder
+      type: System.Int32
+    - id: AssociationType
+      type: System.String
+    - id: IsMandatory
+      type: System.Boolean
+    - id: Instructions
+      type: System.String
+    - id: EstimatedDurationMinutes
+      type: System.Nullable{System.Int32}
+    - id: Distance
+      type: System.Nullable{System.Decimal}
+    - id: Conditions
+      type: System.String
+    - id: Notes
+      type: System.String
+    content.vb: Public Sub New(RouteId As Guid, WeighbridgeId As Guid, SequenceOrder As Integer, AssociationType As String = "Intermediate", IsMandatory As Boolean = True, Instructions As String = Nothing, EstimatedDurationMinutes As Integer? = Nothing, Distance As Decimal? = Nothing, Conditions As String = Nothing, Notes As String = Nothing)
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.#ctor*
+  nameWithType.vb: CreateRouteWeighbridgeAssociationDto.New(Guid, Guid, Integer, String, Boolean, String, Integer?, Decimal?, String, String)
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.New(System.Guid, System.Guid, Integer, String, Boolean, String, Integer?, Decimal?, String, String)
+  name.vb: New(Guid, Guid, Integer, String, Boolean, String, Integer?, Decimal?, String, String)
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId
+  id: RouteId
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: RouteId
+  nameWithType: CreateRouteWeighbridgeAssociationDto.RouteId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RouteId
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 332
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public Guid RouteId { get; init; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property RouteId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+  id: WeighbridgeId
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: WeighbridgeId
+  nameWithType: CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WeighbridgeId
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 333
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public Guid WeighbridgeId { get; init; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property WeighbridgeId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder
+  id: SequenceOrder
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: SequenceOrder
+  nameWithType: CreateRouteWeighbridgeAssociationDto.SequenceOrder
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SequenceOrder
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 334
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public int SequenceOrder { get; init; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property SequenceOrder As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType
+  id: AssociationType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: AssociationType
+  nameWithType: CreateRouteWeighbridgeAssociationDto.AssociationType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AssociationType
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 335
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string AssociationType { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property AssociationType As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory
+  id: IsMandatory
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: IsMandatory
+  nameWithType: CreateRouteWeighbridgeAssociationDto.IsMandatory
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsMandatory
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 336
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public bool IsMandatory { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsMandatory As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions
+  id: Instructions
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: Instructions
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Instructions
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Instructions
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 337
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Instructions { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Instructions As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+  id: EstimatedDurationMinutes
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: EstimatedDurationMinutes
+  nameWithType: CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EstimatedDurationMinutes
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 338
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public int? EstimatedDurationMinutes { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Int32}
+    content.vb: Public Property EstimatedDurationMinutes As Integer?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance
+  id: Distance
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: Distance
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Distance
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Distance
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 339
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public decimal? Distance { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property Distance As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions
+  id: Conditions
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: Conditions
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Conditions
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Conditions
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 340
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Conditions { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Conditions As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 341
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<CreateRouteWeighbridgeAssociationDto>
+  nameWithType: IEquatable<CreateRouteWeighbridgeAssociationDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto>
+  nameWithType.vb: IEquatable(Of CreateRouteWeighbridgeAssociationDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto)
+  name.vb: IEquatable(Of CreateRouteWeighbridgeAssociationDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+    name: CreateRouteWeighbridgeAssociationDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto
+    name: CreateRouteWeighbridgeAssociationDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.#ctor
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto__ctor_System_Guid_System_Guid_System_Int32_System_String_System_Boolean_System_String_System_Nullable_System_Int32__System_Nullable_System_Decimal__System_String_System_String_
+  name: CreateRouteWeighbridgeAssociationDto
+  nameWithType: CreateRouteWeighbridgeAssociationDto.CreateRouteWeighbridgeAssociationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.CreateRouteWeighbridgeAssociationDto
+  nameWithType.vb: CreateRouteWeighbridgeAssociationDto.New
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.New
+  name.vb: New
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.Nullable{System.Int32}
+  commentId: T:System.Nullable{System.Int32}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int?
+  nameWithType: int?
+  fullName: int?
+  nameWithType.vb: Integer?
+  fullName.vb: Integer?
+  name.vb: Integer?
+  spec.csharp:
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+  spec.vb:
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_RouteId
+  name: RouteId
+  nameWithType: CreateRouteWeighbridgeAssociationDto.RouteId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.RouteId
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_WeighbridgeId
+  name: WeighbridgeId
+  nameWithType: CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.WeighbridgeId
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_SequenceOrder
+  name: SequenceOrder
+  nameWithType: CreateRouteWeighbridgeAssociationDto.SequenceOrder
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.SequenceOrder
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_AssociationType
+  name: AssociationType
+  nameWithType: CreateRouteWeighbridgeAssociationDto.AssociationType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.AssociationType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_IsMandatory
+  name: IsMandatory
+  nameWithType: CreateRouteWeighbridgeAssociationDto.IsMandatory
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.IsMandatory
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_Instructions
+  name: Instructions
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Instructions
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Instructions
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_EstimatedDurationMinutes
+  name: EstimatedDurationMinutes
+  nameWithType: CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.EstimatedDurationMinutes
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_Distance
+  name: Distance
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Distance
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Distance
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_Conditions
+  name: Conditions
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Conditions
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Conditions
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_CreateRouteWeighbridgeAssociationDto_Notes
+  name: Notes
+  nameWithType: CreateRouteWeighbridgeAssociationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto.Notes

@@ -1,0 +1,193 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.Entities
+  id: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DocumentCategory
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverDocument
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverMedical
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverPerformance
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverProfile
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverStatus
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverTraining
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverViolation
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.MedicalStatus
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingStatus
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingType
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.ViolationStatus
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver.html
+  name: Driver
+  nameWithType: Driver
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html
+  name: DriverLicense
+  nameWithType: DriverLicense
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverProfile
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverProfile
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverProfile.html
+  name: DriverProfile
+  nameWithType: DriverProfile
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverProfile
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverDocument
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverDocument
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverDocument.html
+  name: DriverDocument
+  nameWithType: DriverDocument
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverDocument
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverTraining
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverTraining
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverTraining.html
+  name: DriverTraining
+  nameWithType: DriverTraining
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverTraining
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverMedical
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverMedical
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverMedical.html
+  name: DriverMedical
+  nameWithType: DriverMedical
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverMedical
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverViolation
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverViolation
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverViolation.html
+  name: DriverViolation
+  nameWithType: DriverViolation
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverViolation
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverPerformance
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverPerformance
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverPerformance.html
+  name: DriverPerformance
+  nameWithType: DriverPerformance
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverPerformance
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverStatus.html
+  name: DriverStatus
+  nameWithType: DriverStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.html
+  name: EmploymentType
+  nameWithType: EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.html
+  name: LicenseStatus
+  nameWithType: LicenseStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DocumentCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DocumentCategory
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DocumentCategory.html
+  name: DocumentCategory
+  nameWithType: DocumentCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingType
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingType.html
+  name: TrainingType
+  nameWithType: TrainingType
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingType
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingStatus.html
+  name: TrainingStatus
+  nameWithType: TrainingStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.TrainingStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.MedicalStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.MedicalStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.MedicalStatus.html
+  name: MedicalStatus
+  nameWithType: MedicalStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.MedicalStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.ViolationStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.ViolationStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.ViolationStatus.html
+  name: ViolationStatus
+  nameWithType: ViolationStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.ViolationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html

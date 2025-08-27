@@ -1,0 +1,162 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.DTOs
+  id: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDocumentDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductSpecificationDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductDocumentDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDocumentDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSpecificationDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSummaryDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDocumentDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDto
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDto.html
+  name: CreateProductDto
+  nameWithType: CreateProductDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDto.html
+  name: UpdateProductDto
+  nameWithType: UpdateProductDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSummaryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSummaryDto
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSummaryDto.html
+  name: ProductSummaryDto
+  nameWithType: ProductSummaryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSummaryDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html
+  name: ProductDetailDto
+  nameWithType: ProductDetailDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductSpecificationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductSpecificationDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductSpecificationDto.html
+  name: CreateProductSpecificationDto
+  nameWithType: CreateProductSpecificationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductSpecificationDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductSpecificationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductSpecificationDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductSpecificationDto.html
+  name: UpdateProductSpecificationDto
+  nameWithType: UpdateProductSpecificationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductSpecificationDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html
+  name: PatchProductSpecificationDto
+  nameWithType: PatchProductSpecificationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSpecificationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSpecificationDto
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSpecificationDto.html
+  name: ProductSpecificationDto
+  nameWithType: ProductSpecificationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductSpecificationDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDocumentDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDocumentDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDocumentDto.html
+  name: CreateProductDocumentDto
+  nameWithType: CreateProductDocumentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDocumentDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDocumentDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDocumentDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDocumentDto.html
+  name: UpdateProductDocumentDto
+  nameWithType: UpdateProductDocumentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDocumentDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductDocumentDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductDocumentDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductDocumentDto.html
+  name: PatchProductDocumentDto
+  nameWithType: PatchProductDocumentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductDocumentDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDocumentDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDocumentDto
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDocumentDto.html
+  name: ProductDocumentDto
+  nameWithType: ProductDocumentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDocumentDto
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.html

@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  id: TransactionType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Calibration
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Demo
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Inspection
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Test
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Weighing
+  langs:
+  - csharp
+  - vb
+  name: TransactionType
+  nameWithType: TransactionType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TransactionType
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 175
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public enum TransactionType
+    content.vb: Public Enum TransactionType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Weighing
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Weighing
+  id: Weighing
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  langs:
+  - csharp
+  - vb
+  name: Weighing
+  nameWithType: TransactionType.Weighing
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Weighing
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Weighing
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 177
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Weighing = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Calibration
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Calibration
+  id: Calibration
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  langs:
+  - csharp
+  - vb
+  name: Calibration
+  nameWithType: TransactionType.Calibration
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Calibration
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Calibration
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 178
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Calibration = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Test
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Test
+  id: Test
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  langs:
+  - csharp
+  - vb
+  name: Test
+  nameWithType: TransactionType.Test
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Test
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Test
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 179
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Test = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Inspection
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Inspection
+  id: Inspection
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  langs:
+  - csharp
+  - vb
+  name: Inspection
+  nameWithType: TransactionType.Inspection
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Inspection
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Inspection
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 180
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Inspection = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Demo
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Demo
+  id: Demo
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  langs:
+  - csharp
+  - vb
+  name: Demo
+  nameWithType: TransactionType.Demo
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.Demo
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Demo
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 181
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Demo = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.html
+  name: TransactionType
+  nameWithType: TransactionType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType

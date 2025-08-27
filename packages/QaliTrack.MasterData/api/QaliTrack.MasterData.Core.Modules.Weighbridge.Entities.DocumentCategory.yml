@@ -1,0 +1,306 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  id: DocumentCategory
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Calibration
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Certificate
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.General
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Legal
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Maintenance
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Manual
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Safety
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Warranty
+  langs:
+  - csharp
+  - vb
+  name: DocumentCategory
+  nameWithType: DocumentCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DocumentCategory
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 193
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public enum DocumentCategory
+    content.vb: Public Enum DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.General
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.General
+  id: General
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: General
+  nameWithType: DocumentCategory.General
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.General
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: General
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 195
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: General = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Manual
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Manual
+  id: Manual
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: Manual
+  nameWithType: DocumentCategory.Manual
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Manual
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Manual
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 196
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Manual = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Certificate
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Certificate
+  id: Certificate
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: Certificate
+  nameWithType: DocumentCategory.Certificate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Certificate
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Certificate
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 197
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Certificate = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Calibration
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Calibration
+  id: Calibration
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: Calibration
+  nameWithType: DocumentCategory.Calibration
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Calibration
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Calibration
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 198
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Calibration = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Maintenance
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Maintenance
+  id: Maintenance
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: Maintenance
+  nameWithType: DocumentCategory.Maintenance
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Maintenance
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Maintenance
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 199
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Maintenance = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Warranty
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Warranty
+  id: Warranty
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: Warranty
+  nameWithType: DocumentCategory.Warranty
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Warranty
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Warranty
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 200
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Warranty = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Legal
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Legal
+  id: Legal
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: Legal
+  nameWithType: DocumentCategory.Legal
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Legal
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Legal
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 201
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Legal = 6
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Safety
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Safety
+  id: Safety
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  langs:
+  - csharp
+  - vb
+  name: Safety
+  nameWithType: DocumentCategory.Safety
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.Safety
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Safety
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 202
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Safety = 7
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.html
+  name: DocumentCategory
+  nameWithType: DocumentCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory

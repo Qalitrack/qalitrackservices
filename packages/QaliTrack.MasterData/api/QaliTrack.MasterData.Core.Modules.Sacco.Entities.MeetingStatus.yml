@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  id: MeetingStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Cancelled
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Completed
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.InProgress
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Postponed
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Scheduled
+  langs:
+  - csharp
+  - vb
+  name: MeetingStatus
+  nameWithType: MeetingStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MeetingStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 304
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public enum MeetingStatus
+    content.vb: Public Enum MeetingStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Scheduled
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Scheduled
+  id: Scheduled
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  langs:
+  - csharp
+  - vb
+  name: Scheduled
+  nameWithType: MeetingStatus.Scheduled
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Scheduled
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Scheduled
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 306
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Scheduled = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.InProgress
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.InProgress
+  id: InProgress
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  langs:
+  - csharp
+  - vb
+  name: InProgress
+  nameWithType: MeetingStatus.InProgress
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.InProgress
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: InProgress
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 307
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: InProgress = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Completed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Completed
+  id: Completed
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  langs:
+  - csharp
+  - vb
+  name: Completed
+  nameWithType: MeetingStatus.Completed
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Completed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Completed
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 308
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Completed = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Cancelled
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Cancelled
+  id: Cancelled
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  langs:
+  - csharp
+  - vb
+  name: Cancelled
+  nameWithType: MeetingStatus.Cancelled
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Cancelled
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Cancelled
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 309
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Cancelled = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Postponed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Postponed
+  id: Postponed
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  langs:
+  - csharp
+  - vb
+  name: Postponed
+  nameWithType: MeetingStatus.Postponed
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.Postponed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Postponed
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 310
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Postponed = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus.html
+  name: MeetingStatus
+  nameWithType: MeetingStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MeetingStatus

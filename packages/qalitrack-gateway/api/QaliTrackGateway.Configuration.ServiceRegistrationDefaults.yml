@@ -1,0 +1,584 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  commentId: T:QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  id: ServiceRegistrationDefaults
+  parent: QaliTrackGateway.Configuration
+  children:
+  - QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+  - QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort
+  - QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol
+  - QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags
+  - QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment
+  - QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath
+  langs:
+  - csharp
+  - vb
+  name: ServiceRegistrationDefaults
+  nameWithType: ServiceRegistrationDefaults
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  type: Class
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceRegistrationDefaults
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 113
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default settings for service registration
+  example: []
+  syntax:
+    content: public class ServiceRegistrationDefaults
+    content.vb: Public Class ServiceRegistrationDefaults
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment
+  commentId: P:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment
+  id: Environment
+  parent: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  langs:
+  - csharp
+  - vb
+  name: Environment
+  nameWithType: ServiceRegistrationDefaults.Environment
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Environment
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 118
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default environment
+  example: []
+  syntax:
+    content: public string Environment { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Environment As String
+  overload: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment*
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath
+  commentId: P:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath
+  id: HealthCheckPath
+  parent: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  langs:
+  - csharp
+  - vb
+  name: HealthCheckPath
+  nameWithType: ServiceRegistrationDefaults.HealthCheckPath
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HealthCheckPath
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 123
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default health check path
+  example: []
+  syntax:
+    content: public string HealthCheckPath { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property HealthCheckPath As String
+  overload: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath*
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort
+  commentId: P:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort
+  id: DefaultPort
+  parent: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  langs:
+  - csharp
+  - vb
+  name: DefaultPort
+  nameWithType: ServiceRegistrationDefaults.DefaultPort
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DefaultPort
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 128
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default service port
+  example: []
+  syntax:
+    content: public int DefaultPort { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property DefaultPort As Integer
+  overload: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort*
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol
+  commentId: P:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol
+  id: DefaultProtocol
+  parent: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  langs:
+  - csharp
+  - vb
+  name: DefaultProtocol
+  nameWithType: ServiceRegistrationDefaults.DefaultProtocol
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DefaultProtocol
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 133
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default service protocol
+  example: []
+  syntax:
+    content: public string DefaultProtocol { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property DefaultProtocol As String
+  overload: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol*
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags
+  commentId: P:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags
+  id: DefaultTags
+  parent: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  langs:
+  - csharp
+  - vb
+  name: DefaultTags
+  nameWithType: ServiceRegistrationDefaults.DefaultTags
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DefaultTags
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 138
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default tags to apply to all services
+  example: []
+  syntax:
+    content: public string[] DefaultTags { get; set; }
+    parameters: []
+    return:
+      type: System.String[]
+    content.vb: Public Property DefaultTags As String()
+  overload: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags*
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+  commentId: P:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+  id: AutoRegisterDiscoveredServices
+  parent: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  langs:
+  - csharp
+  - vb
+  name: AutoRegisterDiscoveredServices
+  nameWithType: ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AutoRegisterDiscoveredServices
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 143
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Auto-register services found during discovery
+  example: []
+  syntax:
+    content: public bool AutoRegisterDiscoveredServices { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property AutoRegisterDiscoveredServices As Boolean
+  overload: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices*
+references:
+- uid: QaliTrackGateway.Configuration
+  commentId: N:QaliTrackGateway.Configuration
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Configuration
+  nameWithType: QaliTrackGateway.Configuration
+  fullName: QaliTrackGateway.Configuration
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Configuration
+    name: Configuration
+    href: QaliTrackGateway.Configuration.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Configuration
+    name: Configuration
+    href: QaliTrackGateway.Configuration.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment*
+  commentId: Overload:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment
+  href: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.html#QaliTrackGateway_Configuration_ServiceRegistrationDefaults_Environment
+  name: Environment
+  nameWithType: ServiceRegistrationDefaults.Environment
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.Environment
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath*
+  commentId: Overload:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath
+  href: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.html#QaliTrackGateway_Configuration_ServiceRegistrationDefaults_HealthCheckPath
+  name: HealthCheckPath
+  nameWithType: ServiceRegistrationDefaults.HealthCheckPath
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.HealthCheckPath
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort*
+  commentId: Overload:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort
+  href: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.html#QaliTrackGateway_Configuration_ServiceRegistrationDefaults_DefaultPort
+  name: DefaultPort
+  nameWithType: ServiceRegistrationDefaults.DefaultPort
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultPort
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol*
+  commentId: Overload:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol
+  href: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.html#QaliTrackGateway_Configuration_ServiceRegistrationDefaults_DefaultProtocol
+  name: DefaultProtocol
+  nameWithType: ServiceRegistrationDefaults.DefaultProtocol
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultProtocol
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags*
+  commentId: Overload:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags
+  href: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.html#QaliTrackGateway_Configuration_ServiceRegistrationDefaults_DefaultTags
+  name: DefaultTags
+  nameWithType: ServiceRegistrationDefaults.DefaultTags
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.DefaultTags
+- uid: System.String[]
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string[]
+  nameWithType: string[]
+  fullName: string[]
+  nameWithType.vb: String()
+  fullName.vb: String()
+  name.vb: String()
+  spec.csharp:
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: (
+  - name: )
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices*
+  commentId: Overload:QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+  href: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.html#QaliTrackGateway_Configuration_ServiceRegistrationDefaults_AutoRegisterDiscoveredServices
+  name: AutoRegisterDiscoveredServices
+  nameWithType: ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.AutoRegisterDiscoveredServices
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean

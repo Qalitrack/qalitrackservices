@@ -1,0 +1,721 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent
+  commentId: T:QaliTrackGateway.Models.HealthCheckAuditEvent
+  id: HealthCheckAuditEvent
+  parent: QaliTrackGateway.Models
+  children:
+  - QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices
+  - QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount
+  - QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices
+  - QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore
+  - QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices
+  - QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices
+  langs:
+  - csharp
+  - vb
+  name: HealthCheckAuditEvent
+  nameWithType: HealthCheckAuditEvent
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent
+  type: Class
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/AuditEvent.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HealthCheckAuditEvent
+    path: src/Models/AuditEvent.cs
+    startLine: 45
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  summary: Health check audit event
+  example: []
+  syntax:
+    content: 'public class HealthCheckAuditEvent : AuditEvent'
+    content.vb: Public Class HealthCheckAuditEvent Inherits AuditEvent
+  inheritance:
+  - System.Object
+  - QaliTrackGateway.Models.AuditEvent
+  inheritedMembers:
+  - QaliTrackGateway.Models.AuditEvent.EventId
+  - QaliTrackGateway.Models.AuditEvent.CorrelationId
+  - QaliTrackGateway.Models.AuditEvent.EventType
+  - QaliTrackGateway.Models.AuditEvent.UserId
+  - QaliTrackGateway.Models.AuditEvent.UserName
+  - QaliTrackGateway.Models.AuditEvent.ServiceName
+  - QaliTrackGateway.Models.AuditEvent.Action
+  - QaliTrackGateway.Models.AuditEvent.Resource
+  - QaliTrackGateway.Models.AuditEvent.IpAddress
+  - QaliTrackGateway.Models.AuditEvent.UserAgent
+  - QaliTrackGateway.Models.AuditEvent.RequestPath
+  - QaliTrackGateway.Models.AuditEvent.HttpMethod
+  - QaliTrackGateway.Models.AuditEvent.StatusCode
+  - QaliTrackGateway.Models.AuditEvent.ResponseTimeMs
+  - QaliTrackGateway.Models.AuditEvent.ErrorMessage
+  - QaliTrackGateway.Models.AuditEvent.EventTimestamp
+  - QaliTrackGateway.Models.AuditEvent.AdditionalData
+  - QaliTrackGateway.Models.AuditEvent.SessionId
+  - QaliTrackGateway.Models.AuditEvent.TenantId
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices
+  commentId: P:QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices
+  id: CheckedServices
+  parent: QaliTrackGateway.Models.HealthCheckAuditEvent
+  langs:
+  - csharp
+  - vb
+  name: CheckedServices
+  nameWithType: HealthCheckAuditEvent.CheckedServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/AuditEvent.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CheckedServices
+    path: src/Models/AuditEvent.cs
+    startLine: 47
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string[] CheckedServices { get; set; }
+    parameters: []
+    return:
+      type: System.String[]
+    content.vb: Public Property CheckedServices As String()
+  overload: QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices*
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices
+  commentId: P:QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices
+  id: HealthyServices
+  parent: QaliTrackGateway.Models.HealthCheckAuditEvent
+  langs:
+  - csharp
+  - vb
+  name: HealthyServices
+  nameWithType: HealthCheckAuditEvent.HealthyServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/AuditEvent.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HealthyServices
+    path: src/Models/AuditEvent.cs
+    startLine: 48
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string[] HealthyServices { get; set; }
+    parameters: []
+    return:
+      type: System.String[]
+    content.vb: Public Property HealthyServices As String()
+  overload: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices*
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices
+  commentId: P:QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices
+  id: UnhealthyServices
+  parent: QaliTrackGateway.Models.HealthCheckAuditEvent
+  langs:
+  - csharp
+  - vb
+  name: UnhealthyServices
+  nameWithType: HealthCheckAuditEvent.UnhealthyServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/AuditEvent.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UnhealthyServices
+    path: src/Models/AuditEvent.cs
+    startLine: 49
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string[] UnhealthyServices { get; set; }
+    parameters: []
+    return:
+      type: System.String[]
+    content.vb: Public Property UnhealthyServices As String()
+  overload: QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices*
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices
+  commentId: P:QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices
+  id: TotalServices
+  parent: QaliTrackGateway.Models.HealthCheckAuditEvent
+  langs:
+  - csharp
+  - vb
+  name: TotalServices
+  nameWithType: HealthCheckAuditEvent.TotalServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/AuditEvent.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TotalServices
+    path: src/Models/AuditEvent.cs
+    startLine: 50
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public int TotalServices { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property TotalServices As Integer
+  overload: QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices*
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount
+  commentId: P:QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount
+  id: HealthyCount
+  parent: QaliTrackGateway.Models.HealthCheckAuditEvent
+  langs:
+  - csharp
+  - vb
+  name: HealthyCount
+  nameWithType: HealthCheckAuditEvent.HealthyCount
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/AuditEvent.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HealthyCount
+    path: src/Models/AuditEvent.cs
+    startLine: 51
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public int HealthyCount { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property HealthyCount As Integer
+  overload: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount*
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore
+  commentId: P:QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore
+  id: OverallHealthScore
+  parent: QaliTrackGateway.Models.HealthCheckAuditEvent
+  langs:
+  - csharp
+  - vb
+  name: OverallHealthScore
+  nameWithType: HealthCheckAuditEvent.OverallHealthScore
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/AuditEvent.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: OverallHealthScore
+    path: src/Models/AuditEvent.cs
+    startLine: 52
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public double OverallHealthScore { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property OverallHealthScore As Double
+  overload: QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore*
+references:
+- uid: QaliTrackGateway.Models
+  commentId: N:QaliTrackGateway.Models
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Models
+  nameWithType: QaliTrackGateway.Models
+  fullName: QaliTrackGateway.Models
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: QaliTrackGateway.Models.AuditEvent
+  commentId: T:QaliTrackGateway.Models.AuditEvent
+  parent: QaliTrackGateway.Models
+  href: QaliTrackGateway.Models.AuditEvent.html
+  name: AuditEvent
+  nameWithType: AuditEvent
+  fullName: QaliTrackGateway.Models.AuditEvent
+- uid: QaliTrackGateway.Models.AuditEvent.EventId
+  commentId: P:QaliTrackGateway.Models.AuditEvent.EventId
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_EventId
+  name: EventId
+  nameWithType: AuditEvent.EventId
+  fullName: QaliTrackGateway.Models.AuditEvent.EventId
+- uid: QaliTrackGateway.Models.AuditEvent.CorrelationId
+  commentId: P:QaliTrackGateway.Models.AuditEvent.CorrelationId
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_CorrelationId
+  name: CorrelationId
+  nameWithType: AuditEvent.CorrelationId
+  fullName: QaliTrackGateway.Models.AuditEvent.CorrelationId
+- uid: QaliTrackGateway.Models.AuditEvent.EventType
+  commentId: P:QaliTrackGateway.Models.AuditEvent.EventType
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_EventType
+  name: EventType
+  nameWithType: AuditEvent.EventType
+  fullName: QaliTrackGateway.Models.AuditEvent.EventType
+- uid: QaliTrackGateway.Models.AuditEvent.UserId
+  commentId: P:QaliTrackGateway.Models.AuditEvent.UserId
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_UserId
+  name: UserId
+  nameWithType: AuditEvent.UserId
+  fullName: QaliTrackGateway.Models.AuditEvent.UserId
+- uid: QaliTrackGateway.Models.AuditEvent.UserName
+  commentId: P:QaliTrackGateway.Models.AuditEvent.UserName
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_UserName
+  name: UserName
+  nameWithType: AuditEvent.UserName
+  fullName: QaliTrackGateway.Models.AuditEvent.UserName
+- uid: QaliTrackGateway.Models.AuditEvent.ServiceName
+  commentId: P:QaliTrackGateway.Models.AuditEvent.ServiceName
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_ServiceName
+  name: ServiceName
+  nameWithType: AuditEvent.ServiceName
+  fullName: QaliTrackGateway.Models.AuditEvent.ServiceName
+- uid: QaliTrackGateway.Models.AuditEvent.Action
+  commentId: P:QaliTrackGateway.Models.AuditEvent.Action
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_Action
+  name: Action
+  nameWithType: AuditEvent.Action
+  fullName: QaliTrackGateway.Models.AuditEvent.Action
+- uid: QaliTrackGateway.Models.AuditEvent.Resource
+  commentId: P:QaliTrackGateway.Models.AuditEvent.Resource
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_Resource
+  name: Resource
+  nameWithType: AuditEvent.Resource
+  fullName: QaliTrackGateway.Models.AuditEvent.Resource
+- uid: QaliTrackGateway.Models.AuditEvent.IpAddress
+  commentId: P:QaliTrackGateway.Models.AuditEvent.IpAddress
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_IpAddress
+  name: IpAddress
+  nameWithType: AuditEvent.IpAddress
+  fullName: QaliTrackGateway.Models.AuditEvent.IpAddress
+- uid: QaliTrackGateway.Models.AuditEvent.UserAgent
+  commentId: P:QaliTrackGateway.Models.AuditEvent.UserAgent
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_UserAgent
+  name: UserAgent
+  nameWithType: AuditEvent.UserAgent
+  fullName: QaliTrackGateway.Models.AuditEvent.UserAgent
+- uid: QaliTrackGateway.Models.AuditEvent.RequestPath
+  commentId: P:QaliTrackGateway.Models.AuditEvent.RequestPath
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_RequestPath
+  name: RequestPath
+  nameWithType: AuditEvent.RequestPath
+  fullName: QaliTrackGateway.Models.AuditEvent.RequestPath
+- uid: QaliTrackGateway.Models.AuditEvent.HttpMethod
+  commentId: P:QaliTrackGateway.Models.AuditEvent.HttpMethod
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_HttpMethod
+  name: HttpMethod
+  nameWithType: AuditEvent.HttpMethod
+  fullName: QaliTrackGateway.Models.AuditEvent.HttpMethod
+- uid: QaliTrackGateway.Models.AuditEvent.StatusCode
+  commentId: P:QaliTrackGateway.Models.AuditEvent.StatusCode
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_StatusCode
+  name: StatusCode
+  nameWithType: AuditEvent.StatusCode
+  fullName: QaliTrackGateway.Models.AuditEvent.StatusCode
+- uid: QaliTrackGateway.Models.AuditEvent.ResponseTimeMs
+  commentId: P:QaliTrackGateway.Models.AuditEvent.ResponseTimeMs
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_ResponseTimeMs
+  name: ResponseTimeMs
+  nameWithType: AuditEvent.ResponseTimeMs
+  fullName: QaliTrackGateway.Models.AuditEvent.ResponseTimeMs
+- uid: QaliTrackGateway.Models.AuditEvent.ErrorMessage
+  commentId: P:QaliTrackGateway.Models.AuditEvent.ErrorMessage
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_ErrorMessage
+  name: ErrorMessage
+  nameWithType: AuditEvent.ErrorMessage
+  fullName: QaliTrackGateway.Models.AuditEvent.ErrorMessage
+- uid: QaliTrackGateway.Models.AuditEvent.EventTimestamp
+  commentId: P:QaliTrackGateway.Models.AuditEvent.EventTimestamp
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_EventTimestamp
+  name: EventTimestamp
+  nameWithType: AuditEvent.EventTimestamp
+  fullName: QaliTrackGateway.Models.AuditEvent.EventTimestamp
+- uid: QaliTrackGateway.Models.AuditEvent.AdditionalData
+  commentId: P:QaliTrackGateway.Models.AuditEvent.AdditionalData
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_AdditionalData
+  name: AdditionalData
+  nameWithType: AuditEvent.AdditionalData
+  fullName: QaliTrackGateway.Models.AuditEvent.AdditionalData
+- uid: QaliTrackGateway.Models.AuditEvent.SessionId
+  commentId: P:QaliTrackGateway.Models.AuditEvent.SessionId
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_SessionId
+  name: SessionId
+  nameWithType: AuditEvent.SessionId
+  fullName: QaliTrackGateway.Models.AuditEvent.SessionId
+- uid: QaliTrackGateway.Models.AuditEvent.TenantId
+  commentId: P:QaliTrackGateway.Models.AuditEvent.TenantId
+  parent: QaliTrackGateway.Models.AuditEvent
+  href: QaliTrackGateway.Models.AuditEvent.html#QaliTrackGateway_Models_AuditEvent_TenantId
+  name: TenantId
+  nameWithType: AuditEvent.TenantId
+  fullName: QaliTrackGateway.Models.AuditEvent.TenantId
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices*
+  commentId: Overload:QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices
+  href: QaliTrackGateway.Models.HealthCheckAuditEvent.html#QaliTrackGateway_Models_HealthCheckAuditEvent_CheckedServices
+  name: CheckedServices
+  nameWithType: HealthCheckAuditEvent.CheckedServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.CheckedServices
+- uid: System.String[]
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string[]
+  nameWithType: string[]
+  fullName: string[]
+  nameWithType.vb: String()
+  fullName.vb: String()
+  name.vb: String()
+  spec.csharp:
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: (
+  - name: )
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices*
+  commentId: Overload:QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices
+  href: QaliTrackGateway.Models.HealthCheckAuditEvent.html#QaliTrackGateway_Models_HealthCheckAuditEvent_HealthyServices
+  name: HealthyServices
+  nameWithType: HealthCheckAuditEvent.HealthyServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyServices
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices*
+  commentId: Overload:QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices
+  href: QaliTrackGateway.Models.HealthCheckAuditEvent.html#QaliTrackGateway_Models_HealthCheckAuditEvent_UnhealthyServices
+  name: UnhealthyServices
+  nameWithType: HealthCheckAuditEvent.UnhealthyServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.UnhealthyServices
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices*
+  commentId: Overload:QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices
+  href: QaliTrackGateway.Models.HealthCheckAuditEvent.html#QaliTrackGateway_Models_HealthCheckAuditEvent_TotalServices
+  name: TotalServices
+  nameWithType: HealthCheckAuditEvent.TotalServices
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.TotalServices
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount*
+  commentId: Overload:QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount
+  href: QaliTrackGateway.Models.HealthCheckAuditEvent.html#QaliTrackGateway_Models_HealthCheckAuditEvent_HealthyCount
+  name: HealthyCount
+  nameWithType: HealthCheckAuditEvent.HealthyCount
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.HealthyCount
+- uid: QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore*
+  commentId: Overload:QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore
+  href: QaliTrackGateway.Models.HealthCheckAuditEvent.html#QaliTrackGateway_Models_HealthCheckAuditEvent_OverallHealthScore
+  name: OverallHealthScore
+  nameWithType: HealthCheckAuditEvent.OverallHealthScore
+  fullName: QaliTrackGateway.Models.HealthCheckAuditEvent.OverallHealthScore
+- uid: System.Double
+  commentId: T:System.Double
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double
+  nameWithType: double
+  fullName: double
+  nameWithType.vb: Double
+  fullName.vb: Double
+  name.vb: Double

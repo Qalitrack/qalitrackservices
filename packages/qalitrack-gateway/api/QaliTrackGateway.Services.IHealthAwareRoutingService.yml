@@ -1,0 +1,790 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService
+  commentId: T:QaliTrackGateway.Services.IHealthAwareRoutingService
+  id: IHealthAwareRoutingService
+  parent: QaliTrackGateway.Services
+  children:
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync(System.String,System.String)
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync(System.String)
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync(System.String)
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync(System.String)
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync(QaliTrackGateway.Models.ServiceInstance)
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync(System.String)
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync(System.String,System.Boolean,System.String)
+  - QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync(System.String,System.String,System.Boolean)
+  langs:
+  - csharp
+  - vb
+  name: IHealthAwareRoutingService
+  nameWithType: IHealthAwareRoutingService
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService
+  type: Interface
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IHealthAwareRoutingService
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 7
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Interface for health-aware routing and service discovery
+  example: []
+  syntax:
+    content: public interface IHealthAwareRoutingService
+    content.vb: Public Interface IHealthAwareRoutingService
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync(System.String)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync(System.String)
+  id: GetBestServiceInstanceAsync(System.String)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: GetBestServiceInstanceAsync(string)
+  nameWithType: IHealthAwareRoutingService.GetBestServiceInstanceAsync(string)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetBestServiceInstanceAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 12
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Get best available service instance for routing
+  example: []
+  syntax:
+    content: Task<ServiceInstance?> GetBestServiceInstanceAsync(string serviceName)
+    parameters:
+    - id: serviceName
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{QaliTrackGateway.Models.ServiceInstance}
+    content.vb: Function GetBestServiceInstanceAsync(serviceName As String) As Task(Of ServiceInstance)
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync*
+  nameWithType.vb: IHealthAwareRoutingService.GetBestServiceInstanceAsync(String)
+  fullName.vb: QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync(String)
+  name.vb: GetBestServiceInstanceAsync(String)
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync(System.String)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync(System.String)
+  id: GetServiceInstancesAsync(System.String)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: GetServiceInstancesAsync(string)
+  nameWithType: IHealthAwareRoutingService.GetServiceInstancesAsync(string)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetServiceInstancesAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 17
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Get all available service instances
+  example: []
+  syntax:
+    content: Task<IEnumerable<ServiceInstance>> GetServiceInstancesAsync(string serviceName)
+    parameters:
+    - id: serviceName
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{QaliTrackGateway.Models.ServiceInstance}}
+    content.vb: Function GetServiceInstancesAsync(serviceName As String) As Task(Of IEnumerable(Of ServiceInstance))
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync*
+  nameWithType.vb: IHealthAwareRoutingService.GetServiceInstancesAsync(String)
+  fullName.vb: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync(String)
+  name.vb: GetServiceInstancesAsync(String)
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync(QaliTrackGateway.Models.ServiceInstance)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync(QaliTrackGateway.Models.ServiceInstance)
+  id: RegisterServiceInstanceAsync(QaliTrackGateway.Models.ServiceInstance)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: RegisterServiceInstanceAsync(ServiceInstance)
+  nameWithType: IHealthAwareRoutingService.RegisterServiceInstanceAsync(ServiceInstance)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync(QaliTrackGateway.Models.ServiceInstance)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RegisterServiceInstanceAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 22
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Register a service instance
+  example: []
+  syntax:
+    content: Task RegisterServiceInstanceAsync(ServiceInstance serviceInstance)
+    parameters:
+    - id: serviceInstance
+      type: QaliTrackGateway.Models.ServiceInstance
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function RegisterServiceInstanceAsync(serviceInstance As ServiceInstance) As Task
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync*
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync(System.String,System.String)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync(System.String,System.String)
+  id: DeregisterServiceInstanceAsync(System.String,System.String)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: DeregisterServiceInstanceAsync(string, string)
+  nameWithType: IHealthAwareRoutingService.DeregisterServiceInstanceAsync(string, string)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DeregisterServiceInstanceAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 27
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Deregister a service instance
+  example: []
+  syntax:
+    content: Task DeregisterServiceInstanceAsync(string serviceName, string instanceId)
+    parameters:
+    - id: serviceName
+      type: System.String
+    - id: instanceId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function DeregisterServiceInstanceAsync(serviceName As String, instanceId As String) As Task
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync*
+  nameWithType.vb: IHealthAwareRoutingService.DeregisterServiceInstanceAsync(String, String)
+  fullName.vb: QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync(String, String)
+  name.vb: DeregisterServiceInstanceAsync(String, String)
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync(System.String,System.String,System.Boolean)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync(System.String,System.String,System.Boolean)
+  id: UpdateServiceInstanceHealthAsync(System.String,System.String,System.Boolean)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: UpdateServiceInstanceHealthAsync(string, string, bool)
+  nameWithType: IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync(string, string, bool)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync(string, string, bool)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdateServiceInstanceHealthAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 32
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Update service instance health status
+  example: []
+  syntax:
+    content: Task UpdateServiceInstanceHealthAsync(string serviceName, string instanceId, bool isHealthy)
+    parameters:
+    - id: serviceName
+      type: System.String
+    - id: instanceId
+      type: System.String
+    - id: isHealthy
+      type: System.Boolean
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function UpdateServiceInstanceHealthAsync(serviceName As String, instanceId As String, isHealthy As Boolean) As Task
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync*
+  nameWithType.vb: IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync(String, String, Boolean)
+  fullName.vb: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync(String, String, Boolean)
+  name.vb: UpdateServiceInstanceHealthAsync(String, String, Boolean)
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync
+  id: GetServiceDiscoveryInfoAsync
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: GetServiceDiscoveryInfoAsync()
+  nameWithType: IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync()
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetServiceDiscoveryInfoAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 37
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Get service discovery information
+  example: []
+  syntax:
+    content: Task<ServiceDiscoveryInfo> GetServiceDiscoveryInfoAsync()
+    return:
+      type: System.Threading.Tasks.Task{QaliTrackGateway.Models.ServiceDiscoveryInfo}
+    content.vb: Function GetServiceDiscoveryInfoAsync() As Task(Of ServiceDiscoveryInfo)
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync*
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync
+  id: PerformServiceDiscoveryAsync
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: PerformServiceDiscoveryAsync()
+  nameWithType: IHealthAwareRoutingService.PerformServiceDiscoveryAsync()
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PerformServiceDiscoveryAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 42
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Perform automatic service discovery
+  example: []
+  syntax:
+    content: Task PerformServiceDiscoveryAsync()
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function PerformServiceDiscoveryAsync() As Task
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync*
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync(System.String)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync(System.String)
+  id: GetCircuitBreakerStatusAsync(System.String)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: GetCircuitBreakerStatusAsync(string)
+  nameWithType: IHealthAwareRoutingService.GetCircuitBreakerStatusAsync(string)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetCircuitBreakerStatusAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 47
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Get circuit breaker status for a service
+  example: []
+  syntax:
+    content: Task<CircuitBreakerStatus> GetCircuitBreakerStatusAsync(string serviceName)
+    parameters:
+    - id: serviceName
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{QaliTrackGateway.Models.CircuitBreakerStatus}
+    content.vb: Function GetCircuitBreakerStatusAsync(serviceName As String) As Task(Of CircuitBreakerStatus)
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync*
+  nameWithType.vb: IHealthAwareRoutingService.GetCircuitBreakerStatusAsync(String)
+  fullName.vb: QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync(String)
+  name.vb: GetCircuitBreakerStatusAsync(String)
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync(System.String,System.Boolean,System.String)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync(System.String,System.Boolean,System.String)
+  id: UpdateCircuitBreakerAsync(System.String,System.Boolean,System.String)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: UpdateCircuitBreakerAsync(string, bool, string?)
+  nameWithType: IHealthAwareRoutingService.UpdateCircuitBreakerAsync(string, bool, string?)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync(string, bool, string?)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdateCircuitBreakerAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 52
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Update circuit breaker status
+  example: []
+  syntax:
+    content: Task UpdateCircuitBreakerAsync(string serviceName, bool isOpen, string? reason = null)
+    parameters:
+    - id: serviceName
+      type: System.String
+    - id: isOpen
+      type: System.Boolean
+    - id: reason
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function UpdateCircuitBreakerAsync(serviceName As String, isOpen As Boolean, reason As String = Nothing) As Task
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync*
+  nameWithType.vb: IHealthAwareRoutingService.UpdateCircuitBreakerAsync(String, Boolean, String)
+  fullName.vb: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync(String, Boolean, String)
+  name.vb: UpdateCircuitBreakerAsync(String, Boolean, String)
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync(System.String)
+  commentId: M:QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync(System.String)
+  id: ShouldBypassServiceAsync(System.String)
+  parent: QaliTrackGateway.Services.IHealthAwareRoutingService
+  langs:
+  - csharp
+  - vb
+  name: ShouldBypassServiceAsync(string)
+  nameWithType: IHealthAwareRoutingService.ShouldBypassServiceAsync(string)
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/IHealthAwareRoutingService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ShouldBypassServiceAsync
+    path: src/Services/IHealthAwareRoutingService.cs
+    startLine: 57
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Services
+  summary: Check if service should be bypassed due to circuit breaker
+  example: []
+  syntax:
+    content: Task<bool> ShouldBypassServiceAsync(string serviceName)
+    parameters:
+    - id: serviceName
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function ShouldBypassServiceAsync(serviceName As String) As Task(Of Boolean)
+  overload: QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync*
+  nameWithType.vb: IHealthAwareRoutingService.ShouldBypassServiceAsync(String)
+  fullName.vb: QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync(String)
+  name.vb: ShouldBypassServiceAsync(String)
+references:
+- uid: QaliTrackGateway.Services
+  commentId: N:QaliTrackGateway.Services
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Services
+  nameWithType: QaliTrackGateway.Services
+  fullName: QaliTrackGateway.Services
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Services
+    name: Services
+    href: QaliTrackGateway.Services.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Services
+    name: Services
+    href: QaliTrackGateway.Services.html
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_GetBestServiceInstanceAsync_System_String_
+  name: GetBestServiceInstanceAsync
+  nameWithType: IHealthAwareRoutingService.GetBestServiceInstanceAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetBestServiceInstanceAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{QaliTrackGateway.Models.ServiceInstance}
+  commentId: T:System.Threading.Tasks.Task{QaliTrackGateway.Models.ServiceInstance}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ServiceInstance>
+  nameWithType: Task<ServiceInstance>
+  fullName: System.Threading.Tasks.Task<QaliTrackGateway.Models.ServiceInstance>
+  nameWithType.vb: Task(Of ServiceInstance)
+  fullName.vb: System.Threading.Tasks.Task(Of QaliTrackGateway.Models.ServiceInstance)
+  name.vb: Task(Of ServiceInstance)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: QaliTrackGateway.Models.ServiceInstance
+    name: ServiceInstance
+    href: QaliTrackGateway.Models.ServiceInstance.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrackGateway.Models.ServiceInstance
+    name: ServiceInstance
+    href: QaliTrackGateway.Models.ServiceInstance.html
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_GetServiceInstancesAsync_System_String_
+  name: GetServiceInstancesAsync
+  nameWithType: IHealthAwareRoutingService.GetServiceInstancesAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceInstancesAsync
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{QaliTrackGateway.Models.ServiceInstance}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{QaliTrackGateway.Models.ServiceInstance}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<ServiceInstance>>
+  nameWithType: Task<IEnumerable<ServiceInstance>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<QaliTrackGateway.Models.ServiceInstance>>
+  nameWithType.vb: Task(Of IEnumerable(Of ServiceInstance))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of QaliTrackGateway.Models.ServiceInstance))
+  name.vb: Task(Of IEnumerable(Of ServiceInstance))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: QaliTrackGateway.Models.ServiceInstance
+    name: ServiceInstance
+    href: QaliTrackGateway.Models.ServiceInstance.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrackGateway.Models.ServiceInstance
+    name: ServiceInstance
+    href: QaliTrackGateway.Models.ServiceInstance.html
+  - name: )
+  - name: )
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_RegisterServiceInstanceAsync_QaliTrackGateway_Models_ServiceInstance_
+  name: RegisterServiceInstanceAsync
+  nameWithType: IHealthAwareRoutingService.RegisterServiceInstanceAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.RegisterServiceInstanceAsync
+- uid: QaliTrackGateway.Models.ServiceInstance
+  commentId: T:QaliTrackGateway.Models.ServiceInstance
+  parent: QaliTrackGateway.Models
+  href: QaliTrackGateway.Models.ServiceInstance.html
+  name: ServiceInstance
+  nameWithType: ServiceInstance
+  fullName: QaliTrackGateway.Models.ServiceInstance
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: QaliTrackGateway.Models
+  commentId: N:QaliTrackGateway.Models
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Models
+  nameWithType: QaliTrackGateway.Models
+  fullName: QaliTrackGateway.Models
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_DeregisterServiceInstanceAsync_System_String_System_String_
+  name: DeregisterServiceInstanceAsync
+  nameWithType: IHealthAwareRoutingService.DeregisterServiceInstanceAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.DeregisterServiceInstanceAsync
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_UpdateServiceInstanceHealthAsync_System_String_System_String_System_Boolean_
+  name: UpdateServiceInstanceHealthAsync
+  nameWithType: IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateServiceInstanceHealthAsync
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_GetServiceDiscoveryInfoAsync
+  name: GetServiceDiscoveryInfoAsync
+  nameWithType: IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetServiceDiscoveryInfoAsync
+- uid: System.Threading.Tasks.Task{QaliTrackGateway.Models.ServiceDiscoveryInfo}
+  commentId: T:System.Threading.Tasks.Task{QaliTrackGateway.Models.ServiceDiscoveryInfo}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ServiceDiscoveryInfo>
+  nameWithType: Task<ServiceDiscoveryInfo>
+  fullName: System.Threading.Tasks.Task<QaliTrackGateway.Models.ServiceDiscoveryInfo>
+  nameWithType.vb: Task(Of ServiceDiscoveryInfo)
+  fullName.vb: System.Threading.Tasks.Task(Of QaliTrackGateway.Models.ServiceDiscoveryInfo)
+  name.vb: Task(Of ServiceDiscoveryInfo)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: QaliTrackGateway.Models.ServiceDiscoveryInfo
+    name: ServiceDiscoveryInfo
+    href: QaliTrackGateway.Models.ServiceDiscoveryInfo.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrackGateway.Models.ServiceDiscoveryInfo
+    name: ServiceDiscoveryInfo
+    href: QaliTrackGateway.Models.ServiceDiscoveryInfo.html
+  - name: )
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_PerformServiceDiscoveryAsync
+  name: PerformServiceDiscoveryAsync
+  nameWithType: IHealthAwareRoutingService.PerformServiceDiscoveryAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.PerformServiceDiscoveryAsync
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_GetCircuitBreakerStatusAsync_System_String_
+  name: GetCircuitBreakerStatusAsync
+  nameWithType: IHealthAwareRoutingService.GetCircuitBreakerStatusAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.GetCircuitBreakerStatusAsync
+- uid: System.Threading.Tasks.Task{QaliTrackGateway.Models.CircuitBreakerStatus}
+  commentId: T:System.Threading.Tasks.Task{QaliTrackGateway.Models.CircuitBreakerStatus}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<CircuitBreakerStatus>
+  nameWithType: Task<CircuitBreakerStatus>
+  fullName: System.Threading.Tasks.Task<QaliTrackGateway.Models.CircuitBreakerStatus>
+  nameWithType.vb: Task(Of CircuitBreakerStatus)
+  fullName.vb: System.Threading.Tasks.Task(Of QaliTrackGateway.Models.CircuitBreakerStatus)
+  name.vb: Task(Of CircuitBreakerStatus)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: QaliTrackGateway.Models.CircuitBreakerStatus
+    name: CircuitBreakerStatus
+    href: QaliTrackGateway.Models.CircuitBreakerStatus.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrackGateway.Models.CircuitBreakerStatus
+    name: CircuitBreakerStatus
+    href: QaliTrackGateway.Models.CircuitBreakerStatus.html
+  - name: )
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_UpdateCircuitBreakerAsync_System_String_System_Boolean_System_String_
+  name: UpdateCircuitBreakerAsync
+  nameWithType: IHealthAwareRoutingService.UpdateCircuitBreakerAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.UpdateCircuitBreakerAsync
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync*
+  commentId: Overload:QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html#QaliTrackGateway_Services_IHealthAwareRoutingService_ShouldBypassServiceAsync_System_String_
+  name: ShouldBypassServiceAsync
+  nameWithType: IHealthAwareRoutingService.ShouldBypassServiceAsync
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService.ShouldBypassServiceAsync
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )

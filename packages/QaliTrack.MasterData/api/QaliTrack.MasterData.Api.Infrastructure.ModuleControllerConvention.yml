@@ -1,0 +1,592 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention
+  commentId: T:QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention
+  id: ModuleControllerConvention
+  parent: QaliTrack.MasterData.Api.Infrastructure
+  children:
+  - QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.#ctor(System.Collections.Generic.HashSet{System.String})
+  - QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  langs:
+  - csharp
+  - vb
+  name: ModuleControllerConvention
+  nameWithType: ModuleControllerConvention
+  fullName: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Api/Infrastructure/ModuleConfiguration.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ModuleControllerConvention
+    path: src/QaliTrack.MasterData.Api/Infrastructure/ModuleConfiguration.cs
+    startLine: 55
+  assemblies:
+  - QaliTrack.MasterData.Api
+  namespace: QaliTrack.MasterData.Api.Infrastructure
+  syntax:
+    content: 'public class ModuleControllerConvention : IApplicationModelConvention'
+    content.vb: Public Class ModuleControllerConvention Implements IApplicationModelConvention
+  inheritance:
+  - System.Object
+  implements:
+  - Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.#ctor(System.Collections.Generic.HashSet{System.String})
+  commentId: M:QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.#ctor(System.Collections.Generic.HashSet{System.String})
+  id: '#ctor(System.Collections.Generic.HashSet{System.String})'
+  parent: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention
+  langs:
+  - csharp
+  - vb
+  name: ModuleControllerConvention(HashSet<string>)
+  nameWithType: ModuleControllerConvention.ModuleControllerConvention(HashSet<string>)
+  fullName: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.ModuleControllerConvention(System.Collections.Generic.HashSet<string>)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Api/Infrastructure/ModuleConfiguration.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Api/Infrastructure/ModuleConfiguration.cs
+    startLine: 59
+  assemblies:
+  - QaliTrack.MasterData.Api
+  namespace: QaliTrack.MasterData.Api.Infrastructure
+  syntax:
+    content: public ModuleControllerConvention(HashSet<string> enabledModules)
+    parameters:
+    - id: enabledModules
+      type: System.Collections.Generic.HashSet{System.String}
+    content.vb: Public Sub New(enabledModules As HashSet(Of String))
+  overload: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.#ctor*
+  nameWithType.vb: ModuleControllerConvention.New(HashSet(Of String))
+  fullName.vb: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.New(System.Collections.Generic.HashSet(Of String))
+  name.vb: New(HashSet(Of String))
+- uid: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  commentId: M:QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  id: Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  parent: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention
+  langs:
+  - csharp
+  - vb
+  name: Apply(ApplicationModel)
+  nameWithType: ModuleControllerConvention.Apply(ApplicationModel)
+  fullName: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Api/Infrastructure/ModuleConfiguration.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Apply
+    path: src/QaliTrack.MasterData.Api/Infrastructure/ModuleConfiguration.cs
+    startLine: 64
+  assemblies:
+  - QaliTrack.MasterData.Api
+  namespace: QaliTrack.MasterData.Api.Infrastructure
+  summary: Called to apply the convention to the <xref href="Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public void Apply(ApplicationModel application)
+    parameters:
+    - id: application
+      type: Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel
+      description: The <xref href="Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel" data-throw-if-not-resolved="false"></xref>.
+    content.vb: Public Sub Apply(application As ApplicationModel)
+  overload: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply*
+  implements:
+  - Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+references:
+- uid: QaliTrack.MasterData.Api.Infrastructure
+  commentId: N:QaliTrack.MasterData.Api.Infrastructure
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Api.Infrastructure
+  nameWithType: QaliTrack.MasterData.Api.Infrastructure
+  fullName: QaliTrack.MasterData.Api.Infrastructure
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Api
+    name: Api
+    href: QaliTrack.MasterData.Api.html
+  - name: .
+  - uid: QaliTrack.MasterData.Api.Infrastructure
+    name: Infrastructure
+    href: QaliTrack.MasterData.Api.Infrastructure.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Api
+    name: Api
+    href: QaliTrack.MasterData.Api.html
+  - name: .
+  - uid: QaliTrack.MasterData.Api.Infrastructure
+    name: Infrastructure
+    href: QaliTrack.MasterData.Api.Infrastructure.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention
+  commentId: T:Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention
+  parent: Microsoft.AspNetCore.Mvc.ApplicationModels
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels.iapplicationmodelconvention
+  name: IApplicationModelConvention
+  nameWithType: IApplicationModelConvention
+  fullName: Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Microsoft.AspNetCore.Mvc.ApplicationModels
+  commentId: N:Microsoft.AspNetCore.Mvc.ApplicationModels
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Mvc.ApplicationModels
+  nameWithType: Microsoft.AspNetCore.Mvc.ApplicationModels
+  fullName: Microsoft.AspNetCore.Mvc.ApplicationModels
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Mvc
+    name: Mvc
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc
+  - name: .
+  - uid: Microsoft.AspNetCore.Mvc.ApplicationModels
+    name: ApplicationModels
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Mvc
+    name: Mvc
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc
+  - name: .
+  - uid: Microsoft.AspNetCore.Mvc.ApplicationModels
+    name: ApplicationModels
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels
+- uid: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.#ctor
+  href: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.html#QaliTrack_MasterData_Api_Infrastructure_ModuleControllerConvention__ctor_System_Collections_Generic_HashSet_System_String__
+  name: ModuleControllerConvention
+  nameWithType: ModuleControllerConvention.ModuleControllerConvention
+  fullName: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.ModuleControllerConvention
+  nameWithType.vb: ModuleControllerConvention.New
+  fullName.vb: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.New
+  name.vb: New
+- uid: System.Collections.Generic.HashSet{System.String}
+  commentId: T:System.Collections.Generic.HashSet{System.String}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.HashSet`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  name: HashSet<string>
+  nameWithType: HashSet<string>
+  fullName: System.Collections.Generic.HashSet<string>
+  nameWithType.vb: HashSet(Of String)
+  fullName.vb: System.Collections.Generic.HashSet(Of String)
+  name.vb: HashSet(Of String)
+  spec.csharp:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Collections.Generic.HashSet`1
+  commentId: T:System.Collections.Generic.HashSet`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  name: HashSet<T>
+  nameWithType: HashSet<T>
+  fullName: System.Collections.Generic.HashSet<T>
+  nameWithType.vb: HashSet(Of T)
+  fullName.vb: System.Collections.Generic.HashSet(Of T)
+  name.vb: HashSet(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel
+  commentId: T:Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel
+  parent: Microsoft.AspNetCore.Mvc.ApplicationModels
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels.applicationmodel
+  name: ApplicationModel
+  nameWithType: ApplicationModel
+  fullName: Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel
+- uid: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply*
+  commentId: Overload:QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply
+  href: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.html#QaliTrack_MasterData_Api_Infrastructure_ModuleControllerConvention_Apply_Microsoft_AspNetCore_Mvc_ApplicationModels_ApplicationModel_
+  name: Apply
+  nameWithType: ModuleControllerConvention.Apply
+  fullName: QaliTrack.MasterData.Api.Infrastructure.ModuleControllerConvention.Apply
+- uid: Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  commentId: M:Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  parent: Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels.iapplicationmodelconvention.apply
+  name: Apply(ApplicationModel)
+  nameWithType: IApplicationModelConvention.Apply(ApplicationModel)
+  fullName: Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+    name: Apply
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels.iapplicationmodelconvention.apply
+  - name: (
+  - uid: Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel
+    name: ApplicationModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels.applicationmodel
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel)
+    name: Apply
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels.iapplicationmodelconvention.apply
+  - name: (
+  - uid: Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel
+    name: ApplicationModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.applicationmodels.applicationmodel
+  - name: )

@@ -1,0 +1,634 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  id: CreateSaccoShareDto
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue
+  langs:
+  - csharp
+  - vb
+  name: CreateSaccoShareDto
+  nameWithType: CreateSaccoShareDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreateSaccoShareDto
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 275
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public class CreateSaccoShareDto
+    content.vb: Public Class CreateSaccoShareDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId
+  id: SaccoId
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  langs:
+  - csharp
+  - vb
+  name: SaccoId
+  nameWithType: CreateSaccoShareDto.SaccoId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoId
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 277
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public Guid SaccoId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property SaccoId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId
+  id: SaccoMemberId
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  langs:
+  - csharp
+  - vb
+  name: SaccoMemberId
+  nameWithType: CreateSaccoShareDto.SaccoMemberId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoMemberId
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 278
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public Guid SaccoMemberId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property SaccoMemberId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber
+  id: ShareCertificateNumber
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  langs:
+  - csharp
+  - vb
+  name: ShareCertificateNumber
+  nameWithType: CreateSaccoShareDto.ShareCertificateNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ShareCertificateNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 279
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public string ShareCertificateNumber { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ShareCertificateNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares
+  id: NumberOfShares
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  langs:
+  - csharp
+  - vb
+  name: NumberOfShares
+  nameWithType: CreateSaccoShareDto.NumberOfShares
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NumberOfShares
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 280
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public int NumberOfShares { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property NumberOfShares As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue
+  id: ShareValue
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  langs:
+  - csharp
+  - vb
+  name: ShareValue
+  nameWithType: CreateSaccoShareDto.ShareValue
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ShareValue
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 281
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public decimal ShareValue { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property ShareValue As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate
+  id: PurchaseDate
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  langs:
+  - csharp
+  - vb
+  name: PurchaseDate
+  nameWithType: CreateSaccoShareDto.PurchaseDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PurchaseDate
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 282
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public DateTime PurchaseDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property PurchaseDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod
+  id: PaymentMethod
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  langs:
+  - csharp
+  - vb
+  name: PaymentMethod
+  nameWithType: CreateSaccoShareDto.PaymentMethod
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PaymentMethod
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/DTOs/SaccoDTOs.cs
+    startLine: 283
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  syntax:
+    content: public string PaymentMethod { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PaymentMethod As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html#QaliTrack_MasterData_Core_Modules_Sacco_DTOs_CreateSaccoShareDto_SaccoId
+  name: SaccoId
+  nameWithType: CreateSaccoShareDto.SaccoId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoId
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html#QaliTrack_MasterData_Core_Modules_Sacco_DTOs_CreateSaccoShareDto_SaccoMemberId
+  name: SaccoMemberId
+  nameWithType: CreateSaccoShareDto.SaccoMemberId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.SaccoMemberId
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html#QaliTrack_MasterData_Core_Modules_Sacco_DTOs_CreateSaccoShareDto_ShareCertificateNumber
+  name: ShareCertificateNumber
+  nameWithType: CreateSaccoShareDto.ShareCertificateNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareCertificateNumber
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html#QaliTrack_MasterData_Core_Modules_Sacco_DTOs_CreateSaccoShareDto_NumberOfShares
+  name: NumberOfShares
+  nameWithType: CreateSaccoShareDto.NumberOfShares
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.NumberOfShares
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html#QaliTrack_MasterData_Core_Modules_Sacco_DTOs_CreateSaccoShareDto_ShareValue
+  name: ShareValue
+  nameWithType: CreateSaccoShareDto.ShareValue
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.ShareValue
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html#QaliTrack_MasterData_Core_Modules_Sacco_DTOs_CreateSaccoShareDto_PurchaseDate
+  name: PurchaseDate
+  nameWithType: CreateSaccoShareDto.PurchaseDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PurchaseDate
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html#QaliTrack_MasterData_Core_Modules_Sacco_DTOs_CreateSaccoShareDto_PaymentMethod
+  name: PaymentMethod
+  nameWithType: CreateSaccoShareDto.PaymentMethod
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.PaymentMethod

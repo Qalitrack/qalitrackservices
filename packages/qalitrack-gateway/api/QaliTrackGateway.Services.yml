@@ -1,0 +1,98 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Services
+  commentId: N:QaliTrackGateway.Services
+  id: QaliTrackGateway.Services
+  children:
+  - QaliTrackGateway.Services.AuditService
+  - QaliTrackGateway.Services.AuthorizationCacheService
+  - QaliTrackGateway.Services.HealthAwareRoutingService
+  - QaliTrackGateway.Services.IAuditService
+  - QaliTrackGateway.Services.IAuthorizationCacheService
+  - QaliTrackGateway.Services.IHealthAwareRoutingService
+  - QaliTrackGateway.Services.IServiceHealthMonitor
+  - QaliTrackGateway.Services.ServiceHealthMonitor
+  langs:
+  - csharp
+  - vb
+  name: QaliTrackGateway.Services
+  nameWithType: QaliTrackGateway.Services
+  fullName: QaliTrackGateway.Services
+  type: Namespace
+  assemblies:
+  - QaliTrack.Gateway
+references:
+- uid: QaliTrackGateway.Services.AuditService
+  commentId: T:QaliTrackGateway.Services.AuditService
+  href: QaliTrackGateway.Services.AuditService.html
+  name: AuditService
+  nameWithType: AuditService
+  fullName: QaliTrackGateway.Services.AuditService
+- uid: QaliTrackGateway.Services.IAuthorizationCacheService
+  commentId: T:QaliTrackGateway.Services.IAuthorizationCacheService
+  parent: QaliTrackGateway.Services
+  href: QaliTrackGateway.Services.IAuthorizationCacheService.html
+  name: IAuthorizationCacheService
+  nameWithType: IAuthorizationCacheService
+  fullName: QaliTrackGateway.Services.IAuthorizationCacheService
+- uid: QaliTrackGateway.Services.AuthorizationCacheService
+  commentId: T:QaliTrackGateway.Services.AuthorizationCacheService
+  href: QaliTrackGateway.Services.AuthorizationCacheService.html
+  name: AuthorizationCacheService
+  nameWithType: AuthorizationCacheService
+  fullName: QaliTrackGateway.Services.AuthorizationCacheService
+- uid: QaliTrackGateway.Services.HealthAwareRoutingService
+  commentId: T:QaliTrackGateway.Services.HealthAwareRoutingService
+  href: QaliTrackGateway.Services.HealthAwareRoutingService.html
+  name: HealthAwareRoutingService
+  nameWithType: HealthAwareRoutingService
+  fullName: QaliTrackGateway.Services.HealthAwareRoutingService
+- uid: QaliTrackGateway.Services.IAuditService
+  commentId: T:QaliTrackGateway.Services.IAuditService
+  parent: QaliTrackGateway.Services
+  href: QaliTrackGateway.Services.IAuditService.html
+  name: IAuditService
+  nameWithType: IAuditService
+  fullName: QaliTrackGateway.Services.IAuditService
+- uid: QaliTrackGateway.Services.IHealthAwareRoutingService
+  commentId: T:QaliTrackGateway.Services.IHealthAwareRoutingService
+  parent: QaliTrackGateway.Services
+  href: QaliTrackGateway.Services.IHealthAwareRoutingService.html
+  name: IHealthAwareRoutingService
+  nameWithType: IHealthAwareRoutingService
+  fullName: QaliTrackGateway.Services.IHealthAwareRoutingService
+- uid: QaliTrackGateway.Services.IServiceHealthMonitor
+  commentId: T:QaliTrackGateway.Services.IServiceHealthMonitor
+  parent: QaliTrackGateway.Services
+  href: QaliTrackGateway.Services.IServiceHealthMonitor.html
+  name: IServiceHealthMonitor
+  nameWithType: IServiceHealthMonitor
+  fullName: QaliTrackGateway.Services.IServiceHealthMonitor
+- uid: QaliTrackGateway.Services.ServiceHealthMonitor
+  commentId: T:QaliTrackGateway.Services.ServiceHealthMonitor
+  href: QaliTrackGateway.Services.ServiceHealthMonitor.html
+  name: ServiceHealthMonitor
+  nameWithType: ServiceHealthMonitor
+  fullName: QaliTrackGateway.Services.ServiceHealthMonitor
+- uid: QaliTrackGateway.Services
+  commentId: N:QaliTrackGateway.Services
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Services
+  nameWithType: QaliTrackGateway.Services
+  fullName: QaliTrackGateway.Services
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Services
+    name: Services
+    href: QaliTrackGateway.Services.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Services
+    name: Services
+    href: QaliTrackGateway.Services.html

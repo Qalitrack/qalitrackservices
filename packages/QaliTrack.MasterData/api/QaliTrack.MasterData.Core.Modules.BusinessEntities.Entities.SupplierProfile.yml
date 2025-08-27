@@ -1,0 +1,1207 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  id: SupplierProfile
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate
+  langs:
+  - csharp
+  - vb
+  name: SupplierProfile
+  nameWithType: SupplierProfile
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SupplierProfile
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 70
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  summary: Supplier-specific profile for business entities
+  example: []
+  syntax:
+    content: 'public class SupplierProfile : BaseEntity'
+    content.vb: Public Class SupplierProfile Inherits BaseEntity
+  inheritance:
+  - System.Object
+  - QaliTrack.MasterData.Core.Common.BaseEntity
+  inheritedMembers:
+  - QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId
+  id: BusinessEntityId
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: BusinessEntityId
+  nameWithType: SupplierProfile.BusinessEntityId
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BusinessEntityId
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 72
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public Guid BusinessEntityId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property BusinessEntityId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType
+  id: SupplierType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: SupplierType
+  nameWithType: SupplierProfile.SupplierType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SupplierType
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 73
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public string SupplierType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property SupplierType As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating
+  id: QualityRating
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: QualityRating
+  nameWithType: SupplierProfile.QualityRating
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: QualityRating
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 74
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public string QualityRating { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property QualityRating As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating
+  id: DeliveryRating
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: DeliveryRating
+  nameWithType: SupplierProfile.DeliveryRating
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DeliveryRating
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 75
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public int DeliveryRating { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property DeliveryRating As Integer
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified
+  id: IsVerified
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: IsVerified
+  nameWithType: SupplierProfile.IsVerified
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsVerified
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 76
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public bool IsVerified { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsVerified As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate
+  id: VerificationDate
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: VerificationDate
+  nameWithType: SupplierProfile.VerificationDate
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VerificationDate
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 77
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public DateTime? VerificationDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property VerificationDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel
+  id: CertificationLevel
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: CertificationLevel
+  nameWithType: SupplierProfile.CertificationLevel
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CertificationLevel
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 78
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public string? CertificationLevel { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CertificationLevel As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays
+  id: LeadTimeDays
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: LeadTimeDays
+  nameWithType: SupplierProfile.LeadTimeDays
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LeadTimeDays
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 79
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public int LeadTimeDays { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property LeadTimeDays As Integer
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue
+  id: MinOrderValue
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: MinOrderValue
+  nameWithType: SupplierProfile.MinOrderValue
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MinOrderValue
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 80
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public decimal MinOrderValue { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property MinOrderValue As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms
+  id: PaymentTerms
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: PaymentTerms
+  nameWithType: SupplierProfile.PaymentTerms
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PaymentTerms
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 81
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public string PaymentTerms { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PaymentTerms As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: SupplierProfile.Status
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 82
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: SupplierProfile.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 83
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity
+  id: BusinessEntity
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: BusinessEntity
+  nameWithType: SupplierProfile.BusinessEntity
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BusinessEntity
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 86
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public virtual BusinessEntity BusinessEntity { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+    content.vb: Public Overridable Property BusinessEntity As BusinessEntity
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts
+  id: Contracts
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: Contracts
+  nameWithType: SupplierProfile.Contracts
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Contracts
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 87
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public virtual ICollection<SupplierContract> Contracts { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.ICollection{QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract}
+    content.vb: Public Overridable Property Contracts As ICollection(Of SupplierContract)
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords
+  id: PerformanceRecords
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile
+  langs:
+  - csharp
+  - vb
+  name: PerformanceRecords
+  nameWithType: SupplierProfile.PerformanceRecords
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PerformanceRecords
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 88
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public virtual ICollection<SupplierPerformance> PerformanceRecords { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.ICollection{QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance}
+    content.vb: Public Overridable Property PerformanceRecords As ICollection(Of SupplierPerformance)
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity
+  commentId: T:QaliTrack.MasterData.Core.Common.BaseEntity
+  parent: QaliTrack.MasterData.Core.Common
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Common
+  commentId: N:QaliTrack.MasterData.Core.Common
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Common
+  nameWithType: QaliTrack.MasterData.Core.Common
+  fullName: QaliTrack.MasterData.Core.Common
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_BusinessEntityId
+  name: BusinessEntityId
+  nameWithType: SupplierProfile.BusinessEntityId
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntityId
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_SupplierType
+  name: SupplierType
+  nameWithType: SupplierProfile.SupplierType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.SupplierType
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_QualityRating
+  name: QualityRating
+  nameWithType: SupplierProfile.QualityRating
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.QualityRating
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_DeliveryRating
+  name: DeliveryRating
+  nameWithType: SupplierProfile.DeliveryRating
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.DeliveryRating
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_IsVerified
+  name: IsVerified
+  nameWithType: SupplierProfile.IsVerified
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.IsVerified
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_VerificationDate
+  name: VerificationDate
+  nameWithType: SupplierProfile.VerificationDate
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.VerificationDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_CertificationLevel
+  name: CertificationLevel
+  nameWithType: SupplierProfile.CertificationLevel
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.CertificationLevel
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_LeadTimeDays
+  name: LeadTimeDays
+  nameWithType: SupplierProfile.LeadTimeDays
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.LeadTimeDays
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_MinOrderValue
+  name: MinOrderValue
+  nameWithType: SupplierProfile.MinOrderValue
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.MinOrderValue
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_PaymentTerms
+  name: PaymentTerms
+  nameWithType: SupplierProfile.PaymentTerms
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PaymentTerms
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_Status
+  name: Status
+  nameWithType: SupplierProfile.Status
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Status
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_Notes
+  name: Notes
+  nameWithType: SupplierProfile.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Notes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_BusinessEntity
+  name: BusinessEntity
+  nameWithType: SupplierProfile.BusinessEntity
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.BusinessEntity
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity.html
+  name: BusinessEntity
+  nameWithType: BusinessEntity
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_Contracts
+  name: Contracts
+  nameWithType: SupplierProfile.Contracts
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.Contracts
+- uid: System.Collections.Generic.ICollection{QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract}
+  commentId: T:System.Collections.Generic.ICollection{QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.ICollection`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  name: ICollection<SupplierContract>
+  nameWithType: ICollection<SupplierContract>
+  fullName: System.Collections.Generic.ICollection<QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract>
+  nameWithType.vb: ICollection(Of SupplierContract)
+  fullName.vb: System.Collections.Generic.ICollection(Of QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract)
+  name.vb: ICollection(Of SupplierContract)
+  spec.csharp:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract
+    name: SupplierContract
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract
+    name: SupplierContract
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierContract.html
+  - name: )
+- uid: System.Collections.Generic.ICollection`1
+  commentId: T:System.Collections.Generic.ICollection`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  name: ICollection<T>
+  nameWithType: ICollection<T>
+  fullName: System.Collections.Generic.ICollection<T>
+  nameWithType.vb: ICollection(Of T)
+  fullName.vb: System.Collections.Generic.ICollection(Of T)
+  name.vb: ICollection(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_Entities_SupplierProfile_PerformanceRecords
+  name: PerformanceRecords
+  nameWithType: SupplierProfile.PerformanceRecords
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile.PerformanceRecords
+- uid: System.Collections.Generic.ICollection{QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance}
+  commentId: T:System.Collections.Generic.ICollection{QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.ICollection`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  name: ICollection<SupplierPerformance>
+  nameWithType: ICollection<SupplierPerformance>
+  fullName: System.Collections.Generic.ICollection<QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance>
+  nameWithType.vb: ICollection(Of SupplierPerformance)
+  fullName.vb: System.Collections.Generic.ICollection(Of QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance)
+  name.vb: ICollection(Of SupplierPerformance)
+  spec.csharp:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance
+    name: SupplierPerformance
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.ICollection`1
+    name: ICollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance
+    name: SupplierPerformance
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierPerformance.html
+  - name: )

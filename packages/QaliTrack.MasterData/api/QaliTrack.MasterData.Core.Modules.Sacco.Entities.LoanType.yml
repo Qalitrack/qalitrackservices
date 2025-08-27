@@ -1,0 +1,306 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  id: LoanType
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Agriculture
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Asset
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Business
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Development
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Education
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Emergency
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Housing
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Refinancing
+  langs:
+  - csharp
+  - vb
+  name: LoanType
+  nameWithType: LoanType
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LoanType
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 330
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public enum LoanType
+    content.vb: Public Enum LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Development
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Development
+  id: Development
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Development
+  nameWithType: LoanType.Development
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Development
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Development
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 332
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Development = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Emergency
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Emergency
+  id: Emergency
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Emergency
+  nameWithType: LoanType.Emergency
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Emergency
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Emergency
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 333
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Emergency = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Business
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Business
+  id: Business
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Business
+  nameWithType: LoanType.Business
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Business
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Business
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 334
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Business = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Education
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Education
+  id: Education
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Education
+  nameWithType: LoanType.Education
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Education
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Education
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 335
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Education = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Agriculture
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Agriculture
+  id: Agriculture
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Agriculture
+  nameWithType: LoanType.Agriculture
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Agriculture
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Agriculture
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 336
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Agriculture = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Housing
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Housing
+  id: Housing
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Housing
+  nameWithType: LoanType.Housing
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Housing
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Housing
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 337
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Housing = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Asset
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Asset
+  id: Asset
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Asset
+  nameWithType: LoanType.Asset
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Asset
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Asset
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 338
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Asset = 6
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Refinancing
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Refinancing
+  id: Refinancing
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  langs:
+  - csharp
+  - vb
+  name: Refinancing
+  nameWithType: LoanType.Refinancing
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.Refinancing
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Refinancing
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 339
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Refinancing = 7
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType.html
+  name: LoanType
+  nameWithType: LoanType
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanType

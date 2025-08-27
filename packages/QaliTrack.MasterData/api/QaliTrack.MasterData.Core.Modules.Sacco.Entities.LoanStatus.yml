@@ -1,0 +1,333 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  id: LoanStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Applied
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Approved
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Completed
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Defaulted
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Disbursed
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Rejected
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.UnderReview
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.WrittenOff
+  langs:
+  - csharp
+  - vb
+  name: LoanStatus
+  nameWithType: LoanStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LoanStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 342
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public enum LoanStatus
+    content.vb: Public Enum LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Applied
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Applied
+  id: Applied
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: Applied
+  nameWithType: LoanStatus.Applied
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Applied
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Applied
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 344
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Applied = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.UnderReview
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.UnderReview
+  id: UnderReview
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: UnderReview
+  nameWithType: LoanStatus.UnderReview
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.UnderReview
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UnderReview
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 345
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: UnderReview = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Approved
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Approved
+  id: Approved
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: Approved
+  nameWithType: LoanStatus.Approved
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Approved
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Approved
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 346
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Approved = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Rejected
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Rejected
+  id: Rejected
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: Rejected
+  nameWithType: LoanStatus.Rejected
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Rejected
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Rejected
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 347
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Rejected = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Disbursed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Disbursed
+  id: Disbursed
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: Disbursed
+  nameWithType: LoanStatus.Disbursed
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Disbursed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Disbursed
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 348
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Disbursed = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: LoanStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 349
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Active = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Completed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Completed
+  id: Completed
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: Completed
+  nameWithType: LoanStatus.Completed
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Completed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Completed
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 350
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Completed = 6
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Defaulted
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Defaulted
+  id: Defaulted
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: Defaulted
+  nameWithType: LoanStatus.Defaulted
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.Defaulted
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Defaulted
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 351
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Defaulted = 7
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.WrittenOff
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.WrittenOff
+  id: WrittenOff
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  langs:
+  - csharp
+  - vb
+  name: WrittenOff
+  nameWithType: LoanStatus.WrittenOff
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.WrittenOff
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WrittenOff
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 352
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: WrittenOff = 8
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus.html
+  name: LoanStatus
+  nameWithType: LoanStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.LoanStatus

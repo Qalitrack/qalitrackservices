@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  id: AppointmentStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Expired
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Removed
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Resigned
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Suspended
+  langs:
+  - csharp
+  - vb
+  name: AppointmentStatus
+  nameWithType: AppointmentStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AppointmentStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 286
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public enum AppointmentStatus
+    content.vb: Public Enum AppointmentStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: AppointmentStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 288
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Expired
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Expired
+  id: Expired
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  langs:
+  - csharp
+  - vb
+  name: Expired
+  nameWithType: AppointmentStatus.Expired
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Expired
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Expired
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 289
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Expired = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Resigned
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Resigned
+  id: Resigned
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  langs:
+  - csharp
+  - vb
+  name: Resigned
+  nameWithType: AppointmentStatus.Resigned
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Resigned
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Resigned
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 290
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Resigned = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Removed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Removed
+  id: Removed
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  langs:
+  - csharp
+  - vb
+  name: Removed
+  nameWithType: AppointmentStatus.Removed
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Removed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Removed
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 291
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Removed = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: AppointmentStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 292
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Suspended = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus.html
+  name: AppointmentStatus
+  nameWithType: AppointmentStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.AppointmentStatus

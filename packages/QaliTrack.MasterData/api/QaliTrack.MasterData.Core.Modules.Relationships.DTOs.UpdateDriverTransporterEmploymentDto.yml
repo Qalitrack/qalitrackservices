@@ -1,0 +1,958 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  id: UpdateDriverTransporterEmploymentDto
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.#ctor(System.DateTime,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.String,System.String,System.Boolean,System.String)
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason
+  langs:
+  - csharp
+  - vb
+  name: UpdateDriverTransporterEmploymentDto
+  nameWithType: UpdateDriverTransporterEmploymentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdateDriverTransporterEmploymentDto
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 196
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: 'public record UpdateDriverTransporterEmploymentDto : IEquatable<UpdateDriverTransporterEmploymentDto>'
+    content.vb: Public Class UpdateDriverTransporterEmploymentDto Implements IEquatable(Of UpdateDriverTransporterEmploymentDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.#ctor(System.DateTime,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.String,System.String,System.Boolean,System.String)
+  commentId: M:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.#ctor(System.DateTime,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.String,System.String,System.Boolean,System.String)
+  id: '#ctor(System.DateTime,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.String,System.String,System.Boolean,System.String)'
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: UpdateDriverTransporterEmploymentDto(DateTime, string, string, DateTime?, decimal?, string?, string?, string?, string?, bool, string?)
+  nameWithType: UpdateDriverTransporterEmploymentDto.UpdateDriverTransporterEmploymentDto(DateTime, string, string, DateTime?, decimal?, string?, string?, string?, string?, bool, string?)
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.UpdateDriverTransporterEmploymentDto(System.DateTime, string, string, System.DateTime?, decimal?, string?, string?, string?, string?, bool, string?)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 196
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public UpdateDriverTransporterEmploymentDto(DateTime HireDate, string EmploymentType, string Status, DateTime? TerminationDate = null, decimal? Salary = null, string? Position = null, string? Department = null, string? ReportsTo = null, string? TerminationReason = null, bool IsActive = true, string? Notes = null)
+    parameters:
+    - id: HireDate
+      type: System.DateTime
+    - id: EmploymentType
+      type: System.String
+    - id: Status
+      type: System.String
+    - id: TerminationDate
+      type: System.Nullable{System.DateTime}
+    - id: Salary
+      type: System.Nullable{System.Decimal}
+    - id: Position
+      type: System.String
+    - id: Department
+      type: System.String
+    - id: ReportsTo
+      type: System.String
+    - id: TerminationReason
+      type: System.String
+    - id: IsActive
+      type: System.Boolean
+    - id: Notes
+      type: System.String
+    content.vb: Public Sub New(HireDate As Date, EmploymentType As String, Status As String, TerminationDate As Date? = Nothing, Salary As Decimal? = Nothing, Position As String = Nothing, Department As String = Nothing, ReportsTo As String = Nothing, TerminationReason As String = Nothing, IsActive As Boolean = True, Notes As String = Nothing)
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.#ctor*
+  nameWithType.vb: UpdateDriverTransporterEmploymentDto.New(Date, String, String, Date?, Decimal?, String, String, String, String, Boolean, String)
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.New(Date, String, String, Date?, Decimal?, String, String, String, String, Boolean, String)
+  name.vb: New(Date, String, String, Date?, Decimal?, String, String, String, String, Boolean, String)
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate
+  id: HireDate
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: HireDate
+  nameWithType: UpdateDriverTransporterEmploymentDto.HireDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HireDate
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 197
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime HireDate { get; init; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property HireDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType
+  id: EmploymentType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: EmploymentType
+  nameWithType: UpdateDriverTransporterEmploymentDto.EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmploymentType
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 198
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string EmploymentType { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EmploymentType As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: UpdateDriverTransporterEmploymentDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 199
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string Status { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate
+  id: TerminationDate
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: TerminationDate
+  nameWithType: UpdateDriverTransporterEmploymentDto.TerminationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TerminationDate
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 200
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime? TerminationDate { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property TerminationDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary
+  id: Salary
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: Salary
+  nameWithType: UpdateDriverTransporterEmploymentDto.Salary
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Salary
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 201
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public decimal? Salary { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property Salary As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position
+  id: Position
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: Position
+  nameWithType: UpdateDriverTransporterEmploymentDto.Position
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Position
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 202
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Position { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Position As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department
+  id: Department
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: Department
+  nameWithType: UpdateDriverTransporterEmploymentDto.Department
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Department
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 203
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Department { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Department As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo
+  id: ReportsTo
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: ReportsTo
+  nameWithType: UpdateDriverTransporterEmploymentDto.ReportsTo
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ReportsTo
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 204
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? ReportsTo { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ReportsTo As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason
+  id: TerminationReason
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: TerminationReason
+  nameWithType: UpdateDriverTransporterEmploymentDto.TerminationReason
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TerminationReason
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 205
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? TerminationReason { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TerminationReason As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive
+  id: IsActive
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: UpdateDriverTransporterEmploymentDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsActive
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 206
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public bool IsActive { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsActive As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: UpdateDriverTransporterEmploymentDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 207
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<UpdateDriverTransporterEmploymentDto>
+  nameWithType: IEquatable<UpdateDriverTransporterEmploymentDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto>
+  nameWithType.vb: IEquatable(Of UpdateDriverTransporterEmploymentDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto)
+  name.vb: IEquatable(Of UpdateDriverTransporterEmploymentDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+    name: UpdateDriverTransporterEmploymentDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto
+    name: UpdateDriverTransporterEmploymentDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.#ctor
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto__ctor_System_DateTime_System_String_System_String_System_Nullable_System_DateTime__System_Nullable_System_Decimal__System_String_System_String_System_String_System_String_System_Boolean_System_String_
+  name: UpdateDriverTransporterEmploymentDto
+  nameWithType: UpdateDriverTransporterEmploymentDto.UpdateDriverTransporterEmploymentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.UpdateDriverTransporterEmploymentDto
+  nameWithType.vb: UpdateDriverTransporterEmploymentDto.New
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.New
+  name.vb: New
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_HireDate
+  name: HireDate
+  nameWithType: UpdateDriverTransporterEmploymentDto.HireDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.HireDate
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_EmploymentType
+  name: EmploymentType
+  nameWithType: UpdateDriverTransporterEmploymentDto.EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_Status
+  name: Status
+  nameWithType: UpdateDriverTransporterEmploymentDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_TerminationDate
+  name: TerminationDate
+  nameWithType: UpdateDriverTransporterEmploymentDto.TerminationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationDate
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_Salary
+  name: Salary
+  nameWithType: UpdateDriverTransporterEmploymentDto.Salary
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Salary
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_Position
+  name: Position
+  nameWithType: UpdateDriverTransporterEmploymentDto.Position
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Position
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_Department
+  name: Department
+  nameWithType: UpdateDriverTransporterEmploymentDto.Department
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Department
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_ReportsTo
+  name: ReportsTo
+  nameWithType: UpdateDriverTransporterEmploymentDto.ReportsTo
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.ReportsTo
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_TerminationReason
+  name: TerminationReason
+  nameWithType: UpdateDriverTransporterEmploymentDto.TerminationReason
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.TerminationReason
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_IsActive
+  name: IsActive
+  nameWithType: UpdateDriverTransporterEmploymentDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.IsActive
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverTransporterEmploymentDto_Notes
+  name: Notes
+  nameWithType: UpdateDriverTransporterEmploymentDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverTransporterEmploymentDto.Notes

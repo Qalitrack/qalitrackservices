@@ -1,0 +1,1099 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  id: WeighbridgeMaintenance
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed
+  langs:
+  - csharp
+  - vb
+  name: WeighbridgeMaintenance
+  nameWithType: WeighbridgeMaintenance
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WeighbridgeMaintenance
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 68
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: 'public class WeighbridgeMaintenance : BaseEntity'
+    content.vb: Public Class WeighbridgeMaintenance Inherits BaseEntity
+  inheritance:
+  - System.Object
+  - QaliTrack.MasterData.Core.Common.BaseEntity
+  inheritedMembers:
+  - QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId
+  id: WeighbridgeId
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: WeighbridgeId
+  nameWithType: WeighbridgeMaintenance.WeighbridgeId
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WeighbridgeId
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 70
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public Guid WeighbridgeId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property WeighbridgeId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate
+  id: MaintenanceDate
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: MaintenanceDate
+  nameWithType: WeighbridgeMaintenance.MaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaintenanceDate
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 71
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public DateTime MaintenanceDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property MaintenanceDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType
+  id: MaintenanceType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: MaintenanceType
+  nameWithType: WeighbridgeMaintenance.MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaintenanceType
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 72
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string MaintenanceType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property MaintenanceType As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider
+  id: ServiceProvider
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: ServiceProvider
+  nameWithType: WeighbridgeMaintenance.ServiceProvider
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceProvider
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 73
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string ServiceProvider { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ServiceProvider As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber
+  id: WorkOrderNumber
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: WorkOrderNumber
+  nameWithType: WeighbridgeMaintenance.WorkOrderNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WorkOrderNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 74
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string? WorkOrderNumber { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property WorkOrderNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed
+  id: WorkPerformed
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: WorkPerformed
+  nameWithType: WeighbridgeMaintenance.WorkPerformed
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WorkPerformed
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 75
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string? WorkPerformed { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property WorkPerformed As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced
+  id: PartsReplaced
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: PartsReplaced
+  nameWithType: WeighbridgeMaintenance.PartsReplaced
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PartsReplaced
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 76
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string? PartsReplaced { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PartsReplaced As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost
+  id: ServiceCost
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: ServiceCost
+  nameWithType: WeighbridgeMaintenance.ServiceCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceCost
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 77
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public decimal ServiceCost { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property ServiceCost As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost
+  id: PartsCost
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: PartsCost
+  nameWithType: WeighbridgeMaintenance.PartsCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PartsCost
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 78
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public decimal PartsCost { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property PartsCost As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost
+  id: TotalCost
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: TotalCost
+  nameWithType: WeighbridgeMaintenance.TotalCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TotalCost
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 79
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public decimal TotalCost { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property TotalCost As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: WeighbridgeMaintenance.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 80
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate
+  id: NextMaintenanceDate
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: NextMaintenanceDate
+  nameWithType: WeighbridgeMaintenance.NextMaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NextMaintenanceDate
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 81
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public DateTime? NextMaintenanceDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property NextMaintenanceDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty
+  id: Warranty
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: Warranty
+  nameWithType: WeighbridgeMaintenance.Warranty
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Warranty
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 82
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string? Warranty { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Warranty As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName
+  id: TechnicianName
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: TechnicianName
+  nameWithType: WeighbridgeMaintenance.TechnicianName
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TechnicianName
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 83
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string? TechnicianName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TechnicianName As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: WeighbridgeMaintenance.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 84
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge
+  id: Weighbridge
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  langs:
+  - csharp
+  - vb
+  name: Weighbridge
+  nameWithType: WeighbridgeMaintenance.Weighbridge
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Weighbridge
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 87
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public virtual Weighbridge Weighbridge { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge
+    content.vb: Public Overridable Property Weighbridge As Weighbridge
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity
+  commentId: T:QaliTrack.MasterData.Core.Common.BaseEntity
+  parent: QaliTrack.MasterData.Core.Common
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Common
+  commentId: N:QaliTrack.MasterData.Core.Common
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Common
+  nameWithType: QaliTrack.MasterData.Core.Common
+  fullName: QaliTrack.MasterData.Core.Common
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_WeighbridgeId
+  name: WeighbridgeId
+  nameWithType: WeighbridgeMaintenance.WeighbridgeId
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WeighbridgeId
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_MaintenanceDate
+  name: MaintenanceDate
+  nameWithType: WeighbridgeMaintenance.MaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceDate
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_MaintenanceType
+  name: MaintenanceType
+  nameWithType: WeighbridgeMaintenance.MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.MaintenanceType
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_ServiceProvider
+  name: ServiceProvider
+  nameWithType: WeighbridgeMaintenance.ServiceProvider
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceProvider
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_WorkOrderNumber
+  name: WorkOrderNumber
+  nameWithType: WeighbridgeMaintenance.WorkOrderNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkOrderNumber
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_WorkPerformed
+  name: WorkPerformed
+  nameWithType: WeighbridgeMaintenance.WorkPerformed
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.WorkPerformed
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_PartsReplaced
+  name: PartsReplaced
+  nameWithType: WeighbridgeMaintenance.PartsReplaced
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsReplaced
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_ServiceCost
+  name: ServiceCost
+  nameWithType: WeighbridgeMaintenance.ServiceCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.ServiceCost
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_PartsCost
+  name: PartsCost
+  nameWithType: WeighbridgeMaintenance.PartsCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.PartsCost
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_TotalCost
+  name: TotalCost
+  nameWithType: WeighbridgeMaintenance.TotalCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TotalCost
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_Status
+  name: Status
+  nameWithType: WeighbridgeMaintenance.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Status
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_NextMaintenanceDate
+  name: NextMaintenanceDate
+  nameWithType: WeighbridgeMaintenance.NextMaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.NextMaintenanceDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_Warranty
+  name: Warranty
+  nameWithType: WeighbridgeMaintenance.Warranty
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Warranty
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_TechnicianName
+  name: TechnicianName
+  nameWithType: WeighbridgeMaintenance.TechnicianName
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.TechnicianName
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_Notes
+  name: Notes
+  nameWithType: WeighbridgeMaintenance.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html#QaliTrack_MasterData_Core_Modules_Weighbridge_Entities_WeighbridgeMaintenance_Weighbridge
+  name: Weighbridge
+  nameWithType: WeighbridgeMaintenance.Weighbridge
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.Weighbridge
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge.html
+  name: Weighbridge
+  nameWithType: Weighbridge
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge

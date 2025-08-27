@@ -1,0 +1,252 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  id: TripStatus
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Cancelled
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Completed
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Delayed
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Diverted
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.InProgress
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Scheduled
+  langs:
+  - csharp
+  - vb
+  name: TripStatus
+  nameWithType: TripStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TripStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 156
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public enum TripStatus
+    content.vb: Public Enum TripStatus
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Scheduled
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Scheduled
+  id: Scheduled
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  langs:
+  - csharp
+  - vb
+  name: Scheduled
+  nameWithType: TripStatus.Scheduled
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Scheduled
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Scheduled
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 158
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Scheduled = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.InProgress
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.InProgress
+  id: InProgress
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  langs:
+  - csharp
+  - vb
+  name: InProgress
+  nameWithType: TripStatus.InProgress
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.InProgress
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: InProgress
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 159
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: InProgress = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Completed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Completed
+  id: Completed
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  langs:
+  - csharp
+  - vb
+  name: Completed
+  nameWithType: TripStatus.Completed
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Completed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Completed
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 160
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Completed = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Delayed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Delayed
+  id: Delayed
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  langs:
+  - csharp
+  - vb
+  name: Delayed
+  nameWithType: TripStatus.Delayed
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Delayed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Delayed
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 161
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Delayed = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Cancelled
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Cancelled
+  id: Cancelled
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  langs:
+  - csharp
+  - vb
+  name: Cancelled
+  nameWithType: TripStatus.Cancelled
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Cancelled
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Cancelled
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 162
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Cancelled = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Diverted
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Diverted
+  id: Diverted
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  langs:
+  - csharp
+  - vb
+  name: Diverted
+  nameWithType: TripStatus.Diverted
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.Diverted
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Diverted
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 163
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Diverted = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Route.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Route.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus.html
+  name: TripStatus
+  nameWithType: TripStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.TripStatus

@@ -1,0 +1,30 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Infrastructure.Migrations
+  commentId: N:QaliTrack.MasterData.Infrastructure.Migrations
+  id: QaliTrack.MasterData.Infrastructure.Migrations
+  children:
+  - QaliTrack.MasterData.Infrastructure.Migrations.AddAllModules
+  - QaliTrack.MasterData.Infrastructure.Migrations.InitialCreate
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Infrastructure.Migrations
+  nameWithType: QaliTrack.MasterData.Infrastructure.Migrations
+  fullName: QaliTrack.MasterData.Infrastructure.Migrations
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Infrastructure
+references:
+- uid: QaliTrack.MasterData.Infrastructure.Migrations.InitialCreate
+  commentId: T:QaliTrack.MasterData.Infrastructure.Migrations.InitialCreate
+  href: QaliTrack.MasterData.Infrastructure.Migrations.InitialCreate.html
+  name: InitialCreate
+  nameWithType: InitialCreate
+  fullName: QaliTrack.MasterData.Infrastructure.Migrations.InitialCreate
+- uid: QaliTrack.MasterData.Infrastructure.Migrations.AddAllModules
+  commentId: T:QaliTrack.MasterData.Infrastructure.Migrations.AddAllModules
+  href: QaliTrack.MasterData.Infrastructure.Migrations.AddAllModules.html
+  name: AddAllModules
+  nameWithType: AddAllModules
+  fullName: QaliTrack.MasterData.Infrastructure.Migrations.AddAllModules

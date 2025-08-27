@@ -1,0 +1,252 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  id: RoadType
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Coastal
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Highway
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mixed
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mountain
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Rural
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Urban
+  langs:
+  - csharp
+  - vb
+  name: RoadType
+  nameWithType: RoadType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RoadType
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 123
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public enum RoadType
+    content.vb: Public Enum RoadType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Highway
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Highway
+  id: Highway
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  langs:
+  - csharp
+  - vb
+  name: Highway
+  nameWithType: RoadType.Highway
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Highway
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Highway
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 125
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Highway = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Urban
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Urban
+  id: Urban
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  langs:
+  - csharp
+  - vb
+  name: Urban
+  nameWithType: RoadType.Urban
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Urban
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Urban
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 126
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Urban = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Rural
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Rural
+  id: Rural
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  langs:
+  - csharp
+  - vb
+  name: Rural
+  nameWithType: RoadType.Rural
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Rural
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Rural
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 127
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Rural = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mountain
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mountain
+  id: Mountain
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  langs:
+  - csharp
+  - vb
+  name: Mountain
+  nameWithType: RoadType.Mountain
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mountain
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Mountain
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 128
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Mountain = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Coastal
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Coastal
+  id: Coastal
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  langs:
+  - csharp
+  - vb
+  name: Coastal
+  nameWithType: RoadType.Coastal
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Coastal
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Coastal
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 129
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Coastal = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mixed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mixed
+  id: Mixed
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  langs:
+  - csharp
+  - vb
+  name: Mixed
+  nameWithType: RoadType.Mixed
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.Mixed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Mixed
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 130
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Mixed = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Route.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Route.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType.html
+  name: RoadType
+  nameWithType: RoadType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RoadType

@@ -1,0 +1,1108 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  id: VehicleSaccoRegistrationDto
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+  langs:
+  - csharp
+  - vb
+  name: VehicleSaccoRegistrationDto
+  nameWithType: VehicleSaccoRegistrationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleSaccoRegistrationDto
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 426
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: 'public record VehicleSaccoRegistrationDto : IEquatable<VehicleSaccoRegistrationDto>'
+    content.vb: Public Class VehicleSaccoRegistrationDto Implements IEquatable(Of VehicleSaccoRegistrationDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id
+  id: Id
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: VehicleSaccoRegistrationDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Id
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 428
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public Guid Id { get; init; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property Id As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId
+  id: VehicleId
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: VehicleId
+  nameWithType: VehicleSaccoRegistrationDto.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleId
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 429
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public Guid VehicleId { get; init; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property VehicleId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId
+  id: SaccoId
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: SaccoId
+  nameWithType: VehicleSaccoRegistrationDto.SaccoId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoId
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 430
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public Guid SaccoId { get; init; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property SaccoId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate
+  id: RegistrationDate
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: RegistrationDate
+  nameWithType: VehicleSaccoRegistrationDto.RegistrationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RegistrationDate
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 431
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime RegistrationDate { get; init; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property RegistrationDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate
+  id: ExpiryDate
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: ExpiryDate
+  nameWithType: VehicleSaccoRegistrationDto.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ExpiryDate
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 432
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime? ExpiryDate { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property ExpiryDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber
+  id: RegistrationNumber
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: RegistrationNumber
+  nameWithType: VehicleSaccoRegistrationDto.RegistrationNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RegistrationNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 433
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string RegistrationNumber { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property RegistrationNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: VehicleSaccoRegistrationDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 434
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string Status { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee
+  id: RegistrationFee
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: RegistrationFee
+  nameWithType: VehicleSaccoRegistrationDto.RegistrationFee
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RegistrationFee
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 435
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public decimal RegistrationFee { get; init; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property RegistrationFee As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber
+  id: CertificateNumber
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: CertificateNumber
+  nameWithType: VehicleSaccoRegistrationDto.CertificateNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CertificateNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 436
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? CertificateNumber { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CertificateNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions
+  id: Conditions
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: Conditions
+  nameWithType: VehicleSaccoRegistrationDto.Conditions
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Conditions
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 437
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Conditions { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Conditions As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive
+  id: IsActive
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: VehicleSaccoRegistrationDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsActive
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 438
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public bool IsActive { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsActive As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: VehicleSaccoRegistrationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 439
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt
+  id: CreatedAt
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: VehicleSaccoRegistrationDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 440
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime CreatedAt { get; init; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property CreatedAt As Date
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt
+  id: UpdatedAt
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedAt
+  nameWithType: VehicleSaccoRegistrationDto.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 441
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime? UpdatedAt { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property UpdatedAt As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired
+  id: IsExpired
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: IsExpired
+  nameWithType: VehicleSaccoRegistrationDto.IsExpired
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsExpired
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 442
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public bool IsExpired { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsExpired As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+  id: VehicleRegistrationNumber
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: VehicleRegistrationNumber
+  nameWithType: VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleRegistrationNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 443
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? VehicleRegistrationNumber { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property VehicleRegistrationNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName
+  id: SaccoName
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+  langs:
+  - csharp
+  - vb
+  name: SaccoName
+  nameWithType: VehicleSaccoRegistrationDto.SaccoName
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoName
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 444
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? SaccoName { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property SaccoName As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<VehicleSaccoRegistrationDto>
+  nameWithType: IEquatable<VehicleSaccoRegistrationDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto>
+  nameWithType.vb: IEquatable(Of VehicleSaccoRegistrationDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto)
+  name.vb: IEquatable(Of VehicleSaccoRegistrationDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+    name: VehicleSaccoRegistrationDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto
+    name: VehicleSaccoRegistrationDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_Id
+  name: Id
+  nameWithType: VehicleSaccoRegistrationDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Id
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_VehicleId
+  name: VehicleId
+  nameWithType: VehicleSaccoRegistrationDto.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleId
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_SaccoId
+  name: SaccoId
+  nameWithType: VehicleSaccoRegistrationDto.SaccoId
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoId
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_RegistrationDate
+  name: RegistrationDate
+  nameWithType: VehicleSaccoRegistrationDto.RegistrationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationDate
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_ExpiryDate
+  name: ExpiryDate
+  nameWithType: VehicleSaccoRegistrationDto.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.ExpiryDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_RegistrationNumber
+  name: RegistrationNumber
+  nameWithType: VehicleSaccoRegistrationDto.RegistrationNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationNumber
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_Status
+  name: Status
+  nameWithType: VehicleSaccoRegistrationDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_RegistrationFee
+  name: RegistrationFee
+  nameWithType: VehicleSaccoRegistrationDto.RegistrationFee
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.RegistrationFee
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_CertificateNumber
+  name: CertificateNumber
+  nameWithType: VehicleSaccoRegistrationDto.CertificateNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CertificateNumber
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_Conditions
+  name: Conditions
+  nameWithType: VehicleSaccoRegistrationDto.Conditions
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Conditions
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_IsActive
+  name: IsActive
+  nameWithType: VehicleSaccoRegistrationDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsActive
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_Notes
+  name: Notes
+  nameWithType: VehicleSaccoRegistrationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_CreatedAt
+  name: CreatedAt
+  nameWithType: VehicleSaccoRegistrationDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.CreatedAt
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_UpdatedAt
+  name: UpdatedAt
+  nameWithType: VehicleSaccoRegistrationDto.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_IsExpired
+  name: IsExpired
+  nameWithType: VehicleSaccoRegistrationDto.IsExpired
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.IsExpired
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_VehicleRegistrationNumber
+  name: VehicleRegistrationNumber
+  nameWithType: VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.VehicleRegistrationNumber
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_VehicleSaccoRegistrationDto_SaccoName
+  name: SaccoName
+  nameWithType: VehicleSaccoRegistrationDto.SaccoName
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.VehicleSaccoRegistrationDto.SaccoName

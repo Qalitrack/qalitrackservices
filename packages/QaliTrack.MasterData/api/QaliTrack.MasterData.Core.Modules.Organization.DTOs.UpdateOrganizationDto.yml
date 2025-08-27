@@ -1,0 +1,811 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  id: UpdateOrganizationDto
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status
+  - QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website
+  langs:
+  - csharp
+  - vb
+  name: UpdateOrganizationDto
+  nameWithType: UpdateOrganizationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdateOrganizationDto
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 31
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  summary: DTO for updating basic organization information
+  example: []
+  syntax:
+    content: public class UpdateOrganizationDto
+    content.vb: Public Class UpdateOrganizationDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name
+  id: Name
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: UpdateOrganizationDto.Name
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Name
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 33
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string Name { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Name As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description
+  id: Description
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: Description
+  nameWithType: UpdateOrganizationDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Description
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 34
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string Description { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Description As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: UpdateOrganizationDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 35
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address
+  id: Address
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: Address
+  nameWithType: UpdateOrganizationDto.Address
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Address
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 36
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string Address { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Address As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City
+  id: City
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: City
+  nameWithType: UpdateOrganizationDto.City
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: City
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 37
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string City { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property City As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State
+  id: State
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: State
+  nameWithType: UpdateOrganizationDto.State
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: State
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 38
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string State { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property State As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country
+  id: Country
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: Country
+  nameWithType: UpdateOrganizationDto.Country
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Country
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 39
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string Country { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Country As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail
+  id: ContactEmail
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: ContactEmail
+  nameWithType: UpdateOrganizationDto.ContactEmail
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ContactEmail
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 40
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string ContactEmail { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ContactEmail As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone
+  id: ContactPhone
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: ContactPhone
+  nameWithType: UpdateOrganizationDto.ContactPhone
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ContactPhone
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 41
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string ContactPhone { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ContactPhone As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode
+  id: PostalCode
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: PostalCode
+  nameWithType: UpdateOrganizationDto.PostalCode
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PostalCode
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 42
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string? PostalCode { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PostalCode As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website
+  id: Website
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: Website
+  nameWithType: UpdateOrganizationDto.Website
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Website
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 43
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string? Website { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Website As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl
+  id: LogoUrl
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: LogoUrl
+  nameWithType: UpdateOrganizationDto.LogoUrl
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LogoUrl
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 44
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string? LogoUrl { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LogoUrl As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl*
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: UpdateOrganizationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/DTOs/OrganizationDTOs.cs
+    startLine: 45
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization
+    name: Organization
+    href: QaliTrack.MasterData.Core.Modules.Organization.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization
+    name: Organization
+    href: QaliTrack.MasterData.Core.Modules.Organization.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_Name
+  name: Name
+  nameWithType: UpdateOrganizationDto.Name
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Name
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_Description
+  name: Description
+  nameWithType: UpdateOrganizationDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Description
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_Status
+  name: Status
+  nameWithType: UpdateOrganizationDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_Address
+  name: Address
+  nameWithType: UpdateOrganizationDto.Address
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Address
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_City
+  name: City
+  nameWithType: UpdateOrganizationDto.City
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.City
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_State
+  name: State
+  nameWithType: UpdateOrganizationDto.State
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.State
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_Country
+  name: Country
+  nameWithType: UpdateOrganizationDto.Country
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Country
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_ContactEmail
+  name: ContactEmail
+  nameWithType: UpdateOrganizationDto.ContactEmail
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactEmail
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_ContactPhone
+  name: ContactPhone
+  nameWithType: UpdateOrganizationDto.ContactPhone
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.ContactPhone
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_PostalCode
+  name: PostalCode
+  nameWithType: UpdateOrganizationDto.PostalCode
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.PostalCode
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_Website
+  name: Website
+  nameWithType: UpdateOrganizationDto.Website
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Website
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_LogoUrl
+  name: LogoUrl
+  nameWithType: UpdateOrganizationDto.LogoUrl
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.LogoUrl
+- uid: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.html#QaliTrack_MasterData_Core_Modules_Organization_DTOs_UpdateOrganizationDto_Notes
+  name: Notes
+  nameWithType: UpdateOrganizationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto.Notes
