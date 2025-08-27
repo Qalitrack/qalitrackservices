@@ -5,24 +5,22 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'packages/microservices/userservice/**'
+      - 'packages/microservices/masterdata/user-service/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'packages/microservices/userservice/**'
+      - 'packages/microservices/masterdata/user-service/**'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
   SERVICE_NAME: user-service
-  SERVICE_PATH: packages/microservices/userservice
+  SERVICE_PATH: packages/microservices/masterdata/user-service
   POSTGRES_USER: userservice
   POSTGRES_PASSWORD: userservice123
   POSTGRES_DB: userservicedb
   REDIS_PASSWORD: userservice123
-  RABBITMQ_USERNAME: admin
-  RABBITMQ_PASSWORD: securepassword
 
 jobs:
   test:
@@ -61,20 +59,6 @@ jobs:
           --health-interval 30s
           --health-timeout 10s
           --health-retries 3
-      
-      rabbitmq:
-        image: rabbitmq:3-management
-        env:
-          RABBITMQ_DEFAULT_USER: ${{ env.RABBITMQ_USERNAME }}
-          RABBITMQ_DEFAULT_PASS: ${{ env.RABBITMQ_PASSWORD }}
-        ports:
-          - 5672:5672
-          - 15672:15672
-        options: >-
-          --health-cmd "rabbitmqctl status"
-          --health-interval 30s
-          --health-timeout 10s
-          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -114,18 +98,6 @@ jobs:
             sleep 2
           done
       
-      - name: Wait for RabbitMQ
-        run: |
-          echo "Waiting for RabbitMQ..."
-          for i in {1..30}; do
-            if curl -s -u ${{ env.RABBITMQ_USERNAME }}:${{ env.RABBITMQ_PASSWORD }} http://localhost:15672/api/aliveness-test/%2F | grep -q '"status":"ok"'; then
-              echo "RabbitMQ is ready!"
-              break
-            fi
-            echo "Waiting for RabbitMQ... ($i/30)"
-            sleep 2
-          done
-      
       - name: Restore dependencies
         run: |
           cd ${{ env.SERVICE_PATH }}
@@ -140,10 +112,6 @@ jobs:
         env:
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5434;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300"
           ConnectionStrings__Redis: "localhost:6379,password=${{ env.REDIS_PASSWORD }}"
-          RABBITMQ_HOST: localhost
-          RABBITMQ_PORT: 5672
-          RABBITMQ_USERNAME: ${{ env.RABBITMQ_USERNAME }}
-          RABBITMQ_PASSWORD: ${{ env.RABBITMQ_PASSWORD }}
           UsePostgreSQL: "true"
           UseRedis: "true"
         run: |
@@ -172,10 +140,6 @@ jobs:
           ASPNETCORE_ENVIRONMENT: "Testing"
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5434;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"
           ConnectionStrings__Redis: "localhost:6379,password=${{ env.REDIS_PASSWORD }}"
-          RABBITMQ_HOST: localhost
-          RABBITMQ_PORT: 5672
-          RABBITMQ_USERNAME: ${{ env.RABBITMQ_USERNAME }}
-          RABBITMQ_PASSWORD: ${{ env.RABBITMQ_PASSWORD }}
           UsePostgreSQL: "true"
           UseRedis: "true"
         run: |
@@ -228,7 +192,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
           labels: |
             org.opencontainers.image.title=User Service
-            org.opencontainers.image.description=QaliTrack User Microservice with PostgreSQL, Redis, and RabbitMQ support
+            org.opencontainers.image.description=QaliTrack User Microservice with PostgreSQL and Redis support
             org.opencontainers.image.vendor=QaliTrack
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
       
