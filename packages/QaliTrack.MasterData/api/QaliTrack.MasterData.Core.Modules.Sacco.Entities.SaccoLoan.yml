@@ -1,0 +1,1333 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  id: SaccoLoan
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status
+  langs:
+  - csharp
+  - vb
+  name: SaccoLoan
+  nameWithType: SaccoLoan
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoLoan
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 176
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: 'public class SaccoLoan : BaseEntity'
+    content.vb: Public Class SaccoLoan Inherits BaseEntity
+  inheritance:
+  - System.Object
+  - QaliTrack.MasterData.Core.Common.BaseEntity
+  inheritedMembers:
+  - QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId
+  id: SaccoId
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: SaccoId
+  nameWithType: SaccoLoan.SaccoId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoId
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 178
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public Guid SaccoId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property SaccoId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId
+  id: SaccoMemberId
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: SaccoMemberId
+  nameWithType: SaccoLoan.SaccoMemberId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoMemberId
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 179
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public Guid SaccoMemberId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property SaccoMemberId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber
+  id: LoanNumber
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: LoanNumber
+  nameWithType: SaccoLoan.LoanNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LoanNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 180
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string LoanNumber { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LoanNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType
+  id: LoanType
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: LoanType
+  nameWithType: SaccoLoan.LoanType
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LoanType
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 181
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string LoanType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LoanType As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount
+  id: LoanAmount
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: LoanAmount
+  nameWithType: SaccoLoan.LoanAmount
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LoanAmount
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 182
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public decimal LoanAmount { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property LoanAmount As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate
+  id: InterestRate
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: InterestRate
+  nameWithType: SaccoLoan.InterestRate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: InterestRate
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 183
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public decimal InterestRate { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property InterestRate As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths
+  id: RepaymentPeriodMonths
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: RepaymentPeriodMonths
+  nameWithType: SaccoLoan.RepaymentPeriodMonths
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RepaymentPeriodMonths
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 184
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public int RepaymentPeriodMonths { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property RepaymentPeriodMonths As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment
+  id: MonthlyPayment
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: MonthlyPayment
+  nameWithType: SaccoLoan.MonthlyPayment
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MonthlyPayment
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 185
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public decimal MonthlyPayment { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property MonthlyPayment As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance
+  id: OutstandingBalance
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: OutstandingBalance
+  nameWithType: SaccoLoan.OutstandingBalance
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: OutstandingBalance
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 186
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public decimal OutstandingBalance { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property OutstandingBalance As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate
+  id: ApplicationDate
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: ApplicationDate
+  nameWithType: SaccoLoan.ApplicationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ApplicationDate
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 187
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public DateTime ApplicationDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property ApplicationDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate
+  id: ApprovalDate
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: ApprovalDate
+  nameWithType: SaccoLoan.ApprovalDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ApprovalDate
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 188
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public DateTime? ApprovalDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property ApprovalDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate
+  id: DisbursementDate
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: DisbursementDate
+  nameWithType: SaccoLoan.DisbursementDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DisbursementDate
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 189
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public DateTime? DisbursementDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property DisbursementDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate
+  id: MaturityDate
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: MaturityDate
+  nameWithType: SaccoLoan.MaturityDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaturityDate
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 190
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public DateTime? MaturityDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property MaturityDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: SaccoLoan.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 191
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose
+  id: Purpose
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: Purpose
+  nameWithType: SaccoLoan.Purpose
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Purpose
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 192
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string Purpose { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Purpose As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral
+  id: Collateral
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: Collateral
+  nameWithType: SaccoLoan.Collateral
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Collateral
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 193
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string? Collateral { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Collateral As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors
+  id: Guarantors
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: Guarantors
+  nameWithType: SaccoLoan.Guarantors
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Guarantors
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 194
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string? Guarantors { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Guarantors As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy
+  id: ApprovedBy
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: ApprovedBy
+  nameWithType: SaccoLoan.ApprovedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ApprovedBy
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 195
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string ApprovedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ApprovedBy As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory
+  id: RepaymentHistory
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: RepaymentHistory
+  nameWithType: SaccoLoan.RepaymentHistory
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RepaymentHistory
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 196
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string? RepaymentHistory { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property RepaymentHistory As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: SaccoLoan.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 197
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco
+  id: Sacco
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: Sacco
+  nameWithType: SaccoLoan.Sacco
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Sacco
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 200
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public virtual Sacco Sacco { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.Sacco
+    content.vb: Public Overridable Property Sacco As Sacco
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco*
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member
+  commentId: P:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member
+  id: Member
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan
+  langs:
+  - csharp
+  - vb
+  name: Member
+  nameWithType: SaccoLoan.Member
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Member
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 201
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public virtual SaccoMember Member { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoMember
+    content.vb: Public Overridable Property Member As SaccoMember
+  overload: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity
+  commentId: T:QaliTrack.MasterData.Core.Common.BaseEntity
+  parent: QaliTrack.MasterData.Core.Common
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Common
+  commentId: N:QaliTrack.MasterData.Core.Common
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Common
+  nameWithType: QaliTrack.MasterData.Core.Common
+  fullName: QaliTrack.MasterData.Core.Common
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_SaccoId
+  name: SaccoId
+  nameWithType: SaccoLoan.SaccoId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoId
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_SaccoMemberId
+  name: SaccoMemberId
+  nameWithType: SaccoLoan.SaccoMemberId
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.SaccoMemberId
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_LoanNumber
+  name: LoanNumber
+  nameWithType: SaccoLoan.LoanNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanNumber
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_LoanType
+  name: LoanType
+  nameWithType: SaccoLoan.LoanType
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_LoanAmount
+  name: LoanAmount
+  nameWithType: SaccoLoan.LoanAmount
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.LoanAmount
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_InterestRate
+  name: InterestRate
+  nameWithType: SaccoLoan.InterestRate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.InterestRate
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_RepaymentPeriodMonths
+  name: RepaymentPeriodMonths
+  nameWithType: SaccoLoan.RepaymentPeriodMonths
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentPeriodMonths
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_MonthlyPayment
+  name: MonthlyPayment
+  nameWithType: SaccoLoan.MonthlyPayment
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MonthlyPayment
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_OutstandingBalance
+  name: OutstandingBalance
+  nameWithType: SaccoLoan.OutstandingBalance
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.OutstandingBalance
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_ApplicationDate
+  name: ApplicationDate
+  nameWithType: SaccoLoan.ApplicationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApplicationDate
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_ApprovalDate
+  name: ApprovalDate
+  nameWithType: SaccoLoan.ApprovalDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovalDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_DisbursementDate
+  name: DisbursementDate
+  nameWithType: SaccoLoan.DisbursementDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.DisbursementDate
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_MaturityDate
+  name: MaturityDate
+  nameWithType: SaccoLoan.MaturityDate
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.MaturityDate
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_Status
+  name: Status
+  nameWithType: SaccoLoan.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Status
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_Purpose
+  name: Purpose
+  nameWithType: SaccoLoan.Purpose
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Purpose
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_Collateral
+  name: Collateral
+  nameWithType: SaccoLoan.Collateral
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Collateral
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_Guarantors
+  name: Guarantors
+  nameWithType: SaccoLoan.Guarantors
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Guarantors
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_ApprovedBy
+  name: ApprovedBy
+  nameWithType: SaccoLoan.ApprovedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.ApprovedBy
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_RepaymentHistory
+  name: RepaymentHistory
+  nameWithType: SaccoLoan.RepaymentHistory
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.RepaymentHistory
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_Notes
+  name: Notes
+  nameWithType: SaccoLoan.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_Sacco
+  name: Sacco
+  nameWithType: SaccoLoan.Sacco
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Sacco
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.Sacco
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.Sacco
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.Sacco.html
+  name: Sacco
+  nameWithType: Sacco
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.Sacco
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.html#QaliTrack_MasterData_Core_Modules_Sacco_Entities_SaccoLoan_Member
+  name: Member
+  nameWithType: SaccoLoan.Member
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoLoan.Member
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoMember
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoMember
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoMember.html
+  name: SaccoMember
+  nameWithType: SaccoMember
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoMember

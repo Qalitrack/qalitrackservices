@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  id: OwnershipType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Contracted
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Financed
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Leased
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Owned
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Rented
+  langs:
+  - csharp
+  - vb
+  name: OwnershipType
+  nameWithType: OwnershipType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: OwnershipType
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 231
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: public enum OwnershipType
+    content.vb: Public Enum OwnershipType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Owned
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Owned
+  id: Owned
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  langs:
+  - csharp
+  - vb
+  name: Owned
+  nameWithType: OwnershipType.Owned
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Owned
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Owned
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 233
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Owned = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Leased
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Leased
+  id: Leased
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  langs:
+  - csharp
+  - vb
+  name: Leased
+  nameWithType: OwnershipType.Leased
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Leased
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Leased
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 234
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Leased = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Rented
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Rented
+  id: Rented
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  langs:
+  - csharp
+  - vb
+  name: Rented
+  nameWithType: OwnershipType.Rented
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Rented
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Rented
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 235
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Rented = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Financed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Financed
+  id: Financed
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  langs:
+  - csharp
+  - vb
+  name: Financed
+  nameWithType: OwnershipType.Financed
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Financed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Financed
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 236
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Financed = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Contracted
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Contracted
+  id: Contracted
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  langs:
+  - csharp
+  - vb
+  name: Contracted
+  nameWithType: OwnershipType.Contracted
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.Contracted
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Contracted
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 237
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Contracted = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.html
+  name: OwnershipType
+  nameWithType: OwnershipType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType

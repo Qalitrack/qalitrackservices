@@ -1,0 +1,1093 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  id: VehicleMaintenanceDto
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId
+  - QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty
+  langs:
+  - csharp
+  - vb
+  name: VehicleMaintenanceDto
+  nameWithType: VehicleMaintenanceDto
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleMaintenanceDto
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 476
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public class VehicleMaintenanceDto
+    content.vb: Public Class VehicleMaintenanceDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id
+  id: Id
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: VehicleMaintenanceDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Id
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 478
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public Guid Id { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property Id As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId
+  id: VehicleId
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: VehicleId
+  nameWithType: VehicleMaintenanceDto.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleId
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 479
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public Guid VehicleId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property VehicleId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate
+  id: MaintenanceDate
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: MaintenanceDate
+  nameWithType: VehicleMaintenanceDto.MaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaintenanceDate
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 480
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public DateTime MaintenanceDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property MaintenanceDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType
+  id: MaintenanceType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: MaintenanceType
+  nameWithType: VehicleMaintenanceDto.MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaintenanceType
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 481
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string MaintenanceType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property MaintenanceType As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider
+  id: ServiceProvider
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: ServiceProvider
+  nameWithType: VehicleMaintenanceDto.ServiceProvider
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceProvider
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 482
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string ServiceProvider { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ServiceProvider As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage
+  id: Mileage
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Mileage
+  nameWithType: VehicleMaintenanceDto.Mileage
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Mileage
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 483
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public decimal? Mileage { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property Mileage As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed
+  id: ServicesPerformed
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: ServicesPerformed
+  nameWithType: VehicleMaintenanceDto.ServicesPerformed
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServicesPerformed
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 484
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string? ServicesPerformed { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ServicesPerformed As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced
+  id: PartsReplaced
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: PartsReplaced
+  nameWithType: VehicleMaintenanceDto.PartsReplaced
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PartsReplaced
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 485
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string? PartsReplaced { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PartsReplaced As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost
+  id: ServiceCost
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: ServiceCost
+  nameWithType: VehicleMaintenanceDto.ServiceCost
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceCost
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 486
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public decimal ServiceCost { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property ServiceCost As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost
+  id: PartsCost
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: PartsCost
+  nameWithType: VehicleMaintenanceDto.PartsCost
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PartsCost
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 487
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public decimal PartsCost { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property PartsCost As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost
+  id: TotalCost
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: TotalCost
+  nameWithType: VehicleMaintenanceDto.TotalCost
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TotalCost
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 488
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public decimal TotalCost { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property TotalCost As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: VehicleMaintenanceDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 489
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate
+  id: NextServiceDate
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: NextServiceDate
+  nameWithType: VehicleMaintenanceDto.NextServiceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NextServiceDate
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 490
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public DateTime? NextServiceDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property NextServiceDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage
+  id: NextServiceMileage
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: NextServiceMileage
+  nameWithType: VehicleMaintenanceDto.NextServiceMileage
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NextServiceMileage
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 491
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public decimal? NextServiceMileage { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property NextServiceMileage As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty
+  id: Warranty
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Warranty
+  nameWithType: VehicleMaintenanceDto.Warranty
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Warranty
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 492
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string? Warranty { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Warranty As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy
+  id: PerformedBy
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: PerformedBy
+  nameWithType: VehicleMaintenanceDto.PerformedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PerformedBy
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 493
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string PerformedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PerformedBy As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: VehicleMaintenanceDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 494
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt
+  id: CreatedAt
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: VehicleMaintenanceDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/DTOs/VehicleDTOs.cs
+    startLine: 495
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  syntax:
+    content: public DateTime CreatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property CreatedAt As Date
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_Id
+  name: Id
+  nameWithType: VehicleMaintenanceDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Id
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_VehicleId
+  name: VehicleId
+  nameWithType: VehicleMaintenanceDto.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.VehicleId
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_MaintenanceDate
+  name: MaintenanceDate
+  nameWithType: VehicleMaintenanceDto.MaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceDate
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_MaintenanceType
+  name: MaintenanceType
+  nameWithType: VehicleMaintenanceDto.MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.MaintenanceType
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_ServiceProvider
+  name: ServiceProvider
+  nameWithType: VehicleMaintenanceDto.ServiceProvider
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceProvider
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_Mileage
+  name: Mileage
+  nameWithType: VehicleMaintenanceDto.Mileage
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Mileage
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_ServicesPerformed
+  name: ServicesPerformed
+  nameWithType: VehicleMaintenanceDto.ServicesPerformed
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServicesPerformed
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_PartsReplaced
+  name: PartsReplaced
+  nameWithType: VehicleMaintenanceDto.PartsReplaced
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsReplaced
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_ServiceCost
+  name: ServiceCost
+  nameWithType: VehicleMaintenanceDto.ServiceCost
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.ServiceCost
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_PartsCost
+  name: PartsCost
+  nameWithType: VehicleMaintenanceDto.PartsCost
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PartsCost
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_TotalCost
+  name: TotalCost
+  nameWithType: VehicleMaintenanceDto.TotalCost
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.TotalCost
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_Status
+  name: Status
+  nameWithType: VehicleMaintenanceDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_NextServiceDate
+  name: NextServiceDate
+  nameWithType: VehicleMaintenanceDto.NextServiceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_NextServiceMileage
+  name: NextServiceMileage
+  nameWithType: VehicleMaintenanceDto.NextServiceMileage
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.NextServiceMileage
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_Warranty
+  name: Warranty
+  nameWithType: VehicleMaintenanceDto.Warranty
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Warranty
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_PerformedBy
+  name: PerformedBy
+  nameWithType: VehicleMaintenanceDto.PerformedBy
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.PerformedBy
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_Notes
+  name: Notes
+  nameWithType: VehicleMaintenanceDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Vehicle_DTOs_VehicleMaintenanceDto_CreatedAt
+  name: CreatedAt
+  nameWithType: VehicleMaintenanceDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleMaintenanceDto.CreatedAt

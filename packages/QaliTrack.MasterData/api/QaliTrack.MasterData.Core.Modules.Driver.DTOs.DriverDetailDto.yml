@@ -1,0 +1,1718 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  id: DriverDetailDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt
+  langs:
+  - csharp
+  - vb
+  name: DriverDetailDto
+  nameWithType: DriverDetailDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DriverDetailDto
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 78
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  summary: Detailed DTO for single driver view - without child collections
+  example: []
+  syntax:
+    content: public class DriverDetailDto
+    content.vb: Public Class DriverDetailDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id
+  id: Id
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: DriverDetailDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Id
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 80
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public Guid Id { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property Id As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName
+  id: FirstName
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: FirstName
+  nameWithType: DriverDetailDto.FirstName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FirstName
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 81
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string FirstName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FirstName As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName
+  id: LastName
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: LastName
+  nameWithType: DriverDetailDto.LastName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LastName
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 82
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string LastName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LastName As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName
+  id: MiddleName
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: MiddleName
+  nameWithType: DriverDetailDto.MiddleName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MiddleName
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 83
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string MiddleName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property MiddleName As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName
+  id: FullName
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: FullName
+  nameWithType: DriverDetailDto.FullName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FullName
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 84
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string FullName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FullName As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth
+  id: DateOfBirth
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: DateOfBirth
+  nameWithType: DriverDetailDto.DateOfBirth
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DateOfBirth
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 85
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public DateTime DateOfBirth { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property DateOfBirth As Date
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age
+  id: Age
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Age
+  nameWithType: DriverDetailDto.Age
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Age
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 86
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public int Age { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Age As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender
+  id: Gender
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Gender
+  nameWithType: DriverDetailDto.Gender
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Gender
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 87
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Gender { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Gender As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality
+  id: Nationality
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Nationality
+  nameWithType: DriverDetailDto.Nationality
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Nationality
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 88
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Nationality { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Nationality As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber
+  id: PhoneNumber
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: PhoneNumber
+  nameWithType: DriverDetailDto.PhoneNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PhoneNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 89
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string PhoneNumber { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PhoneNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email
+  id: Email
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Email
+  nameWithType: DriverDetailDto.Email
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Email
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 90
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Email { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Email As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address
+  id: Address
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Address
+  nameWithType: DriverDetailDto.Address
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Address
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 91
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Address { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Address As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City
+  id: City
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: City
+  nameWithType: DriverDetailDto.City
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: City
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 92
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string City { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property City As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State
+  id: State
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: State
+  nameWithType: DriverDetailDto.State
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: State
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 93
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string State { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property State As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country
+  id: Country
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Country
+  nameWithType: DriverDetailDto.Country
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Country
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 94
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Country { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Country As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode
+  id: PostalCode
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: PostalCode
+  nameWithType: DriverDetailDto.PostalCode
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PostalCode
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 95
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string PostalCode { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PostalCode As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName
+  id: EmergencyContactName
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: EmergencyContactName
+  nameWithType: DriverDetailDto.EmergencyContactName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmergencyContactName
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 96
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string EmergencyContactName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EmergencyContactName As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone
+  id: EmergencyContactPhone
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: EmergencyContactPhone
+  nameWithType: DriverDetailDto.EmergencyContactPhone
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmergencyContactPhone
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 97
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string EmergencyContactPhone { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EmergencyContactPhone As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship
+  id: EmergencyContactRelationship
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: EmergencyContactRelationship
+  nameWithType: DriverDetailDto.EmergencyContactRelationship
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmergencyContactRelationship
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 98
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string EmergencyContactRelationship { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EmergencyContactRelationship As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId
+  id: EmployeeId
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: EmployeeId
+  nameWithType: DriverDetailDto.EmployeeId
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmployeeId
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 99
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string EmployeeId { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EmployeeId As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate
+  id: HireDate
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: HireDate
+  nameWithType: DriverDetailDto.HireDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HireDate
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 100
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public DateTime HireDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property HireDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate
+  id: TerminationDate
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: TerminationDate
+  nameWithType: DriverDetailDto.TerminationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TerminationDate
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 101
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public DateTime? TerminationDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property TerminationDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType
+  id: EmploymentType
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: EmploymentType
+  nameWithType: DriverDetailDto.EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmploymentType
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 102
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string EmploymentType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EmploymentType As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: DriverDetailDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 103
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary
+  id: Salary
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Salary
+  nameWithType: DriverDetailDto.Salary
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Salary
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 104
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public decimal? Salary { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property Salary As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department
+  id: Department
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Department
+  nameWithType: DriverDetailDto.Department
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Department
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 105
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Department { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Department As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor
+  id: Supervisor
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Supervisor
+  nameWithType: DriverDetailDto.Supervisor
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Supervisor
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 106
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Supervisor { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Supervisor As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl
+  id: ProfilePhotoUrl
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: ProfilePhotoUrl
+  nameWithType: DriverDetailDto.ProfilePhotoUrl
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ProfilePhotoUrl
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 107
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string ProfilePhotoUrl { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ProfilePhotoUrl As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate
+  id: BiometricRegistrationDate
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: BiometricRegistrationDate
+  nameWithType: DriverDetailDto.BiometricRegistrationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BiometricRegistrationDate
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 108
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public DateTime? BiometricRegistrationDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property BiometricRegistrationDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled
+  id: BiometricEnabled
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: BiometricEnabled
+  nameWithType: DriverDetailDto.BiometricEnabled
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BiometricEnabled
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 109
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public bool BiometricEnabled { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property BiometricEnabled As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: DriverDetailDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 110
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public string Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt
+  id: CreatedAt
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: DriverDetailDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 111
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public DateTime CreatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property CreatedAt As Date
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt
+  id: UpdatedAt
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedAt
+  nameWithType: DriverDetailDto.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 112
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public DateTime UpdatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property UpdatedAt As Date
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense
+  id: HasLicense
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: HasLicense
+  nameWithType: DriverDetailDto.HasLicense
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HasLicense
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 115
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public bool HasLicense { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property HasLicense As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile
+  id: HasProfile
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  langs:
+  - csharp
+  - vb
+  name: HasProfile
+  nameWithType: DriverDetailDto.HasProfile
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HasProfile
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/DTOs/DriverDTOs.cs
+    startLine: 116
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  syntax:
+    content: public bool HasProfile { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property HasProfile As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Id
+  name: Id
+  nameWithType: DriverDetailDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Id
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_FirstName
+  name: FirstName
+  nameWithType: DriverDetailDto.FirstName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FirstName
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_LastName
+  name: LastName
+  nameWithType: DriverDetailDto.LastName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.LastName
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_MiddleName
+  name: MiddleName
+  nameWithType: DriverDetailDto.MiddleName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.MiddleName
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_FullName
+  name: FullName
+  nameWithType: DriverDetailDto.FullName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.FullName
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_DateOfBirth
+  name: DateOfBirth
+  nameWithType: DriverDetailDto.DateOfBirth
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.DateOfBirth
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Age
+  name: Age
+  nameWithType: DriverDetailDto.Age
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Age
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Gender
+  name: Gender
+  nameWithType: DriverDetailDto.Gender
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Gender
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Nationality
+  name: Nationality
+  nameWithType: DriverDetailDto.Nationality
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Nationality
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_PhoneNumber
+  name: PhoneNumber
+  nameWithType: DriverDetailDto.PhoneNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PhoneNumber
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Email
+  name: Email
+  nameWithType: DriverDetailDto.Email
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Email
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Address
+  name: Address
+  nameWithType: DriverDetailDto.Address
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Address
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_City
+  name: City
+  nameWithType: DriverDetailDto.City
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.City
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_State
+  name: State
+  nameWithType: DriverDetailDto.State
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.State
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Country
+  name: Country
+  nameWithType: DriverDetailDto.Country
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Country
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_PostalCode
+  name: PostalCode
+  nameWithType: DriverDetailDto.PostalCode
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.PostalCode
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_EmergencyContactName
+  name: EmergencyContactName
+  nameWithType: DriverDetailDto.EmergencyContactName
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactName
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_EmergencyContactPhone
+  name: EmergencyContactPhone
+  nameWithType: DriverDetailDto.EmergencyContactPhone
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactPhone
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_EmergencyContactRelationship
+  name: EmergencyContactRelationship
+  nameWithType: DriverDetailDto.EmergencyContactRelationship
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmergencyContactRelationship
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_EmployeeId
+  name: EmployeeId
+  nameWithType: DriverDetailDto.EmployeeId
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmployeeId
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_HireDate
+  name: HireDate
+  nameWithType: DriverDetailDto.HireDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HireDate
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_TerminationDate
+  name: TerminationDate
+  nameWithType: DriverDetailDto.TerminationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.TerminationDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_EmploymentType
+  name: EmploymentType
+  nameWithType: DriverDetailDto.EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Status
+  name: Status
+  nameWithType: DriverDetailDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Salary
+  name: Salary
+  nameWithType: DriverDetailDto.Salary
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Salary
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Department
+  name: Department
+  nameWithType: DriverDetailDto.Department
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Department
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Supervisor
+  name: Supervisor
+  nameWithType: DriverDetailDto.Supervisor
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Supervisor
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_ProfilePhotoUrl
+  name: ProfilePhotoUrl
+  nameWithType: DriverDetailDto.ProfilePhotoUrl
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.ProfilePhotoUrl
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_BiometricRegistrationDate
+  name: BiometricRegistrationDate
+  nameWithType: DriverDetailDto.BiometricRegistrationDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricRegistrationDate
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_BiometricEnabled
+  name: BiometricEnabled
+  nameWithType: DriverDetailDto.BiometricEnabled
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.BiometricEnabled
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_Notes
+  name: Notes
+  nameWithType: DriverDetailDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_CreatedAt
+  name: CreatedAt
+  nameWithType: DriverDetailDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.CreatedAt
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_UpdatedAt
+  name: UpdatedAt
+  nameWithType: DriverDetailDto.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_HasLicense
+  name: HasLicense
+  nameWithType: DriverDetailDto.HasLicense
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasLicense
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html#QaliTrack_MasterData_Core_Modules_Driver_DTOs_DriverDetailDto_HasProfile
+  name: HasProfile
+  nameWithType: DriverDetailDto.HasProfile
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.HasProfile

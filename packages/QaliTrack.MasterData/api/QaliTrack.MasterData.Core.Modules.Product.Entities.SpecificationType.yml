@@ -1,0 +1,252 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  id: SpecificationType
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Environmental
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Legal
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Performance
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Quality
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Safety
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Technical
+  langs:
+  - csharp
+  - vb
+  name: SpecificationType
+  nameWithType: SpecificationType
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SpecificationType
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 120
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: public enum SpecificationType
+    content.vb: Public Enum SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Technical
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Technical
+  id: Technical
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  langs:
+  - csharp
+  - vb
+  name: Technical
+  nameWithType: SpecificationType.Technical
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Technical
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Technical
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 122
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Technical = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Quality
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Quality
+  id: Quality
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  langs:
+  - csharp
+  - vb
+  name: Quality
+  nameWithType: SpecificationType.Quality
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Quality
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Quality
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 123
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Quality = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Safety
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Safety
+  id: Safety
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  langs:
+  - csharp
+  - vb
+  name: Safety
+  nameWithType: SpecificationType.Safety
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Safety
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Safety
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 124
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Safety = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Environmental
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Environmental
+  id: Environmental
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  langs:
+  - csharp
+  - vb
+  name: Environmental
+  nameWithType: SpecificationType.Environmental
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Environmental
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Environmental
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 125
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Environmental = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Legal
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Legal
+  id: Legal
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  langs:
+  - csharp
+  - vb
+  name: Legal
+  nameWithType: SpecificationType.Legal
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Legal
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Legal
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 126
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Legal = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Performance
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Performance
+  id: Performance
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  langs:
+  - csharp
+  - vb
+  name: Performance
+  nameWithType: SpecificationType.Performance
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.Performance
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Performance
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 127
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Performance = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Product.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Product.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Product.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.html
+  name: SpecificationType
+  nameWithType: SpecificationType
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType

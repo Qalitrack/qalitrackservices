@@ -1,0 +1,1139 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Configuration.MonitoringSettings
+  commentId: T:QaliTrackGateway.Configuration.MonitoringSettings
+  id: MonitoringSettings
+  parent: QaliTrackGateway.Configuration
+  children:
+  - QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold
+  - QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns
+  - QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold
+  - QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds
+  - QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds
+  - QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds
+  - QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring
+  - QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics
+  - QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds
+  - QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours
+  - QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures
+  - QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords
+  - QaliTrackGateway.Configuration.MonitoringSettings.SectionName
+  - QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults
+  langs:
+  - csharp
+  - vb
+  name: MonitoringSettings
+  nameWithType: MonitoringSettings
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings
+  type: Class
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MonitoringSettings
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 5
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Configuration settings for service monitoring
+  example: []
+  syntax:
+    content: public class MonitoringSettings
+    content.vb: Public Class MonitoringSettings
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.SectionName
+  commentId: F:QaliTrackGateway.Configuration.MonitoringSettings.SectionName
+  id: SectionName
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: SectionName
+  nameWithType: MonitoringSettings.SectionName
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.SectionName
+  type: Field
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SectionName
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 7
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  syntax:
+    content: public const string SectionName = "Monitoring"
+    return:
+      type: System.String
+    content.vb: Public Const SectionName As String = "Monitoring"
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring
+  id: EnableHealthMonitoring
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnableHealthMonitoring
+  nameWithType: MonitoringSettings.EnableHealthMonitoring
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnableHealthMonitoring
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 12
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable service health monitoring
+  example: []
+  syntax:
+    content: public bool EnableHealthMonitoring { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnableHealthMonitoring As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds
+  id: DefaultHealthCheckIntervalSeconds
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: DefaultHealthCheckIntervalSeconds
+  nameWithType: MonitoringSettings.DefaultHealthCheckIntervalSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DefaultHealthCheckIntervalSeconds
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 17
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default health check interval in seconds
+  example: []
+  syntax:
+    content: public int DefaultHealthCheckIntervalSeconds { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property DefaultHealthCheckIntervalSeconds As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds
+  id: DefaultTimeoutSeconds
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: DefaultTimeoutSeconds
+  nameWithType: MonitoringSettings.DefaultTimeoutSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DefaultTimeoutSeconds
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 22
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default timeout for health checks in seconds
+  example: []
+  syntax:
+    content: public int DefaultTimeoutSeconds { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property DefaultTimeoutSeconds As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs
+  id: DegradedResponseTimeMs
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: DegradedResponseTimeMs
+  nameWithType: MonitoringSettings.DegradedResponseTimeMs
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DegradedResponseTimeMs
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 27
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Response time threshold for degraded status in milliseconds
+  example: []
+  syntax:
+    content: public int DegradedResponseTimeMs { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property DegradedResponseTimeMs As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures
+  id: MaxConsecutiveFailures
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: MaxConsecutiveFailures
+  nameWithType: MonitoringSettings.MaxConsecutiveFailures
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaxConsecutiveFailures
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 32
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Maximum consecutive failures before marking service as unhealthy
+  example: []
+  syntax:
+    content: public int MaxConsecutiveFailures { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property MaxConsecutiveFailures As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit
+  id: EnableHealthCheckAudit
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnableHealthCheckAudit
+  nameWithType: MonitoringSettings.EnableHealthCheckAudit
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnableHealthCheckAudit
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 37
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable health check audit logging
+  example: []
+  syntax:
+    content: public bool EnableHealthCheckAudit { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnableHealthCheckAudit As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds
+  id: HealthCheckAuditIntervalSeconds
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: HealthCheckAuditIntervalSeconds
+  nameWithType: MonitoringSettings.HealthCheckAuditIntervalSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HealthCheckAuditIntervalSeconds
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 42
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Health check audit interval in seconds
+  example: []
+  syntax:
+    content: public int HealthCheckAuditIntervalSeconds { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property HealthCheckAuditIntervalSeconds As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords
+  id: MaxHealthHistoryRecords
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: MaxHealthHistoryRecords
+  nameWithType: MonitoringSettings.MaxHealthHistoryRecords
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaxHealthHistoryRecords
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 47
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Maximum health history records per service
+  example: []
+  syntax:
+    content: public int MaxHealthHistoryRecords { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property MaxHealthHistoryRecords As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours
+  id: HealthDataRetentionHours
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: HealthDataRetentionHours
+  nameWithType: MonitoringSettings.HealthDataRetentionHours
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HealthDataRetentionHours
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 52
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Health data retention period in hours
+  example: []
+  syntax:
+    content: public int HealthDataRetentionHours { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property HealthDataRetentionHours As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking
+  id: EnableDependencyTracking
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnableDependencyTracking
+  nameWithType: MonitoringSettings.EnableDependencyTracking
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnableDependencyTracking
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 57
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable service dependency tracking
+  example: []
+  syntax:
+    content: public bool EnableDependencyTracking { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnableDependencyTracking As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics
+  id: EnablePerformanceMetrics
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnablePerformanceMetrics
+  nameWithType: MonitoringSettings.EnablePerformanceMetrics
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnablePerformanceMetrics
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 62
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable performance metrics collection
+  example: []
+  syntax:
+    content: public bool EnablePerformanceMetrics { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnablePerformanceMetrics As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting
+  id: EnableAlerting
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnableAlerting
+  nameWithType: MonitoringSettings.EnableAlerting
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnableAlerting
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 67
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable alerting for unhealthy services
+  example: []
+  syntax:
+    content: public bool EnableAlerting { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnableAlerting As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold
+  id: AlertHealthScoreThreshold
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: AlertHealthScoreThreshold
+  nameWithType: MonitoringSettings.AlertHealthScoreThreshold
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AlertHealthScoreThreshold
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 72
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Alert threshold for system health score
+  example: []
+  syntax:
+    content: public double AlertHealthScoreThreshold { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property AlertHealthScoreThreshold As Double
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery
+  id: EnableAutoDiscovery
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnableAutoDiscovery
+  nameWithType: MonitoringSettings.EnableAutoDiscovery
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnableAutoDiscovery
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 77
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable automatic service discovery
+  example: []
+  syntax:
+    content: public bool EnableAutoDiscovery { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnableAutoDiscovery As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns
+  id: AutoDiscoveryPatterns
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: AutoDiscoveryPatterns
+  nameWithType: MonitoringSettings.AutoDiscoveryPatterns
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AutoDiscoveryPatterns
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 82
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Auto-discovery service patterns (comma-separated)
+  example: []
+  syntax:
+    content: public string AutoDiscoveryPatterns { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property AutoDiscoveryPatterns As String
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker
+  id: EnableCircuitBreaker
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnableCircuitBreaker
+  nameWithType: MonitoringSettings.EnableCircuitBreaker
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnableCircuitBreaker
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 87
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable circuit breaker pattern
+  example: []
+  syntax:
+    content: public bool EnableCircuitBreaker { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnableCircuitBreaker As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold
+  id: CircuitBreakerFailureThreshold
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: CircuitBreakerFailureThreshold
+  nameWithType: MonitoringSettings.CircuitBreakerFailureThreshold
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CircuitBreakerFailureThreshold
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 92
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Circuit breaker failure threshold
+  example: []
+  syntax:
+    content: public int CircuitBreakerFailureThreshold { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CircuitBreakerFailureThreshold As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds
+  id: CircuitBreakerTimeoutSeconds
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: CircuitBreakerTimeoutSeconds
+  nameWithType: MonitoringSettings.CircuitBreakerTimeoutSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CircuitBreakerTimeoutSeconds
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 97
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Circuit breaker timeout in seconds
+  example: []
+  syntax:
+    content: public int CircuitBreakerTimeoutSeconds { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CircuitBreakerTimeoutSeconds As Integer
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing
+  id: EnableHealthBasedLoadBalancing
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: EnableHealthBasedLoadBalancing
+  nameWithType: MonitoringSettings.EnableHealthBasedLoadBalancing
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnableHealthBasedLoadBalancing
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 102
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Enable load balancing based on health
+  example: []
+  syntax:
+    content: public bool EnableHealthBasedLoadBalancing { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EnableHealthBasedLoadBalancing As Boolean
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing*
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults
+  commentId: P:QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults
+  id: ServiceDefaults
+  parent: QaliTrackGateway.Configuration.MonitoringSettings
+  langs:
+  - csharp
+  - vb
+  name: ServiceDefaults
+  nameWithType: MonitoringSettings.ServiceDefaults
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Configuration/MonitoringSettings.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceDefaults
+    path: src/Configuration/MonitoringSettings.cs
+    startLine: 107
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Configuration
+  summary: Default service registration settings
+  example: []
+  syntax:
+    content: public ServiceRegistrationDefaults ServiceDefaults { get; set; }
+    parameters: []
+    return:
+      type: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+    content.vb: Public Property ServiceDefaults As ServiceRegistrationDefaults
+  overload: QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults*
+references:
+- uid: QaliTrackGateway.Configuration
+  commentId: N:QaliTrackGateway.Configuration
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Configuration
+  nameWithType: QaliTrackGateway.Configuration
+  fullName: QaliTrackGateway.Configuration
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Configuration
+    name: Configuration
+    href: QaliTrackGateway.Configuration.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Configuration
+    name: Configuration
+    href: QaliTrackGateway.Configuration.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnableHealthMonitoring
+  name: EnableHealthMonitoring
+  nameWithType: MonitoringSettings.EnableHealthMonitoring
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthMonitoring
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_DefaultHealthCheckIntervalSeconds
+  name: DefaultHealthCheckIntervalSeconds
+  nameWithType: MonitoringSettings.DefaultHealthCheckIntervalSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.DefaultHealthCheckIntervalSeconds
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_DefaultTimeoutSeconds
+  name: DefaultTimeoutSeconds
+  nameWithType: MonitoringSettings.DefaultTimeoutSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.DefaultTimeoutSeconds
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_DegradedResponseTimeMs
+  name: DegradedResponseTimeMs
+  nameWithType: MonitoringSettings.DegradedResponseTimeMs
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.DegradedResponseTimeMs
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_MaxConsecutiveFailures
+  name: MaxConsecutiveFailures
+  nameWithType: MonitoringSettings.MaxConsecutiveFailures
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.MaxConsecutiveFailures
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnableHealthCheckAudit
+  name: EnableHealthCheckAudit
+  nameWithType: MonitoringSettings.EnableHealthCheckAudit
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthCheckAudit
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_HealthCheckAuditIntervalSeconds
+  name: HealthCheckAuditIntervalSeconds
+  nameWithType: MonitoringSettings.HealthCheckAuditIntervalSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.HealthCheckAuditIntervalSeconds
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_MaxHealthHistoryRecords
+  name: MaxHealthHistoryRecords
+  nameWithType: MonitoringSettings.MaxHealthHistoryRecords
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.MaxHealthHistoryRecords
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_HealthDataRetentionHours
+  name: HealthDataRetentionHours
+  nameWithType: MonitoringSettings.HealthDataRetentionHours
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.HealthDataRetentionHours
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnableDependencyTracking
+  name: EnableDependencyTracking
+  nameWithType: MonitoringSettings.EnableDependencyTracking
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableDependencyTracking
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnablePerformanceMetrics
+  name: EnablePerformanceMetrics
+  nameWithType: MonitoringSettings.EnablePerformanceMetrics
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnablePerformanceMetrics
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnableAlerting
+  name: EnableAlerting
+  nameWithType: MonitoringSettings.EnableAlerting
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableAlerting
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_AlertHealthScoreThreshold
+  name: AlertHealthScoreThreshold
+  nameWithType: MonitoringSettings.AlertHealthScoreThreshold
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.AlertHealthScoreThreshold
+- uid: System.Double
+  commentId: T:System.Double
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double
+  nameWithType: double
+  fullName: double
+  nameWithType.vb: Double
+  fullName.vb: Double
+  name.vb: Double
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnableAutoDiscovery
+  name: EnableAutoDiscovery
+  nameWithType: MonitoringSettings.EnableAutoDiscovery
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableAutoDiscovery
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_AutoDiscoveryPatterns
+  name: AutoDiscoveryPatterns
+  nameWithType: MonitoringSettings.AutoDiscoveryPatterns
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.AutoDiscoveryPatterns
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnableCircuitBreaker
+  name: EnableCircuitBreaker
+  nameWithType: MonitoringSettings.EnableCircuitBreaker
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableCircuitBreaker
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_CircuitBreakerFailureThreshold
+  name: CircuitBreakerFailureThreshold
+  nameWithType: MonitoringSettings.CircuitBreakerFailureThreshold
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerFailureThreshold
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_CircuitBreakerTimeoutSeconds
+  name: CircuitBreakerTimeoutSeconds
+  nameWithType: MonitoringSettings.CircuitBreakerTimeoutSeconds
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.CircuitBreakerTimeoutSeconds
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_EnableHealthBasedLoadBalancing
+  name: EnableHealthBasedLoadBalancing
+  nameWithType: MonitoringSettings.EnableHealthBasedLoadBalancing
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.EnableHealthBasedLoadBalancing
+- uid: QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults*
+  commentId: Overload:QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults
+  href: QaliTrackGateway.Configuration.MonitoringSettings.html#QaliTrackGateway_Configuration_MonitoringSettings_ServiceDefaults
+  name: ServiceDefaults
+  nameWithType: MonitoringSettings.ServiceDefaults
+  fullName: QaliTrackGateway.Configuration.MonitoringSettings.ServiceDefaults
+- uid: QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  commentId: T:QaliTrackGateway.Configuration.ServiceRegistrationDefaults
+  parent: QaliTrackGateway.Configuration
+  href: QaliTrackGateway.Configuration.ServiceRegistrationDefaults.html
+  name: ServiceRegistrationDefaults
+  nameWithType: ServiceRegistrationDefaults
+  fullName: QaliTrackGateway.Configuration.ServiceRegistrationDefaults

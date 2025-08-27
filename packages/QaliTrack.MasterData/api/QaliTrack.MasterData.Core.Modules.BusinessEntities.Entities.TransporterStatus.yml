@@ -1,0 +1,198 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  id: TransporterStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Active
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Inactive
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Suspended
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.UnderReview
+  langs:
+  - csharp
+  - vb
+  name: TransporterStatus
+  nameWithType: TransporterStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TransporterStatus
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 343
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public enum TransporterStatus
+    content.vb: Public Enum TransporterStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: TransporterStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 345
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Inactive
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Inactive
+  id: Inactive
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  langs:
+  - csharp
+  - vb
+  name: Inactive
+  nameWithType: TransporterStatus.Inactive
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Inactive
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Inactive
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 346
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Inactive = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: TransporterStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 347
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Suspended = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.UnderReview
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.UnderReview
+  id: UnderReview
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  langs:
+  - csharp
+  - vb
+  name: UnderReview
+  nameWithType: TransporterStatus.UnderReview
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.UnderReview
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UnderReview
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 348
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: UnderReview = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus.html
+  name: TransporterStatus
+  nameWithType: TransporterStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterStatus

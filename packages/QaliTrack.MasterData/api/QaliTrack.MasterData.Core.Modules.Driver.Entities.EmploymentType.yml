@@ -1,0 +1,198 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  id: EmploymentType
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Contract
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.FullTime
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.PartTime
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Temporary
+  langs:
+  - csharp
+  - vb
+  name: EmploymentType
+  nameWithType: EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmploymentType
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 214
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public enum EmploymentType
+    content.vb: Public Enum EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.FullTime
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.FullTime
+  id: FullTime
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  langs:
+  - csharp
+  - vb
+  name: FullTime
+  nameWithType: EmploymentType.FullTime
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.FullTime
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FullTime
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 216
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: FullTime = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.PartTime
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.PartTime
+  id: PartTime
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  langs:
+  - csharp
+  - vb
+  name: PartTime
+  nameWithType: EmploymentType.PartTime
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.PartTime
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PartTime
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 217
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: PartTime = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Contract
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Contract
+  id: Contract
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  langs:
+  - csharp
+  - vb
+  name: Contract
+  nameWithType: EmploymentType.Contract
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Contract
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Contract
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 218
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: Contract = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Temporary
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Temporary
+  id: Temporary
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  langs:
+  - csharp
+  - vb
+  name: Temporary
+  nameWithType: EmploymentType.Temporary
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.Temporary
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Temporary
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 219
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: Temporary = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType.html
+  name: EmploymentType
+  nameWithType: EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.EmploymentType

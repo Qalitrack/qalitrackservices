@@ -1,0 +1,931 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  id: UpdateDriverSaccoMembershipDto
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.#ctor(System.DateTime,System.String,System.String,System.Decimal,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.Boolean,System.String)
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution
+  - QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status
+  langs:
+  - csharp
+  - vb
+  name: UpdateDriverSaccoMembershipDto
+  nameWithType: UpdateDriverSaccoMembershipDto
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdateDriverSaccoMembershipDto
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 17
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: 'public record UpdateDriverSaccoMembershipDto : IEquatable<UpdateDriverSaccoMembershipDto>'
+    content.vb: Public Class UpdateDriverSaccoMembershipDto Implements IEquatable(Of UpdateDriverSaccoMembershipDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.#ctor(System.DateTime,System.String,System.String,System.Decimal,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.Boolean,System.String)
+  commentId: M:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.#ctor(System.DateTime,System.String,System.String,System.Decimal,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.Boolean,System.String)
+  id: '#ctor(System.DateTime,System.String,System.String,System.Decimal,System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.String,System.String,System.Boolean,System.String)'
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: UpdateDriverSaccoMembershipDto(DateTime, string, string, decimal, DateTime?, decimal?, string?, string?, bool, string?)
+  nameWithType: UpdateDriverSaccoMembershipDto.UpdateDriverSaccoMembershipDto(DateTime, string, string, decimal, DateTime?, decimal?, string?, string?, bool, string?)
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.UpdateDriverSaccoMembershipDto(System.DateTime, string, string, decimal, System.DateTime?, decimal?, string?, string?, bool, string?)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 17
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public UpdateDriverSaccoMembershipDto(DateTime MembershipDate, string MembershipNumber, string Status, decimal ShareContribution, DateTime? ExpiryDate = null, decimal? MonthlyContribution = null, string? MembershipType = null, string? Benefits = null, bool IsActive = true, string? Notes = null)
+    parameters:
+    - id: MembershipDate
+      type: System.DateTime
+    - id: MembershipNumber
+      type: System.String
+    - id: Status
+      type: System.String
+    - id: ShareContribution
+      type: System.Decimal
+    - id: ExpiryDate
+      type: System.Nullable{System.DateTime}
+    - id: MonthlyContribution
+      type: System.Nullable{System.Decimal}
+    - id: MembershipType
+      type: System.String
+    - id: Benefits
+      type: System.String
+    - id: IsActive
+      type: System.Boolean
+    - id: Notes
+      type: System.String
+    content.vb: Public Sub New(MembershipDate As Date, MembershipNumber As String, Status As String, ShareContribution As Decimal, ExpiryDate As Date? = Nothing, MonthlyContribution As Decimal? = Nothing, MembershipType As String = Nothing, Benefits As String = Nothing, IsActive As Boolean = True, Notes As String = Nothing)
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.#ctor*
+  nameWithType.vb: UpdateDriverSaccoMembershipDto.New(Date, String, String, Decimal, Date?, Decimal?, String, String, Boolean, String)
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.New(Date, String, String, Decimal, Date?, Decimal?, String, String, Boolean, String)
+  name.vb: New(Date, String, String, Decimal, Date?, Decimal?, String, String, Boolean, String)
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate
+  id: MembershipDate
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: MembershipDate
+  nameWithType: UpdateDriverSaccoMembershipDto.MembershipDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MembershipDate
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 18
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime MembershipDate { get; init; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property MembershipDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber
+  id: MembershipNumber
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: MembershipNumber
+  nameWithType: UpdateDriverSaccoMembershipDto.MembershipNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MembershipNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 19
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string MembershipNumber { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property MembershipNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: UpdateDriverSaccoMembershipDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 20
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string Status { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution
+  id: ShareContribution
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: ShareContribution
+  nameWithType: UpdateDriverSaccoMembershipDto.ShareContribution
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ShareContribution
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 21
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public decimal ShareContribution { get; init; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property ShareContribution As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate
+  id: ExpiryDate
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: ExpiryDate
+  nameWithType: UpdateDriverSaccoMembershipDto.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ExpiryDate
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 22
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public DateTime? ExpiryDate { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property ExpiryDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution
+  id: MonthlyContribution
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: MonthlyContribution
+  nameWithType: UpdateDriverSaccoMembershipDto.MonthlyContribution
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MonthlyContribution
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 23
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public decimal? MonthlyContribution { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property MonthlyContribution As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType
+  id: MembershipType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: MembershipType
+  nameWithType: UpdateDriverSaccoMembershipDto.MembershipType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MembershipType
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 24
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? MembershipType { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property MembershipType As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits
+  id: Benefits
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: Benefits
+  nameWithType: UpdateDriverSaccoMembershipDto.Benefits
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Benefits
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 25
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Benefits { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Benefits As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive
+  id: IsActive
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: UpdateDriverSaccoMembershipDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsActive
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 26
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public bool IsActive { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsActive As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive*
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: UpdateDriverSaccoMembershipDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/DTOs/RelationshipDTOs.cs
+    startLine: 27
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<UpdateDriverSaccoMembershipDto>
+  nameWithType: IEquatable<UpdateDriverSaccoMembershipDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto>
+  nameWithType.vb: IEquatable(Of UpdateDriverSaccoMembershipDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto)
+  name.vb: IEquatable(Of UpdateDriverSaccoMembershipDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+    name: UpdateDriverSaccoMembershipDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto
+    name: UpdateDriverSaccoMembershipDto
+    href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.#ctor
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto__ctor_System_DateTime_System_String_System_String_System_Decimal_System_Nullable_System_DateTime__System_Nullable_System_Decimal__System_String_System_String_System_Boolean_System_String_
+  name: UpdateDriverSaccoMembershipDto
+  nameWithType: UpdateDriverSaccoMembershipDto.UpdateDriverSaccoMembershipDto
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.UpdateDriverSaccoMembershipDto
+  nameWithType.vb: UpdateDriverSaccoMembershipDto.New
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.New
+  name.vb: New
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_MembershipDate
+  name: MembershipDate
+  nameWithType: UpdateDriverSaccoMembershipDto.MembershipDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipDate
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_MembershipNumber
+  name: MembershipNumber
+  nameWithType: UpdateDriverSaccoMembershipDto.MembershipNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipNumber
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_Status
+  name: Status
+  nameWithType: UpdateDriverSaccoMembershipDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_ShareContribution
+  name: ShareContribution
+  nameWithType: UpdateDriverSaccoMembershipDto.ShareContribution
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ShareContribution
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_ExpiryDate
+  name: ExpiryDate
+  nameWithType: UpdateDriverSaccoMembershipDto.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.ExpiryDate
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_MonthlyContribution
+  name: MonthlyContribution
+  nameWithType: UpdateDriverSaccoMembershipDto.MonthlyContribution
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MonthlyContribution
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_MembershipType
+  name: MembershipType
+  nameWithType: UpdateDriverSaccoMembershipDto.MembershipType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.MembershipType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_Benefits
+  name: Benefits
+  nameWithType: UpdateDriverSaccoMembershipDto.Benefits
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Benefits
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_IsActive
+  name: IsActive
+  nameWithType: UpdateDriverSaccoMembershipDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.IsActive
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.html#QaliTrack_MasterData_Core_Modules_Relationships_DTOs_UpdateDriverSaccoMembershipDto_Notes
+  name: Notes
+  nameWithType: UpdateDriverSaccoMembershipDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto.Notes

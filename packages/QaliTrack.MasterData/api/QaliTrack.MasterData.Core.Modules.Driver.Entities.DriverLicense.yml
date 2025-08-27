@@ -1,0 +1,1027 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  id: DriverLicense
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints
+  langs:
+  - csharp
+  - vb
+  name: DriverLicense
+  nameWithType: DriverLicense
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DriverLicense
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 57
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: 'public class DriverLicense : BaseEntity'
+    content.vb: Public Class DriverLicense Inherits BaseEntity
+  inheritance:
+  - System.Object
+  - QaliTrack.MasterData.Core.Common.BaseEntity
+  inheritedMembers:
+  - QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId
+  id: DriverId
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: DriverId
+  nameWithType: DriverLicense.DriverId
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DriverId
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 59
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public Guid DriverId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property DriverId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber
+  id: LicenseNumber
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: LicenseNumber
+  nameWithType: DriverLicense.LicenseNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LicenseNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 60
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string LicenseNumber { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LicenseNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass
+  id: LicenseClass
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: LicenseClass
+  nameWithType: DriverLicense.LicenseClass
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LicenseClass
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 61
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string LicenseClass { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LicenseClass As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate
+  id: IssueDate
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: IssueDate
+  nameWithType: DriverLicense.IssueDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IssueDate
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 62
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public DateTime IssueDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property IssueDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate
+  id: ExpiryDate
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: ExpiryDate
+  nameWithType: DriverLicense.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ExpiryDate
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 63
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public DateTime ExpiryDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property ExpiryDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority
+  id: IssuingAuthority
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: IssuingAuthority
+  nameWithType: DriverLicense.IssuingAuthority
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IssuingAuthority
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 64
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string IssuingAuthority { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property IssuingAuthority As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: DriverLicense.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 65
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions
+  id: Restrictions
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: Restrictions
+  nameWithType: DriverLicense.Restrictions
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Restrictions
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 66
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string? Restrictions { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Restrictions As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements
+  id: Endorsements
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: Endorsements
+  nameWithType: DriverLicense.Endorsements
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Endorsements
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 67
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string? Endorsements { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Endorsements As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints
+  id: ViolationPoints
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: ViolationPoints
+  nameWithType: DriverLicense.ViolationPoints
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ViolationPoints
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 68
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public int ViolationPoints { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property ViolationPoints As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate
+  id: LastRenewalDate
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: LastRenewalDate
+  nameWithType: DriverLicense.LastRenewalDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LastRenewalDate
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 69
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public DateTime? LastRenewalDate { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property LastRenewalDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus
+  id: RenewalStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: RenewalStatus
+  nameWithType: DriverLicense.RenewalStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RenewalStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 70
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string? RenewalStatus { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property RenewalStatus As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: DriverLicense.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 71
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver
+  commentId: P:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver
+  id: Driver
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense
+  langs:
+  - csharp
+  - vb
+  name: Driver
+  nameWithType: DriverLicense.Driver
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Driver
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 74
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public virtual Driver Driver { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver
+    content.vb: Public Overridable Property Driver As Driver
+  overload: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity
+  commentId: T:QaliTrack.MasterData.Core.Common.BaseEntity
+  parent: QaliTrack.MasterData.Core.Common
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Common
+  commentId: N:QaliTrack.MasterData.Core.Common
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Common
+  nameWithType: QaliTrack.MasterData.Core.Common
+  fullName: QaliTrack.MasterData.Core.Common
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_DriverId
+  name: DriverId
+  nameWithType: DriverLicense.DriverId
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.DriverId
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_LicenseNumber
+  name: LicenseNumber
+  nameWithType: DriverLicense.LicenseNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseNumber
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_LicenseClass
+  name: LicenseClass
+  nameWithType: DriverLicense.LicenseClass
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LicenseClass
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_IssueDate
+  name: IssueDate
+  nameWithType: DriverLicense.IssueDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssueDate
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_ExpiryDate
+  name: ExpiryDate
+  nameWithType: DriverLicense.ExpiryDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ExpiryDate
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_IssuingAuthority
+  name: IssuingAuthority
+  nameWithType: DriverLicense.IssuingAuthority
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.IssuingAuthority
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_Status
+  name: Status
+  nameWithType: DriverLicense.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Status
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_Restrictions
+  name: Restrictions
+  nameWithType: DriverLicense.Restrictions
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Restrictions
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_Endorsements
+  name: Endorsements
+  nameWithType: DriverLicense.Endorsements
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Endorsements
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_ViolationPoints
+  name: ViolationPoints
+  nameWithType: DriverLicense.ViolationPoints
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.ViolationPoints
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_LastRenewalDate
+  name: LastRenewalDate
+  nameWithType: DriverLicense.LastRenewalDate
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.LastRenewalDate
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_RenewalStatus
+  name: RenewalStatus
+  nameWithType: DriverLicense.RenewalStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.RenewalStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_Notes
+  name: Notes
+  nameWithType: DriverLicense.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.html#QaliTrack_MasterData_Core_Modules_Driver_Entities_DriverLicense_Driver
+  name: Driver
+  nameWithType: DriverLicense.Driver
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.DriverLicense.Driver
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver.html
+  name: Driver
+  nameWithType: Driver
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver

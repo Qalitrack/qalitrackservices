@@ -1,0 +1,200 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  id: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoCommitteeDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoFinancialDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoLoanDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMeetingDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMemberDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoServiceDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoCommitteeDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoDetailDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoFinancialDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoLoanDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMeetingDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMemberDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoServiceDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoShareDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoSummaryDto
+  - QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto.html
+  name: CreateSaccoDto
+  nameWithType: CreateSaccoDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto.html
+  name: UpdateSaccoDto
+  nameWithType: UpdateSaccoDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoSummaryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoSummaryDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoSummaryDto.html
+  name: SaccoSummaryDto
+  nameWithType: SaccoSummaryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoSummaryDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoDetailDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoDetailDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoDetailDto.html
+  name: SaccoDetailDto
+  nameWithType: SaccoDetailDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoDetailDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMemberDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMemberDto
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMemberDto.html
+  name: CreateSaccoMemberDto
+  nameWithType: CreateSaccoMemberDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMemberDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMemberDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMemberDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMemberDto.html
+  name: SaccoMemberDto
+  nameWithType: SaccoMemberDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMemberDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoCommitteeDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoCommitteeDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoCommitteeDto.html
+  name: CreateSaccoCommitteeDto
+  nameWithType: CreateSaccoCommitteeDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoCommitteeDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoCommitteeDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoCommitteeDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoCommitteeDto.html
+  name: SaccoCommitteeDto
+  nameWithType: SaccoCommitteeDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoCommitteeDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoFinancialDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoFinancialDto
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoFinancialDto.html
+  name: CreateSaccoFinancialDto
+  nameWithType: CreateSaccoFinancialDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoFinancialDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoFinancialDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoFinancialDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoFinancialDto.html
+  name: SaccoFinancialDto
+  nameWithType: SaccoFinancialDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoFinancialDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoLoanDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoLoanDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoLoanDto.html
+  name: CreateSaccoLoanDto
+  nameWithType: CreateSaccoLoanDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoLoanDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoLoanDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoLoanDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoLoanDto.html
+  name: SaccoLoanDto
+  nameWithType: SaccoLoanDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoLoanDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto.html
+  name: CreateSaccoShareDto
+  nameWithType: CreateSaccoShareDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoShareDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoShareDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoShareDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoShareDto.html
+  name: SaccoShareDto
+  nameWithType: SaccoShareDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoShareDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoServiceDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoServiceDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoServiceDto.html
+  name: CreateSaccoServiceDto
+  nameWithType: CreateSaccoServiceDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoServiceDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoServiceDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoServiceDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoServiceDto.html
+  name: SaccoServiceDto
+  nameWithType: SaccoServiceDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoServiceDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMeetingDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMeetingDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMeetingDto.html
+  name: CreateSaccoMeetingDto
+  nameWithType: CreateSaccoMeetingDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMeetingDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMeetingDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMeetingDto
+  href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMeetingDto.html
+  name: SaccoMeetingDto
+  nameWithType: SaccoMeetingDto
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoMeetingDto
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Sacco.DTOs.html

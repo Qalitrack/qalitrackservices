@@ -1,0 +1,799 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  id: PatchProductSpecificationDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.#ctor(System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.String,System.String,System.String)
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit
+  langs:
+  - csharp
+  - vb
+  name: PatchProductSpecificationDto
+  nameWithType: PatchProductSpecificationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PatchProductSpecificationDto
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 127
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: 'public record PatchProductSpecificationDto : IEquatable<PatchProductSpecificationDto>'
+    content.vb: Public Class PatchProductSpecificationDto Implements IEquatable(Of PatchProductSpecificationDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.#ctor(System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.String,System.String,System.String)
+  commentId: M:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.#ctor(System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.String,System.String,System.String)
+  id: '#ctor(System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.String,System.String,System.String)'
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: PatchProductSpecificationDto(string?, string?, string?, string?, bool?, string?, string?, string?)
+  nameWithType: PatchProductSpecificationDto.PatchProductSpecificationDto(string?, string?, string?, string?, bool?, string?, string?, string?)
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.PatchProductSpecificationDto(string?, string?, string?, string?, bool?, string?, string?, string?)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 127
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public PatchProductSpecificationDto(string? SpecificationName = null, string? SpecificationValue = null, string? Unit = null, string? SpecificationType = null, bool? IsCritical = null, string? ToleranceRange = null, string? TestMethod = null, string? Notes = null)
+    parameters:
+    - id: SpecificationName
+      type: System.String
+    - id: SpecificationValue
+      type: System.String
+    - id: Unit
+      type: System.String
+    - id: SpecificationType
+      type: System.String
+    - id: IsCritical
+      type: System.Nullable{System.Boolean}
+    - id: ToleranceRange
+      type: System.String
+    - id: TestMethod
+      type: System.String
+    - id: Notes
+      type: System.String
+    content.vb: Public Sub New(SpecificationName As String = Nothing, SpecificationValue As String = Nothing, Unit As String = Nothing, SpecificationType As String = Nothing, IsCritical As Boolean? = Nothing, ToleranceRange As String = Nothing, TestMethod As String = Nothing, Notes As String = Nothing)
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.#ctor*
+  nameWithType.vb: PatchProductSpecificationDto.New(String, String, String, String, Boolean?, String, String, String)
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.New(String, String, String, String, Boolean?, String, String, String)
+  name.vb: New(String, String, String, String, Boolean?, String, String, String)
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName
+  id: SpecificationName
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: SpecificationName
+  nameWithType: PatchProductSpecificationDto.SpecificationName
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SpecificationName
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 128
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? SpecificationName { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property SpecificationName As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue
+  id: SpecificationValue
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: SpecificationValue
+  nameWithType: PatchProductSpecificationDto.SpecificationValue
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SpecificationValue
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 129
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? SpecificationValue { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property SpecificationValue As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit
+  id: Unit
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: Unit
+  nameWithType: PatchProductSpecificationDto.Unit
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Unit
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 130
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? Unit { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Unit As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType
+  id: SpecificationType
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: SpecificationType
+  nameWithType: PatchProductSpecificationDto.SpecificationType
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SpecificationType
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 131
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? SpecificationType { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property SpecificationType As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical
+  id: IsCritical
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: IsCritical
+  nameWithType: PatchProductSpecificationDto.IsCritical
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsCritical
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 132
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public bool? IsCritical { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Boolean}
+    content.vb: Public Property IsCritical As Boolean?
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange
+  id: ToleranceRange
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: ToleranceRange
+  nameWithType: PatchProductSpecificationDto.ToleranceRange
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ToleranceRange
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 133
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? ToleranceRange { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ToleranceRange As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod
+  id: TestMethod
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: TestMethod
+  nameWithType: PatchProductSpecificationDto.TestMethod
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TestMethod
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 134
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? TestMethod { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TestMethod As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: PatchProductSpecificationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 135
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<PatchProductSpecificationDto>
+  nameWithType: IEquatable<PatchProductSpecificationDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto>
+  nameWithType.vb: IEquatable(Of PatchProductSpecificationDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto)
+  name.vb: IEquatable(Of PatchProductSpecificationDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+    name: PatchProductSpecificationDto
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto
+    name: PatchProductSpecificationDto
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.#ctor
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto__ctor_System_String_System_String_System_String_System_String_System_Nullable_System_Boolean__System_String_System_String_System_String_
+  name: PatchProductSpecificationDto
+  nameWithType: PatchProductSpecificationDto.PatchProductSpecificationDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.PatchProductSpecificationDto
+  nameWithType.vb: PatchProductSpecificationDto.New
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.New
+  name.vb: New
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Nullable{System.Boolean}
+  commentId: T:System.Nullable{System.Boolean}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool?
+  nameWithType: bool?
+  fullName: bool?
+  nameWithType.vb: Boolean?
+  fullName.vb: Boolean?
+  name.vb: Boolean?
+  spec.csharp:
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '?'
+  spec.vb:
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_SpecificationName
+  name: SpecificationName
+  nameWithType: PatchProductSpecificationDto.SpecificationName
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationName
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_SpecificationValue
+  name: SpecificationValue
+  nameWithType: PatchProductSpecificationDto.SpecificationValue
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationValue
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_Unit
+  name: Unit
+  nameWithType: PatchProductSpecificationDto.Unit
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Unit
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_SpecificationType
+  name: SpecificationType
+  nameWithType: PatchProductSpecificationDto.SpecificationType
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_IsCritical
+  name: IsCritical
+  nameWithType: PatchProductSpecificationDto.IsCritical
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.IsCritical
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_ToleranceRange
+  name: ToleranceRange
+  nameWithType: PatchProductSpecificationDto.ToleranceRange
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.ToleranceRange
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_TestMethod
+  name: TestMethod
+  nameWithType: PatchProductSpecificationDto.TestMethod
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.TestMethod
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_PatchProductSpecificationDto_Notes
+  name: Notes
+  nameWithType: PatchProductSpecificationDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto.Notes

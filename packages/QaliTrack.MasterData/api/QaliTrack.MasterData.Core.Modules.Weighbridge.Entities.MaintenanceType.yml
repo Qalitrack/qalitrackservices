@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  id: MaintenanceType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Corrective
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Emergency
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Inspection
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Preventive
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Upgrade
+  langs:
+  - csharp
+  - vb
+  name: MaintenanceType
+  nameWithType: MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaintenanceType
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 166
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: public enum MaintenanceType
+    content.vb: Public Enum MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Preventive
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Preventive
+  id: Preventive
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  langs:
+  - csharp
+  - vb
+  name: Preventive
+  nameWithType: MaintenanceType.Preventive
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Preventive
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Preventive
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 168
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Preventive = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Corrective
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Corrective
+  id: Corrective
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  langs:
+  - csharp
+  - vb
+  name: Corrective
+  nameWithType: MaintenanceType.Corrective
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Corrective
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Corrective
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 169
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Corrective = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Emergency
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Emergency
+  id: Emergency
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  langs:
+  - csharp
+  - vb
+  name: Emergency
+  nameWithType: MaintenanceType.Emergency
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Emergency
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Emergency
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 170
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Emergency = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Upgrade
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Upgrade
+  id: Upgrade
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  langs:
+  - csharp
+  - vb
+  name: Upgrade
+  nameWithType: MaintenanceType.Upgrade
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Upgrade
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Upgrade
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 171
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Upgrade = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Inspection
+  commentId: F:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Inspection
+  id: Inspection
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  langs:
+  - csharp
+  - vb
+  name: Inspection
+  nameWithType: MaintenanceType.Inspection
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.Inspection
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Inspection
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/Entities/Weighbridge.cs
+    startLine: 172
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  syntax:
+    content: Inspection = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.html
+  name: MaintenanceType
+  nameWithType: MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType

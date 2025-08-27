@@ -1,0 +1,198 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  id: ContactMethod
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Email
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Mail
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Phone
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.SMS
+  langs:
+  - csharp
+  - vb
+  name: ContactMethod
+  nameWithType: ContactMethod
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ContactMethod
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 300
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public enum ContactMethod
+    content.vb: Public Enum ContactMethod
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Email
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Email
+  id: Email
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  langs:
+  - csharp
+  - vb
+  name: Email
+  nameWithType: ContactMethod.Email
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Email
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Email
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 302
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Email = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Phone
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Phone
+  id: Phone
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  langs:
+  - csharp
+  - vb
+  name: Phone
+  nameWithType: ContactMethod.Phone
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Phone
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Phone
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 303
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Phone = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.SMS
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.SMS
+  id: SMS
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  langs:
+  - csharp
+  - vb
+  name: SMS
+  nameWithType: ContactMethod.SMS
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.SMS
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SMS
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 304
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: SMS = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Mail
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Mail
+  id: Mail
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  langs:
+  - csharp
+  - vb
+  name: Mail
+  nameWithType: ContactMethod.Mail
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.Mail
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Mail
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 305
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Mail = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod.html
+  name: ContactMethod
+  nameWithType: ContactMethod
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactMethod

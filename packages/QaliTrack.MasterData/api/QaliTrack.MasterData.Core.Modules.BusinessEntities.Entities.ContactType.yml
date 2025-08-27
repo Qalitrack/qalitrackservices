@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  id: ContactType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Billing
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Emergency
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.General
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Management
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Technical
+  langs:
+  - csharp
+  - vb
+  name: ContactType
+  nameWithType: ContactType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ContactType
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 351
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public enum ContactType
+    content.vb: Public Enum ContactType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.General
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.General
+  id: General
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  langs:
+  - csharp
+  - vb
+  name: General
+  nameWithType: ContactType.General
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.General
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: General
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 353
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: General = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Technical
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Technical
+  id: Technical
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  langs:
+  - csharp
+  - vb
+  name: Technical
+  nameWithType: ContactType.Technical
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Technical
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Technical
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 354
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Technical = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Billing
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Billing
+  id: Billing
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  langs:
+  - csharp
+  - vb
+  name: Billing
+  nameWithType: ContactType.Billing
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Billing
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Billing
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 355
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Billing = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Emergency
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Emergency
+  id: Emergency
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  langs:
+  - csharp
+  - vb
+  name: Emergency
+  nameWithType: ContactType.Emergency
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Emergency
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Emergency
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 356
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Emergency = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Management
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Management
+  id: Management
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  langs:
+  - csharp
+  - vb
+  name: Management
+  nameWithType: ContactType.Management
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.Management
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Management
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 357
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Management = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType.html
+  name: ContactType
+  nameWithType: ContactType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ContactType

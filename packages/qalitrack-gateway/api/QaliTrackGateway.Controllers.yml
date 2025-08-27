@@ -1,0 +1,75 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Controllers
+  commentId: N:QaliTrackGateway.Controllers
+  id: QaliTrackGateway.Controllers
+  children:
+  - QaliTrackGateway.Controllers.CircuitBreakerUpdateRequest
+  - QaliTrackGateway.Controllers.HealthUpdateRequest
+  - QaliTrackGateway.Controllers.MonitoringController
+  - QaliTrackGateway.Controllers.PerformanceController
+  - QaliTrackGateway.Controllers.ServiceDiscoveryController
+  langs:
+  - csharp
+  - vb
+  name: QaliTrackGateway.Controllers
+  nameWithType: QaliTrackGateway.Controllers
+  fullName: QaliTrackGateway.Controllers
+  type: Namespace
+  assemblies:
+  - QaliTrack.Gateway
+references:
+- uid: QaliTrackGateway.Controllers.MonitoringController
+  commentId: T:QaliTrackGateway.Controllers.MonitoringController
+  href: QaliTrackGateway.Controllers.MonitoringController.html
+  name: MonitoringController
+  nameWithType: MonitoringController
+  fullName: QaliTrackGateway.Controllers.MonitoringController
+- uid: QaliTrackGateway.Controllers.PerformanceController
+  commentId: T:QaliTrackGateway.Controllers.PerformanceController
+  href: QaliTrackGateway.Controllers.PerformanceController.html
+  name: PerformanceController
+  nameWithType: PerformanceController
+  fullName: QaliTrackGateway.Controllers.PerformanceController
+- uid: QaliTrackGateway.Controllers.ServiceDiscoveryController
+  commentId: T:QaliTrackGateway.Controllers.ServiceDiscoveryController
+  href: QaliTrackGateway.Controllers.ServiceDiscoveryController.html
+  name: ServiceDiscoveryController
+  nameWithType: ServiceDiscoveryController
+  fullName: QaliTrackGateway.Controllers.ServiceDiscoveryController
+- uid: QaliTrackGateway.Controllers.HealthUpdateRequest
+  commentId: T:QaliTrackGateway.Controllers.HealthUpdateRequest
+  parent: QaliTrackGateway.Controllers
+  href: QaliTrackGateway.Controllers.HealthUpdateRequest.html
+  name: HealthUpdateRequest
+  nameWithType: HealthUpdateRequest
+  fullName: QaliTrackGateway.Controllers.HealthUpdateRequest
+- uid: QaliTrackGateway.Controllers.CircuitBreakerUpdateRequest
+  commentId: T:QaliTrackGateway.Controllers.CircuitBreakerUpdateRequest
+  parent: QaliTrackGateway.Controllers
+  href: QaliTrackGateway.Controllers.CircuitBreakerUpdateRequest.html
+  name: CircuitBreakerUpdateRequest
+  nameWithType: CircuitBreakerUpdateRequest
+  fullName: QaliTrackGateway.Controllers.CircuitBreakerUpdateRequest
+- uid: QaliTrackGateway.Controllers
+  commentId: N:QaliTrackGateway.Controllers
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Controllers
+  nameWithType: QaliTrackGateway.Controllers
+  fullName: QaliTrackGateway.Controllers
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Controllers
+    name: Controllers
+    href: QaliTrackGateway.Controllers.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Controllers
+    name: Controllers
+    href: QaliTrackGateway.Controllers.html

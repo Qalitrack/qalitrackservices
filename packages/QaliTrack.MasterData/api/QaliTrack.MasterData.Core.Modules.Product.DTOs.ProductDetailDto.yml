@@ -1,0 +1,1623 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  id: ProductDetailDto
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt
+  - QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight
+  langs:
+  - csharp
+  - vb
+  name: ProductDetailDto
+  nameWithType: ProductDetailDto
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ProductDetailDto
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 69
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: 'public record ProductDetailDto : IEquatable<ProductDetailDto>'
+    content.vb: Public Class ProductDetailDto Implements IEquatable(Of ProductDetailDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id
+  id: Id
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: ProductDetailDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Id
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 71
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public Guid Id { get; init; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property Id As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name
+  id: Name
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: ProductDetailDto.Name
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Name
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 72
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Name { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Name As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code
+  id: Code
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Code
+  nameWithType: ProductDetailDto.Code
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Code
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 73
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Code { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Code As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category
+  id: Category
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Category
+  nameWithType: ProductDetailDto.Category
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Category
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 74
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Category { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Category As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory
+  id: SubCategory
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: SubCategory
+  nameWithType: ProductDetailDto.SubCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SubCategory
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 75
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string SubCategory { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property SubCategory As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit
+  id: Unit
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Unit
+  nameWithType: ProductDetailDto.Unit
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Unit
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 76
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Unit { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Unit As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice
+  id: UnitPrice
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: UnitPrice
+  nameWithType: ProductDetailDto.UnitPrice
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UnitPrice
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 77
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public decimal UnitPrice { get; init; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property UnitPrice As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: ProductDetailDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 78
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Status { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description
+  id: Description
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Description
+  nameWithType: ProductDetailDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Description
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 79
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Description { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Description As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand
+  id: Brand
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Brand
+  nameWithType: ProductDetailDto.Brand
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Brand
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 80
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Brand { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Brand As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model
+  id: Model
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Model
+  nameWithType: ProductDetailDto.Model
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Model
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 81
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Model { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Model As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight
+  id: Weight
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Weight
+  nameWithType: ProductDetailDto.Weight
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Weight
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 82
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public decimal Weight { get; init; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property Weight As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency
+  id: Currency
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Currency
+  nameWithType: ProductDetailDto.Currency
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Currency
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 83
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string Currency { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Currency As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions
+  id: Dimensions
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Dimensions
+  nameWithType: ProductDetailDto.Dimensions
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Dimensions
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 84
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? Dimensions { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Dimensions As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color
+  id: Color
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Color
+  nameWithType: ProductDetailDto.Color
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Color
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 85
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? Color { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Color As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material
+  id: Material
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Material
+  nameWithType: ProductDetailDto.Material
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Material
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 86
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? Material { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Material As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous
+  id: IsHazardous
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: IsHazardous
+  nameWithType: ProductDetailDto.IsHazardous
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsHazardous
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 87
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public bool IsHazardous { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsHazardous As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass
+  id: HazardClass
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: HazardClass
+  nameWithType: ProductDetailDto.HazardClass
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HazardClass
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 88
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? HazardClass { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property HazardClass As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements
+  id: StorageRequirements
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: StorageRequirements
+  nameWithType: ProductDetailDto.StorageRequirements
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: StorageRequirements
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 89
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? StorageRequirements { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property StorageRequirements As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel
+  id: MinStockLevel
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: MinStockLevel
+  nameWithType: ProductDetailDto.MinStockLevel
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MinStockLevel
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 90
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public int MinStockLevel { get; init; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property MinStockLevel As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel
+  id: MaxStockLevel
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: MaxStockLevel
+  nameWithType: ProductDetailDto.MaxStockLevel
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaxStockLevel
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 91
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public int MaxStockLevel { get; init; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property MaxStockLevel As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel
+  id: ReorderLevel
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: ReorderLevel
+  nameWithType: ProductDetailDto.ReorderLevel
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ReorderLevel
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 92
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public int ReorderLevel { get; init; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property ReorderLevel As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards
+  id: QualityStandards
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: QualityStandards
+  nameWithType: ProductDetailDto.QualityStandards
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: QualityStandards
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 93
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? QualityStandards { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property QualityStandards As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications
+  id: Certifications
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Certifications
+  nameWithType: ProductDetailDto.Certifications
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Certifications
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 94
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? Certifications { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Certifications As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId
+  id: OrganizationId
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: OrganizationId
+  nameWithType: ProductDetailDto.OrganizationId
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: OrganizationId
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 95
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public Guid OrganizationId { get; init; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property OrganizationId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: ProductDetailDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 96
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt
+  id: CreatedAt
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: ProductDetailDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 97
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public DateTime CreatedAt { get; init; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property CreatedAt As Date
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt
+  id: UpdatedAt
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedAt
+  nameWithType: ProductDetailDto.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 98
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public DateTime? UpdatedAt { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property UpdatedAt As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications
+  id: HasSpecifications
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: HasSpecifications
+  nameWithType: ProductDetailDto.HasSpecifications
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HasSpecifications
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 99
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public bool HasSpecifications { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property HasSpecifications As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments
+  id: HasDocuments
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: HasDocuments
+  nameWithType: ProductDetailDto.HasDocuments
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HasDocuments
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 100
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public bool HasDocuments { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property HasDocuments As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments*
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock
+  commentId: P:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock
+  id: IsLowStock
+  parent: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+  langs:
+  - csharp
+  - vb
+  name: IsLowStock
+  nameWithType: ProductDetailDto.IsLowStock
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsLowStock
+    path: src/QaliTrack.MasterData.Core/Modules/Product/DTOs/ProductDTOs.cs
+    startLine: 101
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  syntax:
+    content: public bool IsLowStock { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsLowStock As Boolean
+  overload: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<ProductDetailDto>
+  nameWithType: IEquatable<ProductDetailDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto>
+  nameWithType.vb: IEquatable(Of ProductDetailDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto)
+  name.vb: IEquatable(Of ProductDetailDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+    name: ProductDetailDto
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto
+    name: ProductDetailDto
+    href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Id
+  name: Id
+  nameWithType: ProductDetailDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Id
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Name
+  name: Name
+  nameWithType: ProductDetailDto.Name
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Name
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Code
+  name: Code
+  nameWithType: ProductDetailDto.Code
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Code
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Category
+  name: Category
+  nameWithType: ProductDetailDto.Category
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Category
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_SubCategory
+  name: SubCategory
+  nameWithType: ProductDetailDto.SubCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.SubCategory
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Unit
+  name: Unit
+  nameWithType: ProductDetailDto.Unit
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Unit
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_UnitPrice
+  name: UnitPrice
+  nameWithType: ProductDetailDto.UnitPrice
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UnitPrice
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Status
+  name: Status
+  nameWithType: ProductDetailDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Description
+  name: Description
+  nameWithType: ProductDetailDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Description
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Brand
+  name: Brand
+  nameWithType: ProductDetailDto.Brand
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Brand
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Model
+  name: Model
+  nameWithType: ProductDetailDto.Model
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Model
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Weight
+  name: Weight
+  nameWithType: ProductDetailDto.Weight
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Weight
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Currency
+  name: Currency
+  nameWithType: ProductDetailDto.Currency
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Currency
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Dimensions
+  name: Dimensions
+  nameWithType: ProductDetailDto.Dimensions
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Dimensions
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Color
+  name: Color
+  nameWithType: ProductDetailDto.Color
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Color
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Material
+  name: Material
+  nameWithType: ProductDetailDto.Material
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Material
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_IsHazardous
+  name: IsHazardous
+  nameWithType: ProductDetailDto.IsHazardous
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsHazardous
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_HazardClass
+  name: HazardClass
+  nameWithType: ProductDetailDto.HazardClass
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HazardClass
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_StorageRequirements
+  name: StorageRequirements
+  nameWithType: ProductDetailDto.StorageRequirements
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.StorageRequirements
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_MinStockLevel
+  name: MinStockLevel
+  nameWithType: ProductDetailDto.MinStockLevel
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MinStockLevel
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_MaxStockLevel
+  name: MaxStockLevel
+  nameWithType: ProductDetailDto.MaxStockLevel
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.MaxStockLevel
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_ReorderLevel
+  name: ReorderLevel
+  nameWithType: ProductDetailDto.ReorderLevel
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.ReorderLevel
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_QualityStandards
+  name: QualityStandards
+  nameWithType: ProductDetailDto.QualityStandards
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.QualityStandards
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Certifications
+  name: Certifications
+  nameWithType: ProductDetailDto.Certifications
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Certifications
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_OrganizationId
+  name: OrganizationId
+  nameWithType: ProductDetailDto.OrganizationId
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.OrganizationId
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_Notes
+  name: Notes
+  nameWithType: ProductDetailDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_CreatedAt
+  name: CreatedAt
+  nameWithType: ProductDetailDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.CreatedAt
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_UpdatedAt
+  name: UpdatedAt
+  nameWithType: ProductDetailDto.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.UpdatedAt
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_HasSpecifications
+  name: HasSpecifications
+  nameWithType: ProductDetailDto.HasSpecifications
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasSpecifications
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_HasDocuments
+  name: HasDocuments
+  nameWithType: ProductDetailDto.HasDocuments
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.HasDocuments
+- uid: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock
+  href: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.html#QaliTrack_MasterData_Core_Modules_Product_DTOs_ProductDetailDto_IsLowStock
+  name: IsLowStock
+  nameWithType: ProductDetailDto.IsLowStock
+  fullName: QaliTrack.MasterData.Core.Modules.Product.DTOs.ProductDetailDto.IsLowStock

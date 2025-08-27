@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  id: SubscriptionStatus
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Expired
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Inactive
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Suspended
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Trial
+  langs:
+  - csharp
+  - vb
+  name: SubscriptionStatus
+  nameWithType: SubscriptionStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SubscriptionStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 138
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: public enum SubscriptionStatus
+    content.vb: Public Enum SubscriptionStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: SubscriptionStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 140
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Inactive
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Inactive
+  id: Inactive
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  langs:
+  - csharp
+  - vb
+  name: Inactive
+  nameWithType: SubscriptionStatus.Inactive
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Inactive
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Inactive
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 141
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Inactive = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: SubscriptionStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 142
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Suspended = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Expired
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Expired
+  id: Expired
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  langs:
+  - csharp
+  - vb
+  name: Expired
+  nameWithType: SubscriptionStatus.Expired
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Expired
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Expired
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 143
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Expired = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Trial
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Trial
+  id: Trial
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  langs:
+  - csharp
+  - vb
+  name: Trial
+  nameWithType: SubscriptionStatus.Trial
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.Trial
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Trial
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 144
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Trial = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Organization.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization
+    name: Organization
+    href: QaliTrack.MasterData.Core.Modules.Organization.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Organization.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization
+    name: Organization
+    href: QaliTrack.MasterData.Core.Modules.Organization.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Organization.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  href: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus.html
+  name: SubscriptionStatus
+  nameWithType: SubscriptionStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.SubscriptionStatus
