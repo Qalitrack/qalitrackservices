@@ -1,28 +1,4 @@
-- name: Home
-  href: index.md
-- name: API Documentation
+- name: Docs  
+  href: docs/
+- name: API
   href: api/
-- name: Getting Started
-  href: docs/getting-started.md
-- name: Introduction  
-  href: docs/introduction.md
-- name: Modules
-  items:
-  - name: Business Entities
-    href: docs/modules/business-entities.md
-  - name: Vehicles
-    href: docs/modules/vehicles.md
-  - name: Drivers
-    href: docs/modules/drivers.md
-  - name: Routes
-    href: docs/modules/routes.md
-  - name: Weighbridges
-    href: docs/modules/weighbridges.md
-  - name: Products
-    href: docs/modules/products.md
-  - name: SACCOs
-    href: docs/modules/saccos.md
-  - name: Organizations
-    href: docs/modules/organizations.md
-  - name: Relationships
-    href: docs/modules/relationships.md

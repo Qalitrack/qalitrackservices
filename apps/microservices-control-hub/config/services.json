@@ -142,6 +142,18 @@
       "healthPath": null,
       "swaggerPath": null,
       "description": "Mailpit email testing service"
+    },
+    {
+      "name": "sample-service-1",
+      "host": "localhost",
+      "port": 3001,
+      "group": "application",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/service1",
+      "description": "Sample service 1 for testing health checks and swagger aggregation",
+      "guidesPath": "/docs/"
     }
   ]
 }

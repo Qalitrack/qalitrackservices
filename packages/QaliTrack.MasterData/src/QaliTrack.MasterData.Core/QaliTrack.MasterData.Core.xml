@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>QaliTrack.MasterData.Core</name>
+    </assembly>
+    <members>
+        <member name="T:QaliTrack.MasterData.Core.Common.IQueryableExtensions">
+            <summary>
+            Django-style query extensions for filtering, searching, and pagination
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Core.Common.IQueryableExtensions.ToPagedResultAsync``1(System.Linq.IQueryable{``0},QaliTrack.MasterData.Core.Common.QueryParameters,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Apply Django-style filtering, searching, and pagination
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Core.Common.IQueryableExtensions.Search``1(System.Linq.IQueryable{``0},System.String)">
+            <summary>
+            Django-style search across multiple fields
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Core.Common.IQueryableExtensions.ApplyFilters``1(System.Linq.IQueryable{``0},System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Django-style filtering with key-value pairs
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Core.Common.IQueryableExtensions.ApplyOrdering``1(System.Linq.IQueryable{``0},System.String)">
+            <summary>
+            Django-style ordering (supports 'field' and '-field')
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Common.QueryParameters">
+            <summary>
+            Django-style query parameters for filtering, searching, and pagination
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.Page">
+            <summary>
+            Page number (1-based, like Django)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.PageSize">
+            <summary>
+            Page size (default 25, max 100, like Django's PAGE_SIZE)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.Search">
+            <summary>
+            Search query (searches across multiple fields like name, code, description)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.Ordering">
+            <summary>
+            Ordering field (supports Django-style ordering: 'name', '-name', 'created_at', '-updated_at')
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.Status">
+            <summary>
+            Filter by status (e.g., Active, Inactive, Pending)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.OrganizationId">
+            <summary>
+            Filter by organization ID
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.Type">
+            <summary>
+            Filter by type/category
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.CreatedFrom">
+            <summary>
+            Filter by created date (from)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.CreatedTo">
+            <summary>
+            Filter by created date (to)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.UpdatedFrom">
+            <summary>
+            Filter by updated date (from)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.UpdatedTo">
+            <summary>
+            Filter by updated date (to)
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.IsActive">
+            <summary>
+            Filter by active/inactive status
+            </summary>
+        </member>
+        <member name="P:QaliTrack.MasterData.Core.Common.QueryParameters.Filters">
+            <summary>
+            Generic filters (key-value pairs for any additional filters)
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Common.PagedResult`1">
+            <summary>
+            Paginated response (Django-style pagination)
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CreateBusinessEntityDto">
+            <summary>
+            Simplified DTO for creating a business entity - only essential fields
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.UpdateBusinessEntityDto">
+            <summary>
+            DTO for updating basic business entity information
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.BusinessEntitySummaryDto">
+            <summary>
+            Simplified DTO for business entity list view
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.BusinessEntityDetailDto">
+            <summary>
+            Detailed DTO for single business entity view - without child collections
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessEntity">
+            <summary>
+            Core business entity that can serve as Customer, Supplier, and/or Transporter
+            This replaces the separate Customer, Supplier, and Transporter entities from the original microservices
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.CustomerProfile">
+            <summary>
+            Customer-specific profile for business entities
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierProfile">
+            <summary>
+            Supplier-specific profile for business entities
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterProfile">
+            <summary>
+            Transporter-specific profile for business entities
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto">
+            <summary>
+            Simplified DTO for creating a driver - only essential fields
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverDto">
+            <summary>
+            DTO for updating basic driver information
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverSummaryDto">
+            <summary>
+            Simplified DTO for driver list view
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto">
+            <summary>
+            Detailed DTO for single driver view - without child collections
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.CreateOrganizationDto">
+            <summary>
+            Simplified DTO for creating an organization - only essential fields
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto">
+            <summary>
+            DTO for updating basic organization information
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.OrganizationSummaryDto">
+            <summary>
+            Simplified DTO for organization list view
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.OrganizationDetailDto">
+            <summary>
+            Detailed DTO for single organization view - without child collections
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverSaccoMembership">
+            <summary>
+            Driver-SACCO membership relationship
+            Addresses the missing relationship between drivers and SACCO organizations
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleTransporterOwnership">
+            <summary>
+            Vehicle-Transporter ownership relationship
+            Addresses the missing relationship for fleet management
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverVehicleAssignment">
+            <summary>
+            Driver-Vehicle assignment relationship
+            Addresses the missing relationship for current and historical vehicle assignments
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverTransporterEmployment">
+            <summary>
+            Driver-Transporter employment relationship
+            Addresses the missing relationship for employment tracking
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.ProductSupplierCatalog">
+            <summary>
+            Product-Supplier catalog relationship
+            Addresses the missing many-to-many relationship between products and suppliers
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RouteWeighbridgeAssociation">
+            <summary>
+            Route-Weighbridge association relationship
+            Addresses the missing relationship between routes and weighbridges
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OrganizationWeighbridgeOwnership">
+            <summary>
+            Organization-Weighbridge ownership relationship
+            Addresses the missing relationship for asset management
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleSaccoRegistration">
+            <summary>
+            Vehicle-SACCO registration relationship
+            Addresses the missing relationship for regulatory compliance
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.UserOrganizationRole">
+            <summary>
+            User-Organization-Role matrix
+            Addresses the missing relationship for comprehensive access control
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto">
+            <summary>
+            Simplified DTO for creating a SACCO - only essential fields
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto">
+            <summary>
+            DTO for updating basic SACCO information
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoSummaryDto">
+            <summary>
+            Simplified DTO for SACCO list view
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoDetailDto">
+            <summary>
+            Detailed DTO for single SACCO view - without child collections
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleDto">
+            <summary>
+            Simplified DTO for creating a vehicle - only essential fields
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleDto">
+            <summary>
+            DTO for updating basic vehicle information
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleDto">
+            <summary>
+            DTO for partial vehicle updates
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleSummaryDto">
+            <summary>
+            Simplified DTO for vehicle list view
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDetailDto">
+            <summary>
+            Detailed DTO for single vehicle view - without child collections
+            </summary>
+        </member>
+    </members>
+</doc>
