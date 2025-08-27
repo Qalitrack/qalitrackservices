@@ -1,9 +1,13 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 3001;
 const serviceName = process.env.SERVICE_NAME || 'sample-service';
 
 app.use(express.json());
+
+// Serve static documentation from the 'docs' directory  
+app.use('/docs', express.static('docs'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

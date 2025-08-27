@@ -81,7 +81,8 @@
       "healthPath": "/health",
       "swaggerPath": "/swagger/v1/swagger.json",
       "apiRoot": "/api/customers",
-      "description": "Customer relationship management"
+      "description": "Customer relationship management",
+      "guidesPath": "/docs"
     },
     {
       "name": "product-service",

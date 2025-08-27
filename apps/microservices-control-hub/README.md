@@ -19,6 +19,12 @@ A unified **monitoring and API documentation hub** for microservices architectur
 - Schema conflict resolution with automatic prefixing *(prevents naming collisions: `User` → `userserviceUser`)*
 - Multiple server environments for API testing (development, staging, production)
 
+### 📚 **Service Guides Aggregation**
+- Renders and aggregates external documentation sites (e.g., from DocFX, MkDocs) for each service.
+- Provides a central, beautiful landing page to browse all available service guides.
+- Uses a reverse proxy to seamlessly serve the documentation under the `/service-guides` path.
+- Discovers available guides via a new `guidesPath` property in the service configuration.
+
 ### 🎯 **Unified Dashboard**
 - Single pane of glass for all microservices
 - Interactive service cards with detailed information
@@ -238,6 +244,7 @@ The documentation interface offers:
 | `enabled` | Include in monitoring | ✅ | `true` |
 | `healthPath` | Health check endpoint | ❌ | `"/health"` |
 | `swaggerPath` | Swagger docs endpoint | ❌ | `"/swagger/v1/swagger.json"` |
+| `guidesPath` | Path to external docs (e.g., DocFX) | ❌ | `"/docs"` |
 | `apiRoot` | API path prefix | ❌ | `"/api/users"` |
 | `pathTransformations` | Gateway routing adjustments | ❌ | `[{"pattern": "/api/users", "operation": "strip"}]` |
 | `description` | Service description | ❌ | `"User management"` |
@@ -527,13 +534,144 @@ docker-compose -f tests/docker-compose.test.yml down
 
 See [tests/README.md](tests/README.md) for detailed testing instructions.
 
+## 🏥 Health Endpoint Requirements
+
+### Supported Health Check Formats
+
+The control hub supports flexible health endpoint formats to accommodate different service architectures:
+
+#### 1. Simple HTTP Status (Minimal)
+```http
+GET /health
+HTTP 200 OK
+```
+- ✅ **Any 200-299 status = healthy**
+- ❌ **Non-200 status = unhealthy**
+
+#### 2. JSON with Status Field (Recommended)
+```json
+{
+  "status": "healthy"
+}
+```
+
+**Supported status values:**
+- `"healthy"` → Service is fully operational ✅
+- `"degraded"` → Service has issues but running ⚠️
+- `"unhealthy"` → Service has problems ❌
+- Any other value → Treated as `"degraded"`
+
+#### 3. ASP.NET Core Health Checks (Built-in Support)
+```json
+{
+  "status": "Healthy",
+  "totalDuration": "00:00:00.0123456",
+  "entries": {
+    "database": {
+      "status": "Healthy", 
+      "duration": "00:00:00.0100000"
+    }
+  }
+}
+```
+
+**Status mapping:**
+- `"Healthy"` → `"healthy"` ✅
+- `"Degraded"` → `"degraded"` ⚠️
+- `"Unhealthy"` → `"degraded"` ⚠️
+
+#### 4. Custom Health Information
+```json
+{
+  "status": "healthy",
+  "version": "1.2.3",
+  "uptime": "2d 14h 32m",
+  "dependencies": {
+    "database": "connected",
+    "redis": "connected"
+  }
+}
+```
+
+### Health Check Response Format
+
+The control hub aggregates health data and returns:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-08-25T03:00:00.000Z", 
+  "responseTime": 156,
+  "endpoint": "http://customer-service:80/health",
+  "service": {
+    "name": "customer-service",
+    "group": "application",
+    "description": "Customer relationship management"
+  }
+}
+```
+
+### Status Detection Logic
+
+1. **HTTP Response Check**: Must return 200-299 status code
+2. **JSON Parsing**: Attempts to parse response body as JSON
+3. **Status Field**: Looks for `status` field in response
+4. **Fallback**: If no `status` field but HTTP 200, considers `"healthy"`
+
+### Error Handling
+
+Connection failures result in:
+```json
+{
+  "status": "down", 
+  "error": "ECONNREFUSED",
+  "timestamp": "2025-08-25T03:00:00.000Z",
+  "responseTime": 5000
+}
+```
+
+**Error status mapping:**
+- Connection refused → `"down"` 💀
+- Timeout → `"down"` 💀  
+- HTTP 4xx/5xx → `"unhealthy"` ❌
+
+### Implementation Examples
+
+#### Express.js
+```javascript
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy' });
+});
+```
+
+#### ASP.NET Core (Built-in)
+```csharp
+// Program.cs
+builder.Services.AddHealthChecks();
+app.MapHealthChecks("/health");
+```
+
+#### Spring Boot
+```java
+// Built-in at /actuator/health
+// Or custom:
+@RestController
+public class HealthController {
+    @GetMapping("/health")
+    public Map<String, String> health() {
+        return Map.of("status", "healthy");
+    }
+}
+```
+
 ## 📈 Monitoring Best Practices
 
-1. **Service Health Endpoints**: Ensure all services expose `/health` endpoints
+1. **Service Health Endpoints**: Ensure all services expose `/health` endpoints with proper status responses
 2. **Swagger Documentation**: Use consistent OpenAPI 3.0 specifications
 3. **Service Grouping**: Organize services by type (application, infrastructure, gateway)
 4. **Configuration Management**: Use environment-specific configuration files
 5. **Network Setup**: Ensure services can communicate within Docker networks
+6. **Health Check Consistency**: Use standard status values (`healthy`, `degraded`, `unhealthy`)
+7. **Response Time Optimization**: Keep health checks lightweight (< 500ms)
 
 ## 🤝 Contributing
 
