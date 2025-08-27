@@ -19,10 +19,8 @@ public class UserServiceTests
     private readonly Mock<IRoleService> _mockRoleService;
     private readonly IMapper _mapper;
     private readonly UserService.Core.Services.UserService _userService;
-    private readonly IRoleRepository _mockRoleRepository;
     private readonly ILogger<UserService.Core.Services.UserService> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly UserService.Core.Services.PasswordPolicyService _passwordPolicyService;
     
 
     public UserServiceTests()
@@ -32,16 +30,34 @@ public class UserServiceTests
         _logger = new Logger<UserService.Core.Services.UserService>(new LoggerFactory());
         _httpContextAccessor = new HttpContextAccessor();
         
+        // Initialize missing mocks
+        var mockRoleRepository = new Mock<IRoleRepository>();
+        var mockPasswordPolicyService = new Mock<UserService.Core.Services.PasswordPolicyService>();
+        
         var config = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>());
         _mapper = config.CreateMapper();
         
         _userService = new UserService.Core.Services.UserService(
             _mockUserRepository.Object,
             _mapper,
-            _mockRoleRepository,
+            mockRoleRepository.Object,
             _httpContextAccessor,
-            _passwordPolicyService
+            mockPasswordPolicyService.Object
             );
+    }
+
+    [Fact]
+    public void TestFramework_IsWorking()
+    {
+        // Simple test to verify xunit is working
+        Assert.True(true);
+    }
+
+    [Fact]
+    public void UserService_IsInstantiated()
+    {
+        // Test that the user service can be created
+        Assert.NotNull(_userService);
     }
 
     [Fact]
