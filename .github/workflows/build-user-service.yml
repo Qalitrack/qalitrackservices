@@ -44,6 +44,7 @@ jobs:
         volumes:
           - pg_wal_archive:/var/lib/postgresql/data/pg_wal_archive
         options: >-
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=1g
           --health-cmd pg_isready
           --health-interval 30s
           --health-timeout 10s
