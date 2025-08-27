@@ -107,6 +107,15 @@ jobs:
         run: |
           cd ${{ env.SERVICE_PATH }}
           dotnet build src/UserService.Api/UserService.Api.csproj --no-restore -c Release --verbosity normal
+          dotnet build tests/UserService.Tests/UserService.Tests.csproj --no-restore -c Release --verbosity normal
+
+      - name: Verify test project
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          echo "Checking if test DLL exists..."
+          ls -la tests/UserService.Tests/bin/Release/net8.0/
+          echo "Checking test project for any build issues..."
+          dotnet list tests/UserService.Tests/UserService.Tests.csproj package
       
       - name: Run unit tests
         env:
@@ -116,10 +125,8 @@ jobs:
           UseRedis: "true"
         run: |
           cd ${{ env.SERVICE_PATH }}
-          find . -name "*.Tests.csproj" -o -name "*Test*.csproj" | while read testproject; do
-            echo "Running tests for: $testproject"
-            dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
-          done
+          echo "Running unit tests..."
+          dotnet test tests/UserService.Tests/UserService.Tests.csproj -c Release --verbosity normal --logger "console;verbosity=detailed" --results-directory TestResults/ --blame
         continue-on-error: false
       
       - name: Run database migrations
