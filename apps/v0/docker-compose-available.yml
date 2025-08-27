@@ -37,6 +37,21 @@ services:
       - microservices
     restart: unless-stopped
     
+
+  UserService:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/user-service:latest
+    ports:
+      - "7015:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - POSTGRES_USER=userService
+      - POSTGRES_PASSWORD=userService123
+      - POSTGRES_DB=userServicedb
+      - POSTGRES_HOST=postgres
+    networks:
+      - microservices
+    restart: unless-stopped
+
   customer-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/customer-service:latest
     ports:
