@@ -102,6 +102,7 @@ jobs:
         run: |
           cd ${{ env.SERVICE_PATH }}
           dotnet restore src/UserService.Api/UserService.Api.csproj --verbosity normal
+          dotnet restore tests/UserService.Tests/UserService.Tests.csproj --verbosity normal
       
       - name: Build application
         run: |
