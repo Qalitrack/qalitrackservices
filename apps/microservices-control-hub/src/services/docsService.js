@@ -94,6 +94,19 @@ class DocsService {
     const servicePromises = services.map(async (service) => {
       try {
         const docs = await this.getServiceDocs(service.name);
+        const pathCount = docs?.paths ? Object.keys(docs.paths).length : 0;
+        
+        let modules = null;
+        if (service.modules && Array.isArray(service.modules) && service.modules.length > 0) {
+          const moduleEndpointCounts = this.countModuleEndpoints(docs?.paths, service.modules);
+          modules = service.modules.map(module => ({
+            name: module.name,
+            description: module.description,
+            path: module.path,
+            endpointCount: moduleEndpointCounts[module.name] || 0
+          }));
+        }
+        
         return {
           name: service.name,
           title: this.formatServiceTitle(service.name),
@@ -101,7 +114,9 @@ class DocsService {
           description: service.description,
           group: service.group,
           apiRoot: service.apiRoot,
-          pathCount: docs?.paths ? Object.keys(docs.paths).length : 0
+          pathCount,
+          modules,
+          isModular: !!modules
         };
       } catch (error) {
         return {
@@ -112,6 +127,8 @@ class DocsService {
           group: service.group,
           apiRoot: service.apiRoot,
           pathCount: 0,
+          modules: null,
+          isModular: false,
           error: error.message
         };
       }
@@ -157,13 +174,39 @@ class DocsService {
       return;
     }
 
-    // Add service tag
     const pathCount = serviceDocs.paths ? Object.keys(serviceDocs.paths).length : 0;
-    const serviceTag = {
-      name: service.name,
-      description: `${service.description || this.formatServiceTitle(service.name)} - ${pathCount} endpoints`
-    };
-    aggregatedSwagger.tags.push(serviceTag);
+
+    // Check if service should use modular grouping (either has modules config OR has multiple tags in swagger)
+    const serviceTags = this.extractServiceTags(serviceDocs);
+    const shouldUseModularGrouping = service.modules || serviceTags.length > 1;
+
+    if (shouldUseModularGrouping && serviceTags.length > 1) {
+      // Use existing swagger tags for modular grouping
+      const tagEndpointCounts = this.countEndpointsByTag(serviceDocs.paths);
+      
+      serviceTags.forEach(tagName => {
+        // Skip generic API tags like "QaliTrack.MasterData.Api"
+        if (this.isGenericTag(tagName)) {
+          return;
+        }
+        
+        const endpointCount = tagEndpointCounts[tagName] || 0;
+        if (endpointCount > 0) {
+          const moduleTag = {
+            name: `${service.name}-${this.normalizeTagName(tagName)}`,
+            description: `${tagName} - ${endpointCount} endpoints`
+          };
+          aggregatedSwagger.tags.push(moduleTag);
+        }
+      });
+    } else {
+      // Add traditional single service tag
+      const serviceTag = {
+        name: service.name,
+        description: `${service.description || this.formatServiceTitle(service.name)} - ${pathCount} endpoints`
+      };
+      aggregatedSwagger.tags.push(serviceTag);
+    }
 
     // Create schema mapping for reference updates
     const schemaMapping = {};
@@ -189,8 +232,22 @@ class DocsService {
         const processedPathObject = { ...pathObject };
         for (const [method, methodObject] of Object.entries(processedPathObject)) {
           if (typeof methodObject === 'object' && methodObject !== null) {
-            // Replace tags with service name
-            methodObject.tags = [service.name];
+            // Use existing tags or determine appropriate tag
+            const originalTags = methodObject.tags || [];
+            const serviceTags = this.extractServiceTags(serviceDocs);
+            
+            if (serviceTags.length > 1 && originalTags.length > 0) {
+              // Use modular tags: replace original tag with service-prefixed version
+              const originalTag = originalTags[0];
+              if (!this.isGenericTag(originalTag)) {
+                methodObject.tags = [`${service.name}-${this.normalizeTagName(originalTag)}`];
+              } else {
+                methodObject.tags = [service.name];
+              }
+            } else {
+              // Use service name as tag
+              methodObject.tags = [service.name];
+            }
             
             // Add service info to operation
             if (!methodObject.description) {
@@ -365,6 +422,145 @@ class DocsService {
     }
 
     return false;
+  }
+
+  /**
+   * Count endpoints for each module based on path patterns
+   */
+  countModuleEndpoints(paths, modules) {
+    const counts = {};
+    
+    if (!paths || !modules) {
+      return counts;
+    }
+
+    // Initialize counts
+    modules.forEach(module => {
+      counts[module.name] = 0;
+    });
+
+    // Count endpoints for each path
+    Object.keys(paths).forEach(path => {
+      const matchedModule = this.findMatchingModule(path, modules);
+      if (matchedModule) {
+        counts[matchedModule.name]++;
+      }
+    });
+
+    return counts;
+  }
+
+  /**
+   * Find which module a path belongs to based on module path patterns
+   */
+  findMatchingModule(path, modules) {
+    if (!modules || !Array.isArray(modules)) {
+      return null;
+    }
+
+    // Sort modules by path specificity (longer paths first for better matching)
+    const sortedModules = modules.slice().sort((a, b) => b.path.length - a.path.length);
+
+    // Find the first module whose path matches the beginning of the endpoint path
+    return sortedModules.find(module => {
+      if (module.path) {
+        return path.startsWith(module.path);
+      }
+      return false;
+    });
+  }
+
+  /**
+   * Get the appropriate tag name for an endpoint (either module tag or service tag)
+   */
+  getEndpointTag(path, service) {
+    // If service has modules, try to match endpoint to a module
+    if (service.modules && Array.isArray(service.modules) && service.modules.length > 0) {
+      const matchedModule = this.findMatchingModule(path, service.modules);
+      if (matchedModule) {
+        return `${service.name}-${matchedModule.name}`;
+      }
+    }
+    
+    // Fall back to service name if no module match
+    return service.name;
+  }
+
+  /**
+   * Extract unique tags from swagger documentation
+   */
+  extractServiceTags(serviceDocs) {
+    if (!serviceDocs?.paths) {
+      return [];
+    }
+
+    const tags = new Set();
+    
+    // Extract tags from all endpoints
+    Object.values(serviceDocs.paths).forEach(pathObject => {
+      Object.values(pathObject).forEach(methodObject => {
+        if (methodObject?.tags && Array.isArray(methodObject.tags)) {
+          methodObject.tags.forEach(tag => tags.add(tag));
+        }
+      });
+    });
+
+    return Array.from(tags);
+  }
+
+  /**
+   * Count endpoints for each tag
+   */
+  countEndpointsByTag(paths) {
+    const counts = {};
+    
+    if (!paths) {
+      return counts;
+    }
+
+    Object.values(paths).forEach(pathObject => {
+      Object.values(pathObject).forEach(methodObject => {
+        if (methodObject?.tags && Array.isArray(methodObject.tags)) {
+          methodObject.tags.forEach(tag => {
+            counts[tag] = (counts[tag] || 0) + 1;
+          });
+        }
+      });
+    });
+
+    return counts;
+  }
+
+  /**
+   * Check if a tag is generic (should be skipped for modular grouping)
+   */
+  isGenericTag(tagName) {
+    if (!tagName || typeof tagName !== 'string') {
+      return true;
+    }
+
+    // Skip generic patterns like "ServiceName.Api", "Api", etc.
+    const genericPatterns = [
+      /\.Api$/i,
+      /^Api$/i,
+      /^[A-Za-z]+\.[A-Za-z]+\.Api$/i
+    ];
+
+    return genericPatterns.some(pattern => pattern.test(tagName));
+  }
+
+  /**
+   * Normalize tag name for use in service-tag combination
+   */
+  normalizeTagName(tagName) {
+    if (!tagName || typeof tagName !== 'string') {
+      return 'unknown';
+    }
+
+    return tagName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
 
   formatServiceTitle(serviceName) {

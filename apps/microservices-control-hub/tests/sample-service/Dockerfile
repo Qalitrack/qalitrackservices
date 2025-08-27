@@ -8,8 +8,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci --omit=dev
 
-# Copy application code
+# Copy application code and documentation
 COPY app.js ./
+COPY docs/ ./docs/
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \

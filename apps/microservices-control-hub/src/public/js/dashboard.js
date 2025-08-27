@@ -70,34 +70,45 @@ class MicroservicesDashboard {
 
     async loadData() {
         try {
-            await Promise.all([
+            const results = await Promise.allSettled([
                 this.loadHealthData(),
                 this.loadServicesData(),
                 this.loadGroupsData(),
                 this.loadDocsData()
             ]);
+
+            results.forEach((result, index) => {
+                if (result.status === 'rejected') {
+                    const endpointNames = ['Health', 'Services', 'Groups', 'Docs'];
+                    console.error(`Failed to load ${endpointNames[index]} data:`, result.reason);
+                    // Optionally update UI to show partial data error
+                }
+            });
+
             this.updateLastUpdated();
         } catch (error) {
-            console.error('Failed to load dashboard data:', error);
-            this.showError('Failed to load dashboard data');
+            // This will now only catch errors if Promise.allSettled itself fails, which is rare.
+            console.error('An unexpected error occurred while loading dashboard data:', error);
+            this.showError('An unexpected error occurred');
         }
     }
 
     async loadHealthData() {
         try {
-            const response = await fetch('/api/health/stats/summary');
+            const response = await fetch('/api/health/stats/summary?_t=' + Date.now());
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
             this.updateHealthStats(data);
         } catch (error) {
             console.error('Failed to load health data:', error);
+            this.showError('Failed to load health data');
         }
     }
 
     async loadServicesData() {
         try {
-            const response = await fetch('/api/services');
+            const response = await fetch('/api/services?_t=' + Date.now());
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
@@ -112,7 +123,7 @@ class MicroservicesDashboard {
 
     async loadGroupsData() {
         try {
-            const response = await fetch('/api/services/groups');
+            const response = await fetch('/api/services/groups?_t=' + Date.now());
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
@@ -142,21 +153,30 @@ class MicroservicesDashboard {
         const totalServices = document.getElementById('totalServices');
         const avgResponseTime = document.getElementById('avgResponseTime');
 
-        // Update overall status
-        overallStatus.className = `stat-card overall-status ${data.overall}`;
-        overallStatusValue.textContent = this.capitalizeFirst(data.overall);
+        // Ensure all elements exist before updating
+        if (overallStatus && overallStatusValue && healthyCount && healthyPercentage && totalServices && avgResponseTime) {
+            // Update overall status with proper class cleanup
+            overallStatus.className = `stat-card overall-status ${data.overall}`;
+            overallStatusValue.textContent = this.capitalizeFirst(data.overall);
 
-        // Update healthy services
-        healthyCount.textContent = `${data.healthy}/${data.total}`;
-        healthyPercentage.textContent = `${data.healthPercentage}% healthy`;
+            // Update healthy services
+            healthyCount.textContent = `${data.healthy}/${data.total}`;
+            healthyPercentage.textContent = `${data.healthPercentage}% healthy`;
 
-        // Update total services
-        totalServices.textContent = data.total;
-        avgResponseTime.textContent = `${data.averageResponseTime}ms avg`;
+            // Update total services
+            totalServices.textContent = data.total;
+            avgResponseTime.textContent = `${data.averageResponseTime}ms avg`;
 
-        // Update status icon
-        const statusIcon = overallStatus.querySelector('.stat-icon');
-        statusIcon.textContent = this.getStatusIcon(data.overall);
+            // Update status icon
+            const statusIcon = overallStatus.querySelector('.stat-icon');
+            if (statusIcon) {
+                statusIcon.textContent = this.getStatusIcon(data.overall);
+            }
+            
+            console.log('Health stats updated:', data); // Debug logging
+        } else {
+            console.error('Some DOM elements for health stats not found');
+        }
     }
 
     updateDocsStats(data) {
@@ -227,15 +247,23 @@ class MicroservicesDashboard {
     createGroupCard(group) {
         const healthPercentage = group.total > 0 ? Math.round((group.healthy / group.total) * 100) : 0;
         
+        // Determine overall group status for styling
+        let groupStatus = 'healthy';
+        if (healthPercentage === 0) {
+            groupStatus = 'unhealthy';
+        } else if (healthPercentage < 100) {
+            groupStatus = 'degraded';
+        }
+        
         return `
-            <div class="group-card">
+            <div class="group-card ${groupStatus}">
                 <div class="group-header">
-                    <div class="group-name">${group.name}</div>
+                    <div class="group-name">${this.capitalizeFirst(group.name)}</div>
                     <div class="group-stats">${group.healthy}/${group.total} healthy (${healthPercentage}%)</div>
                 </div>
                 <div class="group-services">
                     ${group.services.map(service => 
-                        `<span class="service-pill ${service.status}">${service.name}</span>`
+                        `<span class="service-pill ${service.status}" title="Response: ${service.responseTime || 'N/A'}ms">${service.name}</span>`
                     ).join('')}
                 </div>
             </div>

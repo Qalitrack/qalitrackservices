@@ -36,57 +36,57 @@
       "modules": [
         {
           "name": "customers",
-          "path": "/api/masterdata/business-entities",
+          "path": "/api/masterdata/business-entity",
           "description": "Customer management"
         },
         {
           "name": "drivers", 
-          "path": "/api/masterdata/drivers",
+          "path": "/api/masterdata/driver",
           "description": "Driver management"
         },
         {
           "name": "products",
-          "path": "/api/masterdata/products", 
+          "path": "/api/masterdata/product", 
           "description": "Product catalog"
         },
         {
           "name": "reports",
-          "path": "/api/masterdata/reports",
+          "path": "/api/masterdata/report",
           "description": "Reporting system"
         },
         {
           "name": "routes",
-          "path": "/api/masterdata/routes",
+          "path": "/api/masterdata/route",
           "description": "Route management"
         },
         {
           "name": "saccos",
-          "path": "/api/masterdata/saccos",
+          "path": "/api/masterdata/sacco",
           "description": "SACCO integration"
         },
         {
           "name": "suppliers",
-          "path": "/api/masterdata/business-entities",
+          "path": "/api/masterdata/business-entity",
           "description": "Supplier management"  
         },
         {
           "name": "transporters",
-          "path": "/api/masterdata/business-entities",
+          "path": "/api/masterdata/business-entity",
           "description": "Transporter management"
         },
         {
           "name": "vehicles",
-          "path": "/api/masterdata/vehicles",
+          "path": "/api/masterdata/vehicle",
           "description": "Vehicle management"
         },
         {
           "name": "weighbridges",
-          "path": "/api/masterdata/weighbridges",
+          "path": "/api/masterdata/weighbridge",
           "description": "Weighbridge management"
         },
         {
           "name": "organizations",
-          "path": "/api/masterdata/organizations",
+          "path": "/api/masterdata/organization",
           "description": "Organization management"
         },
         {

@@ -186,9 +186,24 @@ body {
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
+.group-card.healthy {
+    border-left: 4px solid #10b981;
+    background: linear-gradient(to right, #ecfdf5, white);
+}
+
+.group-card.degraded {
+    border-left: 4px solid #f59e0b;
+    background: linear-gradient(to right, #fffbeb, white);
+}
+
+.group-card.unhealthy {
+    border-left: 4px solid #ef4444;
+    background: linear-gradient(to right, #fef2f2, white);
+}
+
 .group-header {
     display: flex;
-    justify-content: between;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 0.75rem;
 }
