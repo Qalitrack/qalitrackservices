@@ -47,6 +47,7 @@ dotnet run --project src/QaliTrack.MasterData.Api
 
 ### 4. Access the Service
 - **Swagger UI**: `http://localhost:5000/`
+- **Documentation**: `http://localhost:5000/docs` (Complete API documentation)
 - **Health Check**: `http://localhost:5000/health`
 - **API Endpoints**: `http://localhost:5000/{module}/` (Django-style URLs)
 
@@ -557,13 +558,46 @@ curl http://localhost:5001/driver/{driver-id}/vehicle-assignments
 4. Deploy application
 
 ### Docker Deployment
-```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-COPY . /app
-WORKDIR /app
-EXPOSE 5000
-ENTRYPOINT ["dotnet", "QaliTrack.MasterData.Api.dll"]
+
+The service includes a comprehensive Dockerfile that builds both the API and documentation:
+
+```bash
+# Build Docker image (includes DocFX documentation generation)
+docker build -t qalitrack-masterdata .
+
+# Run container
+docker run -p 5000:80 -p 8080:8080 qalitrack-masterdata
+
+# Access services
+# API & Swagger UI: http://localhost:5000
+# Documentation: http://localhost:5000/docs
+# Health Check: http://localhost:5000/health
 ```
+
+#### Docker Features
+- **Multi-stage build** for optimized image size
+- **Documentation generation** during build process using DocFX
+- **Static file serving** for documentation at `/docs` endpoint
+- **Health checks** for container orchestration
+- **Production-ready configuration** with proper error handling
+
+#### Manual Documentation Generation
+```bash
+# Generate documentation locally
+docfx
+
+# Serve documentation 
+docfx --serve --port 8080
+
+# Or serve pre-built documentation
+cd _site && python -m http.server 8080
+```
+
+The service automatically includes comprehensive API documentation that covers:
+- **Complete API Reference**: All 394+ documented models and endpoints
+- **Cross-Module Relationships**: Detailed relationship management documentation
+- **Module-Specific Guides**: Individual module documentation
+- **Getting Started Guides**: Setup and configuration instructions
 
 ## 📋 Migration from Microservices
 
