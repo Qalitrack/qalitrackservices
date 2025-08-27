@@ -22,6 +22,21 @@ services:
       start_period: 40s
 
   # Available QaliTrack Services (13 services from your list)
+
+  BackupService:
+    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/backup-service:latest
+    ports:
+      - "7014:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - POSTGRES_USER=backupservice
+      - POSTGRES_PASSWORD=backupservice123
+      - POSTGRES_DB=backupservicedb
+      - POSTGRES_HOST=postgres
+    networks:
+      - microservices
+    restart: unless-stopped
+    
   customer-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/customer-service:latest
     ports:
@@ -31,6 +46,7 @@ services:
     networks:
       - microservices
     restart: unless-stopped
+
 
   driver-service:
     image: ghcr.io/t-qs-builds/qalitrack-microservices-build/driver-service:latest
