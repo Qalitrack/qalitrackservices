@@ -44,7 +44,7 @@ jobs:
         volumes:
           - pg_wal_archive:/var/lib/postgresql/data/pg_wal_archive
         options: >-
-          --health-cmd "pg_isready -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }}"
+          --health-cmd pg_isready
           --health-interval 30s
           --health-timeout 10s
           --health-retries 3
@@ -52,12 +52,13 @@ jobs:
       
       redis:
         image: redis:7-alpine
+        env:
+          REDIS_PASSWORD: ${{ env.REDIS_PASSWORD }}
         ports:
           - 6379:6379
         options: >-
-          --cmd redis-server
           --appendonly yes
-          --requirepass ${{ env.REDIS_PASSWORD }}
+          --requirepass $REDIS_PASSWORD
           --maxmemory 1gb
           --maxmemory-policy allkeys-lru
           --tcp-keepalive 60
