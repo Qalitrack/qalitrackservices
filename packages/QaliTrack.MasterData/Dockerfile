@@ -30,12 +30,12 @@ COPY index.md /src/
 COPY toc.yml /src/
 COPY docs/ /src/docs/
 
-# Build the application
-RUN dotnet build "QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj" -c Release -o /app/build
+# Build the application in the source directory so DocFX can find assemblies
+RUN dotnet build "QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj" -c Release
 
-# Generate documentation
+# Generate documentation - DocFX will find the built assemblies in bin/Release
 WORKDIR /src
-RUN docfx
+RUN docfx docfx.json
 
 # Publish the application
 FROM build AS publish

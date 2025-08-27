@@ -60,25 +60,23 @@ The service follows a clean architecture pattern with the following layers:
 4. Run migrations: `dotnet ef database update`
 5. Start the service: `dotnet run --project src/QaliTrack.MasterData.Api`
 
-### API Documentation
-
-The service exposes a comprehensive REST API with Swagger documentation available at `/swagger` when running in development mode.
-
 ## Modules
 
-- [Business Entities](xref:QaliTrack.MasterData.Core.Modules.BusinessEntities) - Company and organization management
-- [Vehicles](xref:QaliTrack.MasterData.Core.Modules.Vehicle) - Fleet management
-- [Drivers](xref:QaliTrack.MasterData.Core.Modules.Driver) - Driver management
-- [Routes](xref:QaliTrack.MasterData.Core.Modules.Route) - Transportation routes
-- [Weighbridges](xref:QaliTrack.MasterData.Core.Modules.Weighbridge) - Weighing stations
-- [Products](xref:QaliTrack.MasterData.Core.Modules.Product) - Product catalog
-- [SACCOs](xref:QaliTrack.MasterData.Core.Modules.Sacco) - Cooperative organizations
-- [Organizations](xref:QaliTrack.MasterData.Core.Modules.Organization) - Organizational hierarchy
-- [Relationships](xref:QaliTrack.MasterData.Core.Modules.Relationships) - Cross-module relationships
+- [Business Entities](xref:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs) - Customer, supplier, and transporter management
+- [Vehicles](xref:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs) - Fleet and vehicle lifecycle management
+- [Drivers](xref:QaliTrack.MasterData.Core.Modules.Driver.DTOs) - Driver credentials and performance tracking
+- [Routes](xref:QaliTrack.MasterData.Core.Modules.Route.DTOs) - Route planning and logistics management
+- [Weighbridges](xref:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs) - Equipment and calibration management
+- [Products](xref:QaliTrack.MasterData.Core.Modules.Product.DTOs) - Product catalog and specifications
+- [SACCOs](xref:QaliTrack.MasterData.Core.Modules.Sacco.DTOs) - Financial cooperative integration
+- [Organizations](xref:QaliTrack.MasterData.Core.Modules.Organization.DTOs) - Multi-tenant organization structure
+- [Relationships](xref:QaliTrack.MasterData.Core.Modules.Relationships.DTOs) - Cross-module relationships
 
 ## API Reference
 
-For detailed API documentation, please refer to the [API Reference](api/index.md) section.
+For complete API documentation, please refer to:
+- **[Interactive API Documentation](/)** - Swagger UI for testing endpoints
+- **[API Reference Documentation](api/)** - Auto-generated API reference
 
 ## Support
 

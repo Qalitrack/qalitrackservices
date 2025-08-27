@@ -35,14 +35,6 @@ items:
     content.vb: Public Module IQueryableExtensions
   inheritance:
   - System.Object
-  inheritedMembers:
-  - System.Object.Equals(System.Object)
-  - System.Object.Equals(System.Object,System.Object)
-  - System.Object.GetHashCode
-  - System.Object.GetType
-  - System.Object.MemberwiseClone
-  - System.Object.ReferenceEquals(System.Object,System.Object)
-  - System.Object.ToString
 - uid: QaliTrack.MasterData.Core.Common.IQueryableExtensions.ToPagedResultAsync``1(System.Linq.IQueryable{``0},QaliTrack.MasterData.Core.Common.QueryParameters,System.String,System.Threading.CancellationToken)
   commentId: M:QaliTrack.MasterData.Core.Common.IQueryableExtensions.ToPagedResultAsync``1(System.Linq.IQueryable{``0},QaliTrack.MasterData.Core.Common.QueryParameters,System.String,System.Threading.CancellationToken)
   id: ToPagedResultAsync``1(System.Linq.IQueryable{``0},QaliTrack.MasterData.Core.Common.QueryParameters,System.String,System.Threading.CancellationToken)
@@ -293,236 +285,15 @@ references:
   commentId: T:System.Object
   parent: System
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object
   name: object
   nameWithType: object
   fullName: object
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: System.Object.Equals(System.Object)
-  commentId: M:System.Object.Equals(System.Object)
-  parent: System.Object
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
-  name: Equals(object)
-  nameWithType: object.Equals(object)
-  fullName: object.Equals(object)
-  nameWithType.vb: Object.Equals(Object)
-  fullName.vb: Object.Equals(Object)
-  name.vb: Equals(Object)
-  spec.csharp:
-  - uid: System.Object.Equals(System.Object)
-    name: Equals
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
-  - name: (
-  - uid: System.Object
-    name: object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: )
-  spec.vb:
-  - uid: System.Object.Equals(System.Object)
-    name: Equals
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
-  - name: (
-  - uid: System.Object
-    name: Object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: )
-- uid: System.Object.Equals(System.Object,System.Object)
-  commentId: M:System.Object.Equals(System.Object,System.Object)
-  parent: System.Object
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
-  name: Equals(object, object)
-  nameWithType: object.Equals(object, object)
-  fullName: object.Equals(object, object)
-  nameWithType.vb: Object.Equals(Object, Object)
-  fullName.vb: Object.Equals(Object, Object)
-  name.vb: Equals(Object, Object)
-  spec.csharp:
-  - uid: System.Object.Equals(System.Object,System.Object)
-    name: Equals
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
-  - name: (
-  - uid: System.Object
-    name: object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: ','
-  - name: " "
-  - uid: System.Object
-    name: object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: )
-  spec.vb:
-  - uid: System.Object.Equals(System.Object,System.Object)
-    name: Equals
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
-  - name: (
-  - uid: System.Object
-    name: Object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: ','
-  - name: " "
-  - uid: System.Object
-    name: Object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: )
-- uid: System.Object.GetHashCode
-  commentId: M:System.Object.GetHashCode
-  parent: System.Object
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
-  name: GetHashCode()
-  nameWithType: object.GetHashCode()
-  fullName: object.GetHashCode()
-  nameWithType.vb: Object.GetHashCode()
-  fullName.vb: Object.GetHashCode()
-  spec.csharp:
-  - uid: System.Object.GetHashCode
-    name: GetHashCode
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: System.Object.GetHashCode
-    name: GetHashCode
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
-  - name: (
-  - name: )
-- uid: System.Object.GetType
-  commentId: M:System.Object.GetType
-  parent: System.Object
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
-  name: GetType()
-  nameWithType: object.GetType()
-  fullName: object.GetType()
-  nameWithType.vb: Object.GetType()
-  fullName.vb: Object.GetType()
-  spec.csharp:
-  - uid: System.Object.GetType
-    name: GetType
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: System.Object.GetType
-    name: GetType
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
-  - name: (
-  - name: )
-- uid: System.Object.MemberwiseClone
-  commentId: M:System.Object.MemberwiseClone
-  parent: System.Object
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
-  name: MemberwiseClone()
-  nameWithType: object.MemberwiseClone()
-  fullName: object.MemberwiseClone()
-  nameWithType.vb: Object.MemberwiseClone()
-  fullName.vb: Object.MemberwiseClone()
-  spec.csharp:
-  - uid: System.Object.MemberwiseClone
-    name: MemberwiseClone
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: System.Object.MemberwiseClone
-    name: MemberwiseClone
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
-  - name: (
-  - name: )
-- uid: System.Object.ReferenceEquals(System.Object,System.Object)
-  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
-  parent: System.Object
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
-  name: ReferenceEquals(object, object)
-  nameWithType: object.ReferenceEquals(object, object)
-  fullName: object.ReferenceEquals(object, object)
-  nameWithType.vb: Object.ReferenceEquals(Object, Object)
-  fullName.vb: Object.ReferenceEquals(Object, Object)
-  name.vb: ReferenceEquals(Object, Object)
-  spec.csharp:
-  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
-    name: ReferenceEquals
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
-  - name: (
-  - uid: System.Object
-    name: object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: ','
-  - name: " "
-  - uid: System.Object
-    name: object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: )
-  spec.vb:
-  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
-    name: ReferenceEquals
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
-  - name: (
-  - uid: System.Object
-    name: Object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: ','
-  - name: " "
-  - uid: System.Object
-    name: Object
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object
-  - name: )
-- uid: System.Object.ToString
-  commentId: M:System.Object.ToString
-  parent: System.Object
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
-  name: ToString()
-  nameWithType: object.ToString()
-  fullName: object.ToString()
-  nameWithType.vb: Object.ToString()
-  fullName.vb: Object.ToString()
-  spec.csharp:
-  - uid: System.Object.ToString
-    name: ToString
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: System.Object.ToString
-    name: ToString
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
-  - name: (
-  - name: )
 - uid: System
   commentId: N:System
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System
   nameWithType: System
   fullName: System
@@ -536,7 +307,6 @@ references:
   commentId: T:System.Linq.IQueryable{``0}
   parent: System.Linq
   definition: System.Linq.IQueryable`1
-  href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
   name: IQueryable<T>
   nameWithType: IQueryable<T>
   fullName: System.Linq.IQueryable<T>
@@ -547,7 +317,6 @@ references:
   - uid: System.Linq.IQueryable`1
     name: IQueryable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
   - name: <
   - name: T
   - name: '>'
@@ -555,7 +324,6 @@ references:
   - uid: System.Linq.IQueryable`1
     name: IQueryable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
   - name: (
   - name: Of
   - name: " "
@@ -572,7 +340,6 @@ references:
   commentId: T:System.String
   parent: System
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
   name: string
   nameWithType: string
   fullName: string
@@ -583,7 +350,6 @@ references:
   commentId: T:System.Threading.CancellationToken
   parent: System.Threading
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
   name: CancellationToken
   nameWithType: CancellationToken
   fullName: System.Threading.CancellationToken
@@ -591,7 +357,7 @@ references:
   commentId: T:System.Threading.Tasks.Task{QaliTrack.MasterData.Core.Common.PagedResult{``0}}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  href: QaliTrack.MasterData.Core.Common.PagedResult-1.html
   name: Task<PagedResult<T>>
   nameWithType: Task<PagedResult<T>>
   fullName: System.Threading.Tasks.Task<QaliTrack.MasterData.Core.Common.PagedResult<T>>
@@ -602,7 +368,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - uid: QaliTrack.MasterData.Core.Common.PagedResult`1
     name: PagedResult
@@ -615,7 +380,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
@@ -631,7 +395,6 @@ references:
 - uid: System.Linq.IQueryable`1
   commentId: T:System.Linq.IQueryable`1
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
   name: IQueryable<T>
   nameWithType: IQueryable<T>
   fullName: System.Linq.IQueryable<T>
@@ -642,7 +405,6 @@ references:
   - uid: System.Linq.IQueryable`1
     name: IQueryable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
   - name: <
   - name: T
   - name: '>'
@@ -650,7 +412,6 @@ references:
   - uid: System.Linq.IQueryable`1
     name: IQueryable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
   - name: (
   - name: Of
   - name: " "
@@ -659,7 +420,6 @@ references:
 - uid: System.Linq
   commentId: N:System.Linq
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Linq
   nameWithType: System.Linq
   fullName: System.Linq
@@ -667,26 +427,21 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Linq
     name: Linq
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Linq
     name: Linq
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq
 - uid: System.Threading
   commentId: N:System.Threading
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Threading
   nameWithType: System.Threading
   fullName: System.Threading
@@ -694,26 +449,21 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
 - uid: System.Threading.Tasks.Task`1
   commentId: T:System.Threading.Tasks.Task`1
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<TResult>
   nameWithType: Task<TResult>
   fullName: System.Threading.Tasks.Task<TResult>
@@ -724,7 +474,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - name: TResult
   - name: '>'
@@ -732,7 +481,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
@@ -741,7 +489,6 @@ references:
 - uid: System.Threading.Tasks
   commentId: N:System.Threading.Tasks
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Threading.Tasks
   nameWithType: System.Threading.Tasks
   fullName: System.Threading.Tasks
@@ -749,32 +496,26 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
   - name: .
   - uid: System.Threading.Tasks
     name: Tasks
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
   - name: .
   - uid: System.Threading.Tasks
     name: Tasks
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
 - uid: QaliTrack.MasterData.Core.Common.IQueryableExtensions.Search*
   commentId: Overload:QaliTrack.MasterData.Core.Common.IQueryableExtensions.Search
   href: QaliTrack.MasterData.Core.Common.IQueryableExtensions.html#QaliTrack_MasterData_Core_Common_IQueryableExtensions_Search__1_System_Linq_IQueryable___0__System_String_
@@ -791,7 +532,6 @@ references:
   commentId: T:System.Collections.Generic.Dictionary{System.String,System.String}
   parent: System.Collections.Generic
   definition: System.Collections.Generic.Dictionary`2
-  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
   name: Dictionary<string, string>
   nameWithType: Dictionary<string, string>
   fullName: System.Collections.Generic.Dictionary<string, string>
@@ -802,42 +542,35 @@ references:
   - uid: System.Collections.Generic.Dictionary`2
     name: Dictionary
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
   - name: <
   - uid: System.String
     name: string
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
   - name: ','
   - name: " "
   - uid: System.String
     name: string
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
   - name: '>'
   spec.vb:
   - uid: System.Collections.Generic.Dictionary`2
     name: Dictionary
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
   - name: (
   - name: Of
   - name: " "
   - uid: System.String
     name: String
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
   - name: ','
   - name: " "
   - uid: System.String
     name: String
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
 - uid: System.Collections.Generic.Dictionary`2
   commentId: T:System.Collections.Generic.Dictionary`2
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
   name: Dictionary<TKey, TValue>
   nameWithType: Dictionary<TKey, TValue>
   fullName: System.Collections.Generic.Dictionary<TKey, TValue>
@@ -848,7 +581,6 @@ references:
   - uid: System.Collections.Generic.Dictionary`2
     name: Dictionary
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
   - name: <
   - name: TKey
   - name: ','
@@ -859,7 +591,6 @@ references:
   - uid: System.Collections.Generic.Dictionary`2
     name: Dictionary
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
   - name: (
   - name: Of
   - name: " "
@@ -871,7 +602,6 @@ references:
 - uid: System.Collections.Generic
   commentId: N:System.Collections.Generic
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Collections.Generic
   nameWithType: System.Collections.Generic
   fullName: System.Collections.Generic
@@ -879,32 +609,26 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Collections
     name: Collections
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections
   - name: .
   - uid: System.Collections.Generic
     name: Generic
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Collections
     name: Collections
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections
   - name: .
   - uid: System.Collections.Generic
     name: Generic
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
 - uid: QaliTrack.MasterData.Core.Common.IQueryableExtensions.ApplyOrdering*
   commentId: Overload:QaliTrack.MasterData.Core.Common.IQueryableExtensions.ApplyOrdering
   href: QaliTrack.MasterData.Core.Common.IQueryableExtensions.html#QaliTrack_MasterData_Core_Common_IQueryableExtensions_ApplyOrdering__1_System_Linq_IQueryable___0__System_String_
@@ -921,7 +645,6 @@ references:
   commentId: T:System.Threading.Tasks.Task{System.Int32}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<int>
   nameWithType: Task<int>
   fullName: System.Threading.Tasks.Task<int>
@@ -932,23 +655,19 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - uid: System.Int32
     name: int
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.int32
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
   - uid: System.Int32
     name: Integer
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.int32
   - name: )

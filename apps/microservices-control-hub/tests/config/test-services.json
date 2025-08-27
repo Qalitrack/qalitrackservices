@@ -27,7 +27,8 @@
       "healthPath": "/health",
       "swaggerPath": "/swagger/v1/swagger.json",
       "apiRoot": "/api/service1",
-      "description": "Sample service 1 for testing health checks and swagger aggregation"
+      "description": "Sample service 1 for testing health checks and swagger aggregation",
+      "guidesPath": "/docs/"
     },
     {
       "name": "sample-service-2",
