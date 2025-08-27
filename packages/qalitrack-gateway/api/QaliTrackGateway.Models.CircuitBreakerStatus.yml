@@ -1,0 +1,770 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus
+  commentId: T:QaliTrackGateway.Models.CircuitBreakerStatus
+  id: CircuitBreakerStatus
+  parent: QaliTrackGateway.Models
+  children:
+  - QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount
+  - QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold
+  - QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen
+  - QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt
+  - QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason
+  - QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt
+  - QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt
+  - QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName
+  - QaliTrackGateway.Models.CircuitBreakerStatus.State
+  - QaliTrackGateway.Models.CircuitBreakerStatus.Timeout
+  langs:
+  - csharp
+  - vb
+  name: CircuitBreakerStatus
+  nameWithType: CircuitBreakerStatus
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus
+  type: Class
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CircuitBreakerStatus
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 60
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  summary: Circuit breaker status for a service
+  example: []
+  syntax:
+    content: public class CircuitBreakerStatus
+    content.vb: Public Class CircuitBreakerStatus
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName
+  id: ServiceName
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: ServiceName
+  nameWithType: CircuitBreakerStatus.ServiceName
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceName
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 62
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string ServiceName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ServiceName As String
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen
+  id: IsOpen
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: IsOpen
+  nameWithType: CircuitBreakerStatus.IsOpen
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsOpen
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 63
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public bool IsOpen { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsOpen As Boolean
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt
+  id: OpenedAt
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: OpenedAt
+  nameWithType: CircuitBreakerStatus.OpenedAt
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: OpenedAt
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 64
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public DateTime? OpenedAt { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property OpenedAt As Date?
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt
+  id: LastFailureAt
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: LastFailureAt
+  nameWithType: CircuitBreakerStatus.LastFailureAt
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LastFailureAt
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 65
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public DateTime? LastFailureAt { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property LastFailureAt As Date?
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount
+  id: FailureCount
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: FailureCount
+  nameWithType: CircuitBreakerStatus.FailureCount
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FailureCount
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 66
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public int FailureCount { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property FailureCount As Integer
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold
+  id: FailureThreshold
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: FailureThreshold
+  nameWithType: CircuitBreakerStatus.FailureThreshold
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FailureThreshold
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 67
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public int FailureThreshold { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property FailureThreshold As Integer
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.Timeout
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.Timeout
+  id: Timeout
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: Timeout
+  nameWithType: CircuitBreakerStatus.Timeout
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.Timeout
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Timeout
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 68
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public TimeSpan Timeout { get; set; }
+    parameters: []
+    return:
+      type: System.TimeSpan
+    content.vb: Public Property Timeout As TimeSpan
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.Timeout*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason
+  id: LastFailureReason
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: LastFailureReason
+  nameWithType: CircuitBreakerStatus.LastFailureReason
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LastFailureReason
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 69
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string? LastFailureReason { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property LastFailureReason As String
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt
+  id: NextAttemptAt
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: NextAttemptAt
+  nameWithType: CircuitBreakerStatus.NextAttemptAt
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NextAttemptAt
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 70
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public DateTime NextAttemptAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property NextAttemptAt As Date
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt*
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.State
+  commentId: P:QaliTrackGateway.Models.CircuitBreakerStatus.State
+  id: State
+  parent: QaliTrackGateway.Models.CircuitBreakerStatus
+  langs:
+  - csharp
+  - vb
+  name: State
+  nameWithType: CircuitBreakerStatus.State
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.State
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: State
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 71
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public CircuitBreakerState State { get; set; }
+    parameters: []
+    return:
+      type: QaliTrackGateway.Models.CircuitBreakerState
+    content.vb: Public Property State As CircuitBreakerState
+  overload: QaliTrackGateway.Models.CircuitBreakerStatus.State*
+references:
+- uid: QaliTrackGateway.Models
+  commentId: N:QaliTrackGateway.Models
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Models
+  nameWithType: QaliTrackGateway.Models
+  fullName: QaliTrackGateway.Models
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_ServiceName
+  name: ServiceName
+  nameWithType: CircuitBreakerStatus.ServiceName
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.ServiceName
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_IsOpen
+  name: IsOpen
+  nameWithType: CircuitBreakerStatus.IsOpen
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.IsOpen
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_OpenedAt
+  name: OpenedAt
+  nameWithType: CircuitBreakerStatus.OpenedAt
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.OpenedAt
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_LastFailureAt
+  name: LastFailureAt
+  nameWithType: CircuitBreakerStatus.LastFailureAt
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureAt
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_FailureCount
+  name: FailureCount
+  nameWithType: CircuitBreakerStatus.FailureCount
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.FailureCount
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_FailureThreshold
+  name: FailureThreshold
+  nameWithType: CircuitBreakerStatus.FailureThreshold
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.FailureThreshold
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.Timeout*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.Timeout
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_Timeout
+  name: Timeout
+  nameWithType: CircuitBreakerStatus.Timeout
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.Timeout
+- uid: System.TimeSpan
+  commentId: T:System.TimeSpan
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.timespan
+  name: TimeSpan
+  nameWithType: TimeSpan
+  fullName: System.TimeSpan
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_LastFailureReason
+  name: LastFailureReason
+  nameWithType: CircuitBreakerStatus.LastFailureReason
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.LastFailureReason
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_NextAttemptAt
+  name: NextAttemptAt
+  nameWithType: CircuitBreakerStatus.NextAttemptAt
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.NextAttemptAt
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrackGateway.Models.CircuitBreakerStatus.State*
+  commentId: Overload:QaliTrackGateway.Models.CircuitBreakerStatus.State
+  href: QaliTrackGateway.Models.CircuitBreakerStatus.html#QaliTrackGateway_Models_CircuitBreakerStatus_State
+  name: State
+  nameWithType: CircuitBreakerStatus.State
+  fullName: QaliTrackGateway.Models.CircuitBreakerStatus.State
+- uid: QaliTrackGateway.Models.CircuitBreakerState
+  commentId: T:QaliTrackGateway.Models.CircuitBreakerState
+  parent: QaliTrackGateway.Models
+  href: QaliTrackGateway.Models.CircuitBreakerState.html
+  name: CircuitBreakerState
+  nameWithType: CircuitBreakerState
+  fullName: QaliTrackGateway.Models.CircuitBreakerState

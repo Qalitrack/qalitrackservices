@@ -1,0 +1,201 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Route.DTOs
+  id: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteHistoryDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteScheduleDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteWaypointDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteHistoryDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteScheduleDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteWaypointDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteDetailDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteHistoryDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteScheduleDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteSummaryDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteWaypointDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteHistoryDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteScheduleDto
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteWaypointDto
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteDto.html
+  name: CreateRouteDto
+  nameWithType: CreateRouteDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteDto.html
+  name: UpdateRouteDto
+  nameWithType: UpdateRouteDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html
+  name: PatchRouteDto
+  nameWithType: PatchRouteDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteSummaryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteSummaryDto
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteSummaryDto.html
+  name: RouteSummaryDto
+  nameWithType: RouteSummaryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteSummaryDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteDetailDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteDetailDto
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteDetailDto.html
+  name: RouteDetailDto
+  nameWithType: RouteDetailDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteDetailDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteWaypointDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteWaypointDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteWaypointDto.html
+  name: CreateRouteWaypointDto
+  nameWithType: CreateRouteWaypointDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteWaypointDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteWaypointDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteWaypointDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteWaypointDto.html
+  name: UpdateRouteWaypointDto
+  nameWithType: UpdateRouteWaypointDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteWaypointDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteWaypointDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteWaypointDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteWaypointDto.html
+  name: PatchRouteWaypointDto
+  nameWithType: PatchRouteWaypointDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteWaypointDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteWaypointDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteWaypointDto
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteWaypointDto.html
+  name: RouteWaypointDto
+  nameWithType: RouteWaypointDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteWaypointDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteScheduleDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteScheduleDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteScheduleDto.html
+  name: CreateRouteScheduleDto
+  nameWithType: CreateRouteScheduleDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteScheduleDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteScheduleDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteScheduleDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteScheduleDto.html
+  name: UpdateRouteScheduleDto
+  nameWithType: UpdateRouteScheduleDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteScheduleDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteScheduleDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteScheduleDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteScheduleDto.html
+  name: PatchRouteScheduleDto
+  nameWithType: PatchRouteScheduleDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteScheduleDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteScheduleDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteScheduleDto
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteScheduleDto.html
+  name: RouteScheduleDto
+  nameWithType: RouteScheduleDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteScheduleDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteHistoryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteHistoryDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteHistoryDto.html
+  name: CreateRouteHistoryDto
+  nameWithType: CreateRouteHistoryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteHistoryDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteHistoryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteHistoryDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteHistoryDto.html
+  name: UpdateRouteHistoryDto
+  nameWithType: UpdateRouteHistoryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteHistoryDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteHistoryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteHistoryDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteHistoryDto.html
+  name: PatchRouteHistoryDto
+  nameWithType: PatchRouteHistoryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteHistoryDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteHistoryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteHistoryDto
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteHistoryDto.html
+  name: RouteHistoryDto
+  nameWithType: RouteHistoryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.RouteHistoryDto
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Route.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Route.DTOs.html

@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  id: AssignmentType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Backup
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Emergency
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Regular
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Temporary
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Training
+  langs:
+  - csharp
+  - vb
+  name: AssignmentType
+  nameWithType: AssignmentType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AssignmentType
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 240
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: public enum AssignmentType
+    content.vb: Public Enum AssignmentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Regular
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Regular
+  id: Regular
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  langs:
+  - csharp
+  - vb
+  name: Regular
+  nameWithType: AssignmentType.Regular
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Regular
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Regular
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 242
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Regular = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Temporary
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Temporary
+  id: Temporary
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  langs:
+  - csharp
+  - vb
+  name: Temporary
+  nameWithType: AssignmentType.Temporary
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Temporary
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Temporary
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 243
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Temporary = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Emergency
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Emergency
+  id: Emergency
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  langs:
+  - csharp
+  - vb
+  name: Emergency
+  nameWithType: AssignmentType.Emergency
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Emergency
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Emergency
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 244
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Emergency = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Training
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Training
+  id: Training
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  langs:
+  - csharp
+  - vb
+  name: Training
+  nameWithType: AssignmentType.Training
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Training
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Training
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 245
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Training = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Backup
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Backup
+  id: Backup
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  langs:
+  - csharp
+  - vb
+  name: Backup
+  nameWithType: AssignmentType.Backup
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.Backup
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Backup
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 246
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Backup = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.html
+  name: AssignmentType
+  nameWithType: AssignmentType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType

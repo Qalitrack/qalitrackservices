@@ -1,0 +1,139 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.Entities
+  id: QaliTrack.MasterData.Core.Modules.Product.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.DocumentCategory
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.PriceType
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.Product
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductCategory
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductDocument
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductPricing
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductSpecification
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Product.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.Product
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.Product
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.Product.html
+  name: Product
+  nameWithType: Product
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.Product
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductSpecification
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductSpecification
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductSpecification.html
+  name: ProductSpecification
+  nameWithType: ProductSpecification
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductSpecification
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductDocument
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductDocument
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductDocument.html
+  name: ProductDocument
+  nameWithType: ProductDocument
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductDocument
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductPricing
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductPricing
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductPricing.html
+  name: ProductPricing
+  nameWithType: ProductPricing
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductPricing
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.html
+  name: ProductStatus
+  nameWithType: ProductStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductCategory
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductCategory.html
+  name: ProductCategory
+  nameWithType: ProductCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductCategory
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType.html
+  name: SpecificationType
+  nameWithType: SpecificationType
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.SpecificationType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.DocumentCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.DocumentCategory
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.DocumentCategory.html
+  name: DocumentCategory
+  nameWithType: DocumentCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.PriceType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.PriceType
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.PriceType.html
+  name: PriceType
+  nameWithType: PriceType
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.PriceType
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Product.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Product.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Product.Entities.html

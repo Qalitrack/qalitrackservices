@@ -1,0 +1,189 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  id: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssociationType
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverSaccoMembership
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverTransporterEmployment
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverVehicleAssignment
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentStatus
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentType
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.MembershipStatus
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.OrganizationWeighbridgeOwnership
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.ProductSupplierCatalog
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.RouteWeighbridgeAssociation
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.UserOrganizationRole
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleSaccoRegistration
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleTransporterOwnership
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverSaccoMembership
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverSaccoMembership
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverSaccoMembership.html
+  name: DriverSaccoMembership
+  nameWithType: DriverSaccoMembership
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverSaccoMembership
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleTransporterOwnership
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleTransporterOwnership
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleTransporterOwnership.html
+  name: VehicleTransporterOwnership
+  nameWithType: VehicleTransporterOwnership
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleTransporterOwnership
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverVehicleAssignment
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverVehicleAssignment
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverVehicleAssignment.html
+  name: DriverVehicleAssignment
+  nameWithType: DriverVehicleAssignment
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverVehicleAssignment
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverTransporterEmployment
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverTransporterEmployment
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverTransporterEmployment.html
+  name: DriverTransporterEmployment
+  nameWithType: DriverTransporterEmployment
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverTransporterEmployment
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.ProductSupplierCatalog
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.ProductSupplierCatalog
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.ProductSupplierCatalog.html
+  name: ProductSupplierCatalog
+  nameWithType: ProductSupplierCatalog
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.ProductSupplierCatalog
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RouteWeighbridgeAssociation
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RouteWeighbridgeAssociation
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RouteWeighbridgeAssociation.html
+  name: RouteWeighbridgeAssociation
+  nameWithType: RouteWeighbridgeAssociation
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RouteWeighbridgeAssociation
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OrganizationWeighbridgeOwnership
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OrganizationWeighbridgeOwnership
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OrganizationWeighbridgeOwnership.html
+  name: OrganizationWeighbridgeOwnership
+  nameWithType: OrganizationWeighbridgeOwnership
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OrganizationWeighbridgeOwnership
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleSaccoRegistration
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleSaccoRegistration
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleSaccoRegistration.html
+  name: VehicleSaccoRegistration
+  nameWithType: VehicleSaccoRegistration
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleSaccoRegistration
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.UserOrganizationRole
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.UserOrganizationRole
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.UserOrganizationRole.html
+  name: UserOrganizationRole
+  nameWithType: UserOrganizationRole
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.UserOrganizationRole
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.MembershipStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.MembershipStatus
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.MembershipStatus.html
+  name: MembershipStatus
+  nameWithType: MembershipStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.MembershipStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType.html
+  name: OwnershipType
+  nameWithType: OwnershipType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.OwnershipType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType.html
+  name: AssignmentType
+  nameWithType: AssignmentType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssignmentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentType.html
+  name: EmploymentType
+  nameWithType: EmploymentType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentStatus
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentStatus.html
+  name: EmploymentStatus
+  nameWithType: EmploymentStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.EmploymentStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssociationType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssociationType
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssociationType.html
+  name: AssociationType
+  nameWithType: AssociationType
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.AssociationType
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.html
+  name: RegistrationStatus
+  nameWithType: RegistrationStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html

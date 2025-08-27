@@ -1,0 +1,200 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  id: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverLicenseDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverMedicalDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverTrainingDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDocumentDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverLicenseDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverMedicalDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverSummaryDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverTrainingDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverLicenseDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverMedicalDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverTrainingDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverLicenseDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverMedicalDto
+  - QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverTrainingDto
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto.html
+  name: CreateDriverDto
+  nameWithType: CreateDriverDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverDto.html
+  name: UpdateDriverDto
+  nameWithType: UpdateDriverDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverSummaryDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverSummaryDto
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverSummaryDto.html
+  name: DriverSummaryDto
+  nameWithType: DriverSummaryDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverSummaryDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto.html
+  name: DriverDetailDto
+  nameWithType: DriverDetailDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDetailDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverLicenseDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverLicenseDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverLicenseDto.html
+  name: CreateDriverLicenseDto
+  nameWithType: CreateDriverLicenseDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverLicenseDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverLicenseDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverLicenseDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverLicenseDto.html
+  name: UpdateDriverLicenseDto
+  nameWithType: UpdateDriverLicenseDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverLicenseDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverLicenseDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverLicenseDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverLicenseDto.html
+  name: PatchDriverLicenseDto
+  nameWithType: PatchDriverLicenseDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverLicenseDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverLicenseDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverLicenseDto
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverLicenseDto.html
+  name: DriverLicenseDto
+  nameWithType: DriverLicenseDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverLicenseDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverTrainingDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverTrainingDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverTrainingDto.html
+  name: CreateDriverTrainingDto
+  nameWithType: CreateDriverTrainingDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverTrainingDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverTrainingDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverTrainingDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverTrainingDto.html
+  name: UpdateDriverTrainingDto
+  nameWithType: UpdateDriverTrainingDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverTrainingDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverTrainingDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverTrainingDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverTrainingDto.html
+  name: PatchDriverTrainingDto
+  nameWithType: PatchDriverTrainingDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverTrainingDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverTrainingDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverTrainingDto
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverTrainingDto.html
+  name: DriverTrainingDto
+  nameWithType: DriverTrainingDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverTrainingDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverMedicalDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverMedicalDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverMedicalDto.html
+  name: CreateDriverMedicalDto
+  nameWithType: CreateDriverMedicalDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverMedicalDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverMedicalDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverMedicalDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverMedicalDto.html
+  name: UpdateDriverMedicalDto
+  nameWithType: UpdateDriverMedicalDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverMedicalDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverMedicalDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverMedicalDto
+  parent: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverMedicalDto.html
+  name: PatchDriverMedicalDto
+  nameWithType: PatchDriverMedicalDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverMedicalDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverMedicalDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverMedicalDto
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverMedicalDto.html
+  name: DriverMedicalDto
+  nameWithType: DriverMedicalDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverMedicalDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDocumentDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDocumentDto
+  href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDocumentDto.html
+  name: DriverDocumentDto
+  nameWithType: DriverDocumentDto
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs.DriverDocumentDto
+- uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Driver.DTOs.html

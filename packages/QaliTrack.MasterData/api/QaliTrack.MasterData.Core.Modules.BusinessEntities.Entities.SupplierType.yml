@@ -1,0 +1,252 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  id: SupplierType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Consultant
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Contractor
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Distributor
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Manufacturer
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Retailer
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.ServiceProvider
+  langs:
+  - csharp
+  - vb
+  name: SupplierType
+  nameWithType: SupplierType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SupplierType
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 316
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public enum SupplierType
+    content.vb: Public Enum SupplierType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Manufacturer
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Manufacturer
+  id: Manufacturer
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  langs:
+  - csharp
+  - vb
+  name: Manufacturer
+  nameWithType: SupplierType.Manufacturer
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Manufacturer
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Manufacturer
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 318
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Manufacturer = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Distributor
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Distributor
+  id: Distributor
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  langs:
+  - csharp
+  - vb
+  name: Distributor
+  nameWithType: SupplierType.Distributor
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Distributor
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Distributor
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 319
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Distributor = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Retailer
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Retailer
+  id: Retailer
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  langs:
+  - csharp
+  - vb
+  name: Retailer
+  nameWithType: SupplierType.Retailer
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Retailer
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Retailer
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 320
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Retailer = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.ServiceProvider
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.ServiceProvider
+  id: ServiceProvider
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  langs:
+  - csharp
+  - vb
+  name: ServiceProvider
+  nameWithType: SupplierType.ServiceProvider
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.ServiceProvider
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceProvider
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 321
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: ServiceProvider = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Contractor
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Contractor
+  id: Contractor
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  langs:
+  - csharp
+  - vb
+  name: Contractor
+  nameWithType: SupplierType.Contractor
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Contractor
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Contractor
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 322
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Contractor = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Consultant
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Consultant
+  id: Consultant
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  langs:
+  - csharp
+  - vb
+  name: Consultant
+  nameWithType: SupplierType.Consultant
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.Consultant
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Consultant
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 323
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Consultant = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType.html
+  name: SupplierType
+  nameWithType: SupplierType
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.SupplierType

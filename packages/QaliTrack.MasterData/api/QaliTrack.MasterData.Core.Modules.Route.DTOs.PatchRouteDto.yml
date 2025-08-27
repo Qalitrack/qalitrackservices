@@ -1,0 +1,1225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  id: PatchRouteDto
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.#ctor(System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Int32},System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Decimal},System.String,System.String,System.Nullable{System.Boolean},System.String)
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions
+  - QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions
+  langs:
+  - csharp
+  - vb
+  name: PatchRouteDto
+  nameWithType: PatchRouteDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PatchRouteDto
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 45
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: 'public record PatchRouteDto : IEquatable<PatchRouteDto>'
+    content.vb: Public Class PatchRouteDto Implements IEquatable(Of PatchRouteDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.#ctor(System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Int32},System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Decimal},System.String,System.String,System.Nullable{System.Boolean},System.String)
+  commentId: M:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.#ctor(System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Int32},System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Decimal},System.String,System.String,System.Nullable{System.Boolean},System.String)
+  id: '#ctor(System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Int32},System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Decimal},System.String,System.String,System.Nullable{System.Boolean},System.String)'
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: PatchRouteDto(string?, string?, string?, decimal?, int?, string?, string?, string?, string?, string?, string?, string?, string?, decimal?, string?, string?, bool?, string?)
+  nameWithType: PatchRouteDto.PatchRouteDto(string?, string?, string?, decimal?, int?, string?, string?, string?, string?, string?, string?, string?, string?, decimal?, string?, string?, bool?, string?)
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.PatchRouteDto(string?, string?, string?, decimal?, int?, string?, string?, string?, string?, string?, string?, string?, string?, decimal?, string?, string?, bool?, string?)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 45
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public PatchRouteDto(string? Name = null, string? StartLocation = null, string? EndLocation = null, decimal? Distance = null, int? EstimatedDurationMinutes = null, string? Status = null, string? RouteType = null, string? RoadType = null, string? Description = null, string? Coordinates = null, string? TrafficConditions = null, string? WeatherRestrictions = null, string? VehicleRestrictions = null, decimal? TollFee = null, string? FuelStations = null, string? RestAreas = null, bool? IsActive = null, string? Notes = null)
+    parameters:
+    - id: Name
+      type: System.String
+    - id: StartLocation
+      type: System.String
+    - id: EndLocation
+      type: System.String
+    - id: Distance
+      type: System.Nullable{System.Decimal}
+    - id: EstimatedDurationMinutes
+      type: System.Nullable{System.Int32}
+    - id: Status
+      type: System.String
+    - id: RouteType
+      type: System.String
+    - id: RoadType
+      type: System.String
+    - id: Description
+      type: System.String
+    - id: Coordinates
+      type: System.String
+    - id: TrafficConditions
+      type: System.String
+    - id: WeatherRestrictions
+      type: System.String
+    - id: VehicleRestrictions
+      type: System.String
+    - id: TollFee
+      type: System.Nullable{System.Decimal}
+    - id: FuelStations
+      type: System.String
+    - id: RestAreas
+      type: System.String
+    - id: IsActive
+      type: System.Nullable{System.Boolean}
+    - id: Notes
+      type: System.String
+    content.vb: Public Sub New(Name As String = Nothing, StartLocation As String = Nothing, EndLocation As String = Nothing, Distance As Decimal? = Nothing, EstimatedDurationMinutes As Integer? = Nothing, Status As String = Nothing, RouteType As String = Nothing, RoadType As String = Nothing, Description As String = Nothing, Coordinates As String = Nothing, TrafficConditions As String = Nothing, WeatherRestrictions As String = Nothing, VehicleRestrictions As String = Nothing, TollFee As Decimal? = Nothing, FuelStations As String = Nothing, RestAreas As String = Nothing, IsActive As Boolean? = Nothing, Notes As String = Nothing)
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.#ctor*
+  nameWithType.vb: PatchRouteDto.New(String, String, String, Decimal?, Integer?, String, String, String, String, String, String, String, String, Decimal?, String, String, Boolean?, String)
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.New(String, String, String, Decimal?, Integer?, String, String, String, String, String, String, String, String, Decimal?, String, String, Boolean?, String)
+  name.vb: New(String, String, String, Decimal?, Integer?, String, String, String, String, String, String, String, String, Decimal?, String, String, Boolean?, String)
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name
+  id: Name
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: PatchRouteDto.Name
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Name
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 46
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? Name { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Name As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation
+  id: StartLocation
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: StartLocation
+  nameWithType: PatchRouteDto.StartLocation
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: StartLocation
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 47
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? StartLocation { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property StartLocation As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation
+  id: EndLocation
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: EndLocation
+  nameWithType: PatchRouteDto.EndLocation
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EndLocation
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 48
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? EndLocation { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EndLocation As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance
+  id: Distance
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: Distance
+  nameWithType: PatchRouteDto.Distance
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Distance
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 49
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public decimal? Distance { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property Distance As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes
+  id: EstimatedDurationMinutes
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: EstimatedDurationMinutes
+  nameWithType: PatchRouteDto.EstimatedDurationMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EstimatedDurationMinutes
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 50
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public int? EstimatedDurationMinutes { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Int32}
+    content.vb: Public Property EstimatedDurationMinutes As Integer?
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: PatchRouteDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 51
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? Status { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType
+  id: RouteType
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: RouteType
+  nameWithType: PatchRouteDto.RouteType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RouteType
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 52
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? RouteType { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property RouteType As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType
+  id: RoadType
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: RoadType
+  nameWithType: PatchRouteDto.RoadType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RoadType
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 53
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? RoadType { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property RoadType As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description
+  id: Description
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: Description
+  nameWithType: PatchRouteDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Description
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 54
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? Description { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Description As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates
+  id: Coordinates
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: Coordinates
+  nameWithType: PatchRouteDto.Coordinates
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Coordinates
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 55
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? Coordinates { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Coordinates As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions
+  id: TrafficConditions
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: TrafficConditions
+  nameWithType: PatchRouteDto.TrafficConditions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TrafficConditions
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 56
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? TrafficConditions { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TrafficConditions As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions
+  id: WeatherRestrictions
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: WeatherRestrictions
+  nameWithType: PatchRouteDto.WeatherRestrictions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WeatherRestrictions
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 57
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? WeatherRestrictions { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property WeatherRestrictions As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions
+  id: VehicleRestrictions
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: VehicleRestrictions
+  nameWithType: PatchRouteDto.VehicleRestrictions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleRestrictions
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 58
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? VehicleRestrictions { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property VehicleRestrictions As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee
+  id: TollFee
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: TollFee
+  nameWithType: PatchRouteDto.TollFee
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TollFee
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 59
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public decimal? TollFee { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property TollFee As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations
+  id: FuelStations
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: FuelStations
+  nameWithType: PatchRouteDto.FuelStations
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FuelStations
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 60
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? FuelStations { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FuelStations As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas
+  id: RestAreas
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: RestAreas
+  nameWithType: PatchRouteDto.RestAreas
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RestAreas
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 61
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? RestAreas { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property RestAreas As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive
+  id: IsActive
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: IsActive
+  nameWithType: PatchRouteDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsActive
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 62
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public bool? IsActive { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Boolean}
+    content.vb: Public Property IsActive As Boolean?
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive*
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: PatchRouteDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Route/DTOs/RouteDTOs.cs
+    startLine: 63
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Route.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Route.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Route.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<PatchRouteDto>
+  nameWithType: IEquatable<PatchRouteDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto>
+  nameWithType.vb: IEquatable(Of PatchRouteDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto)
+  name.vb: IEquatable(Of PatchRouteDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+    name: PatchRouteDto
+    href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto
+    name: PatchRouteDto
+    href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.#ctor
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto__ctor_System_String_System_String_System_String_System_Nullable_System_Decimal__System_Nullable_System_Int32__System_String_System_String_System_String_System_String_System_String_System_String_System_String_System_String_System_Nullable_System_Decimal__System_String_System_String_System_Nullable_System_Boolean__System_String_
+  name: PatchRouteDto
+  nameWithType: PatchRouteDto.PatchRouteDto
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.PatchRouteDto
+  nameWithType.vb: PatchRouteDto.New
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.New
+  name.vb: New
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: System.Nullable{System.Int32}
+  commentId: T:System.Nullable{System.Int32}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int?
+  nameWithType: int?
+  fullName: int?
+  nameWithType.vb: Integer?
+  fullName.vb: Integer?
+  name.vb: Integer?
+  spec.csharp:
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+  spec.vb:
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+- uid: System.Nullable{System.Boolean}
+  commentId: T:System.Nullable{System.Boolean}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool?
+  nameWithType: bool?
+  fullName: bool?
+  nameWithType.vb: Boolean?
+  fullName.vb: Boolean?
+  name.vb: Boolean?
+  spec.csharp:
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '?'
+  spec.vb:
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_Name
+  name: Name
+  nameWithType: PatchRouteDto.Name
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Name
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_StartLocation
+  name: StartLocation
+  nameWithType: PatchRouteDto.StartLocation
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.StartLocation
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_EndLocation
+  name: EndLocation
+  nameWithType: PatchRouteDto.EndLocation
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EndLocation
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_Distance
+  name: Distance
+  nameWithType: PatchRouteDto.Distance
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Distance
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_EstimatedDurationMinutes
+  name: EstimatedDurationMinutes
+  nameWithType: PatchRouteDto.EstimatedDurationMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.EstimatedDurationMinutes
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_Status
+  name: Status
+  nameWithType: PatchRouteDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_RouteType
+  name: RouteType
+  nameWithType: PatchRouteDto.RouteType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RouteType
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_RoadType
+  name: RoadType
+  nameWithType: PatchRouteDto.RoadType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RoadType
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_Description
+  name: Description
+  nameWithType: PatchRouteDto.Description
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Description
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_Coordinates
+  name: Coordinates
+  nameWithType: PatchRouteDto.Coordinates
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Coordinates
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_TrafficConditions
+  name: TrafficConditions
+  nameWithType: PatchRouteDto.TrafficConditions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TrafficConditions
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_WeatherRestrictions
+  name: WeatherRestrictions
+  nameWithType: PatchRouteDto.WeatherRestrictions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.WeatherRestrictions
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_VehicleRestrictions
+  name: VehicleRestrictions
+  nameWithType: PatchRouteDto.VehicleRestrictions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.VehicleRestrictions
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_TollFee
+  name: TollFee
+  nameWithType: PatchRouteDto.TollFee
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.TollFee
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_FuelStations
+  name: FuelStations
+  nameWithType: PatchRouteDto.FuelStations
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.FuelStations
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_RestAreas
+  name: RestAreas
+  nameWithType: PatchRouteDto.RestAreas
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.RestAreas
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_IsActive
+  name: IsActive
+  nameWithType: PatchRouteDto.IsActive
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.IsActive
+- uid: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.html#QaliTrack_MasterData_Core_Modules_Route_DTOs_PatchRouteDto_Notes
+  name: Notes
+  nameWithType: PatchRouteDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto.Notes

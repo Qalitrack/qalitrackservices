@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  id: LicenseStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Expired
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Pending
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Revoked
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Suspended
+  - QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Valid
+  langs:
+  - csharp
+  - vb
+  name: LicenseStatus
+  nameWithType: LicenseStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LicenseStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 222
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: public enum LicenseStatus
+    content.vb: Public Enum LicenseStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Valid
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Valid
+  id: Valid
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  langs:
+  - csharp
+  - vb
+  name: Valid
+  nameWithType: LicenseStatus.Valid
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Valid
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Valid
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 224
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: Valid = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Expired
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Expired
+  id: Expired
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  langs:
+  - csharp
+  - vb
+  name: Expired
+  nameWithType: LicenseStatus.Expired
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Expired
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Expired
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 225
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: Expired = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: LicenseStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 226
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: Suspended = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Revoked
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Revoked
+  id: Revoked
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  langs:
+  - csharp
+  - vb
+  name: Revoked
+  nameWithType: LicenseStatus.Revoked
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Revoked
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Revoked
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 227
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: Revoked = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Pending
+  commentId: F:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Pending
+  id: Pending
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  langs:
+  - csharp
+  - vb
+  name: Pending
+  nameWithType: LicenseStatus.Pending
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.Pending
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Pending
+    path: src/QaliTrack.MasterData.Core/Modules/Driver/Entities/Driver.cs
+    startLine: 228
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  syntax:
+    content: Pending = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver
+    name: Driver
+    href: QaliTrack.MasterData.Core.Modules.Driver.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Driver.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Driver.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus
+  parent: QaliTrack.MasterData.Core.Modules.Driver.Entities
+  href: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus.html
+  name: LicenseStatus
+  nameWithType: LicenseStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Driver.Entities.LicenseStatus

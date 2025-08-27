@@ -1,0 +1,252 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  id: MembershipStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Deceased
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Expired
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Inactive
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Suspended
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Terminated
+  langs:
+  - csharp
+  - vb
+  name: MembershipStatus
+  nameWithType: MembershipStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MembershipStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 257
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public enum MembershipStatus
+    content.vb: Public Enum MembershipStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: MembershipStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 259
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Inactive
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Inactive
+  id: Inactive
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  langs:
+  - csharp
+  - vb
+  name: Inactive
+  nameWithType: MembershipStatus.Inactive
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Inactive
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Inactive
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 260
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Inactive = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: MembershipStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 261
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Suspended = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Expired
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Expired
+  id: Expired
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  langs:
+  - csharp
+  - vb
+  name: Expired
+  nameWithType: MembershipStatus.Expired
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Expired
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Expired
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 262
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Expired = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Terminated
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Terminated
+  id: Terminated
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  langs:
+  - csharp
+  - vb
+  name: Terminated
+  nameWithType: MembershipStatus.Terminated
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Terminated
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Terminated
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 263
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Terminated = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Deceased
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Deceased
+  id: Deceased
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  langs:
+  - csharp
+  - vb
+  name: Deceased
+  nameWithType: MembershipStatus.Deceased
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.Deceased
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Deceased
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 264
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Deceased = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus.html
+  name: MembershipStatus
+  nameWithType: MembershipStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.MembershipStatus

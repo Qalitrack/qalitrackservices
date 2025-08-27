@@ -1,0 +1,162 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  id: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.CalibrationStatus
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionStatus
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeCalibration
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeDocument
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeStatus
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeTransaction
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeType
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge.html
+  name: Weighbridge
+  nameWithType: Weighbridge
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.Weighbridge
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeCalibration
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeCalibration
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeCalibration.html
+  name: WeighbridgeCalibration
+  nameWithType: WeighbridgeCalibration
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeCalibration
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance.html
+  name: WeighbridgeMaintenance
+  nameWithType: WeighbridgeMaintenance
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeMaintenance
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeTransaction
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeTransaction
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeTransaction.html
+  name: WeighbridgeTransaction
+  nameWithType: WeighbridgeTransaction
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeTransaction
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeDocument
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeDocument
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeDocument.html
+  name: WeighbridgeDocument
+  nameWithType: WeighbridgeDocument
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeDocument
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeStatus
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeStatus.html
+  name: WeighbridgeStatus
+  nameWithType: WeighbridgeStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeStatus
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeType.html
+  name: WeighbridgeType
+  nameWithType: WeighbridgeType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.WeighbridgeType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.CalibrationStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.CalibrationStatus
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.CalibrationStatus.html
+  name: CalibrationStatus
+  nameWithType: CalibrationStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.CalibrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType.html
+  name: MaintenanceType
+  nameWithType: MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType.html
+  name: TransactionType
+  nameWithType: TransactionType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionStatus
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionStatus.html
+  name: TransactionStatus
+  nameWithType: TransactionStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.TransactionStatus
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory.html
+  name: DocumentCategory
+  nameWithType: DocumentCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.Entities.html

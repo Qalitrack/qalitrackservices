@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  id: RegistrationStatus
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Cancelled
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Expired
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Pending
+  - QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Suspended
+  langs:
+  - csharp
+  - vb
+  name: RegistrationStatus
+  nameWithType: RegistrationStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RegistrationStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 276
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: public enum RegistrationStatus
+    content.vb: Public Enum RegistrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: RegistrationStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 278
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Expired
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Expired
+  id: Expired
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  langs:
+  - csharp
+  - vb
+  name: Expired
+  nameWithType: RegistrationStatus.Expired
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Expired
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Expired
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 279
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Expired = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: RegistrationStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 280
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Suspended = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Cancelled
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Cancelled
+  id: Cancelled
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  langs:
+  - csharp
+  - vb
+  name: Cancelled
+  nameWithType: RegistrationStatus.Cancelled
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Cancelled
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Cancelled
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 281
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Cancelled = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Pending
+  commentId: F:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Pending
+  id: Pending
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  langs:
+  - csharp
+  - vb
+  name: Pending
+  nameWithType: RegistrationStatus.Pending
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.Pending
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Pending
+    path: src/QaliTrack.MasterData.Core/Modules/Relationships/Entities/CrossModuleRelationships.cs
+    startLine: 282
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  syntax:
+    content: Pending = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships
+    name: Relationships
+    href: QaliTrack.MasterData.Core.Modules.Relationships.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
+  parent: QaliTrack.MasterData.Core.Modules.Relationships.Entities
+  href: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus.html
+  name: RegistrationStatus
+  nameWithType: RegistrationStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Relationships.Entities.RegistrationStatus
