@@ -175,62 +175,7 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
     }
 }
 
-        /// <summary>
-        /// Preview a restore operation without actually executing it
-        /// </summary>
-        /// <param name="request">Restore preview request</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Restore preview result</returns>
-        [HttpPost("preview-restore")]
-        public async Task<ActionResult<RestorePreviewResult>> PreviewRestore([FromBody] RestoreBackupRequest request, CancellationToken ct = default)
-        {
-            try
-            {
-                _logger.LogInformation("Previewing restore for microservice: {Microservice}, BackupId: {BackupId}", 
-                    request.Microservice, request.BackupId);
 
-                // Validate that backup source path is provided
-                if (string.IsNullOrWhiteSpace(request.BackupSourcePath))
-                {
-                    throw new ArgumentException("BackupSourcePath is required for restore preview");
-                }
-
-                // Validate that the backup file exists
-                if (!System.IO.File.Exists(request.BackupSourcePath))
-                {
-                    throw new FileNotFoundException($"Backup file not found: {request.BackupSourcePath}");
-                }
-
-                // Call the service method with the backup file path directly
-                var result = await _backupService.PreviewRestoreAsync(
-                    request.Microservice,
-                    request.BackupSourcePath,
-                    ct);
-
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "Microservice or backup not found: {Microservice}, {BackupId}", 
-                    request.Microservice, request.BackupId);
-                return NotFound(new { error = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Invalid arguments for restore preview: {Microservice}", request.Microservice);
-                return BadRequest(new { error = ex.Message });
-            }
-            catch (FileNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "Backup file not found: {BackupSourcePath}", request.BackupSourcePath);
-                return NotFound(new { error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error previewing restore for microservice: {Microservice}", request.Microservice);
-                return StatusCode(500, new { error = "Internal server error while previewing restore" });
-            }
-        }
 
         /// <summary>
         /// <summary>
@@ -260,31 +205,6 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
 
       
 
-
-        /// <summary>
-        /// Validate all backups
-        /// </summary>
-        /// <param name="microservice">Optional microservice filter</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Validation result</returns>
-        [HttpPost("validate")]
-        public async Task<ActionResult> ValidateAllBackups(
-            [FromQuery] string? microservice = null, 
-            CancellationToken ct = default)
-        {
-            try
-            {
-                _logger.LogInformation("Validating all backups for microservice: {Microservice}", microservice ?? "all");
-
-                await _backupService.ValidateAllBackupsAsync(microservice, ct);
-                return Ok(new { message = "Backup validation completed successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error validating backups for microservice: {Microservice}", microservice);
-                return StatusCode(500, new { error = "Internal server error while validating backups" });
-            }
-        }
 
         /// <summary>
         /// Get backup statistics

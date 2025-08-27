@@ -87,20 +87,6 @@ public class DatabaseBackupService : IDatabaseBackupService
 
         return result;
     }
-
-    public async Task<RestorePreviewResult> PreviewRestoreAsync(string microservice, string backupFilePath, 
-        CancellationToken ct = default)
-    {
-        // Validate required parameters
-        if (string.IsNullOrWhiteSpace(backupFilePath))
-            throw new ArgumentException("Backup file path must be provided", nameof(backupFilePath));
-
-        if (!File.Exists(backupFilePath))
-            throw new FileNotFoundException($"Backup file not found: {backupFilePath}");
-
-        // Call the actual restoration service directly with the backup file path
-        return await _restorationService.PreviewRestoreAsync(microservice, backupFilePath, ct);
-    }
     
 
     public async Task<List<BackupFileInfo>> GetAvailableBackupsAsync(string? microservice = null, CancellationToken ct = default)
