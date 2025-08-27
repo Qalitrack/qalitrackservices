@@ -14,9 +14,11 @@
       "includePrivateMembers": false,
       "disableGitFeatures": false,
       "disableDefaultFilter": false,
-      "noRestore": true,
+      "noRestore": false,
       "namespaceLayout": "flattened",
-      "memberLayout": "samePage"
+      "memberLayout": "samePage",
+      "allowCompilationErrors": true,
+      "filter": "filterConfig.yml"
     }
   ],
   "build": {
@@ -39,6 +41,11 @@
         "files": [
           "images/**"
         ]
+      },
+      {
+        "files": [
+          "templates/**"
+        ]
       }
     ],
     "output": "_site",
@@ -51,12 +58,19 @@
       "_appTitle": "QaliTrack Master Data Service API Documentation",
       "_enableSearch": true,
       "_enableNewTab": true,
+      "_disableNavbar": false,
+      "_disableBreadcrumb": false,
+      "_disableToc": false,
+      "_disableAffix": false,
+      "_enableSourceMap": false,
       "pdf": false,
       "_gitContribute": {
         "repo": "https://github.com/yourusername/qalitrackservices",
         "branch": "main",
         "path": "packages/QaliTrack.MasterData"
-      }
+      },
+      "_footer": "© 2024 QaliTrack. Generated with DocFX.",
+      "_appFooter": "QaliTrack Master Data Service Documentation"
     },
     "postProcessors": ["ExtractSearchIndex"]
   }
