@@ -23,136 +23,78 @@
   },
   "services": [
     {
-      "name": "customer-service",
-      "host": "customer-service",
+      "name": "qalitrack-masterdata",
+      "host": "qalitrack-masterdata",
       "port": 80,
       "group": "masterdata",
       "enabled": true,
       "healthPath": "/health",
       "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/customers",
-      "description": "Customer management service"
-    },
-    {
-      "name": "driver-service",
-      "host": "driver-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/drivers",
-      "description": "Driver management service"
-    },
-    {
-      "name": "product-service",
-      "host": "product-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/products",
-      "description": "Product catalog and inventory management"
-    },
-    {
-      "name": "report-service",
-      "host": "report-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/reports",
-      "description": "Reporting service"
-    },
-    {
-      "name": "route-service",
-      "host": "route-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/routes",
-      "description": "Route management service"
-    },
-    {
-      "name": "sacco-service",
-      "host": "sacco-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/saccos",
-      "description": "SACCO integration service"
-    },
-    {
-      "name": "supplier-service",
-      "host": "supplier-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/suppliers",
-      "description": "Supplier management service"
-    },
-    {
-      "name": "transporter-service",
-      "host": "transporter-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/transporters",
-      "description": "Transporter management service"
-    },
-    {
-      "name": "vehicle-service",
-      "host": "vehicle-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/vehicles",
-      "description": "Vehicle management service"
-    },
-    {
-      "name": "weighbridge-service",
-      "host": "weighbridge-service",
-      "port": 80,
-      "group": "masterdata",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/weighbridges",
-      "description": "Weighbridge management service"
-    },
-    {
-      "name": "compliance-service",
-      "host": "compliance-service",
-      "port": 80,
-      "group": "datamanager",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/compliance",
-      "description": "Compliance monitoring service"
-    },
-    {
-      "name": "operational-data-service",
-      "host": "operational-data-service",
-      "port": 80,
-      "group": "datamanager",
-      "enabled": true,
-      "healthPath": "/health",
-      "swaggerPath": "/swagger/v1/swagger.json",
-      "apiRoot": "/api/operational-data",
-      "description": "Operational data processing service"
+      "apiRoot": "/api/masterdata",
+      "guidesPath": "/docs",
+      "description": "Consolidated MasterData service (customers, drivers, products, reports, routes, saccos, suppliers, transporters, vehicles, weighbridges, organizations, relationships)",
+      "modules": [
+        {
+          "name": "customers",
+          "path": "/api/masterdata/business-entities",
+          "description": "Customer management"
+        },
+        {
+          "name": "drivers", 
+          "path": "/api/masterdata/drivers",
+          "description": "Driver management"
+        },
+        {
+          "name": "products",
+          "path": "/api/masterdata/products", 
+          "description": "Product catalog"
+        },
+        {
+          "name": "reports",
+          "path": "/api/masterdata/reports",
+          "description": "Reporting system"
+        },
+        {
+          "name": "routes",
+          "path": "/api/masterdata/routes",
+          "description": "Route management"
+        },
+        {
+          "name": "saccos",
+          "path": "/api/masterdata/saccos",
+          "description": "SACCO integration"
+        },
+        {
+          "name": "suppliers",
+          "path": "/api/masterdata/business-entities",
+          "description": "Supplier management"  
+        },
+        {
+          "name": "transporters",
+          "path": "/api/masterdata/business-entities",
+          "description": "Transporter management"
+        },
+        {
+          "name": "vehicles",
+          "path": "/api/masterdata/vehicles",
+          "description": "Vehicle management"
+        },
+        {
+          "name": "weighbridges",
+          "path": "/api/masterdata/weighbridges",
+          "description": "Weighbridge management"
+        },
+        {
+          "name": "organizations",
+          "path": "/api/masterdata/organizations",
+          "description": "Organization management"
+        },
+        {
+          "name": "relationships",
+          "path": "/api/masterdata/relationships",
+          "description": "Cross-module relationships"
+        }
+      ]
     },
     {
       "name": "transaction-service",
@@ -175,6 +117,28 @@
       "swaggerPath": "/swagger/v1/swagger.json",
       "apiRoot": "/api/weight-data",
       "description": "Weight data processing service"
+    },
+    {
+      "name": "operational-data-service",
+      "host": "operational-data-service",
+      "port": 80,
+      "group": "datamanager",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/operational-data",
+      "description": "Operational data processing service"
+    },
+    {
+      "name": "backup-service",
+      "host": "backup-service",
+      "port": 80,
+      "group": "infrastructure",
+      "enabled": true,
+      "healthPath": "/health",
+      "swaggerPath": "/swagger/v1/swagger.json",
+      "apiRoot": "/api/backup",
+      "description": "Backup and archive service"
     },
     {
       "name": "postgres",
