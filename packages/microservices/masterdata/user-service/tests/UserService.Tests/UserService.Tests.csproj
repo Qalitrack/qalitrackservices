@@ -7,6 +7,13 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+
+    <!-- Test configuration -->
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <CoverletOutput>./coverage/</CoverletOutput>
+    <Exclude>[*.Tests]*</Exclude>
+    <Include>[UserService.*]*</Include>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +23,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="xunit.runner.console" Version="2.4.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -33,6 +48,16 @@
     <ProjectReference Include="..\..\src\UserService.Core\UserService.Core.csproj" />
     <ProjectReference Include="..\..\src\UserService.Infrastructure\UserService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\UserService.Api\UserService.Api.csproj" />
+  </ItemGroup>
+
+  <!-- Test data and configuration files -->
+  <ItemGroup>
+    <None Update="appsettings.Test.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="test-data/**/*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
