@@ -18,6 +18,7 @@ using UserService.Core.Interfaces.Emails;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using System.IO.Abstractions;
+using StackExchange.Redis;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -173,7 +174,13 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
         services.AddMemoryCache();
         Log.Information("Memory cache configured (suitable for <500 users)");
     }
-    
+
+    if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
+    {
+        services.AddSingleton<IConnectionMultiplexer>(
+            ConnectionMultiplexer.Connect(redisConnectionString)
+        );
+    }
     // Register BackupOptions from configuration
     // Register our health check service
     builder.Services.AddHttpContextAccessor();
