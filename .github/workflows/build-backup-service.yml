@@ -1,0 +1,214 @@
+name: Build Backup Service
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/masterdata/BackupService/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packages/microservices/masterdata/BackupService/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  DOCKER_BUILDKIT: 1
+  SERVICE_NAME: backup-service
+  SERVICE_PATH: packages/microservices/masterdata/BackupService
+  POSTGRES_USER: backupservice
+  POSTGRES_PASSWORD: backupservice123
+  POSTGRES_DB: backupservicedb
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for PostgreSQL..."
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U ${{ env.POSTGRES_USER }}; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 2
+          done
+          
+
+      
+      - name: Restore dependencies
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          dotnet restore BackupService.API/BackupService.API.csproj --verbosity normal
+      
+      - name: Build application
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          dotnet build BackupService.API/BackupService.API.csproj --no-restore -c Release --verbosity normal
+      
+      - name: Run unit tests
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60"
+          UsePostgreSQL: "true"
+          UseRedis: "false"
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          # Find and run all test projects
+          find . -name "*.Tests.csproj" -o -name "*Test*.csproj" | while read testproject; do
+            echo "Running tests for: $testproject"
+            dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
+          done
+        continue-on-error: false
+      
+      - name: Run database migrations (if applicable)
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60"
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          # Check if Entity Framework migrations exist
+          if [ -d "BackupService.Infrastructure/Migrations" ] || [ -d "BackupService.API/Migrations" ]; then
+            echo "Running database migrations..."
+            dotnet ef database update --project BackupService.API/BackupService.API.csproj --verbose
+          else
+            echo "No Entity Framework migrations found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Run integration tests
+        env:
+          ASPNETCORE_ENVIRONMENT: "Testing"
+          ConnectionStrings__DefaultConnection: "Host=localhost;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60"
+          UsePostgreSQL: "true"
+          UseRedis: "false"
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          # Run integration tests if they exist
+          find . -name "*.IntegrationTests.csproj" | while read testproject; do
+            echo "Running integration tests for: $testproject"
+            dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
+          done
+        continue-on-error: true
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ${{ env.SERVICE_PATH }}/TestResults/
+  
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=Backup Service
+            org.opencontainers.image.description=QaliTrack Backup Microservice with PostgreSQL support
+            org.opencontainers.image.vendor=QaliTrack
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+      
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          file: ${{ env.SERVICE_PATH }}/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+  deploy-compose:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create deployment artifact
+        run: |
+          mkdir -p deployment
+          cp ${{ env.SERVICE_PATH }}/docker-compose.yml deployment/
+          # Replace image with the newly built one
+          IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:main-${{ github.sha }}"
+          sed -i "s|build:|# build:|g" deployment/docker-compose.yml
+          sed -i "s|context: .|# context: .|g" deployment/docker-compose.yml
+          sed -i "s|dockerfile: Dockerfile|# dockerfile: Dockerfile|g" deployment/docker-compose.yml
+          sed -i "/# build:/a\\      image: $IMAGE_TAG" deployment/docker-compose.yml
+      
+      - name: Upload deployment files
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-files
+          path: deployment/
+      
+      - name: Validate Docker Compose
+        run: |
+          cd deployment
+          docker-compose config

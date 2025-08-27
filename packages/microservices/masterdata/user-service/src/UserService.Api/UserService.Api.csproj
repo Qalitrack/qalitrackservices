@@ -15,7 +15,6 @@
     <PackageReference Include="MassTransit" Version="8.5.2" />
     <PackageReference Include="MassTransit.Newtonsoft" Version="8.5.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
-    <PackageReference Include="Messaging.Contracts" Version="2.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
