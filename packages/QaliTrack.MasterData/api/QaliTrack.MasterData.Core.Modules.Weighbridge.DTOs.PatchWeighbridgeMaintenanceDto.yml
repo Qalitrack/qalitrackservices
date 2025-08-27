@@ -1,0 +1,1050 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  id: PatchWeighbridgeMaintenanceDto
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.#ctor(System.Nullable{System.DateTime},System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.String,System.String,System.String,System.Nullable{System.DateTime},System.String,System.String,System.String)
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+  - QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed
+  langs:
+  - csharp
+  - vb
+  name: PatchWeighbridgeMaintenanceDto
+  nameWithType: PatchWeighbridgeMaintenanceDto
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PatchWeighbridgeMaintenanceDto
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 243
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: 'public record PatchWeighbridgeMaintenanceDto : IEquatable<PatchWeighbridgeMaintenanceDto>'
+    content.vb: Public Class PatchWeighbridgeMaintenanceDto Implements IEquatable(Of PatchWeighbridgeMaintenanceDto)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.#ctor(System.Nullable{System.DateTime},System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.String,System.String,System.String,System.Nullable{System.DateTime},System.String,System.String,System.String)
+  commentId: M:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.#ctor(System.Nullable{System.DateTime},System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.String,System.String,System.String,System.Nullable{System.DateTime},System.String,System.String,System.String)
+  id: '#ctor(System.Nullable{System.DateTime},System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.String,System.String,System.String,System.Nullable{System.DateTime},System.String,System.String,System.String)'
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: PatchWeighbridgeMaintenanceDto(DateTime?, string?, string?, string?, decimal?, decimal?, decimal?, string?, string?, string?, DateTime?, string?, string?, string?)
+  nameWithType: PatchWeighbridgeMaintenanceDto.PatchWeighbridgeMaintenanceDto(DateTime?, string?, string?, string?, decimal?, decimal?, decimal?, string?, string?, string?, DateTime?, string?, string?, string?)
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PatchWeighbridgeMaintenanceDto(System.DateTime?, string?, string?, string?, decimal?, decimal?, decimal?, string?, string?, string?, System.DateTime?, string?, string?, string?)
+  type: Constructor
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: .ctor
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 243
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public PatchWeighbridgeMaintenanceDto(DateTime? MaintenanceDate = null, string? MaintenanceType = null, string? ServiceProvider = null, string? Status = null, decimal? ServiceCost = null, decimal? PartsCost = null, decimal? TotalCost = null, string? WorkOrderNumber = null, string? WorkPerformed = null, string? PartsReplaced = null, DateTime? NextMaintenanceDate = null, string? Warranty = null, string? TechnicianName = null, string? Notes = null)
+    parameters:
+    - id: MaintenanceDate
+      type: System.Nullable{System.DateTime}
+    - id: MaintenanceType
+      type: System.String
+    - id: ServiceProvider
+      type: System.String
+    - id: Status
+      type: System.String
+    - id: ServiceCost
+      type: System.Nullable{System.Decimal}
+    - id: PartsCost
+      type: System.Nullable{System.Decimal}
+    - id: TotalCost
+      type: System.Nullable{System.Decimal}
+    - id: WorkOrderNumber
+      type: System.String
+    - id: WorkPerformed
+      type: System.String
+    - id: PartsReplaced
+      type: System.String
+    - id: NextMaintenanceDate
+      type: System.Nullable{System.DateTime}
+    - id: Warranty
+      type: System.String
+    - id: TechnicianName
+      type: System.String
+    - id: Notes
+      type: System.String
+    content.vb: Public Sub New(MaintenanceDate As Date? = Nothing, MaintenanceType As String = Nothing, ServiceProvider As String = Nothing, Status As String = Nothing, ServiceCost As Decimal? = Nothing, PartsCost As Decimal? = Nothing, TotalCost As Decimal? = Nothing, WorkOrderNumber As String = Nothing, WorkPerformed As String = Nothing, PartsReplaced As String = Nothing, NextMaintenanceDate As Date? = Nothing, Warranty As String = Nothing, TechnicianName As String = Nothing, Notes As String = Nothing)
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.#ctor*
+  nameWithType.vb: PatchWeighbridgeMaintenanceDto.New(Date?, String, String, String, Decimal?, Decimal?, Decimal?, String, String, String, Date?, String, String, String)
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.New(Date?, String, String, String, Decimal?, Decimal?, Decimal?, String, String, String, Date?, String, String, String)
+  name.vb: New(Date?, String, String, String, Decimal?, Decimal?, Decimal?, String, String, String, Date?, String, String, String)
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate
+  id: MaintenanceDate
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: MaintenanceDate
+  nameWithType: PatchWeighbridgeMaintenanceDto.MaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaintenanceDate
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 244
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public DateTime? MaintenanceDate { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property MaintenanceDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType
+  id: MaintenanceType
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: MaintenanceType
+  nameWithType: PatchWeighbridgeMaintenanceDto.MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: MaintenanceType
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 245
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? MaintenanceType { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property MaintenanceType As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider
+  id: ServiceProvider
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: ServiceProvider
+  nameWithType: PatchWeighbridgeMaintenanceDto.ServiceProvider
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceProvider
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 246
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? ServiceProvider { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ServiceProvider As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: PatchWeighbridgeMaintenanceDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 247
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? Status { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost
+  id: ServiceCost
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: ServiceCost
+  nameWithType: PatchWeighbridgeMaintenanceDto.ServiceCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceCost
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 248
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public decimal? ServiceCost { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property ServiceCost As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost
+  id: PartsCost
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: PartsCost
+  nameWithType: PatchWeighbridgeMaintenanceDto.PartsCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PartsCost
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 249
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public decimal? PartsCost { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property PartsCost As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost
+  id: TotalCost
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: TotalCost
+  nameWithType: PatchWeighbridgeMaintenanceDto.TotalCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TotalCost
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 250
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public decimal? TotalCost { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property TotalCost As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+  id: WorkOrderNumber
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: WorkOrderNumber
+  nameWithType: PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WorkOrderNumber
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 251
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? WorkOrderNumber { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property WorkOrderNumber As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed
+  id: WorkPerformed
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: WorkPerformed
+  nameWithType: PatchWeighbridgeMaintenanceDto.WorkPerformed
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WorkPerformed
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 252
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? WorkPerformed { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property WorkPerformed As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced
+  id: PartsReplaced
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: PartsReplaced
+  nameWithType: PatchWeighbridgeMaintenanceDto.PartsReplaced
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PartsReplaced
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 253
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? PartsReplaced { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PartsReplaced As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+  id: NextMaintenanceDate
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: NextMaintenanceDate
+  nameWithType: PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NextMaintenanceDate
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 254
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public DateTime? NextMaintenanceDate { get; init; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property NextMaintenanceDate As Date?
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty
+  id: Warranty
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Warranty
+  nameWithType: PatchWeighbridgeMaintenanceDto.Warranty
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Warranty
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 255
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? Warranty { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Warranty As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName
+  id: TechnicianName
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: TechnicianName
+  nameWithType: PatchWeighbridgeMaintenanceDto.TechnicianName
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TechnicianName
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 256
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? TechnicianName { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TechnicianName As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName*
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: PatchWeighbridgeMaintenanceDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Weighbridge/DTOs/WeighbridgeDTOs.cs
+    startLine: 257
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  syntax:
+    content: public string? Notes { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge
+    name: Weighbridge
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto}
+  commentId: T:System.IEquatable{QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<PatchWeighbridgeMaintenanceDto>
+  nameWithType: IEquatable<PatchWeighbridgeMaintenanceDto>
+  fullName: System.IEquatable<QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto>
+  nameWithType.vb: IEquatable(Of PatchWeighbridgeMaintenanceDto)
+  fullName.vb: System.IEquatable(Of QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto)
+  name.vb: IEquatable(Of PatchWeighbridgeMaintenanceDto)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+    name: PatchWeighbridgeMaintenanceDto
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto
+    name: PatchWeighbridgeMaintenanceDto
+    href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.#ctor*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.#ctor
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto__ctor_System_Nullable_System_DateTime__System_String_System_String_System_String_System_Nullable_System_Decimal__System_Nullable_System_Decimal__System_Nullable_System_Decimal__System_String_System_String_System_String_System_Nullable_System_DateTime__System_String_System_String_System_String_
+  name: PatchWeighbridgeMaintenanceDto
+  nameWithType: PatchWeighbridgeMaintenanceDto.PatchWeighbridgeMaintenanceDto
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PatchWeighbridgeMaintenanceDto
+  nameWithType.vb: PatchWeighbridgeMaintenanceDto.New
+  fullName.vb: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.New
+  name.vb: New
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_MaintenanceDate
+  name: MaintenanceDate
+  nameWithType: PatchWeighbridgeMaintenanceDto.MaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceDate
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_MaintenanceType
+  name: MaintenanceType
+  nameWithType: PatchWeighbridgeMaintenanceDto.MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_ServiceProvider
+  name: ServiceProvider
+  nameWithType: PatchWeighbridgeMaintenanceDto.ServiceProvider
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceProvider
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_Status
+  name: Status
+  nameWithType: PatchWeighbridgeMaintenanceDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_ServiceCost
+  name: ServiceCost
+  nameWithType: PatchWeighbridgeMaintenanceDto.ServiceCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.ServiceCost
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_PartsCost
+  name: PartsCost
+  nameWithType: PatchWeighbridgeMaintenanceDto.PartsCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsCost
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_TotalCost
+  name: TotalCost
+  nameWithType: PatchWeighbridgeMaintenanceDto.TotalCost
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TotalCost
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_WorkOrderNumber
+  name: WorkOrderNumber
+  nameWithType: PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkOrderNumber
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_WorkPerformed
+  name: WorkPerformed
+  nameWithType: PatchWeighbridgeMaintenanceDto.WorkPerformed
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.WorkPerformed
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_PartsReplaced
+  name: PartsReplaced
+  nameWithType: PatchWeighbridgeMaintenanceDto.PartsReplaced
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.PartsReplaced
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_NextMaintenanceDate
+  name: NextMaintenanceDate
+  nameWithType: PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.NextMaintenanceDate
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_Warranty
+  name: Warranty
+  nameWithType: PatchWeighbridgeMaintenanceDto.Warranty
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Warranty
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_TechnicianName
+  name: TechnicianName
+  nameWithType: PatchWeighbridgeMaintenanceDto.TechnicianName
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.TechnicianName
+- uid: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.html#QaliTrack_MasterData_Core_Modules_Weighbridge_DTOs_PatchWeighbridgeMaintenanceDto_Notes
+  name: Notes
+  nameWithType: PatchWeighbridgeMaintenanceDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto.Notes

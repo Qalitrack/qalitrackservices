@@ -1,0 +1,1156 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  id: VehicleSpecification
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width
+  langs:
+  - csharp
+  - vb
+  name: VehicleSpecification
+  nameWithType: VehicleSpecification
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleSpecification
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 79
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: 'public class VehicleSpecification : BaseEntity'
+    content.vb: Public Class VehicleSpecification Inherits BaseEntity
+  inheritance:
+  - System.Object
+  - QaliTrack.MasterData.Core.Common.BaseEntity
+  inheritedMembers:
+  - QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId
+  id: VehicleId
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: VehicleId
+  nameWithType: VehicleSpecification.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleId
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 81
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public Guid VehicleId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property VehicleId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length
+  id: Length
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: Length
+  nameWithType: VehicleSpecification.Length
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Length
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 82
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal Length { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property Length As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width
+  id: Width
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: Width
+  nameWithType: VehicleSpecification.Width
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Width
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 83
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal Width { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property Width As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height
+  id: Height
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: Height
+  nameWithType: VehicleSpecification.Height
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Height
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 84
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal Height { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property Height As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase
+  id: Wheelbase
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: Wheelbase
+  nameWithType: VehicleSpecification.Wheelbase
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Wheelbase
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 85
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal Wheelbase { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property Wheelbase As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance
+  id: GroundClearance
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: GroundClearance
+  nameWithType: VehicleSpecification.GroundClearance
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GroundClearance
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 86
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal GroundClearance { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property GroundClearance As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType
+  id: TransmissionType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: TransmissionType
+  nameWithType: VehicleSpecification.TransmissionType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TransmissionType
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 87
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public string TransmissionType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TransmissionType As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears
+  id: NumberOfGears
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: NumberOfGears
+  nameWithType: VehicleSpecification.NumberOfGears
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NumberOfGears
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 88
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public int NumberOfGears { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property NumberOfGears As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType
+  id: DriveType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: DriveType
+  nameWithType: VehicleSpecification.DriveType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DriveType
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 89
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public string DriveType { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property DriveType As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity
+  id: EngineCapacity
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: EngineCapacity
+  nameWithType: VehicleSpecification.EngineCapacity
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EngineCapacity
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 90
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal EngineCapacity { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property EngineCapacity As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower
+  id: EnginePower
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: EnginePower
+  nameWithType: VehicleSpecification.EnginePower
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EnginePower
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 91
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public int EnginePower { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property EnginePower As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque
+  id: EngineTorque
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: EngineTorque
+  nameWithType: VehicleSpecification.EngineTorque
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EngineTorque
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 92
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public int EngineTorque { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property EngineTorque As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity
+  id: FuelTankCapacity
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: FuelTankCapacity
+  nameWithType: VehicleSpecification.FuelTankCapacity
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FuelTankCapacity
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 93
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal FuelTankCapacity { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property FuelTankCapacity As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption
+  id: FuelConsumption
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: FuelConsumption
+  nameWithType: VehicleSpecification.FuelConsumption
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FuelConsumption
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 94
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public decimal FuelConsumption { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property FuelConsumption As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard
+  id: EmissionStandard
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: EmissionStandard
+  nameWithType: VehicleSpecification.EmissionStandard
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: EmissionStandard
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 95
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public string EmissionStandard { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property EmissionStandard As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity
+  id: SeatingCapacity
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: SeatingCapacity
+  nameWithType: VehicleSpecification.SeatingCapacity
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SeatingCapacity
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 96
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public int SeatingCapacity { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property SeatingCapacity As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures
+  id: SpecialFeatures
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: SpecialFeatures
+  nameWithType: VehicleSpecification.SpecialFeatures
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SpecialFeatures
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 97
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public string? SpecialFeatures { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property SpecialFeatures As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: VehicleSpecification.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 98
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle
+  commentId: P:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle
+  id: Vehicle
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  langs:
+  - csharp
+  - vb
+  name: Vehicle
+  nameWithType: VehicleSpecification.Vehicle
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Vehicle
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 101
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public virtual Vehicle Vehicle { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle
+    content.vb: Public Overridable Property Vehicle As Vehicle
+  overload: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity
+  commentId: T:QaliTrack.MasterData.Core.Common.BaseEntity
+  parent: QaliTrack.MasterData.Core.Common
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Common
+  commentId: N:QaliTrack.MasterData.Core.Common
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Common
+  nameWithType: QaliTrack.MasterData.Core.Common
+  fullName: QaliTrack.MasterData.Core.Common
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_VehicleId
+  name: VehicleId
+  nameWithType: VehicleSpecification.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.VehicleId
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_Length
+  name: Length
+  nameWithType: VehicleSpecification.Length
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Length
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_Width
+  name: Width
+  nameWithType: VehicleSpecification.Width
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Width
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_Height
+  name: Height
+  nameWithType: VehicleSpecification.Height
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Height
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_Wheelbase
+  name: Wheelbase
+  nameWithType: VehicleSpecification.Wheelbase
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Wheelbase
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_GroundClearance
+  name: GroundClearance
+  nameWithType: VehicleSpecification.GroundClearance
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.GroundClearance
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_TransmissionType
+  name: TransmissionType
+  nameWithType: VehicleSpecification.TransmissionType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.TransmissionType
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_NumberOfGears
+  name: NumberOfGears
+  nameWithType: VehicleSpecification.NumberOfGears
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.NumberOfGears
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_DriveType
+  name: DriveType
+  nameWithType: VehicleSpecification.DriveType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.DriveType
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_EngineCapacity
+  name: EngineCapacity
+  nameWithType: VehicleSpecification.EngineCapacity
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineCapacity
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_EnginePower
+  name: EnginePower
+  nameWithType: VehicleSpecification.EnginePower
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EnginePower
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_EngineTorque
+  name: EngineTorque
+  nameWithType: VehicleSpecification.EngineTorque
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EngineTorque
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_FuelTankCapacity
+  name: FuelTankCapacity
+  nameWithType: VehicleSpecification.FuelTankCapacity
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelTankCapacity
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_FuelConsumption
+  name: FuelConsumption
+  nameWithType: VehicleSpecification.FuelConsumption
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.FuelConsumption
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_EmissionStandard
+  name: EmissionStandard
+  nameWithType: VehicleSpecification.EmissionStandard
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.EmissionStandard
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_SeatingCapacity
+  name: SeatingCapacity
+  nameWithType: VehicleSpecification.SeatingCapacity
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SeatingCapacity
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_SpecialFeatures
+  name: SpecialFeatures
+  nameWithType: VehicleSpecification.SpecialFeatures
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.SpecialFeatures
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_Notes
+  name: Notes
+  nameWithType: VehicleSpecification.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html#QaliTrack_MasterData_Core_Modules_Vehicle_Entities_VehicleSpecification_Vehicle
+  name: Vehicle
+  nameWithType: VehicleSpecification.Vehicle
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.Vehicle
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle.html
+  name: Vehicle
+  nameWithType: Vehicle
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle

@@ -1,0 +1,198 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  id: InsuranceStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Active
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Cancelled
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Expired
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Suspended
+  langs:
+  - csharp
+  - vb
+  name: InsuranceStatus
+  nameWithType: InsuranceStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: InsuranceStatus
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 408
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public enum InsuranceStatus
+    content.vb: Public Enum InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: InsuranceStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 410
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Expired
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Expired
+  id: Expired
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Expired
+  nameWithType: InsuranceStatus.Expired
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Expired
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Expired
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 411
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Expired = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Cancelled
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Cancelled
+  id: Cancelled
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Cancelled
+  nameWithType: InsuranceStatus.Cancelled
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Cancelled
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Cancelled
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 412
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Cancelled = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: InsuranceStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 413
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Suspended = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus.html
+  name: InsuranceStatus
+  nameWithType: InsuranceStatus
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.InsuranceStatus

@@ -1,0 +1,1168 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2
+  commentId: T:QaliTrack.MasterData.Core.Common.IRepository`2
+  id: IRepository`2
+  parent: QaliTrack.MasterData.Core.Common
+  children:
+  - QaliTrack.MasterData.Core.Common.IRepository`2.AddAsync(`0,System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.AddRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.AnyAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.CountAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync(`0,System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync(`1,System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.DeleteRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.FindAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.GetAllAsync(System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.GetByIdAsync(`1,System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.SaveChangesAsync(System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.UpdateAsync(`0,System.Threading.CancellationToken)
+  - QaliTrack.MasterData.Core.Common.IRepository`2.UpdateRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  langs:
+  - csharp
+  - vb
+  name: IRepository<TEntity, TKey>
+  nameWithType: IRepository<TEntity, TKey>
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>
+  type: Interface
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IRepository
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 26
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: 'public interface IRepository<TEntity, TKey> where TEntity : BaseEntity<TKey> where TKey : IEquatable<TKey>'
+    typeParameters:
+    - id: TEntity
+    - id: TKey
+    content.vb: Public Interface IRepository(Of TEntity As BaseEntity(Of TKey), TKey As IEquatable(Of TKey))
+  nameWithType.vb: IRepository(Of TEntity, TKey)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey)
+  name.vb: IRepository(Of TEntity, TKey)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.GetByIdAsync(`1,System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.GetByIdAsync(`1,System.Threading.CancellationToken)
+  id: GetByIdAsync(`1,System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: GetByIdAsync(TKey, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.GetByIdAsync(TKey, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.GetByIdAsync(TKey, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetByIdAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 28
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken = default)
+    parameters:
+    - id: id
+      type: '{TKey}'
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{{TEntity}}
+    content.vb: Function GetByIdAsync(id As TKey, cancellationToken As CancellationToken = Nothing) As Task(Of TEntity)
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.GetByIdAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).GetByIdAsync(TKey, CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).GetByIdAsync(TKey, System.Threading.CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.GetAllAsync(System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.GetAllAsync(System.Threading.CancellationToken)
+  id: GetAllAsync(System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: GetAllAsync(CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.GetAllAsync(CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.GetAllAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetAllAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 29
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    parameters:
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{{TEntity}}}
+    content.vb: Function GetAllAsync(cancellationToken As CancellationToken = Nothing) As Task(Of IEnumerable(Of TEntity))
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.GetAllAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).GetAllAsync(CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).GetAllAsync(System.Threading.CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.FindAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.FindAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  id: FindAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: FindAsync(Expression<Func<TEntity, bool>>, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.FindAsync(Expression<Func<TEntity, bool>>, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.FindAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>>, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FindAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 30
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    parameters:
+    - id: predicate
+      type: System.Linq.Expressions.Expression{System.Func{{TEntity},System.Boolean}}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{{TEntity}}}
+    content.vb: Function FindAsync(predicate As Expression(Of Func(Of TEntity, Boolean)), cancellationToken As CancellationToken = Nothing) As Task(Of IEnumerable(Of TEntity))
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.FindAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).FindAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).FindAsync(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, Boolean)), System.Threading.CancellationToken)
+  name.vb: FindAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  id: FirstOrDefaultAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: FirstOrDefaultAsync(Expression<Func<TEntity, bool>>, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.FirstOrDefaultAsync(Expression<Func<TEntity, bool>>, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.FirstOrDefaultAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>>, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FirstOrDefaultAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 31
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    parameters:
+    - id: predicate
+      type: System.Linq.Expressions.Expression{System.Func{{TEntity},System.Boolean}}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{{TEntity}}
+    content.vb: Function FirstOrDefaultAsync(predicate As Expression(Of Func(Of TEntity, Boolean)), cancellationToken As CancellationToken = Nothing) As Task(Of TEntity)
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.FirstOrDefaultAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).FirstOrDefaultAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).FirstOrDefaultAsync(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, Boolean)), System.Threading.CancellationToken)
+  name.vb: FirstOrDefaultAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.AnyAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.AnyAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  id: AnyAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: AnyAsync(Expression<Func<TEntity, bool>>, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.AnyAsync(Expression<Func<TEntity, bool>>, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.AnyAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>>, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AnyAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 32
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    parameters:
+    - id: predicate
+      type: System.Linq.Expressions.Expression{System.Func{{TEntity},System.Boolean}}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function AnyAsync(predicate As Expression(Of Func(Of TEntity, Boolean)), cancellationToken As CancellationToken = Nothing) As Task(Of Boolean)
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.AnyAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).AnyAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).AnyAsync(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, Boolean)), System.Threading.CancellationToken)
+  name.vb: AnyAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.CountAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.CountAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  id: CountAsync(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: CountAsync(Expression<Func<TEntity, bool>>?, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.CountAsync(Expression<Func<TEntity, bool>>?, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.CountAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>>?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CountAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 33
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    parameters:
+    - id: predicate
+      type: System.Linq.Expressions.Expression{System.Func{{TEntity},System.Boolean}}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+    content.vb: Function CountAsync(predicate As Expression(Of Func(Of TEntity, Boolean)) = Nothing, cancellationToken As CancellationToken = Nothing) As Task(Of Integer)
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.CountAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).CountAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).CountAsync(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, Boolean)), System.Threading.CancellationToken)
+  name.vb: CountAsync(Expression(Of Func(Of TEntity, Boolean)), CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.AddAsync(`0,System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.AddAsync(`0,System.Threading.CancellationToken)
+  id: AddAsync(`0,System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: AddAsync(TEntity, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.AddAsync(TEntity, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.AddAsync(TEntity, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AddAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 35
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
+    parameters:
+    - id: entity
+      type: '{TEntity}'
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{{TEntity}}
+    content.vb: Function AddAsync(entity As TEntity, cancellationToken As CancellationToken = Nothing) As Task(Of TEntity)
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.AddAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).AddAsync(TEntity, CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).AddAsync(TEntity, System.Threading.CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.AddRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.AddRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  id: AddRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: AddRangeAsync(IEnumerable<TEntity>, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.AddRangeAsync(IEnumerable<TEntity>, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.AddRangeAsync(System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AddRangeAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 36
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    parameters:
+    - id: entities
+      type: System.Collections.Generic.IEnumerable{{TEntity}}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{{TEntity}}}
+    content.vb: Function AddRangeAsync(entities As IEnumerable(Of TEntity), cancellationToken As CancellationToken = Nothing) As Task(Of IEnumerable(Of TEntity))
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.AddRangeAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).AddRangeAsync(IEnumerable(Of TEntity), CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).AddRangeAsync(System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  name.vb: AddRangeAsync(IEnumerable(Of TEntity), CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.UpdateAsync(`0,System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.UpdateAsync(`0,System.Threading.CancellationToken)
+  id: UpdateAsync(`0,System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: UpdateAsync(TEntity, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.UpdateAsync(TEntity, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.UpdateAsync(TEntity, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdateAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 38
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    parameters:
+    - id: entity
+      type: '{TEntity}'
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{{TEntity}}
+    content.vb: Function UpdateAsync(entity As TEntity, cancellationToken As CancellationToken = Nothing) As Task(Of TEntity)
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.UpdateAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).UpdateAsync(TEntity, CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).UpdateAsync(TEntity, System.Threading.CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.UpdateRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.UpdateRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  id: UpdateRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: UpdateRangeAsync(IEnumerable<TEntity>, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.UpdateRangeAsync(IEnumerable<TEntity>, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.UpdateRangeAsync(System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UpdateRangeAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 39
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<IEnumerable<TEntity>> UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    parameters:
+    - id: entities
+      type: System.Collections.Generic.IEnumerable{{TEntity}}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{{TEntity}}}
+    content.vb: Function UpdateRangeAsync(entities As IEnumerable(Of TEntity), cancellationToken As CancellationToken = Nothing) As Task(Of IEnumerable(Of TEntity))
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.UpdateRangeAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).UpdateRangeAsync(IEnumerable(Of TEntity), CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).UpdateRangeAsync(System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  name.vb: UpdateRangeAsync(IEnumerable(Of TEntity), CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync(`1,System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync(`1,System.Threading.CancellationToken)
+  id: DeleteAsync(`1,System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: DeleteAsync(TKey, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.DeleteAsync(TKey, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.DeleteAsync(TKey, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DeleteAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 41
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task DeleteAsync(TKey id, CancellationToken cancellationToken = default)
+    parameters:
+    - id: id
+      type: '{TKey}'
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function DeleteAsync(id As TKey, cancellationToken As CancellationToken = Nothing) As Task
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).DeleteAsync(TKey, CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).DeleteAsync(TKey, System.Threading.CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync(`0,System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync(`0,System.Threading.CancellationToken)
+  id: DeleteAsync(`0,System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: DeleteAsync(TEntity, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.DeleteAsync(TEntity, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.DeleteAsync(TEntity, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DeleteAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 42
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+    parameters:
+    - id: entity
+      type: '{TEntity}'
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function DeleteAsync(entity As TEntity, cancellationToken As CancellationToken = Nothing) As Task
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).DeleteAsync(TEntity, CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).DeleteAsync(TEntity, System.Threading.CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.DeleteRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  id: DeleteRangeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: DeleteRangeAsync(IEnumerable<TEntity>, CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.DeleteRangeAsync(IEnumerable<TEntity>, CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.DeleteRangeAsync(System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DeleteRangeAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 43
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    parameters:
+    - id: entities
+      type: System.Collections.Generic.IEnumerable{{TEntity}}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function DeleteRangeAsync(entities As IEnumerable(Of TEntity), cancellationToken As CancellationToken = Nothing) As Task
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteRangeAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).DeleteRangeAsync(IEnumerable(Of TEntity), CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).DeleteRangeAsync(System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  name.vb: DeleteRangeAsync(IEnumerable(Of TEntity), CancellationToken)
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.SaveChangesAsync(System.Threading.CancellationToken)
+  commentId: M:QaliTrack.MasterData.Core.Common.IRepository`2.SaveChangesAsync(System.Threading.CancellationToken)
+  id: SaveChangesAsync(System.Threading.CancellationToken)
+  parent: QaliTrack.MasterData.Core.Common.IRepository`2
+  langs:
+  - csharp
+  - vb
+  name: SaveChangesAsync(CancellationToken)
+  nameWithType: IRepository<TEntity, TKey>.SaveChangesAsync(CancellationToken)
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.SaveChangesAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Common/IRepository.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaveChangesAsync
+    path: src/QaliTrack.MasterData.Core/Common/IRepository.cs
+    startLine: 45
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Common
+  syntax:
+    content: Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    parameters:
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+    content.vb: Function SaveChangesAsync(cancellationToken As CancellationToken = Nothing) As Task(Of Integer)
+  overload: QaliTrack.MasterData.Core.Common.IRepository`2.SaveChangesAsync*
+  nameWithType.vb: IRepository(Of TEntity, TKey).SaveChangesAsync(CancellationToken)
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).SaveChangesAsync(System.Threading.CancellationToken)
+references:
+- uid: QaliTrack.MasterData.Core.Common
+  commentId: N:QaliTrack.MasterData.Core.Common
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Common
+  nameWithType: QaliTrack.MasterData.Core.Common
+  fullName: QaliTrack.MasterData.Core.Common
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.GetByIdAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.GetByIdAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_GetByIdAsync__1_System_Threading_CancellationToken_
+  name: GetByIdAsync
+  nameWithType: IRepository<TEntity, TKey>.GetByIdAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.GetByIdAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).GetByIdAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).GetByIdAsync
+- uid: '{TKey}'
+  commentId: '!:TKey'
+  definition: TKey
+  name: TKey
+  nameWithType: TKey
+  fullName: TKey
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task{{TEntity}}
+  commentId: T:System.Threading.Tasks.Task{`0}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TEntity>
+  nameWithType: Task<TEntity>
+  fullName: System.Threading.Tasks.Task<TEntity>
+  nameWithType.vb: Task(Of TEntity)
+  fullName.vb: System.Threading.Tasks.Task(Of TEntity)
+  name.vb: Task(Of TEntity)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TEntity
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEntity
+  - name: )
+- uid: TKey
+  name: TKey
+  nameWithType: TKey
+  fullName: TKey
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.GetAllAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.GetAllAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_GetAllAsync_System_Threading_CancellationToken_
+  name: GetAllAsync
+  nameWithType: IRepository<TEntity, TKey>.GetAllAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.GetAllAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).GetAllAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).GetAllAsync
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{{TEntity}}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{`0}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<TEntity>>
+  nameWithType: Task<IEnumerable<TEntity>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TEntity>>
+  nameWithType.vb: Task(Of IEnumerable(Of TEntity))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of TEntity))
+  name.vb: Task(Of IEnumerable(Of TEntity))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: TEntity
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEntity
+  - name: )
+  - name: )
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.FindAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.FindAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_FindAsync_System_Linq_Expressions_Expression_System_Func__0_System_Boolean___System_Threading_CancellationToken_
+  name: FindAsync
+  nameWithType: IRepository<TEntity, TKey>.FindAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.FindAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).FindAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).FindAsync
+- uid: System.Linq.Expressions.Expression{System.Func{{TEntity},System.Boolean}}
+  commentId: T:System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}}
+  parent: System.Linq.Expressions
+  definition: System.Linq.Expressions.Expression`1
+  href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
+  name: Expression<Func<TEntity, bool>>
+  nameWithType: Expression<Func<TEntity, bool>>
+  fullName: System.Linq.Expressions.Expression<System.Func<TEntity, bool>>
+  nameWithType.vb: Expression(Of Func(Of TEntity, Boolean))
+  fullName.vb: System.Linq.Expressions.Expression(Of System.Func(Of TEntity, Boolean))
+  name.vb: Expression(Of Func(Of TEntity, Boolean))
+  spec.csharp:
+  - uid: System.Linq.Expressions.Expression`1
+    name: Expression
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
+  - name: <
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - name: TEntity
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Linq.Expressions.Expression`1
+    name: Expression
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEntity
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  - name: )
+- uid: System.Linq.Expressions.Expression`1
+  commentId: T:System.Linq.Expressions.Expression`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
+  name: Expression<TDelegate>
+  nameWithType: Expression<TDelegate>
+  fullName: System.Linq.Expressions.Expression<TDelegate>
+  nameWithType.vb: Expression(Of TDelegate)
+  fullName.vb: System.Linq.Expressions.Expression(Of TDelegate)
+  name.vb: Expression(Of TDelegate)
+  spec.csharp:
+  - uid: System.Linq.Expressions.Expression`1
+    name: Expression
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
+  - name: <
+  - name: TDelegate
+  - name: '>'
+  spec.vb:
+  - uid: System.Linq.Expressions.Expression`1
+    name: Expression
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TDelegate
+  - name: )
+- uid: System.Linq.Expressions
+  commentId: N:System.Linq.Expressions
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Linq.Expressions
+  nameWithType: System.Linq.Expressions
+  fullName: System.Linq.Expressions
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Linq
+    name: Linq
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq
+  - name: .
+  - uid: System.Linq.Expressions
+    name: Expressions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Linq
+    name: Linq
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq
+  - name: .
+  - uid: System.Linq.Expressions
+    name: Expressions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.FirstOrDefaultAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.FirstOrDefaultAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_FirstOrDefaultAsync_System_Linq_Expressions_Expression_System_Func__0_System_Boolean___System_Threading_CancellationToken_
+  name: FirstOrDefaultAsync
+  nameWithType: IRepository<TEntity, TKey>.FirstOrDefaultAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.FirstOrDefaultAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).FirstOrDefaultAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).FirstOrDefaultAsync
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.AnyAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.AnyAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_AnyAsync_System_Linq_Expressions_Expression_System_Func__0_System_Boolean___System_Threading_CancellationToken_
+  name: AnyAsync
+  nameWithType: IRepository<TEntity, TKey>.AnyAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.AnyAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).AnyAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).AnyAsync
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.CountAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.CountAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_CountAsync_System_Linq_Expressions_Expression_System_Func__0_System_Boolean___System_Threading_CancellationToken_
+  name: CountAsync
+  nameWithType: IRepository<TEntity, TKey>.CountAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.CountAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).CountAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).CountAsync
+- uid: System.Threading.Tasks.Task{System.Int32}
+  commentId: T:System.Threading.Tasks.Task{System.Int32}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<int>
+  nameWithType: Task<int>
+  fullName: System.Threading.Tasks.Task<int>
+  nameWithType.vb: Task(Of Integer)
+  fullName.vb: System.Threading.Tasks.Task(Of Integer)
+  name.vb: Task(Of Integer)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.AddAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.AddAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_AddAsync__0_System_Threading_CancellationToken_
+  name: AddAsync
+  nameWithType: IRepository<TEntity, TKey>.AddAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.AddAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).AddAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).AddAsync
+- uid: '{TEntity}'
+  commentId: '!:TEntity'
+  definition: TEntity
+  name: TEntity
+  nameWithType: TEntity
+  fullName: TEntity
+- uid: TEntity
+  name: TEntity
+  nameWithType: TEntity
+  fullName: TEntity
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.AddRangeAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.AddRangeAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_AddRangeAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  name: AddRangeAsync
+  nameWithType: IRepository<TEntity, TKey>.AddRangeAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.AddRangeAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).AddRangeAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).AddRangeAsync
+- uid: System.Collections.Generic.IEnumerable{{TEntity}}
+  commentId: T:System.Collections.Generic.IEnumerable{`0}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<TEntity>
+  nameWithType: IEnumerable<TEntity>
+  fullName: System.Collections.Generic.IEnumerable<TEntity>
+  nameWithType.vb: IEnumerable(Of TEntity)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of TEntity)
+  name.vb: IEnumerable(Of TEntity)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: TEntity
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEntity
+  - name: )
+- uid: System.Collections.Generic.IEnumerable`1
+  commentId: T:System.Collections.Generic.IEnumerable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.UpdateAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.UpdateAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_UpdateAsync__0_System_Threading_CancellationToken_
+  name: UpdateAsync
+  nameWithType: IRepository<TEntity, TKey>.UpdateAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.UpdateAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).UpdateAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).UpdateAsync
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.UpdateRangeAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.UpdateRangeAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_UpdateRangeAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  name: UpdateRangeAsync
+  nameWithType: IRepository<TEntity, TKey>.UpdateRangeAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.UpdateRangeAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).UpdateRangeAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).UpdateRangeAsync
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.DeleteAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_DeleteAsync__1_System_Threading_CancellationToken_
+  name: DeleteAsync
+  nameWithType: IRepository<TEntity, TKey>.DeleteAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.DeleteAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).DeleteAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).DeleteAsync
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.DeleteRangeAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.DeleteRangeAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_DeleteRangeAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  name: DeleteRangeAsync
+  nameWithType: IRepository<TEntity, TKey>.DeleteRangeAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.DeleteRangeAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).DeleteRangeAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).DeleteRangeAsync
+- uid: QaliTrack.MasterData.Core.Common.IRepository`2.SaveChangesAsync*
+  commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`2.SaveChangesAsync
+  href: QaliTrack.MasterData.Core.Common.IRepository-2.html#QaliTrack_MasterData_Core_Common_IRepository_2_SaveChangesAsync_System_Threading_CancellationToken_
+  name: SaveChangesAsync
+  nameWithType: IRepository<TEntity, TKey>.SaveChangesAsync
+  fullName: QaliTrack.MasterData.Core.Common.IRepository<TEntity, TKey>.SaveChangesAsync
+  nameWithType.vb: IRepository(Of TEntity, TKey).SaveChangesAsync
+  fullName.vb: QaliTrack.MasterData.Core.Common.IRepository(Of TEntity, TKey).SaveChangesAsync

@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  id: InsuranceStatus
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Cancelled
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Expired
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Pending
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Suspended
+  langs:
+  - csharp
+  - vb
+  name: InsuranceStatus
+  nameWithType: InsuranceStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: InsuranceStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 250
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: public enum InsuranceStatus
+    content.vb: Public Enum InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: InsuranceStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 252
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Expired
+  commentId: F:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Expired
+  id: Expired
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Expired
+  nameWithType: InsuranceStatus.Expired
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Expired
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Expired
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 253
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: Expired = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Cancelled
+  commentId: F:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Cancelled
+  id: Cancelled
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Cancelled
+  nameWithType: InsuranceStatus.Cancelled
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Cancelled
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Cancelled
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 254
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: Cancelled = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: InsuranceStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 255
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: Suspended = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Pending
+  commentId: F:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Pending
+  id: Pending
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  langs:
+  - csharp
+  - vb
+  name: Pending
+  nameWithType: InsuranceStatus.Pending
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.Pending
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Pending
+    path: src/QaliTrack.MasterData.Core/Modules/Vehicle/Entities/Vehicle.cs
+    startLine: 256
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  syntax:
+    content: Pending = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.html
+  name: InsuranceStatus
+  nameWithType: InsuranceStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus

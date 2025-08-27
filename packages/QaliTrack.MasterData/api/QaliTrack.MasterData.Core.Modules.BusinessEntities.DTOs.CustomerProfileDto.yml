@@ -1,0 +1,1045 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  id: CustomerProfileDto
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit
+  langs:
+  - csharp
+  - vb
+  name: CustomerProfileDto
+  nameWithType: CustomerProfileDto
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CustomerProfileDto
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 135
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public class CustomerProfileDto
+    content.vb: Public Class CustomerProfileDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id
+  id: Id
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: CustomerProfileDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Id
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 137
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public Guid Id { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property Id As Guid
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId
+  id: BusinessEntityId
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: BusinessEntityId
+  nameWithType: CustomerProfileDto.BusinessEntityId
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BusinessEntityId
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 138
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public Guid BusinessEntityId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property BusinessEntityId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit
+  id: CreditLimit
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: CreditLimit
+  nameWithType: CustomerProfileDto.CreditLimit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreditLimit
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 139
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public decimal CreditLimit { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property CreditLimit As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit
+  id: AvailableCredit
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: AvailableCredit
+  nameWithType: CustomerProfileDto.AvailableCredit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: AvailableCredit
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 140
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public decimal AvailableCredit { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property AvailableCredit As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit
+  id: UsedCredit
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: UsedCredit
+  nameWithType: CustomerProfileDto.UsedCredit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UsedCredit
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 141
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public decimal UsedCredit { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property UsedCredit As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays
+  id: PaymentTermsDays
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: PaymentTermsDays
+  nameWithType: CustomerProfileDto.PaymentTermsDays
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PaymentTermsDays
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 142
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public int PaymentTermsDays { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property PaymentTermsDays As Integer
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency
+  id: Currency
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: Currency
+  nameWithType: CustomerProfileDto.Currency
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Currency
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 143
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public string Currency { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Currency As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating
+  id: CreditRating
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: CreditRating
+  nameWithType: CustomerProfileDto.CreditRating
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreditRating
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 144
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public string CreditRating { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreditRating As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview
+  id: LastCreditReview
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: LastCreditReview
+  nameWithType: CustomerProfileDto.LastCreditReview
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LastCreditReview
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 145
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public DateTime? LastCreditReview { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property LastCreditReview As Date?
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview
+  id: NextCreditReview
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: NextCreditReview
+  nameWithType: CustomerProfileDto.NextCreditReview
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: NextCreditReview
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 146
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public DateTime? NextCreditReview { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.DateTime}
+    content.vb: Public Property NextCreditReview As Date?
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit
+  id: SecurityDeposit
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: SecurityDeposit
+  nameWithType: CustomerProfileDto.SecurityDeposit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SecurityDeposit
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 147
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public decimal SecurityDeposit { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property SecurityDeposit As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod
+  id: PreferredContactMethod
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: PreferredContactMethod
+  nameWithType: CustomerProfileDto.PreferredContactMethod
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PreferredContactMethod
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 148
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public string PreferredContactMethod { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PreferredContactMethod As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage
+  id: PreferredLanguage
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: PreferredLanguage
+  nameWithType: CustomerProfileDto.PreferredLanguage
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PreferredLanguage
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 149
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public string PreferredLanguage { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property PreferredLanguage As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress
+  id: BillingAddress
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: BillingAddress
+  nameWithType: CustomerProfileDto.BillingAddress
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BillingAddress
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 150
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public string BillingAddress { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property BillingAddress As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status
+  id: Status
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: CustomerProfileDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 151
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: CustomerProfileDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 152
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public string Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt
+  id: CreatedAt
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: CustomerProfileDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: CreatedAt
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/DTOs/BusinessEntityDTOs.cs
+    startLine: 153
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  syntax:
+    content: public DateTime CreatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property CreatedAt As Date
+  overload: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs
+    name: DTOs
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_Id
+  name: Id
+  nameWithType: CustomerProfileDto.Id
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Id
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_BusinessEntityId
+  name: BusinessEntityId
+  nameWithType: CustomerProfileDto.BusinessEntityId
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BusinessEntityId
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_CreditLimit
+  name: CreditLimit
+  nameWithType: CustomerProfileDto.CreditLimit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditLimit
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_AvailableCredit
+  name: AvailableCredit
+  nameWithType: CustomerProfileDto.AvailableCredit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.AvailableCredit
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_UsedCredit
+  name: UsedCredit
+  nameWithType: CustomerProfileDto.UsedCredit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.UsedCredit
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_PaymentTermsDays
+  name: PaymentTermsDays
+  nameWithType: CustomerProfileDto.PaymentTermsDays
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PaymentTermsDays
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_Currency
+  name: Currency
+  nameWithType: CustomerProfileDto.Currency
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Currency
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_CreditRating
+  name: CreditRating
+  nameWithType: CustomerProfileDto.CreditRating
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreditRating
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_LastCreditReview
+  name: LastCreditReview
+  nameWithType: CustomerProfileDto.LastCreditReview
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.LastCreditReview
+- uid: System.Nullable{System.DateTime}
+  commentId: T:System.Nullable{System.DateTime}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime?
+  nameWithType: DateTime?
+  fullName: System.DateTime?
+  nameWithType.vb: Date?
+  fullName.vb: Date?
+  name.vb: Date?
+  spec.csharp:
+  - uid: System.DateTime
+    name: DateTime
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+  spec.vb:
+  - uid: System.DateTime
+    name: Date
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.datetime
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_NextCreditReview
+  name: NextCreditReview
+  nameWithType: CustomerProfileDto.NextCreditReview
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.NextCreditReview
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_SecurityDeposit
+  name: SecurityDeposit
+  nameWithType: CustomerProfileDto.SecurityDeposit
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.SecurityDeposit
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_PreferredContactMethod
+  name: PreferredContactMethod
+  nameWithType: CustomerProfileDto.PreferredContactMethod
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredContactMethod
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_PreferredLanguage
+  name: PreferredLanguage
+  nameWithType: CustomerProfileDto.PreferredLanguage
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.PreferredLanguage
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_BillingAddress
+  name: BillingAddress
+  nameWithType: CustomerProfileDto.BillingAddress
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.BillingAddress
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_Status
+  name: Status
+  nameWithType: CustomerProfileDto.Status
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Status
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_Notes
+  name: Notes
+  nameWithType: CustomerProfileDto.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.Notes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.html#QaliTrack_MasterData_Core_Modules_BusinessEntities_DTOs_CustomerProfileDto_CreatedAt
+  name: CreatedAt
+  nameWithType: CustomerProfileDto.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CustomerProfileDto.CreatedAt
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date

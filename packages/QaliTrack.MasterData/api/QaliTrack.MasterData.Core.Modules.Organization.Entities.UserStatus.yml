@@ -1,0 +1,198 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  id: UserStatus
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Inactive
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Pending
+  - QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Suspended
+  langs:
+  - csharp
+  - vb
+  name: UserStatus
+  nameWithType: UserStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: UserStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 113
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: public enum UserStatus
+    content.vb: Public Enum UserStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: UserStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 115
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Inactive
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Inactive
+  id: Inactive
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  langs:
+  - csharp
+  - vb
+  name: Inactive
+  nameWithType: UserStatus.Inactive
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Inactive
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Inactive
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 116
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Inactive = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Suspended
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Suspended
+  id: Suspended
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  langs:
+  - csharp
+  - vb
+  name: Suspended
+  nameWithType: UserStatus.Suspended
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Suspended
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Suspended
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 117
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Suspended = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Pending
+  commentId: F:QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Pending
+  id: Pending
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  langs:
+  - csharp
+  - vb
+  name: Pending
+  nameWithType: UserStatus.Pending
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.Pending
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Pending
+    path: src/QaliTrack.MasterData.Core/Modules/Organization/Entities/Organization.cs
+    startLine: 118
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  syntax:
+    content: Pending = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Organization.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization
+    name: Organization
+    href: QaliTrack.MasterData.Core.Modules.Organization.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Organization.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization
+    name: Organization
+    href: QaliTrack.MasterData.Core.Modules.Organization.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Organization.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Organization.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus
+  parent: QaliTrack.MasterData.Core.Modules.Organization.Entities
+  href: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus.html
+  name: UserStatus
+  nameWithType: UserStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Organization.Entities.UserStatus

@@ -1,0 +1,333 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  id: SaccoType
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Agricultural
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Business
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Community
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Employee
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Faith
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Housing
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Mixed
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Teachers
+  - QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Transport
+  langs:
+  - csharp
+  - vb
+  name: SaccoType
+  nameWithType: SaccoType
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: SaccoType
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 224
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: public enum SaccoType
+    content.vb: Public Enum SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Community
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Community
+  id: Community
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Community
+  nameWithType: SaccoType.Community
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Community
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Community
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 226
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Community = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Employee
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Employee
+  id: Employee
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Employee
+  nameWithType: SaccoType.Employee
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Employee
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Employee
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 227
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Employee = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Faith
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Faith
+  id: Faith
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Faith
+  nameWithType: SaccoType.Faith
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Faith
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Faith
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 228
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Faith = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Agricultural
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Agricultural
+  id: Agricultural
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Agricultural
+  nameWithType: SaccoType.Agricultural
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Agricultural
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Agricultural
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 229
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Agricultural = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Transport
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Transport
+  id: Transport
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Transport
+  nameWithType: SaccoType.Transport
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Transport
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Transport
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 230
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Transport = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Business
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Business
+  id: Business
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Business
+  nameWithType: SaccoType.Business
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Business
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Business
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 231
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Business = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Mixed
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Mixed
+  id: Mixed
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Mixed
+  nameWithType: SaccoType.Mixed
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Mixed
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Mixed
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 232
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Mixed = 6
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Housing
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Housing
+  id: Housing
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Housing
+  nameWithType: SaccoType.Housing
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Housing
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Housing
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 233
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Housing = 7
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Teachers
+  commentId: F:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Teachers
+  id: Teachers
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  langs:
+  - csharp
+  - vb
+  name: Teachers
+  nameWithType: SaccoType.Teachers
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.Teachers
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Teachers
+    path: src/QaliTrack.MasterData.Core/Modules/Sacco/Entities/Sacco.cs
+    startLine: 234
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  syntax:
+    content: Teachers = 8
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco
+    name: Sacco
+    href: QaliTrack.MasterData.Core.Modules.Sacco.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType
+  parent: QaliTrack.MasterData.Core.Modules.Sacco.Entities
+  href: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType.html
+  name: SaccoType
+  nameWithType: SaccoType
+  fullName: QaliTrack.MasterData.Core.Modules.Sacco.Entities.SaccoType

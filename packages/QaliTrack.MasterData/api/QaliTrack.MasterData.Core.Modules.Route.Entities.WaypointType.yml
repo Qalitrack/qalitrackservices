@@ -1,0 +1,306 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  id: WaypointType
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Border
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Checkpoint
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.FuelStation
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.RestArea
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Service
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Stop
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Warning
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Weighbridge
+  langs:
+  - csharp
+  - vb
+  name: WaypointType
+  nameWithType: WaypointType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WaypointType
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 133
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public enum WaypointType
+    content.vb: Public Enum WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Stop
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Stop
+  id: Stop
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: Stop
+  nameWithType: WaypointType.Stop
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Stop
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Stop
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 135
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Stop = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Checkpoint
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Checkpoint
+  id: Checkpoint
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: Checkpoint
+  nameWithType: WaypointType.Checkpoint
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Checkpoint
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Checkpoint
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 136
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Checkpoint = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.FuelStation
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.FuelStation
+  id: FuelStation
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: FuelStation
+  nameWithType: WaypointType.FuelStation
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.FuelStation
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FuelStation
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 137
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: FuelStation = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.RestArea
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.RestArea
+  id: RestArea
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: RestArea
+  nameWithType: WaypointType.RestArea
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.RestArea
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RestArea
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 138
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: RestArea = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Warning
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Warning
+  id: Warning
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: Warning
+  nameWithType: WaypointType.Warning
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Warning
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Warning
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 139
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Warning = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Weighbridge
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Weighbridge
+  id: Weighbridge
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: Weighbridge
+  nameWithType: WaypointType.Weighbridge
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Weighbridge
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Weighbridge
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 140
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Weighbridge = 5
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Border
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Border
+  id: Border
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: Border
+  nameWithType: WaypointType.Border
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Border
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Border
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 141
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Border = 6
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Service
+  commentId: F:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Service
+  id: Service
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  langs:
+  - csharp
+  - vb
+  name: Service
+  nameWithType: WaypointType.Service
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.Service
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Service
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 142
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: Service = 7
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Route.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Route.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType.html
+  name: WaypointType
+  nameWithType: WaypointType
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.WaypointType

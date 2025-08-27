@@ -1,0 +1,202 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  id: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.DocumentCategory
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionStatus
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionType
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceType
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceStatus
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceType
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.RegistrationStatus
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleDocument
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInspection
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInsurance
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleMaintenance
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleRegistration
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleStatus
+  - QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleType
+  langs:
+  - csharp
+  - vb
+  name: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  type: Namespace
+  assemblies:
+  - QaliTrack.MasterData.Core
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle.html
+  name: Vehicle
+  nameWithType: Vehicle
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.Vehicle
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleType.html
+  name: VehicleType
+  nameWithType: VehicleType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleType
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleRegistration
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleRegistration
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleRegistration.html
+  name: VehicleRegistration
+  nameWithType: VehicleRegistration
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleRegistration
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification.html
+  name: VehicleSpecification
+  nameWithType: VehicleSpecification
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleSpecification
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleDocument
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleDocument
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleDocument.html
+  name: VehicleDocument
+  nameWithType: VehicleDocument
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleDocument
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInspection
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInspection
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInspection.html
+  name: VehicleInspection
+  nameWithType: VehicleInspection
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInspection
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInsurance
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInsurance
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInsurance.html
+  name: VehicleInsurance
+  nameWithType: VehicleInsurance
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleInsurance
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleMaintenance
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleMaintenance
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleMaintenance.html
+  name: VehicleMaintenance
+  nameWithType: VehicleMaintenance
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleMaintenance
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleStatus
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleStatus.html
+  name: VehicleStatus
+  nameWithType: VehicleStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.VehicleStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.RegistrationStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.RegistrationStatus
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.RegistrationStatus.html
+  name: RegistrationStatus
+  nameWithType: RegistrationStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.RegistrationStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.DocumentCategory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.DocumentCategory
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.DocumentCategory.html
+  name: DocumentCategory
+  nameWithType: DocumentCategory
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.DocumentCategory
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionType.html
+  name: InspectionType
+  nameWithType: InspectionType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionType
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionStatus
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionStatus.html
+  name: InspectionStatus
+  nameWithType: InspectionStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InspectionStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceType.html
+  name: InsuranceType
+  nameWithType: InsuranceType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceType
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus.html
+  name: InsuranceStatus
+  nameWithType: InsuranceStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.InsuranceStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceType
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceType
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceType.html
+  name: MaintenanceType
+  nameWithType: MaintenanceType
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceType
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceStatus
+  parent: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceStatus.html
+  name: MaintenanceStatus
+  nameWithType: MaintenanceStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.MaintenanceStatus
+- uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle
+    name: Vehicle
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Vehicle.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Vehicle.Entities.html

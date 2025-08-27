@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  id: BusinessLocationTypes
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Distribution
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Office
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Plant
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Service
+  - QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Warehouse
+  langs:
+  - csharp
+  - vb
+  name: BusinessLocationTypes
+  nameWithType: BusinessLocationTypes
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BusinessLocationTypes
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 360
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: public enum BusinessLocationTypes
+    content.vb: Public Enum BusinessLocationTypes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Office
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Office
+  id: Office
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  langs:
+  - csharp
+  - vb
+  name: Office
+  nameWithType: BusinessLocationTypes.Office
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Office
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Office
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 362
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Office = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Warehouse
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Warehouse
+  id: Warehouse
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  langs:
+  - csharp
+  - vb
+  name: Warehouse
+  nameWithType: BusinessLocationTypes.Warehouse
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Warehouse
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Warehouse
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 363
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Warehouse = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Plant
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Plant
+  id: Plant
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  langs:
+  - csharp
+  - vb
+  name: Plant
+  nameWithType: BusinessLocationTypes.Plant
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Plant
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Plant
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 364
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Plant = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Service
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Service
+  id: Service
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  langs:
+  - csharp
+  - vb
+  name: Service
+  nameWithType: BusinessLocationTypes.Service
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Service
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Service
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 365
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Service = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Distribution
+  commentId: F:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Distribution
+  id: Distribution
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  langs:
+  - csharp
+  - vb
+  name: Distribution
+  nameWithType: BusinessLocationTypes.Distribution
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.Distribution
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Distribution
+    path: src/QaliTrack.MasterData.Core/Modules/BusinessEntities/Entities/BusinessEntity.cs
+    startLine: 366
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  syntax:
+    content: Distribution = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+references:
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities
+    name: BusinessEntities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  commentId: T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes
+  parent: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities
+  href: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes.html
+  name: BusinessLocationTypes
+  nameWithType: BusinessLocationTypes
+  fullName: QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.BusinessLocationTypes

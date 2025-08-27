@@ -287,6 +287,37 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
+// Serve static files including documentation
+app.UseStaticFiles();
+
+// Configure documentation serving
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs")),
+    RequestPath = "/docs"
+});
+
+// Documentation default route
+app.MapGet("/docs", () => Results.Redirect("/docs/index.html"));
+app.MapFallback("/docs/{**path}", async context =>
+{
+    var path = context.Request.Path.Value?.Replace("/docs/", "") ?? "index.html";
+    if (string.IsNullOrEmpty(path) || path == "/")
+        path = "index.html";
+    
+    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs", path);
+    if (File.Exists(filePath))
+    {
+        await context.Response.SendFileAsync(filePath);
+    }
+    else
+    {
+        context.Response.StatusCode = 404;
+        await context.Response.WriteAsync("Documentation file not found");
+    }
+});
+
 if (app.Environment.IsDevelopment())
 {
     // Add middleware to handle CORS for Swagger

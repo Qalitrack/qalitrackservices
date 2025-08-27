@@ -1,0 +1,432 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.Gateway.Models.DeploymentInfo
+  commentId: T:QaliTrack.Gateway.Models.DeploymentInfo
+  id: DeploymentInfo
+  parent: QaliTrack.Gateway.Models
+  children:
+  - QaliTrack.Gateway.Models.DeploymentInfo.Domain
+  - QaliTrack.Gateway.Models.DeploymentInfo.Environment
+  - QaliTrack.Gateway.Models.DeploymentInfo.Ports
+  langs:
+  - csharp
+  - vb
+  name: DeploymentInfo
+  nameWithType: DeploymentInfo
+  fullName: QaliTrack.Gateway.Models.DeploymentInfo
+  type: Class
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceConfiguration.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DeploymentInfo
+    path: src/Models/ServiceConfiguration.cs
+    startLine: 17
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Models
+  syntax:
+    content: public class DeploymentInfo
+    content.vb: Public Class DeploymentInfo
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.Gateway.Models.DeploymentInfo.Environment
+  commentId: P:QaliTrack.Gateway.Models.DeploymentInfo.Environment
+  id: Environment
+  parent: QaliTrack.Gateway.Models.DeploymentInfo
+  langs:
+  - csharp
+  - vb
+  name: Environment
+  nameWithType: DeploymentInfo.Environment
+  fullName: QaliTrack.Gateway.Models.DeploymentInfo.Environment
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceConfiguration.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Environment
+    path: src/Models/ServiceConfiguration.cs
+    startLine: 19
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Models
+  syntax:
+    content: public string Environment { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Environment As String
+  overload: QaliTrack.Gateway.Models.DeploymentInfo.Environment*
+- uid: QaliTrack.Gateway.Models.DeploymentInfo.Domain
+  commentId: P:QaliTrack.Gateway.Models.DeploymentInfo.Domain
+  id: Domain
+  parent: QaliTrack.Gateway.Models.DeploymentInfo
+  langs:
+  - csharp
+  - vb
+  name: Domain
+  nameWithType: DeploymentInfo.Domain
+  fullName: QaliTrack.Gateway.Models.DeploymentInfo.Domain
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceConfiguration.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Domain
+    path: src/Models/ServiceConfiguration.cs
+    startLine: 20
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Models
+  syntax:
+    content: public string Domain { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Domain As String
+  overload: QaliTrack.Gateway.Models.DeploymentInfo.Domain*
+- uid: QaliTrack.Gateway.Models.DeploymentInfo.Ports
+  commentId: P:QaliTrack.Gateway.Models.DeploymentInfo.Ports
+  id: Ports
+  parent: QaliTrack.Gateway.Models.DeploymentInfo
+  langs:
+  - csharp
+  - vb
+  name: Ports
+  nameWithType: DeploymentInfo.Ports
+  fullName: QaliTrack.Gateway.Models.DeploymentInfo.Ports
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceConfiguration.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Ports
+    path: src/Models/ServiceConfiguration.cs
+    startLine: 21
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Models
+  syntax:
+    content: public PortConfiguration Ports { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.Gateway.Models.PortConfiguration
+    content.vb: Public Property Ports As PortConfiguration
+  overload: QaliTrack.Gateway.Models.DeploymentInfo.Ports*
+references:
+- uid: QaliTrack.Gateway.Models
+  commentId: N:QaliTrack.Gateway.Models
+  href: QaliTrack.html
+  name: QaliTrack.Gateway.Models
+  nameWithType: QaliTrack.Gateway.Models
+  fullName: QaliTrack.Gateway.Models
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.Gateway
+    name: Gateway
+    href: QaliTrack.Gateway.html
+  - name: .
+  - uid: QaliTrack.Gateway.Models
+    name: Models
+    href: QaliTrack.Gateway.Models.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.Gateway
+    name: Gateway
+    href: QaliTrack.Gateway.html
+  - name: .
+  - uid: QaliTrack.Gateway.Models
+    name: Models
+    href: QaliTrack.Gateway.Models.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.Gateway.Models.DeploymentInfo.Environment*
+  commentId: Overload:QaliTrack.Gateway.Models.DeploymentInfo.Environment
+  href: QaliTrack.Gateway.Models.DeploymentInfo.html#QaliTrack_Gateway_Models_DeploymentInfo_Environment
+  name: Environment
+  nameWithType: DeploymentInfo.Environment
+  fullName: QaliTrack.Gateway.Models.DeploymentInfo.Environment
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.Gateway.Models.DeploymentInfo.Domain*
+  commentId: Overload:QaliTrack.Gateway.Models.DeploymentInfo.Domain
+  href: QaliTrack.Gateway.Models.DeploymentInfo.html#QaliTrack_Gateway_Models_DeploymentInfo_Domain
+  name: Domain
+  nameWithType: DeploymentInfo.Domain
+  fullName: QaliTrack.Gateway.Models.DeploymentInfo.Domain
+- uid: QaliTrack.Gateway.Models.DeploymentInfo.Ports*
+  commentId: Overload:QaliTrack.Gateway.Models.DeploymentInfo.Ports
+  href: QaliTrack.Gateway.Models.DeploymentInfo.html#QaliTrack_Gateway_Models_DeploymentInfo_Ports
+  name: Ports
+  nameWithType: DeploymentInfo.Ports
+  fullName: QaliTrack.Gateway.Models.DeploymentInfo.Ports
+- uid: QaliTrack.Gateway.Models.PortConfiguration
+  commentId: T:QaliTrack.Gateway.Models.PortConfiguration
+  parent: QaliTrack.Gateway.Models
+  href: QaliTrack.Gateway.Models.PortConfiguration.html
+  name: PortConfiguration
+  nameWithType: PortConfiguration
+  fullName: QaliTrack.Gateway.Models.PortConfiguration

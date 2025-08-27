@@ -1,0 +1,436 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.Gateway.Services.IConfigurationService
+  commentId: T:QaliTrack.Gateway.Services.IConfigurationService
+  id: IConfigurationService
+  parent: QaliTrack.Gateway.Services
+  children:
+  - QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration
+  - QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices
+  - QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync(System.String,System.Int32)
+  langs:
+  - csharp
+  - vb
+  name: IConfigurationService
+  nameWithType: IConfigurationService
+  fullName: QaliTrack.Gateway.Services.IConfigurationService
+  type: Interface
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/ConfigurationService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IConfigurationService
+    path: src/Services/ConfigurationService.cs
+    startLine: 5
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Services
+  syntax:
+    content: public interface IConfigurationService
+    content.vb: Public Interface IConfigurationService
+- uid: QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration
+  commentId: M:QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration
+  id: GetClientConfiguration
+  parent: QaliTrack.Gateway.Services.IConfigurationService
+  langs:
+  - csharp
+  - vb
+  name: GetClientConfiguration()
+  nameWithType: IConfigurationService.GetClientConfiguration()
+  fullName: QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration()
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/ConfigurationService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetClientConfiguration
+    path: src/Services/ConfigurationService.cs
+    startLine: 7
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Services
+  syntax:
+    content: ClientConfiguration GetClientConfiguration()
+    return:
+      type: QaliTrack.Gateway.Models.ClientConfiguration
+    content.vb: Function GetClientConfiguration() As ClientConfiguration
+  overload: QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration*
+- uid: QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices
+  commentId: M:QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices
+  id: GetEnabledServices
+  parent: QaliTrack.Gateway.Services.IConfigurationService
+  langs:
+  - csharp
+  - vb
+  name: GetEnabledServices()
+  nameWithType: IConfigurationService.GetEnabledServices()
+  fullName: QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices()
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/ConfigurationService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: GetEnabledServices
+    path: src/Services/ConfigurationService.cs
+    startLine: 8
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Services
+  syntax:
+    content: List<SwaggerEndpoint> GetEnabledServices()
+    return:
+      type: System.Collections.Generic.List{QaliTrack.Gateway.Models.SwaggerEndpoint}
+    content.vb: Function GetEnabledServices() As List(Of SwaggerEndpoint)
+  overload: QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices*
+- uid: QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync(System.String,System.Int32)
+  commentId: M:QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync(System.String,System.Int32)
+  id: IsServiceHealthyAsync(System.String,System.Int32)
+  parent: QaliTrack.Gateway.Services.IConfigurationService
+  langs:
+  - csharp
+  - vb
+  name: IsServiceHealthyAsync(string, int)
+  nameWithType: IConfigurationService.IsServiceHealthyAsync(string, int)
+  fullName: QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync(string, int)
+  type: Method
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Services/ConfigurationService.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsServiceHealthyAsync
+    path: src/Services/ConfigurationService.cs
+    startLine: 9
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrack.Gateway.Services
+  syntax:
+    content: Task<bool> IsServiceHealthyAsync(string serviceName, int port)
+    parameters:
+    - id: serviceName
+      type: System.String
+    - id: port
+      type: System.Int32
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function IsServiceHealthyAsync(serviceName As String, port As Integer) As Task(Of Boolean)
+  overload: QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync*
+  nameWithType.vb: IConfigurationService.IsServiceHealthyAsync(String, Integer)
+  fullName.vb: QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync(String, Integer)
+  name.vb: IsServiceHealthyAsync(String, Integer)
+references:
+- uid: QaliTrack.Gateway.Services
+  commentId: N:QaliTrack.Gateway.Services
+  href: QaliTrack.html
+  name: QaliTrack.Gateway.Services
+  nameWithType: QaliTrack.Gateway.Services
+  fullName: QaliTrack.Gateway.Services
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.Gateway
+    name: Gateway
+    href: QaliTrack.Gateway.html
+  - name: .
+  - uid: QaliTrack.Gateway.Services
+    name: Services
+    href: QaliTrack.Gateway.Services.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.Gateway
+    name: Gateway
+    href: QaliTrack.Gateway.html
+  - name: .
+  - uid: QaliTrack.Gateway.Services
+    name: Services
+    href: QaliTrack.Gateway.Services.html
+- uid: QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration*
+  commentId: Overload:QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration
+  href: QaliTrack.Gateway.Services.IConfigurationService.html#QaliTrack_Gateway_Services_IConfigurationService_GetClientConfiguration
+  name: GetClientConfiguration
+  nameWithType: IConfigurationService.GetClientConfiguration
+  fullName: QaliTrack.Gateway.Services.IConfigurationService.GetClientConfiguration
+- uid: QaliTrack.Gateway.Models.ClientConfiguration
+  commentId: T:QaliTrack.Gateway.Models.ClientConfiguration
+  parent: QaliTrack.Gateway.Models
+  href: QaliTrack.Gateway.Models.ClientConfiguration.html
+  name: ClientConfiguration
+  nameWithType: ClientConfiguration
+  fullName: QaliTrack.Gateway.Models.ClientConfiguration
+- uid: QaliTrack.Gateway.Models
+  commentId: N:QaliTrack.Gateway.Models
+  href: QaliTrack.html
+  name: QaliTrack.Gateway.Models
+  nameWithType: QaliTrack.Gateway.Models
+  fullName: QaliTrack.Gateway.Models
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.Gateway
+    name: Gateway
+    href: QaliTrack.Gateway.html
+  - name: .
+  - uid: QaliTrack.Gateway.Models
+    name: Models
+    href: QaliTrack.Gateway.Models.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.Gateway
+    name: Gateway
+    href: QaliTrack.Gateway.html
+  - name: .
+  - uid: QaliTrack.Gateway.Models
+    name: Models
+    href: QaliTrack.Gateway.Models.html
+- uid: QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices*
+  commentId: Overload:QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices
+  href: QaliTrack.Gateway.Services.IConfigurationService.html#QaliTrack_Gateway_Services_IConfigurationService_GetEnabledServices
+  name: GetEnabledServices
+  nameWithType: IConfigurationService.GetEnabledServices
+  fullName: QaliTrack.Gateway.Services.IConfigurationService.GetEnabledServices
+- uid: System.Collections.Generic.List{QaliTrack.Gateway.Models.SwaggerEndpoint}
+  commentId: T:System.Collections.Generic.List{QaliTrack.Gateway.Models.SwaggerEndpoint}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<SwaggerEndpoint>
+  nameWithType: List<SwaggerEndpoint>
+  fullName: System.Collections.Generic.List<QaliTrack.Gateway.Models.SwaggerEndpoint>
+  nameWithType.vb: List(Of SwaggerEndpoint)
+  fullName.vb: System.Collections.Generic.List(Of QaliTrack.Gateway.Models.SwaggerEndpoint)
+  name.vb: List(Of SwaggerEndpoint)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: QaliTrack.Gateway.Models.SwaggerEndpoint
+    name: SwaggerEndpoint
+    href: QaliTrack.Gateway.Models.SwaggerEndpoint.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: QaliTrack.Gateway.Models.SwaggerEndpoint
+    name: SwaggerEndpoint
+    href: QaliTrack.Gateway.Models.SwaggerEndpoint.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync*
+  commentId: Overload:QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync
+  href: QaliTrack.Gateway.Services.IConfigurationService.html#QaliTrack_Gateway_Services_IConfigurationService_IsServiceHealthyAsync_System_String_System_Int32_
+  name: IsServiceHealthyAsync
+  nameWithType: IConfigurationService.IsServiceHealthyAsync
+  fullName: QaliTrack.Gateway.Services.IConfigurationService.IsServiceHealthyAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

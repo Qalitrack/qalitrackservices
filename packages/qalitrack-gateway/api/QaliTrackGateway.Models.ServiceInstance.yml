@@ -1,0 +1,1269 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrackGateway.Models.ServiceInstance
+  commentId: T:QaliTrackGateway.Models.ServiceInstance
+  id: ServiceInstance
+  parent: QaliTrackGateway.Models
+  children:
+  - QaliTrackGateway.Models.ServiceInstance.BaseUrl
+  - QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures
+  - QaliTrackGateway.Models.ServiceInstance.Environment
+  - QaliTrackGateway.Models.ServiceInstance.HealthScore
+  - QaliTrackGateway.Models.ServiceInstance.Host
+  - QaliTrackGateway.Models.ServiceInstance.InstanceId
+  - QaliTrackGateway.Models.ServiceInstance.IsEnabled
+  - QaliTrackGateway.Models.ServiceInstance.IsHealthy
+  - QaliTrackGateway.Models.ServiceInstance.LastHealthCheck
+  - QaliTrackGateway.Models.ServiceInstance.LastSeen
+  - QaliTrackGateway.Models.ServiceInstance.Metadata
+  - QaliTrackGateway.Models.ServiceInstance.Port
+  - QaliTrackGateway.Models.ServiceInstance.Priority
+  - QaliTrackGateway.Models.ServiceInstance.Protocol
+  - QaliTrackGateway.Models.ServiceInstance.RegisteredAt
+  - QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs
+  - QaliTrackGateway.Models.ServiceInstance.ServiceName
+  - QaliTrackGateway.Models.ServiceInstance.Status
+  - QaliTrackGateway.Models.ServiceInstance.Tags
+  - QaliTrackGateway.Models.ServiceInstance.Version
+  - QaliTrackGateway.Models.ServiceInstance.Weight
+  langs:
+  - csharp
+  - vb
+  name: ServiceInstance
+  nameWithType: ServiceInstance
+  fullName: QaliTrackGateway.Models.ServiceInstance
+  type: Class
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceInstance
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 5
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  summary: Service instance information for routing
+  example: []
+  syntax:
+    content: public class ServiceInstance
+    content.vb: Public Class ServiceInstance
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrackGateway.Models.ServiceInstance.InstanceId
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.InstanceId
+  id: InstanceId
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: InstanceId
+  nameWithType: ServiceInstance.InstanceId
+  fullName: QaliTrackGateway.Models.ServiceInstance.InstanceId
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: InstanceId
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 7
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string InstanceId { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property InstanceId As String
+  overload: QaliTrackGateway.Models.ServiceInstance.InstanceId*
+- uid: QaliTrackGateway.Models.ServiceInstance.ServiceName
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.ServiceName
+  id: ServiceName
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: ServiceName
+  nameWithType: ServiceInstance.ServiceName
+  fullName: QaliTrackGateway.Models.ServiceInstance.ServiceName
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ServiceName
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 8
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string ServiceName { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property ServiceName As String
+  overload: QaliTrackGateway.Models.ServiceInstance.ServiceName*
+- uid: QaliTrackGateway.Models.ServiceInstance.Host
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Host
+  id: Host
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Host
+  nameWithType: ServiceInstance.Host
+  fullName: QaliTrackGateway.Models.ServiceInstance.Host
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Host
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 9
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string Host { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Host As String
+  overload: QaliTrackGateway.Models.ServiceInstance.Host*
+- uid: QaliTrackGateway.Models.ServiceInstance.Port
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Port
+  id: Port
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Port
+  nameWithType: ServiceInstance.Port
+  fullName: QaliTrackGateway.Models.ServiceInstance.Port
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Port
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 10
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public int Port { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Port As Integer
+  overload: QaliTrackGateway.Models.ServiceInstance.Port*
+- uid: QaliTrackGateway.Models.ServiceInstance.Protocol
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Protocol
+  id: Protocol
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Protocol
+  nameWithType: ServiceInstance.Protocol
+  fullName: QaliTrackGateway.Models.ServiceInstance.Protocol
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Protocol
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 11
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string Protocol { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Protocol As String
+  overload: QaliTrackGateway.Models.ServiceInstance.Protocol*
+- uid: QaliTrackGateway.Models.ServiceInstance.IsHealthy
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.IsHealthy
+  id: IsHealthy
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: IsHealthy
+  nameWithType: ServiceInstance.IsHealthy
+  fullName: QaliTrackGateway.Models.ServiceInstance.IsHealthy
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsHealthy
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 12
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public bool IsHealthy { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsHealthy As Boolean
+  overload: QaliTrackGateway.Models.ServiceInstance.IsHealthy*
+- uid: QaliTrackGateway.Models.ServiceInstance.LastHealthCheck
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.LastHealthCheck
+  id: LastHealthCheck
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: LastHealthCheck
+  nameWithType: ServiceInstance.LastHealthCheck
+  fullName: QaliTrackGateway.Models.ServiceInstance.LastHealthCheck
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LastHealthCheck
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 13
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public DateTime LastHealthCheck { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property LastHealthCheck As Date
+  overload: QaliTrackGateway.Models.ServiceInstance.LastHealthCheck*
+- uid: QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs
+  id: ResponseTimeMs
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: ResponseTimeMs
+  nameWithType: ServiceInstance.ResponseTimeMs
+  fullName: QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ResponseTimeMs
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 14
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public long ResponseTimeMs { get; set; }
+    parameters: []
+    return:
+      type: System.Int64
+    content.vb: Public Property ResponseTimeMs As Long
+  overload: QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs*
+- uid: QaliTrackGateway.Models.ServiceInstance.Weight
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Weight
+  id: Weight
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Weight
+  nameWithType: ServiceInstance.Weight
+  fullName: QaliTrackGateway.Models.ServiceInstance.Weight
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Weight
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 15
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public int Weight { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Weight As Integer
+  overload: QaliTrackGateway.Models.ServiceInstance.Weight*
+- uid: QaliTrackGateway.Models.ServiceInstance.Priority
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Priority
+  id: Priority
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Priority
+  nameWithType: ServiceInstance.Priority
+  fullName: QaliTrackGateway.Models.ServiceInstance.Priority
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Priority
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 16
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public int Priority { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Priority As Integer
+  overload: QaliTrackGateway.Models.ServiceInstance.Priority*
+- uid: QaliTrackGateway.Models.ServiceInstance.Metadata
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Metadata
+  id: Metadata
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Metadata
+  nameWithType: ServiceInstance.Metadata
+  fullName: QaliTrackGateway.Models.ServiceInstance.Metadata
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Metadata
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 17
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public Dictionary<string, string> Metadata { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.Dictionary{System.String,System.String}
+    content.vb: Public Property Metadata As Dictionary(Of String, String)
+  overload: QaliTrackGateway.Models.ServiceInstance.Metadata*
+- uid: QaliTrackGateway.Models.ServiceInstance.Tags
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Tags
+  id: Tags
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Tags
+  nameWithType: ServiceInstance.Tags
+  fullName: QaliTrackGateway.Models.ServiceInstance.Tags
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Tags
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 18
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string[] Tags { get; set; }
+    parameters: []
+    return:
+      type: System.String[]
+    content.vb: Public Property Tags As String()
+  overload: QaliTrackGateway.Models.ServiceInstance.Tags*
+- uid: QaliTrackGateway.Models.ServiceInstance.RegisteredAt
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.RegisteredAt
+  id: RegisteredAt
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: RegisteredAt
+  nameWithType: ServiceInstance.RegisteredAt
+  fullName: QaliTrackGateway.Models.ServiceInstance.RegisteredAt
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RegisteredAt
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 19
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public DateTime RegisteredAt { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property RegisteredAt As Date
+  overload: QaliTrackGateway.Models.ServiceInstance.RegisteredAt*
+- uid: QaliTrackGateway.Models.ServiceInstance.LastSeen
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.LastSeen
+  id: LastSeen
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: LastSeen
+  nameWithType: ServiceInstance.LastSeen
+  fullName: QaliTrackGateway.Models.ServiceInstance.LastSeen
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: LastSeen
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 20
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public DateTime LastSeen { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property LastSeen As Date
+  overload: QaliTrackGateway.Models.ServiceInstance.LastSeen*
+- uid: QaliTrackGateway.Models.ServiceInstance.Status
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Status
+  id: Status
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: ServiceInstance.Status
+  fullName: QaliTrackGateway.Models.ServiceInstance.Status
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Status
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 21
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string Status { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Status As String
+  overload: QaliTrackGateway.Models.ServiceInstance.Status*
+- uid: QaliTrackGateway.Models.ServiceInstance.Version
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Version
+  id: Version
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Version
+  nameWithType: ServiceInstance.Version
+  fullName: QaliTrackGateway.Models.ServiceInstance.Version
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Version
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 22
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string Version { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Version As String
+  overload: QaliTrackGateway.Models.ServiceInstance.Version*
+- uid: QaliTrackGateway.Models.ServiceInstance.Environment
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.Environment
+  id: Environment
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: Environment
+  nameWithType: ServiceInstance.Environment
+  fullName: QaliTrackGateway.Models.ServiceInstance.Environment
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Environment
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 23
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public string Environment { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Environment As String
+  overload: QaliTrackGateway.Models.ServiceInstance.Environment*
+- uid: QaliTrackGateway.Models.ServiceInstance.IsEnabled
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.IsEnabled
+  id: IsEnabled
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: IsEnabled
+  nameWithType: ServiceInstance.IsEnabled
+  fullName: QaliTrackGateway.Models.ServiceInstance.IsEnabled
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: IsEnabled
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 24
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  syntax:
+    content: public bool IsEnabled { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsEnabled As Boolean
+  overload: QaliTrackGateway.Models.ServiceInstance.IsEnabled*
+- uid: QaliTrackGateway.Models.ServiceInstance.BaseUrl
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.BaseUrl
+  id: BaseUrl
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: BaseUrl
+  nameWithType: ServiceInstance.BaseUrl
+  fullName: QaliTrackGateway.Models.ServiceInstance.BaseUrl
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: BaseUrl
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 29
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  summary: Full URL for this instance
+  example: []
+  syntax:
+    content: public string BaseUrl { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property BaseUrl As String
+  overload: QaliTrackGateway.Models.ServiceInstance.BaseUrl*
+- uid: QaliTrackGateway.Models.ServiceInstance.HealthScore
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.HealthScore
+  id: HealthScore
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: HealthScore
+  nameWithType: ServiceInstance.HealthScore
+  fullName: QaliTrackGateway.Models.ServiceInstance.HealthScore
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: HealthScore
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 34
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  summary: Health score for routing decisions (0-100)
+  example: []
+  syntax:
+    content: public double HealthScore { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property HealthScore As Double
+  overload: QaliTrackGateway.Models.ServiceInstance.HealthScore*
+- uid: QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures
+  commentId: P:QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures
+  id: ConsecutiveFailures
+  parent: QaliTrackGateway.Models.ServiceInstance
+  langs:
+  - csharp
+  - vb
+  name: ConsecutiveFailures
+  nameWithType: ServiceInstance.ConsecutiveFailures
+  fullName: QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures
+  type: Property
+  source:
+    remote:
+      path: packages/qalitrack-gateway/src/Models/ServiceDiscoveryModels.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ConsecutiveFailures
+    path: src/Models/ServiceDiscoveryModels.cs
+    startLine: 39
+  assemblies:
+  - QaliTrack.Gateway
+  namespace: QaliTrackGateway.Models
+  summary: Number of consecutive failures
+  example: []
+  syntax:
+    content: public int ConsecutiveFailures { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property ConsecutiveFailures As Integer
+  overload: QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures*
+references:
+- uid: QaliTrackGateway.Models
+  commentId: N:QaliTrackGateway.Models
+  href: QaliTrackGateway.html
+  name: QaliTrackGateway.Models
+  nameWithType: QaliTrackGateway.Models
+  fullName: QaliTrackGateway.Models
+  spec.csharp:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+  spec.vb:
+  - uid: QaliTrackGateway
+    name: QaliTrackGateway
+    href: QaliTrackGateway.html
+  - name: .
+  - uid: QaliTrackGateway.Models
+    name: Models
+    href: QaliTrackGateway.Models.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrackGateway.Models.ServiceInstance.InstanceId*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.InstanceId
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_InstanceId
+  name: InstanceId
+  nameWithType: ServiceInstance.InstanceId
+  fullName: QaliTrackGateway.Models.ServiceInstance.InstanceId
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrackGateway.Models.ServiceInstance.ServiceName*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.ServiceName
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_ServiceName
+  name: ServiceName
+  nameWithType: ServiceInstance.ServiceName
+  fullName: QaliTrackGateway.Models.ServiceInstance.ServiceName
+- uid: QaliTrackGateway.Models.ServiceInstance.Host*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Host
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Host
+  name: Host
+  nameWithType: ServiceInstance.Host
+  fullName: QaliTrackGateway.Models.ServiceInstance.Host
+- uid: QaliTrackGateway.Models.ServiceInstance.Port*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Port
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Port
+  name: Port
+  nameWithType: ServiceInstance.Port
+  fullName: QaliTrackGateway.Models.ServiceInstance.Port
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrackGateway.Models.ServiceInstance.Protocol*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Protocol
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Protocol
+  name: Protocol
+  nameWithType: ServiceInstance.Protocol
+  fullName: QaliTrackGateway.Models.ServiceInstance.Protocol
+- uid: QaliTrackGateway.Models.ServiceInstance.IsHealthy*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.IsHealthy
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_IsHealthy
+  name: IsHealthy
+  nameWithType: ServiceInstance.IsHealthy
+  fullName: QaliTrackGateway.Models.ServiceInstance.IsHealthy
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: QaliTrackGateway.Models.ServiceInstance.LastHealthCheck*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.LastHealthCheck
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_LastHealthCheck
+  name: LastHealthCheck
+  nameWithType: ServiceInstance.LastHealthCheck
+  fullName: QaliTrackGateway.Models.ServiceInstance.LastHealthCheck
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_ResponseTimeMs
+  name: ResponseTimeMs
+  nameWithType: ServiceInstance.ResponseTimeMs
+  fullName: QaliTrackGateway.Models.ServiceInstance.ResponseTimeMs
+- uid: System.Int64
+  commentId: T:System.Int64
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int64
+  name: long
+  nameWithType: long
+  fullName: long
+  nameWithType.vb: Long
+  fullName.vb: Long
+  name.vb: Long
+- uid: QaliTrackGateway.Models.ServiceInstance.Weight*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Weight
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Weight
+  name: Weight
+  nameWithType: ServiceInstance.Weight
+  fullName: QaliTrackGateway.Models.ServiceInstance.Weight
+- uid: QaliTrackGateway.Models.ServiceInstance.Priority*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Priority
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Priority
+  name: Priority
+  nameWithType: ServiceInstance.Priority
+  fullName: QaliTrackGateway.Models.ServiceInstance.Priority
+- uid: QaliTrackGateway.Models.ServiceInstance.Metadata*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Metadata
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Metadata
+  name: Metadata
+  nameWithType: ServiceInstance.Metadata
+  fullName: QaliTrackGateway.Models.ServiceInstance.Metadata
+- uid: System.Collections.Generic.Dictionary{System.String,System.String}
+  commentId: T:System.Collections.Generic.Dictionary{System.String,System.String}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.Dictionary`2
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<string, string>
+  nameWithType: Dictionary<string, string>
+  fullName: System.Collections.Generic.Dictionary<string, string>
+  nameWithType.vb: Dictionary(Of String, String)
+  fullName.vb: System.Collections.Generic.Dictionary(Of String, String)
+  name.vb: Dictionary(Of String, String)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Collections.Generic.Dictionary`2
+  commentId: T:System.Collections.Generic.Dictionary`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<TKey, TValue>
+  nameWithType: Dictionary<TKey, TValue>
+  fullName: System.Collections.Generic.Dictionary<TKey, TValue>
+  nameWithType.vb: Dictionary(Of TKey, TValue)
+  fullName.vb: System.Collections.Generic.Dictionary(Of TKey, TValue)
+  name.vb: Dictionary(Of TKey, TValue)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: QaliTrackGateway.Models.ServiceInstance.Tags*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Tags
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Tags
+  name: Tags
+  nameWithType: ServiceInstance.Tags
+  fullName: QaliTrackGateway.Models.ServiceInstance.Tags
+- uid: System.String[]
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string[]
+  nameWithType: string[]
+  fullName: string[]
+  nameWithType.vb: String()
+  fullName.vb: String()
+  name.vb: String()
+  spec.csharp:
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: (
+  - name: )
+- uid: QaliTrackGateway.Models.ServiceInstance.RegisteredAt*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.RegisteredAt
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_RegisteredAt
+  name: RegisteredAt
+  nameWithType: ServiceInstance.RegisteredAt
+  fullName: QaliTrackGateway.Models.ServiceInstance.RegisteredAt
+- uid: QaliTrackGateway.Models.ServiceInstance.LastSeen*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.LastSeen
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_LastSeen
+  name: LastSeen
+  nameWithType: ServiceInstance.LastSeen
+  fullName: QaliTrackGateway.Models.ServiceInstance.LastSeen
+- uid: QaliTrackGateway.Models.ServiceInstance.Status*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Status
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Status
+  name: Status
+  nameWithType: ServiceInstance.Status
+  fullName: QaliTrackGateway.Models.ServiceInstance.Status
+- uid: QaliTrackGateway.Models.ServiceInstance.Version*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Version
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Version
+  name: Version
+  nameWithType: ServiceInstance.Version
+  fullName: QaliTrackGateway.Models.ServiceInstance.Version
+- uid: QaliTrackGateway.Models.ServiceInstance.Environment*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.Environment
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_Environment
+  name: Environment
+  nameWithType: ServiceInstance.Environment
+  fullName: QaliTrackGateway.Models.ServiceInstance.Environment
+- uid: QaliTrackGateway.Models.ServiceInstance.IsEnabled*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.IsEnabled
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_IsEnabled
+  name: IsEnabled
+  nameWithType: ServiceInstance.IsEnabled
+  fullName: QaliTrackGateway.Models.ServiceInstance.IsEnabled
+- uid: QaliTrackGateway.Models.ServiceInstance.BaseUrl*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.BaseUrl
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_BaseUrl
+  name: BaseUrl
+  nameWithType: ServiceInstance.BaseUrl
+  fullName: QaliTrackGateway.Models.ServiceInstance.BaseUrl
+- uid: QaliTrackGateway.Models.ServiceInstance.HealthScore*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.HealthScore
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_HealthScore
+  name: HealthScore
+  nameWithType: ServiceInstance.HealthScore
+  fullName: QaliTrackGateway.Models.ServiceInstance.HealthScore
+- uid: System.Double
+  commentId: T:System.Double
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double
+  nameWithType: double
+  fullName: double
+  nameWithType.vb: Double
+  fullName.vb: Double
+  name.vb: Double
+- uid: QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures*
+  commentId: Overload:QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures
+  href: QaliTrackGateway.Models.ServiceInstance.html#QaliTrackGateway_Models_ServiceInstance_ConsecutiveFailures
+  name: ConsecutiveFailures
+  nameWithType: ServiceInstance.ConsecutiveFailures
+  fullName: QaliTrackGateway.Models.ServiceInstance.ConsecutiveFailures

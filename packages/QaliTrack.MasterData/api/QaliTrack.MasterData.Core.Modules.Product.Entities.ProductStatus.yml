@@ -1,0 +1,225 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  id: ProductStatus
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Active
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Discontinued
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Inactive
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.OutOfStock
+  - QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Pending
+  langs:
+  - csharp
+  - vb
+  name: ProductStatus
+  nameWithType: ProductStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ProductStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 101
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: public enum ProductStatus
+    content.vb: Public Enum ProductStatus
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Active
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Active
+  id: Active
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: ProductStatus.Active
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Active
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 103
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Active = 0
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Inactive
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Inactive
+  id: Inactive
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  langs:
+  - csharp
+  - vb
+  name: Inactive
+  nameWithType: ProductStatus.Inactive
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Inactive
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Inactive
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 104
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Inactive = 1
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Discontinued
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Discontinued
+  id: Discontinued
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  langs:
+  - csharp
+  - vb
+  name: Discontinued
+  nameWithType: ProductStatus.Discontinued
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Discontinued
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Discontinued
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 105
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Discontinued = 2
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.OutOfStock
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.OutOfStock
+  id: OutOfStock
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  langs:
+  - csharp
+  - vb
+  name: OutOfStock
+  nameWithType: ProductStatus.OutOfStock
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.OutOfStock
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: OutOfStock
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 106
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: OutOfStock = 3
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Pending
+  commentId: F:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Pending
+  id: Pending
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  langs:
+  - csharp
+  - vb
+  name: Pending
+  nameWithType: ProductStatus.Pending
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.Pending
+  type: Field
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Pending
+    path: src/QaliTrack.MasterData.Core/Modules/Product/Entities/Product.cs
+    startLine: 107
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Product.Entities
+  syntax:
+    content: Pending = 4
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Product.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Product.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Product.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product
+    name: Product
+    href: QaliTrack.MasterData.Core.Modules.Product.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Product.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Product.Entities.html
+- uid: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  commentId: T:QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus
+  parent: QaliTrack.MasterData.Core.Modules.Product.Entities
+  href: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus.html
+  name: ProductStatus
+  nameWithType: ProductStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Product.Entities.ProductStatus

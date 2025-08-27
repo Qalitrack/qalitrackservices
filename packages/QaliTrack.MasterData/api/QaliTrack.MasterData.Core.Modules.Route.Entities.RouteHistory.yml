@@ -1,0 +1,1321 @@
+### YamlMime:ManagedReference
+items:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  id: RouteHistory
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  children:
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId
+  - QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions
+  langs:
+  - csharp
+  - vb
+  name: RouteHistory
+  nameWithType: RouteHistory
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  type: Class
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RouteHistory
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 76
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: 'public class RouteHistory : BaseEntity'
+    content.vb: Public Class RouteHistory Inherits BaseEntity
+  inheritance:
+  - System.Object
+  - QaliTrack.MasterData.Core.Common.BaseEntity
+  inheritedMembers:
+  - QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  - QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  - QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId
+  id: RouteId
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: RouteId
+  nameWithType: RouteHistory.RouteId
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: RouteId
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 78
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public Guid RouteId { get; set; }
+    parameters: []
+    return:
+      type: System.Guid
+    content.vb: Public Property RouteId As Guid
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate
+  id: TripDate
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: TripDate
+  nameWithType: RouteHistory.TripDate
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TripDate
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 79
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public DateTime TripDate { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property TripDate As Date
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime
+  id: ActualDepartureTime
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: ActualDepartureTime
+  nameWithType: RouteHistory.ActualDepartureTime
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ActualDepartureTime
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 80
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public TimeSpan ActualDepartureTime { get; set; }
+    parameters: []
+    return:
+      type: System.TimeSpan
+    content.vb: Public Property ActualDepartureTime As TimeSpan
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime
+  id: ActualArrivalTime
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: ActualArrivalTime
+  nameWithType: RouteHistory.ActualArrivalTime
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ActualArrivalTime
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 81
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public TimeSpan ActualArrivalTime { get; set; }
+    parameters: []
+    return:
+      type: System.TimeSpan
+    content.vb: Public Property ActualArrivalTime As TimeSpan
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes
+  id: ActualDurationMinutes
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: ActualDurationMinutes
+  nameWithType: RouteHistory.ActualDurationMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ActualDurationMinutes
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 82
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public int ActualDurationMinutes { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property ActualDurationMinutes As Integer
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId
+  id: DriverId
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: DriverId
+  nameWithType: RouteHistory.DriverId
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DriverId
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 83
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string? DriverId { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property DriverId As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId
+  id: VehicleId
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: VehicleId
+  nameWithType: RouteHistory.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: VehicleId
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 84
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string? VehicleId { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property VehicleId As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus
+  id: TripStatus
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: TripStatus
+  nameWithType: RouteHistory.TripStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TripStatus
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 85
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string TripStatus { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TripStatus As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason
+  id: DelayReason
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: DelayReason
+  nameWithType: RouteHistory.DelayReason
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DelayReason
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 86
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string? DelayReason { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property DelayReason As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes
+  id: DelayMinutes
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: DelayMinutes
+  nameWithType: RouteHistory.DelayMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: DelayMinutes
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 87
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public int? DelayMinutes { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Int32}
+    content.vb: Public Property DelayMinutes As Integer?
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance
+  id: ActualDistance
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: ActualDistance
+  nameWithType: RouteHistory.ActualDistance
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: ActualDistance
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 88
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public decimal ActualDistance { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property ActualDistance As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed
+  id: FuelConsumed
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: FuelConsumed
+  nameWithType: RouteHistory.FuelConsumed
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FuelConsumed
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 89
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public decimal FuelConsumed { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property FuelConsumed As Decimal
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost
+  id: FuelCost
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: FuelCost
+  nameWithType: RouteHistory.FuelCost
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: FuelCost
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 90
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public decimal? FuelCost { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property FuelCost As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid
+  id: TollsPaid
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: TollsPaid
+  nameWithType: RouteHistory.TollsPaid
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TollsPaid
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 91
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public decimal? TollsPaid { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property TollsPaid As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents
+  id: Incidents
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: Incidents
+  nameWithType: RouteHistory.Incidents
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Incidents
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 92
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string? Incidents { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Incidents As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions
+  id: WeatherConditions
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: WeatherConditions
+  nameWithType: RouteHistory.WeatherConditions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: WeatherConditions
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 93
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string? WeatherConditions { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property WeatherConditions As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions
+  id: TrafficConditions
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: TrafficConditions
+  nameWithType: RouteHistory.TrafficConditions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: TrafficConditions
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 94
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string? TrafficConditions { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property TrafficConditions As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount
+  id: PassengerCount
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: PassengerCount
+  nameWithType: RouteHistory.PassengerCount
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: PassengerCount
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 95
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public int? PassengerCount { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Int32}
+    content.vb: Public Property PassengerCount As Integer?
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue
+  id: Revenue
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: Revenue
+  nameWithType: RouteHistory.Revenue
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Revenue
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 96
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public decimal? Revenue { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Decimal}
+    content.vb: Public Property Revenue As Decimal?
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes
+  id: Notes
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: Notes
+  nameWithType: RouteHistory.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Notes
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 97
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public string? Notes { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Notes As String
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes*
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route
+  commentId: P:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route
+  id: Route
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory
+  langs:
+  - csharp
+  - vb
+  name: Route
+  nameWithType: RouteHistory.Route
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route
+  type: Property
+  source:
+    remote:
+      path: packages/QaliTrack.MasterData/src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+      branch: main
+      repo: https://github.com/surgbc-projects/qalitrackservices.git
+    id: Route
+    path: src/QaliTrack.MasterData.Core/Modules/Route/Entities/Route.cs
+    startLine: 100
+  assemblies:
+  - QaliTrack.MasterData.Core
+  namespace: QaliTrack.MasterData.Core.Modules.Route.Entities
+  syntax:
+    content: public virtual Route Route { get; set; }
+    parameters: []
+    return:
+      type: QaliTrack.MasterData.Core.Modules.Route.Entities.Route
+    content.vb: Public Overridable Property Route As Route
+  overload: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route*
+references:
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+  commentId: N:QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Modules.Route.Entities
+  nameWithType: QaliTrack.MasterData.Core.Modules.Route.Entities
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules
+    name: Modules
+    href: QaliTrack.MasterData.Core.Modules.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route
+    name: Route
+    href: QaliTrack.MasterData.Core.Modules.Route.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Modules.Route.Entities
+    name: Entities
+    href: QaliTrack.MasterData.Core.Modules.Route.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity
+  commentId: T:QaliTrack.MasterData.Core.Common.BaseEntity
+  parent: QaliTrack.MasterData.Core.Common
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html
+  name: BaseEntity
+  nameWithType: BaseEntity
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.Id
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_Id
+  name: Id
+  nameWithType: BaseEntity.Id
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.Id
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedAt
+  name: CreatedAt
+  nameWithType: BaseEntity.CreatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedAt
+  name: UpdatedAt
+  nameWithType: BaseEntity.UpdatedAt
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedAt
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_CreatedBy
+  name: CreatedBy
+  nameWithType: BaseEntity.CreatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.CreatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_UpdatedBy
+  name: UpdatedBy
+  nameWithType: BaseEntity.UpdatedBy
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.UpdatedBy
+- uid: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  commentId: P:QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+  parent: QaliTrack.MasterData.Core.Common.BaseEntity
+  href: QaliTrack.MasterData.Core.Common.BaseEntity.html#QaliTrack_MasterData_Core_Common_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: QaliTrack.MasterData.Core.Common.BaseEntity.IsDeleted
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: QaliTrack.MasterData.Core.Common
+  commentId: N:QaliTrack.MasterData.Core.Common
+  href: QaliTrack.html
+  name: QaliTrack.MasterData.Core.Common
+  nameWithType: QaliTrack.MasterData.Core.Common
+  fullName: QaliTrack.MasterData.Core.Common
+  spec.csharp:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+  spec.vb:
+  - uid: QaliTrack
+    name: QaliTrack
+    href: QaliTrack.html
+  - name: .
+  - uid: QaliTrack.MasterData
+    name: MasterData
+    href: QaliTrack.MasterData.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core
+    name: Core
+    href: QaliTrack.MasterData.Core.html
+  - name: .
+  - uid: QaliTrack.MasterData.Core.Common
+    name: Common
+    href: QaliTrack.MasterData.Core.Common.html
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_RouteId
+  name: RouteId
+  nameWithType: RouteHistory.RouteId
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.RouteId
+- uid: System.Guid
+  commentId: T:System.Guid
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.guid
+  name: Guid
+  nameWithType: Guid
+  fullName: System.Guid
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_TripDate
+  name: TripDate
+  nameWithType: RouteHistory.TripDate
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripDate
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_ActualDepartureTime
+  name: ActualDepartureTime
+  nameWithType: RouteHistory.ActualDepartureTime
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDepartureTime
+- uid: System.TimeSpan
+  commentId: T:System.TimeSpan
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.timespan
+  name: TimeSpan
+  nameWithType: TimeSpan
+  fullName: System.TimeSpan
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_ActualArrivalTime
+  name: ActualArrivalTime
+  nameWithType: RouteHistory.ActualArrivalTime
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualArrivalTime
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_ActualDurationMinutes
+  name: ActualDurationMinutes
+  nameWithType: RouteHistory.ActualDurationMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDurationMinutes
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_DriverId
+  name: DriverId
+  nameWithType: RouteHistory.DriverId
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DriverId
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_VehicleId
+  name: VehicleId
+  nameWithType: RouteHistory.VehicleId
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.VehicleId
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_TripStatus
+  name: TripStatus
+  nameWithType: RouteHistory.TripStatus
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TripStatus
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_DelayReason
+  name: DelayReason
+  nameWithType: RouteHistory.DelayReason
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayReason
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_DelayMinutes
+  name: DelayMinutes
+  nameWithType: RouteHistory.DelayMinutes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.DelayMinutes
+- uid: System.Nullable{System.Int32}
+  commentId: T:System.Nullable{System.Int32}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int?
+  nameWithType: int?
+  fullName: int?
+  nameWithType.vb: Integer?
+  fullName.vb: Integer?
+  name.vb: Integer?
+  spec.csharp:
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+  spec.vb:
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_ActualDistance
+  name: ActualDistance
+  nameWithType: RouteHistory.ActualDistance
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.ActualDistance
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_FuelConsumed
+  name: FuelConsumed
+  nameWithType: RouteHistory.FuelConsumed
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelConsumed
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_FuelCost
+  name: FuelCost
+  nameWithType: RouteHistory.FuelCost
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.FuelCost
+- uid: System.Nullable{System.Decimal}
+  commentId: T:System.Nullable{System.Decimal}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal?
+  nameWithType: decimal?
+  fullName: decimal?
+  nameWithType.vb: Decimal?
+  fullName.vb: Decimal?
+  name.vb: Decimal?
+  spec.csharp:
+  - uid: System.Decimal
+    name: decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+  spec.vb:
+  - uid: System.Decimal
+    name: Decimal
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.decimal
+  - name: '?'
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_TollsPaid
+  name: TollsPaid
+  nameWithType: RouteHistory.TollsPaid
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TollsPaid
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_Incidents
+  name: Incidents
+  nameWithType: RouteHistory.Incidents
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Incidents
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_WeatherConditions
+  name: WeatherConditions
+  nameWithType: RouteHistory.WeatherConditions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.WeatherConditions
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_TrafficConditions
+  name: TrafficConditions
+  nameWithType: RouteHistory.TrafficConditions
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.TrafficConditions
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_PassengerCount
+  name: PassengerCount
+  nameWithType: RouteHistory.PassengerCount
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.PassengerCount
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_Revenue
+  name: Revenue
+  nameWithType: RouteHistory.Revenue
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Revenue
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_Notes
+  name: Notes
+  nameWithType: RouteHistory.Notes
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Notes
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route*
+  commentId: Overload:QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.html#QaliTrack_MasterData_Core_Modules_Route_Entities_RouteHistory_Route
+  name: Route
+  nameWithType: RouteHistory.Route
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.RouteHistory.Route
+- uid: QaliTrack.MasterData.Core.Modules.Route.Entities.Route
+  commentId: T:QaliTrack.MasterData.Core.Modules.Route.Entities.Route
+  parent: QaliTrack.MasterData.Core.Modules.Route.Entities
+  href: QaliTrack.MasterData.Core.Modules.Route.Entities.Route.html
+  name: Route
+  nameWithType: Route
+  fullName: QaliTrack.MasterData.Core.Modules.Route.Entities.Route
