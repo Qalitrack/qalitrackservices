@@ -587,50 +587,103 @@ public class MasterDataDbContext : DbContext
 
     private void ConfigureCrossModuleRelationships(ModelBuilder modelBuilder)
     {
-        // Note: These would be configured with HasOne/WithMany when the referenced entities are added
-        // For now, we'll set up basic indexes and constraints
-
         // Driver-SACCO membership
         modelBuilder.Entity<DriverSaccoMembership>(entity =>
         {
             entity.HasIndex(e => new { e.DriverId, e.SaccoId }).IsUnique();
             entity.HasIndex(e => e.MembershipNumber).IsUnique();
+            
+            entity.HasOne(e => e.Driver)
+                .WithMany()
+                .HasForeignKey(e => e.DriverId);
+                
+            entity.HasOne(e => e.Sacco)
+                .WithMany()
+                .HasForeignKey(e => e.SaccoId);
         });
 
         // Vehicle-Transporter ownership
         modelBuilder.Entity<VehicleTransporterOwnership>(entity =>
         {
             entity.HasIndex(e => new { e.VehicleId, e.TransporterProfileId });
+            
+            entity.HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.VehicleId);
+                
+            entity.HasOne(e => e.TransporterProfile)
+                .WithMany()
+                .HasForeignKey(e => e.TransporterProfileId);
         });
 
         // Driver-Vehicle assignment
         modelBuilder.Entity<DriverVehicleAssignment>(entity =>
         {
             entity.HasIndex(e => new { e.DriverId, e.VehicleId, e.IsActive });
+            
+            entity.HasOne(e => e.Driver)
+                .WithMany()
+                .HasForeignKey(e => e.DriverId);
+                
+            entity.HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.VehicleId);
         });
 
         // Driver-Transporter employment
         modelBuilder.Entity<DriverTransporterEmployment>(entity =>
         {
             entity.HasIndex(e => new { e.DriverId, e.TransporterProfileId });
+            
+            entity.HasOne(e => e.Driver)
+                .WithMany()
+                .HasForeignKey(e => e.DriverId);
+                
+            entity.HasOne(e => e.TransporterProfile)
+                .WithMany()
+                .HasForeignKey(e => e.TransporterProfileId);
         });
 
         // Product-Supplier catalog
         modelBuilder.Entity<ProductSupplierCatalog>(entity =>
         {
             entity.HasIndex(e => new { e.ProductId, e.SupplierProfileId });
+            
+            entity.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId);
+                
+            entity.HasOne(e => e.SupplierProfile)
+                .WithMany()
+                .HasForeignKey(e => e.SupplierProfileId);
         });
 
         // Route-Weighbridge association
         modelBuilder.Entity<RouteWeighbridgeAssociation>(entity =>
         {
             entity.HasIndex(e => new { e.RouteId, e.WeighbridgeId });
+            
+            entity.HasOne(e => e.Route)
+                .WithMany()
+                .HasForeignKey(e => e.RouteId);
+                
+            entity.HasOne(e => e.Weighbridge)
+                .WithMany()
+                .HasForeignKey(e => e.WeighbridgeId);
         });
 
         // Organization-Weighbridge ownership
         modelBuilder.Entity<OrganizationWeighbridgeOwnership>(entity =>
         {
             entity.HasIndex(e => new { e.OrganizationId, e.WeighbridgeId });
+            
+            entity.HasOne(e => e.Organization)
+                .WithMany()
+                .HasForeignKey(e => e.OrganizationId);
+                
+            entity.HasOne(e => e.Weighbridge)
+                .WithMany()
+                .HasForeignKey(e => e.WeighbridgeId);
         });
 
         // Vehicle-SACCO registration
@@ -638,12 +691,24 @@ public class MasterDataDbContext : DbContext
         {
             entity.HasIndex(e => new { e.VehicleId, e.SaccoId });
             entity.HasIndex(e => e.RegistrationNumber).IsUnique();
+            
+            entity.HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.VehicleId);
+                
+            entity.HasOne(e => e.Sacco)
+                .WithMany()
+                .HasForeignKey(e => e.SaccoId);
         });
 
-        // User-Organization-Role
+        // User-Organization-Role (User and Role entities not defined in this context)
         modelBuilder.Entity<UserOrganizationRole>(entity =>
         {
             entity.HasIndex(e => new { e.UserId, e.OrganizationId, e.RoleId }).IsUnique();
+            
+            entity.HasOne(e => e.Organization)
+                .WithMany()
+                .HasForeignKey(e => e.OrganizationId);
         });
     }
 

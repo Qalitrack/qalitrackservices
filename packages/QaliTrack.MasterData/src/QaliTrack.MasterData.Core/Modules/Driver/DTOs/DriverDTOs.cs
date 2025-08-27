@@ -129,6 +129,28 @@ public class CreateDriverLicenseDto
     public string Restrictions { get; set; } = string.Empty;
 }
 
+public class UpdateDriverLicenseDto
+{
+    public string LicenseNumber { get; set; } = string.Empty;
+    public string LicenseClass { get; set; } = string.Empty;
+    public DateTime IssueDate { get; set; }
+    public DateTime ExpiryDate { get; set; }
+    public string IssuingAuthority { get; set; } = string.Empty;
+    public string Restrictions { get; set; } = string.Empty;
+    public string Status { get; set; } = "Active";
+}
+
+public class PatchDriverLicenseDto
+{
+    public string? LicenseNumber { get; set; }
+    public string? LicenseClass { get; set; }
+    public DateTime? IssueDate { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+    public string? IssuingAuthority { get; set; }
+    public string? Restrictions { get; set; }
+    public string? Status { get; set; }
+}
+
 public class DriverLicenseDto
 {
     public Guid Id { get; set; }
@@ -155,6 +177,38 @@ public class CreateDriverTrainingDto
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public string Status { get; set; } = "Active";
+}
+
+public class UpdateDriverTrainingDto
+{
+    public string TrainingName { get; set; } = string.Empty;
+    public string TrainingType { get; set; } = string.Empty;
+    public string? TrainingProvider { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public string Status { get; set; } = "Active";
+    public decimal? Score { get; set; }
+    public bool IsCertified { get; set; } = false;
+    public string? CertificateNumber { get; set; }
+    public DateTime? CertificateExpiryDate { get; set; }
+    public decimal? Cost { get; set; }
+    public string? Notes { get; set; }
+}
+
+public class PatchDriverTrainingDto
+{
+    public string? TrainingName { get; set; }
+    public string? TrainingType { get; set; }
+    public string? TrainingProvider { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public string? Status { get; set; }
+    public decimal? Score { get; set; }
+    public bool? IsCertified { get; set; }
+    public string? CertificateNumber { get; set; }
+    public DateTime? CertificateExpiryDate { get; set; }
+    public decimal? Cost { get; set; }
+    public string? Notes { get; set; }
 }
 
 public class DriverTrainingDto
@@ -186,6 +240,42 @@ public class CreateDriverMedicalDto
     public string IssuingDoctor { get; set; } = string.Empty;
     public string MedicalFacility { get; set; } = string.Empty;
     public string Status { get; set; } = "Active";
+}
+
+public class UpdateDriverMedicalDto
+{
+    public DateTime ExaminationDate { get; set; }
+    public DateTime ExpiryDate { get; set; }
+    public string CertificateNumber { get; set; } = string.Empty;
+    public string IssuingDoctor { get; set; } = string.Empty;
+    public string MedicalFacility { get; set; } = string.Empty;
+    public string Status { get; set; } = "Active";
+    public string? Restrictions { get; set; }
+    public string? Conditions { get; set; }
+    public bool RequiresGlasses { get; set; } = false;
+    public bool RequiresHearingAid { get; set; } = false;
+    public string? BloodType { get; set; }
+    public string? Allergies { get; set; }
+    public string? Medications { get; set; }
+    public string? Notes { get; set; }
+}
+
+public class PatchDriverMedicalDto
+{
+    public DateTime? ExaminationDate { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+    public string? CertificateNumber { get; set; }
+    public string? IssuingDoctor { get; set; }
+    public string? MedicalFacility { get; set; }
+    public string? Status { get; set; }
+    public string? Restrictions { get; set; }
+    public string? Conditions { get; set; }
+    public bool? RequiresGlasses { get; set; }
+    public bool? RequiresHearingAid { get; set; }
+    public string? BloodType { get; set; }
+    public string? Allergies { get; set; }
+    public string? Medications { get; set; }
+    public string? Notes { get; set; }
 }
 
 public class DriverMedicalDto

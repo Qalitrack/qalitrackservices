@@ -51,6 +51,30 @@ public record UpdateWeighbridgeDto(
     string? Notes = null
 );
 
+public record PatchWeighbridgeDto(
+    string? Name = null,
+    string? Location = null,
+    decimal? Latitude = null,
+    decimal? Longitude = null,
+    string? Status = null,
+    string? Type = null,
+    decimal? MaxCapacity = null,
+    decimal? MinCapacity = null,
+    decimal? Accuracy = null,
+    string? Manufacturer = null,
+    string? Model = null,
+    string? CertificateNumber = null,
+    DateTime? CertificateExpiryDate = null,
+    string? CalibrationAuthority = null,
+    string? OperatingHours = null,
+    string? ContactPerson = null,
+    string? ContactPhone = null,
+    decimal? ServiceFee = null,
+    string? Currency = null,
+    bool? IsActive = null,
+    string? Notes = null
+);
+
 public record WeighbridgeSummaryDto
 {
     public Guid Id { get; init; }
@@ -128,6 +152,38 @@ public record CreateWeighbridgeCalibrationDto(
     string? Notes = null
 );
 
+public record UpdateWeighbridgeCalibrationDto(
+    DateTime CalibrationDate,
+    string CalibrationBy,
+    string CertificateNumber,
+    DateTime CertificateExpiryDate,
+    string CalibrationAuthority,
+    string Status,
+    decimal CalibrationCost,
+    decimal? AccuracyAchieved = null,
+    string? TestWeights = null,
+    string? TestResults = null,
+    string? Adjustments = null,
+    DateTime? NextCalibrationDate = null,
+    string? Notes = null
+);
+
+public record PatchWeighbridgeCalibrationDto(
+    DateTime? CalibrationDate = null,
+    string? CalibrationBy = null,
+    string? CertificateNumber = null,
+    DateTime? CertificateExpiryDate = null,
+    string? CalibrationAuthority = null,
+    string? Status = null,
+    decimal? CalibrationCost = null,
+    decimal? AccuracyAchieved = null,
+    string? TestWeights = null,
+    string? TestResults = null,
+    string? Adjustments = null,
+    DateTime? NextCalibrationDate = null,
+    string? Notes = null
+);
+
 public record WeighbridgeCalibrationDto
 {
     public Guid Id { get; init; }
@@ -162,6 +218,40 @@ public record CreateWeighbridgeMaintenanceDto(
     string? WorkPerformed = null,
     string? PartsReplaced = null,
     string Status = "Completed",
+    DateTime? NextMaintenanceDate = null,
+    string? Warranty = null,
+    string? TechnicianName = null,
+    string? Notes = null
+);
+
+public record UpdateWeighbridgeMaintenanceDto(
+    DateTime MaintenanceDate,
+    string MaintenanceType,
+    string ServiceProvider,
+    string Status,
+    decimal ServiceCost,
+    decimal PartsCost,
+    decimal TotalCost,
+    string? WorkOrderNumber = null,
+    string? WorkPerformed = null,
+    string? PartsReplaced = null,
+    DateTime? NextMaintenanceDate = null,
+    string? Warranty = null,
+    string? TechnicianName = null,
+    string? Notes = null
+);
+
+public record PatchWeighbridgeMaintenanceDto(
+    DateTime? MaintenanceDate = null,
+    string? MaintenanceType = null,
+    string? ServiceProvider = null,
+    string? Status = null,
+    decimal? ServiceCost = null,
+    decimal? PartsCost = null,
+    decimal? TotalCost = null,
+    string? WorkOrderNumber = null,
+    string? WorkPerformed = null,
+    string? PartsReplaced = null,
     DateTime? NextMaintenanceDate = null,
     string? Warranty = null,
     string? TechnicianName = null,
@@ -209,6 +299,42 @@ public record CreateWeighbridgeTransactionDto(
     string? Comments = null
 );
 
+public record UpdateWeighbridgeTransactionDto(
+    string TicketNumber,
+    DateTime TransactionDate,
+    string TransactionType,
+    decimal GrossWeight,
+    decimal TareWeight,
+    decimal NetWeight,
+    string WeightUnit,
+    string? VehicleNumber = null,
+    string? DriverName = null,
+    string? CustomerName = null,
+    string? ProductType = null,
+    decimal? ServiceFee = null,
+    string? PaymentMethod = null,
+    string? OperatorName = null,
+    string? Comments = null
+);
+
+public record PatchWeighbridgeTransactionDto(
+    string? TicketNumber = null,
+    DateTime? TransactionDate = null,
+    string? TransactionType = null,
+    decimal? GrossWeight = null,
+    decimal? TareWeight = null,
+    decimal? NetWeight = null,
+    string? WeightUnit = null,
+    string? VehicleNumber = null,
+    string? DriverName = null,
+    string? CustomerName = null,
+    string? ProductType = null,
+    decimal? ServiceFee = null,
+    string? PaymentMethod = null,
+    string? OperatorName = null,
+    string? Comments = null
+);
+
 public record WeighbridgeTransactionDto
 {
     public Guid Id { get; init; }
@@ -243,6 +369,34 @@ public record CreateWeighbridgeDocumentDto(
     long FileSize,
     string UploadedBy,
     string Category = "General",
+    string? Description = null,
+    DateTime? ExpiryDate = null,
+    string? FileUrl = null
+);
+
+public record UpdateWeighbridgeDocumentDto(
+    string FileName,
+    string OriginalFileName,
+    string ContentType,
+    string FilePath,
+    long FileSize,
+    string Category,
+    bool IsActive,
+    string UploadedBy,
+    string? Description = null,
+    DateTime? ExpiryDate = null,
+    string? FileUrl = null
+);
+
+public record PatchWeighbridgeDocumentDto(
+    string? FileName = null,
+    string? OriginalFileName = null,
+    string? ContentType = null,
+    string? FilePath = null,
+    long? FileSize = null,
+    string? Category = null,
+    bool? IsActive = null,
+    string? UploadedBy = null,
     string? Description = null,
     DateTime? ExpiryDate = null,
     string? FileUrl = null

@@ -114,6 +114,28 @@ public record CreateProductSpecificationDto(
     string? Notes = null
 );
 
+public record UpdateProductSpecificationDto(
+    string SpecificationName,
+    string SpecificationValue,
+    string Unit = "",
+    string SpecificationType = "Technical",
+    bool IsCritical = false,
+    string? ToleranceRange = null,
+    string? TestMethod = null,
+    string? Notes = null
+);
+
+public record PatchProductSpecificationDto(
+    string? SpecificationName = null,
+    string? SpecificationValue = null,
+    string? Unit = null,
+    string? SpecificationType = null,
+    bool? IsCritical = null,
+    string? ToleranceRange = null,
+    string? TestMethod = null,
+    string? Notes = null
+);
+
 public record ProductSpecificationDto
 {
     public Guid Id { get; init; }
@@ -142,6 +164,36 @@ public record CreateProductDocumentDto(
     string? Version = null,
     DateTime? ExpiryDate = null,
     string? FileUrl = null
+);
+
+public record UpdateProductDocumentDto(
+    string FileName,
+    string OriginalFileName,
+    string ContentType,
+    string FilePath,
+    long FileSize,
+    string UploadedBy,
+    string Category = "General",
+    string? Description = null,
+    string? Version = null,
+    DateTime? ExpiryDate = null,
+    string? FileUrl = null,
+    bool IsActive = true
+);
+
+public record PatchProductDocumentDto(
+    string? FileName = null,
+    string? OriginalFileName = null,
+    string? ContentType = null,
+    string? FilePath = null,
+    long? FileSize = null,
+    string? UploadedBy = null,
+    string? Category = null,
+    string? Description = null,
+    string? Version = null,
+    DateTime? ExpiryDate = null,
+    string? FileUrl = null,
+    bool? IsActive = null
 );
 
 public record ProductDocumentDto

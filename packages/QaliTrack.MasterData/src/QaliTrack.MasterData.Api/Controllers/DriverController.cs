@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using QaliTrack.MasterData.Core.Common;
 using QaliTrack.MasterData.Core.Modules.Driver.Entities;
 using QaliTrack.MasterData.Core.Modules.Driver.DTOs;
+using QaliTrack.MasterData.Core.Modules.Relationships.DTOs;
+using QaliTrack.MasterData.Core.Modules.Relationships.Entities;
 using QaliTrack.MasterData.Infrastructure.Data;
 
 namespace QaliTrack.MasterData.Api.Controllers;
@@ -344,6 +346,140 @@ public class DriverController : ControllerBase
     }
 
     /// <summary>
+    /// Update driver license
+    /// </summary>
+    [HttpPut("{id}/license")]
+    public async Task<ActionResult<ApiResponse<DriverLicenseDto>>> UpdateDriverLicense(Guid id, UpdateDriverLicenseDto dto)
+    {
+        try
+        {
+            var license = await _context.DriverLicenses
+                .FirstOrDefaultAsync(l => l.DriverId == id);
+
+            if (license == null)
+            {
+                return NotFound(ApiResponse<DriverLicenseDto>.ErrorResponse("Driver license not found"));
+            }
+
+            license.LicenseNumber = dto.LicenseNumber;
+            license.LicenseClass = dto.LicenseClass;
+            license.IssueDate = dto.IssueDate;
+            license.ExpiryDate = dto.ExpiryDate;
+            license.IssuingAuthority = dto.IssuingAuthority;
+            license.Restrictions = dto.Restrictions;
+            license.Status = dto.Status;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new DriverLicenseDto
+            {
+                Id = license.Id,
+                DriverId = license.DriverId,
+                LicenseNumber = license.LicenseNumber,
+                LicenseClass = license.LicenseClass,
+                IssueDate = license.IssueDate,
+                ExpiryDate = license.ExpiryDate,
+                IssuingAuthority = license.IssuingAuthority,
+                Restrictions = license.Restrictions,
+                Status = license.Status,
+                IsExpired = license.ExpiryDate < DateTime.Today,
+                DaysUntilExpiry = (license.ExpiryDate - DateTime.Today).Days,
+                CreatedAt = license.CreatedAt
+            };
+
+            return Ok(ApiResponse<DriverLicenseDto>.SuccessResponse(responseDto, "Driver license updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<DriverLicenseDto>.ErrorResponse("Error updating driver license", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update driver license
+    /// </summary>
+    [HttpPatch("{id}/license")]
+    public async Task<ActionResult<ApiResponse<DriverLicenseDto>>> PatchDriverLicense(Guid id, PatchDriverLicenseDto dto)
+    {
+        try
+        {
+            var license = await _context.DriverLicenses
+                .FirstOrDefaultAsync(l => l.DriverId == id);
+
+            if (license == null)
+            {
+                return NotFound(ApiResponse<DriverLicenseDto>.ErrorResponse("Driver license not found"));
+            }
+
+            if (dto.LicenseNumber != null)
+                license.LicenseNumber = dto.LicenseNumber;
+            if (dto.LicenseClass != null)
+                license.LicenseClass = dto.LicenseClass;
+            if (dto.IssueDate.HasValue)
+                license.IssueDate = dto.IssueDate.Value;
+            if (dto.ExpiryDate.HasValue)
+                license.ExpiryDate = dto.ExpiryDate.Value;
+            if (dto.IssuingAuthority != null)
+                license.IssuingAuthority = dto.IssuingAuthority;
+            if (dto.Restrictions != null)
+                license.Restrictions = dto.Restrictions;
+            if (dto.Status != null)
+                license.Status = dto.Status;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new DriverLicenseDto
+            {
+                Id = license.Id,
+                DriverId = license.DriverId,
+                LicenseNumber = license.LicenseNumber,
+                LicenseClass = license.LicenseClass,
+                IssueDate = license.IssueDate,
+                ExpiryDate = license.ExpiryDate,
+                IssuingAuthority = license.IssuingAuthority,
+                Restrictions = license.Restrictions,
+                Status = license.Status,
+                IsExpired = license.ExpiryDate < DateTime.Today,
+                DaysUntilExpiry = (license.ExpiryDate - DateTime.Today).Days,
+                CreatedAt = license.CreatedAt
+            };
+
+            return Ok(ApiResponse<DriverLicenseDto>.SuccessResponse(responseDto, "Driver license updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<DriverLicenseDto>.ErrorResponse("Error updating driver license", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete driver license
+    /// </summary>
+    [HttpDelete("{id}/license")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteDriverLicense(Guid id)
+    {
+        try
+        {
+            var license = await _context.DriverLicenses
+                .FirstOrDefaultAsync(l => l.DriverId == id);
+
+            if (license == null)
+            {
+                return NotFound(ApiResponse.CreateError("Driver license not found"));
+            }
+
+            _context.DriverLicenses.Remove(license);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Driver license deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting driver license", ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Create/Update driver license
     /// </summary>
     [HttpPost("{id}/license")]
@@ -453,6 +589,161 @@ public class DriverController : ControllerBase
     }
 
     /// <summary>
+    /// Update driver training
+    /// </summary>
+    [HttpPut("{id}/trainings/{trainingId}")]
+    public async Task<ActionResult<ApiResponse<DriverTrainingDto>>> UpdateDriverTraining(Guid id, Guid trainingId, UpdateDriverTrainingDto dto)
+    {
+        try
+        {
+            var training = await _context.DriverTrainings
+                .FirstOrDefaultAsync(t => t.Id == trainingId && t.DriverId == id);
+
+            if (training == null)
+            {
+                return NotFound(ApiResponse<DriverTrainingDto>.ErrorResponse("Driver training not found"));
+            }
+
+            training.TrainingName = dto.TrainingName;
+            training.TrainingType = dto.TrainingType;
+            training.TrainingProvider = dto.TrainingProvider;
+            training.StartDate = dto.StartDate;
+            training.EndDate = dto.EndDate;
+            training.Status = dto.Status;
+            training.Score = dto.Score;
+            training.IsCertified = dto.IsCertified;
+            training.CertificateNumber = dto.CertificateNumber;
+            training.CertificateExpiryDate = dto.CertificateExpiryDate;
+            training.Cost = dto.Cost;
+            training.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new DriverTrainingDto
+            {
+                Id = training.Id,
+                DriverId = training.DriverId,
+                TrainingName = training.TrainingName,
+                TrainingType = training.TrainingType,
+                TrainingProvider = training.TrainingProvider,
+                StartDate = training.StartDate,
+                EndDate = training.EndDate,
+                Status = training.Status,
+                Score = training.Score,
+                IsCertified = training.IsCertified,
+                CertificateNumber = training.CertificateNumber,
+                CertificateExpiryDate = training.CertificateExpiryDate,
+                Cost = training.Cost,
+                Notes = training.Notes,
+                CreatedAt = training.CreatedAt
+            };
+
+            return Ok(ApiResponse<DriverTrainingDto>.SuccessResponse(responseDto, "Driver training updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<DriverTrainingDto>.ErrorResponse("Error updating driver training", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update driver training
+    /// </summary>
+    [HttpPatch("{id}/trainings/{trainingId}")]
+    public async Task<ActionResult<ApiResponse<DriverTrainingDto>>> PatchDriverTraining(Guid id, Guid trainingId, PatchDriverTrainingDto dto)
+    {
+        try
+        {
+            var training = await _context.DriverTrainings
+                .FirstOrDefaultAsync(t => t.Id == trainingId && t.DriverId == id);
+
+            if (training == null)
+            {
+                return NotFound(ApiResponse<DriverTrainingDto>.ErrorResponse("Driver training not found"));
+            }
+
+            if (dto.TrainingName != null)
+                training.TrainingName = dto.TrainingName;
+            if (dto.TrainingType != null)
+                training.TrainingType = dto.TrainingType;
+            if (dto.TrainingProvider != null)
+                training.TrainingProvider = dto.TrainingProvider;
+            if (dto.StartDate.HasValue)
+                training.StartDate = dto.StartDate.Value;
+            if (dto.EndDate.HasValue)
+                training.EndDate = dto.EndDate.Value;
+            if (dto.Status != null)
+                training.Status = dto.Status;
+            if (dto.Score.HasValue)
+                training.Score = dto.Score.Value;
+            if (dto.IsCertified.HasValue)
+                training.IsCertified = dto.IsCertified.Value;
+            if (dto.CertificateNumber != null)
+                training.CertificateNumber = dto.CertificateNumber;
+            if (dto.CertificateExpiryDate.HasValue)
+                training.CertificateExpiryDate = dto.CertificateExpiryDate.Value;
+            if (dto.Cost.HasValue)
+                training.Cost = dto.Cost.Value;
+            if (dto.Notes != null)
+                training.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new DriverTrainingDto
+            {
+                Id = training.Id,
+                DriverId = training.DriverId,
+                TrainingName = training.TrainingName,
+                TrainingType = training.TrainingType,
+                TrainingProvider = training.TrainingProvider,
+                StartDate = training.StartDate,
+                EndDate = training.EndDate,
+                Status = training.Status,
+                Score = training.Score,
+                IsCertified = training.IsCertified,
+                CertificateNumber = training.CertificateNumber,
+                CertificateExpiryDate = training.CertificateExpiryDate,
+                Cost = training.Cost,
+                Notes = training.Notes,
+                CreatedAt = training.CreatedAt
+            };
+
+            return Ok(ApiResponse<DriverTrainingDto>.SuccessResponse(responseDto, "Driver training updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<DriverTrainingDto>.ErrorResponse("Error updating driver training", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete driver training
+    /// </summary>
+    [HttpDelete("{id}/trainings/{trainingId}")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteDriverTraining(Guid id, Guid trainingId)
+    {
+        try
+        {
+            var training = await _context.DriverTrainings
+                .FirstOrDefaultAsync(t => t.Id == trainingId && t.DriverId == id);
+
+            if (training == null)
+            {
+                return NotFound(ApiResponse.CreateError("Driver training not found"));
+            }
+
+            _context.DriverTrainings.Remove(training);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Driver training deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting driver training", ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Add driver training
     /// </summary>
     [HttpPost("{id}/trainings")]
@@ -553,6 +844,173 @@ public class DriverController : ControllerBase
     }
 
     /// <summary>
+    /// Update driver medical record
+    /// </summary>
+    [HttpPut("{id}/medical-records/{recordId}")]
+    public async Task<ActionResult<ApiResponse<DriverMedicalDto>>> UpdateDriverMedicalRecord(Guid id, Guid recordId, UpdateDriverMedicalDto dto)
+    {
+        try
+        {
+            var medicalRecord = await _context.DriverMedicals
+                .FirstOrDefaultAsync(m => m.Id == recordId && m.DriverId == id);
+
+            if (medicalRecord == null)
+            {
+                return NotFound(ApiResponse<DriverMedicalDto>.ErrorResponse("Medical record not found"));
+            }
+
+            medicalRecord.ExaminationDate = dto.ExaminationDate;
+            medicalRecord.ExpiryDate = dto.ExpiryDate;
+            medicalRecord.CertificateNumber = dto.CertificateNumber;
+            medicalRecord.IssuingDoctor = dto.IssuingDoctor;
+            medicalRecord.MedicalFacility = dto.MedicalFacility;
+            medicalRecord.Status = dto.Status;
+            medicalRecord.Restrictions = dto.Restrictions;
+            medicalRecord.Conditions = dto.Conditions;
+            medicalRecord.RequiresGlasses = dto.RequiresGlasses;
+            medicalRecord.RequiresHearingAid = dto.RequiresHearingAid;
+            medicalRecord.BloodType = dto.BloodType;
+            medicalRecord.Allergies = dto.Allergies;
+            medicalRecord.Medications = dto.Medications;
+            medicalRecord.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new DriverMedicalDto
+            {
+                Id = medicalRecord.Id,
+                DriverId = medicalRecord.DriverId,
+                ExaminationDate = medicalRecord.ExaminationDate,
+                ExpiryDate = medicalRecord.ExpiryDate,
+                CertificateNumber = medicalRecord.CertificateNumber,
+                IssuingDoctor = medicalRecord.IssuingDoctor,
+                MedicalFacility = medicalRecord.MedicalFacility,
+                Status = medicalRecord.Status,
+                Restrictions = medicalRecord.Restrictions,
+                Conditions = medicalRecord.Conditions,
+                RequiresGlasses = medicalRecord.RequiresGlasses,
+                RequiresHearingAid = medicalRecord.RequiresHearingAid,
+                BloodType = medicalRecord.BloodType,
+                Allergies = medicalRecord.Allergies,
+                Medications = medicalRecord.Medications,
+                Notes = medicalRecord.Notes,
+                IsExpired = medicalRecord.ExpiryDate < DateTime.Today,
+                CreatedAt = medicalRecord.CreatedAt
+            };
+
+            return Ok(ApiResponse<DriverMedicalDto>.SuccessResponse(responseDto, "Medical record updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<DriverMedicalDto>.ErrorResponse("Error updating medical record", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Partially update driver medical record
+    /// </summary>
+    [HttpPatch("{id}/medical-records/{recordId}")]
+    public async Task<ActionResult<ApiResponse<DriverMedicalDto>>> PatchDriverMedicalRecord(Guid id, Guid recordId, PatchDriverMedicalDto dto)
+    {
+        try
+        {
+            var medicalRecord = await _context.DriverMedicals
+                .FirstOrDefaultAsync(m => m.Id == recordId && m.DriverId == id);
+
+            if (medicalRecord == null)
+            {
+                return NotFound(ApiResponse<DriverMedicalDto>.ErrorResponse("Medical record not found"));
+            }
+
+            if (dto.ExaminationDate.HasValue)
+                medicalRecord.ExaminationDate = dto.ExaminationDate.Value;
+            if (dto.ExpiryDate.HasValue)
+                medicalRecord.ExpiryDate = dto.ExpiryDate.Value;
+            if (dto.CertificateNumber != null)
+                medicalRecord.CertificateNumber = dto.CertificateNumber;
+            if (dto.IssuingDoctor != null)
+                medicalRecord.IssuingDoctor = dto.IssuingDoctor;
+            if (dto.MedicalFacility != null)
+                medicalRecord.MedicalFacility = dto.MedicalFacility;
+            if (dto.Status != null)
+                medicalRecord.Status = dto.Status;
+            if (dto.Restrictions != null)
+                medicalRecord.Restrictions = dto.Restrictions;
+            if (dto.Conditions != null)
+                medicalRecord.Conditions = dto.Conditions;
+            if (dto.RequiresGlasses.HasValue)
+                medicalRecord.RequiresGlasses = dto.RequiresGlasses.Value;
+            if (dto.RequiresHearingAid.HasValue)
+                medicalRecord.RequiresHearingAid = dto.RequiresHearingAid.Value;
+            if (dto.BloodType != null)
+                medicalRecord.BloodType = dto.BloodType;
+            if (dto.Allergies != null)
+                medicalRecord.Allergies = dto.Allergies;
+            if (dto.Medications != null)
+                medicalRecord.Medications = dto.Medications;
+            if (dto.Notes != null)
+                medicalRecord.Notes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            var responseDto = new DriverMedicalDto
+            {
+                Id = medicalRecord.Id,
+                DriverId = medicalRecord.DriverId,
+                ExaminationDate = medicalRecord.ExaminationDate,
+                ExpiryDate = medicalRecord.ExpiryDate,
+                CertificateNumber = medicalRecord.CertificateNumber,
+                IssuingDoctor = medicalRecord.IssuingDoctor,
+                MedicalFacility = medicalRecord.MedicalFacility,
+                Status = medicalRecord.Status,
+                Restrictions = medicalRecord.Restrictions,
+                Conditions = medicalRecord.Conditions,
+                RequiresGlasses = medicalRecord.RequiresGlasses,
+                RequiresHearingAid = medicalRecord.RequiresHearingAid,
+                BloodType = medicalRecord.BloodType,
+                Allergies = medicalRecord.Allergies,
+                Medications = medicalRecord.Medications,
+                Notes = medicalRecord.Notes,
+                IsExpired = medicalRecord.ExpiryDate < DateTime.Today,
+                CreatedAt = medicalRecord.CreatedAt
+            };
+
+            return Ok(ApiResponse<DriverMedicalDto>.SuccessResponse(responseDto, "Medical record updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<DriverMedicalDto>.ErrorResponse("Error updating medical record", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete driver medical record
+    /// </summary>
+    [HttpDelete("{id}/medical-records/{recordId}")]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteDriverMedicalRecord(Guid id, Guid recordId)
+    {
+        try
+        {
+            var medicalRecord = await _context.DriverMedicals
+                .FirstOrDefaultAsync(m => m.Id == recordId && m.DriverId == id);
+
+            if (medicalRecord == null)
+            {
+                return NotFound(ApiResponse.CreateError("Medical record not found"));
+            }
+
+            _context.DriverMedicals.Remove(medicalRecord);
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse.CreateSuccess("Medical record deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.CreateError("Error deleting medical record", ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Add driver medical record
     /// </summary>
     [HttpPost("{id}/medical-records")]
@@ -649,6 +1107,145 @@ public class DriverController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, ApiResponse<PagedResult<DriverDocumentDto>>.ErrorResponse("Error retrieving driver documents", ex.Message));
+        }
+    }
+
+    #endregion
+
+    #region Driver Relationships
+
+    /// <summary>
+    /// Get driver's SACCO memberships
+    /// </summary>
+    [HttpGet("{id}/saccos")]
+    public async Task<ActionResult<ApiResponse<PagedResult<DriverSaccoMembershipDto>>>> GetDriverSaccos(
+        Guid id, [FromQuery] QueryParameters queryParams)
+    {
+        try
+        {
+            var query = _context.DriverSaccoMemberships
+                .Where(m => m.DriverId == id)
+                .Select(m => new DriverSaccoMembershipDto
+                {
+                    Id = m.Id,
+                    DriverId = m.DriverId,
+                    SaccoId = m.SaccoId,
+                    MembershipDate = m.MembershipDate,
+                    ExpiryDate = m.ExpiryDate,
+                    MembershipNumber = m.MembershipNumber,
+                    Status = m.Status,
+                    ShareContribution = m.ShareContribution,
+                    MonthlyContribution = m.MonthlyContribution,
+                    MembershipType = m.MembershipType,
+                    Benefits = m.Benefits,
+                    IsActive = m.IsActive,
+                    Notes = m.Notes,
+                    CreatedAt = m.CreatedAt,
+                    UpdatedAt = m.UpdatedAt,
+                    IsExpired = m.ExpiryDate.HasValue && m.ExpiryDate < DateTime.Today,
+                    DriverName = "Driver Name", // TODO: Join with Driver entity
+                    SaccoName = "SACCO Name" // TODO: Join with SACCO entity
+                })
+                .AsQueryable();
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+            var pagedResult = await query.ToPagedResultAsync(queryParams, baseUrl);
+
+            return Ok(ApiResponse<PagedResult<DriverSaccoMembershipDto>>.SuccessResponse(pagedResult));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<PagedResult<DriverSaccoMembershipDto>>.ErrorResponse("Error retrieving driver SACCO memberships", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Get driver's vehicle assignments
+    /// </summary>
+    [HttpGet("{id}/vehicles")]
+    public async Task<ActionResult<ApiResponse<PagedResult<DriverVehicleAssignmentDto>>>> GetDriverVehicles(
+        Guid id, [FromQuery] QueryParameters queryParams)
+    {
+        try
+        {
+            var query = _context.DriverVehicleAssignments
+                .Where(a => a.DriverId == id)
+                .Select(a => new DriverVehicleAssignmentDto
+                {
+                    Id = a.Id,
+                    DriverId = a.DriverId,
+                    VehicleId = a.VehicleId,
+                    AssignedDate = a.AssignedDate,
+                    UnassignedDate = a.UnassignedDate,
+                    IsPrimary = a.IsPrimary,
+                    IsActive = a.IsActive,
+                    AssignmentType = a.AssignmentType,
+                    Reason = a.Reason,
+                    AssignedBy = a.AssignedBy,
+                    UnassignedBy = a.UnassignedBy,
+                    Notes = a.Notes,
+                    CreatedAt = a.CreatedAt,
+                    UpdatedAt = a.UpdatedAt,
+                    DriverName = "Driver Name", // TODO: Join with Driver entity
+                    VehicleRegistrationNumber = "Vehicle Reg", // TODO: Join with Vehicle entity
+                    IsCurrentlyAssigned = a.IsActive && a.UnassignedDate == null
+                })
+                .AsQueryable();
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+            var pagedResult = await query.ToPagedResultAsync(queryParams, baseUrl);
+
+            return Ok(ApiResponse<PagedResult<DriverVehicleAssignmentDto>>.SuccessResponse(pagedResult));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<PagedResult<DriverVehicleAssignmentDto>>.ErrorResponse("Error retrieving driver vehicle assignments", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Get driver's employment history with transporters
+    /// </summary>
+    [HttpGet("{id}/employment")]
+    public async Task<ActionResult<ApiResponse<PagedResult<DriverTransporterEmploymentDto>>>> GetDriverEmployment(
+        Guid id, [FromQuery] QueryParameters queryParams)
+    {
+        try
+        {
+            var query = _context.DriverTransporterEmployments
+                .Where(e => e.DriverId == id)
+                .Select(e => new DriverTransporterEmploymentDto
+                {
+                    Id = e.Id,
+                    DriverId = e.DriverId,
+                    TransporterProfileId = e.TransporterProfileId,
+                    HireDate = e.HireDate,
+                    TerminationDate = e.TerminationDate,
+                    EmploymentType = e.EmploymentType,
+                    Status = e.Status,
+                    Salary = e.Salary,
+                    Position = e.Position,
+                    Department = e.Department,
+                    ReportsTo = e.ReportsTo,
+                    TerminationReason = e.TerminationReason,
+                    IsActive = e.IsActive,
+                    Notes = e.Notes,
+                    CreatedAt = e.CreatedAt,
+                    UpdatedAt = e.UpdatedAt,
+                    DriverName = "Driver Name", // TODO: Join with Driver entity
+                    TransporterName = "Transporter Name", // TODO: Join with Transporter entity
+                    IsCurrentEmployment = e.IsActive && e.TerminationDate == null
+                })
+                .AsQueryable();
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+            var pagedResult = await query.ToPagedResultAsync(queryParams, baseUrl);
+
+            return Ok(ApiResponse<PagedResult<DriverTransporterEmploymentDto>>.SuccessResponse(pagedResult));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<PagedResult<DriverTransporterEmploymentDto>>.ErrorResponse("Error retrieving driver employment history", ex.Message));
         }
     }
 
