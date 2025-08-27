@@ -1,7 +1,7 @@
 services:
   # Microservices Control Hub - Main Dashboard
   microservices-control-hub:
-    image: microservices-control-hub:local
+    image: ghcr.io/qalitrack/qalitrackservices/microservices-control-hub:latest
     ports:
       - "3000:3000"
     environment:
@@ -24,7 +24,7 @@ services:
   # QaliTrack Services (4 services including backup)
   # Consolidated MasterData Service (replaces 10 individual services)
   qalitrack-masterdata:
-    image: ghcr.io/t-qs-builds/qalitrack-microservices-build/qalitrack-masterdata:latest
+    image: ghcr.io/qalitrack/qalitrackservices/qalitrack-masterdata:latest
     ports:
       - "7001:80"
     environment:
