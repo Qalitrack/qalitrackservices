@@ -107,6 +107,15 @@ app.use('/guides/public/*', (req, res) => {
 
 // Reverse proxy for service guides
 app.use('/guides/:serviceKey', (req, res, next) => {
+  console.log(`[DEBUG-REDIRECT] req.path: "${req.path}", originalUrl: "${req.originalUrl}"`);
+  
+  // Handle trailing slash redirect for root service paths
+  if (req.path === '/' && !req.originalUrl.endsWith('/')) {
+    console.log(`[TRAILING-SLASH] Redirecting ${req.originalUrl} to ${req.originalUrl}/`);
+    return res.redirect(301, req.originalUrl + '/');
+  }
+
+  // Continue with normal proxy handling
   console.log(`[PROXY] Service key: ${req.params.serviceKey}`);
   console.log(`[PROXY] req.path: ${req.path}`);
   console.log(`[PROXY] req.originalUrl: ${req.originalUrl}`);
