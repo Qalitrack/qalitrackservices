@@ -22,19 +22,16 @@ public class MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheSer
                 {
                     if (cachedValue is T directValue)
                     {
-                        logger.LogDebug("Cache hit for key: {Key}", key);
                         return directValue;
                     }
 
                     if (cachedValue is string jsonValue)
                     {
                         var deserializedValue = JsonSerializer.Deserialize<T>(jsonValue);
-                        logger.LogDebug("Cache hit (deserialized) for key: {Key}", key);
                         return deserializedValue;
                     }
                 }
 
-                logger.LogDebug("Cache miss for key: {Key}", key);
                 return default(T);
             }
             catch (Exception ex)
@@ -81,7 +78,6 @@ public class MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheSer
                     _cacheKeys.Add(key);
                 }
 
-                logger.LogDebug("Cache set for key: {Key}", key);
             }
             catch (Exception ex)
             {
@@ -99,7 +95,6 @@ public class MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheSer
             {
                 _cacheKeys.Remove(key);
             }
-            logger.LogDebug("Cache removed for key: {Key}", key);
         }
         catch (Exception ex)
         {
@@ -124,7 +119,6 @@ public class MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheSer
                 await RemoveAsync(key);
             }
 
-            logger.LogDebug("Cache cleared for pattern: {Pattern}, Removed {Count} keys", pattern, keysToRemove.Count);
         }
         catch (Exception ex)
         {

@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Roles;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
@@ -245,20 +244,20 @@ namespace UserService.Api.Controllers
                 _logger.LogInformation("Successfully deleted role with ID {RoleId}", id);
                 return Ok(new { Message = "Role deleted successfully" });
             }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
             {
                 string errorMessage = pgEx.SqlState switch
                 {
-                    "23503" => "Cannot delete role - it is still assigned to users or has other dependencies",
-                    "23514" => "Data validation failed - check constraint violation",
-                    _ => $"Database error: {pgEx.MessageText}"
+                    "23503" => "Cannot delete role due to existing dependencies.",
+                    "23514" => "Role data failed validation.",
+                    _ => "A database error occurred while deleting the role."
                 };
 
                 _logger.LogWarning(ex, "Database constraint error deleting role: {ErrorMessage}", errorMessage);
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = ("Error kinldy contact support"), 
                     StatusCode = 400 
                 });
             }
@@ -301,7 +300,6 @@ namespace UserService.Api.Controllers
                 }
 
                 await _roleService.AssignPermissionToRoleAsync(roleId, permissionId);
-                _logger.LogInformation("Assigned permission {PermissionId} to role {RoleId}", permissionId, roleId);
                 return Ok(new { Message = "Permission assigned to role successfully" });
             }
             catch (KeyNotFoundException ex)
@@ -337,7 +335,6 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Removing permission {PermissionId} from role {RoleId}", permissionId, roleId);
                 
                 if (string.IsNullOrWhiteSpace(roleId) || string.IsNullOrWhiteSpace(permissionId))
                 {
@@ -351,7 +348,6 @@ namespace UserService.Api.Controllers
                     return NotFound("The specified permission was not assigned to this role");
                 }
 
-                _logger.LogInformation("Removed permission {PermissionId} from role {RoleId}", permissionId, roleId);
                 
                 return Ok(new { Message = "Permission removed from role" });
             }

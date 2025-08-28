@@ -41,7 +41,6 @@ public class SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailSer
             };
 
             await client.SendMailAsync(mailMessage);
-            logger.LogInformation("Email sent successfully to {To} with subject '{Subject}'", to, subject);
         }
         catch (Exception ex)
         {

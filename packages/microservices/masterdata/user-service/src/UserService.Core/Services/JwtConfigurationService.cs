@@ -38,19 +38,16 @@ public class JwtConfigurationService : IJwtConfigurationService
     }
 
 
-    public JwtConfiguration GetConfiguration() => _jwtConfig;
 
     public string GetSecretKey()
     {
         if (string.IsNullOrWhiteSpace(_jwtConfig.SecretKey))
         {
-            _logger.LogError("JWT Secret Key is not configured or is empty");
             throw new InvalidOperationException("JWT Secret Key is not configured");
         }
         
         if (_jwtConfig.SecretKey.Length < 32)
         {
-            _logger.LogError("JWT Secret Key is too short. Must be at least 32 characters");
             throw new InvalidOperationException("JWT Secret Key must be at least 32 characters long");
         }
         
@@ -60,7 +57,6 @@ public class JwtConfigurationService : IJwtConfigurationService
     public string GetIssuer() => _jwtConfig.Issuer;
     public string GetAudience() => _jwtConfig.Audience;
     public TimeSpan GetTokenExpiration() => _jwtConfig.TokenExpiration;
-    public TimeSpan GetRefreshTokenExpiration() => _jwtConfig.RefreshTokenExpiration;
 
     private void ValidateConfiguration()
     {
@@ -89,8 +85,6 @@ public class JwtConfigurationService : IJwtConfigurationService
             _logger.LogError(errorMessage);
             throw new InvalidOperationException(errorMessage);
         }
-
-        _logger.LogInformation("JWT Configuration validated successfully. Issuer: {Issuer}, Audience: {Audience}, Token Expiry: {TokenExpiry} minutes", 
-            _jwtConfig.Issuer, _jwtConfig.Audience, _jwtConfig.ExpirationMinutes);
+        
     }
 }

@@ -147,14 +147,12 @@ namespace UserService.Infrastructure.Repositories
 
                 if (!tokens.Any())
                 {
-                    _logger.LogInformation("No tokens found for user {UserId}", userId);
                     return false;
                 }
 
                 _dbContext.PersonalAccessTokens.RemoveRange(tokens);
                 var changes = await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("Deleted {Count} tokens for user {UserId}", tokens.Count, userId);
                 return changes > 0;
             }
             catch (Exception ex)

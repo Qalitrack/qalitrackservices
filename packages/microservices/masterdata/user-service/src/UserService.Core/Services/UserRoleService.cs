@@ -1,11 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Common;
-using UserService.Core.Entities;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 
@@ -35,7 +29,6 @@ namespace UserService.Core.Services
             var user = await userRepository.GetByIdAsync(userId, true);
             if (user == null)
             {
-                logger.LogWarning("User {UserId} does not exist or is deleted", userId);
                 return new ServiceResult { Success = false, Message = "User does not exist or is deleted" };
             }
 
@@ -43,20 +36,17 @@ namespace UserService.Core.Services
             var role = await roleRepository.GetByIdAsync(roleId, true);
             if (role == null)
             {
-                logger.LogWarning("Role {RoleId} does not exist", roleId);
                 return new ServiceResult { Success = false, Message = "Role does not exist" };
             }
 
             if (!role.IsActive)
             {
-                logger.LogWarning("Role {RoleId} is not active", roleId);
                 return new ServiceResult { Success = false, Message = "Role is not active" };
             }
 
             var success = await userRoleRepository.AssignRoleToUserAsync(userId, roleId);
             if (success)
             {
-                logger.LogInformation("Successfully assigned role {RoleId} to user {UserId}", roleId, userId);
                 
                 // Invalidate user permissions cache
                 await cacheService.RemoveAsync($"user_permissions:{userId}");
@@ -76,7 +66,6 @@ namespace UserService.Core.Services
             var user = await userRepository.GetByIdAsync(userId, true);
             if (user == null)
             {
-                logger.LogWarning("User {UserId} does not exist or is deleted", userId);
                 return new ServiceResult { Success = false, Message = "User does not exist or is deleted" };
             }
 
@@ -87,12 +76,10 @@ namespace UserService.Core.Services
                 // Invalidate user permissions cache
                 await cacheService.RemoveAsync($"user_permissions:{userId}");
                 await cacheService.RemovePatternAsync($"user_permission:{userId}:*");
-                logger.LogInformation("Successfully removed role {RoleId} from user {UserId} and cleared cache", roleId, userId);
                 return new ServiceResult { Success = true, Message = "User removed from role." };
             }
             else
             {
-                logger.LogWarning("User {UserId} is not assigned to role {RoleId}", userId, roleId);
                 return new ServiceResult { Success = false, Message = "User is not assigned to this role." };
             }
         }

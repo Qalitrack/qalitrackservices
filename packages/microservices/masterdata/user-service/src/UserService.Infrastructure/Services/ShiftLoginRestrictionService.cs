@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using UserService.Core.Entities;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Services;
 using UserService.Infrastructure.Data;
 
@@ -26,28 +25,20 @@ namespace UserService.Infrastructure.Services
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                _logger.LogInformation("[START] Login restriction check for user {UserId}", userId);
-                
                 // Check if user is an admin first (bypass all restrictions)
                 var isPrivilegedUser = await IsUserAdminAsync(userId);
                 if (isPrivilegedUser)
                 {
-                    _logger.LogInformation("[END] Privileged user {UserId} - bypassing shift restrictions", userId);
-                    return (true, "Privileged access - shift restrictions bypassed");
+                    return (true, "Privileged user - access granted");
                 }
 
                 var currentTime = TimeOnly.FromDateTime(DateTime.UtcNow);
 
                 // 1. Get all currently running shifts (both Strict and Open)
                 var runningShifts = await GetCurrentlyRunningShifts(currentTime);
-
-                _logger.LogDebug("Found {Count} running shifts: {Shifts}",
-                    runningShifts.Count,
-                    string.Join(", ", runningShifts.Select(s => $"{s.Name} (ID: {s.Id}, Mode: {s.Mode})")));
-
+                
                 if (!runningShifts.Any())
                 {
-                    _logger.LogInformation("[END] No shifts running - access granted");
                     return (true, "No active shifts");
                 }
 
@@ -59,12 +50,7 @@ namespace UserService.Infrastructure.Services
                     .Include(us => us.Shift)
                     .Where(us => us.UserId == userId)
                     .ToListAsync();
-
-                _logger.LogDebug("User {UserId} has {Count} shift assignments: {Assignments}",
-                    userId,
-                    userAssignments.Count,
-                    string.Join(", ", userAssignments.Select(a => $"{a.ShiftId} (Mode: {a.Shift?.Mode})")));
-
+                
                 // 4. Check strict shift rules first
                 if (strictShifts.Any())
                 {
@@ -74,8 +60,6 @@ namespace UserService.Infrastructure.Services
                     if (!assignedToStrictShift)
                     {
                         var shiftNames = string.Join(", ", strictShifts.Select(s => s.Name));
-                        _logger.LogWarning("[END] User {UserId} denied login - not assigned to any running strict shifts: {ShiftNames}", 
-                            userId, shiftNames);
                         return (false, $"Access denied. Active strict shift(s): {shiftNames}");
                     }
                 }
@@ -88,14 +72,9 @@ namespace UserService.Infrastructure.Services
                 {
                     var assignedShift = userAssignments
                         .First(us => runningShifts.Any(s => s.Id == us.ShiftId)).Shift;
-                    
-                    _logger.LogInformation("[END] User {UserId} is assigned to running {Mode} shift {ShiftName} - access granted", 
-                        userId, assignedShift.Mode == ShiftMode.Strict ? "Strict" : "Open", assignedShift.Name);
                     return (true, $"Assigned to {assignedShift.Mode} shift: {assignedShift.Name}");
                 }
-
-                // 6. If not assigned to any running shift
-                _logger.LogWarning("[END] User {UserId} denied login - not assigned to any running shifts", userId);
+                
                 return (false, "Access denied. Not assigned to any active shifts");
             }
             catch (Exception ex)
