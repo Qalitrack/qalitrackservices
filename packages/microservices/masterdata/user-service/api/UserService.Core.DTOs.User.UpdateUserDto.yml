@@ -21,7 +21,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdateUserDto
     path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
     startLine: 5
@@ -56,7 +56,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: FirstName
     path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
     startLine: 7
@@ -101,7 +101,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: LastName
     path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
     startLine: 10
@@ -146,7 +146,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MobileNumber
     path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
     startLine: 13
@@ -191,7 +191,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Email
     path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
     startLine: 16
@@ -247,7 +247,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UpdateUserDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsFirstLogin
     path: src/UserService.Core/DTOs/User/UpdateUserDto.cs
     startLine: 20

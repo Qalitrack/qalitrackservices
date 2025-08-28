@@ -6,9 +6,7 @@ items:
   parent: UserService.Core.Services
   children:
   - UserService.Core.Services.IJwtConfigurationService.GetAudience
-  - UserService.Core.Services.IJwtConfigurationService.GetConfiguration
   - UserService.Core.Services.IJwtConfigurationService.GetIssuer
-  - UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration
   - UserService.Core.Services.IJwtConfigurationService.GetSecretKey
   - UserService.Core.Services.IJwtConfigurationService.GetTokenExpiration
   langs:
@@ -22,7 +20,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/JwtConfigurationService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IJwtConfigurationService
     path: src/UserService.Core/Services/JwtConfigurationService.cs
     startLine: 7
@@ -32,34 +30,6 @@ items:
   syntax:
     content: public interface IJwtConfigurationService
     content.vb: Public Interface IJwtConfigurationService
-- uid: UserService.Core.Services.IJwtConfigurationService.GetConfiguration
-  commentId: M:UserService.Core.Services.IJwtConfigurationService.GetConfiguration
-  id: GetConfiguration
-  parent: UserService.Core.Services.IJwtConfigurationService
-  langs:
-  - csharp
-  - vb
-  name: GetConfiguration()
-  nameWithType: IJwtConfigurationService.GetConfiguration()
-  fullName: UserService.Core.Services.IJwtConfigurationService.GetConfiguration()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/JwtConfigurationService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetConfiguration
-    path: src/UserService.Core/Services/JwtConfigurationService.cs
-    startLine: 9
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Services
-  syntax:
-    content: JwtConfiguration GetConfiguration()
-    return:
-      type: UserService.Core.Configuration.JwtConfiguration
-    content.vb: Function GetConfiguration() As JwtConfiguration
-  overload: UserService.Core.Services.IJwtConfigurationService.GetConfiguration*
 - uid: UserService.Core.Services.IJwtConfigurationService.GetSecretKey
   commentId: M:UserService.Core.Services.IJwtConfigurationService.GetSecretKey
   id: GetSecretKey
@@ -75,10 +45,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/JwtConfigurationService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetSecretKey
     path: src/UserService.Core/Services/JwtConfigurationService.cs
-    startLine: 10
+    startLine: 9
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -103,10 +73,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/JwtConfigurationService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetIssuer
     path: src/UserService.Core/Services/JwtConfigurationService.cs
-    startLine: 11
+    startLine: 10
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -131,10 +101,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/JwtConfigurationService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAudience
     path: src/UserService.Core/Services/JwtConfigurationService.cs
-    startLine: 12
+    startLine: 11
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -159,10 +129,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/JwtConfigurationService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetTokenExpiration
     path: src/UserService.Core/Services/JwtConfigurationService.cs
-    startLine: 13
+    startLine: 12
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -172,34 +142,6 @@ items:
       type: System.TimeSpan
     content.vb: Function GetTokenExpiration() As TimeSpan
   overload: UserService.Core.Services.IJwtConfigurationService.GetTokenExpiration*
-- uid: UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration
-  commentId: M:UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration
-  id: GetRefreshTokenExpiration
-  parent: UserService.Core.Services.IJwtConfigurationService
-  langs:
-  - csharp
-  - vb
-  name: GetRefreshTokenExpiration()
-  nameWithType: IJwtConfigurationService.GetRefreshTokenExpiration()
-  fullName: UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/JwtConfigurationService.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetRefreshTokenExpiration
-    path: src/UserService.Core/Services/JwtConfigurationService.cs
-    startLine: 14
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Services
-  syntax:
-    content: TimeSpan GetRefreshTokenExpiration()
-    return:
-      type: System.TimeSpan
-    content.vb: Function GetRefreshTokenExpiration() As TimeSpan
-  overload: UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration*
 references:
 - uid: UserService.Core.Services
   commentId: N:UserService.Core.Services
@@ -231,49 +173,6 @@ references:
   - uid: UserService.Core.Services
     name: Services
     href: UserService.Core.Services.html
-- uid: UserService.Core.Services.IJwtConfigurationService.GetConfiguration*
-  commentId: Overload:UserService.Core.Services.IJwtConfigurationService.GetConfiguration
-  href: UserService.Core.Services.IJwtConfigurationService.html#UserService_Core_Services_IJwtConfigurationService_GetConfiguration
-  name: GetConfiguration
-  nameWithType: IJwtConfigurationService.GetConfiguration
-  fullName: UserService.Core.Services.IJwtConfigurationService.GetConfiguration
-- uid: UserService.Core.Configuration.JwtConfiguration
-  commentId: T:UserService.Core.Configuration.JwtConfiguration
-  parent: UserService.Core.Configuration
-  href: UserService.Core.Configuration.JwtConfiguration.html
-  name: JwtConfiguration
-  nameWithType: JwtConfiguration
-  fullName: UserService.Core.Configuration.JwtConfiguration
-- uid: UserService.Core.Configuration
-  commentId: N:UserService.Core.Configuration
-  href: UserService.html
-  name: UserService.Core.Configuration
-  nameWithType: UserService.Core.Configuration
-  fullName: UserService.Core.Configuration
-  spec.csharp:
-  - uid: UserService
-    name: UserService
-    href: UserService.html
-  - name: .
-  - uid: UserService.Core
-    name: Core
-    href: UserService.Core.html
-  - name: .
-  - uid: UserService.Core.Configuration
-    name: Configuration
-    href: UserService.Core.Configuration.html
-  spec.vb:
-  - uid: UserService
-    name: UserService
-    href: UserService.html
-  - name: .
-  - uid: UserService.Core
-    name: Core
-    href: UserService.Core.html
-  - name: .
-  - uid: UserService.Core.Configuration
-    name: Configuration
-    href: UserService.Core.Configuration.html
 - uid: UserService.Core.Services.IJwtConfigurationService.GetSecretKey*
   commentId: Overload:UserService.Core.Services.IJwtConfigurationService.GetSecretKey
   href: UserService.Core.Services.IJwtConfigurationService.html#UserService_Core_Services_IJwtConfigurationService_GetSecretKey
@@ -324,9 +223,3 @@ references:
   name: TimeSpan
   nameWithType: TimeSpan
   fullName: System.TimeSpan
-- uid: UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration*
-  commentId: Overload:UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration
-  href: UserService.Core.Services.IJwtConfigurationService.html#UserService_Core_Services_IJwtConfigurationService_GetRefreshTokenExpiration
-  name: GetRefreshTokenExpiration
-  nameWithType: IJwtConfigurationService.GetRefreshTokenExpiration
-  fullName: UserService.Core.Services.IJwtConfigurationService.GetRefreshTokenExpiration

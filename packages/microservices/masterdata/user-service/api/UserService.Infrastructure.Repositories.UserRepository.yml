@@ -5,7 +5,7 @@ items:
   id: UserRepository
   parent: UserService.Infrastructure.Repositories
   children:
-  - UserService.Infrastructure.Repositories.UserRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository})
+  - UserService.Infrastructure.Repositories.UserRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)
   - UserService.Infrastructure.Repositories.UserRepository.AssignShiftToUserAsync(System.String,System.String)
   - UserService.Infrastructure.Repositories.UserRepository.DeleteAsync(System.String)
   - UserService.Infrastructure.Repositories.UserRepository.GetAllAsync
@@ -34,10 +34,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserRepository
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 11
+    startLine: 15
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -48,14 +48,18 @@ items:
   - System.Object
   - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
   implements:
-  - UserService.Core.Interfaces.IUserRepository
-  - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}
+  - UserService.Core.Interfaces.Repositories.IUserRepository
+  - UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}
   inheritedMembers:
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._dbContext
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._dbSet
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetByIdAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.HttpContextAccessor
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._logger
   - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.CreateAsync(UserService.Core.Entities.User)
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.RestoreAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetCurrentUserId
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.ExistsAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.SaveChangesAsync
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.Query
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
   - System.Object.GetHashCode
@@ -63,40 +67,42 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Infrastructure.Repositories.UserRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository})
-  commentId: M:UserService.Infrastructure.Repositories.UserRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository})
-  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository})'
+- uid: UserService.Infrastructure.Repositories.UserRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  commentId: M:UserService.Infrastructure.Repositories.UserRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)'
   parent: UserService.Infrastructure.Repositories.UserRepository
   langs:
   - csharp
   - vb
-  name: UserRepository(UserServiceDbContext, ILogger<UserRepository>)
-  nameWithType: UserRepository.UserRepository(UserServiceDbContext, ILogger<UserRepository>)
-  fullName: UserService.Infrastructure.Repositories.UserRepository.UserRepository(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.UserRepository>)
+  name: UserRepository(UserServiceDbContext, ILogger<UserRepository>, IHttpContextAccessor)
+  nameWithType: UserRepository.UserRepository(UserServiceDbContext, ILogger<UserRepository>, IHttpContextAccessor)
+  fullName: UserService.Infrastructure.Repositories.UserRepository.UserRepository(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.UserRepository>, Microsoft.AspNetCore.Http.IHttpContextAccessor)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 16
+    startLine: 15
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   syntax:
-    content: public UserRepository(UserServiceDbContext context, ILogger<UserRepository> logger)
+    content: public UserRepository(UserServiceDbContext context, ILogger<UserRepository> logger, IHttpContextAccessor httpContextAccessor)
     parameters:
     - id: context
       type: UserService.Infrastructure.Data.UserServiceDbContext
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRepository}
-    content.vb: Public Sub New(context As UserServiceDbContext, logger As ILogger(Of UserRepository))
+    - id: httpContextAccessor
+      type: Microsoft.AspNetCore.Http.IHttpContextAccessor
+    content.vb: Public Sub New(context As UserServiceDbContext, logger As ILogger(Of UserRepository), httpContextAccessor As IHttpContextAccessor)
   overload: UserService.Infrastructure.Repositories.UserRepository.#ctor*
-  nameWithType.vb: UserRepository.New(UserServiceDbContext, ILogger(Of UserRepository))
-  fullName.vb: UserService.Infrastructure.Repositories.UserRepository.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.UserRepository))
-  name.vb: New(UserServiceDbContext, ILogger(Of UserRepository))
+  nameWithType.vb: UserRepository.New(UserServiceDbContext, ILogger(Of UserRepository), IHttpContextAccessor)
+  fullName.vb: UserService.Infrastructure.Repositories.UserRepository.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.UserRepository), Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  name.vb: New(UserServiceDbContext, ILogger(Of UserRepository), IHttpContextAccessor)
 - uid: UserService.Infrastructure.Repositories.UserRepository.GetUserPermissionsAsync(System.String)
   commentId: M:UserService.Infrastructure.Repositories.UserRepository.GetUserPermissionsAsync(System.String)
   id: GetUserPermissionsAsync(System.String)
@@ -112,10 +118,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserPermissionsAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 23
+    startLine: 22
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -130,7 +136,7 @@ items:
     content.vb: Public Function GetUserPermissionsAsync(userId As String) As Task(Of IEnumerable(Of Permission))
   overload: UserService.Infrastructure.Repositories.UserRepository.GetUserPermissionsAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.GetUserPermissionsAsync(System.String)
   nameWithType.vb: UserRepository.GetUserPermissionsAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.GetUserPermissionsAsync(String)
   name.vb: GetUserPermissionsAsync(String)
@@ -149,25 +155,25 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUsersByRoleAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 43
+    startLine: 42
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   example: []
   syntax:
-    content: public Task<IEnumerable> GetUsersByRoleAsync(string roleId)
+    content: public Task<IEnumerable<User>> GetUsersByRoleAsync(string roleId)
     parameters:
     - id: roleId
       type: System.String
     return:
-      type: System.Threading.Tasks.Task{System.Collections.IEnumerable}
-    content.vb: Public Function GetUsersByRoleAsync(roleId As String) As Task(Of IEnumerable)
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
+    content.vb: Public Function GetUsersByRoleAsync(roleId As String) As Task(Of IEnumerable(Of User))
   overload: UserService.Infrastructure.Repositories.UserRepository.GetUsersByRoleAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.GetUsersByRoleAsync(System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.GetUsersByRoleAsync(System.String)
   nameWithType.vb: UserRepository.GetUsersByRoleAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.GetUsersByRoleAsync(String)
   name.vb: GetUsersByRoleAsync(String)
@@ -186,14 +192,13 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserRolesAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 50
+    startLine: 51
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
-  example: []
   syntax:
     content: public Task<IEnumerable<UserRole>> GetUserRolesAsync(string userId)
     parameters:
@@ -203,8 +208,6 @@ items:
       type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.UserRole}}
     content.vb: Public Function GetUserRolesAsync(userId As String) As Task(Of IEnumerable(Of UserRole))
   overload: UserService.Infrastructure.Repositories.UserRepository.GetUserRolesAsync*
-  implements:
-  - UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(System.String)
   nameWithType.vb: UserRepository.GetUserRolesAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.GetUserRolesAsync(String)
   name.vb: GetUserRolesAsync(String)
@@ -223,10 +226,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetByEmailAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 75
+    startLine: 60
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -241,7 +244,7 @@ items:
     content.vb: Public Function GetByEmailAsync(email As String) As Task(Of User)
   overload: UserService.Infrastructure.Repositories.UserRepository.GetByEmailAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.GetByEmailAsync(System.String)
   nameWithType.vb: UserRepository.GetByEmailAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.GetByEmailAsync(String)
   name.vb: GetByEmailAsync(String)
@@ -260,10 +263,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserShiftsAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 89
+    startLine: 70
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -278,7 +281,7 @@ items:
     content.vb: Public Function GetUserShiftsAsync(userId As String) As Task(Of IEnumerable(Of UserShift))
   overload: UserService.Infrastructure.Repositories.UserRepository.GetUserShiftsAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.GetUserShiftsAsync(System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftsAsync(System.String)
   nameWithType.vb: UserRepository.GetUserShiftsAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.GetUserShiftsAsync(String)
   name.vb: GetUserShiftsAsync(String)
@@ -297,10 +300,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserShiftByShiftIdAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 96
+    startLine: 77
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -317,7 +320,7 @@ items:
     content.vb: Public Function GetUserShiftByShiftIdAsync(userId As String, shiftId As String) As Task(Of UserShift)
   overload: UserService.Infrastructure.Repositories.UserRepository.GetUserShiftByShiftIdAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
   nameWithType.vb: UserRepository.GetUserShiftByShiftIdAsync(String, String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.GetUserShiftByShiftIdAsync(String, String)
   name.vb: GetUserShiftByShiftIdAsync(String, String)
@@ -336,10 +339,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignShiftToUserAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 102
+    startLine: 83
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -356,7 +359,7 @@ items:
     content.vb: Public Function AssignShiftToUserAsync(userId As String, shiftId As String) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRepository.AssignShiftToUserAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
   nameWithType.vb: UserRepository.AssignShiftToUserAsync(String, String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.AssignShiftToUserAsync(String, String)
   name.vb: AssignShiftToUserAsync(String, String)
@@ -375,10 +378,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemoveShiftFromUserAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 108
+    startLine: 89
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -395,7 +398,7 @@ items:
     content.vb: Public Function RemoveShiftFromUserAsync(userId As String, shiftId As String) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRepository.RemoveShiftFromUserAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
   nameWithType.vb: UserRepository.RemoveShiftFromUserAsync(String, String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.RemoveShiftFromUserAsync(String, String)
   name.vb: RemoveShiftFromUserAsync(String, String)
@@ -414,10 +417,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: HasPermissionAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 114
+    startLine: 95
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -434,7 +437,7 @@ items:
     content.vb: Public Function HasPermissionAsync(userId As String, permissionName As String) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRepository.HasPermissionAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.HasPermissionAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.HasPermissionAsync(System.String,System.String)
   nameWithType.vb: UserRepository.HasPermissionAsync(String, String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.HasPermissionAsync(String, String)
   name.vb: HasPermissionAsync(String, String)
@@ -453,10 +456,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAllAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 127
+    startLine: 108
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -468,7 +471,7 @@ items:
     content.vb: Public Function GetAllAsync() As Task(Of IEnumerable(Of User))
   overload: UserService.Infrastructure.Repositories.UserRepository.GetAllAsync*
   implements:
-  - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetAllAsync
+  - UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetAllAsync
 - uid: UserService.Infrastructure.Repositories.UserRepository.RestoreAsync(System.String)
   commentId: M:UserService.Infrastructure.Repositories.UserRepository.RestoreAsync(System.String)
   id: RestoreAsync(System.String)
@@ -484,10 +487,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RestoreAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 136
+    startLine: 117
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -502,7 +505,7 @@ items:
     content.vb: Public Function RestoreAsync(id As String) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRepository.RestoreAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.RestoreAsync(System.String)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.RestoreAsync(System.String)
   nameWithType.vb: UserRepository.RestoreAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.RestoreAsync(String)
   name.vb: RestoreAsync(String)
@@ -521,10 +524,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdateUserActiveStatusAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 169
+    startLine: 151
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -541,7 +544,7 @@ items:
     content.vb: Public Function UpdateUserActiveStatusAsync(userId As String, isActive As Boolean) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRepository.UpdateUserActiveStatusAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
   nameWithType.vb: UserRepository.UpdateUserActiveStatusAsync(String, Boolean)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.UpdateUserActiveStatusAsync(String, Boolean)
   name.vb: UpdateUserActiveStatusAsync(String, Boolean)
@@ -560,10 +563,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetByIdAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 206
+    startLine: 190
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -580,7 +583,7 @@ items:
     content.vb: Public Function GetByIdAsync(id As String, includeRoles As Boolean = True) As Task(Of User)
   overload: UserService.Infrastructure.Repositories.UserRepository.GetByIdAsync*
   implements:
-  - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
+  - UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
   nameWithType.vb: UserRepository.GetByIdAsync(String, Boolean)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.GetByIdAsync(String, Boolean)
   name.vb: GetByIdAsync(String, Boolean)
@@ -599,10 +602,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 268
+    startLine: 244
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -617,7 +620,7 @@ items:
     content.vb: Public Function DeleteAsync(id As String) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRepository.DeleteAsync*
   implements:
-  - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
+  - UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
   nameWithType.vb: UserRepository.DeleteAsync(String)
   fullName.vb: UserService.Infrastructure.Repositories.UserRepository.DeleteAsync(String)
   name.vb: DeleteAsync(String)
@@ -636,10 +639,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetPagedAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 321
+    startLine: 294
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -654,7 +657,7 @@ items:
     content.vb: Public Function GetPagedAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of User))
   overload: UserService.Infrastructure.Repositories.UserRepository.GetPagedAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
 - uid: UserService.Infrastructure.Repositories.UserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
   commentId: M:UserService.Infrastructure.Repositories.UserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
   id: GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
@@ -670,10 +673,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetDeletedPagedAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 379
+    startLine: 352
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -688,7 +691,7 @@ items:
     content.vb: Public Function GetDeletedPagedAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of User))
   overload: UserService.Infrastructure.Repositories.UserRepository.GetDeletedPagedAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Interfaces.Repositories.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
 - uid: UserService.Infrastructure.Repositories.UserRepository.UpdateAsync(UserService.Core.Entities.User)
   commentId: M:UserService.Infrastructure.Repositories.UserRepository.UpdateAsync(UserService.Core.Entities.User)
   id: UpdateAsync(UserService.Core.Entities.User)
@@ -704,10 +707,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdateAsync
     path: src/UserService.Infrastructure/Repositories/UserRepository.cs
-    startLine: 438
+    startLine: 411
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -723,7 +726,7 @@ items:
   overridden: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
   overload: UserService.Infrastructure.Repositories.UserRepository.UpdateAsync*
   implements:
-  - UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
+  - UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
 references:
 - uid: UserService.Infrastructure.Repositories
   commentId: N:UserService.Infrastructure.Repositories
@@ -795,37 +798,37 @@ references:
   - uid: UserService.Core.Entities.User
     name: User
   - name: )
-- uid: UserService.Core.Interfaces.IUserRepository
-  commentId: T:UserService.Core.Interfaces.IUserRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserRepository.html
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserRepository.html
   name: IUserRepository
   nameWithType: IUserRepository
-  fullName: UserService.Core.Interfaces.IUserRepository
-- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}
-  commentId: T:UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}
-  parent: UserService.Core.Interfaces
-  definition: UserService.Core.Interfaces.IRepository`1
-  href: UserService.Core.Interfaces.IRepository-1.html
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}
+  commentId: T:UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}
+  parent: UserService.Core.Interfaces.Repositories
+  definition: UserService.Core.Interfaces.Repositories.IRepository`1
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html
   name: IRepository<User>
   nameWithType: IRepository<User>
-  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Entities.User>
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<UserService.Core.Entities.User>
   nameWithType.vb: IRepository(Of User)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Entities.User)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of UserService.Core.Entities.User)
   name.vb: IRepository(Of User)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository`1
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1
     name: IRepository
-    href: UserService.Core.Interfaces.IRepository-1.html
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html
   - name: <
   - uid: UserService.Core.Entities.User
     name: User
     href: UserService.Core.Entities.User.html
   - name: '>'
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository`1
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1
     name: IRepository
-    href: UserService.Core.Interfaces.IRepository-1.html
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html
   - name: (
   - name: Of
   - name: " "
@@ -833,56 +836,26 @@ references:
     name: User
     href: UserService.Core.Entities.User.html
   - name: )
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._dbContext
-  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._dbContext
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.HttpContextAccessor
+  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.HttpContextAccessor
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
-  definition: UserService.Infrastructure.Repositories.Repository`1._dbContext
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbContext
-  name: _dbContext
-  nameWithType: Repository<User>._dbContext
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>._dbContext
-  nameWithType.vb: Repository(Of User)._dbContext
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User)._dbContext
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._dbSet
-  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._dbSet
+  definition: UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_HttpContextAccessor
+  name: HttpContextAccessor
+  nameWithType: Repository<User>.HttpContextAccessor
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.HttpContextAccessor
+  nameWithType.vb: Repository(Of User).HttpContextAccessor
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).HttpContextAccessor
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._logger
+  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}._logger
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
-  definition: UserService.Infrastructure.Repositories.Repository`1._dbSet
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbSet
-  name: _dbSet
-  nameWithType: Repository<User>._dbSet
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>._dbSet
-  nameWithType.vb: Repository(Of User)._dbSet
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User)._dbSet
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetByIdAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetByIdAsync(System.Guid)
-  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
-  definition: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  name: GetByIdAsync(Guid)
-  nameWithType: Repository<User>.GetByIdAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.GetByIdAsync(System.Guid)
-  nameWithType.vb: Repository(Of User).GetByIdAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).GetByIdAsync(System.Guid)
-  spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
-  spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
+  definition: UserService.Infrastructure.Repositories.Repository`1._logger
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__logger
+  name: _logger
+  nameWithType: Repository<User>._logger
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>._logger
+  nameWithType.vb: Repository(Of User)._logger
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User)._logger
 - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.CreateAsync(UserService.Core.Entities.User)
   commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.CreateAsync(UserService.Core.Entities.User)
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
@@ -909,36 +882,153 @@ references:
   - uid: UserService.Core.Entities.User
     name: User
   - name: )
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Object)
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
-  definition: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
-  name: DeleteAsync(Guid)
-  nameWithType: Repository<User>.DeleteAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.DeleteAsync(System.Guid)
-  nameWithType.vb: Repository(Of User).DeleteAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).DeleteAsync(System.Guid)
+  definition: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
+  name: DeleteAsync(object)
+  nameWithType: Repository<User>.DeleteAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.DeleteAsync(object)
+  nameWithType.vb: Repository(Of User).DeleteAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).DeleteAsync(Object)
+  name.vb: DeleteAsync(Object)
   spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
   spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: Object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.RestoreAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.RestoreAsync(System.Object)
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
+  definition: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  name: RestoreAsync(object)
+  nameWithType: Repository<User>.RestoreAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.RestoreAsync(object)
+  nameWithType.vb: Repository(Of User).RestoreAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).RestoreAsync(Object)
+  name.vb: RestoreAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetCurrentUserId
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetCurrentUserId
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
+  definition: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  name: GetCurrentUserId()
+  nameWithType: Repository<User>.GetCurrentUserId()
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.GetCurrentUserId()
+  nameWithType.vb: Repository(Of User).GetCurrentUserId()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).GetCurrentUserId()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.ExistsAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.ExistsAsync(System.Object)
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
+  definition: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  name: ExistsAsync(object)
+  nameWithType: Repository<User>.ExistsAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.ExistsAsync(object)
+  nameWithType.vb: Repository(Of User).ExistsAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).ExistsAsync(Object)
+  name.vb: ExistsAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.SaveChangesAsync
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.SaveChangesAsync
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
+  definition: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  name: SaveChangesAsync()
+  nameWithType: Repository<User>.SaveChangesAsync()
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.SaveChangesAsync()
+  nameWithType.vb: Repository(Of User).SaveChangesAsync()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).SaveChangesAsync()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.Query
+  commentId: P:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}.Query
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.User}
+  definition: UserService.Infrastructure.Repositories.Repository`1.Query
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_Query
+  name: Query
+  nameWithType: Repository<User>.Query
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.User>.Query
+  nameWithType.vb: Repository(Of User).Query
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.User).Query
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -1190,12 +1280,12 @@ references:
   - name: " "
   - name: T
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -1208,6 +1298,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -1220,76 +1314,51 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
-- uid: UserService.Core.Interfaces.IRepository`1
-  commentId: T:UserService.Core.Interfaces.IRepository`1
-  href: UserService.Core.Interfaces.IRepository-1.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+- uid: UserService.Core.Interfaces.Repositories.IRepository`1
+  commentId: T:UserService.Core.Interfaces.Repositories.IRepository`1
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html
   name: IRepository<T>
   nameWithType: IRepository<T>
-  fullName: UserService.Core.Interfaces.IRepository<T>
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<T>
   nameWithType.vb: IRepository(Of T)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of T)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of T)
   name.vb: IRepository(Of T)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository`1
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1
     name: IRepository
-    href: UserService.Core.Interfaces.IRepository-1.html
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html
   - name: <
   - name: T
   - name: '>'
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository`1
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1
     name: IRepository
-    href: UserService.Core.Interfaces.IRepository-1.html
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html
   - name: (
   - name: Of
   - name: " "
   - name: T
   - name: )
-- uid: UserService.Infrastructure.Repositories.Repository`1._dbContext
-  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbContext
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbContext
-  name: _dbContext
-  nameWithType: Repository<T>._dbContext
-  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbContext
-  nameWithType.vb: Repository(Of T)._dbContext
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbContext
-- uid: UserService.Infrastructure.Repositories.Repository`1._dbSet
-  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbSet
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbSet
-  name: _dbSet
-  nameWithType: Repository<T>._dbSet
-  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbSet
-  nameWithType.vb: Repository(Of T)._dbSet
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbSet
-- uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  isExternal: true
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  name: GetByIdAsync(Guid)
-  nameWithType: Repository<T>.GetByIdAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetByIdAsync(System.Guid)
-  nameWithType.vb: Repository(Of T).GetByIdAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetByIdAsync(System.Guid)
-  spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
-  spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_HttpContextAccessor
+  name: HttpContextAccessor
+  nameWithType: Repository<T>.HttpContextAccessor
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.HttpContextAccessor
+  nameWithType.vb: Repository(Of T).HttpContextAccessor
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).HttpContextAccessor
+- uid: UserService.Infrastructure.Repositories.Repository`1._logger
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1._logger
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__logger
+  name: _logger
+  nameWithType: Repository<T>._logger
+  fullName: UserService.Infrastructure.Repositories.Repository<T>._logger
+  nameWithType.vb: Repository(Of T)._logger
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._logger
 - uid: UserService.Infrastructure.Repositories.Repository`1.CreateAsync(`0)
   commentId: M:UserService.Infrastructure.Repositories.Repository`1.CreateAsync(`0)
   href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_CreateAsync__0_
@@ -1312,38 +1381,147 @@ references:
   - name: (
   - name: T
   - name: )
-- uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
   isExternal: true
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
-  name: DeleteAsync(Guid)
-  nameWithType: Repository<T>.DeleteAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync(System.Guid)
-  nameWithType.vb: Repository(Of T).DeleteAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).DeleteAsync(System.Guid)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
+  name: DeleteAsync(object)
+  nameWithType: Repository<T>.DeleteAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync(object)
+  nameWithType.vb: Repository(Of T).DeleteAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).DeleteAsync(Object)
+  name.vb: DeleteAsync(Object)
   spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
   spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: Object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  isExternal: true
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  name: RestoreAsync(object)
+  nameWithType: Repository<T>.RestoreAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.RestoreAsync(object)
+  nameWithType.vb: Repository(Of T).RestoreAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).RestoreAsync(Object)
+  name.vb: RestoreAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  name: GetCurrentUserId()
+  nameWithType: Repository<T>.GetCurrentUserId()
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetCurrentUserId()
+  nameWithType.vb: Repository(Of T).GetCurrentUserId()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetCurrentUserId()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  isExternal: true
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  name: ExistsAsync(object)
+  nameWithType: Repository<T>.ExistsAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.ExistsAsync(object)
+  nameWithType.vb: Repository(Of T).ExistsAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).ExistsAsync(Object)
+  name.vb: ExistsAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  name: SaveChangesAsync()
+  nameWithType: Repository<T>.SaveChangesAsync()
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.SaveChangesAsync()
+  nameWithType.vb: Repository(Of T).SaveChangesAsync()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).SaveChangesAsync()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.Query
+  commentId: P:UserService.Infrastructure.Repositories.Repository`1.Query
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_Query
+  name: Query
+  nameWithType: Repository<T>.Query
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.Query
+  nameWithType.vb: Repository(Of T).Query
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).Query
 - uid: UserService.Infrastructure.Repositories.UserRepository.#ctor*
   commentId: Overload:UserService.Infrastructure.Repositories.UserRepository.#ctor
-  href: UserService.Infrastructure.Repositories.UserRepository.html#UserService_Infrastructure_Repositories_UserRepository__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Repositories_UserRepository__
+  href: UserService.Infrastructure.Repositories.UserRepository.html#UserService_Infrastructure_Repositories_UserRepository__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Repositories_UserRepository__Microsoft_AspNetCore_Http_IHttpContextAccessor_
   name: UserRepository
   nameWithType: UserRepository.UserRepository
   fullName: UserService.Infrastructure.Repositories.UserRepository.UserRepository
@@ -1390,6 +1568,14 @@ references:
     name: UserRepository
     href: UserService.Infrastructure.Repositories.UserRepository.html
   - name: )
+- uid: Microsoft.AspNetCore.Http.IHttpContextAccessor
+  commentId: T:Microsoft.AspNetCore.Http.IHttpContextAccessor
+  parent: Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor
+  name: IHttpContextAccessor
+  nameWithType: IHttpContextAccessor
+  fullName: Microsoft.AspNetCore.Http.IHttpContextAccessor
 - uid: UserService.Infrastructure.Data
   commentId: N:UserService.Infrastructure.Data
   href: UserService.html
@@ -1485,25 +1671,62 @@ references:
     name: Logging
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: Microsoft.AspNetCore.Http
+  commentId: N:Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Http
+  nameWithType: Microsoft.AspNetCore.Http
+  fullName: Microsoft.AspNetCore.Http
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
 - uid: UserService.Infrastructure.Repositories.UserRepository.GetUserPermissionsAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.UserRepository.GetUserPermissionsAsync
   href: UserService.Infrastructure.Repositories.UserRepository.html#UserService_Infrastructure_Repositories_UserRepository_GetUserPermissionsAsync_System_String_
   name: GetUserPermissionsAsync
   nameWithType: UserRepository.GetUserPermissionsAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetUserPermissionsAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserPermissionsAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.GetUserPermissionsAsync(System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetUserPermissionsAsync(string)
   nameWithType: IUserRepository.GetUserPermissionsAsync(string)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserPermissionsAsync(string)
   nameWithType.vb: IUserRepository.GetUserPermissionsAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserPermissionsAsync(String)
   name.vb: GetUserPermissionsAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserPermissionsAsync(System.String)
     name: GetUserPermissionsAsync
   - name: (
   - uid: System.String
@@ -1512,7 +1735,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserPermissionsAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserPermissionsAsync(System.String)
     name: GetUserPermissionsAsync
   - name: (
   - uid: System.String
@@ -1649,19 +1872,19 @@ references:
   name: GetUsersByRoleAsync
   nameWithType: UserRepository.GetUsersByRoleAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetUsersByRoleAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetUsersByRoleAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetUsersByRoleAsync(System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUsersByRoleAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.GetUsersByRoleAsync(System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetUsersByRoleAsync(string)
   nameWithType: IUserRepository.GetUsersByRoleAsync(string)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetUsersByRoleAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.GetUsersByRoleAsync(string)
   nameWithType.vb: IUserRepository.GetUsersByRoleAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.GetUsersByRoleAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.GetUsersByRoleAsync(String)
   name.vb: GetUsersByRoleAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUsersByRoleAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUsersByRoleAsync(System.String)
     name: GetUsersByRoleAsync
   - name: (
   - uid: System.String
@@ -1670,7 +1893,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUsersByRoleAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUsersByRoleAsync(System.String)
     name: GetUsersByRoleAsync
   - name: (
   - uid: System.String
@@ -1678,27 +1901,32 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
-- uid: System.Threading.Tasks.Task{System.Collections.IEnumerable}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.IEnumerable}
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable>
-  nameWithType: Task<IEnumerable>
-  fullName: System.Threading.Tasks.Task<System.Collections.IEnumerable>
-  nameWithType.vb: Task(Of IEnumerable)
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.IEnumerable)
-  name.vb: Task(Of IEnumerable)
+  name: Task<IEnumerable<User>>
+  nameWithType: Task<IEnumerable<User>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.Entities.User>>
+  nameWithType.vb: Task(Of IEnumerable(Of User))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.Entities.User))
+  name.vb: Task(Of IEnumerable(Of User))
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: System.Collections.IEnumerable
+  - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.ienumerable
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: UserService.Core.Entities.User
+    name: User
+    href: UserService.Core.Entities.User.html
+  - name: '>'
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -1708,10 +1936,17 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: System.Collections.IEnumerable
+  - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.ienumerable
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Entities.User
+    name: User
+    href: UserService.Core.Entities.User.html
+  - name: )
   - name: )
 - uid: UserService.Infrastructure.Repositories.UserRepository.GetUserRolesAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.UserRepository.GetUserRolesAsync
@@ -1719,35 +1954,6 @@ references:
   name: GetUserRolesAsync
   nameWithType: UserRepository.GetUserRolesAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetUserRolesAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
-  name: GetUserRolesAsync(string)
-  nameWithType: IUserRepository.GetUserRolesAsync(string)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(string)
-  nameWithType.vb: IUserRepository.GetUserRolesAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(String)
-  name.vb: GetUserRolesAsync(String)
-  spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(System.String)
-    name: GetUserRolesAsync
-  - name: (
-  - uid: System.String
-    name: string
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
-  spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserRolesAsync(System.String)
-    name: GetUserRolesAsync
-  - name: (
-  - uid: System.String
-    name: String
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.string
-  - name: )
 - uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.UserRole}}
   commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.UserRole}}
   parent: System.Threading.Tasks
@@ -1801,19 +2007,19 @@ references:
   name: GetByEmailAsync
   nameWithType: UserRepository.GetByEmailAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetByEmailAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetByEmailAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.GetByEmailAsync(System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetByEmailAsync(string)
   nameWithType: IUserRepository.GetByEmailAsync(string)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.GetByEmailAsync(string)
   nameWithType.vb: IUserRepository.GetByEmailAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.GetByEmailAsync(String)
   name.vb: GetByEmailAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetByEmailAsync(System.String)
     name: GetByEmailAsync
   - name: (
   - uid: System.String
@@ -1822,7 +2028,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetByEmailAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetByEmailAsync(System.String)
     name: GetByEmailAsync
   - name: (
   - uid: System.String
@@ -1869,19 +2075,19 @@ references:
   name: GetUserShiftsAsync
   nameWithType: UserRepository.GetUserShiftsAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetUserShiftsAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetUserShiftsAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetUserShiftsAsync(System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftsAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftsAsync(System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetUserShiftsAsync(string)
   nameWithType: IUserRepository.GetUserShiftsAsync(string)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetUserShiftsAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftsAsync(string)
   nameWithType.vb: IUserRepository.GetUserShiftsAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.GetUserShiftsAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftsAsync(String)
   name.vb: GetUserShiftsAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserShiftsAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftsAsync(System.String)
     name: GetUserShiftsAsync
   - name: (
   - uid: System.String
@@ -1890,7 +2096,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserShiftsAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftsAsync(System.String)
     name: GetUserShiftsAsync
   - name: (
   - uid: System.String
@@ -1951,19 +2157,19 @@ references:
   name: GetUserShiftByShiftIdAsync
   nameWithType: UserRepository.GetUserShiftByShiftIdAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetUserShiftByShiftIdAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetUserShiftByShiftIdAsync(string, string)
   nameWithType: IUserRepository.GetUserShiftByShiftIdAsync(string, string)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(string, string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftByShiftIdAsync(string, string)
   nameWithType.vb: IUserRepository.GetUserShiftByShiftIdAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftByShiftIdAsync(String, String)
   name.vb: GetUserShiftByShiftIdAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
     name: GetUserShiftByShiftIdAsync
   - name: (
   - uid: System.String
@@ -1978,7 +2184,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetUserShiftByShiftIdAsync(System.String,System.String)
     name: GetUserShiftByShiftIdAsync
   - name: (
   - uid: System.String
@@ -2031,19 +2237,19 @@ references:
   name: AssignShiftToUserAsync
   nameWithType: UserRepository.AssignShiftToUserAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.AssignShiftToUserAsync
-- uid: UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: AssignShiftToUserAsync(string, string)
   nameWithType: IUserRepository.AssignShiftToUserAsync(string, string)
-  fullName: UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(string, string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.AssignShiftToUserAsync(string, string)
   nameWithType.vb: IUserRepository.AssignShiftToUserAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.AssignShiftToUserAsync(String, String)
   name.vb: AssignShiftToUserAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
     name: AssignShiftToUserAsync
   - name: (
   - uid: System.String
@@ -2058,7 +2264,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.AssignShiftToUserAsync(System.String,System.String)
     name: AssignShiftToUserAsync
   - name: (
   - uid: System.String
@@ -2113,19 +2319,19 @@ references:
   name: RemoveShiftFromUserAsync
   nameWithType: UserRepository.RemoveShiftFromUserAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.RemoveShiftFromUserAsync
-- uid: UserService.Core.Interfaces.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: RemoveShiftFromUserAsync(string, string)
   nameWithType: IUserRepository.RemoveShiftFromUserAsync(string, string)
-  fullName: UserService.Core.Interfaces.IUserRepository.RemoveShiftFromUserAsync(string, string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.RemoveShiftFromUserAsync(string, string)
   nameWithType.vb: IUserRepository.RemoveShiftFromUserAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.RemoveShiftFromUserAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.RemoveShiftFromUserAsync(String, String)
   name.vb: RemoveShiftFromUserAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
     name: RemoveShiftFromUserAsync
   - name: (
   - uid: System.String
@@ -2140,7 +2346,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.RemoveShiftFromUserAsync(System.String,System.String)
     name: RemoveShiftFromUserAsync
   - name: (
   - uid: System.String
@@ -2160,19 +2366,19 @@ references:
   name: HasPermissionAsync
   nameWithType: UserRepository.HasPermissionAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.HasPermissionAsync
-- uid: UserService.Core.Interfaces.IUserRepository.HasPermissionAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.HasPermissionAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.HasPermissionAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.HasPermissionAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: HasPermissionAsync(string, string)
   nameWithType: IUserRepository.HasPermissionAsync(string, string)
-  fullName: UserService.Core.Interfaces.IUserRepository.HasPermissionAsync(string, string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.HasPermissionAsync(string, string)
   nameWithType.vb: IUserRepository.HasPermissionAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.HasPermissionAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.HasPermissionAsync(String, String)
   name.vb: HasPermissionAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.HasPermissionAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.HasPermissionAsync(System.String,System.String)
     name: HasPermissionAsync
   - name: (
   - uid: System.String
@@ -2187,7 +2393,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.HasPermissionAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.HasPermissionAsync(System.String,System.String)
     name: HasPermissionAsync
   - name: (
   - uid: System.String
@@ -2207,91 +2413,46 @@ references:
   name: GetAllAsync
   nameWithType: UserRepository.GetAllAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetAllAsync
-- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetAllAsync
-  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetAllAsync
-  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}
-  definition: UserService.Core.Interfaces.IRepository`1.GetAllAsync
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+- uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetAllAsync
+  parent: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}
+  definition: UserService.Core.Interfaces.Repositories.IRepository`1.GetAllAsync
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetAllAsync
   name: GetAllAsync()
   nameWithType: IRepository<User>.GetAllAsync()
-  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Entities.User>.GetAllAsync()
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<UserService.Core.Entities.User>.GetAllAsync()
   nameWithType.vb: IRepository(Of User).GetAllAsync()
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Entities.User).GetAllAsync()
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of UserService.Core.Entities.User).GetAllAsync()
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetAllAsync
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetAllAsync
   - name: (
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetAllAsync
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetAllAsync
   - name: (
   - name: )
-- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
-  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.Entities.User}}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IEnumerable<User>>
-  nameWithType: Task<IEnumerable<User>>
-  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.Entities.User>>
-  nameWithType.vb: Task(Of IEnumerable(Of User))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.Entities.User))
-  name.vb: Task(Of IEnumerable(Of User))
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: <
-  - uid: UserService.Core.Entities.User
-    name: User
-  - name: '>'
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: System.Collections.Generic.IEnumerable`1
-    name: IEnumerable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
-  - name: (
-  - name: Of
-  - name: " "
-  - uid: UserService.Core.Entities.User
-    name: User
-  - name: )
-  - name: )
-- uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync
-  commentId: M:UserService.Core.Interfaces.IRepository`1.GetAllAsync
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+- uid: UserService.Core.Interfaces.Repositories.IRepository`1.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository`1.GetAllAsync
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetAllAsync
   name: GetAllAsync()
   nameWithType: IRepository<T>.GetAllAsync()
-  fullName: UserService.Core.Interfaces.IRepository<T>.GetAllAsync()
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<T>.GetAllAsync()
   nameWithType.vb: IRepository(Of T).GetAllAsync()
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetAllAsync()
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of T).GetAllAsync()
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetAllAsync
   - name: (
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository`1.GetAllAsync
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetAllAsync
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetAllAsync
   - name: (
   - name: )
 - uid: UserService.Infrastructure.Repositories.UserRepository.RestoreAsync*
@@ -2300,19 +2461,19 @@ references:
   name: RestoreAsync
   nameWithType: UserRepository.RestoreAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.RestoreAsync
-- uid: UserService.Core.Interfaces.IUserRepository.RestoreAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.RestoreAsync(System.String)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.RestoreAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.RestoreAsync(System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: RestoreAsync(string)
   nameWithType: IUserRepository.RestoreAsync(string)
-  fullName: UserService.Core.Interfaces.IUserRepository.RestoreAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.RestoreAsync(string)
   nameWithType.vb: IUserRepository.RestoreAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.RestoreAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.RestoreAsync(String)
   name.vb: RestoreAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.RestoreAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.RestoreAsync(System.String)
     name: RestoreAsync
   - name: (
   - uid: System.String
@@ -2321,7 +2482,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.RestoreAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.RestoreAsync(System.String)
     name: RestoreAsync
   - name: (
   - uid: System.String
@@ -2335,19 +2496,19 @@ references:
   name: UpdateUserActiveStatusAsync
   nameWithType: UserRepository.UpdateUserActiveStatusAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.UpdateUserActiveStatusAsync
-- uid: UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: UpdateUserActiveStatusAsync(string, bool)
   nameWithType: IUserRepository.UpdateUserActiveStatusAsync(string, bool)
-  fullName: UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(string, bool)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.UpdateUserActiveStatusAsync(string, bool)
   nameWithType.vb: IUserRepository.UpdateUserActiveStatusAsync(String, Boolean)
-  fullName.vb: UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRepository.UpdateUserActiveStatusAsync(String, Boolean)
   name.vb: UpdateUserActiveStatusAsync(String, Boolean)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
     name: UpdateUserActiveStatusAsync
   - name: (
   - uid: System.String
@@ -2362,7 +2523,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.UpdateUserActiveStatusAsync(System.String,System.Boolean)
     name: UpdateUserActiveStatusAsync
   - name: (
   - uid: System.String
@@ -2393,21 +2554,21 @@ references:
   name: GetByIdAsync
   nameWithType: UserRepository.GetByIdAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetByIdAsync
-- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
-  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
-  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}
-  definition: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+- uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
+  parent: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}
+  definition: UserService.Core.Interfaces.Repositories.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetByIdAsync_System_String_System_Boolean_
   name: GetByIdAsync(string, bool)
   nameWithType: IRepository<User>.GetByIdAsync(string, bool)
-  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Entities.User>.GetByIdAsync(string, bool)
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<UserService.Core.Entities.User>.GetByIdAsync(string, bool)
   nameWithType.vb: IRepository(Of User).GetByIdAsync(String, Boolean)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Entities.User).GetByIdAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of UserService.Core.Entities.User).GetByIdAsync(String, Boolean)
   name.vb: GetByIdAsync(String, Boolean)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetByIdAsync_System_String_System_Boolean_
   - name: (
   - uid: System.String
     name: string
@@ -2421,9 +2582,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.GetByIdAsync(System.String,System.Boolean)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetByIdAsync_System_String_System_Boolean_
   - name: (
   - uid: System.String
     name: String
@@ -2436,20 +2597,20 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
-- uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
-  commentId: M:UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+- uid: UserService.Core.Interfaces.Repositories.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository`1.GetByIdAsync(System.String,System.Boolean)
   isExternal: true
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetByIdAsync_System_String_System_Boolean_
   name: GetByIdAsync(string, bool)
   nameWithType: IRepository<T>.GetByIdAsync(string, bool)
-  fullName: UserService.Core.Interfaces.IRepository<T>.GetByIdAsync(string, bool)
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<T>.GetByIdAsync(string, bool)
   nameWithType.vb: IRepository(Of T).GetByIdAsync(String, Boolean)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).GetByIdAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of T).GetByIdAsync(String, Boolean)
   name.vb: GetByIdAsync(String, Boolean)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.GetByIdAsync(System.String,System.Boolean)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetByIdAsync_System_String_System_Boolean_
   - name: (
   - uid: System.String
     name: string
@@ -2463,9 +2624,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository`1.GetByIdAsync(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.GetByIdAsync(System.String,System.Boolean)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_GetByIdAsync_System_String_System_Boolean_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_GetByIdAsync_System_String_System_Boolean_
   - name: (
   - uid: System.String
     name: String
@@ -2484,21 +2645,21 @@ references:
   name: DeleteAsync
   nameWithType: UserRepository.DeleteAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.DeleteAsync
-- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
-  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}
-  definition: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+- uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
+  parent: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}
+  definition: UserService.Core.Interfaces.Repositories.IRepository`1.DeleteAsync(System.String)
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_DeleteAsync_System_String_
   name: DeleteAsync(string)
   nameWithType: IRepository<User>.DeleteAsync(string)
-  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Entities.User>.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<UserService.Core.Entities.User>.DeleteAsync(string)
   nameWithType.vb: IRepository(Of User).DeleteAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Entities.User).DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of UserService.Core.Entities.User).DeleteAsync(String)
   name.vb: DeleteAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -2506,29 +2667,29 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: String
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
-- uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+- uid: UserService.Core.Interfaces.Repositories.IRepository`1.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository`1.DeleteAsync(System.String)
   isExternal: true
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_DeleteAsync_System_String_
   name: DeleteAsync(string)
   nameWithType: IRepository<T>.DeleteAsync(string)
-  fullName: UserService.Core.Interfaces.IRepository<T>.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<T>.DeleteAsync(string)
   nameWithType.vb: IRepository(Of T).DeleteAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of T).DeleteAsync(String)
   name.vb: DeleteAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -2536,9 +2697,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository`1.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -2551,21 +2712,21 @@ references:
   name: GetPagedAsync
   nameWithType: UserRepository.GetPagedAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetPagedAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   name: GetPagedAsync(PaginationParameters)
   nameWithType: IUserRepository.GetPagedAsync(PaginationParameters)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GetPagedAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
     name: PaginationParameters
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GetPagedAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
@@ -2667,21 +2828,21 @@ references:
   name: GetDeletedPagedAsync
   nameWithType: UserRepository.GetDeletedPagedAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.GetDeletedPagedAsync
-- uid: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  commentId: M:UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  parent: UserService.Core.Interfaces.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.Repositories.IUserRepository
   name: GetDeletedPagedAsync(PaginationParameters)
   nameWithType: IUserRepository.GetDeletedPagedAsync(PaginationParameters)
-  fullName: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GetDeletedPagedAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
     name: PaginationParameters
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository.GetDeletedPagedAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GetDeletedPagedAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
@@ -2719,29 +2880,29 @@ references:
   name: UpdateAsync
   nameWithType: UserRepository.UpdateAsync
   fullName: UserService.Infrastructure.Repositories.UserRepository.UpdateAsync
-- uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
-  commentId: M:UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
-  parent: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}
-  definition: UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_UpdateAsync__0_
+- uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
+  parent: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}
+  definition: UserService.Core.Interfaces.Repositories.IRepository`1.UpdateAsync(`0)
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_UpdateAsync__0_
   name: UpdateAsync(User)
   nameWithType: IRepository<User>.UpdateAsync(User)
-  fullName: UserService.Core.Interfaces.IRepository<UserService.Core.Entities.User>.UpdateAsync(UserService.Core.Entities.User)
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<UserService.Core.Entities.User>.UpdateAsync(UserService.Core.Entities.User)
   nameWithType.vb: IRepository(Of User).UpdateAsync(User)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of UserService.Core.Entities.User).UpdateAsync(UserService.Core.Entities.User)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of UserService.Core.Entities.User).UpdateAsync(UserService.Core.Entities.User)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_UpdateAsync__0_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_UpdateAsync__0_
   - name: (
   - uid: UserService.Core.Entities.User
     name: User
     href: UserService.Core.Entities.User.html
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository{UserService.Core.Entities.User}.UpdateAsync(UserService.Core.Entities.User)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_UpdateAsync__0_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_UpdateAsync__0_
   - name: (
   - uid: UserService.Core.Entities.User
     name: User
@@ -2776,25 +2937,25 @@ references:
   - name: (
   - name: T
   - name: )
-- uid: UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
-  commentId: M:UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
-  href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_UpdateAsync__0_
+- uid: UserService.Core.Interfaces.Repositories.IRepository`1.UpdateAsync(`0)
+  commentId: M:UserService.Core.Interfaces.Repositories.IRepository`1.UpdateAsync(`0)
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_UpdateAsync__0_
   name: UpdateAsync(T)
   nameWithType: IRepository<T>.UpdateAsync(T)
-  fullName: UserService.Core.Interfaces.IRepository<T>.UpdateAsync(T)
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<T>.UpdateAsync(T)
   nameWithType.vb: IRepository(Of T).UpdateAsync(T)
-  fullName.vb: UserService.Core.Interfaces.IRepository(Of T).UpdateAsync(T)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of T).UpdateAsync(T)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.UpdateAsync(`0)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_UpdateAsync__0_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_UpdateAsync__0_
   - name: (
   - name: T
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IRepository`1.UpdateAsync(`0)
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1.UpdateAsync(`0)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IRepository-1.html#UserService_Core_Interfaces_IRepository_1_UpdateAsync__0_
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html#UserService_Core_Interfaces_Repositories_IRepository_1_UpdateAsync__0_
   - name: (
   - name: T
   - name: )

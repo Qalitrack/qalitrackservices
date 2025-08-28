@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Infrastructure.Repositories
+  commentId: N:BackupService.Infrastructure.Repositories
+  id: BackupService.Infrastructure.Repositories
+  children:
+  - BackupService.Infrastructure.Repositories.MicroserviceRepository
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Infrastructure.Repositories
+  nameWithType: BackupService.Infrastructure.Repositories
+  fullName: BackupService.Infrastructure.Repositories
+  type: Namespace
+  assemblies:
+  - BackupService.Infrastructure
+references:
+- uid: BackupService.Infrastructure.Repositories.MicroserviceRepository
+  commentId: T:BackupService.Infrastructure.Repositories.MicroserviceRepository
+  href: BackupService.Infrastructure.Repositories.MicroserviceRepository.html
+  name: MicroserviceRepository
+  nameWithType: MicroserviceRepository
+  fullName: BackupService.Infrastructure.Repositories.MicroserviceRepository

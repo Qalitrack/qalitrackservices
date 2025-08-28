@@ -1,0 +1,175 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.Emails.IEmailService
+  commentId: T:UserService.Core.Interfaces.Emails.IEmailService
+  id: IEmailService
+  parent: UserService.Core.Interfaces.Emails
+  children:
+  - UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: IEmailService
+  nameWithType: IEmailService
+  fullName: UserService.Core.Interfaces.Emails.IEmailService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Emails/IEmaliService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IEmailService
+    path: src/UserService.Core/Interfaces/Emails/IEmaliService.cs
+    startLine: 2
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Emails
+  syntax:
+    content: public interface IEmailService
+    content.vb: Public Interface IEmailService
+- uid: UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync(System.String,System.String,System.String)
+  id: SendEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Core.Interfaces.Emails.IEmailService
+  langs:
+  - csharp
+  - vb
+  name: SendEmailAsync(string, string, string)
+  nameWithType: IEmailService.SendEmailAsync(string, string, string)
+  fullName: UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync(string, string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Emails/IEmaliService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: SendEmailAsync
+    path: src/UserService.Core/Interfaces/Emails/IEmaliService.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Emails
+  syntax:
+    content: Task SendEmailAsync(string to, string subject, string body)
+    parameters:
+    - id: to
+      type: System.String
+    - id: subject
+      type: System.String
+    - id: body
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function SendEmailAsync([to] As String, subject As String, body As String) As Task
+  overload: UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync*
+  nameWithType.vb: IEmailService.SendEmailAsync(String, String, String)
+  fullName.vb: UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync(String, String, String)
+  name.vb: SendEmailAsync(String, String, String)
+references:
+- uid: UserService.Core.Interfaces.Emails
+  commentId: N:UserService.Core.Interfaces.Emails
+  href: UserService.html
+  name: UserService.Core.Interfaces.Emails
+  nameWithType: UserService.Core.Interfaces.Emails
+  fullName: UserService.Core.Interfaces.Emails
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html
+- uid: UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync*
+  commentId: Overload:UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync
+  href: UserService.Core.Interfaces.Emails.IEmailService.html#UserService_Core_Interfaces_Emails_IEmailService_SendEmailAsync_System_String_System_String_System_String_
+  name: SendEmailAsync
+  nameWithType: IEmailService.SendEmailAsync
+  fullName: UserService.Core.Interfaces.Emails.IEmailService.SendEmailAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

@@ -21,7 +21,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/UserShift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserShift
     path: src/UserService.Core/Entities/UserShift.cs
     startLine: 2
@@ -63,7 +63,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/UserShift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserId
     path: src/UserService.Core/Entities/UserShift.cs
     startLine: 4
@@ -92,7 +92,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/UserShift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: User
     path: src/UserService.Core/Entities/UserShift.cs
     startLine: 5
@@ -121,7 +121,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/UserShift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftId
     path: src/UserService.Core/Entities/UserShift.cs
     startLine: 7
@@ -150,7 +150,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/UserShift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Shift
     path: src/UserService.Core/Entities/UserShift.cs
     startLine: 8
@@ -179,7 +179,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/UserShift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignedAt
     path: src/UserService.Core/Entities/UserShift.cs
     startLine: 10

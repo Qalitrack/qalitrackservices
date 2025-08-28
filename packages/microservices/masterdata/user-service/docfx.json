@@ -4,7 +4,7 @@
     {
       "src": [
         {
-          "src": "./src",
+          "src": ".",
           "files": [
              "UserService.Api/UserService.Api.csproj",
             "UserService.Core/UserService.Core.csproj", 

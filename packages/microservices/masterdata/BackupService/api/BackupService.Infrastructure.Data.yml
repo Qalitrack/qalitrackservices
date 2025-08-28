@@ -1,0 +1,68 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Infrastructure.Data
+  commentId: N:BackupService.Infrastructure.Data
+  id: BackupService.Infrastructure.Data
+  children:
+  - BackupService.Infrastructure.Data.BackupServiceDbContext
+  - BackupService.Infrastructure.Data.BackupServiceDbContextFactory
+  - BackupService.Infrastructure.Data.DatabaseSeeder
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Infrastructure.Data
+  nameWithType: BackupService.Infrastructure.Data
+  fullName: BackupService.Infrastructure.Data
+  type: Namespace
+  assemblies:
+  - BackupService.Infrastructure
+references:
+- uid: BackupService.Infrastructure.Data.BackupServiceDbContext
+  commentId: T:BackupService.Infrastructure.Data.BackupServiceDbContext
+  parent: BackupService.Infrastructure.Data
+  href: BackupService.Infrastructure.Data.BackupServiceDbContext.html
+  name: BackupServiceDbContext
+  nameWithType: BackupServiceDbContext
+  fullName: BackupService.Infrastructure.Data.BackupServiceDbContext
+- uid: BackupService.Infrastructure.Data.BackupServiceDbContextFactory
+  commentId: T:BackupService.Infrastructure.Data.BackupServiceDbContextFactory
+  href: BackupService.Infrastructure.Data.BackupServiceDbContextFactory.html
+  name: BackupServiceDbContextFactory
+  nameWithType: BackupServiceDbContextFactory
+  fullName: BackupService.Infrastructure.Data.BackupServiceDbContextFactory
+- uid: BackupService.Infrastructure.Data.DatabaseSeeder
+  commentId: T:BackupService.Infrastructure.Data.DatabaseSeeder
+  href: BackupService.Infrastructure.Data.DatabaseSeeder.html
+  name: DatabaseSeeder
+  nameWithType: DatabaseSeeder
+  fullName: BackupService.Infrastructure.Data.DatabaseSeeder
+- uid: BackupService.Infrastructure.Data
+  commentId: N:BackupService.Infrastructure.Data
+  href: BackupService.html
+  name: BackupService.Infrastructure.Data
+  nameWithType: BackupService.Infrastructure.Data
+  fullName: BackupService.Infrastructure.Data
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Infrastructure
+    name: Infrastructure
+    href: BackupService.Infrastructure.html
+  - name: .
+  - uid: BackupService.Infrastructure.Data
+    name: Data
+    href: BackupService.Infrastructure.Data.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Infrastructure
+    name: Infrastructure
+    href: BackupService.Infrastructure.html
+  - name: .
+  - uid: BackupService.Infrastructure.Data
+    name: Data
+    href: BackupService.Infrastructure.Data.html

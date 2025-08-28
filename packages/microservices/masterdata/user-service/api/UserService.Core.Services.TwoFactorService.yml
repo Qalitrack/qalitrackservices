@@ -5,7 +5,7 @@ items:
   id: TwoFactorService
   parent: UserService.Core.Services
   children:
-  - UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
+  - UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.Services.ICacheService,UserService.Core.Interfaces.Emails.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
   - UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync(System.String)
   - UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
   - UserService.Core.Services.TwoFactorService.GetAttemptCountAsync(System.String)
@@ -23,10 +23,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TwoFactorService
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 8
+    startLine: 9
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -36,7 +36,7 @@ items:
   inheritance:
   - System.Object
   implements:
-  - UserService.Core.Interfaces.ITwoFactorService
+  - UserService.Core.Interfaces.Services.ITwoFactorService
   inheritedMembers:
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
@@ -45,25 +45,25 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
-  commentId: M:UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
-  id: '#ctor(UserService.Core.Interfaces.ICacheService,UserService.Core.Interfaces.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})'
+- uid: UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.Services.ICacheService,UserService.Core.Interfaces.Emails.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
+  commentId: M:UserService.Core.Services.TwoFactorService.#ctor(UserService.Core.Interfaces.Services.ICacheService,UserService.Core.Interfaces.Emails.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})
+  id: '#ctor(UserService.Core.Interfaces.Services.ICacheService,UserService.Core.Interfaces.Emails.IEmailQueueService,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService})'
   parent: UserService.Core.Services.TwoFactorService
   langs:
   - csharp
   - vb
   name: TwoFactorService(ICacheService, IEmailQueueService, ILogger<TwoFactorService>)
   nameWithType: TwoFactorService.TwoFactorService(ICacheService, IEmailQueueService, ILogger<TwoFactorService>)
-  fullName: UserService.Core.Services.TwoFactorService.TwoFactorService(UserService.Core.Interfaces.ICacheService, UserService.Core.Interfaces.IEmailQueueService, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.TwoFactorService>)
+  fullName: UserService.Core.Services.TwoFactorService.TwoFactorService(UserService.Core.Interfaces.Services.ICacheService, UserService.Core.Interfaces.Emails.IEmailQueueService, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.TwoFactorService>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 17
+    startLine: 9
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -71,15 +71,15 @@ items:
     content: public TwoFactorService(ICacheService cacheService, IEmailQueueService emailQueueService, ILogger<TwoFactorService> logger)
     parameters:
     - id: cacheService
-      type: UserService.Core.Interfaces.ICacheService
+      type: UserService.Core.Interfaces.Services.ICacheService
     - id: emailQueueService
-      type: UserService.Core.Interfaces.IEmailQueueService
+      type: UserService.Core.Interfaces.Emails.IEmailQueueService
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService}
     content.vb: Public Sub New(cacheService As ICacheService, emailQueueService As IEmailQueueService, logger As ILogger(Of TwoFactorService))
   overload: UserService.Core.Services.TwoFactorService.#ctor*
   nameWithType.vb: TwoFactorService.New(ICacheService, IEmailQueueService, ILogger(Of TwoFactorService))
-  fullName.vb: UserService.Core.Services.TwoFactorService.New(UserService.Core.Interfaces.ICacheService, UserService.Core.Interfaces.IEmailQueueService, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.TwoFactorService))
+  fullName.vb: UserService.Core.Services.TwoFactorService.New(UserService.Core.Interfaces.Services.ICacheService, UserService.Core.Interfaces.Emails.IEmailQueueService, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.TwoFactorService))
   name.vb: New(ICacheService, IEmailQueueService, ILogger(Of TwoFactorService))
 - uid: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
   commentId: M:UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
@@ -96,10 +96,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GenerateAndSendCodeAsync
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 27
+    startLine: 19
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -116,7 +116,7 @@ items:
     content.vb: Public Function GenerateAndSendCodeAsync(userId As String, email As String) As Task(Of ServiceResult)
   overload: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync*
   implements:
-  - UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
   nameWithType.vb: TwoFactorService.GenerateAndSendCodeAsync(String, String)
   fullName.vb: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync(String, String)
   name.vb: GenerateAndSendCodeAsync(String, String)
@@ -135,10 +135,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: VerifyCodeAsync
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 97
+    startLine: 86
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -155,7 +155,7 @@ items:
     content.vb: Public Function VerifyCodeAsync(sessionId As String, code As String) As Task(Of ServiceResult)
   overload: UserService.Core.Services.TwoFactorService.VerifyCodeAsync*
   implements:
-  - UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
   nameWithType.vb: TwoFactorService.VerifyCodeAsync(String, String)
   fullName.vb: UserService.Core.Services.TwoFactorService.VerifyCodeAsync(String, String)
   name.vb: VerifyCodeAsync(String, String)
@@ -174,10 +174,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreateTwoFactorSessionAsync
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 186
+    startLine: 169
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -192,7 +192,7 @@ items:
     content.vb: Public Function CreateTwoFactorSessionAsync(userId As String) As Task(Of String)
   overload: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync*
   implements:
-  - UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
   nameWithType.vb: TwoFactorService.CreateTwoFactorSessionAsync(String)
   fullName.vb: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync(String)
   name.vb: CreateTwoFactorSessionAsync(String)
@@ -211,10 +211,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserIdFromSessionAsync
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 199
+    startLine: 180
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -229,7 +229,7 @@ items:
     content.vb: Public Function GetUserIdFromSessionAsync(sessionId As String) As Task(Of String)
   overload: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync*
   implements:
-  - UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
   nameWithType.vb: TwoFactorService.GetUserIdFromSessionAsync(String)
   fullName.vb: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync(String)
   name.vb: GetUserIdFromSessionAsync(String)
@@ -248,10 +248,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAttemptCountAsync
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 205
+    startLine: 186
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -266,7 +266,7 @@ items:
     content.vb: Public Function GetAttemptCountAsync(userId As String) As Task(Of Integer)
   overload: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync*
   implements:
-  - UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
   nameWithType.vb: TwoFactorService.GetAttemptCountAsync(String)
   fullName.vb: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync(String)
   name.vb: GetAttemptCountAsync(String)
@@ -285,10 +285,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/TwoFactorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsSessionValidAsync
     path: src/UserService.Core/Services/TwoFactorService.cs
-    startLine: 212
+    startLine: 193
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -303,7 +303,7 @@ items:
     content.vb: Public Function IsSessionValidAsync(sessionId As String) As Task(Of Boolean)
   overload: UserService.Core.Services.TwoFactorService.IsSessionValidAsync*
   implements:
-  - UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
   nameWithType.vb: TwoFactorService.IsSessionValidAsync(String)
   fullName.vb: UserService.Core.Services.TwoFactorService.IsSessionValidAsync(String)
   name.vb: IsSessionValidAsync(String)
@@ -349,13 +349,13 @@ references:
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: UserService.Core.Interfaces.ITwoFactorService
-  commentId: T:UserService.Core.Interfaces.ITwoFactorService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ITwoFactorService.html
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService
+  commentId: T:UserService.Core.Interfaces.Services.ITwoFactorService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html
   name: ITwoFactorService
   nameWithType: ITwoFactorService
-  fullName: UserService.Core.Interfaces.ITwoFactorService
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -582,12 +582,12 @@ references:
   name: System
   nameWithType: System
   fullName: System
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -600,6 +600,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -612,29 +616,33 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: UserService.Core.Services.TwoFactorService.#ctor*
   commentId: Overload:UserService.Core.Services.TwoFactorService.#ctor
-  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService__ctor_UserService_Core_Interfaces_ICacheService_UserService_Core_Interfaces_IEmailQueueService_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_TwoFactorService__
+  href: UserService.Core.Services.TwoFactorService.html#UserService_Core_Services_TwoFactorService__ctor_UserService_Core_Interfaces_Services_ICacheService_UserService_Core_Interfaces_Emails_IEmailQueueService_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_TwoFactorService__
   name: TwoFactorService
   nameWithType: TwoFactorService.TwoFactorService
   fullName: UserService.Core.Services.TwoFactorService.TwoFactorService
   nameWithType.vb: TwoFactorService.New
   fullName.vb: UserService.Core.Services.TwoFactorService.New
   name.vb: New
-- uid: UserService.Core.Interfaces.ICacheService
-  commentId: T:UserService.Core.Interfaces.ICacheService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ICacheService.html
+- uid: UserService.Core.Interfaces.Services.ICacheService
+  commentId: T:UserService.Core.Interfaces.Services.ICacheService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.ICacheService.html
   name: ICacheService
   nameWithType: ICacheService
-  fullName: UserService.Core.Interfaces.ICacheService
-- uid: UserService.Core.Interfaces.IEmailQueueService
-  commentId: T:UserService.Core.Interfaces.IEmailQueueService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IEmailQueueService.html
+  fullName: UserService.Core.Interfaces.Services.ICacheService
+- uid: UserService.Core.Interfaces.Emails.IEmailQueueService
+  commentId: T:UserService.Core.Interfaces.Emails.IEmailQueueService
+  parent: UserService.Core.Interfaces.Emails
+  href: UserService.Core.Interfaces.Emails.IEmailQueueService.html
   name: IEmailQueueService
   nameWithType: IEmailQueueService
-  fullName: UserService.Core.Interfaces.IEmailQueueService
+  fullName: UserService.Core.Interfaces.Emails.IEmailQueueService
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.TwoFactorService}
   parent: Microsoft.Extensions.Logging
@@ -668,6 +676,44 @@ references:
     name: TwoFactorService
     href: UserService.Core.Services.TwoFactorService.html
   - name: )
+- uid: UserService.Core.Interfaces.Emails
+  commentId: N:UserService.Core.Interfaces.Emails
+  href: UserService.html
+  name: UserService.Core.Interfaces.Emails
+  nameWithType: UserService.Core.Interfaces.Emails
+  fullName: UserService.Core.Interfaces.Emails
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true
@@ -739,21 +785,21 @@ references:
   name: GenerateAndSendCodeAsync
   nameWithType: TwoFactorService.GenerateAndSendCodeAsync
   fullName: UserService.Core.Services.TwoFactorService.GenerateAndSendCodeAsync
-- uid: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
   isExternal: true
-  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
   name: GenerateAndSendCodeAsync(string, string)
   nameWithType: ITwoFactorService.GenerateAndSendCodeAsync(string, string)
-  fullName: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(string, string)
   nameWithType.vb: ITwoFactorService.GenerateAndSendCodeAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(String, String)
   name.vb: GenerateAndSendCodeAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
     name: GenerateAndSendCodeAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -767,9 +813,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
     name: GenerateAndSendCodeAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -897,21 +943,21 @@ references:
   name: VerifyCodeAsync
   nameWithType: TwoFactorService.VerifyCodeAsync
   fullName: UserService.Core.Services.TwoFactorService.VerifyCodeAsync
-- uid: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
   isExternal: true
-  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
   name: VerifyCodeAsync(string, string)
   nameWithType: ITwoFactorService.VerifyCodeAsync(string, string)
-  fullName: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(string, string)
   nameWithType.vb: ITwoFactorService.VerifyCodeAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(String, String)
   name.vb: VerifyCodeAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
     name: VerifyCodeAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -925,9 +971,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
     name: VerifyCodeAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -946,21 +992,21 @@ references:
   name: CreateTwoFactorSessionAsync
   nameWithType: TwoFactorService.CreateTwoFactorSessionAsync
   fullName: UserService.Core.Services.TwoFactorService.CreateTwoFactorSessionAsync
-- uid: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
-  parent: UserService.Core.Interfaces.ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
   isExternal: true
-  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
   name: CreateTwoFactorSessionAsync(string)
   nameWithType: ITwoFactorService.CreateTwoFactorSessionAsync(string)
-  fullName: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(string)
   nameWithType.vb: ITwoFactorService.CreateTwoFactorSessionAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(String)
   name.vb: CreateTwoFactorSessionAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
     name: CreateTwoFactorSessionAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -968,9 +1014,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
     name: CreateTwoFactorSessionAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1018,21 +1064,21 @@ references:
   name: GetUserIdFromSessionAsync
   nameWithType: TwoFactorService.GetUserIdFromSessionAsync
   fullName: UserService.Core.Services.TwoFactorService.GetUserIdFromSessionAsync
-- uid: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
-  parent: UserService.Core.Interfaces.ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
   isExternal: true
-  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
   name: GetUserIdFromSessionAsync(string)
   nameWithType: ITwoFactorService.GetUserIdFromSessionAsync(string)
-  fullName: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(string)
   nameWithType.vb: ITwoFactorService.GetUserIdFromSessionAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(String)
   name.vb: GetUserIdFromSessionAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
     name: GetUserIdFromSessionAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1040,9 +1086,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
     name: GetUserIdFromSessionAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1055,21 +1101,21 @@ references:
   name: GetAttemptCountAsync
   nameWithType: TwoFactorService.GetAttemptCountAsync
   fullName: UserService.Core.Services.TwoFactorService.GetAttemptCountAsync
-- uid: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
-  parent: UserService.Core.Interfaces.ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
   isExternal: true
-  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetAttemptCountAsync_System_String_
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetAttemptCountAsync_System_String_
   name: GetAttemptCountAsync(string)
   nameWithType: ITwoFactorService.GetAttemptCountAsync(string)
-  fullName: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(string)
   nameWithType.vb: ITwoFactorService.GetAttemptCountAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(String)
   name.vb: GetAttemptCountAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
     name: GetAttemptCountAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetAttemptCountAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetAttemptCountAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1077,9 +1123,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.GetAttemptCountAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
     name: GetAttemptCountAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_GetAttemptCountAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetAttemptCountAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1127,21 +1173,21 @@ references:
   name: IsSessionValidAsync
   nameWithType: TwoFactorService.IsSessionValidAsync
   fullName: UserService.Core.Services.TwoFactorService.IsSessionValidAsync
-- uid: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
-  parent: UserService.Core.Interfaces.ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
   isExternal: true
-  href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_IsSessionValidAsync_System_String_
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_IsSessionValidAsync_System_String_
   name: IsSessionValidAsync(string)
   nameWithType: ITwoFactorService.IsSessionValidAsync(string)
-  fullName: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(string)
   nameWithType.vb: ITwoFactorService.IsSessionValidAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(String)
   name.vb: IsSessionValidAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
     name: IsSessionValidAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_IsSessionValidAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_IsSessionValidAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1149,9 +1195,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ITwoFactorService.IsSessionValidAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
     name: IsSessionValidAsync
-    href: UserService.Core.Interfaces.ITwoFactorService.html#UserService_Core_Interfaces_ITwoFactorService_IsSessionValidAsync_System_String_
+    href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_IsSessionValidAsync_System_String_
   - name: (
   - uid: System.String
     name: String

@@ -174,7 +174,6 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
 
 
         /// <summary>
-        /// <summary>
         /// Get available backups
         /// </summary>
         /// <param name="microservice">Optional microservice filter</param>

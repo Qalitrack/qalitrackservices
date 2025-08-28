@@ -18,7 +18,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Middleware/GlobalExceptionMiddleware.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GlobalExceptionMiddleware
     path: src/UserService.Api/Middleware/GlobalExceptionMiddleware.cs
     startLine: 6
@@ -53,7 +53,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Middleware/GlobalExceptionMiddleware.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Middleware/GlobalExceptionMiddleware.cs
     startLine: 11
@@ -87,7 +87,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Middleware/GlobalExceptionMiddleware.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: InvokeAsync
     path: src/UserService.Api/Middleware/GlobalExceptionMiddleware.cs
     startLine: 17

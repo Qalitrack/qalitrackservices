@@ -1,0 +1,168 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
+  id: UserService.Core.Interfaces.Repositories
+  children:
+  - UserService.Core.Interfaces.Repositories.IPasswordPolicyRepository
+  - UserService.Core.Interfaces.Repositories.IPermissionsRepository
+  - UserService.Core.Interfaces.Repositories.IRepository`1
+  - UserService.Core.Interfaces.Repositories.IRolePermissionRepository
+  - UserService.Core.Interfaces.Repositories.IRoleRepository
+  - UserService.Core.Interfaces.Repositories.IShiftRepository
+  - UserService.Core.Interfaces.Repositories.ITokenRepository
+  - UserService.Core.Interfaces.Repositories.ITokenService
+  - UserService.Core.Interfaces.Repositories.IUserRepository
+  - UserService.Core.Interfaces.Repositories.IUserRoleRepository
+  - UserService.Core.Interfaces.Repositories.IUserShiftRepository
+  - UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Interfaces.Repositories.IPasswordPolicyRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IPasswordPolicyRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IPasswordPolicyRepository.html
+  name: IPasswordPolicyRepository
+  nameWithType: IPasswordPolicyRepository
+  fullName: UserService.Core.Interfaces.Repositories.IPasswordPolicyRepository
+- uid: UserService.Core.Interfaces.Repositories.IPermissionsRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IPermissionsRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IPermissionsRepository.html
+  name: IPermissionsRepository
+  nameWithType: IPermissionsRepository
+  fullName: UserService.Core.Interfaces.Repositories.IPermissionsRepository
+- uid: UserService.Core.Interfaces.Repositories.IRepository`1
+  commentId: T:UserService.Core.Interfaces.Repositories.IRepository`1
+  href: UserService.Core.Interfaces.Repositories.IRepository-1.html
+  name: IRepository<T>
+  nameWithType: IRepository<T>
+  fullName: UserService.Core.Interfaces.Repositories.IRepository<T>
+  nameWithType.vb: IRepository(Of T)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IRepository(Of T)
+  name.vb: IRepository(Of T)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1
+    name: IRepository
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1
+    name: IRepository
+    href: UserService.Core.Interfaces.Repositories.IRepository-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: UserService.Core.Interfaces.Repositories.IRolePermissionRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IRolePermissionRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IRolePermissionRepository.html
+  name: IRolePermissionRepository
+  nameWithType: IRolePermissionRepository
+  fullName: UserService.Core.Interfaces.Repositories.IRolePermissionRepository
+- uid: UserService.Core.Interfaces.Repositories.IRoleRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IRoleRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IRoleRepository.html
+  name: IRoleRepository
+  nameWithType: IRoleRepository
+  fullName: UserService.Core.Interfaces.Repositories.IRoleRepository
+- uid: UserService.Core.Interfaces.Repositories.IShiftRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IShiftRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IShiftRepository.html
+  name: IShiftRepository
+  nameWithType: IShiftRepository
+  fullName: UserService.Core.Interfaces.Repositories.IShiftRepository
+- uid: UserService.Core.Interfaces.Repositories.ITokenRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.ITokenRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.ITokenRepository.html
+  name: ITokenRepository
+  nameWithType: ITokenRepository
+  fullName: UserService.Core.Interfaces.Repositories.ITokenRepository
+- uid: UserService.Core.Interfaces.Repositories.ITokenService
+  commentId: T:UserService.Core.Interfaces.Repositories.ITokenService
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.ITokenService.html
+  name: ITokenService
+  nameWithType: ITokenService
+  fullName: UserService.Core.Interfaces.Repositories.ITokenService
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserRepository.html
+  name: IUserRepository
+  nameWithType: IUserRepository
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserRoleRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserRoleRepository.html
+  name: IUserRoleRepository
+  nameWithType: IUserRoleRepository
+  fullName: UserService.Core.Interfaces.Repositories.IUserRoleRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserShiftRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserShiftRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserShiftRepository.html
+  name: IUserShiftRepository
+  nameWithType: IUserShiftRepository
+  fullName: UserService.Core.Interfaces.Repositories.IUserShiftRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserStatusRepository.html
+  name: IUserStatusRepository
+  nameWithType: IUserStatusRepository
+  fullName: UserService.Core.Interfaces.Repositories.IUserStatusRepository
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
+  href: UserService.html
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html

@@ -17,7 +17,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/PrepDb.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PrepDb
     path: src/UserService.Infrastructure/Data/PrepDb.cs
     startLine: 11
@@ -52,7 +52,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/PrepDb.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PrepPopulation
     path: src/UserService.Infrastructure/Data/PrepDb.cs
     startLine: 13

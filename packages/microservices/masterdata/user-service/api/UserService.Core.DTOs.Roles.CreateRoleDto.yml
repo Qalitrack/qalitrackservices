@@ -19,7 +19,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreateRoleDto
     path: src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
     startLine: 4
@@ -54,7 +54,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
     startLine: 6
@@ -106,7 +106,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
     startLine: 10
@@ -147,7 +147,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/DTOs/Roles/CreateRoleDto.cs
     startLine: 13

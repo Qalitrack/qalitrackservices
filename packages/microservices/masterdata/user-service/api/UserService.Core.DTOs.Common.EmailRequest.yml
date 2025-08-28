@@ -22,7 +22,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/EmailRequest.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EmailRequest
     path: src/UserService.Core/DTOs/Common/EmailRequest.cs
     startLine: 2
@@ -57,7 +57,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/EmailRequest.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: To
     path: src/UserService.Core/DTOs/Common/EmailRequest.cs
     startLine: 4
@@ -86,7 +86,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/EmailRequest.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Subject
     path: src/UserService.Core/DTOs/Common/EmailRequest.cs
     startLine: 5
@@ -115,7 +115,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/EmailRequest.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Body
     path: src/UserService.Core/DTOs/Common/EmailRequest.cs
     startLine: 6
@@ -144,7 +144,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/EmailRequest.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: QueuedAt
     path: src/UserService.Core/DTOs/Common/EmailRequest.cs
     startLine: 7
@@ -173,7 +173,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/EmailRequest.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RetryCount
     path: src/UserService.Core/DTOs/Common/EmailRequest.cs
     startLine: 8
@@ -202,7 +202,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/EmailRequest.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MaxRetries
     path: src/UserService.Core/DTOs/Common/EmailRequest.cs
     startLine: 9

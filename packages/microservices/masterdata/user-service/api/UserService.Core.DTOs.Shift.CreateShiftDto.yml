@@ -22,7 +22,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreateShiftDto
     path: src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
     startLine: 4
@@ -57,7 +57,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
     startLine: 6
@@ -86,7 +86,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
     startLine: 7
@@ -115,7 +115,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: StartTime
     path: src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
     startLine: 8
@@ -144,7 +144,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Mode
     path: src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
     startLine: 9
@@ -173,7 +173,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AutoRepeatDaily
     path: src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
     startLine: 10
@@ -202,7 +202,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: DurationMinutes
     path: src/UserService.Core/DTOs/Shift/CreateShiftDto.cs
     startLine: 11

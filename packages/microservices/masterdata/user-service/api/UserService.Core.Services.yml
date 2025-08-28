@@ -7,8 +7,8 @@ items:
   - UserService.Core.Services.CachedUserService
   - UserService.Core.Services.IJwtConfigurationService
   - UserService.Core.Services.JwtConfigurationService
+  - UserService.Core.Services.PasswordPolicyService
   - UserService.Core.Services.PermissionsService
-  - UserService.Core.Services.RestoreService
   - UserService.Core.Services.RoleService
   - UserService.Core.Services.ShiftService
   - UserService.Core.Services.TokenService
@@ -17,6 +17,7 @@ items:
   - UserService.Core.Services.UserService
   - UserService.Core.Services.UserStatusService
   - UserService.Core.Services.UserStatusUpdate
+  - UserService.Core.Services.ValidationResult
   langs:
   - csharp
   - vb
@@ -46,18 +47,25 @@ references:
   name: JwtConfigurationService
   nameWithType: JwtConfigurationService
   fullName: UserService.Core.Services.JwtConfigurationService
+- uid: UserService.Core.Services.PasswordPolicyService
+  commentId: T:UserService.Core.Services.PasswordPolicyService
+  parent: UserService.Core.Services
+  href: UserService.Core.Services.PasswordPolicyService.html
+  name: PasswordPolicyService
+  nameWithType: PasswordPolicyService
+  fullName: UserService.Core.Services.PasswordPolicyService
+- uid: UserService.Core.Services.ValidationResult
+  commentId: T:UserService.Core.Services.ValidationResult
+  href: UserService.Core.Services.ValidationResult.html
+  name: ValidationResult
+  nameWithType: ValidationResult
+  fullName: UserService.Core.Services.ValidationResult
 - uid: UserService.Core.Services.PermissionsService
   commentId: T:UserService.Core.Services.PermissionsService
   href: UserService.Core.Services.PermissionsService.html
   name: PermissionsService
   nameWithType: PermissionsService
   fullName: UserService.Core.Services.PermissionsService
-- uid: UserService.Core.Services.RestoreService
-  commentId: T:UserService.Core.Services.RestoreService
-  href: UserService.Core.Services.RestoreService.html
-  name: RestoreService
-  nameWithType: RestoreService
-  fullName: UserService.Core.Services.RestoreService
 - uid: UserService.Core.Services.RoleService
   commentId: T:UserService.Core.Services.RoleService
   href: UserService.Core.Services.RoleService.html

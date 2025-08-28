@@ -5,9 +5,11 @@ items:
   id: PermissionDto
   parent: UserService.Core.DTOs.Permissions
   children:
+  - UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
   - UserService.Core.DTOs.Permissions.PermissionDto.Description
   - UserService.Core.DTOs.Permissions.PermissionDto.Id
   - UserService.Core.DTOs.Permissions.PermissionDto.Name
+  - UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
   langs:
   - csharp
   - vb
@@ -19,7 +21,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionDto
     path: src/UserService.Core/DTOs/Permissions/PermissionDto.cs
     startLine: 2
@@ -56,7 +58,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Id
     path: src/UserService.Core/DTOs/Permissions/PermissionDto.cs
     startLine: 4
@@ -85,7 +87,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/DTOs/Permissions/PermissionDto.cs
     startLine: 5
@@ -114,7 +116,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/DTOs/Permissions/PermissionDto.cs
     startLine: 6
@@ -128,6 +130,64 @@ items:
       type: System.String
     content.vb: Public Property Description As String
   overload: UserService.Core.DTOs.Permissions.PermissionDto.Description*
+- uid: UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+  commentId: P:UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+  id: CreatedBy
+  parent: UserService.Core.DTOs.Permissions.PermissionDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedBy
+  nameWithType: PermissionDto.CreatedBy
+  fullName: UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreatedBy
+    path: src/UserService.Core/DTOs/Permissions/PermissionDto.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Permissions
+  syntax:
+    content: public string? CreatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreatedBy As String
+  overload: UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy*
+- uid: UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
+  commentId: P:UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
+  id: UpdatedBy
+  parent: UserService.Core.DTOs.Permissions.PermissionDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedBy
+  nameWithType: PermissionDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdatedBy
+    path: src/UserService.Core/DTOs/Permissions/PermissionDto.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Permissions
+  syntax:
+    content: public string? UpdatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UpdatedBy As String
+  overload: UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy*
 references:
 - uid: UserService.Core.DTOs.Permissions
   commentId: N:UserService.Core.DTOs.Permissions
@@ -433,3 +493,15 @@ references:
   name: Description
   nameWithType: PermissionDto.Description
   fullName: UserService.Core.DTOs.Permissions.PermissionDto.Description
+- uid: UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy*
+  commentId: Overload:UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+  href: UserService.Core.DTOs.Permissions.PermissionDto.html#UserService_Core_DTOs_Permissions_PermissionDto_CreatedBy
+  name: CreatedBy
+  nameWithType: PermissionDto.CreatedBy
+  fullName: UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+- uid: UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy*
+  commentId: Overload:UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
+  href: UserService.Core.DTOs.Permissions.PermissionDto.html#UserService_Core_DTOs_Permissions_PermissionDto_UpdatedBy
+  name: UpdatedBy
+  nameWithType: PermissionDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy

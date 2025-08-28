@@ -1,0 +1,239 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Interfaces.IBackupVerificationService
+  commentId: T:BackupService.Core.Interfaces.IBackupVerificationService
+  id: IBackupVerificationService
+  parent: BackupService.Core.Interfaces
+  children:
+  - BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  langs:
+  - csharp
+  - vb
+  name: IBackupVerificationService
+  nameWithType: IBackupVerificationService
+  fullName: BackupService.Core.Interfaces.IBackupVerificationService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IBackupVerificationService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IBackupVerificationService
+    path: BackupService.Core/Interfaces/IBackupVerificationService.cs
+    startLine: 6
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: public interface IBackupVerificationService
+    content.vb: Public Interface IBackupVerificationService
+- uid: BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  id: VerifyBackupIntegrityAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IBackupVerificationService
+  langs:
+  - csharp
+  - vb
+  name: VerifyBackupIntegrityAsync(string, BackupType, CancellationToken)
+  nameWithType: IBackupVerificationService.VerifyBackupIntegrityAsync(string, BackupType, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync(string, BackupService.Core.Enums.BackupType, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IBackupVerificationService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: VerifyBackupIntegrityAsync
+    path: BackupService.Core/Interfaces/IBackupVerificationService.cs
+    startLine: 8
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: Task VerifyBackupIntegrityAsync(string backupPath, BackupType backupType, CancellationToken ct = default)
+    parameters:
+    - id: backupPath
+      type: System.String
+    - id: backupType
+      type: BackupService.Core.Enums.BackupType
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function VerifyBackupIntegrityAsync(backupPath As String, backupType As BackupType, ct As CancellationToken = Nothing) As Task
+  overload: BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync*
+  nameWithType.vb: IBackupVerificationService.VerifyBackupIntegrityAsync(String, BackupType, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync(String, BackupService.Core.Enums.BackupType, System.Threading.CancellationToken)
+  name.vb: VerifyBackupIntegrityAsync(String, BackupType, CancellationToken)
+references:
+- uid: BackupService.Core.Interfaces
+  commentId: N:BackupService.Core.Interfaces
+  href: BackupService.html
+  name: BackupService.Core.Interfaces
+  nameWithType: BackupService.Core.Interfaces
+  fullName: BackupService.Core.Interfaces
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+- uid: BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync
+  href: BackupService.Core.Interfaces.IBackupVerificationService.html#BackupService_Core_Interfaces_IBackupVerificationService_VerifyBackupIntegrityAsync_System_String_BackupService_Core_Enums_BackupType_System_Threading_CancellationToken_
+  name: VerifyBackupIntegrityAsync
+  nameWithType: IBackupVerificationService.VerifyBackupIntegrityAsync
+  fullName: BackupService.Core.Interfaces.IBackupVerificationService.VerifyBackupIntegrityAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: BackupService.Core.Enums.BackupType
+  commentId: T:BackupService.Core.Enums.BackupType
+  parent: BackupService.Core.Enums
+  href: BackupService.Core.Enums.BackupType.html
+  name: BackupType
+  nameWithType: BackupType
+  fullName: BackupService.Core.Enums.BackupType
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: BackupService.Core.Enums
+  commentId: N:BackupService.Core.Enums
+  href: BackupService.html
+  name: BackupService.Core.Enums
+  nameWithType: BackupService.Core.Enums
+  fullName: BackupService.Core.Enums
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

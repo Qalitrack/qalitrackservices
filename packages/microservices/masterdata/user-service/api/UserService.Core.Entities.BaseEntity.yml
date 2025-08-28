@@ -22,7 +22,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: BaseEntity
     path: src/UserService.Core/Entities/BaseEntity.cs
     startLine: 2
@@ -35,6 +35,7 @@ items:
   inheritance:
   - System.Object
   derivedClasses:
+  - UserService.Core.Entities.PasswordPolicy
   - UserService.Core.Entities.Permission
   - UserService.Core.Entities.Role
   - UserService.Core.Entities.RolePermission
@@ -67,7 +68,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Id
     path: src/UserService.Core/Entities/BaseEntity.cs
     startLine: 4
@@ -96,7 +97,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreatedAt
     path: src/UserService.Core/Entities/BaseEntity.cs
     startLine: 5
@@ -125,7 +126,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdatedAt
     path: src/UserService.Core/Entities/BaseEntity.cs
     startLine: 6
@@ -154,7 +155,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreatedBy
     path: src/UserService.Core/Entities/BaseEntity.cs
     startLine: 7
@@ -183,7 +184,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdatedBy
     path: src/UserService.Core/Entities/BaseEntity.cs
     startLine: 8
@@ -212,7 +213,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/BaseEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsDeleted
     path: src/UserService.Core/Entities/BaseEntity.cs
     startLine: 9

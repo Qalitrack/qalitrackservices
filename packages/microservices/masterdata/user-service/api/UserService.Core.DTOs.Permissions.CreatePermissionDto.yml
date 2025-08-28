@@ -18,7 +18,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/CreatePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreatePermissionDto
     path: src/UserService.Core/DTOs/Permissions/CreatePermissionDto.cs
     startLine: 4
@@ -53,7 +53,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/CreatePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/DTOs/Permissions/CreatePermissionDto.cs
     startLine: 6
@@ -92,7 +92,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/CreatePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/DTOs/Permissions/CreatePermissionDto.cs
     startLine: 8

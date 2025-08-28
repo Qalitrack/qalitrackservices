@@ -20,10 +20,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserReportResponse
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
-    startLine: 26
+    startLine: 29
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -55,10 +55,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Users
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
-    startLine: 28
+    startLine: 31
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -84,10 +84,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TotalUsers
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
-    startLine: 29
+    startLine: 32
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -113,10 +113,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ActiveUsers
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
-    startLine: 30
+    startLine: 33
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -142,10 +142,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UsersWithShifts
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
-    startLine: 31
+    startLine: 34
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report

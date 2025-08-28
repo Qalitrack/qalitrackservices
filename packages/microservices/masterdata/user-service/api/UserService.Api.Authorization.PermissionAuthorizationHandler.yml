@@ -5,7 +5,7 @@ items:
   id: PermissionAuthorizationHandler
   parent: UserService.Api.Authorization
   children:
-  - UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor(UserService.Core.Interfaces.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.ITokenService)
+  - UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor(UserService.Core.Interfaces.Services.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.Repositories.ITokenService)
   - UserService.Api.Authorization.PermissionAuthorizationHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,UserService.Api.Authorization.PermissionRequirement)
   langs:
   - csharp
@@ -18,10 +18,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionAuthorizationHandler.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionAuthorizationHandler
     path: src/UserService.Api/Authorization/PermissionAuthorizationHandler.cs
-    startLine: 8
+    startLine: 7
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Authorization
@@ -42,25 +42,25 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor(UserService.Core.Interfaces.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.ITokenService)
-  commentId: M:UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor(UserService.Core.Interfaces.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.ITokenService)
-  id: '#ctor(UserService.Core.Interfaces.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.ITokenService)'
+- uid: UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor(UserService.Core.Interfaces.Services.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.Repositories.ITokenService)
+  commentId: M:UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor(UserService.Core.Interfaces.Services.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.Repositories.ITokenService)
+  id: '#ctor(UserService.Core.Interfaces.Services.IUserService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler},Microsoft.AspNetCore.Http.IHttpContextAccessor,UserService.Core.Interfaces.Repositories.ITokenService)'
   parent: UserService.Api.Authorization.PermissionAuthorizationHandler
   langs:
   - csharp
   - vb
   name: PermissionAuthorizationHandler(IUserService, ILogger<PermissionAuthorizationHandler>, IHttpContextAccessor, ITokenService)
   nameWithType: PermissionAuthorizationHandler.PermissionAuthorizationHandler(IUserService, ILogger<PermissionAuthorizationHandler>, IHttpContextAccessor, ITokenService)
-  fullName: UserService.Api.Authorization.PermissionAuthorizationHandler.PermissionAuthorizationHandler(UserService.Core.Interfaces.IUserService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Authorization.PermissionAuthorizationHandler>, Microsoft.AspNetCore.Http.IHttpContextAccessor, UserService.Core.Interfaces.ITokenService)
+  fullName: UserService.Api.Authorization.PermissionAuthorizationHandler.PermissionAuthorizationHandler(UserService.Core.Interfaces.Services.IUserService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Authorization.PermissionAuthorizationHandler>, Microsoft.AspNetCore.Http.IHttpContextAccessor, UserService.Core.Interfaces.Repositories.ITokenService)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionAuthorizationHandler.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Authorization/PermissionAuthorizationHandler.cs
-    startLine: 8
+    startLine: 7
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Authorization
@@ -68,17 +68,17 @@ items:
     content: public PermissionAuthorizationHandler(IUserService userService, ILogger<PermissionAuthorizationHandler> logger, IHttpContextAccessor httpContextAccessor, ITokenService tokenService)
     parameters:
     - id: userService
-      type: UserService.Core.Interfaces.IUserService
+      type: UserService.Core.Interfaces.Services.IUserService
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler}
     - id: httpContextAccessor
       type: Microsoft.AspNetCore.Http.IHttpContextAccessor
     - id: tokenService
-      type: UserService.Core.Interfaces.ITokenService
+      type: UserService.Core.Interfaces.Repositories.ITokenService
     content.vb: Public Sub New(userService As IUserService, logger As ILogger(Of PermissionAuthorizationHandler), httpContextAccessor As IHttpContextAccessor, tokenService As ITokenService)
   overload: UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor*
   nameWithType.vb: PermissionAuthorizationHandler.New(IUserService, ILogger(Of PermissionAuthorizationHandler), IHttpContextAccessor, ITokenService)
-  fullName.vb: UserService.Api.Authorization.PermissionAuthorizationHandler.New(UserService.Core.Interfaces.IUserService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Authorization.PermissionAuthorizationHandler), Microsoft.AspNetCore.Http.IHttpContextAccessor, UserService.Core.Interfaces.ITokenService)
+  fullName.vb: UserService.Api.Authorization.PermissionAuthorizationHandler.New(UserService.Core.Interfaces.Services.IUserService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Authorization.PermissionAuthorizationHandler), Microsoft.AspNetCore.Http.IHttpContextAccessor, UserService.Core.Interfaces.Repositories.ITokenService)
   name.vb: New(IUserService, ILogger(Of PermissionAuthorizationHandler), IHttpContextAccessor, ITokenService)
 - uid: UserService.Api.Authorization.PermissionAuthorizationHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,UserService.Api.Authorization.PermissionRequirement)
   commentId: M:UserService.Api.Authorization.PermissionAuthorizationHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,UserService.Api.Authorization.PermissionRequirement)
@@ -95,10 +95,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionAuthorizationHandler.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: HandleRequirementAsync
     path: src/UserService.Api/Authorization/PermissionAuthorizationHandler.cs
-    startLine: 22
+    startLine: 21
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Authorization
@@ -557,20 +557,20 @@ references:
   - name: )
 - uid: UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor*
   commentId: Overload:UserService.Api.Authorization.PermissionAuthorizationHandler.#ctor
-  href: UserService.Api.Authorization.PermissionAuthorizationHandler.html#UserService_Api_Authorization_PermissionAuthorizationHandler__ctor_UserService_Core_Interfaces_IUserService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Authorization_PermissionAuthorizationHandler__Microsoft_AspNetCore_Http_IHttpContextAccessor_UserService_Core_Interfaces_ITokenService_
+  href: UserService.Api.Authorization.PermissionAuthorizationHandler.html#UserService_Api_Authorization_PermissionAuthorizationHandler__ctor_UserService_Core_Interfaces_Services_IUserService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Authorization_PermissionAuthorizationHandler__Microsoft_AspNetCore_Http_IHttpContextAccessor_UserService_Core_Interfaces_Repositories_ITokenService_
   name: PermissionAuthorizationHandler
   nameWithType: PermissionAuthorizationHandler.PermissionAuthorizationHandler
   fullName: UserService.Api.Authorization.PermissionAuthorizationHandler.PermissionAuthorizationHandler
   nameWithType.vb: PermissionAuthorizationHandler.New
   fullName.vb: UserService.Api.Authorization.PermissionAuthorizationHandler.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IUserService
-  commentId: T:UserService.Core.Interfaces.IUserService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserService.html
+- uid: UserService.Core.Interfaces.Services.IUserService
+  commentId: T:UserService.Core.Interfaces.Services.IUserService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserService.html
   name: IUserService
   nameWithType: IUserService
-  fullName: UserService.Core.Interfaces.IUserService
+  fullName: UserService.Core.Interfaces.Services.IUserService
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Api.Authorization.PermissionAuthorizationHandler}
   parent: Microsoft.Extensions.Logging
@@ -612,19 +612,19 @@ references:
   name: IHttpContextAccessor
   nameWithType: IHttpContextAccessor
   fullName: Microsoft.AspNetCore.Http.IHttpContextAccessor
-- uid: UserService.Core.Interfaces.ITokenService
-  commentId: T:UserService.Core.Interfaces.ITokenService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ITokenService.html
+- uid: UserService.Core.Interfaces.Repositories.ITokenService
+  commentId: T:UserService.Core.Interfaces.Repositories.ITokenService
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.ITokenService.html
   name: ITokenService
   nameWithType: ITokenService
-  fullName: UserService.Core.Interfaces.ITokenService
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces.Repositories.ITokenService
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -637,6 +637,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -649,6 +653,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true
@@ -751,6 +759,44 @@ references:
     name: Http
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
+  href: UserService.html
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
 - uid: Microsoft.AspNetCore.Authorization.AuthorizationHandler{UserService.Api.Authorization.PermissionRequirement}.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,UserService.Api.Authorization.PermissionRequirement)
   commentId: M:Microsoft.AspNetCore.Authorization.AuthorizationHandler{UserService.Api.Authorization.PermissionRequirement}.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,UserService.Api.Authorization.PermissionRequirement)
   parent: Microsoft.AspNetCore.Authorization.AuthorizationHandler{UserService.Api.Authorization.PermissionRequirement}

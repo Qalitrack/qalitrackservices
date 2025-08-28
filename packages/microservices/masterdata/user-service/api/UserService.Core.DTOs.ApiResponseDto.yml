@@ -20,7 +20,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/ApiResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ApiResponseDto
     path: src/UserService.Core/DTOs/ApiResponseDto.cs
     startLine: 2
@@ -57,7 +57,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/ApiResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Success
     path: src/UserService.Core/DTOs/ApiResponseDto.cs
     startLine: 4
@@ -86,7 +86,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/ApiResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Message
     path: src/UserService.Core/DTOs/ApiResponseDto.cs
     startLine: 5
@@ -115,7 +115,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/ApiResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Errors
     path: src/UserService.Core/DTOs/ApiResponseDto.cs
     startLine: 6
@@ -144,7 +144,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/ApiResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: StatusCode
     path: src/UserService.Core/DTOs/ApiResponseDto.cs
     startLine: 7

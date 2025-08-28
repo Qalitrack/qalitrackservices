@@ -6,6 +6,7 @@ items:
   children:
   - UserService.Api.Controllers.AuthController
   - UserService.Api.Controllers.BaseController
+  - UserService.Api.Controllers.PasswordPolicyController
   - UserService.Api.Controllers.PermissionsController
   - UserService.Api.Controllers.ReportsController
   - UserService.Api.Controllers.RolesController
@@ -36,6 +37,12 @@ references:
   name: BaseController
   nameWithType: BaseController
   fullName: UserService.Api.Controllers.BaseController
+- uid: UserService.Api.Controllers.PasswordPolicyController
+  commentId: T:UserService.Api.Controllers.PasswordPolicyController
+  href: UserService.Api.Controllers.PasswordPolicyController.html
+  name: PasswordPolicyController
+  nameWithType: PasswordPolicyController
+  fullName: UserService.Api.Controllers.PasswordPolicyController
 - uid: UserService.Api.Controllers.PermissionsController
   commentId: T:UserService.Api.Controllers.PermissionsController
   href: UserService.Api.Controllers.PermissionsController.html

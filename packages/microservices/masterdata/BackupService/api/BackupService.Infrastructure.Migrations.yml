@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Infrastructure.Migrations
+  commentId: N:BackupService.Infrastructure.Migrations
+  id: BackupService.Infrastructure.Migrations
+  children:
+  - BackupService.Infrastructure.Migrations.InitialCreate
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Infrastructure.Migrations
+  nameWithType: BackupService.Infrastructure.Migrations
+  fullName: BackupService.Infrastructure.Migrations
+  type: Namespace
+  assemblies:
+  - BackupService.Infrastructure
+references:
+- uid: BackupService.Infrastructure.Migrations.InitialCreate
+  commentId: T:BackupService.Infrastructure.Migrations.InitialCreate
+  href: BackupService.Infrastructure.Migrations.InitialCreate.html
+  name: InitialCreate
+  nameWithType: InitialCreate
+  fullName: BackupService.Infrastructure.Migrations.InitialCreate

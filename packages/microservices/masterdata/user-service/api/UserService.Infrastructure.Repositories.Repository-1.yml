@@ -5,14 +5,17 @@ items:
   id: Repository`1
   parent: UserService.Infrastructure.Repositories
   children:
-  - UserService.Infrastructure.Repositories.Repository`1.#ctor(UserService.Infrastructure.Data.UserServiceDbContext)
+  - UserService.Infrastructure.Repositories.Repository`1.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.AspNetCore.Http.IHttpContextAccessor,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository{`0}})
   - UserService.Infrastructure.Repositories.Repository`1.CreateAsync(`0)
-  - UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
-  - UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-  - UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  - UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  - UserService.Infrastructure.Repositories.Repository`1.Query
+  - UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
   - UserService.Infrastructure.Repositories.Repository`1.UpdateAsync(`0)
-  - UserService.Infrastructure.Repositories.Repository`1._dbContext
-  - UserService.Infrastructure.Repositories.Repository`1._dbSet
+  - UserService.Infrastructure.Repositories.Repository`1._logger
   langs:
   - csharp
   - vb
@@ -24,10 +27,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Repository
     path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 7
+    startLine: 11
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -57,159 +60,100 @@ items:
   nameWithType.vb: Repository(Of T)
   fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)
   name.vb: Repository(Of T)
-- uid: UserService.Infrastructure.Repositories.Repository`1._dbContext
-  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbContext
-  id: _dbContext
+- uid: UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  id: HttpContextAccessor
   parent: UserService.Infrastructure.Repositories.Repository`1
   langs:
   - csharp
   - vb
-  name: _dbContext
-  nameWithType: Repository<T>._dbContext
-  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbContext
+  name: HttpContextAccessor
+  nameWithType: Repository<T>.HttpContextAccessor
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.HttpContextAccessor
   type: Field
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: _dbContext
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: HttpContextAccessor
     path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 9
+    startLine: 15
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   syntax:
-    content: protected readonly UserServiceDbContext _dbContext
+    content: protected readonly IHttpContextAccessor HttpContextAccessor
     return:
-      type: UserService.Infrastructure.Data.UserServiceDbContext
-    content.vb: Protected ReadOnly _dbContext As UserServiceDbContext
-  nameWithType.vb: Repository(Of T)._dbContext
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbContext
-- uid: UserService.Infrastructure.Repositories.Repository`1._dbSet
-  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbSet
-  id: _dbSet
+      type: Microsoft.AspNetCore.Http.IHttpContextAccessor
+    content.vb: Protected ReadOnly HttpContextAccessor As IHttpContextAccessor
+  nameWithType.vb: Repository(Of T).HttpContextAccessor
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).HttpContextAccessor
+- uid: UserService.Infrastructure.Repositories.Repository`1._logger
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1._logger
+  id: _logger
   parent: UserService.Infrastructure.Repositories.Repository`1
   langs:
   - csharp
   - vb
-  name: _dbSet
-  nameWithType: Repository<T>._dbSet
-  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbSet
+  name: _logger
+  nameWithType: Repository<T>._logger
+  fullName: UserService.Infrastructure.Repositories.Repository<T>._logger
   type: Field
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: _dbSet
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: _logger
     path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 10
+    startLine: 16
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   syntax:
-    content: protected readonly DbSet<T> _dbSet
+    content: protected readonly ILogger<Repository<T>> _logger
     return:
-      type: Microsoft.EntityFrameworkCore.DbSet{{T}}
-    content.vb: Protected ReadOnly _dbSet As DbSet(Of T)
-  nameWithType.vb: Repository(Of T)._dbSet
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbSet
-- uid: UserService.Infrastructure.Repositories.Repository`1.#ctor(UserService.Infrastructure.Data.UserServiceDbContext)
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.#ctor(UserService.Infrastructure.Data.UserServiceDbContext)
-  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext)'
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository`1}
+    content.vb: Protected ReadOnly _logger As ILogger(Of Repository(Of T))
+  nameWithType.vb: Repository(Of T)._logger
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._logger
+- uid: UserService.Infrastructure.Repositories.Repository`1.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.AspNetCore.Http.IHttpContextAccessor,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository{`0}})
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.AspNetCore.Http.IHttpContextAccessor,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository{`0}})
+  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.AspNetCore.Http.IHttpContextAccessor,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository{`0}})'
   parent: UserService.Infrastructure.Repositories.Repository`1
   langs:
   - csharp
   - vb
-  name: Repository(UserServiceDbContext)
-  nameWithType: Repository<T>.Repository(UserServiceDbContext)
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.Repository(UserService.Infrastructure.Data.UserServiceDbContext)
+  name: Repository(UserServiceDbContext, IHttpContextAccessor, ILogger<Repository<T>>)
+  nameWithType: Repository<T>.Repository(UserServiceDbContext, IHttpContextAccessor, ILogger<Repository<T>>)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.Repository(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.Repository<T>>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
-    path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 12
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  syntax:
-    content: public Repository(UserServiceDbContext dbContext)
-    parameters:
-    - id: dbContext
-      type: UserService.Infrastructure.Data.UserServiceDbContext
-    content.vb: Public Sub New(dbContext As UserServiceDbContext)
-  overload: UserService.Infrastructure.Repositories.Repository`1.#ctor*
-  nameWithType.vb: Repository(Of T).New(UserServiceDbContext)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).New(UserService.Infrastructure.Data.UserServiceDbContext)
-  name.vb: New(UserServiceDbContext)
-- uid: UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-  id: GetAllAsync
-  parent: UserService.Infrastructure.Repositories.Repository`1
-  langs:
-  - csharp
-  - vb
-  name: GetAllAsync()
-  nameWithType: Repository<T>.GetAllAsync()
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetAllAsync()
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetAllAsync
     path: src/UserService.Infrastructure/Repositories/Repository.cs
     startLine: 18
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   syntax:
-    content: public Task<IQueryable<T>> GetAllAsync()
-    return:
-      type: System.Threading.Tasks.Task{System.Linq.IQueryable{{T}}}
-    content.vb: Public Function GetAllAsync() As Task(Of IQueryable(Of T))
-  overload: UserService.Infrastructure.Repositories.Repository`1.GetAllAsync*
-  nameWithType.vb: Repository(Of T).GetAllAsync()
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetAllAsync()
-- uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  id: GetByIdAsync(System.Guid)
-  parent: UserService.Infrastructure.Repositories.Repository`1
-  langs:
-  - csharp
-  - vb
-  name: GetByIdAsync(Guid)
-  nameWithType: Repository<T>.GetByIdAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetByIdAsync(System.Guid)
-  type: Method
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: GetByIdAsync
-    path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 23
-  assemblies:
-  - UserService.Infrastructure
-  namespace: UserService.Infrastructure.Repositories
-  syntax:
-    content: public Task<T?> GetByIdAsync(Guid id)
+    content: protected Repository(UserServiceDbContext dbContext, IHttpContextAccessor httpContextAccessor, ILogger<Repository<T>> logger)
     parameters:
-    - id: id
-      type: System.Guid
-    return:
-      type: System.Threading.Tasks.Task{{T}}
-    content.vb: Public Function GetByIdAsync(id As Guid) As Task(Of T)
-  overload: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync*
-  nameWithType.vb: Repository(Of T).GetByIdAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetByIdAsync(System.Guid)
+    - id: dbContext
+      type: UserService.Infrastructure.Data.UserServiceDbContext
+    - id: httpContextAccessor
+      type: Microsoft.AspNetCore.Http.IHttpContextAccessor
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository`1}
+    content.vb: Protected Sub New(dbContext As UserServiceDbContext, httpContextAccessor As IHttpContextAccessor, logger As ILogger(Of Repository(Of T)))
+  overload: UserService.Infrastructure.Repositories.Repository`1.#ctor*
+  nameWithType.vb: Repository(Of T).New(UserServiceDbContext, IHttpContextAccessor, ILogger(Of Repository(Of T)))
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.Repository(Of T)))
+  name.vb: New(UserServiceDbContext, IHttpContextAccessor, ILogger(Of Repository(Of T)))
 - uid: UserService.Infrastructure.Repositories.Repository`1.CreateAsync(`0)
   commentId: M:UserService.Infrastructure.Repositories.Repository`1.CreateAsync(`0)
   id: CreateAsync(`0)
@@ -225,10 +169,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreateAsync
     path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 28
+    startLine: 26
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -258,10 +202,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdateAsync
     path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 35
+    startLine: 51
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -276,39 +220,199 @@ items:
   overload: UserService.Infrastructure.Repositories.Repository`1.UpdateAsync*
   nameWithType.vb: Repository(Of T).UpdateAsync(T)
   fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).UpdateAsync(T)
-- uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
-  id: DeleteAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
+  id: DeleteAsync(System.Object)
   parent: UserService.Infrastructure.Repositories.Repository`1
   langs:
   - csharp
   - vb
-  name: DeleteAsync(Guid)
-  nameWithType: Repository<T>.DeleteAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync(System.Guid)
+  name: DeleteAsync(object)
+  nameWithType: Repository<T>.DeleteAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync(object)
   type: Method
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Infrastructure/Repositories/Repository.cs
-    startLine: 81
+    startLine: 90
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   syntax:
-    content: public Task<bool> DeleteAsync(Guid id)
+    content: public virtual Task<bool> DeleteAsync(object id)
     parameters:
     - id: id
-      type: System.Guid
+      type: System.Object
     return:
       type: System.Threading.Tasks.Task{System.Boolean}
-    content.vb: Public Function DeleteAsync(id As Guid) As Task(Of Boolean)
+    content.vb: Public Overridable Function DeleteAsync(id As Object) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync*
-  nameWithType.vb: Repository(Of T).DeleteAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).DeleteAsync(System.Guid)
+  nameWithType.vb: Repository(Of T).DeleteAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).DeleteAsync(Object)
+  name.vb: DeleteAsync(Object)
+- uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  id: RestoreAsync(System.Object)
+  parent: UserService.Infrastructure.Repositories.Repository`1
+  langs:
+  - csharp
+  - vb
+  name: RestoreAsync(object)
+  nameWithType: Repository<T>.RestoreAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.RestoreAsync(object)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: RestoreAsync
+    path: src/UserService.Infrastructure/Repositories/Repository.cs
+    startLine: 117
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: public virtual Task<bool> RestoreAsync(object id)
+    parameters:
+    - id: id
+      type: System.Object
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Overridable Function RestoreAsync(id As Object) As Task(Of Boolean)
+  overload: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync*
+  nameWithType.vb: Repository(Of T).RestoreAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).RestoreAsync(Object)
+  name.vb: RestoreAsync(Object)
+- uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  id: GetCurrentUserId
+  parent: UserService.Infrastructure.Repositories.Repository`1
+  langs:
+  - csharp
+  - vb
+  name: GetCurrentUserId()
+  nameWithType: Repository<T>.GetCurrentUserId()
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetCurrentUserId()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetCurrentUserId
+    path: src/UserService.Infrastructure/Repositories/Repository.cs
+    startLine: 133
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: protected string GetCurrentUserId()
+    return:
+      type: System.String
+    content.vb: Protected Function GetCurrentUserId() As String
+  overload: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId*
+  nameWithType.vb: Repository(Of T).GetCurrentUserId()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetCurrentUserId()
+- uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  id: ExistsAsync(System.Object)
+  parent: UserService.Infrastructure.Repositories.Repository`1
+  langs:
+  - csharp
+  - vb
+  name: ExistsAsync(object)
+  nameWithType: Repository<T>.ExistsAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.ExistsAsync(object)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: ExistsAsync
+    path: src/UserService.Infrastructure/Repositories/Repository.cs
+    startLine: 178
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: protected Task<bool> ExistsAsync(object id)
+    parameters:
+    - id: id
+      type: System.Object
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Protected Function ExistsAsync(id As Object) As Task(Of Boolean)
+  overload: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync*
+  nameWithType.vb: Repository(Of T).ExistsAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).ExistsAsync(Object)
+  name.vb: ExistsAsync(Object)
+- uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  id: SaveChangesAsync
+  parent: UserService.Infrastructure.Repositories.Repository`1
+  langs:
+  - csharp
+  - vb
+  name: SaveChangesAsync()
+  nameWithType: Repository<T>.SaveChangesAsync()
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.SaveChangesAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: SaveChangesAsync
+    path: src/UserService.Infrastructure/Repositories/Repository.cs
+    startLine: 183
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: protected Task<int> SaveChangesAsync()
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+    content.vb: Protected Function SaveChangesAsync() As Task(Of Integer)
+  overload: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync*
+  nameWithType.vb: Repository(Of T).SaveChangesAsync()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).SaveChangesAsync()
+- uid: UserService.Infrastructure.Repositories.Repository`1.Query
+  commentId: P:UserService.Infrastructure.Repositories.Repository`1.Query
+  id: Query
+  parent: UserService.Infrastructure.Repositories.Repository`1
+  langs:
+  - csharp
+  - vb
+  name: Query
+  nameWithType: Repository<T>.Query
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.Query
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/Repository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Query
+    path: src/UserService.Infrastructure/Repositories/Repository.cs
+    startLine: 188
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: protected IQueryable<T> Query { get; }
+    parameters: []
+    return:
+      type: System.Linq.IQueryable{{T}}
+    content.vb: Protected ReadOnly Property Query As IQueryable(Of T)
+  overload: UserService.Infrastructure.Repositories.Repository`1.Query*
+  nameWithType.vb: Repository(Of T).Query
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).Query
 references:
 - uid: UserService.Infrastructure.Repositories
   commentId: N:UserService.Infrastructure.Repositories
@@ -577,6 +681,166 @@ references:
   name: System
   nameWithType: System
   fullName: System
+- uid: Microsoft.AspNetCore.Http.IHttpContextAccessor
+  commentId: T:Microsoft.AspNetCore.Http.IHttpContextAccessor
+  parent: Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor
+  name: IHttpContextAccessor
+  nameWithType: IHttpContextAccessor
+  fullName: Microsoft.AspNetCore.Http.IHttpContextAccessor
+- uid: Microsoft.AspNetCore.Http
+  commentId: N:Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Http
+  nameWithType: Microsoft.AspNetCore.Http
+  fullName: Microsoft.AspNetCore.Http
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
+- uid: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository`1}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.Repository`1}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<Repository<T>>
+  nameWithType: ILogger<Repository<T>>
+  fullName: Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.Repository<T>>
+  nameWithType.vb: ILogger(Of Repository(Of T))
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.Repository(Of T))
+  name.vb: ILogger(Of Repository(Of T))
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Infrastructure.Repositories.Repository`1
+    name: Repository
+    href: UserService.Infrastructure.Repositories.Repository-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: )
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: UserService.Infrastructure.Repositories.Repository`1.#ctor*
+  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.#ctor
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_AspNetCore_Http_IHttpContextAccessor_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Repositories_Repository__0___
+  name: Repository
+  nameWithType: Repository<T>.Repository
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.Repository
+  nameWithType.vb: Repository(Of T).New
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).New
+  name.vb: New
 - uid: UserService.Infrastructure.Data.UserServiceDbContext
   commentId: T:UserService.Infrastructure.Data.UserServiceDbContext
   parent: UserService.Infrastructure.Data
@@ -614,131 +878,38 @@ references:
   - uid: UserService.Infrastructure.Data
     name: Data
     href: UserService.Infrastructure.Data.html
-- uid: Microsoft.EntityFrameworkCore.DbSet{{T}}
-  commentId: T:Microsoft.EntityFrameworkCore.DbSet{`0}
-  parent: Microsoft.EntityFrameworkCore
-  definition: Microsoft.EntityFrameworkCore.DbSet`1
-  href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
-  name: DbSet<T>
-  nameWithType: DbSet<T>
-  fullName: Microsoft.EntityFrameworkCore.DbSet<T>
-  nameWithType.vb: DbSet(Of T)
-  fullName.vb: Microsoft.EntityFrameworkCore.DbSet(Of T)
-  name.vb: DbSet(Of T)
-  spec.csharp:
-  - uid: Microsoft.EntityFrameworkCore.DbSet`1
-    name: DbSet
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
-  - name: <
-  - name: T
-  - name: '>'
-  spec.vb:
-  - uid: Microsoft.EntityFrameworkCore.DbSet`1
-    name: DbSet
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
-  - name: (
-  - name: Of
-  - name: " "
-  - name: T
-  - name: )
-- uid: Microsoft.EntityFrameworkCore.DbSet`1
-  commentId: T:Microsoft.EntityFrameworkCore.DbSet`1
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
-  name: DbSet<TEntity>
-  nameWithType: DbSet<TEntity>
-  fullName: Microsoft.EntityFrameworkCore.DbSet<TEntity>
-  nameWithType.vb: DbSet(Of TEntity)
-  fullName.vb: Microsoft.EntityFrameworkCore.DbSet(Of TEntity)
-  name.vb: DbSet(Of TEntity)
-  spec.csharp:
-  - uid: Microsoft.EntityFrameworkCore.DbSet`1
-    name: DbSet
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
-  - name: <
-  - name: TEntity
-  - name: '>'
-  spec.vb:
-  - uid: Microsoft.EntityFrameworkCore.DbSet`1
-    name: DbSet
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
-  - name: (
-  - name: Of
-  - name: " "
-  - name: TEntity
-  - name: )
-- uid: Microsoft.EntityFrameworkCore
-  commentId: N:Microsoft.EntityFrameworkCore
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/microsoft
-  name: Microsoft.EntityFrameworkCore
-  nameWithType: Microsoft.EntityFrameworkCore
-  fullName: Microsoft.EntityFrameworkCore
-  spec.csharp:
-  - uid: Microsoft
-    name: Microsoft
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft
-  - name: .
-  - uid: Microsoft.EntityFrameworkCore
-    name: EntityFrameworkCore
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore
-  spec.vb:
-  - uid: Microsoft
-    name: Microsoft
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft
-  - name: .
-  - uid: Microsoft.EntityFrameworkCore
-    name: EntityFrameworkCore
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore
-- uid: UserService.Infrastructure.Repositories.Repository`1.#ctor*
-  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.#ctor
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__ctor_UserService_Infrastructure_Data_UserServiceDbContext_
-  name: Repository
-  nameWithType: Repository<T>.Repository
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.Repository
-  nameWithType.vb: Repository(Of T).New
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).New
-  name.vb: New
-- uid: UserService.Infrastructure.Repositories.Repository`1.GetAllAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetAllAsync
-  name: GetAllAsync
-  nameWithType: Repository<T>.GetAllAsync
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetAllAsync
-  nameWithType.vb: Repository(Of T).GetAllAsync
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetAllAsync
-- uid: System.Threading.Tasks.Task{System.Linq.IQueryable{{T}}}
-  commentId: T:System.Threading.Tasks.Task{System.Linq.IQueryable{`0}}
+- uid: UserService.Infrastructure.Repositories.Repository`1.CreateAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.CreateAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_CreateAsync__0_
+  name: CreateAsync
+  nameWithType: Repository<T>.CreateAsync
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.CreateAsync
+  nameWithType.vb: Repository(Of T).CreateAsync
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).CreateAsync
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: System.Threading.Tasks.Task{{T}}
+  commentId: T:System.Threading.Tasks.Task{`0}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
   href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<IQueryable<T>>
-  nameWithType: Task<IQueryable<T>>
-  fullName: System.Threading.Tasks.Task<System.Linq.IQueryable<T>>
-  nameWithType.vb: Task(Of IQueryable(Of T))
-  fullName.vb: System.Threading.Tasks.Task(Of System.Linq.IQueryable(Of T))
-  name.vb: Task(Of IQueryable(Of T))
+  name: Task<T>
+  nameWithType: Task<T>
+  fullName: System.Threading.Tasks.Task<T>
+  nameWithType.vb: Task(Of T)
+  fullName.vb: System.Threading.Tasks.Task(Of T)
+  name.vb: Task(Of T)
   spec.csharp:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
-  - uid: System.Linq.IQueryable`1
-    name: IQueryable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
-  - name: <
   - name: T
-  - name: '>'
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
@@ -748,16 +919,12 @@ references:
   - name: (
   - name: Of
   - name: " "
-  - uid: System.Linq.IQueryable`1
-    name: IQueryable
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
-  - name: (
-  - name: Of
-  - name: " "
   - name: T
   - name: )
-  - name: )
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T
 - uid: System.Threading.Tasks.Task`1
   commentId: T:System.Threading.Tasks.Task`1
   isExternal: true
@@ -823,69 +990,6 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-- uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  name: GetByIdAsync
-  nameWithType: Repository<T>.GetByIdAsync
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetByIdAsync
-  nameWithType.vb: Repository(Of T).GetByIdAsync
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetByIdAsync
-- uid: System.Guid
-  commentId: T:System.Guid
-  parent: System
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.guid
-  name: Guid
-  nameWithType: Guid
-  fullName: System.Guid
-- uid: System.Threading.Tasks.Task{{T}}
-  commentId: T:System.Threading.Tasks.Task{`0}
-  parent: System.Threading.Tasks
-  definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  name: Task<T>
-  nameWithType: Task<T>
-  fullName: System.Threading.Tasks.Task<T>
-  nameWithType.vb: Task(Of T)
-  fullName.vb: System.Threading.Tasks.Task(Of T)
-  name.vb: Task(Of T)
-  spec.csharp:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: <
-  - name: T
-  - name: '>'
-  spec.vb:
-  - uid: System.Threading.Tasks.Task`1
-    name: Task
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
-  - name: (
-  - name: Of
-  - name: " "
-  - name: T
-  - name: )
-- uid: UserService.Infrastructure.Repositories.Repository`1.CreateAsync*
-  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.CreateAsync
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_CreateAsync__0_
-  name: CreateAsync
-  nameWithType: Repository<T>.CreateAsync
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.CreateAsync
-  nameWithType.vb: Repository(Of T).CreateAsync
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).CreateAsync
-- uid: '{T}'
-  commentId: '!:T'
-  definition: T
-  name: T
-  nameWithType: T
-  fullName: T
-- uid: T
-  name: T
-  nameWithType: T
-  fullName: T
 - uid: UserService.Infrastructure.Repositories.Repository`1.UpdateAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.UpdateAsync
   href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_UpdateAsync__0_
@@ -896,7 +1000,7 @@ references:
   fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).UpdateAsync
 - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   name: DeleteAsync
   nameWithType: Repository<T>.DeleteAsync
   fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync
@@ -937,3 +1041,173 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.RestoreAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  name: RestoreAsync
+  nameWithType: Repository<T>.RestoreAsync
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.RestoreAsync
+  nameWithType.vb: Repository(Of T).RestoreAsync
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).RestoreAsync
+- uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId*
+  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  name: GetCurrentUserId
+  nameWithType: Repository<T>.GetCurrentUserId
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetCurrentUserId
+  nameWithType.vb: Repository(Of T).GetCurrentUserId
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetCurrentUserId
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.ExistsAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  name: ExistsAsync
+  nameWithType: Repository<T>.ExistsAsync
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.ExistsAsync
+  nameWithType.vb: Repository(Of T).ExistsAsync
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).ExistsAsync
+- uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  name: SaveChangesAsync
+  nameWithType: Repository<T>.SaveChangesAsync
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.SaveChangesAsync
+  nameWithType.vb: Repository(Of T).SaveChangesAsync
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).SaveChangesAsync
+- uid: System.Threading.Tasks.Task{System.Int32}
+  commentId: T:System.Threading.Tasks.Task{System.Int32}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<int>
+  nameWithType: Task<int>
+  fullName: System.Threading.Tasks.Task<int>
+  nameWithType.vb: Task(Of Integer)
+  fullName.vb: System.Threading.Tasks.Task(Of Integer)
+  name.vb: Task(Of Integer)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.Query*
+  commentId: Overload:UserService.Infrastructure.Repositories.Repository`1.Query
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_Query
+  name: Query
+  nameWithType: Repository<T>.Query
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.Query
+  nameWithType.vb: Repository(Of T).Query
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).Query
+- uid: System.Linq.IQueryable{{T}}
+  commentId: T:System.Linq.IQueryable{`0}
+  parent: System.Linq
+  definition: System.Linq.IQueryable`1
+  href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
+  name: IQueryable<T>
+  nameWithType: IQueryable<T>
+  fullName: System.Linq.IQueryable<T>
+  nameWithType.vb: IQueryable(Of T)
+  fullName.vb: System.Linq.IQueryable(Of T)
+  name.vb: IQueryable(Of T)
+  spec.csharp:
+  - uid: System.Linq.IQueryable`1
+    name: IQueryable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Linq.IQueryable`1
+    name: IQueryable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Linq.IQueryable`1
+  commentId: T:System.Linq.IQueryable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
+  name: IQueryable<T>
+  nameWithType: IQueryable<T>
+  fullName: System.Linq.IQueryable<T>
+  nameWithType.vb: IQueryable(Of T)
+  fullName.vb: System.Linq.IQueryable(Of T)
+  name.vb: IQueryable(Of T)
+  spec.csharp:
+  - uid: System.Linq.IQueryable`1
+    name: IQueryable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Linq.IQueryable`1
+    name: IQueryable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq.iqueryable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Linq
+  commentId: N:System.Linq
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Linq
+  nameWithType: System.Linq
+  fullName: System.Linq
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Linq
+    name: Linq
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Linq
+    name: Linq
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.linq
