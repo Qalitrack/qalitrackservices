@@ -1,0 +1,11 @@
+apiRules:
+- exclude:
+    uidRegex: ^System\.
+- exclude:
+    uidRegex: ^Microsoft\.
+- exclude:
+    type: Namespace
+    uidRegex: ^(?!QaliTrack).*
+- include:
+    type: Namespace
+    uidRegex: ^QaliTrack\.MasterData\..*

@@ -591,7 +591,6 @@ references:
   commentId: T:System.String
   parent: System
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.string
   name: string
   nameWithType: string
   fullName: string
@@ -602,7 +601,6 @@ references:
   commentId: T:System.Threading.CancellationToken
   parent: System.Threading
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
   name: CancellationToken
   nameWithType: CancellationToken
   fullName: System.Threading.CancellationToken
@@ -610,7 +608,6 @@ references:
   commentId: T:System.Threading.Tasks.Task{`0}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<TEntity>
   nameWithType: Task<TEntity>
   fullName: System.Threading.Tasks.Task<TEntity>
@@ -621,7 +618,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - name: TEntity
   - name: '>'
@@ -629,7 +625,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
@@ -638,14 +633,12 @@ references:
 - uid: System
   commentId: N:System
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System
   nameWithType: System
   fullName: System
 - uid: System.Threading
   commentId: N:System.Threading
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Threading
   nameWithType: System.Threading
   fullName: System.Threading
@@ -653,26 +646,21 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
 - uid: System.Threading.Tasks.Task`1
   commentId: T:System.Threading.Tasks.Task`1
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<TResult>
   nameWithType: Task<TResult>
   fullName: System.Threading.Tasks.Task<TResult>
@@ -683,7 +671,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - name: TResult
   - name: '>'
@@ -691,7 +678,6 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
@@ -700,7 +686,6 @@ references:
 - uid: System.Threading.Tasks
   commentId: N:System.Threading.Tasks
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Threading.Tasks
   nameWithType: System.Threading.Tasks
   fullName: System.Threading.Tasks
@@ -708,32 +693,26 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
   - name: .
   - uid: System.Threading.Tasks
     name: Tasks
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Threading
     name: Threading
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading
   - name: .
   - uid: System.Threading.Tasks
     name: Tasks
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
 - uid: QaliTrack.MasterData.Core.Common.IRepository`1.GetAllAsync*
   commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`1.GetAllAsync
   href: QaliTrack.MasterData.Core.Common.IRepository-1.html#QaliTrack_MasterData_Core_Common_IRepository_1_GetAllAsync_System_Threading_CancellationToken_
@@ -746,7 +725,6 @@ references:
   commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{`0}}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<IEnumerable<TEntity>>
   nameWithType: Task<IEnumerable<TEntity>>
   fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TEntity>>
@@ -757,12 +735,10 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   - name: <
   - name: TEntity
   - name: '>'
@@ -771,14 +747,12 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
   - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   - name: (
   - name: Of
   - name: " "
@@ -797,7 +771,6 @@ references:
   commentId: T:System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}}
   parent: System.Linq.Expressions
   definition: System.Linq.Expressions.Expression`1
-  href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
   name: Expression<Func<TEntity, bool>>
   nameWithType: Expression<Func<TEntity, bool>>
   fullName: System.Linq.Expressions.Expression<System.Func<TEntity, bool>>
@@ -808,12 +781,10 @@ references:
   - uid: System.Linq.Expressions.Expression`1
     name: Expression
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
   - name: <
   - uid: System.Func`2
     name: Func
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.func-2
   - name: <
   - name: TEntity
   - name: ','
@@ -821,21 +792,18 @@ references:
   - uid: System.Boolean
     name: bool
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: '>'
   - name: '>'
   spec.vb:
   - uid: System.Linq.Expressions.Expression`1
     name: Expression
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
   - name: (
   - name: Of
   - name: " "
   - uid: System.Func`2
     name: Func
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.func-2
   - name: (
   - name: Of
   - name: " "
@@ -845,13 +813,11 @@ references:
   - uid: System.Boolean
     name: Boolean
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
   - name: )
 - uid: System.Linq.Expressions.Expression`1
   commentId: T:System.Linq.Expressions.Expression`1
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
   name: Expression<TDelegate>
   nameWithType: Expression<TDelegate>
   fullName: System.Linq.Expressions.Expression<TDelegate>
@@ -862,7 +828,6 @@ references:
   - uid: System.Linq.Expressions.Expression`1
     name: Expression
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
   - name: <
   - name: TDelegate
   - name: '>'
@@ -870,7 +835,6 @@ references:
   - uid: System.Linq.Expressions.Expression`1
     name: Expression
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1
   - name: (
   - name: Of
   - name: " "
@@ -879,7 +843,6 @@ references:
 - uid: System.Linq.Expressions
   commentId: N:System.Linq.Expressions
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Linq.Expressions
   nameWithType: System.Linq.Expressions
   fullName: System.Linq.Expressions
@@ -887,32 +850,26 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Linq
     name: Linq
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq
   - name: .
   - uid: System.Linq.Expressions
     name: Expressions
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Linq
     name: Linq
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq
   - name: .
   - uid: System.Linq.Expressions
     name: Expressions
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.linq.expressions
 - uid: QaliTrack.MasterData.Core.Common.IRepository`1.FirstOrDefaultAsync*
   commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`1.FirstOrDefaultAsync
   href: QaliTrack.MasterData.Core.Common.IRepository-1.html#QaliTrack_MasterData_Core_Common_IRepository_1_FirstOrDefaultAsync_System_Linq_Expressions_Expression_System_Func__0_System_Boolean___System_Threading_CancellationToken_
@@ -933,7 +890,6 @@ references:
   commentId: T:System.Threading.Tasks.Task{System.Boolean}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<bool>
   nameWithType: Task<bool>
   fullName: System.Threading.Tasks.Task<bool>
@@ -944,25 +900,21 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - uid: System.Boolean
     name: bool
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
   - uid: System.Boolean
     name: Boolean
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
 - uid: QaliTrack.MasterData.Core.Common.IRepository`1.CountAsync*
   commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`1.CountAsync
@@ -976,7 +928,6 @@ references:
   commentId: T:System.Threading.Tasks.Task{System.Int32}
   parent: System.Threading.Tasks
   definition: System.Threading.Tasks.Task`1
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   name: Task<int>
   nameWithType: Task<int>
   fullName: System.Threading.Tasks.Task<int>
@@ -987,25 +938,21 @@ references:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: <
   - uid: System.Int32
     name: int
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.int32
   - name: '>'
   spec.vb:
   - uid: System.Threading.Tasks.Task`1
     name: Task
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
   - name: (
   - name: Of
   - name: " "
   - uid: System.Int32
     name: Integer
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.int32
   - name: )
 - uid: QaliTrack.MasterData.Core.Common.IRepository`1.AddAsync*
   commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`1.AddAsync
@@ -1037,7 +984,6 @@ references:
   commentId: T:System.Collections.Generic.IEnumerable{`0}
   parent: System.Collections.Generic
   definition: System.Collections.Generic.IEnumerable`1
-  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   name: IEnumerable<TEntity>
   nameWithType: IEnumerable<TEntity>
   fullName: System.Collections.Generic.IEnumerable<TEntity>
@@ -1048,7 +994,6 @@ references:
   - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   - name: <
   - name: TEntity
   - name: '>'
@@ -1056,7 +1001,6 @@ references:
   - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   - name: (
   - name: Of
   - name: " "
@@ -1065,7 +1009,6 @@ references:
 - uid: System.Collections.Generic.IEnumerable`1
   commentId: T:System.Collections.Generic.IEnumerable`1
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   name: IEnumerable<T>
   nameWithType: IEnumerable<T>
   fullName: System.Collections.Generic.IEnumerable<T>
@@ -1076,7 +1019,6 @@ references:
   - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   - name: <
   - name: T
   - name: '>'
@@ -1084,7 +1026,6 @@ references:
   - uid: System.Collections.Generic.IEnumerable`1
     name: IEnumerable
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
   - name: (
   - name: Of
   - name: " "
@@ -1093,7 +1034,6 @@ references:
 - uid: System.Collections.Generic
   commentId: N:System.Collections.Generic
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system
   name: System.Collections.Generic
   nameWithType: System.Collections.Generic
   fullName: System.Collections.Generic
@@ -1101,32 +1041,26 @@ references:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Collections
     name: Collections
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections
   - name: .
   - uid: System.Collections.Generic
     name: Generic
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
   spec.vb:
   - uid: System
     name: System
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system
   - name: .
   - uid: System.Collections
     name: Collections
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections
   - name: .
   - uid: System.Collections.Generic
     name: Generic
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
 - uid: QaliTrack.MasterData.Core.Common.IRepository`1.UpdateAsync*
   commentId: Overload:QaliTrack.MasterData.Core.Common.IRepository`1.UpdateAsync
   href: QaliTrack.MasterData.Core.Common.IRepository-1.html#QaliTrack_MasterData_Core_Common_IRepository_1_UpdateAsync__0_System_Threading_CancellationToken_
@@ -1155,7 +1089,6 @@ references:
   commentId: T:System.Threading.Tasks.Task
   parent: System.Threading.Tasks
   isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
   name: Task
   nameWithType: Task
   fullName: System.Threading.Tasks.Task
