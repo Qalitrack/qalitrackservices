@@ -5,7 +5,7 @@ items:
   id: ReportService
   parent: UserService.Infrastructure.Services
   children:
-  - UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)
+  - UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService})
   - UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   - UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   - UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(System.String)
@@ -21,10 +21,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ReportService
     path: src/UserService.Infrastructure/Services/ReportService.cs
-    startLine: 15
+    startLine: 16
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -34,7 +34,7 @@ items:
   inheritance:
   - System.Object
   implements:
-  - UserService.Core.Interfaces.IReportService
+  - UserService.Core.Interfaces.Services.IReportService
   inheritedMembers:
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
@@ -43,42 +43,40 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)
-  commentId: M:UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)
-  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService},AutoMapper.IMapper)'
+- uid: UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService})
+  commentId: M:UserService.Infrastructure.Services.ReportService.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService})
+  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService})'
   parent: UserService.Infrastructure.Services.ReportService
   langs:
   - csharp
   - vb
-  name: ReportService(UserServiceDbContext, ILogger<ReportService>, IMapper)
-  nameWithType: ReportService.ReportService(UserServiceDbContext, ILogger<ReportService>, IMapper)
-  fullName: UserService.Infrastructure.Services.ReportService.ReportService(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.ReportService>, AutoMapper.IMapper)
+  name: ReportService(UserServiceDbContext, ILogger<ReportService>)
+  nameWithType: ReportService.ReportService(UserServiceDbContext, ILogger<ReportService>)
+  fullName: UserService.Infrastructure.Services.ReportService.ReportService(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.ReportService>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Services/ReportService.cs
-    startLine: 21
+    startLine: 16
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
   syntax:
-    content: public ReportService(UserServiceDbContext context, ILogger<ReportService> logger, IMapper mapper)
+    content: public ReportService(UserServiceDbContext context, ILogger<ReportService> logger)
     parameters:
     - id: context
       type: UserService.Infrastructure.Data.UserServiceDbContext
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.ReportService}
-    - id: mapper
-      type: AutoMapper.IMapper
-    content.vb: Public Sub New(context As UserServiceDbContext, logger As ILogger(Of ReportService), mapper As IMapper)
+    content.vb: Public Sub New(context As UserServiceDbContext, logger As ILogger(Of ReportService))
   overload: UserService.Infrastructure.Services.ReportService.#ctor*
-  nameWithType.vb: ReportService.New(UserServiceDbContext, ILogger(Of ReportService), IMapper)
-  fullName.vb: UserService.Infrastructure.Services.ReportService.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.ReportService), AutoMapper.IMapper)
-  name.vb: New(UserServiceDbContext, ILogger(Of ReportService), IMapper)
+  nameWithType.vb: ReportService.New(UserServiceDbContext, ILogger(Of ReportService))
+  fullName.vb: UserService.Infrastructure.Services.ReportService.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.ReportService))
+  name.vb: New(UserServiceDbContext, ILogger(Of ReportService))
 - uid: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   commentId: M:UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   id: GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
@@ -94,10 +92,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GenerateShiftReportAsync
     path: src/UserService.Infrastructure/Services/ReportService.cs
-    startLine: 31
+    startLine: 24
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -112,7 +110,7 @@ items:
     content.vb: Public Function GenerateShiftReportAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of ShiftReportDto))
   overload: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync*
   implements:
-  - UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Interfaces.Services.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
 - uid: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   commentId: M:UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   id: GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
@@ -128,10 +126,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GenerateUserReportAsync
     path: src/UserService.Infrastructure/Services/ReportService.cs
-    startLine: 102
+    startLine: 95
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -146,7 +144,7 @@ items:
     content.vb: Public Function GenerateUserReportAsync(parameters As PaginationParameters) As Task(Of PagedResult(Of UserReportDto))
   overload: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync*
   implements:
-  - UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - UserService.Core.Interfaces.Services.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
 - uid: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(System.String)
   commentId: M:UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(System.String)
   id: GetShiftDetailsReportAsync(System.String)
@@ -162,10 +160,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetShiftDetailsReportAsync
     path: src/UserService.Infrastructure/Services/ReportService.cs
-    startLine: 169
+    startLine: 165
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -180,7 +178,7 @@ items:
     content.vb: Public Function GetShiftDetailsReportAsync(shiftId As String) As Task(Of ShiftReportDto)
   overload: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync*
   implements:
-  - UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  - UserService.Core.Interfaces.Services.IReportService.GetShiftDetailsReportAsync(System.String)
   nameWithType.vb: ReportService.GetShiftDetailsReportAsync(String)
   fullName.vb: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync(String)
   name.vb: GetShiftDetailsReportAsync(String)
@@ -199,10 +197,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ReportService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserDetailsReportAsync
     path: src/UserService.Infrastructure/Services/ReportService.cs
-    startLine: 215
+    startLine: 211
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -217,7 +215,7 @@ items:
     content.vb: Public Function GetUserDetailsReportAsync(userId As String) As Task(Of UserReportDto)
   overload: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync*
   implements:
-  - UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  - UserService.Core.Interfaces.Services.IReportService.GetUserDetailsReportAsync(System.String)
   nameWithType.vb: ReportService.GetUserDetailsReportAsync(String)
   fullName.vb: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync(String)
   name.vb: GetUserDetailsReportAsync(String)
@@ -263,13 +261,13 @@ references:
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: UserService.Core.Interfaces.IReportService
-  commentId: T:UserService.Core.Interfaces.IReportService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IReportService.html
+- uid: UserService.Core.Interfaces.Services.IReportService
+  commentId: T:UserService.Core.Interfaces.Services.IReportService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IReportService.html
   name: IReportService
   nameWithType: IReportService
-  fullName: UserService.Core.Interfaces.IReportService
+  fullName: UserService.Core.Interfaces.Services.IReportService
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -496,12 +494,12 @@ references:
   name: System
   nameWithType: System
   fullName: System
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -514,6 +512,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -526,9 +528,13 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: UserService.Infrastructure.Services.ReportService.#ctor*
   commentId: Overload:UserService.Infrastructure.Services.ReportService.#ctor
-  href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_ReportService__AutoMapper_IMapper_
+  href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_ReportService__
   name: ReportService
   nameWithType: ReportService.ReportService
   fullName: UserService.Infrastructure.Services.ReportService.ReportService
@@ -575,13 +581,6 @@ references:
     name: ReportService
     href: UserService.Infrastructure.Services.ReportService.html
   - name: )
-- uid: AutoMapper.IMapper
-  commentId: T:AutoMapper.IMapper
-  parent: AutoMapper
-  isExternal: true
-  name: IMapper
-  nameWithType: IMapper
-  fullName: AutoMapper.IMapper
 - uid: UserService.Infrastructure.Data
   commentId: N:UserService.Infrastructure.Data
   href: UserService.html
@@ -677,33 +676,27 @@ references:
     name: Logging
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
-- uid: AutoMapper
-  commentId: N:AutoMapper
-  isExternal: true
-  name: AutoMapper
-  nameWithType: AutoMapper
-  fullName: AutoMapper
 - uid: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync*
   commentId: Overload:UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync
   href: UserService.Infrastructure.Services.ReportService.html#UserService_Infrastructure_Services_ReportService_GenerateShiftReportAsync_UserService_Core_DTOs_Common_PaginationParameters_
   name: GenerateShiftReportAsync
   nameWithType: ReportService.GenerateShiftReportAsync
   fullName: UserService.Infrastructure.Services.ReportService.GenerateShiftReportAsync
-- uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  commentId: M:UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  parent: UserService.Core.Interfaces.IReportService
+- uid: UserService.Core.Interfaces.Services.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.Services.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.Services.IReportService
   name: GenerateShiftReportAsync(PaginationParameters)
   nameWithType: IReportService.GenerateShiftReportAsync(PaginationParameters)
-  fullName: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  fullName: UserService.Core.Interfaces.Services.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GenerateShiftReportAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
     name: PaginationParameters
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GenerateShiftReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GenerateShiftReportAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
@@ -870,21 +863,21 @@ references:
   name: GenerateUserReportAsync
   nameWithType: ReportService.GenerateUserReportAsync
   fullName: UserService.Infrastructure.Services.ReportService.GenerateUserReportAsync
-- uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  commentId: M:UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
-  parent: UserService.Core.Interfaces.IReportService
+- uid: UserService.Core.Interfaces.Services.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  commentId: M:UserService.Core.Interfaces.Services.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  parent: UserService.Core.Interfaces.Services.IReportService
   name: GenerateUserReportAsync(PaginationParameters)
   nameWithType: IReportService.GenerateUserReportAsync(PaginationParameters)
-  fullName: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  fullName: UserService.Core.Interfaces.Services.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GenerateUserReportAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
     name: PaginationParameters
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GenerateUserReportAsync(UserService.Core.DTOs.Common.PaginationParameters)
     name: GenerateUserReportAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.PaginationParameters
@@ -941,19 +934,19 @@ references:
   name: GetShiftDetailsReportAsync
   nameWithType: ReportService.GetShiftDetailsReportAsync
   fullName: UserService.Infrastructure.Services.ReportService.GetShiftDetailsReportAsync
-- uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
-  parent: UserService.Core.Interfaces.IReportService
+- uid: UserService.Core.Interfaces.Services.IReportService.GetShiftDetailsReportAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IReportService.GetShiftDetailsReportAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IReportService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetShiftDetailsReportAsync(string)
   nameWithType: IReportService.GetShiftDetailsReportAsync(string)
-  fullName: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IReportService.GetShiftDetailsReportAsync(string)
   nameWithType.vb: IReportService.GetShiftDetailsReportAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IReportService.GetShiftDetailsReportAsync(String)
   name.vb: GetShiftDetailsReportAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GetShiftDetailsReportAsync(System.String)
     name: GetShiftDetailsReportAsync
   - name: (
   - uid: System.String
@@ -962,7 +955,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IReportService.GetShiftDetailsReportAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GetShiftDetailsReportAsync(System.String)
     name: GetShiftDetailsReportAsync
   - name: (
   - uid: System.String
@@ -1020,19 +1013,19 @@ references:
   name: GetUserDetailsReportAsync
   nameWithType: ReportService.GetUserDetailsReportAsync
   fullName: UserService.Infrastructure.Services.ReportService.GetUserDetailsReportAsync
-- uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
-  parent: UserService.Core.Interfaces.IReportService
+- uid: UserService.Core.Interfaces.Services.IReportService.GetUserDetailsReportAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IReportService.GetUserDetailsReportAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IReportService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetUserDetailsReportAsync(string)
   nameWithType: IReportService.GetUserDetailsReportAsync(string)
-  fullName: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IReportService.GetUserDetailsReportAsync(string)
   nameWithType.vb: IReportService.GetUserDetailsReportAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IReportService.GetUserDetailsReportAsync(String)
   name.vb: GetUserDetailsReportAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GetUserDetailsReportAsync(System.String)
     name: GetUserDetailsReportAsync
   - name: (
   - uid: System.String
@@ -1041,7 +1034,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IReportService.GetUserDetailsReportAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IReportService.GetUserDetailsReportAsync(System.String)
     name: GetUserDetailsReportAsync
   - name: (
   - uid: System.String

@@ -8,6 +8,7 @@ items:
   - UserService.Infrastructure.Data.UserServiceDbContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{UserService.Infrastructure.Data.UserServiceDbContext})
   - UserService.Infrastructure.Data.UserServiceDbContext.OnConfiguring(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder)
   - UserService.Infrastructure.Data.UserServiceDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)
+  - UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies
   - UserService.Infrastructure.Data.UserServiceDbContext.Permissions
   - UserService.Infrastructure.Data.UserServiceDbContext.PersonalAccessTokens
   - UserService.Infrastructure.Data.UserServiceDbContext.RolePermissions
@@ -27,7 +28,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserServiceDbContext
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 7
@@ -116,7 +117,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 9
@@ -148,7 +149,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: OnConfiguring
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 13
@@ -201,7 +202,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Users
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 23
@@ -230,7 +231,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Shifts
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 24
@@ -259,7 +260,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Permissions
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 25
@@ -288,7 +289,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Roles
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 26
@@ -317,7 +318,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RolePermissions
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 27
@@ -346,7 +347,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserRoles
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 28
@@ -375,7 +376,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserShifts
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 29
@@ -404,7 +405,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PersonalAccessTokens
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
     startLine: 30
@@ -418,6 +419,35 @@ items:
       type: Microsoft.EntityFrameworkCore.DbSet{UserService.Core.Interfaces.PersonalAccessToken}
     content.vb: Public Property PersonalAccessTokens As DbSet(Of PersonalAccessToken)
   overload: UserService.Infrastructure.Data.UserServiceDbContext.PersonalAccessTokens*
+- uid: UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies
+  commentId: P:UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies
+  id: PasswordPolicies
+  parent: UserService.Infrastructure.Data.UserServiceDbContext
+  langs:
+  - csharp
+  - vb
+  name: PasswordPolicies
+  nameWithType: UserServiceDbContext.PasswordPolicies
+  fullName: UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: PasswordPolicies
+    path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
+    startLine: 31
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Data
+  syntax:
+    content: public DbSet<PasswordPolicy> PasswordPolicies { get; set; }
+    parameters: []
+    return:
+      type: Microsoft.EntityFrameworkCore.DbSet{UserService.Core.Entities.PasswordPolicy}
+    content.vb: Public Property PasswordPolicies As DbSet(Of PasswordPolicy)
+  overload: UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies*
 - uid: UserService.Infrastructure.Data.UserServiceDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)
   commentId: M:UserService.Infrastructure.Data.UserServiceDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)
   id: OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)
@@ -433,10 +463,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/UserServiceDbContext.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: OnModelCreating
     path: src/UserService.Infrastructure/Data/UserServiceDbContext.cs
-    startLine: 34
+    startLine: 33
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Data
@@ -3319,6 +3349,43 @@ references:
   - name: " "
   - uid: UserService.Core.Interfaces.PersonalAccessToken
     name: PersonalAccessToken
+  - name: )
+- uid: UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies*
+  commentId: Overload:UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies
+  href: UserService.Infrastructure.Data.UserServiceDbContext.html#UserService_Infrastructure_Data_UserServiceDbContext_PasswordPolicies
+  name: PasswordPolicies
+  nameWithType: UserServiceDbContext.PasswordPolicies
+  fullName: UserService.Infrastructure.Data.UserServiceDbContext.PasswordPolicies
+- uid: Microsoft.EntityFrameworkCore.DbSet{UserService.Core.Entities.PasswordPolicy}
+  commentId: T:Microsoft.EntityFrameworkCore.DbSet{UserService.Core.Entities.PasswordPolicy}
+  parent: Microsoft.EntityFrameworkCore
+  definition: Microsoft.EntityFrameworkCore.DbSet`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
+  name: DbSet<PasswordPolicy>
+  nameWithType: DbSet<PasswordPolicy>
+  fullName: Microsoft.EntityFrameworkCore.DbSet<UserService.Core.Entities.PasswordPolicy>
+  nameWithType.vb: DbSet(Of PasswordPolicy)
+  fullName.vb: Microsoft.EntityFrameworkCore.DbSet(Of UserService.Core.Entities.PasswordPolicy)
+  name.vb: DbSet(Of PasswordPolicy)
+  spec.csharp:
+  - uid: Microsoft.EntityFrameworkCore.DbSet`1
+    name: DbSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
+  - name: <
+  - uid: UserService.Core.Entities.PasswordPolicy
+    name: PasswordPolicy
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.EntityFrameworkCore.DbSet`1
+    name: DbSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbset-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.Entities.PasswordPolicy
+    name: PasswordPolicy
   - name: )
 - uid: Microsoft.EntityFrameworkCore.DbContextOptionsBuilder.UseModel(Microsoft.EntityFrameworkCore.Metadata.IModel)
   commentId: M:Microsoft.EntityFrameworkCore.DbContextOptionsBuilder.UseModel(Microsoft.EntityFrameworkCore.Metadata.IModel)

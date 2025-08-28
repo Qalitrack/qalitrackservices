@@ -1,0 +1,586 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Infrastructure.Repositories.UserStatusRepository
+  commentId: T:UserService.Infrastructure.Repositories.UserStatusRepository
+  id: UserStatusRepository
+  parent: UserService.Infrastructure.Repositories
+  children:
+  - UserService.Infrastructure.Repositories.UserStatusRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext)
+  - UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+  langs:
+  - csharp
+  - vb
+  name: UserStatusRepository
+  nameWithType: UserStatusRepository
+  fullName: UserService.Infrastructure.Repositories.UserStatusRepository
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserStatusRepository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UserStatusRepository
+    path: src/UserService.Infrastructure/Repositories/UserStatusRepository.cs
+    startLine: 6
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: 'public class UserStatusRepository : IUserStatusRepository'
+    content.vb: Public Class UserStatusRepository Implements IUserStatusRepository
+  inheritance:
+  - System.Object
+  implements:
+  - UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: UserService.Infrastructure.Repositories.UserStatusRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext)
+  commentId: M:UserService.Infrastructure.Repositories.UserStatusRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext)
+  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext)'
+  parent: UserService.Infrastructure.Repositories.UserStatusRepository
+  langs:
+  - csharp
+  - vb
+  name: UserStatusRepository(UserServiceDbContext)
+  nameWithType: UserStatusRepository.UserStatusRepository(UserServiceDbContext)
+  fullName: UserService.Infrastructure.Repositories.UserStatusRepository.UserStatusRepository(UserService.Infrastructure.Data.UserServiceDbContext)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserStatusRepository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: .ctor
+    path: src/UserService.Infrastructure/Repositories/UserStatusRepository.cs
+    startLine: 6
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  syntax:
+    content: public UserStatusRepository(UserServiceDbContext context)
+    parameters:
+    - id: context
+      type: UserService.Infrastructure.Data.UserServiceDbContext
+    content.vb: Public Sub New(context As UserServiceDbContext)
+  overload: UserService.Infrastructure.Repositories.UserStatusRepository.#ctor*
+  nameWithType.vb: UserStatusRepository.New(UserServiceDbContext)
+  fullName.vb: UserService.Infrastructure.Repositories.UserStatusRepository.New(UserService.Infrastructure.Data.UserServiceDbContext)
+  name.vb: New(UserServiceDbContext)
+- uid: UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+  commentId: M:UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+  id: UpdateUserStatusAsync(System.String,System.Boolean)
+  parent: UserService.Infrastructure.Repositories.UserStatusRepository
+  langs:
+  - csharp
+  - vb
+  name: UpdateUserStatusAsync(string, bool)
+  nameWithType: UserStatusRepository.UpdateUserStatusAsync(string, bool)
+  fullName: UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync(string, bool)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserStatusRepository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdateUserStatusAsync
+    path: src/UserService.Infrastructure/Repositories/UserStatusRepository.cs
+    startLine: 10
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task UpdateUserStatusAsync(string userId, bool isActive)
+    parameters:
+    - id: userId
+      type: System.String
+    - id: isActive
+      type: System.Boolean
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function UpdateUserStatusAsync(userId As String, isActive As Boolean) As Task
+  overload: UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync*
+  implements:
+  - UserService.Core.Interfaces.Repositories.IUserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+  nameWithType.vb: UserStatusRepository.UpdateUserStatusAsync(String, Boolean)
+  fullName.vb: UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync(String, Boolean)
+  name.vb: UpdateUserStatusAsync(String, Boolean)
+references:
+- uid: UserService.Infrastructure.Repositories
+  commentId: N:UserService.Infrastructure.Repositories
+  href: UserService.html
+  name: UserService.Infrastructure.Repositories
+  nameWithType: UserService.Infrastructure.Repositories
+  fullName: UserService.Infrastructure.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Repositories
+    name: Repositories
+    href: UserService.Infrastructure.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Repositories
+    name: Repositories
+    href: UserService.Infrastructure.Repositories.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserStatusRepository.html
+  name: IUserStatusRepository
+  nameWithType: IUserStatusRepository
+  fullName: UserService.Core.Interfaces.Repositories.IUserStatusRepository
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
+  href: UserService.html
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+- uid: UserService.Infrastructure.Repositories.UserStatusRepository.#ctor*
+  commentId: Overload:UserService.Infrastructure.Repositories.UserStatusRepository.#ctor
+  href: UserService.Infrastructure.Repositories.UserStatusRepository.html#UserService_Infrastructure_Repositories_UserStatusRepository__ctor_UserService_Infrastructure_Data_UserServiceDbContext_
+  name: UserStatusRepository
+  nameWithType: UserStatusRepository.UserStatusRepository
+  fullName: UserService.Infrastructure.Repositories.UserStatusRepository.UserStatusRepository
+  nameWithType.vb: UserStatusRepository.New
+  fullName.vb: UserService.Infrastructure.Repositories.UserStatusRepository.New
+  name.vb: New
+- uid: UserService.Infrastructure.Data.UserServiceDbContext
+  commentId: T:UserService.Infrastructure.Data.UserServiceDbContext
+  parent: UserService.Infrastructure.Data
+  href: UserService.Infrastructure.Data.UserServiceDbContext.html
+  name: UserServiceDbContext
+  nameWithType: UserServiceDbContext
+  fullName: UserService.Infrastructure.Data.UserServiceDbContext
+- uid: UserService.Infrastructure.Data
+  commentId: N:UserService.Infrastructure.Data
+  href: UserService.html
+  name: UserService.Infrastructure.Data
+  nameWithType: UserService.Infrastructure.Data
+  fullName: UserService.Infrastructure.Data
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Infrastructure
+    name: Infrastructure
+    href: UserService.Infrastructure.html
+  - name: .
+  - uid: UserService.Infrastructure.Data
+    name: Data
+    href: UserService.Infrastructure.Data.html
+- uid: UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync
+  href: UserService.Infrastructure.Repositories.UserStatusRepository.html#UserService_Infrastructure_Repositories_UserStatusRepository_UpdateUserStatusAsync_System_String_System_Boolean_
+  name: UpdateUserStatusAsync
+  nameWithType: UserStatusRepository.UpdateUserStatusAsync
+  fullName: UserService.Infrastructure.Repositories.UserStatusRepository.UpdateUserStatusAsync
+- uid: UserService.Core.Interfaces.Repositories.IUserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+  parent: UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: UpdateUserStatusAsync(string, bool)
+  nameWithType: IUserStatusRepository.UpdateUserStatusAsync(string, bool)
+  fullName: UserService.Core.Interfaces.Repositories.IUserStatusRepository.UpdateUserStatusAsync(string, bool)
+  nameWithType.vb: IUserStatusRepository.UpdateUserStatusAsync(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserStatusRepository.UpdateUserStatusAsync(String, Boolean)
+  name.vb: UpdateUserStatusAsync(String, Boolean)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.Repositories.IUserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+    name: UpdateUserStatusAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.Repositories.IUserStatusRepository.UpdateUserStatusAsync(System.String,System.Boolean)
+    name: UpdateUserStatusAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

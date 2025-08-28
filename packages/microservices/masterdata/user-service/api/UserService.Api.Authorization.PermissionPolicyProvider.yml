@@ -20,7 +20,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionPolicyProvider.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionPolicyProvider
     path: src/UserService.Api/Authorization/PermissionPolicyProvider.cs
     startLine: 6
@@ -57,7 +57,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionPolicyProvider.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Authorization/PermissionPolicyProvider.cs
     startLine: 6
@@ -89,7 +89,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionPolicyProvider.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetDefaultPolicyAsync
     path: src/UserService.Api/Authorization/PermissionPolicyProvider.cs
     startLine: 10
@@ -122,7 +122,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionPolicyProvider.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetFallbackPolicyAsync
     path: src/UserService.Api/Authorization/PermissionPolicyProvider.cs
     startLine: 15
@@ -155,7 +155,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Authorization/PermissionPolicyProvider.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetPolicyAsync
     path: src/UserService.Api/Authorization/PermissionPolicyProvider.cs
     startLine: 20

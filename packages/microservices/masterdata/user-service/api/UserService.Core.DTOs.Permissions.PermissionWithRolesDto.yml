@@ -17,7 +17,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionWithRolesDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionWithRolesDto
     path: src/UserService.Core/DTOs/Permissions/PermissionWithRolesDto.cs
     startLine: 4
@@ -34,6 +34,8 @@ items:
   - UserService.Core.DTOs.Permissions.PermissionDto.Id
   - UserService.Core.DTOs.Permissions.PermissionDto.Name
   - UserService.Core.DTOs.Permissions.PermissionDto.Description
+  - UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+  - UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
   - System.Object.GetHashCode
@@ -56,7 +58,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Permissions/PermissionWithRolesDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Roles
     path: src/UserService.Core/DTOs/Permissions/PermissionWithRolesDto.cs
     startLine: 6
@@ -148,6 +150,20 @@ references:
   name: Description
   nameWithType: PermissionDto.Description
   fullName: UserService.Core.DTOs.Permissions.PermissionDto.Description
+- uid: UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+  commentId: P:UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+  parent: UserService.Core.DTOs.Permissions.PermissionDto
+  href: UserService.Core.DTOs.Permissions.PermissionDto.html#UserService_Core_DTOs_Permissions_PermissionDto_CreatedBy
+  name: CreatedBy
+  nameWithType: PermissionDto.CreatedBy
+  fullName: UserService.Core.DTOs.Permissions.PermissionDto.CreatedBy
+- uid: UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
+  commentId: P:UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
+  parent: UserService.Core.DTOs.Permissions.PermissionDto
+  href: UserService.Core.DTOs.Permissions.PermissionDto.html#UserService_Core_DTOs_Permissions_PermissionDto_UpdatedBy
+  name: UpdatedBy
+  nameWithType: PermissionDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Permissions.PermissionDto.UpdatedBy
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object

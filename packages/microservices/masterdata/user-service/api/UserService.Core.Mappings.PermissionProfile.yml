@@ -17,7 +17,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Mappings/PermissionProfile.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionProfile
     path: src/UserService.Core/Mappings/PermissionProfile.cs
     startLine: 7
@@ -81,7 +81,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Mappings/PermissionProfile.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Mappings/PermissionProfile.cs
     startLine: 9

@@ -6,14 +6,19 @@ items:
   parent: UserService.Core.DTOs.Shift
   children:
   - UserService.Core.DTOs.Shift.ShiftDto.AutoRepeatDaily
+  - UserService.Core.DTOs.Shift.ShiftDto.CreatedAt
+  - UserService.Core.DTOs.Shift.ShiftDto.CreatedBy
   - UserService.Core.DTOs.Shift.ShiftDto.Description
   - UserService.Core.DTOs.Shift.ShiftDto.DurationMinutes
   - UserService.Core.DTOs.Shift.ShiftDto.EndTime
   - UserService.Core.DTOs.Shift.ShiftDto.Id
   - UserService.Core.DTOs.Shift.ShiftDto.IsActive
+  - UserService.Core.DTOs.Shift.ShiftDto.IsDeleted
   - UserService.Core.DTOs.Shift.ShiftDto.Mode
   - UserService.Core.DTOs.Shift.ShiftDto.Name
   - UserService.Core.DTOs.Shift.ShiftDto.StartTime
+  - UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt
+  - UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy
   langs:
   - csharp
   - vb
@@ -25,7 +30,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftDto
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 6
@@ -60,7 +65,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Id
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 8
@@ -89,7 +94,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 9
@@ -118,7 +123,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 10
@@ -147,7 +152,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: StartTime
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 11
@@ -176,7 +181,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EndTime
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 12
@@ -205,7 +210,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Mode
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 13
@@ -234,7 +239,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 14
@@ -263,7 +268,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AutoRepeatDaily
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 15
@@ -292,7 +297,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: DurationMinutes
     path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
     startLine: 16
@@ -306,6 +311,151 @@ items:
       type: System.Nullable{System.Int32}
     content.vb: Public Property DurationMinutes As Integer?
   overload: UserService.Core.DTOs.Shift.ShiftDto.DurationMinutes*
+- uid: UserService.Core.DTOs.Shift.ShiftDto.CreatedAt
+  commentId: P:UserService.Core.DTOs.Shift.ShiftDto.CreatedAt
+  id: CreatedAt
+  parent: UserService.Core.DTOs.Shift.ShiftDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedAt
+  nameWithType: ShiftDto.CreatedAt
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.CreatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreatedAt
+    path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
+    startLine: 17
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Shift
+  syntax:
+    content: public string? CreatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreatedAt As String
+  overload: UserService.Core.DTOs.Shift.ShiftDto.CreatedAt*
+- uid: UserService.Core.DTOs.Shift.ShiftDto.CreatedBy
+  commentId: P:UserService.Core.DTOs.Shift.ShiftDto.CreatedBy
+  id: CreatedBy
+  parent: UserService.Core.DTOs.Shift.ShiftDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedBy
+  nameWithType: ShiftDto.CreatedBy
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.CreatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreatedBy
+    path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
+    startLine: 18
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Shift
+  syntax:
+    content: public string? CreatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreatedBy As String
+  overload: UserService.Core.DTOs.Shift.ShiftDto.CreatedBy*
+- uid: UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt
+  commentId: P:UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt
+  id: UpdatedAt
+  parent: UserService.Core.DTOs.Shift.ShiftDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedAt
+  nameWithType: ShiftDto.UpdatedAt
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdatedAt
+    path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
+    startLine: 19
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Shift
+  syntax:
+    content: public string? UpdatedAt { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UpdatedAt As String
+  overload: UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt*
+- uid: UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy
+  commentId: P:UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy
+  id: UpdatedBy
+  parent: UserService.Core.DTOs.Shift.ShiftDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedBy
+  nameWithType: ShiftDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdatedBy
+    path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
+    startLine: 20
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Shift
+  syntax:
+    content: public string? UpdatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UpdatedBy As String
+  overload: UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy*
+- uid: UserService.Core.DTOs.Shift.ShiftDto.IsDeleted
+  commentId: P:UserService.Core.DTOs.Shift.ShiftDto.IsDeleted
+  id: IsDeleted
+  parent: UserService.Core.DTOs.Shift.ShiftDto
+  langs:
+  - csharp
+  - vb
+  name: IsDeleted
+  nameWithType: ShiftDto.IsDeleted
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.IsDeleted
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/ShiftDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IsDeleted
+    path: src/UserService.Core/DTOs/Shift/ShiftDto.cs
+    startLine: 21
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Shift
+  syntax:
+    content: public string? IsDeleted { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property IsDeleted As String
+  overload: UserService.Core.DTOs.Shift.ShiftDto.IsDeleted*
 references:
 - uid: UserService.Core.DTOs.Shift
   commentId: N:UserService.Core.DTOs.Shift
@@ -757,3 +907,33 @@ references:
   - name: " "
   - name: T
   - name: )
+- uid: UserService.Core.DTOs.Shift.ShiftDto.CreatedAt*
+  commentId: Overload:UserService.Core.DTOs.Shift.ShiftDto.CreatedAt
+  href: UserService.Core.DTOs.Shift.ShiftDto.html#UserService_Core_DTOs_Shift_ShiftDto_CreatedAt
+  name: CreatedAt
+  nameWithType: ShiftDto.CreatedAt
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.CreatedAt
+- uid: UserService.Core.DTOs.Shift.ShiftDto.CreatedBy*
+  commentId: Overload:UserService.Core.DTOs.Shift.ShiftDto.CreatedBy
+  href: UserService.Core.DTOs.Shift.ShiftDto.html#UserService_Core_DTOs_Shift_ShiftDto_CreatedBy
+  name: CreatedBy
+  nameWithType: ShiftDto.CreatedBy
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.CreatedBy
+- uid: UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt*
+  commentId: Overload:UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt
+  href: UserService.Core.DTOs.Shift.ShiftDto.html#UserService_Core_DTOs_Shift_ShiftDto_UpdatedAt
+  name: UpdatedAt
+  nameWithType: ShiftDto.UpdatedAt
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.UpdatedAt
+- uid: UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy*
+  commentId: Overload:UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy
+  href: UserService.Core.DTOs.Shift.ShiftDto.html#UserService_Core_DTOs_Shift_ShiftDto_UpdatedBy
+  name: UpdatedBy
+  nameWithType: ShiftDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.UpdatedBy
+- uid: UserService.Core.DTOs.Shift.ShiftDto.IsDeleted*
+  commentId: Overload:UserService.Core.DTOs.Shift.ShiftDto.IsDeleted
+  href: UserService.Core.DTOs.Shift.ShiftDto.html#UserService_Core_DTOs_Shift_ShiftDto_IsDeleted
+  name: IsDeleted
+  nameWithType: ShiftDto.IsDeleted
+  fullName: UserService.Core.DTOs.Shift.ShiftDto.IsDeleted

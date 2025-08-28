@@ -7,12 +7,15 @@ items:
   children:
   - UserService.Core.DTOs.Report.UserReportDto.ActiveShiftsAssigned
   - UserService.Core.DTOs.Report.UserReportDto.AssignedShifts
+  - UserService.Core.DTOs.Report.UserReportDto.CreatedBy
   - UserService.Core.DTOs.Report.UserReportDto.Email
   - UserService.Core.DTOs.Report.UserReportDto.FirstName
   - UserService.Core.DTOs.Report.UserReportDto.Id
   - UserService.Core.DTOs.Report.UserReportDto.IsActive
+  - UserService.Core.DTOs.Report.UserReportDto.LastModified
   - UserService.Core.DTOs.Report.UserReportDto.LastName
   - UserService.Core.DTOs.Report.UserReportDto.TotalShiftsAssigned
+  - UserService.Core.DTOs.Report.UserReportDto.UpdatedBy
   langs:
   - csharp
   - vb
@@ -24,7 +27,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserReportDto
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 14
@@ -59,7 +62,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Id
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 16
@@ -88,7 +91,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Email
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 17
@@ -117,7 +120,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: FirstName
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 18
@@ -146,7 +149,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: LastName
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 19
@@ -175,7 +178,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 20
@@ -204,7 +207,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignedShifts
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 21
@@ -233,7 +236,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TotalShiftsAssigned
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 22
@@ -262,7 +265,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ActiveShiftsAssigned
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 23
@@ -276,6 +279,93 @@ items:
       type: System.Int32
     content.vb: Public ReadOnly Property ActiveShiftsAssigned As Integer
   overload: UserService.Core.DTOs.Report.UserReportDto.ActiveShiftsAssigned*
+- uid: UserService.Core.DTOs.Report.UserReportDto.CreatedBy
+  commentId: P:UserService.Core.DTOs.Report.UserReportDto.CreatedBy
+  id: CreatedBy
+  parent: UserService.Core.DTOs.Report.UserReportDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedBy
+  nameWithType: UserReportDto.CreatedBy
+  fullName: UserService.Core.DTOs.Report.UserReportDto.CreatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreatedBy
+    path: src/UserService.Core/DTOs/Report/UserReportDto.cs
+    startLine: 24
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Report
+  syntax:
+    content: public string? CreatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreatedBy As String
+  overload: UserService.Core.DTOs.Report.UserReportDto.CreatedBy*
+- uid: UserService.Core.DTOs.Report.UserReportDto.UpdatedBy
+  commentId: P:UserService.Core.DTOs.Report.UserReportDto.UpdatedBy
+  id: UpdatedBy
+  parent: UserService.Core.DTOs.Report.UserReportDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedBy
+  nameWithType: UserReportDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Report.UserReportDto.UpdatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdatedBy
+    path: src/UserService.Core/DTOs/Report/UserReportDto.cs
+    startLine: 25
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Report
+  syntax:
+    content: public string? UpdatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UpdatedBy As String
+  overload: UserService.Core.DTOs.Report.UserReportDto.UpdatedBy*
+- uid: UserService.Core.DTOs.Report.UserReportDto.LastModified
+  commentId: P:UserService.Core.DTOs.Report.UserReportDto.LastModified
+  id: LastModified
+  parent: UserService.Core.DTOs.Report.UserReportDto
+  langs:
+  - csharp
+  - vb
+  name: LastModified
+  nameWithType: UserReportDto.LastModified
+  fullName: UserService.Core.DTOs.Report.UserReportDto.LastModified
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: LastModified
+    path: src/UserService.Core/DTOs/Report/UserReportDto.cs
+    startLine: 26
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Report
+  syntax:
+    content: public DateTime LastModified { get; set; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property LastModified As Date
+  overload: UserService.Core.DTOs.Report.UserReportDto.LastModified*
 references:
 - uid: UserService.Core.DTOs.Report
   commentId: N:UserService.Core.DTOs.Report
@@ -731,3 +821,32 @@ references:
   name: ActiveShiftsAssigned
   nameWithType: UserReportDto.ActiveShiftsAssigned
   fullName: UserService.Core.DTOs.Report.UserReportDto.ActiveShiftsAssigned
+- uid: UserService.Core.DTOs.Report.UserReportDto.CreatedBy*
+  commentId: Overload:UserService.Core.DTOs.Report.UserReportDto.CreatedBy
+  href: UserService.Core.DTOs.Report.UserReportDto.html#UserService_Core_DTOs_Report_UserReportDto_CreatedBy
+  name: CreatedBy
+  nameWithType: UserReportDto.CreatedBy
+  fullName: UserService.Core.DTOs.Report.UserReportDto.CreatedBy
+- uid: UserService.Core.DTOs.Report.UserReportDto.UpdatedBy*
+  commentId: Overload:UserService.Core.DTOs.Report.UserReportDto.UpdatedBy
+  href: UserService.Core.DTOs.Report.UserReportDto.html#UserService_Core_DTOs_Report_UserReportDto_UpdatedBy
+  name: UpdatedBy
+  nameWithType: UserReportDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Report.UserReportDto.UpdatedBy
+- uid: UserService.Core.DTOs.Report.UserReportDto.LastModified*
+  commentId: Overload:UserService.Core.DTOs.Report.UserReportDto.LastModified
+  href: UserService.Core.DTOs.Report.UserReportDto.html#UserService_Core_DTOs_Report_UserReportDto_LastModified
+  name: LastModified
+  nameWithType: UserReportDto.LastModified
+  fullName: UserService.Core.DTOs.Report.UserReportDto.LastModified
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date

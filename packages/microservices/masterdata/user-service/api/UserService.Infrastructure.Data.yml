@@ -4,6 +4,7 @@ items:
   commentId: N:UserService.Infrastructure.Data
   id: UserService.Infrastructure.Data
   children:
+  - UserService.Infrastructure.Data.DesignTimeDbContextFactory
   - UserService.Infrastructure.Data.PrepDb
   - UserService.Infrastructure.Data.UserServiceDbContext
   langs:
@@ -16,6 +17,12 @@ items:
   assemblies:
   - UserService.Infrastructure
 references:
+- uid: UserService.Infrastructure.Data.DesignTimeDbContextFactory
+  commentId: T:UserService.Infrastructure.Data.DesignTimeDbContextFactory
+  href: UserService.Infrastructure.Data.DesignTimeDbContextFactory.html
+  name: DesignTimeDbContextFactory
+  nameWithType: DesignTimeDbContextFactory
+  fullName: UserService.Infrastructure.Data.DesignTimeDbContextFactory
 - uid: UserService.Infrastructure.Data.PrepDb
   commentId: T:UserService.Infrastructure.Data.PrepDb
   href: UserService.Infrastructure.Data.PrepDb.html

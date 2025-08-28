@@ -18,10 +18,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftMonitorService
     path: src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
-    startLine: 13
+    startLine: 15
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -61,10 +61,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
-    startLine: 18
+    startLine: 20
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -95,10 +95,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ExecuteAsync
     path: src/UserService.Infrastructure/Services/ShiftMonitoringService.cs
-    startLine: 25
+    startLine: 27
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services

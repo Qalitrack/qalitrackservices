@@ -6,6 +6,7 @@ items:
   parent: UserService.Core.DTOs.User
   children:
   - UserService.Core.DTOs.User.UserReadDto.CreatedAt
+  - UserService.Core.DTOs.User.UserReadDto.CreatedBy
   - UserService.Core.DTOs.User.UserReadDto.Email
   - UserService.Core.DTOs.User.UserReadDto.FirstName
   - UserService.Core.DTOs.User.UserReadDto.FullName
@@ -18,6 +19,7 @@ items:
   - UserService.Core.DTOs.User.UserReadDto.MobileNumber
   - UserService.Core.DTOs.User.UserReadDto.Roles
   - UserService.Core.DTOs.User.UserReadDto.UpdatedAt
+  - UserService.Core.DTOs.User.UserReadDto.UpdatedBy
   langs:
   - csharp
   - vb
@@ -29,7 +31,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserReadDto
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 5
@@ -64,7 +66,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Id
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 7
@@ -105,7 +107,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: FirstName
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 10
@@ -146,7 +148,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: LastName
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 13
@@ -187,7 +189,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MobileNumber
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 16
@@ -228,7 +230,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Email
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 19
@@ -269,7 +271,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 22
@@ -310,7 +312,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsFirstLogin
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 25
@@ -351,7 +353,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsDeleted
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 28
@@ -392,7 +394,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreatedAt
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 31
@@ -433,7 +435,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdatedAt
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 34
@@ -474,7 +476,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: LastLoginDate
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 37
@@ -515,7 +517,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Roles
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 41
@@ -556,7 +558,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: FullName
     path: src/UserService.Core/DTOs/User/UserReadDto.cs
     startLine: 45
@@ -580,6 +582,64 @@ items:
   - type: System.Text.Json.Serialization.JsonIgnoreAttribute
     ctor: System.Text.Json.Serialization.JsonIgnoreAttribute.#ctor
     arguments: []
+- uid: UserService.Core.DTOs.User.UserReadDto.CreatedBy
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.CreatedBy
+  id: CreatedBy
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedBy
+  nameWithType: UserReadDto.CreatedBy
+  fullName: UserService.Core.DTOs.User.UserReadDto.CreatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreatedBy
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 48
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: public string? CreatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreatedBy As String
+  overload: UserService.Core.DTOs.User.UserReadDto.CreatedBy*
+- uid: UserService.Core.DTOs.User.UserReadDto.UpdatedBy
+  commentId: P:UserService.Core.DTOs.User.UserReadDto.UpdatedBy
+  id: UpdatedBy
+  parent: UserService.Core.DTOs.User.UserReadDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedBy
+  nameWithType: UserReadDto.UpdatedBy
+  fullName: UserService.Core.DTOs.User.UserReadDto.UpdatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/User/UserReadDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdatedBy
+    path: src/UserService.Core/DTOs/User/UserReadDto.cs
+    startLine: 50
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.User
+  syntax:
+    content: public string? UpdatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UpdatedBy As String
+  overload: UserService.Core.DTOs.User.UserReadDto.UpdatedBy*
 references:
 - uid: UserService.Core.DTOs.User
   commentId: N:UserService.Core.DTOs.User
@@ -1118,3 +1178,15 @@ references:
   name: FullName
   nameWithType: UserReadDto.FullName
   fullName: UserService.Core.DTOs.User.UserReadDto.FullName
+- uid: UserService.Core.DTOs.User.UserReadDto.CreatedBy*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.CreatedBy
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_CreatedBy
+  name: CreatedBy
+  nameWithType: UserReadDto.CreatedBy
+  fullName: UserService.Core.DTOs.User.UserReadDto.CreatedBy
+- uid: UserService.Core.DTOs.User.UserReadDto.UpdatedBy*
+  commentId: Overload:UserService.Core.DTOs.User.UserReadDto.UpdatedBy
+  href: UserService.Core.DTOs.User.UserReadDto.html#UserService_Core_DTOs_User_UserReadDto_UpdatedBy
+  name: UpdatedBy
+  nameWithType: UserReadDto.UpdatedBy
+  fullName: UserService.Core.DTOs.User.UserReadDto.UpdatedBy

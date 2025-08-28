@@ -6,12 +6,15 @@ items:
   parent: UserService.Core.DTOs.Roles
   children:
   - UserService.Core.DTOs.Roles.RoleDto.CreatedAt
+  - UserService.Core.DTOs.Roles.RoleDto.CreatedBy
   - UserService.Core.DTOs.Roles.RoleDto.Description
   - UserService.Core.DTOs.Roles.RoleDto.Id
   - UserService.Core.DTOs.Roles.RoleDto.IsActive
+  - UserService.Core.DTOs.Roles.RoleDto.IsDeleted
   - UserService.Core.DTOs.Roles.RoleDto.Name
   - UserService.Core.DTOs.Roles.RoleDto.TotalUsers
   - UserService.Core.DTOs.Roles.RoleDto.UpdatedAt
+  - UserService.Core.DTOs.Roles.RoleDto.UpdatedBy
   - UserService.Core.DTOs.Roles.RoleDto.Users
   langs:
   - csharp
@@ -24,7 +27,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RoleDto
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
     startLine: 12
@@ -61,7 +64,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Id
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
     startLine: 14
@@ -90,7 +93,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
     startLine: 15
@@ -119,7 +122,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
     startLine: 16
@@ -148,7 +151,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
     startLine: 17
@@ -177,7 +180,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreatedAt
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
     startLine: 18
@@ -206,7 +209,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdatedAt
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
     startLine: 19
@@ -220,6 +223,93 @@ items:
       type: System.Nullable{System.DateTime}
     content.vb: Public Property UpdatedAt As Date?
   overload: UserService.Core.DTOs.Roles.RoleDto.UpdatedAt*
+- uid: UserService.Core.DTOs.Roles.RoleDto.CreatedBy
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.CreatedBy
+  id: CreatedBy
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  langs:
+  - csharp
+  - vb
+  name: CreatedBy
+  nameWithType: RoleDto.CreatedBy
+  fullName: UserService.Core.DTOs.Roles.RoleDto.CreatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreatedBy
+    path: src/UserService.Core/DTOs/Roles/RoleDto.cs
+    startLine: 20
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Roles
+  syntax:
+    content: public string? CreatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property CreatedBy As String
+  overload: UserService.Core.DTOs.Roles.RoleDto.CreatedBy*
+- uid: UserService.Core.DTOs.Roles.RoleDto.UpdatedBy
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.UpdatedBy
+  id: UpdatedBy
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  langs:
+  - csharp
+  - vb
+  name: UpdatedBy
+  nameWithType: RoleDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Roles.RoleDto.UpdatedBy
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdatedBy
+    path: src/UserService.Core/DTOs/Roles/RoleDto.cs
+    startLine: 21
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Roles
+  syntax:
+    content: public string? UpdatedBy { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property UpdatedBy As String
+  overload: UserService.Core.DTOs.Roles.RoleDto.UpdatedBy*
+- uid: UserService.Core.DTOs.Roles.RoleDto.IsDeleted
+  commentId: P:UserService.Core.DTOs.Roles.RoleDto.IsDeleted
+  id: IsDeleted
+  parent: UserService.Core.DTOs.Roles.RoleDto
+  langs:
+  - csharp
+  - vb
+  name: IsDeleted
+  nameWithType: RoleDto.IsDeleted
+  fullName: UserService.Core.DTOs.Roles.RoleDto.IsDeleted
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IsDeleted
+    path: src/UserService.Core/DTOs/Roles/RoleDto.cs
+    startLine: 22
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.DTOs.Roles
+  syntax:
+    content: public string? IsDeleted { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property IsDeleted As String
+  overload: UserService.Core.DTOs.Roles.RoleDto.IsDeleted*
 - uid: UserService.Core.DTOs.Roles.RoleDto.Users
   commentId: P:UserService.Core.DTOs.Roles.RoleDto.Users
   id: Users
@@ -235,10 +325,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Users
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
-    startLine: 20
+    startLine: 23
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Roles
@@ -264,10 +354,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/RoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TotalUsers
     path: src/UserService.Core/DTOs/Roles/RoleDto.cs
-    startLine: 21
+    startLine: 24
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Roles
@@ -674,6 +764,24 @@ references:
   - name: " "
   - name: T
   - name: )
+- uid: UserService.Core.DTOs.Roles.RoleDto.CreatedBy*
+  commentId: Overload:UserService.Core.DTOs.Roles.RoleDto.CreatedBy
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_CreatedBy
+  name: CreatedBy
+  nameWithType: RoleDto.CreatedBy
+  fullName: UserService.Core.DTOs.Roles.RoleDto.CreatedBy
+- uid: UserService.Core.DTOs.Roles.RoleDto.UpdatedBy*
+  commentId: Overload:UserService.Core.DTOs.Roles.RoleDto.UpdatedBy
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_UpdatedBy
+  name: UpdatedBy
+  nameWithType: RoleDto.UpdatedBy
+  fullName: UserService.Core.DTOs.Roles.RoleDto.UpdatedBy
+- uid: UserService.Core.DTOs.Roles.RoleDto.IsDeleted*
+  commentId: Overload:UserService.Core.DTOs.Roles.RoleDto.IsDeleted
+  href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_IsDeleted
+  name: IsDeleted
+  nameWithType: RoleDto.IsDeleted
+  fullName: UserService.Core.DTOs.Roles.RoleDto.IsDeleted
 - uid: UserService.Core.DTOs.Roles.RoleDto.Users*
   commentId: Overload:UserService.Core.DTOs.Roles.RoleDto.Users
   href: UserService.Core.DTOs.Roles.RoleDto.html#UserService_Core_DTOs_Roles_RoleDto_Users

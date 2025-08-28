@@ -1,0 +1,93 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Enums.BackupType
+  commentId: T:BackupService.Core.Enums.BackupType
+  id: BackupType
+  parent: BackupService.Core.Enums
+  children:
+  - BackupService.Core.Enums.BackupType.Full
+  langs:
+  - csharp
+  - vb
+  name: BackupType
+  nameWithType: BackupType
+  fullName: BackupService.Core.Enums.BackupType
+  type: Enum
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Enums/BackupType.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: BackupType
+    path: BackupService.Core/Enums/BackupType.cs
+    startLine: 2
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Enums
+  syntax:
+    content: public enum BackupType
+    content.vb: Public Enum BackupType
+- uid: BackupService.Core.Enums.BackupType.Full
+  commentId: F:BackupService.Core.Enums.BackupType.Full
+  id: Full
+  parent: BackupService.Core.Enums.BackupType
+  langs:
+  - csharp
+  - vb
+  name: Full
+  nameWithType: BackupType.Full
+  fullName: BackupService.Core.Enums.BackupType.Full
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Enums/BackupType.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Full
+    path: BackupService.Core/Enums/BackupType.cs
+    startLine: 4
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Enums
+  syntax:
+    content: Full = 0
+    return:
+      type: BackupService.Core.Enums.BackupType
+references:
+- uid: BackupService.Core.Enums
+  commentId: N:BackupService.Core.Enums
+  href: BackupService.html
+  name: BackupService.Core.Enums
+  nameWithType: BackupService.Core.Enums
+  fullName: BackupService.Core.Enums
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+- uid: BackupService.Core.Enums.BackupType
+  commentId: T:BackupService.Core.Enums.BackupType
+  parent: BackupService.Core.Enums
+  href: BackupService.Core.Enums.BackupType.html
+  name: BackupType
+  nameWithType: BackupType
+  fullName: BackupService.Core.Enums.BackupType

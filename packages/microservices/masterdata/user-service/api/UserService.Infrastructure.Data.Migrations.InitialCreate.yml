@@ -17,11 +17,11 @@ items:
   type: Class
   source:
     remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.Designer.cs
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.Designer.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: InitialCreate
-    path: src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.Designer.cs
+    path: src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.Designer.cs
     startLine: 12
   assemblies:
   - UserService.Infrastructure
@@ -33,13 +33,13 @@ items:
     content: >-
       [DbContext(typeof(UserServiceDbContext))]
 
-      [Migration("20250730084122_InitialCreate")]
+      [Migration("20250804124624_InitialCreate")]
 
       public class InitialCreate : Migration
     content.vb: >-
       <DbContext(GetType(UserServiceDbContext))>
 
-      <Migration("20250730084122_InitialCreate")>
+      <Migration("20250804124624_InitialCreate")>
 
       Public Class InitialCreate Inherits Migration
   inheritance:
@@ -68,7 +68,7 @@ items:
     ctor: Microsoft.EntityFrameworkCore.Migrations.MigrationAttribute.#ctor(System.String)
     arguments:
     - type: System.String
-      value: 20250730084122_InitialCreate
+      value: 20250804124624_InitialCreate
 - uid: UserService.Infrastructure.Data.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)
   commentId: M:UserService.Infrastructure.Data.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)
   id: Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)
@@ -82,11 +82,11 @@ items:
   type: Method
   source:
     remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.cs
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Up
-    path: src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.cs
+    path: src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.cs
     startLine: 11
   assemblies:
   - UserService.Infrastructure
@@ -128,12 +128,12 @@ items:
   type: Method
   source:
     remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.cs
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Down
-    path: src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.cs
-    startLine: 313
+    path: src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.cs
+    startLine: 335
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Data.Migrations
@@ -176,11 +176,11 @@ items:
   type: Method
   source:
     remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.Designer.cs
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.Designer.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: BuildTargetModel
-    path: src/UserService.Infrastructure/Data/Migrations/20250730084122_InitialCreate.Designer.cs
+    path: src/UserService.Infrastructure/Data/Migrations/20250804124624_InitialCreate.Designer.cs
     startLine: 17
   assemblies:
   - UserService.Infrastructure

@@ -20,7 +20,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RolePermissionDto
     path: src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
     startLine: 2
@@ -55,7 +55,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RoleId
     path: src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
     startLine: 4
@@ -84,7 +84,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RoleName
     path: src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
     startLine: 5
@@ -113,7 +113,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionId
     path: src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
     startLine: 6
@@ -142,7 +142,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionName
     path: src/UserService.Core/DTOs/RolePermission/RolePermissionDto.cs
     startLine: 7

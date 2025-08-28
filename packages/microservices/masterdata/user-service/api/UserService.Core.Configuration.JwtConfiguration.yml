@@ -23,7 +23,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: JwtConfiguration
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 4
@@ -58,7 +58,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: SecretKey
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 6
@@ -110,7 +110,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Issuer
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 10
@@ -149,7 +149,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Audience
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 13
@@ -188,7 +188,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ExpirationMinutes
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 16
@@ -235,7 +235,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RefreshTokenExpirationHours
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 19
@@ -282,7 +282,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TokenExpiration
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 22
@@ -311,7 +311,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Configuration/JwtConfiguration.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RefreshTokenExpiration
     path: src/UserService.Core/Configuration/JwtConfiguration.cs
     startLine: 23

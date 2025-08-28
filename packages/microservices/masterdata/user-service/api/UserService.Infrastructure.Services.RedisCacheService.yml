@@ -5,7 +5,7 @@ items:
   id: RedisCacheService
   parent: UserService.Infrastructure.Services
   children:
-  - UserService.Infrastructure.Services.RedisCacheService.#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})
+  - UserService.Infrastructure.Services.RedisCacheService.#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,StackExchange.Redis.IConnectionMultiplexer,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})
   - UserService.Infrastructure.Services.RedisCacheService.GetAsync``1(System.String)
   - UserService.Infrastructure.Services.RedisCacheService.RemoveAsync(System.String)
   - UserService.Infrastructure.Services.RedisCacheService.RemovePatternAsync(System.String)
@@ -21,10 +21,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/RedisCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RedisCacheService
     path: src/UserService.Infrastructure/Services/RedisCacheService.cs
-    startLine: 7
+    startLine: 9
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -34,7 +34,7 @@ items:
   inheritance:
   - System.Object
   implements:
-  - UserService.Core.Interfaces.ICacheService
+  - UserService.Core.Interfaces.Services.ICacheService
   inheritedMembers:
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
@@ -43,40 +43,42 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Infrastructure.Services.RedisCacheService.#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})
-  commentId: M:UserService.Infrastructure.Services.RedisCacheService.#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})
-  id: '#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})'
+- uid: UserService.Infrastructure.Services.RedisCacheService.#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,StackExchange.Redis.IConnectionMultiplexer,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})
+  commentId: M:UserService.Infrastructure.Services.RedisCacheService.#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,StackExchange.Redis.IConnectionMultiplexer,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})
+  id: '#ctor(Microsoft.Extensions.Caching.Distributed.IDistributedCache,StackExchange.Redis.IConnectionMultiplexer,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService})'
   parent: UserService.Infrastructure.Services.RedisCacheService
   langs:
   - csharp
   - vb
-  name: RedisCacheService(IDistributedCache, ILogger<RedisCacheService>)
-  nameWithType: RedisCacheService.RedisCacheService(IDistributedCache, ILogger<RedisCacheService>)
-  fullName: UserService.Infrastructure.Services.RedisCacheService.RedisCacheService(Microsoft.Extensions.Caching.Distributed.IDistributedCache, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.RedisCacheService>)
+  name: RedisCacheService(IDistributedCache, IConnectionMultiplexer, ILogger<RedisCacheService>)
+  nameWithType: RedisCacheService.RedisCacheService(IDistributedCache, IConnectionMultiplexer, ILogger<RedisCacheService>)
+  fullName: UserService.Infrastructure.Services.RedisCacheService.RedisCacheService(Microsoft.Extensions.Caching.Distributed.IDistributedCache, StackExchange.Redis.IConnectionMultiplexer, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Services.RedisCacheService>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/RedisCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Services/RedisCacheService.cs
-    startLine: 12
+    startLine: 16
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
   syntax:
-    content: public RedisCacheService(IDistributedCache distributedCache, ILogger<RedisCacheService> logger)
+    content: public RedisCacheService(IDistributedCache distributedCache, IConnectionMultiplexer connectionMultiplexer, ILogger<RedisCacheService> logger)
     parameters:
     - id: distributedCache
       type: Microsoft.Extensions.Caching.Distributed.IDistributedCache
+    - id: connectionMultiplexer
+      type: StackExchange.Redis.IConnectionMultiplexer
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService}
-    content.vb: Public Sub New(distributedCache As IDistributedCache, logger As ILogger(Of RedisCacheService))
+    content.vb: Public Sub New(distributedCache As IDistributedCache, connectionMultiplexer As IConnectionMultiplexer, logger As ILogger(Of RedisCacheService))
   overload: UserService.Infrastructure.Services.RedisCacheService.#ctor*
-  nameWithType.vb: RedisCacheService.New(IDistributedCache, ILogger(Of RedisCacheService))
-  fullName.vb: UserService.Infrastructure.Services.RedisCacheService.New(Microsoft.Extensions.Caching.Distributed.IDistributedCache, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.RedisCacheService))
-  name.vb: New(IDistributedCache, ILogger(Of RedisCacheService))
+  nameWithType.vb: RedisCacheService.New(IDistributedCache, IConnectionMultiplexer, ILogger(Of RedisCacheService))
+  fullName.vb: UserService.Infrastructure.Services.RedisCacheService.New(Microsoft.Extensions.Caching.Distributed.IDistributedCache, StackExchange.Redis.IConnectionMultiplexer, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Services.RedisCacheService))
+  name.vb: New(IDistributedCache, IConnectionMultiplexer, ILogger(Of RedisCacheService))
 - uid: UserService.Infrastructure.Services.RedisCacheService.GetAsync``1(System.String)
   commentId: M:UserService.Infrastructure.Services.RedisCacheService.GetAsync``1(System.String)
   id: GetAsync``1(System.String)
@@ -92,10 +94,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/RedisCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAsync
     path: src/UserService.Infrastructure/Services/RedisCacheService.cs
-    startLine: 18
+    startLine: 32
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -112,7 +114,7 @@ items:
     content.vb: Public Function GetAsync(Of T)(key As String) As Task(Of T)
   overload: UserService.Infrastructure.Services.RedisCacheService.GetAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  - UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
   nameWithType.vb: RedisCacheService.GetAsync(Of T)(String)
   fullName.vb: UserService.Infrastructure.Services.RedisCacheService.GetAsync(Of T)(String)
   name.vb: GetAsync(Of T)(String)
@@ -131,10 +133,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/RedisCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: SetAsync
     path: src/UserService.Infrastructure/Services/RedisCacheService.cs
-    startLine: 40
+    startLine: 66
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -155,7 +157,7 @@ items:
     content.vb: Public Function SetAsync(Of T)(key As String, value As T, expiration As TimeSpan? = Nothing) As Task
   overload: UserService.Infrastructure.Services.RedisCacheService.SetAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
+  - UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
   nameWithType.vb: RedisCacheService.SetAsync(Of T)(String, T, TimeSpan?)
   fullName.vb: UserService.Infrastructure.Services.RedisCacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
   name.vb: SetAsync(Of T)(String, T, TimeSpan?)
@@ -174,10 +176,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/RedisCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemoveAsync
     path: src/UserService.Infrastructure/Services/RedisCacheService.cs
-    startLine: 69
+    startLine: 108
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -192,7 +194,7 @@ items:
     content.vb: Public Function RemoveAsync(key As String) As Task
   overload: UserService.Infrastructure.Services.RedisCacheService.RemoveAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  - UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
   nameWithType.vb: RedisCacheService.RemoveAsync(String)
   fullName.vb: UserService.Infrastructure.Services.RedisCacheService.RemoveAsync(String)
   name.vb: RemoveAsync(String)
@@ -211,10 +213,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/RedisCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemovePatternAsync
     path: src/UserService.Infrastructure/Services/RedisCacheService.cs
-    startLine: 82
+    startLine: 125
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -229,7 +231,7 @@ items:
     content.vb: Public Function RemovePatternAsync(pattern As String) As Task
   overload: UserService.Infrastructure.Services.RedisCacheService.RemovePatternAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  - UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
   nameWithType.vb: RedisCacheService.RemovePatternAsync(String)
   fullName.vb: UserService.Infrastructure.Services.RedisCacheService.RemovePatternAsync(String)
   name.vb: RemovePatternAsync(String)
@@ -275,13 +277,13 @@ references:
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: UserService.Core.Interfaces.ICacheService
-  commentId: T:UserService.Core.Interfaces.ICacheService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ICacheService.html
+- uid: UserService.Core.Interfaces.Services.ICacheService
+  commentId: T:UserService.Core.Interfaces.Services.ICacheService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.ICacheService.html
   name: ICacheService
   nameWithType: ICacheService
-  fullName: UserService.Core.Interfaces.ICacheService
+  fullName: UserService.Core.Interfaces.Services.ICacheService
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -508,12 +510,12 @@ references:
   name: System
   nameWithType: System
   fullName: System
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -526,6 +528,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -538,9 +544,13 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: UserService.Infrastructure.Services.RedisCacheService.#ctor*
   commentId: Overload:UserService.Infrastructure.Services.RedisCacheService.#ctor
-  href: UserService.Infrastructure.Services.RedisCacheService.html#UserService_Infrastructure_Services_RedisCacheService__ctor_Microsoft_Extensions_Caching_Distributed_IDistributedCache_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_RedisCacheService__
+  href: UserService.Infrastructure.Services.RedisCacheService.html#UserService_Infrastructure_Services_RedisCacheService__ctor_Microsoft_Extensions_Caching_Distributed_IDistributedCache_StackExchange_Redis_IConnectionMultiplexer_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_RedisCacheService__
   name: RedisCacheService
   nameWithType: RedisCacheService.RedisCacheService
   fullName: UserService.Infrastructure.Services.RedisCacheService.RedisCacheService
@@ -555,6 +565,13 @@ references:
   name: IDistributedCache
   nameWithType: IDistributedCache
   fullName: Microsoft.Extensions.Caching.Distributed.IDistributedCache
+- uid: StackExchange.Redis.IConnectionMultiplexer
+  commentId: T:StackExchange.Redis.IConnectionMultiplexer
+  parent: StackExchange.Redis
+  isExternal: true
+  name: IConnectionMultiplexer
+  nameWithType: IConnectionMultiplexer
+  fullName: StackExchange.Redis.IConnectionMultiplexer
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Services.RedisCacheService}
   parent: Microsoft.Extensions.Logging
@@ -635,6 +652,28 @@ references:
     name: Distributed
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.distributed
+- uid: StackExchange.Redis
+  commentId: N:StackExchange.Redis
+  isExternal: true
+  name: StackExchange.Redis
+  nameWithType: StackExchange.Redis
+  fullName: StackExchange.Redis
+  spec.csharp:
+  - uid: StackExchange
+    name: StackExchange
+    isExternal: true
+  - name: .
+  - uid: StackExchange.Redis
+    name: Redis
+    isExternal: true
+  spec.vb:
+  - uid: StackExchange
+    name: StackExchange
+    isExternal: true
+  - name: .
+  - uid: StackExchange.Redis
+    name: Redis
+    isExternal: true
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true
@@ -706,19 +745,19 @@ references:
   name: GetAsync
   nameWithType: RedisCacheService.GetAsync
   fullName: UserService.Infrastructure.Services.RedisCacheService.GetAsync
-- uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
-  commentId: M:UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
-  parent: UserService.Core.Interfaces.ICacheService
+- uid: UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
+  parent: UserService.Core.Interfaces.Services.ICacheService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetAsync<T>(string)
   nameWithType: ICacheService.GetAsync<T>(string)
-  fullName: UserService.Core.Interfaces.ICacheService.GetAsync<T>(string)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.GetAsync<T>(string)
   nameWithType.vb: ICacheService.GetAsync(Of T)(String)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.GetAsync(Of T)(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.GetAsync(Of T)(String)
   name.vb: GetAsync(Of T)(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
     name: GetAsync
   - name: <
   - name: T
@@ -730,7 +769,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
     name: GetAsync
   - name: (
   - name: Of
@@ -854,19 +893,19 @@ references:
   name: SetAsync
   nameWithType: RedisCacheService.SetAsync
   fullName: UserService.Infrastructure.Services.RedisCacheService.SetAsync
-- uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
-  commentId: M:UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
-  parent: UserService.Core.Interfaces.ICacheService
-  definition: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+- uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  parent: UserService.Core.Interfaces.Services.ICacheService
+  definition: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: SetAsync<T>(string, T, TimeSpan?)
   nameWithType: ICacheService.SetAsync<T>(string, T, TimeSpan?)
-  fullName: UserService.Core.Interfaces.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
   nameWithType.vb: ICacheService.SetAsync(Of T)(String, T, TimeSpan?)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
   name.vb: SetAsync(Of T)(String, T, TimeSpan?)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: <
   - name: T
@@ -888,7 +927,7 @@ references:
   - name: '?'
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: (
   - name: Of
@@ -945,18 +984,18 @@ references:
   name: Task
   nameWithType: Task
   fullName: System.Threading.Tasks.Task
-- uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
-  commentId: M:UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+- uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: SetAsync<T>(string, T, TimeSpan?)
   nameWithType: ICacheService.SetAsync<T>(string, T, TimeSpan?)
-  fullName: UserService.Core.Interfaces.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
   nameWithType.vb: ICacheService.SetAsync(Of T)(String, T, TimeSpan?)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
   name.vb: SetAsync(Of T)(String, T, TimeSpan?)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: <
   - name: T
@@ -978,7 +1017,7 @@ references:
   - name: '?'
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: (
   - name: Of
@@ -1039,19 +1078,19 @@ references:
   name: RemoveAsync
   nameWithType: RedisCacheService.RemoveAsync
   fullName: UserService.Infrastructure.Services.RedisCacheService.RemoveAsync
-- uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
-  parent: UserService.Core.Interfaces.ICacheService
+- uid: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ICacheService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: RemoveAsync(string)
   nameWithType: ICacheService.RemoveAsync(string)
-  fullName: UserService.Core.Interfaces.ICacheService.RemoveAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(string)
   nameWithType.vb: ICacheService.RemoveAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.RemoveAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(String)
   name.vb: RemoveAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
     name: RemoveAsync
   - name: (
   - uid: System.String
@@ -1060,7 +1099,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
     name: RemoveAsync
   - name: (
   - uid: System.String
@@ -1074,19 +1113,19 @@ references:
   name: RemovePatternAsync
   nameWithType: RedisCacheService.RemovePatternAsync
   fullName: UserService.Infrastructure.Services.RedisCacheService.RemovePatternAsync
-- uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
-  parent: UserService.Core.Interfaces.ICacheService
+- uid: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ICacheService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: RemovePatternAsync(string)
   nameWithType: ICacheService.RemovePatternAsync(string)
-  fullName: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(string)
   nameWithType.vb: ICacheService.RemovePatternAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(String)
   name.vb: RemovePatternAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
     name: RemovePatternAsync
   - name: (
   - uid: System.String
@@ -1095,7 +1134,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
     name: RemovePatternAsync
   - name: (
   - uid: System.String

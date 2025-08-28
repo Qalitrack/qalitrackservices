@@ -5,6 +5,7 @@ items:
   id: UserService.Core.Entities
   children:
   - UserService.Core.Entities.BaseEntity
+  - UserService.Core.Entities.PasswordPolicy
   - UserService.Core.Entities.Permission
   - UserService.Core.Entities.Role
   - UserService.Core.Entities.RolePermission
@@ -38,6 +39,13 @@ references:
   name: User
   nameWithType: User
   fullName: UserService.Core.Entities.User
+- uid: UserService.Core.Entities.PasswordPolicy
+  commentId: T:UserService.Core.Entities.PasswordPolicy
+  parent: UserService.Core.Entities
+  href: UserService.Core.Entities.PasswordPolicy.html
+  name: PasswordPolicy
+  nameWithType: PasswordPolicy
+  fullName: UserService.Core.Entities.PasswordPolicy
 - uid: UserService.Core.Entities.Permission
   commentId: T:UserService.Core.Entities.Permission
   parent: UserService.Core.Entities

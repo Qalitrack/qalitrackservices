@@ -23,6 +23,9 @@ items:
   - uid: UserService.Api.Controllers.BaseController
     name: BaseController
     type: Class
+  - uid: UserService.Api.Controllers.PasswordPolicyController
+    name: PasswordPolicyController
+    type: Class
   - uid: UserService.Api.Controllers.PermissionsController
     name: PermissionsController
     type: Class
@@ -237,6 +240,9 @@ items:
   - uid: UserService.Core.Entities.BaseEntity
     name: BaseEntity
     type: Class
+  - uid: UserService.Core.Entities.PasswordPolicy
+    name: PasswordPolicy
+    type: Class
   - uid: UserService.Core.Entities.Permission
     name: Permission
     type: Class
@@ -264,95 +270,97 @@ items:
   - uid: UserService.Core.Entities.UserShift
     name: UserShift
     type: Class
-- uid: UserService.Core.Enums
-  name: UserService.Core.Enums
-  type: Namespace
-  items:
-  - uid: UserService.Core.Enums.BackupType
-    name: BackupType
-    type: Enum
 - uid: UserService.Core.Interfaces
   name: UserService.Core.Interfaces
   type: Namespace
   items:
-  - uid: UserService.Core.Interfaces.IBackupNotificationService
-    name: IBackupNotificationService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IBackupVerificationService
-    name: IBackupVerificationService
-    type: Interface
-  - uid: UserService.Core.Interfaces.ICacheService
-    name: ICacheService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IDatabaseBackupService
-    name: IDatabaseBackupService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IEmailQueueService
-    name: IEmailQueueService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IHealthCheckService
-    name: IHealthCheckService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IPermissionsRepository
-    name: IPermissionsRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IPermissionsService
-    name: IPermissionsService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IReportService
-    name: IReportService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IRepository`1
-    name: IRepository<T>
-    type: Interface
-  - uid: UserService.Core.Interfaces.IRolePermissionRepository
-    name: IRolePermissionRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IRoleRepository
-    name: IRoleRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IRoleService
-    name: IRoleService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IShiftRepository
-    name: IShiftRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IShiftService
-    name: IShiftService
-    type: Interface
-  - uid: UserService.Core.Interfaces.ITokenRepository
-    name: ITokenRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.ITokenService
-    name: ITokenService
-    type: Interface
-  - uid: UserService.Core.Interfaces.ITwoFactorService
-    name: ITwoFactorService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IUserRepository
-    name: IUserRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IUserRoleRepository
-    name: IUserRoleRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IUserRoleService
-    name: IUserRoleService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IUserService
-    name: IUserService
-    type: Interface
-  - uid: UserService.Core.Interfaces.IUserShiftRepository
-    name: IUserShiftRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IUserStatusRepository
-    name: IUserStatusRepository
-    type: Interface
-  - uid: UserService.Core.Interfaces.IUserStatusService
-    name: IUserStatusService
-    type: Interface
   - uid: UserService.Core.Interfaces.PersonalAccessToken
     name: PersonalAccessToken
     type: Class
+- uid: UserService.Core.Interfaces.Emails
+  name: UserService.Core.Interfaces.Emails
+  type: Namespace
+  items:
+  - uid: UserService.Core.Interfaces.Emails.IEmailQueueService
+    name: IEmailQueueService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Emails.IEmailService
+    name: IEmailService
+    type: Interface
+- uid: UserService.Core.Interfaces.Repositories
+  name: UserService.Core.Interfaces.Repositories
+  type: Namespace
+  items:
+  - uid: UserService.Core.Interfaces.Repositories.IPasswordPolicyRepository
+    name: IPasswordPolicyRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IPermissionsRepository
+    name: IPermissionsRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IRepository`1
+    name: IRepository<T>
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IRolePermissionRepository
+    name: IRolePermissionRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IRoleRepository
+    name: IRoleRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IShiftRepository
+    name: IShiftRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.ITokenRepository
+    name: ITokenRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.ITokenService
+    name: ITokenService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IUserRepository
+    name: IUserRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository
+    name: IUserRoleRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IUserShiftRepository
+    name: IUserShiftRepository
+    type: Interface
+  - uid: UserService.Core.Interfaces.Repositories.IUserStatusRepository
+    name: IUserStatusRepository
+    type: Interface
+- uid: UserService.Core.Interfaces.Services
+  name: UserService.Core.Interfaces.Services
+  type: Namespace
+  items:
+  - uid: UserService.Core.Interfaces.Services.ICacheService
+    name: ICacheService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService
+    name: IPermissionsService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IReportService
+    name: IReportService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IRoleService
+    name: IRoleService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IShiftLoginRestrictionService
+    name: IShiftLoginRestrictionService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IShiftService
+    name: IShiftService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.ITwoFactorService
+    name: ITwoFactorService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IUserRoleService
+    name: IUserRoleService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IUserService
+    name: IUserService
+    type: Interface
+  - uid: UserService.Core.Interfaces.Services.IUserStatusService
+    name: IUserStatusService
+    type: Interface
 - uid: UserService.Core.Mappings
   name: UserService.Core.Mappings
   type: Namespace
@@ -372,15 +380,11 @@ items:
   - uid: UserService.Core.Mappings.UserProfile
     name: UserProfile
     type: Class
+  - uid: UserService.Core.Mappings.UserRoleProfile
+    name: UserRoleProfile
+    type: Class
   - uid: UserService.Core.Mappings.UserShiftProfile
     name: UserShiftProfile
-    type: Class
-- uid: UserService.Core.Options
-  name: UserService.Core.Options
-  type: Namespace
-  items:
-  - uid: UserService.Core.Options.BackupOptions
-    name: BackupOptions
     type: Class
 - uid: UserService.Core.Services
   name: UserService.Core.Services
@@ -395,11 +399,11 @@ items:
   - uid: UserService.Core.Services.JwtConfigurationService
     name: JwtConfigurationService
     type: Class
+  - uid: UserService.Core.Services.PasswordPolicyService
+    name: PasswordPolicyService
+    type: Class
   - uid: UserService.Core.Services.PermissionsService
     name: PermissionsService
-    type: Class
-  - uid: UserService.Core.Services.RestoreService
-    name: RestoreService
     type: Class
   - uid: UserService.Core.Services.RoleService
     name: RoleService
@@ -425,10 +429,16 @@ items:
   - uid: UserService.Core.Services.UserStatusUpdate
     name: UserStatusUpdate
     type: Class
+  - uid: UserService.Core.Services.ValidationResult
+    name: ValidationResult
+    type: Class
 - uid: UserService.Core.Utilities
   name: UserService.Core.Utilities
   type: Namespace
   items:
+  - uid: UserService.Core.Utilities.AuthUtils
+    name: AuthUtils
+    type: Class
   - uid: UserService.Core.Utilities.StringUtils
     name: StringUtils
     type: Class
@@ -436,6 +446,9 @@ items:
   name: UserService.Infrastructure.Data
   type: Namespace
   items:
+  - uid: UserService.Infrastructure.Data.DesignTimeDbContextFactory
+    name: DesignTimeDbContextFactory
+    type: Class
   - uid: UserService.Infrastructure.Data.PrepDb
     name: PrepDb
     type: Class
@@ -449,17 +462,13 @@ items:
   - uid: UserService.Infrastructure.Data.Migrations.InitialCreate
     name: InitialCreate
     type: Class
-- uid: UserService.Infrastructure.Interfaces
-  name: UserService.Infrastructure.Interfaces
-  type: Namespace
-  items:
-  - uid: UserService.Infrastructure.Interfaces.IEmailService
-    name: IEmailService
-    type: Interface
 - uid: UserService.Infrastructure.Repositories
   name: UserService.Infrastructure.Repositories
   type: Namespace
   items:
+  - uid: UserService.Infrastructure.Repositories.PasswordPolicyRepository
+    name: PasswordPolicyRepository
+    type: Class
   - uid: UserService.Infrastructure.Repositories.PermissionsRepository
     name: PermissionsRepository
     type: Class
@@ -487,6 +496,9 @@ items:
   - uid: UserService.Infrastructure.Repositories.UserShiftRepository
     name: UserShiftRepository
     type: Class
+  - uid: UserService.Infrastructure.Repositories.UserStatusRepository
+    name: UserStatusRepository
+    type: Class
 - uid: UserService.Infrastructure.Services
   name: UserService.Infrastructure.Services
   type: Namespace
@@ -496,9 +508,6 @@ items:
     type: Class
   - uid: UserService.Infrastructure.Services.EmailQueueService
     name: EmailQueueService
-    type: Class
-  - uid: UserService.Infrastructure.Services.HealthCheckService
-    name: HealthCheckService
     type: Class
   - uid: UserService.Infrastructure.Services.MemoryCacheService
     name: MemoryCacheService
@@ -511,6 +520,9 @@ items:
     type: Class
   - uid: UserService.Infrastructure.Services.ReportService
     name: ReportService
+    type: Class
+  - uid: UserService.Infrastructure.Services.ShiftLoginRestrictionService
+    name: ShiftLoginRestrictionService
     type: Class
   - uid: UserService.Infrastructure.Services.ShiftMonitorService
     name: ShiftMonitorService

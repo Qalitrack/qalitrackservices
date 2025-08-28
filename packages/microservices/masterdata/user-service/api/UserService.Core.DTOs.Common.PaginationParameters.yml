@@ -21,7 +21,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PaginationParameters.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PaginationParameters
     path: src/UserService.Core/DTOs/Common/PaginationParameters.cs
     startLine: 4
@@ -56,7 +56,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PaginationParameters.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Page
     path: src/UserService.Core/DTOs/Common/PaginationParameters.cs
     startLine: 9
@@ -103,7 +103,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PaginationParameters.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PageSize
     path: src/UserService.Core/DTOs/Common/PaginationParameters.cs
     startLine: 12
@@ -150,7 +150,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PaginationParameters.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Search
     path: src/UserService.Core/DTOs/Common/PaginationParameters.cs
     startLine: 19
@@ -179,7 +179,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PaginationParameters.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: SortBy
     path: src/UserService.Core/DTOs/Common/PaginationParameters.cs
     startLine: 20
@@ -208,7 +208,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PaginationParameters.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: SortDescending
     path: src/UserService.Core/DTOs/Common/PaginationParameters.cs
     startLine: 21

@@ -5,7 +5,7 @@ items:
   id: AuthController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)
+  - UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.Repositories.ITokenService,UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.Services.IUserStatusService,UserService.Core.Interfaces.Services.ITwoFactorService)
   - UserService.Api.Controllers.AuthController.Login(UserService.Core.DTOs.Auth.LoginDto)
   - UserService.Api.Controllers.AuthController.Logout
   - UserService.Api.Controllers.AuthController.UpdatePassword(System.String,UserService.Core.DTOs.Auth.UpdatePasswordDto)
@@ -21,10 +21,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/AuthController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AuthController
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 13
+    startLine: 15
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -247,25 +247,25 @@ items:
     arguments:
     - type: System.String
       value: api/[controller]
-- uid: UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)
-  commentId: M:UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)
-  id: '#ctor(UserService.Core.Interfaces.ITokenService,UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.IUserStatusService,UserService.Core.Interfaces.ITwoFactorService)'
+- uid: UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.Repositories.ITokenService,UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.Services.IUserStatusService,UserService.Core.Interfaces.Services.ITwoFactorService)
+  commentId: M:UserService.Api.Controllers.AuthController.#ctor(UserService.Core.Interfaces.Repositories.ITokenService,UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.Services.IUserStatusService,UserService.Core.Interfaces.Services.ITwoFactorService)
+  id: '#ctor(UserService.Core.Interfaces.Repositories.ITokenService,UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController},AutoMapper.IMapper,UserService.Core.Interfaces.Services.IUserStatusService,UserService.Core.Interfaces.Services.ITwoFactorService)'
   parent: UserService.Api.Controllers.AuthController
   langs:
   - csharp
   - vb
   name: AuthController(ITokenService, IUserService, IShiftService, ILogger<AuthController>, IMapper, IUserStatusService, ITwoFactorService)
   nameWithType: AuthController.AuthController(ITokenService, IUserService, IShiftService, ILogger<AuthController>, IMapper, IUserStatusService, ITwoFactorService)
-  fullName: UserService.Api.Controllers.AuthController.AuthController(UserService.Core.Interfaces.ITokenService, UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.AuthController>, AutoMapper.IMapper, UserService.Core.Interfaces.IUserStatusService, UserService.Core.Interfaces.ITwoFactorService)
+  fullName: UserService.Api.Controllers.AuthController.AuthController(UserService.Core.Interfaces.Repositories.ITokenService, UserService.Core.Interfaces.Services.IUserService, UserService.Core.Interfaces.Services.IShiftService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.AuthController>, AutoMapper.IMapper, UserService.Core.Interfaces.Services.IUserStatusService, UserService.Core.Interfaces.Services.ITwoFactorService)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/AuthController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 25
+    startLine: 27
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -273,23 +273,23 @@ items:
     content: public AuthController(ITokenService tokenService, IUserService userService, IShiftService shiftService, ILogger<AuthController> logger, IMapper mapper, IUserStatusService userStatusService, ITwoFactorService twoFactorService)
     parameters:
     - id: tokenService
-      type: UserService.Core.Interfaces.ITokenService
+      type: UserService.Core.Interfaces.Repositories.ITokenService
     - id: userService
-      type: UserService.Core.Interfaces.IUserService
+      type: UserService.Core.Interfaces.Services.IUserService
     - id: shiftService
-      type: UserService.Core.Interfaces.IShiftService
+      type: UserService.Core.Interfaces.Services.IShiftService
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController}
     - id: mapper
       type: AutoMapper.IMapper
     - id: userStatusService
-      type: UserService.Core.Interfaces.IUserStatusService
+      type: UserService.Core.Interfaces.Services.IUserStatusService
     - id: twoFactorService
-      type: UserService.Core.Interfaces.ITwoFactorService
+      type: UserService.Core.Interfaces.Services.ITwoFactorService
     content.vb: Public Sub New(tokenService As ITokenService, userService As IUserService, shiftService As IShiftService, logger As ILogger(Of AuthController), mapper As IMapper, userStatusService As IUserStatusService, twoFactorService As ITwoFactorService)
   overload: UserService.Api.Controllers.AuthController.#ctor*
   nameWithType.vb: AuthController.New(ITokenService, IUserService, IShiftService, ILogger(Of AuthController), IMapper, IUserStatusService, ITwoFactorService)
-  fullName.vb: UserService.Api.Controllers.AuthController.New(UserService.Core.Interfaces.ITokenService, UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.AuthController), AutoMapper.IMapper, UserService.Core.Interfaces.IUserStatusService, UserService.Core.Interfaces.ITwoFactorService)
+  fullName.vb: UserService.Api.Controllers.AuthController.New(UserService.Core.Interfaces.Repositories.ITokenService, UserService.Core.Interfaces.Services.IUserService, UserService.Core.Interfaces.Services.IShiftService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.AuthController), AutoMapper.IMapper, UserService.Core.Interfaces.Services.IUserStatusService, UserService.Core.Interfaces.Services.ITwoFactorService)
   name.vb: New(ITokenService, IUserService, IShiftService, ILogger(Of AuthController), IMapper, IUserStatusService, ITwoFactorService)
 - uid: UserService.Api.Controllers.AuthController.Login(UserService.Core.DTOs.Auth.LoginDto)
   commentId: M:UserService.Api.Controllers.AuthController.Login(UserService.Core.DTOs.Auth.LoginDto)
@@ -306,10 +306,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/AuthController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Login
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 43
+    startLine: 45
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -353,10 +353,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/AuthController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: VerifyTwoFactor
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 139
+    startLine: 151
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -400,10 +400,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/AuthController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdatePassword
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 219
+    startLine: 225
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -459,10 +459,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/AuthController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Logout
     path: src/UserService.Api/Controllers/AuthController.cs
-    startLine: 297
+    startLine: 300
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -10003,34 +10003,34 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.AuthController.#ctor*
   commentId: Overload:UserService.Api.Controllers.AuthController.#ctor
-  href: UserService.Api.Controllers.AuthController.html#UserService_Api_Controllers_AuthController__ctor_UserService_Core_Interfaces_ITokenService_UserService_Core_Interfaces_IUserService_UserService_Core_Interfaces_IShiftService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_AuthController__AutoMapper_IMapper_UserService_Core_Interfaces_IUserStatusService_UserService_Core_Interfaces_ITwoFactorService_
+  href: UserService.Api.Controllers.AuthController.html#UserService_Api_Controllers_AuthController__ctor_UserService_Core_Interfaces_Repositories_ITokenService_UserService_Core_Interfaces_Services_IUserService_UserService_Core_Interfaces_Services_IShiftService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_AuthController__AutoMapper_IMapper_UserService_Core_Interfaces_Services_IUserStatusService_UserService_Core_Interfaces_Services_ITwoFactorService_
   name: AuthController
   nameWithType: AuthController.AuthController
   fullName: UserService.Api.Controllers.AuthController.AuthController
   nameWithType.vb: AuthController.New
   fullName.vb: UserService.Api.Controllers.AuthController.New
   name.vb: New
-- uid: UserService.Core.Interfaces.ITokenService
-  commentId: T:UserService.Core.Interfaces.ITokenService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ITokenService.html
+- uid: UserService.Core.Interfaces.Repositories.ITokenService
+  commentId: T:UserService.Core.Interfaces.Repositories.ITokenService
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.ITokenService.html
   name: ITokenService
   nameWithType: ITokenService
-  fullName: UserService.Core.Interfaces.ITokenService
-- uid: UserService.Core.Interfaces.IUserService
-  commentId: T:UserService.Core.Interfaces.IUserService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserService.html
+  fullName: UserService.Core.Interfaces.Repositories.ITokenService
+- uid: UserService.Core.Interfaces.Services.IUserService
+  commentId: T:UserService.Core.Interfaces.Services.IUserService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserService.html
   name: IUserService
   nameWithType: IUserService
-  fullName: UserService.Core.Interfaces.IUserService
-- uid: UserService.Core.Interfaces.IShiftService
-  commentId: T:UserService.Core.Interfaces.IShiftService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IShiftService.html
+  fullName: UserService.Core.Interfaces.Services.IUserService
+- uid: UserService.Core.Interfaces.Services.IShiftService
+  commentId: T:UserService.Core.Interfaces.Services.IShiftService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IShiftService.html
   name: IShiftService
   nameWithType: IShiftService
-  fullName: UserService.Core.Interfaces.IShiftService
+  fullName: UserService.Core.Interfaces.Services.IShiftService
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.AuthController}
   parent: Microsoft.Extensions.Logging
@@ -10071,26 +10071,26 @@ references:
   name: IMapper
   nameWithType: IMapper
   fullName: AutoMapper.IMapper
-- uid: UserService.Core.Interfaces.IUserStatusService
-  commentId: T:UserService.Core.Interfaces.IUserStatusService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserStatusService.html
+- uid: UserService.Core.Interfaces.Services.IUserStatusService
+  commentId: T:UserService.Core.Interfaces.Services.IUserStatusService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserStatusService.html
   name: IUserStatusService
   nameWithType: IUserStatusService
-  fullName: UserService.Core.Interfaces.IUserStatusService
-- uid: UserService.Core.Interfaces.ITwoFactorService
-  commentId: T:UserService.Core.Interfaces.ITwoFactorService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ITwoFactorService.html
+  fullName: UserService.Core.Interfaces.Services.IUserStatusService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService
+  commentId: T:UserService.Core.Interfaces.Services.ITwoFactorService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html
   name: ITwoFactorService
   nameWithType: ITwoFactorService
-  fullName: UserService.Core.Interfaces.ITwoFactorService
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -10103,6 +10103,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -10115,6 +10119,48 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
+  href: UserService.html
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true

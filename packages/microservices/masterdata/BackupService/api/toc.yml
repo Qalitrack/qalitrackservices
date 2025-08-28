@@ -1,0 +1,169 @@
+### YamlMime:TableOfContent
+items:
+- uid: BackupService.API.Controllers
+  name: BackupService.API.Controllers
+  type: Namespace
+  items:
+  - uid: BackupService.API.Controllers.BackupController
+    name: BackupController
+    type: Class
+  - uid: BackupService.API.Controllers.MicroserviceController
+    name: MicroserviceController
+    type: Class
+- uid: BackupService.Core.Dtos
+  name: BackupService.Core.Dtos
+  type: Namespace
+  items:
+  - uid: BackupService.Core.Dtos.ApiResponseDto`1
+    name: ApiResponseDto<T>
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupChainInfo
+    name: BackupChainInfo
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupFileInfo
+    name: BackupFileInfo
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupHealthReport
+    name: BackupHealthReport
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupHealthResult
+    name: BackupHealthResult
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupOptions
+    name: BackupOptions
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupRequest
+    name: BackupRequest
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupResult
+    name: BackupResult
+    type: Class
+  - uid: BackupService.Core.Dtos.BackupStatistics
+    name: BackupStatistics
+    type: Class
+  - uid: BackupService.Core.Dtos.MicroserviceRequest
+    name: MicroserviceRequest
+    type: Class
+  - uid: BackupService.Core.Dtos.RestoreBackupRequest
+    name: RestoreBackupRequest
+    type: Class
+  - uid: BackupService.Core.Dtos.RestorePreviewResult
+    name: RestorePreviewResult
+    type: Class
+  - uid: BackupService.Core.Dtos.RestoreResult
+    name: RestoreResult
+    type: Class
+- uid: BackupService.Core.Entities
+  name: BackupService.Core.Entities
+  type: Namespace
+  items:
+  - uid: BackupService.Core.Entities.BackupChain
+    name: BackupChain
+    type: Class
+  - uid: BackupService.Core.Entities.BackupMetadata
+    name: BackupMetadata
+    type: Class
+  - uid: BackupService.Core.Entities.Microservice
+    name: Microservice
+    type: Class
+  - uid: BackupService.Core.Entities.ScheduledBackup
+    name: ScheduledBackup
+    type: Class
+  - uid: BackupService.Core.Entities.WalFileInfo
+    name: WalFileInfo
+    type: Class
+- uid: BackupService.Core.Enums
+  name: BackupService.Core.Enums
+  type: Namespace
+  items:
+  - uid: BackupService.Core.Enums.BackupType
+    name: BackupType
+    type: Enum
+  - uid: BackupService.Core.Enums.MicroserviceStatus
+    name: MicroserviceStatus
+    type: Enum
+- uid: BackupService.Core.Interfaces
+  name: BackupService.Core.Interfaces
+  type: Namespace
+  items:
+  - uid: BackupService.Core.Interfaces.IBackupCreationService
+    name: IBackupCreationService
+    type: Interface
+  - uid: BackupService.Core.Interfaces.IBackupMetadataService
+    name: IBackupMetadataService
+    type: Interface
+  - uid: BackupService.Core.Interfaces.IBackupRestoreService
+    name: IBackupRestoreService
+    type: Interface
+  - uid: BackupService.Core.Interfaces.IBackupVerificationService
+    name: IBackupVerificationService
+    type: Interface
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService
+    name: IDatabaseBackupService
+    type: Interface
+  - uid: BackupService.Core.Interfaces.IMicroService
+    name: IMicroService
+    type: Interface
+  - uid: BackupService.Core.Interfaces.IMicroserviceRepository
+    name: IMicroserviceRepository
+    type: Interface
+- uid: BackupService.Core.Services
+  name: BackupService.Core.Services
+  type: Namespace
+  items:
+  - uid: BackupService.Core.Services.BackupCreationService
+    name: BackupCreationService
+    type: Class
+  - uid: BackupService.Core.Services.BackupRestoreService
+    name: BackupRestoreService
+    type: Class
+  - uid: BackupService.Core.Services.BackupVerificationService
+    name: BackupVerificationService
+    type: Class
+  - uid: BackupService.Core.Services.DatabaseBackupService
+    name: DatabaseBackupService
+    type: Class
+  - uid: BackupService.Core.Services.DatabaseBackupService.BackupJob
+    name: DatabaseBackupService.BackupJob
+    type: Class
+  - uid: BackupService.Core.Services.JsonBackupMetadataService
+    name: JsonBackupMetadataService
+    type: Class
+  - uid: BackupService.Core.Services.MicroService
+    name: MicroService
+    type: Class
+- uid: BackupService.Infrastructure.Data
+  name: BackupService.Infrastructure.Data
+  type: Namespace
+  items:
+  - uid: BackupService.Infrastructure.Data.BackupServiceDbContext
+    name: BackupServiceDbContext
+    type: Class
+  - uid: BackupService.Infrastructure.Data.BackupServiceDbContextFactory
+    name: BackupServiceDbContextFactory
+    type: Class
+  - uid: BackupService.Infrastructure.Data.DatabaseSeeder
+    name: DatabaseSeeder
+    type: Class
+- uid: BackupService.Infrastructure.Migrations
+  name: BackupService.Infrastructure.Migrations
+  type: Namespace
+  items:
+  - uid: BackupService.Infrastructure.Migrations.InitialCreate
+    name: InitialCreate
+    type: Class
+- uid: BackupService.Infrastructure.Repositories
+  name: BackupService.Infrastructure.Repositories
+  type: Namespace
+  items:
+  - uid: BackupService.Infrastructure.Repositories.MicroserviceRepository
+    name: MicroserviceRepository
+    type: Class
+- uid: BackupService.Infrastructure.Services.Notifications
+  name: BackupService.Infrastructure.Services.Notifications
+  type: Namespace
+  items:
+  - uid: BackupService.Infrastructure.Services.Notifications.SmtpOptions
+    name: SmtpOptions
+    type: Class
+memberLayout: SamePage
