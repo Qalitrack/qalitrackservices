@@ -20,7 +20,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UsersAssignedToShiftDto
     path: src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
     startLine: 5
@@ -55,7 +55,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftId
     path: src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
     startLine: 7
@@ -84,7 +84,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftName
     path: src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
     startLine: 8
@@ -113,7 +113,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Users
     path: src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
     startLine: 9
@@ -142,7 +142,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TotalUsers
     path: src/UserService.Core/DTOs/Shift/UsersAssignedToShiftDto.cs
     startLine: 10

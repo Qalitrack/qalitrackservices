@@ -21,10 +21,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/ShiftReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftReportResponse
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 29
+    startLine: 34
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -56,10 +56,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/ShiftReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Shifts
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 31
+    startLine: 36
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -85,10 +85,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/ShiftReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TotalShifts
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 32
+    startLine: 37
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -114,10 +114,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/ShiftReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ActiveShifts
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 33
+    startLine: 38
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -143,10 +143,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/ShiftReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: StrictModeShifts
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 34
+    startLine: 39
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report
@@ -172,10 +172,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/ShiftReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: OpenModeShifts
     path: src/UserService.Core/DTOs/Report/ShiftReportDto.cs
-    startLine: 35
+    startLine: 40
   assemblies:
   - UserService.Core
   namespace: UserService.Core.DTOs.Report

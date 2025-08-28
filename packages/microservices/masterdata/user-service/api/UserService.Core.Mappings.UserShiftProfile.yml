@@ -17,7 +17,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Mappings/UserShiftProfile.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserShiftProfile
     path: src/UserService.Core/Mappings/UserShiftProfile.cs
     startLine: 6
@@ -81,7 +81,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Mappings/UserShiftProfile.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Mappings/UserShiftProfile.cs
     startLine: 8

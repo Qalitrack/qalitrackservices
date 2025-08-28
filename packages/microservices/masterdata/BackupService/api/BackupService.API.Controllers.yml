@@ -1,0 +1,30 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.API.Controllers
+  commentId: N:BackupService.API.Controllers
+  id: BackupService.API.Controllers
+  children:
+  - BackupService.API.Controllers.BackupController
+  - BackupService.API.Controllers.MicroserviceController
+  langs:
+  - csharp
+  - vb
+  name: BackupService.API.Controllers
+  nameWithType: BackupService.API.Controllers
+  fullName: BackupService.API.Controllers
+  type: Namespace
+  assemblies:
+  - BackupService.API
+references:
+- uid: BackupService.API.Controllers.BackupController
+  commentId: T:BackupService.API.Controllers.BackupController
+  href: BackupService.API.Controllers.BackupController.html
+  name: BackupController
+  nameWithType: BackupController
+  fullName: BackupService.API.Controllers.BackupController
+- uid: BackupService.API.Controllers.MicroserviceController
+  commentId: T:BackupService.API.Controllers.MicroserviceController
+  href: BackupService.API.Controllers.MicroserviceController.html
+  name: MicroserviceController
+  nameWithType: MicroserviceController
+  fullName: BackupService.API.Controllers.MicroserviceController

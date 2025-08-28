@@ -5,7 +5,7 @@ items:
   id: RolesController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.RolesController.#ctor(UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})
+  - UserService.Api.Controllers.RolesController.#ctor(UserService.Core.Interfaces.Services.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})
   - UserService.Api.Controllers.RolesController.AddPermissionToRole(System.String,System.String)
   - UserService.Api.Controllers.RolesController.Create(UserService.Core.DTOs.Roles.CreateRoleDto)
   - UserService.Api.Controllers.RolesController.Delete(System.String)
@@ -24,7 +24,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RolesController
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 8
@@ -248,22 +248,22 @@ items:
     arguments:
     - type: System.String
       value: api/[controller]
-- uid: UserService.Api.Controllers.RolesController.#ctor(UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})
-  commentId: M:UserService.Api.Controllers.RolesController.#ctor(UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})
-  id: '#ctor(UserService.Core.Interfaces.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})'
+- uid: UserService.Api.Controllers.RolesController.#ctor(UserService.Core.Interfaces.Services.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})
+  commentId: M:UserService.Api.Controllers.RolesController.#ctor(UserService.Core.Interfaces.Services.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})
+  id: '#ctor(UserService.Core.Interfaces.Services.IRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.RolesController})'
   parent: UserService.Api.Controllers.RolesController
   langs:
   - csharp
   - vb
   name: RolesController(IRoleService, IMapper, ILogger<RolesController>)
   nameWithType: RolesController.RolesController(IRoleService, IMapper, ILogger<RolesController>)
-  fullName: UserService.Api.Controllers.RolesController.RolesController(UserService.Core.Interfaces.IRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.RolesController>)
+  fullName: UserService.Api.Controllers.RolesController.RolesController(UserService.Core.Interfaces.Services.IRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.RolesController>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 8
@@ -274,7 +274,7 @@ items:
     content: public RolesController(IRoleService roleService, IMapper mapper, ILogger<RolesController> logger)
     parameters:
     - id: roleService
-      type: UserService.Core.Interfaces.IRoleService
+      type: UserService.Core.Interfaces.Services.IRoleService
     - id: mapper
       type: AutoMapper.IMapper
     - id: logger
@@ -282,7 +282,7 @@ items:
     content.vb: Public Sub New(roleService As IRoleService, mapper As IMapper, logger As ILogger(Of RolesController))
   overload: UserService.Api.Controllers.RolesController.#ctor*
   nameWithType.vb: RolesController.New(IRoleService, IMapper, ILogger(Of RolesController))
-  fullName.vb: UserService.Api.Controllers.RolesController.New(UserService.Core.Interfaces.IRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.RolesController))
+  fullName.vb: UserService.Api.Controllers.RolesController.New(UserService.Core.Interfaces.Services.IRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.RolesController))
   name.vb: New(IRoleService, IMapper, ILogger(Of RolesController))
 - uid: UserService.Api.Controllers.RolesController.GetAll
   commentId: M:UserService.Api.Controllers.RolesController.GetAll
@@ -299,7 +299,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAll
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 22
@@ -386,7 +386,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetById
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 42
@@ -481,7 +481,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Create
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 72
@@ -584,7 +584,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Update
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 142
@@ -701,7 +701,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Delete
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 219
@@ -812,7 +812,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AddPermissionToRole
     path: src/UserService.Api/Controllers/RolesController.cs
     startLine: 281
@@ -925,10 +925,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/RolesController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemovePermissionFromRole
     path: src/UserService.Api/Controllers/RolesController.cs
-    startLine: 326
+    startLine: 325
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -10021,20 +10021,20 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.RolesController.#ctor*
   commentId: Overload:UserService.Api.Controllers.RolesController.#ctor
-  href: UserService.Api.Controllers.RolesController.html#UserService_Api_Controllers_RolesController__ctor_UserService_Core_Interfaces_IRoleService_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_RolesController__
+  href: UserService.Api.Controllers.RolesController.html#UserService_Api_Controllers_RolesController__ctor_UserService_Core_Interfaces_Services_IRoleService_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_RolesController__
   name: RolesController
   nameWithType: RolesController.RolesController
   fullName: UserService.Api.Controllers.RolesController.RolesController
   nameWithType.vb: RolesController.New
   fullName.vb: UserService.Api.Controllers.RolesController.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IRoleService
-  commentId: T:UserService.Core.Interfaces.IRoleService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IRoleService.html
+- uid: UserService.Core.Interfaces.Services.IRoleService
+  commentId: T:UserService.Core.Interfaces.Services.IRoleService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IRoleService.html
   name: IRoleService
   nameWithType: IRoleService
-  fullName: UserService.Core.Interfaces.IRoleService
+  fullName: UserService.Core.Interfaces.Services.IRoleService
 - uid: AutoMapper.IMapper
   commentId: T:AutoMapper.IMapper
   parent: AutoMapper
@@ -10075,12 +10075,12 @@ references:
     name: RolesController
     href: UserService.Api.Controllers.RolesController.html
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -10093,6 +10093,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -10105,6 +10109,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: AutoMapper
   commentId: N:AutoMapper
   isExternal: true

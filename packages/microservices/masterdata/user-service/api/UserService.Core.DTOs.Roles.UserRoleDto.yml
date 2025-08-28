@@ -21,7 +21,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserRoleDto
     path: src/UserService.Core/DTOs/Roles/UserRoleDto.cs
     startLine: 2
@@ -56,7 +56,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserId
     path: src/UserService.Core/DTOs/Roles/UserRoleDto.cs
     startLine: 4
@@ -85,7 +85,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RoleId
     path: src/UserService.Core/DTOs/Roles/UserRoleDto.cs
     startLine: 5
@@ -114,7 +114,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RoleName
     path: src/UserService.Core/DTOs/Roles/UserRoleDto.cs
     startLine: 6
@@ -143,7 +143,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignedAt
     path: src/UserService.Core/DTOs/Roles/UserRoleDto.cs
     startLine: 7
@@ -172,7 +172,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserName
     path: src/UserService.Core/DTOs/Roles/UserRoleDto.cs
     startLine: 10

@@ -5,7 +5,7 @@ items:
   id: UserStatusService
   parent: UserService.Core.Services
   children:
-  - UserService.Core.Services.UserStatusService.#ctor(UserService.Core.Interfaces.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})
+  - UserService.Core.Services.UserStatusService.#ctor(UserService.Core.Interfaces.Repositories.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})
   - UserService.Core.Services.UserStatusService.Dispose
   - UserService.Core.Services.UserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
   - UserService.Core.Services.UserStatusService.ExecuteAsync(System.Threading.CancellationToken)
@@ -20,10 +20,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserStatusService
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 7
+    startLine: 10
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -36,7 +36,7 @@ items:
   implements:
   - Microsoft.Extensions.Hosting.IHostedService
   - System.IDisposable
-  - UserService.Core.Interfaces.IUserStatusService
+  - UserService.Core.Interfaces.Services.IUserStatusService
   inheritedMembers:
   - Microsoft.Extensions.Hosting.BackgroundService.StartAsync(System.Threading.CancellationToken)
   - Microsoft.Extensions.Hosting.BackgroundService.StopAsync(System.Threading.CancellationToken)
@@ -48,25 +48,25 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Core.Services.UserStatusService.#ctor(UserService.Core.Interfaces.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})
-  commentId: M:UserService.Core.Services.UserStatusService.#ctor(UserService.Core.Interfaces.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})
-  id: '#ctor(UserService.Core.Interfaces.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})'
+- uid: UserService.Core.Services.UserStatusService.#ctor(UserService.Core.Interfaces.Repositories.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})
+  commentId: M:UserService.Core.Services.UserStatusService.#ctor(UserService.Core.Interfaces.Repositories.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})
+  id: '#ctor(UserService.Core.Interfaces.Repositories.IUserStatusRepository,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService})'
   parent: UserService.Core.Services.UserStatusService
   langs:
   - csharp
   - vb
   name: UserStatusService(IUserStatusRepository, ILogger<UserStatusService>)
   nameWithType: UserStatusService.UserStatusService(IUserStatusRepository, ILogger<UserStatusService>)
-  fullName: UserService.Core.Services.UserStatusService.UserStatusService(UserService.Core.Interfaces.IUserStatusRepository, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.UserStatusService>)
+  fullName: UserService.Core.Services.UserStatusService.UserStatusService(UserService.Core.Interfaces.Repositories.IUserStatusRepository, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.UserStatusService>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 14
+    startLine: 17
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -74,13 +74,13 @@ items:
     content: public UserStatusService(IUserStatusRepository userStatusRepository, ILogger<UserStatusService> logger)
     parameters:
     - id: userStatusRepository
-      type: UserService.Core.Interfaces.IUserStatusRepository
+      type: UserService.Core.Interfaces.Repositories.IUserStatusRepository
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService}
     content.vb: Public Sub New(userStatusRepository As IUserStatusRepository, logger As ILogger(Of UserStatusService))
   overload: UserService.Core.Services.UserStatusService.#ctor*
   nameWithType.vb: UserStatusService.New(IUserStatusRepository, ILogger(Of UserStatusService))
-  fullName.vb: UserService.Core.Services.UserStatusService.New(UserService.Core.Interfaces.IUserStatusRepository, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.UserStatusService))
+  fullName.vb: UserService.Core.Services.UserStatusService.New(UserService.Core.Interfaces.Repositories.IUserStatusRepository, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.UserStatusService))
   name.vb: New(IUserStatusRepository, ILogger(Of UserStatusService))
 - uid: UserService.Core.Services.UserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
   commentId: M:UserService.Core.Services.UserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
@@ -97,10 +97,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EnqueueStatusUpdate
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 34
+    startLine: 37
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -115,7 +115,7 @@ items:
     content.vb: Public Sub EnqueueStatusUpdate(userId As String, isActive As Boolean)
   overload: UserService.Core.Services.UserStatusService.EnqueueStatusUpdate*
   implements:
-  - UserService.Core.Interfaces.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
+  - UserService.Core.Interfaces.Services.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
   nameWithType.vb: UserStatusService.EnqueueStatusUpdate(String, Boolean)
   fullName.vb: UserService.Core.Services.UserStatusService.EnqueueStatusUpdate(String, Boolean)
   name.vb: EnqueueStatusUpdate(String, Boolean)
@@ -134,10 +134,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ExecuteAsync
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 45
+    startLine: 48
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -174,10 +174,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Dispose
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 77
+    startLine: 79
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -254,13 +254,13 @@ references:
   name: IDisposable
   nameWithType: IDisposable
   fullName: System.IDisposable
-- uid: UserService.Core.Interfaces.IUserStatusService
-  commentId: T:UserService.Core.Interfaces.IUserStatusService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserStatusService.html
+- uid: UserService.Core.Interfaces.Services.IUserStatusService
+  commentId: T:UserService.Core.Interfaces.Services.IUserStatusService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserStatusService.html
   name: IUserStatusService
   nameWithType: IUserStatusService
-  fullName: UserService.Core.Interfaces.IUserStatusService
+  fullName: UserService.Core.Interfaces.Services.IUserStatusService
 - uid: Microsoft.Extensions.Hosting.BackgroundService.StartAsync(System.Threading.CancellationToken)
   commentId: M:Microsoft.Extensions.Hosting.BackgroundService.StartAsync(System.Threading.CancellationToken)
   parent: Microsoft.Extensions.Hosting.BackgroundService
@@ -592,12 +592,12 @@ references:
     name: Hosting
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -610,6 +610,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -622,22 +626,26 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: UserService.Core.Services.UserStatusService.#ctor*
   commentId: Overload:UserService.Core.Services.UserStatusService.#ctor
-  href: UserService.Core.Services.UserStatusService.html#UserService_Core_Services_UserStatusService__ctor_UserService_Core_Interfaces_IUserStatusRepository_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_UserStatusService__
+  href: UserService.Core.Services.UserStatusService.html#UserService_Core_Services_UserStatusService__ctor_UserService_Core_Interfaces_Repositories_IUserStatusRepository_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_UserStatusService__
   name: UserStatusService
   nameWithType: UserStatusService.UserStatusService
   fullName: UserService.Core.Services.UserStatusService.UserStatusService
   nameWithType.vb: UserStatusService.New
   fullName.vb: UserService.Core.Services.UserStatusService.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IUserStatusRepository
-  commentId: T:UserService.Core.Interfaces.IUserStatusRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserStatusRepository.html
+- uid: UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserStatusRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserStatusRepository.html
   name: IUserStatusRepository
   nameWithType: IUserStatusRepository
-  fullName: UserService.Core.Interfaces.IUserStatusRepository
+  fullName: UserService.Core.Interfaces.Repositories.IUserStatusRepository
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.UserStatusService}
   parent: Microsoft.Extensions.Logging
@@ -671,6 +679,44 @@ references:
     name: UserStatusService
     href: UserService.Core.Services.UserStatusService.html
   - name: )
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
+  href: UserService.html
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true
@@ -742,21 +788,21 @@ references:
   name: EnqueueStatusUpdate
   nameWithType: UserStatusService.EnqueueStatusUpdate
   fullName: UserService.Core.Services.UserStatusService.EnqueueStatusUpdate
-- uid: UserService.Core.Interfaces.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
-  commentId: M:UserService.Core.Interfaces.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
-  parent: UserService.Core.Interfaces.IUserStatusService
+- uid: UserService.Core.Interfaces.Services.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
+  commentId: M:UserService.Core.Interfaces.Services.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
+  parent: UserService.Core.Interfaces.Services.IUserStatusService
   isExternal: true
-  href: UserService.Core.Interfaces.IUserStatusService.html#UserService_Core_Interfaces_IUserStatusService_EnqueueStatusUpdate_System_String_System_Boolean_
+  href: UserService.Core.Interfaces.Services.IUserStatusService.html#UserService_Core_Interfaces_Services_IUserStatusService_EnqueueStatusUpdate_System_String_System_Boolean_
   name: EnqueueStatusUpdate(string, bool)
   nameWithType: IUserStatusService.EnqueueStatusUpdate(string, bool)
-  fullName: UserService.Core.Interfaces.IUserStatusService.EnqueueStatusUpdate(string, bool)
+  fullName: UserService.Core.Interfaces.Services.IUserStatusService.EnqueueStatusUpdate(string, bool)
   nameWithType.vb: IUserStatusService.EnqueueStatusUpdate(String, Boolean)
-  fullName.vb: UserService.Core.Interfaces.IUserStatusService.EnqueueStatusUpdate(String, Boolean)
+  fullName.vb: UserService.Core.Interfaces.Services.IUserStatusService.EnqueueStatusUpdate(String, Boolean)
   name.vb: EnqueueStatusUpdate(String, Boolean)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Services.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
     name: EnqueueStatusUpdate
-    href: UserService.Core.Interfaces.IUserStatusService.html#UserService_Core_Interfaces_IUserStatusService_EnqueueStatusUpdate_System_String_System_Boolean_
+    href: UserService.Core.Interfaces.Services.IUserStatusService.html#UserService_Core_Interfaces_Services_IUserStatusService_EnqueueStatusUpdate_System_String_System_Boolean_
   - name: (
   - uid: System.String
     name: string
@@ -770,9 +816,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.boolean
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
+  - uid: UserService.Core.Interfaces.Services.IUserStatusService.EnqueueStatusUpdate(System.String,System.Boolean)
     name: EnqueueStatusUpdate
-    href: UserService.Core.Interfaces.IUserStatusService.html#UserService_Core_Interfaces_IUserStatusService_EnqueueStatusUpdate_System_String_System_Boolean_
+    href: UserService.Core.Interfaces.Services.IUserStatusService.html#UserService_Core_Interfaces_Services_IUserStatusService_EnqueueStatusUpdate_System_String_System_Boolean_
   - name: (
   - uid: System.String
     name: String

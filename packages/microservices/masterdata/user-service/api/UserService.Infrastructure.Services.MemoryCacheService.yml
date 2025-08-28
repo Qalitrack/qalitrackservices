@@ -21,10 +21,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MemoryCacheService
     path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
-    startLine: 7
+    startLine: 8
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -34,7 +34,7 @@ items:
   inheritance:
   - System.Object
   implements:
-  - UserService.Core.Interfaces.ICacheService
+  - UserService.Core.Interfaces.Services.ICacheService
   inheritedMembers:
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
@@ -58,10 +58,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
-    startLine: 14
+    startLine: 8
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -92,10 +92,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAsync
     path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
-    startLine: 20
+    startLine: 14
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -112,7 +112,7 @@ items:
     content.vb: Public Function GetAsync(Of T)(key As String) As Task(Of T)
   overload: UserService.Infrastructure.Services.MemoryCacheService.GetAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  - UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
   nameWithType.vb: MemoryCacheService.GetAsync(Of T)(String)
   fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.GetAsync(Of T)(String)
   name.vb: GetAsync(Of T)(String)
@@ -131,10 +131,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: SetAsync
     path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
-    startLine: 50
+    startLine: 45
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -155,7 +155,7 @@ items:
     content.vb: Public Function SetAsync(Of T)(key As String, value As T, expiration As TimeSpan? = Nothing) As Task
   overload: UserService.Infrastructure.Services.MemoryCacheService.SetAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
+  - UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
   nameWithType.vb: MemoryCacheService.SetAsync(Of T)(String, T, TimeSpan?)
   fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
   name.vb: SetAsync(Of T)(String, T, TimeSpan?)
@@ -174,10 +174,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemoveAsync
     path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
-    startLine: 95
+    startLine: 88
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -192,7 +192,7 @@ items:
     content.vb: Public Function RemoveAsync(key As String) As Task
   overload: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  - UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
   nameWithType.vb: MemoryCacheService.RemoveAsync(String)
   fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync(String)
   name.vb: RemoveAsync(String)
@@ -211,10 +211,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/MemoryCacheService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemovePatternAsync
     path: src/UserService.Infrastructure/Services/MemoryCacheService.cs
-    startLine: 112
+    startLine: 104
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -229,7 +229,7 @@ items:
     content.vb: Public Function RemovePatternAsync(pattern As String) As Task
   overload: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync*
   implements:
-  - UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  - UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
   nameWithType.vb: MemoryCacheService.RemovePatternAsync(String)
   fullName.vb: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync(String)
   name.vb: RemovePatternAsync(String)
@@ -275,13 +275,13 @@ references:
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: UserService.Core.Interfaces.ICacheService
-  commentId: T:UserService.Core.Interfaces.ICacheService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.ICacheService.html
+- uid: UserService.Core.Interfaces.Services.ICacheService
+  commentId: T:UserService.Core.Interfaces.Services.ICacheService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.ICacheService.html
   name: ICacheService
   nameWithType: ICacheService
-  fullName: UserService.Core.Interfaces.ICacheService
+  fullName: UserService.Core.Interfaces.Services.ICacheService
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -508,12 +508,12 @@ references:
   name: System
   nameWithType: System
   fullName: System
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -526,6 +526,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -538,6 +542,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: UserService.Infrastructure.Services.MemoryCacheService.#ctor*
   commentId: Overload:UserService.Infrastructure.Services.MemoryCacheService.#ctor
   href: UserService.Infrastructure.Services.MemoryCacheService.html#UserService_Infrastructure_Services_MemoryCacheService__ctor_Microsoft_Extensions_Caching_Memory_IMemoryCache_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_MemoryCacheService__
@@ -706,19 +714,19 @@ references:
   name: GetAsync
   nameWithType: MemoryCacheService.GetAsync
   fullName: UserService.Infrastructure.Services.MemoryCacheService.GetAsync
-- uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
-  commentId: M:UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
-  parent: UserService.Core.Interfaces.ICacheService
+- uid: UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
+  parent: UserService.Core.Interfaces.Services.ICacheService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: GetAsync<T>(string)
   nameWithType: ICacheService.GetAsync<T>(string)
-  fullName: UserService.Core.Interfaces.ICacheService.GetAsync<T>(string)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.GetAsync<T>(string)
   nameWithType.vb: ICacheService.GetAsync(Of T)(String)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.GetAsync(Of T)(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.GetAsync(Of T)(String)
   name.vb: GetAsync(Of T)(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
     name: GetAsync
   - name: <
   - name: T
@@ -730,7 +738,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.GetAsync``1(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.GetAsync``1(System.String)
     name: GetAsync
   - name: (
   - name: Of
@@ -854,19 +862,19 @@ references:
   name: SetAsync
   nameWithType: MemoryCacheService.SetAsync
   fullName: UserService.Infrastructure.Services.MemoryCacheService.SetAsync
-- uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
-  commentId: M:UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
-  parent: UserService.Core.Interfaces.ICacheService
-  definition: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+- uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,{T},System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  parent: UserService.Core.Interfaces.Services.ICacheService
+  definition: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: SetAsync<T>(string, T, TimeSpan?)
   nameWithType: ICacheService.SetAsync<T>(string, T, TimeSpan?)
-  fullName: UserService.Core.Interfaces.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
   nameWithType.vb: ICacheService.SetAsync(Of T)(String, T, TimeSpan?)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
   name.vb: SetAsync(Of T)(String, T, TimeSpan?)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: <
   - name: T
@@ -888,7 +896,7 @@ references:
   - name: '?'
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: (
   - name: Of
@@ -945,18 +953,18 @@ references:
   name: Task
   nameWithType: Task
   fullName: System.Threading.Tasks.Task
-- uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
-  commentId: M:UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+- uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: SetAsync<T>(string, T, TimeSpan?)
   nameWithType: ICacheService.SetAsync<T>(string, T, TimeSpan?)
-  fullName: UserService.Core.Interfaces.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.SetAsync<T>(string, T, System.TimeSpan?)
   nameWithType.vb: ICacheService.SetAsync(Of T)(String, T, TimeSpan?)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.SetAsync(Of T)(String, T, System.TimeSpan?)
   name.vb: SetAsync(Of T)(String, T, TimeSpan?)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: <
   - name: T
@@ -978,7 +986,7 @@ references:
   - name: '?'
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
+  - uid: UserService.Core.Interfaces.Services.ICacheService.SetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})
     name: SetAsync
   - name: (
   - name: Of
@@ -1039,19 +1047,19 @@ references:
   name: RemoveAsync
   nameWithType: MemoryCacheService.RemoveAsync
   fullName: UserService.Infrastructure.Services.MemoryCacheService.RemoveAsync
-- uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
-  parent: UserService.Core.Interfaces.ICacheService
+- uid: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ICacheService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: RemoveAsync(string)
   nameWithType: ICacheService.RemoveAsync(string)
-  fullName: UserService.Core.Interfaces.ICacheService.RemoveAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(string)
   nameWithType.vb: ICacheService.RemoveAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.RemoveAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(String)
   name.vb: RemoveAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
     name: RemoveAsync
   - name: (
   - uid: System.String
@@ -1060,7 +1068,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.RemoveAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemoveAsync(System.String)
     name: RemoveAsync
   - name: (
   - uid: System.String
@@ -1074,19 +1082,19 @@ references:
   name: RemovePatternAsync
   nameWithType: MemoryCacheService.RemovePatternAsync
   fullName: UserService.Infrastructure.Services.MemoryCacheService.RemovePatternAsync
-- uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
-  parent: UserService.Core.Interfaces.ICacheService
+- uid: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ICacheService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: RemovePatternAsync(string)
   nameWithType: ICacheService.RemovePatternAsync(string)
-  fullName: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(string)
   nameWithType.vb: ICacheService.RemovePatternAsync(String)
-  fullName.vb: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(String)
   name.vb: RemovePatternAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
     name: RemovePatternAsync
   - name: (
   - uid: System.String
@@ -1095,7 +1103,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.ICacheService.RemovePatternAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.ICacheService.RemovePatternAsync(System.String)
     name: RemovePatternAsync
   - name: (
   - uid: System.String

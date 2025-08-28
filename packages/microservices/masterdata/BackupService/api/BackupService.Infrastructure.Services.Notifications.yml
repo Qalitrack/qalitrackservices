@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Infrastructure.Services.Notifications
+  commentId: N:BackupService.Infrastructure.Services.Notifications
+  id: BackupService.Infrastructure.Services.Notifications
+  children:
+  - BackupService.Infrastructure.Services.Notifications.SmtpOptions
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Infrastructure.Services.Notifications
+  nameWithType: BackupService.Infrastructure.Services.Notifications
+  fullName: BackupService.Infrastructure.Services.Notifications
+  type: Namespace
+  assemblies:
+  - BackupService.Infrastructure
+references:
+- uid: BackupService.Infrastructure.Services.Notifications.SmtpOptions
+  commentId: T:BackupService.Infrastructure.Services.Notifications.SmtpOptions
+  href: BackupService.Infrastructure.Services.Notifications.SmtpOptions.html
+  name: SmtpOptions
+  nameWithType: SmtpOptions
+  fullName: BackupService.Infrastructure.Services.Notifications.SmtpOptions

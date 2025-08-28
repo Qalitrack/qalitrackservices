@@ -17,7 +17,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Utilities/StringUtils.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: StringUtils
     path: src/UserService.Core/Utilities/StringUtils.cs
     startLine: 2
@@ -52,7 +52,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Utilities/StringUtils.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MaskEmail
     path: src/UserService.Core/Utilities/StringUtils.cs
     startLine: 4

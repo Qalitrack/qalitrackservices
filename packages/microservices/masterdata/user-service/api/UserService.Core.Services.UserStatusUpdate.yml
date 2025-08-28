@@ -19,10 +19,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserStatusUpdate
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 85
+    startLine: 87
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -56,10 +56,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 85
+    startLine: 87
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -90,10 +90,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserId
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 85
+    startLine: 87
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -119,10 +119,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/UserStatusService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/Services/UserStatusService.cs
-    startLine: 85
+    startLine: 87
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services

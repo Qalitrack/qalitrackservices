@@ -23,7 +23,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PagedResult
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 2
@@ -63,7 +63,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Items
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 4
@@ -94,7 +94,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Page
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 5
@@ -125,7 +125,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PageSize
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 6
@@ -156,7 +156,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TotalCount
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 7
@@ -187,7 +187,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TotalPages
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 8
@@ -218,7 +218,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: HasPreviousPage
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 9
@@ -249,7 +249,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Common/PagedResult.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: HasNextPage
     path: src/UserService.Core/DTOs/Common/PagedResult.cs
     startLine: 10

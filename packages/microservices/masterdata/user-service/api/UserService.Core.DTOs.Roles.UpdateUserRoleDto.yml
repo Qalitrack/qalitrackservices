@@ -18,7 +18,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UpdateUserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdateUserRoleDto
     path: src/UserService.Core/DTOs/Roles/UpdateUserRoleDto.cs
     startLine: 3
@@ -53,7 +53,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UpdateUserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserId
     path: src/UserService.Core/DTOs/Roles/UpdateUserRoleDto.cs
     startLine: 5
@@ -82,7 +82,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Roles/UpdateUserRoleDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RoleId
     path: src/UserService.Core/DTOs/Roles/UpdateUserRoleDto.cs
     startLine: 6

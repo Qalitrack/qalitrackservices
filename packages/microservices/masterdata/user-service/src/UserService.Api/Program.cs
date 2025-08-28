@@ -20,7 +20,6 @@ using UserService.Core.Interfaces.Services;
 using System.IO.Abstractions;
 using StackExchange.Redis;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
@@ -47,7 +46,6 @@ try
         })
         .AddJsonOptions(options =>
         {        
-
             options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve property casing
         });
     
@@ -94,6 +92,54 @@ try
     // Configure the HTTP request pipeline
     ConfigureMiddleware(app);
     
+    // Serve static files including documentation
+    app.UseStaticFiles();
+
+    // Configure documentation serving
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs")),
+        RequestPath = "/docs"
+    });
+
+    // Documentation default route
+    app.MapGet("/docs", () => Results.Redirect("/docs/index.html"));
+    app.MapFallback("/docs/{**path}", async context =>
+    {
+        var path = context.Request.Path.Value?.Replace("/docs/", "") ?? "index.html";
+        if (string.IsNullOrEmpty(path) || path == "/")
+            path = "index.html";
+        
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs", path);
+        if (File.Exists(filePath))
+        {
+            // Set proper Content-Type based on file extension
+            var extension = Path.GetExtension(filePath).ToLowerInvariant();
+            var contentType = extension switch
+            {
+                ".html" => "text/html; charset=utf-8",
+                ".css" => "text/css; charset=utf-8",
+                ".js" => "application/javascript; charset=utf-8",
+                ".json" => "application/json; charset=utf-8",
+                ".png" => "image/png",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".svg" => "image/svg+xml",
+                ".ico" => "image/x-icon",
+                ".yml" or ".yaml" => "text/yaml; charset=utf-8",
+                _ => "application/octet-stream"
+            };
+            
+            context.Response.ContentType = contentType;
+            await context.Response.SendFileAsync(filePath);
+        }
+        else
+        {
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsync("Documentation file not found");
+        }
+    });
+    
     // Run migrations and seed database
     await InitializeDatabaseAsync(app);
     
@@ -111,8 +157,7 @@ finally
 }
 
 static void RegisterServices(IServiceCollection services, WebApplicationBuilder builder)
-{  
-    
+{
     // Core Services - Register base service first, then decorate with caching
     services.AddScoped<UserService.Core.Services.UserService>();
     services.AddScoped<IUserService>(provider =>
@@ -131,14 +176,14 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddScoped<ITwoFactorService, TwoFactorService>();
     services.AddScoped<PasswordPolicyService>();
     services.AddScoped<IPasswordPolicyRepository, PasswordPolicyRepository>();
-    
+
     // Email queue services for improved performance
     services.AddSingleton<EmailQueueService>();
     services.AddScoped<IEmailQueueService>(provider => provider.GetRequiredService<EmailQueueService>());
-    
+
     // JWT Configuration Service
     services.AddScoped<IJwtConfigurationService, JwtConfigurationService>();
-   
+
     // Repositories
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRoleRepository, RoleRepository>();
@@ -155,11 +200,11 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
     services.AddHttpContextAccessor();
     services.AddAutoMapper(typeof(UserProfile));
     services.AddHealthChecks(); // This registers all necessary health check services
-    
+
     // Configure caching for 1000+ users
     var useRedis = builder.Configuration.GetValue<bool>("UseRedis", false);
     var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
-    
+
     if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
     {
         services.AddStackExchangeRedisCache(options =>
@@ -194,14 +239,11 @@ static void RegisterServices(IServiceCollection services, WebApplicationBuilder 
         services.AddScoped<ICacheService, MemoryCacheService>();
     }
     services.AddSingleton<IFileSystem, FileSystem>();
-        // Register the backup event consumer
-        
-        
-        
-  
+    // Register the backup event consumer
+
     services.AddHostedService<ShiftMonitorService>();
     services.AddHostedService<EmailProcessorService>();
-  
+
     // Register SMTP Email Service for 2FA
     services.AddScoped<IEmailService, SmtpEmailService>();
 
@@ -386,7 +428,6 @@ static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
     });
 }
 
-
 static void ConfigureAuthorization(IServiceCollection services)
 {
     services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
@@ -512,14 +553,13 @@ static void ConfigureMiddleware(WebApplication app)
     app.UseSwaggerUI(c => 
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
-        c.RoutePrefix = "swagger";
+        c.RoutePrefix = string.Empty;
     });
     
     if (!app.Environment.IsDevelopment())
     {
         app.UseHsts();
     }
-    
     
     app.UseSerilogRequestLogging();
     app.UseRouting();

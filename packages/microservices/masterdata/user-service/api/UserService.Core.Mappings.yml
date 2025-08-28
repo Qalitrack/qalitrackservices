@@ -9,6 +9,7 @@ items:
   - UserService.Core.Mappings.RoleProfile
   - UserService.Core.Mappings.ShiftProfile
   - UserService.Core.Mappings.UserProfile
+  - UserService.Core.Mappings.UserRoleProfile
   - UserService.Core.Mappings.UserShiftProfile
   langs:
   - csharp
@@ -50,6 +51,12 @@ references:
   name: UserProfile
   nameWithType: UserProfile
   fullName: UserService.Core.Mappings.UserProfile
+- uid: UserService.Core.Mappings.UserRoleProfile
+  commentId: T:UserService.Core.Mappings.UserRoleProfile
+  href: UserService.Core.Mappings.UserRoleProfile.html
+  name: UserRoleProfile
+  nameWithType: UserRoleProfile
+  fullName: UserService.Core.Mappings.UserRoleProfile
 - uid: UserService.Core.Mappings.UserShiftProfile
   commentId: T:UserService.Core.Mappings.UserShiftProfile
   href: UserService.Core.Mappings.UserShiftProfile.html

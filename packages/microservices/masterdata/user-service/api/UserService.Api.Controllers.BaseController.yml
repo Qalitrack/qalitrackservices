@@ -28,7 +28,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: BaseController
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 5
@@ -251,7 +251,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Ok
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 8
@@ -289,7 +289,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Created
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 19
@@ -327,7 +327,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: BadRequest
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 30
@@ -363,7 +363,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Unauthorized
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 41
@@ -397,7 +397,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Forbidden
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 51
@@ -431,7 +431,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: NotFound
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 61
@@ -465,7 +465,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: InternalServerError
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 71
@@ -499,7 +499,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Conflict
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 81
@@ -533,7 +533,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: NotImplemented
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 91
@@ -567,7 +567,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ServiceUnavailable
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 101
@@ -601,7 +601,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GatewayTimeout
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 111
@@ -635,7 +635,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/BaseController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TooManyRequests
     path: src/UserService.Api/Controllers/BaseController.cs
     startLine: 121

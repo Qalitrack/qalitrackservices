@@ -1,0 +1,134 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
+  id: UserService.Core.Interfaces.Services
+  children:
+  - UserService.Core.Interfaces.Services.ICacheService
+  - UserService.Core.Interfaces.Services.IPermissionsService
+  - UserService.Core.Interfaces.Services.IReportService
+  - UserService.Core.Interfaces.Services.IRoleService
+  - UserService.Core.Interfaces.Services.IShiftLoginRestrictionService
+  - UserService.Core.Interfaces.Services.IShiftService
+  - UserService.Core.Interfaces.Services.ITwoFactorService
+  - UserService.Core.Interfaces.Services.IUserRoleService
+  - UserService.Core.Interfaces.Services.IUserService
+  - UserService.Core.Interfaces.Services.IUserStatusService
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Interfaces.Services.ICacheService
+  commentId: T:UserService.Core.Interfaces.Services.ICacheService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.ICacheService.html
+  name: ICacheService
+  nameWithType: ICacheService
+  fullName: UserService.Core.Interfaces.Services.ICacheService
+- uid: UserService.Core.Interfaces.Services.IPermissionsService
+  commentId: T:UserService.Core.Interfaces.Services.IPermissionsService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html
+  name: IPermissionsService
+  nameWithType: IPermissionsService
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService
+- uid: UserService.Core.Interfaces.Services.IReportService
+  commentId: T:UserService.Core.Interfaces.Services.IReportService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IReportService.html
+  name: IReportService
+  nameWithType: IReportService
+  fullName: UserService.Core.Interfaces.Services.IReportService
+- uid: UserService.Core.Interfaces.Services.IRoleService
+  commentId: T:UserService.Core.Interfaces.Services.IRoleService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IRoleService.html
+  name: IRoleService
+  nameWithType: IRoleService
+  fullName: UserService.Core.Interfaces.Services.IRoleService
+- uid: UserService.Core.Interfaces.Services.IShiftLoginRestrictionService
+  commentId: T:UserService.Core.Interfaces.Services.IShiftLoginRestrictionService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IShiftLoginRestrictionService.html
+  name: IShiftLoginRestrictionService
+  nameWithType: IShiftLoginRestrictionService
+  fullName: UserService.Core.Interfaces.Services.IShiftLoginRestrictionService
+- uid: UserService.Core.Interfaces.Services.IShiftService
+  commentId: T:UserService.Core.Interfaces.Services.IShiftService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IShiftService.html
+  name: IShiftService
+  nameWithType: IShiftService
+  fullName: UserService.Core.Interfaces.Services.IShiftService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService
+  commentId: T:UserService.Core.Interfaces.Services.ITwoFactorService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html
+  name: ITwoFactorService
+  nameWithType: ITwoFactorService
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.IUserRoleService
+  commentId: T:UserService.Core.Interfaces.Services.IUserRoleService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserRoleService.html
+  name: IUserRoleService
+  nameWithType: IUserRoleService
+  fullName: UserService.Core.Interfaces.Services.IUserRoleService
+- uid: UserService.Core.Interfaces.Services.IUserService
+  commentId: T:UserService.Core.Interfaces.Services.IUserService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserService.html
+  name: IUserService
+  nameWithType: IUserService
+  fullName: UserService.Core.Interfaces.Services.IUserService
+- uid: UserService.Core.Interfaces.Services.IUserStatusService
+  commentId: T:UserService.Core.Interfaces.Services.IUserStatusService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserStatusService.html
+  name: IUserStatusService
+  nameWithType: IUserStatusService
+  fullName: UserService.Core.Interfaces.Services.IUserStatusService
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
+  href: UserService.html
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html

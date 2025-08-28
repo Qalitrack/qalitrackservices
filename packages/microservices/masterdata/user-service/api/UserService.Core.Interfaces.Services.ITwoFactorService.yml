@@ -1,0 +1,538 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService
+  commentId: T:UserService.Core.Interfaces.Services.ITwoFactorService
+  id: ITwoFactorService
+  parent: UserService.Core.Interfaces.Services
+  children:
+  - UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
+  - UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: ITwoFactorService
+  nameWithType: ITwoFactorService
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: ITwoFactorService
+    path: src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: public interface ITwoFactorService
+    content.vb: Public Interface ITwoFactorService
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(System.String,System.String)
+  id: GenerateAndSendCodeAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: GenerateAndSendCodeAsync(string, string)
+  nameWithType: ITwoFactorService.GenerateAndSendCodeAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GenerateAndSendCodeAsync
+    path: src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+    startLine: 6
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<ServiceResult> GenerateAndSendCodeAsync(string userId, string email)
+    parameters:
+    - id: userId
+      type: System.String
+    - id: email
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+    content.vb: Function GenerateAndSendCodeAsync(userId As String, email As String) As Task(Of ServiceResult)
+  overload: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync*
+  nameWithType.vb: ITwoFactorService.GenerateAndSendCodeAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync(String, String)
+  name.vb: GenerateAndSendCodeAsync(String, String)
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(System.String,System.String)
+  id: VerifyCodeAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: VerifyCodeAsync(string, string)
+  nameWithType: ITwoFactorService.VerifyCodeAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: VerifyCodeAsync
+    path: src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<ServiceResult> VerifyCodeAsync(string sessionId, string code)
+    parameters:
+    - id: sessionId
+      type: System.String
+    - id: code
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+    content.vb: Function VerifyCodeAsync(sessionId As String, code As String) As Task(Of ServiceResult)
+  overload: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync*
+  nameWithType.vb: ITwoFactorService.VerifyCodeAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync(String, String)
+  name.vb: VerifyCodeAsync(String, String)
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(System.String)
+  id: CreateTwoFactorSessionAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: CreateTwoFactorSessionAsync(string)
+  nameWithType: ITwoFactorService.CreateTwoFactorSessionAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreateTwoFactorSessionAsync
+    path: src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<string> CreateTwoFactorSessionAsync(string userId)
+    parameters:
+    - id: userId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.String}
+    content.vb: Function CreateTwoFactorSessionAsync(userId As String) As Task(Of String)
+  overload: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync*
+  nameWithType.vb: ITwoFactorService.CreateTwoFactorSessionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync(String)
+  name.vb: CreateTwoFactorSessionAsync(String)
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(System.String)
+  id: GetUserIdFromSessionAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: GetUserIdFromSessionAsync(string)
+  nameWithType: ITwoFactorService.GetUserIdFromSessionAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetUserIdFromSessionAsync
+    path: src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<string?> GetUserIdFromSessionAsync(string sessionId)
+    parameters:
+    - id: sessionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.String}
+    content.vb: Function GetUserIdFromSessionAsync(sessionId As String) As Task(Of String)
+  overload: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync*
+  nameWithType.vb: ITwoFactorService.GetUserIdFromSessionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync(String)
+  name.vb: GetUserIdFromSessionAsync(String)
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(System.String)
+  id: GetAttemptCountAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: GetAttemptCountAsync(string)
+  nameWithType: ITwoFactorService.GetAttemptCountAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetAttemptCountAsync
+    path: src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<int> GetAttemptCountAsync(string userId)
+    parameters:
+    - id: userId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+    content.vb: Function GetAttemptCountAsync(userId As String) As Task(Of Integer)
+  overload: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync*
+  nameWithType.vb: ITwoFactorService.GetAttemptCountAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync(String)
+  name.vb: GetAttemptCountAsync(String)
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(System.String)
+  id: IsSessionValidAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.ITwoFactorService
+  langs:
+  - csharp
+  - vb
+  name: IsSessionValidAsync(string)
+  nameWithType: ITwoFactorService.IsSessionValidAsync(string)
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IsSessionValidAsync
+    path: src/UserService.Core/Interfaces/Services/ITwoFactorService.cs
+    startLine: 11
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<bool> IsSessionValidAsync(string sessionId)
+    parameters:
+    - id: sessionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function IsSessionValidAsync(sessionId As String) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync*
+  nameWithType.vb: ITwoFactorService.IsSessionValidAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync(String)
+  name.vb: IsSessionValidAsync(String)
+references:
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
+  href: UserService.html
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GenerateAndSendCodeAsync_System_String_System_String_
+  name: GenerateAndSendCodeAsync
+  nameWithType: ITwoFactorService.GenerateAndSendCodeAsync
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GenerateAndSendCodeAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Common.ServiceResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<ServiceResult>
+  nameWithType: Task<ServiceResult>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Common.ServiceResult>
+  nameWithType.vb: Task(Of ServiceResult)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Common.ServiceResult)
+  name.vb: Task(Of ServiceResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Common.ServiceResult
+    name: ServiceResult
+    href: UserService.Core.DTOs.Common.ServiceResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Common.ServiceResult
+    name: ServiceResult
+    href: UserService.Core.DTOs.Common.ServiceResult.html
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_VerifyCodeAsync_System_String_System_String_
+  name: VerifyCodeAsync
+  nameWithType: ITwoFactorService.VerifyCodeAsync
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.VerifyCodeAsync
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_CreateTwoFactorSessionAsync_System_String_
+  name: CreateTwoFactorSessionAsync
+  nameWithType: ITwoFactorService.CreateTwoFactorSessionAsync
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.CreateTwoFactorSessionAsync
+- uid: System.Threading.Tasks.Task{System.String}
+  commentId: T:System.Threading.Tasks.Task{System.String}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<string>
+  nameWithType: Task<string>
+  fullName: System.Threading.Tasks.Task<string>
+  nameWithType.vb: Task(Of String)
+  fullName.vb: System.Threading.Tasks.Task(Of String)
+  name.vb: Task(Of String)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetUserIdFromSessionAsync_System_String_
+  name: GetUserIdFromSessionAsync
+  nameWithType: ITwoFactorService.GetUserIdFromSessionAsync
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GetUserIdFromSessionAsync
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_GetAttemptCountAsync_System_String_
+  name: GetAttemptCountAsync
+  nameWithType: ITwoFactorService.GetAttemptCountAsync
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.GetAttemptCountAsync
+- uid: System.Threading.Tasks.Task{System.Int32}
+  commentId: T:System.Threading.Tasks.Task{System.Int32}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<int>
+  nameWithType: Task<int>
+  fullName: System.Threading.Tasks.Task<int>
+  nameWithType.vb: Task(Of Integer)
+  fullName.vb: System.Threading.Tasks.Task(Of Integer)
+  name.vb: Task(Of Integer)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync
+  href: UserService.Core.Interfaces.Services.ITwoFactorService.html#UserService_Core_Interfaces_Services_ITwoFactorService_IsSessionValidAsync_System_String_
+  name: IsSessionValidAsync
+  nameWithType: ITwoFactorService.IsSessionValidAsync
+  fullName: UserService.Core.Interfaces.Services.ITwoFactorService.IsSessionValidAsync
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )

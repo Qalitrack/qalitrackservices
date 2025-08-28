@@ -22,7 +22,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: LoginResponseDto
     path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
     startLine: 5
@@ -57,7 +57,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Token
     path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
     startLine: 7
@@ -98,7 +98,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Id
     path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
     startLine: 10
@@ -139,7 +139,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Email
     path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
     startLine: 13
@@ -168,7 +168,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: FirstName
     path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
     startLine: 15
@@ -197,7 +197,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: LastName
     path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
     startLine: 17
@@ -226,7 +226,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserRoles
     path: src/UserService.Core/DTOs/Auth/LoginResponseDto.cs
     startLine: 19

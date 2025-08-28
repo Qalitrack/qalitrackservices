@@ -1,0 +1,161 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Dtos
+  commentId: N:BackupService.Core.Dtos
+  id: BackupService.Core.Dtos
+  children:
+  - BackupService.Core.Dtos.ApiResponseDto`1
+  - BackupService.Core.Dtos.BackupChainInfo
+  - BackupService.Core.Dtos.BackupFileInfo
+  - BackupService.Core.Dtos.BackupHealthReport
+  - BackupService.Core.Dtos.BackupHealthResult
+  - BackupService.Core.Dtos.BackupOptions
+  - BackupService.Core.Dtos.BackupRequest
+  - BackupService.Core.Dtos.BackupResult
+  - BackupService.Core.Dtos.BackupStatistics
+  - BackupService.Core.Dtos.MicroserviceRequest
+  - BackupService.Core.Dtos.RestoreBackupRequest
+  - BackupService.Core.Dtos.RestorePreviewResult
+  - BackupService.Core.Dtos.RestoreResult
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Core.Dtos
+  nameWithType: BackupService.Core.Dtos
+  fullName: BackupService.Core.Dtos
+  type: Namespace
+  assemblies:
+  - BackupService.Core
+references:
+- uid: BackupService.Core.Dtos.ApiResponseDto`1
+  commentId: T:BackupService.Core.Dtos.ApiResponseDto`1
+  href: BackupService.Core.Dtos.ApiResponseDto-1.html
+  name: ApiResponseDto<T>
+  nameWithType: ApiResponseDto<T>
+  fullName: BackupService.Core.Dtos.ApiResponseDto<T>
+  nameWithType.vb: ApiResponseDto(Of T)
+  fullName.vb: BackupService.Core.Dtos.ApiResponseDto(Of T)
+  name.vb: ApiResponseDto(Of T)
+  spec.csharp:
+  - uid: BackupService.Core.Dtos.ApiResponseDto`1
+    name: ApiResponseDto
+    href: BackupService.Core.Dtos.ApiResponseDto-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: BackupService.Core.Dtos.ApiResponseDto`1
+    name: ApiResponseDto
+    href: BackupService.Core.Dtos.ApiResponseDto-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: BackupService.Core.Dtos.BackupChainInfo
+  commentId: T:BackupService.Core.Dtos.BackupChainInfo
+  parent: BackupService.Core.Dtos
+  href: BackupService.Core.Dtos.BackupChainInfo.html
+  name: BackupChainInfo
+  nameWithType: BackupChainInfo
+  fullName: BackupService.Core.Dtos.BackupChainInfo
+- uid: BackupService.Core.Dtos.BackupFileInfo
+  commentId: T:BackupService.Core.Dtos.BackupFileInfo
+  href: BackupService.Core.Dtos.BackupFileInfo.html
+  name: BackupFileInfo
+  nameWithType: BackupFileInfo
+  fullName: BackupService.Core.Dtos.BackupFileInfo
+- uid: BackupService.Core.Dtos.BackupHealthReport
+  commentId: T:BackupService.Core.Dtos.BackupHealthReport
+  href: BackupService.Core.Dtos.BackupHealthReport.html
+  name: BackupHealthReport
+  nameWithType: BackupHealthReport
+  fullName: BackupService.Core.Dtos.BackupHealthReport
+- uid: BackupService.Core.Dtos.BackupHealthResult
+  commentId: T:BackupService.Core.Dtos.BackupHealthResult
+  href: BackupService.Core.Dtos.BackupHealthResult.html
+  name: BackupHealthResult
+  nameWithType: BackupHealthResult
+  fullName: BackupService.Core.Dtos.BackupHealthResult
+- uid: BackupService.Core.Dtos.BackupOptions
+  commentId: T:BackupService.Core.Dtos.BackupOptions
+  href: BackupService.Core.Dtos.BackupOptions.html
+  name: BackupOptions
+  nameWithType: BackupOptions
+  fullName: BackupService.Core.Dtos.BackupOptions
+- uid: BackupService.Core.Dtos.BackupRequest
+  commentId: T:BackupService.Core.Dtos.BackupRequest
+  parent: BackupService.Core.Dtos
+  href: BackupService.Core.Dtos.BackupRequest.html
+  name: BackupRequest
+  nameWithType: BackupRequest
+  fullName: BackupService.Core.Dtos.BackupRequest
+- uid: BackupService.Core.Dtos.BackupResult
+  commentId: T:BackupService.Core.Dtos.BackupResult
+  parent: BackupService.Core.Dtos
+  href: BackupService.Core.Dtos.BackupResult.html
+  name: BackupResult
+  nameWithType: BackupResult
+  fullName: BackupService.Core.Dtos.BackupResult
+- uid: BackupService.Core.Dtos.BackupStatistics
+  commentId: T:BackupService.Core.Dtos.BackupStatistics
+  href: BackupService.Core.Dtos.BackupStatistics.html
+  name: BackupStatistics
+  nameWithType: BackupStatistics
+  fullName: BackupService.Core.Dtos.BackupStatistics
+- uid: BackupService.Core.Dtos.MicroserviceRequest
+  commentId: T:BackupService.Core.Dtos.MicroserviceRequest
+  parent: BackupService.Core.Dtos
+  href: BackupService.Core.Dtos.MicroserviceRequest.html
+  name: MicroserviceRequest
+  nameWithType: MicroserviceRequest
+  fullName: BackupService.Core.Dtos.MicroserviceRequest
+- uid: BackupService.Core.Dtos.RestoreBackupRequest
+  commentId: T:BackupService.Core.Dtos.RestoreBackupRequest
+  parent: BackupService.Core.Dtos
+  href: BackupService.Core.Dtos.RestoreBackupRequest.html
+  name: RestoreBackupRequest
+  nameWithType: RestoreBackupRequest
+  fullName: BackupService.Core.Dtos.RestoreBackupRequest
+- uid: BackupService.Core.Dtos.RestorePreviewResult
+  commentId: T:BackupService.Core.Dtos.RestorePreviewResult
+  href: BackupService.Core.Dtos.RestorePreviewResult.html
+  name: RestorePreviewResult
+  nameWithType: RestorePreviewResult
+  fullName: BackupService.Core.Dtos.RestorePreviewResult
+- uid: BackupService.Core.Dtos.RestoreResult
+  commentId: T:BackupService.Core.Dtos.RestoreResult
+  href: BackupService.Core.Dtos.RestoreResult.html
+  name: RestoreResult
+  nameWithType: RestoreResult
+  fullName: BackupService.Core.Dtos.RestoreResult
+- uid: BackupService.Core.Dtos
+  commentId: N:BackupService.Core.Dtos
+  href: BackupService.html
+  name: BackupService.Core.Dtos
+  nameWithType: BackupService.Core.Dtos
+  fullName: BackupService.Core.Dtos
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Dtos
+    name: Dtos
+    href: BackupService.Core.Dtos.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Dtos
+    name: Dtos
+    href: BackupService.Core.Dtos.html

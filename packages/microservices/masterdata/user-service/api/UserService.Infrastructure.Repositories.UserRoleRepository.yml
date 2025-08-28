@@ -5,9 +5,10 @@ items:
   id: UserRoleRepository
   parent: UserService.Infrastructure.Repositories
   children:
-  - UserService.Infrastructure.Repositories.UserRoleRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository})
+  - UserService.Infrastructure.Repositories.UserRoleRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)
   - UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
   - UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
+  - UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
   - UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
   langs:
   - csharp
@@ -20,10 +21,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserRoleRepository
     path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 13
+    startLine: 9
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -34,15 +35,18 @@ items:
   - System.Object
   - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
   implements:
-  - UserService.Core.Interfaces.IUserRoleRepository
+  - UserService.Core.Interfaces.Repositories.IUserRoleRepository
   inheritedMembers:
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._dbContext
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._dbSet
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetAllAsync
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetByIdAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.HttpContextAccessor
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._logger
   - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.CreateAsync(UserService.Core.Entities.UserRole)
   - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.UpdateAsync(UserService.Core.Entities.UserRole)
-  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Guid)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.RestoreAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetCurrentUserId
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.ExistsAsync(System.Object)
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.SaveChangesAsync
+  - UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.Query
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
   - System.Object.GetHashCode
@@ -50,40 +54,42 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Infrastructure.Repositories.UserRoleRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository})
-  commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository})
-  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository})'
+- uid: UserService.Infrastructure.Repositories.UserRoleRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  id: '#ctor(UserService.Infrastructure.Data.UserServiceDbContext,Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository},Microsoft.AspNetCore.Http.IHttpContextAccessor)'
   parent: UserService.Infrastructure.Repositories.UserRoleRepository
   langs:
   - csharp
   - vb
-  name: UserRoleRepository(UserServiceDbContext, ILogger<UserRoleRepository>)
-  nameWithType: UserRoleRepository.UserRoleRepository(UserServiceDbContext, ILogger<UserRoleRepository>)
-  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.UserRoleRepository(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.UserRoleRepository>)
+  name: UserRoleRepository(UserServiceDbContext, ILogger<UserRoleRepository>, IHttpContextAccessor)
+  nameWithType: UserRoleRepository.UserRoleRepository(UserServiceDbContext, ILogger<UserRoleRepository>, IHttpContextAccessor)
+  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.UserRoleRepository(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger<UserService.Infrastructure.Repositories.UserRoleRepository>, Microsoft.AspNetCore.Http.IHttpContextAccessor)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 18
+    startLine: 9
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
   syntax:
-    content: public UserRoleRepository(UserServiceDbContext context, ILogger<UserRoleRepository> logger)
+    content: public UserRoleRepository(UserServiceDbContext context, ILogger<UserRoleRepository> logger, IHttpContextAccessor httpContextAccessor)
     parameters:
     - id: context
       type: UserService.Infrastructure.Data.UserServiceDbContext
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Infrastructure.Repositories.UserRoleRepository}
-    content.vb: Public Sub New(context As UserServiceDbContext, logger As ILogger(Of UserRoleRepository))
+    - id: httpContextAccessor
+      type: Microsoft.AspNetCore.Http.IHttpContextAccessor
+    content.vb: Public Sub New(context As UserServiceDbContext, logger As ILogger(Of UserRoleRepository), httpContextAccessor As IHttpContextAccessor)
   overload: UserService.Infrastructure.Repositories.UserRoleRepository.#ctor*
-  nameWithType.vb: UserRoleRepository.New(UserServiceDbContext, ILogger(Of UserRoleRepository))
-  fullName.vb: UserService.Infrastructure.Repositories.UserRoleRepository.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.UserRoleRepository))
-  name.vb: New(UserServiceDbContext, ILogger(Of UserRoleRepository))
+  nameWithType.vb: UserRoleRepository.New(UserServiceDbContext, ILogger(Of UserRoleRepository), IHttpContextAccessor)
+  fullName.vb: UserService.Infrastructure.Repositories.UserRoleRepository.New(UserService.Infrastructure.Data.UserServiceDbContext, Microsoft.Extensions.Logging.ILogger(Of UserService.Infrastructure.Repositories.UserRoleRepository), Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  name.vb: New(UserServiceDbContext, ILogger(Of UserRoleRepository), IHttpContextAccessor)
 - uid: UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
   commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
   id: GetAllAsync(System.Threading.CancellationToken)
@@ -99,10 +105,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAllAsync
     path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 26
+    startLine: 17
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -117,7 +123,7 @@ items:
     content.vb: Public Function GetAllAsync(cancellationToken As CancellationToken = Nothing) As Task(Of IEnumerable(Of UserRole))
   overload: UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
+  - UserService.Core.Interfaces.Repositories.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
 - uid: UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
   commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
   id: AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
@@ -133,10 +139,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignRoleToUserAsync
     path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 86
+    startLine: 37
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -155,7 +161,7 @@ items:
     content.vb: Public Function AssignRoleToUserAsync(userId As String, roleId As String, cancellationToken As CancellationToken = Nothing) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  - UserService.Core.Interfaces.Repositories.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
   nameWithType.vb: UserRoleRepository.AssignRoleToUserAsync(String, String, CancellationToken)
   fullName.vb: UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync(String, String, System.Threading.CancellationToken)
   name.vb: AssignRoleToUserAsync(String, String, CancellationToken)
@@ -174,10 +180,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemoveRoleFromUserAsync
     path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
-    startLine: 137
+    startLine: 90
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Repositories
@@ -196,10 +202,47 @@ items:
     content.vb: Public Function RemoveRoleFromUserAsync(userId As String, roleId As String, cancellationToken As CancellationToken = Nothing) As Task(Of Boolean)
   overload: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromUserAsync*
   implements:
-  - UserService.Core.Interfaces.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  - UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
   nameWithType.vb: UserRoleRepository.RemoveRoleFromUserAsync(String, String, CancellationToken)
   fullName.vb: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromUserAsync(String, String, System.Threading.CancellationToken)
   name.vb: RemoveRoleFromUserAsync(String, String, CancellationToken)
+- uid: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
+  commentId: M:UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
+  id: RemoveRoleFromAllUsersAsync(System.String)
+  parent: UserService.Infrastructure.Repositories.UserRoleRepository
+  langs:
+  - csharp
+  - vb
+  name: RemoveRoleFromAllUsersAsync(string)
+  nameWithType: UserRoleRepository.RemoveRoleFromAllUsersAsync(string)
+  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: RemoveRoleFromAllUsersAsync
+    path: src/UserService.Infrastructure/Repositories/UserRoleRepository.cs
+    startLine: 147
+  assemblies:
+  - UserService.Infrastructure
+  namespace: UserService.Infrastructure.Repositories
+  example: []
+  syntax:
+    content: public Task<int> RemoveRoleFromAllUsersAsync(string roleId)
+    parameters:
+    - id: roleId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+    content.vb: Public Function RemoveRoleFromAllUsersAsync(roleId As String) As Task(Of Integer)
+  overload: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync*
+  implements:
+  - UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
+  nameWithType.vb: UserRoleRepository.RemoveRoleFromAllUsersAsync(String)
+  fullName.vb: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync(String)
+  name.vb: RemoveRoleFromAllUsersAsync(String)
 references:
 - uid: UserService.Infrastructure.Repositories
   commentId: N:UserService.Infrastructure.Repositories
@@ -271,85 +314,33 @@ references:
   - uid: UserService.Core.Entities.UserRole
     name: UserRole
   - name: )
-- uid: UserService.Core.Interfaces.IUserRoleRepository
-  commentId: T:UserService.Core.Interfaces.IUserRoleRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserRoleRepository.html
+- uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserRoleRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserRoleRepository.html
   name: IUserRoleRepository
   nameWithType: IUserRoleRepository
-  fullName: UserService.Core.Interfaces.IUserRoleRepository
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._dbContext
-  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._dbContext
+  fullName: UserService.Core.Interfaces.Repositories.IUserRoleRepository
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.HttpContextAccessor
+  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.HttpContextAccessor
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
-  definition: UserService.Infrastructure.Repositories.Repository`1._dbContext
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbContext
-  name: _dbContext
-  nameWithType: Repository<UserRole>._dbContext
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>._dbContext
-  nameWithType.vb: Repository(Of UserRole)._dbContext
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole)._dbContext
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._dbSet
-  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._dbSet
+  definition: UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_HttpContextAccessor
+  name: HttpContextAccessor
+  nameWithType: Repository<UserRole>.HttpContextAccessor
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.HttpContextAccessor
+  nameWithType.vb: Repository(Of UserRole).HttpContextAccessor
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).HttpContextAccessor
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._logger
+  commentId: F:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}._logger
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
-  definition: UserService.Infrastructure.Repositories.Repository`1._dbSet
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbSet
-  name: _dbSet
-  nameWithType: Repository<UserRole>._dbSet
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>._dbSet
-  nameWithType.vb: Repository(Of UserRole)._dbSet
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole)._dbSet
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetAllAsync
-  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetAllAsync
-  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
-  definition: UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetAllAsync
-  name: GetAllAsync()
-  nameWithType: Repository<UserRole>.GetAllAsync()
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.GetAllAsync()
-  nameWithType.vb: Repository(Of UserRole).GetAllAsync()
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).GetAllAsync()
-  spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetAllAsync
-    name: GetAllAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetAllAsync
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetAllAsync
-    name: GetAllAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetAllAsync
-  - name: (
-  - name: )
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetByIdAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetByIdAsync(System.Guid)
-  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
-  definition: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  name: GetByIdAsync(Guid)
-  nameWithType: Repository<UserRole>.GetByIdAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.GetByIdAsync(System.Guid)
-  nameWithType.vb: Repository(Of UserRole).GetByIdAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).GetByIdAsync(System.Guid)
-  spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
-  spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
+  definition: UserService.Infrastructure.Repositories.Repository`1._logger
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__logger
+  name: _logger
+  nameWithType: Repository<UserRole>._logger
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>._logger
+  nameWithType.vb: Repository(Of UserRole)._logger
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole)._logger
 - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.CreateAsync(UserService.Core.Entities.UserRole)
   commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.CreateAsync(UserService.Core.Entities.UserRole)
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
@@ -402,36 +393,153 @@ references:
   - uid: UserService.Core.Entities.UserRole
     name: UserRole
   - name: )
-- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Object)
   parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
-  definition: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
-  name: DeleteAsync(Guid)
-  nameWithType: Repository<UserRole>.DeleteAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.DeleteAsync(System.Guid)
-  nameWithType.vb: Repository(Of UserRole).DeleteAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).DeleteAsync(System.Guid)
+  definition: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
+  name: DeleteAsync(object)
+  nameWithType: Repository<UserRole>.DeleteAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.DeleteAsync(object)
+  nameWithType.vb: Repository(Of UserRole).DeleteAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).DeleteAsync(Object)
+  name.vb: DeleteAsync(Object)
   spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
   spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: Object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.RestoreAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.RestoreAsync(System.Object)
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
+  definition: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  name: RestoreAsync(object)
+  nameWithType: Repository<UserRole>.RestoreAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.RestoreAsync(object)
+  nameWithType.vb: Repository(Of UserRole).RestoreAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).RestoreAsync(Object)
+  name.vb: RestoreAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetCurrentUserId
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetCurrentUserId
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
+  definition: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  name: GetCurrentUserId()
+  nameWithType: Repository<UserRole>.GetCurrentUserId()
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.GetCurrentUserId()
+  nameWithType.vb: Repository(Of UserRole).GetCurrentUserId()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).GetCurrentUserId()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.ExistsAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.ExistsAsync(System.Object)
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
+  definition: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  name: ExistsAsync(object)
+  nameWithType: Repository<UserRole>.ExistsAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.ExistsAsync(object)
+  nameWithType.vb: Repository(Of UserRole).ExistsAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).ExistsAsync(Object)
+  name.vb: ExistsAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.SaveChangesAsync
+  commentId: M:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.SaveChangesAsync
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
+  definition: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  name: SaveChangesAsync()
+  nameWithType: Repository<UserRole>.SaveChangesAsync()
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.SaveChangesAsync()
+  nameWithType.vb: Repository(Of UserRole).SaveChangesAsync()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).SaveChangesAsync()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.Query
+  commentId: P:UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}.Query
+  parent: UserService.Infrastructure.Repositories.Repository{UserService.Core.Entities.UserRole}
+  definition: UserService.Infrastructure.Repositories.Repository`1.Query
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_Query
+  name: Query
+  nameWithType: Repository<UserRole>.Query
+  fullName: UserService.Infrastructure.Repositories.Repository<UserService.Core.Entities.UserRole>.Query
+  nameWithType.vb: Repository(Of UserRole).Query
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of UserService.Core.Entities.UserRole).Query
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -683,12 +791,12 @@ references:
   - name: " "
   - name: T
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -701,6 +809,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -713,71 +825,26 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
-- uid: UserService.Infrastructure.Repositories.Repository`1._dbContext
-  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbContext
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbContext
-  name: _dbContext
-  nameWithType: Repository<T>._dbContext
-  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbContext
-  nameWithType.vb: Repository(Of T)._dbContext
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbContext
-- uid: UserService.Infrastructure.Repositories.Repository`1._dbSet
-  commentId: F:UserService.Infrastructure.Repositories.Repository`1._dbSet
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__dbSet
-  name: _dbSet
-  nameWithType: Repository<T>._dbSet
-  fullName: UserService.Infrastructure.Repositories.Repository<T>._dbSet
-  nameWithType.vb: Repository(Of T)._dbSet
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._dbSet
-- uid: UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetAllAsync
-  name: GetAllAsync()
-  nameWithType: Repository<T>.GetAllAsync()
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetAllAsync()
-  nameWithType.vb: Repository(Of T).GetAllAsync()
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetAllAsync()
-  spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-    name: GetAllAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetAllAsync
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.GetAllAsync
-    name: GetAllAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetAllAsync
-  - name: (
-  - name: )
-- uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-  isExternal: true
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  name: GetByIdAsync(Guid)
-  nameWithType: Repository<T>.GetByIdAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetByIdAsync(System.Guid)
-  nameWithType.vb: Repository(Of T).GetByIdAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetByIdAsync(System.Guid)
-  spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
-  spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.GetByIdAsync(System.Guid)
-    name: GetByIdAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetByIdAsync_System_Guid_
-  - name: (
-  - uid: System.Guid
-    name: Guid
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
-  - name: )
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+- uid: UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1.HttpContextAccessor
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_HttpContextAccessor
+  name: HttpContextAccessor
+  nameWithType: Repository<T>.HttpContextAccessor
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.HttpContextAccessor
+  nameWithType.vb: Repository(Of T).HttpContextAccessor
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).HttpContextAccessor
+- uid: UserService.Infrastructure.Repositories.Repository`1._logger
+  commentId: F:UserService.Infrastructure.Repositories.Repository`1._logger
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1__logger
+  name: _logger
+  nameWithType: Repository<T>._logger
+  fullName: UserService.Infrastructure.Repositories.Repository<T>._logger
+  nameWithType.vb: Repository(Of T)._logger
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T)._logger
 - uid: UserService.Infrastructure.Repositories.Repository`1.CreateAsync(`0)
   commentId: M:UserService.Infrastructure.Repositories.Repository`1.CreateAsync(`0)
   href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_CreateAsync__0_
@@ -822,38 +889,147 @@ references:
   - name: (
   - name: T
   - name: )
-- uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
-  commentId: M:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+- uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
   isExternal: true
-  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
-  name: DeleteAsync(Guid)
-  nameWithType: Repository<T>.DeleteAsync(Guid)
-  fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync(System.Guid)
-  nameWithType.vb: Repository(Of T).DeleteAsync(Guid)
-  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).DeleteAsync(System.Guid)
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
+  name: DeleteAsync(object)
+  nameWithType: Repository<T>.DeleteAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.DeleteAsync(object)
+  nameWithType.vb: Repository(Of T).DeleteAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).DeleteAsync(Object)
+  name.vb: DeleteAsync(Object)
   spec.csharp:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
   spec.vb:
-  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Guid)
+  - uid: UserService.Infrastructure.Repositories.Repository`1.DeleteAsync(System.Object)
     name: DeleteAsync
-    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Guid_
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_DeleteAsync_System_Object_
   - name: (
-  - uid: System.Guid
-    name: Guid
+  - uid: System.Object
+    name: Object
     isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.guid
+    href: https://learn.microsoft.com/dotnet/api/system.object
   - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+  isExternal: true
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  name: RestoreAsync(object)
+  nameWithType: Repository<T>.RestoreAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.RestoreAsync(object)
+  nameWithType.vb: Repository(Of T).RestoreAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).RestoreAsync(Object)
+  name.vb: RestoreAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.RestoreAsync(System.Object)
+    name: RestoreAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_RestoreAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  name: GetCurrentUserId()
+  nameWithType: Repository<T>.GetCurrentUserId()
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.GetCurrentUserId()
+  nameWithType.vb: Repository(Of T).GetCurrentUserId()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).GetCurrentUserId()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.GetCurrentUserId
+    name: GetCurrentUserId
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_GetCurrentUserId
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+  isExternal: true
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  name: ExistsAsync(object)
+  nameWithType: Repository<T>.ExistsAsync(object)
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.ExistsAsync(object)
+  nameWithType.vb: Repository(Of T).ExistsAsync(Object)
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).ExistsAsync(Object)
+  name.vb: ExistsAsync(Object)
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.ExistsAsync(System.Object)
+    name: ExistsAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_ExistsAsync_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  commentId: M:UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  name: SaveChangesAsync()
+  nameWithType: Repository<T>.SaveChangesAsync()
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.SaveChangesAsync()
+  nameWithType.vb: Repository(Of T).SaveChangesAsync()
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).SaveChangesAsync()
+  spec.csharp:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: UserService.Infrastructure.Repositories.Repository`1.SaveChangesAsync
+    name: SaveChangesAsync
+    href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_SaveChangesAsync
+  - name: (
+  - name: )
+- uid: UserService.Infrastructure.Repositories.Repository`1.Query
+  commentId: P:UserService.Infrastructure.Repositories.Repository`1.Query
+  href: UserService.Infrastructure.Repositories.Repository-1.html#UserService_Infrastructure_Repositories_Repository_1_Query
+  name: Query
+  nameWithType: Repository<T>.Query
+  fullName: UserService.Infrastructure.Repositories.Repository<T>.Query
+  nameWithType.vb: Repository(Of T).Query
+  fullName.vb: UserService.Infrastructure.Repositories.Repository(Of T).Query
 - uid: UserService.Infrastructure.Repositories.UserRoleRepository.#ctor*
   commentId: Overload:UserService.Infrastructure.Repositories.UserRoleRepository.#ctor
-  href: UserService.Infrastructure.Repositories.UserRoleRepository.html#UserService_Infrastructure_Repositories_UserRoleRepository__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Repositories_UserRoleRepository__
+  href: UserService.Infrastructure.Repositories.UserRoleRepository.html#UserService_Infrastructure_Repositories_UserRoleRepository__ctor_UserService_Infrastructure_Data_UserServiceDbContext_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Repositories_UserRoleRepository__Microsoft_AspNetCore_Http_IHttpContextAccessor_
   name: UserRoleRepository
   nameWithType: UserRoleRepository.UserRoleRepository
   fullName: UserService.Infrastructure.Repositories.UserRoleRepository.UserRoleRepository
@@ -900,6 +1076,14 @@ references:
     name: UserRoleRepository
     href: UserService.Infrastructure.Repositories.UserRoleRepository.html
   - name: )
+- uid: Microsoft.AspNetCore.Http.IHttpContextAccessor
+  commentId: T:Microsoft.AspNetCore.Http.IHttpContextAccessor
+  parent: Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor
+  name: IHttpContextAccessor
+  nameWithType: IHttpContextAccessor
+  fullName: Microsoft.AspNetCore.Http.IHttpContextAccessor
 - uid: UserService.Infrastructure.Data
   commentId: N:UserService.Infrastructure.Data
   href: UserService.html
@@ -995,22 +1179,59 @@ references:
     name: Logging
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: Microsoft.AspNetCore.Http
+  commentId: N:Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Http
+  nameWithType: Microsoft.AspNetCore.Http
+  fullName: Microsoft.AspNetCore.Http
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
 - uid: UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync*
   commentId: Overload:UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync
   href: UserService.Infrastructure.Repositories.UserRoleRepository.html#UserService_Infrastructure_Repositories_UserRoleRepository_GetAllAsync_System_Threading_CancellationToken_
   name: GetAllAsync
   nameWithType: UserRoleRepository.GetAllAsync
   fullName: UserService.Infrastructure.Repositories.UserRoleRepository.GetAllAsync
-- uid: UserService.Core.Interfaces.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
-  commentId: M:UserService.Core.Interfaces.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
-  parent: UserService.Core.Interfaces.IUserRoleRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
+  parent: UserService.Core.Interfaces.Repositories.IUserRoleRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
   name: GetAllAsync(CancellationToken)
   nameWithType: IUserRoleRepository.GetAllAsync(CancellationToken)
-  fullName: UserService.Core.Interfaces.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
     name: GetAllAsync
   - name: (
   - uid: System.Threading.CancellationToken
@@ -1019,7 +1240,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.GetAllAsync(System.Threading.CancellationToken)
     name: GetAllAsync
   - name: (
   - uid: System.Threading.CancellationToken
@@ -1180,19 +1401,19 @@ references:
   name: AssignRoleToUserAsync
   nameWithType: UserRoleRepository.AssignRoleToUserAsync
   fullName: UserService.Infrastructure.Repositories.UserRoleRepository.AssignRoleToUserAsync
-- uid: UserService.Core.Interfaces.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
-  commentId: M:UserService.Core.Interfaces.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
-  parent: UserService.Core.Interfaces.IUserRoleRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  parent: UserService.Core.Interfaces.Repositories.IUserRoleRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: AssignRoleToUserAsync(string, string, CancellationToken)
   nameWithType: IUserRoleRepository.AssignRoleToUserAsync(string, string, CancellationToken)
-  fullName: UserService.Core.Interfaces.IUserRoleRepository.AssignRoleToUserAsync(string, string, System.Threading.CancellationToken)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRoleRepository.AssignRoleToUserAsync(string, string, System.Threading.CancellationToken)
   nameWithType.vb: IUserRoleRepository.AssignRoleToUserAsync(String, String, CancellationToken)
-  fullName.vb: UserService.Core.Interfaces.IUserRoleRepository.AssignRoleToUserAsync(String, String, System.Threading.CancellationToken)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRoleRepository.AssignRoleToUserAsync(String, String, System.Threading.CancellationToken)
   name.vb: AssignRoleToUserAsync(String, String, CancellationToken)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
     name: AssignRoleToUserAsync
   - name: (
   - uid: System.String
@@ -1213,7 +1434,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.AssignRoleToUserAsync(System.String,System.String,System.Threading.CancellationToken)
     name: AssignRoleToUserAsync
   - name: (
   - uid: System.String
@@ -1285,19 +1506,19 @@ references:
   name: RemoveRoleFromUserAsync
   nameWithType: UserRoleRepository.RemoveRoleFromUserAsync
   fullName: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromUserAsync
-- uid: UserService.Core.Interfaces.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
-  commentId: M:UserService.Core.Interfaces.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
-  parent: UserService.Core.Interfaces.IUserRoleRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  parent: UserService.Core.Interfaces.Repositories.IUserRoleRepository
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: RemoveRoleFromUserAsync(string, string, CancellationToken)
   nameWithType: IUserRoleRepository.RemoveRoleFromUserAsync(string, string, CancellationToken)
-  fullName: UserService.Core.Interfaces.IUserRoleRepository.RemoveRoleFromUserAsync(string, string, System.Threading.CancellationToken)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromUserAsync(string, string, System.Threading.CancellationToken)
   nameWithType.vb: IUserRoleRepository.RemoveRoleFromUserAsync(String, String, CancellationToken)
-  fullName.vb: UserService.Core.Interfaces.IUserRoleRepository.RemoveRoleFromUserAsync(String, String, System.Threading.CancellationToken)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromUserAsync(String, String, System.Threading.CancellationToken)
   name.vb: RemoveRoleFromUserAsync(String, String, CancellationToken)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
     name: RemoveRoleFromUserAsync
   - name: (
   - uid: System.String
@@ -1318,7 +1539,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromUserAsync(System.String,System.String,System.Threading.CancellationToken)
     name: RemoveRoleFromUserAsync
   - name: (
   - uid: System.String
@@ -1337,4 +1558,74 @@ references:
     name: CancellationToken
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync*
+  commentId: Overload:UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync
+  href: UserService.Infrastructure.Repositories.UserRoleRepository.html#UserService_Infrastructure_Repositories_UserRoleRepository_RemoveRoleFromAllUsersAsync_System_String_
+  name: RemoveRoleFromAllUsersAsync
+  nameWithType: UserRoleRepository.RemoveRoleFromAllUsersAsync
+  fullName: UserService.Infrastructure.Repositories.UserRoleRepository.RemoveRoleFromAllUsersAsync
+- uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
+  parent: UserService.Core.Interfaces.Repositories.IUserRoleRepository
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: RemoveRoleFromAllUsersAsync(string)
+  nameWithType: IUserRoleRepository.RemoveRoleFromAllUsersAsync(string)
+  fullName: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromAllUsersAsync(string)
+  nameWithType.vb: IUserRoleRepository.RemoveRoleFromAllUsersAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromAllUsersAsync(String)
+  name.vb: RemoveRoleFromAllUsersAsync(String)
+  spec.csharp:
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
+    name: RemoveRoleFromAllUsersAsync
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: UserService.Core.Interfaces.Repositories.IUserRoleRepository.RemoveRoleFromAllUsersAsync(System.String)
+    name: RemoveRoleFromAllUsersAsync
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Int32}
+  commentId: T:System.Threading.Tasks.Task{System.Int32}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<int>
+  nameWithType: Task<int>
+  fullName: System.Threading.Tasks.Task<int>
+  nameWithType.vb: Task(Of Integer)
+  fullName.vb: System.Threading.Tasks.Task(Of Integer)
+  name.vb: Task(Of Integer)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
   - name: )

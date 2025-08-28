@@ -4,6 +4,7 @@ items:
   commentId: N:UserService.Infrastructure.Repositories
   id: UserService.Infrastructure.Repositories
   children:
+  - UserService.Infrastructure.Repositories.PasswordPolicyRepository
   - UserService.Infrastructure.Repositories.PermissionsRepository
   - UserService.Infrastructure.Repositories.Repository`1
   - UserService.Infrastructure.Repositories.RolePermissionRepository
@@ -13,6 +14,7 @@ items:
   - UserService.Infrastructure.Repositories.UserRepository
   - UserService.Infrastructure.Repositories.UserRoleRepository
   - UserService.Infrastructure.Repositories.UserShiftRepository
+  - UserService.Infrastructure.Repositories.UserStatusRepository
   langs:
   - csharp
   - vb
@@ -23,6 +25,12 @@ items:
   assemblies:
   - UserService.Infrastructure
 references:
+- uid: UserService.Infrastructure.Repositories.PasswordPolicyRepository
+  commentId: T:UserService.Infrastructure.Repositories.PasswordPolicyRepository
+  href: UserService.Infrastructure.Repositories.PasswordPolicyRepository.html
+  name: PasswordPolicyRepository
+  nameWithType: PasswordPolicyRepository
+  fullName: UserService.Infrastructure.Repositories.PasswordPolicyRepository
 - uid: UserService.Infrastructure.Repositories.PermissionsRepository
   commentId: T:UserService.Infrastructure.Repositories.PermissionsRepository
   href: UserService.Infrastructure.Repositories.PermissionsRepository.html
@@ -96,3 +104,9 @@ references:
   name: UserShiftRepository
   nameWithType: UserShiftRepository
   fullName: UserService.Infrastructure.Repositories.UserShiftRepository
+- uid: UserService.Infrastructure.Repositories.UserStatusRepository
+  commentId: T:UserService.Infrastructure.Repositories.UserStatusRepository
+  href: UserService.Infrastructure.Repositories.UserStatusRepository.html
+  name: UserStatusRepository
+  nameWithType: UserStatusRepository
+  fullName: UserService.Infrastructure.Repositories.UserStatusRepository

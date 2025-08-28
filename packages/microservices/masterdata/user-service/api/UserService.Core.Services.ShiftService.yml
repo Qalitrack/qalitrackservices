@@ -5,7 +5,7 @@ items:
   id: ShiftService
   parent: UserService.Core.Services
   children:
-  - UserService.Core.Services.ShiftService.#ctor(UserService.Core.Interfaces.IShiftRepository,UserService.Core.Interfaces.IUserShiftRepository,UserService.Core.Interfaces.IUserRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})
+  - UserService.Core.Services.ShiftService.#ctor(UserService.Core.Interfaces.Repositories.IShiftRepository,UserService.Core.Interfaces.Repositories.IUserShiftRepository,UserService.Core.Interfaces.Repositories.IUserRepository,Microsoft.AspNetCore.Http.IHttpContextAccessor,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})
   - UserService.Core.Services.ShiftService.AssignUserToShiftAsync(System.String,System.String)
   - UserService.Core.Services.ShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
   - UserService.Core.Services.ShiftService.DeleteAsync(System.String)
@@ -29,10 +29,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftService
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 9
+    startLine: 13
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -42,7 +42,7 @@ items:
   inheritance:
   - System.Object
   implements:
-  - UserService.Core.Interfaces.IShiftService
+  - UserService.Core.Interfaces.Services.IShiftService
   inheritedMembers:
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
@@ -51,46 +51,48 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Core.Services.ShiftService.#ctor(UserService.Core.Interfaces.IShiftRepository,UserService.Core.Interfaces.IUserShiftRepository,UserService.Core.Interfaces.IUserRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})
-  commentId: M:UserService.Core.Services.ShiftService.#ctor(UserService.Core.Interfaces.IShiftRepository,UserService.Core.Interfaces.IUserShiftRepository,UserService.Core.Interfaces.IUserRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})
-  id: '#ctor(UserService.Core.Interfaces.IShiftRepository,UserService.Core.Interfaces.IUserShiftRepository,UserService.Core.Interfaces.IUserRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})'
+- uid: UserService.Core.Services.ShiftService.#ctor(UserService.Core.Interfaces.Repositories.IShiftRepository,UserService.Core.Interfaces.Repositories.IUserShiftRepository,UserService.Core.Interfaces.Repositories.IUserRepository,Microsoft.AspNetCore.Http.IHttpContextAccessor,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})
+  commentId: M:UserService.Core.Services.ShiftService.#ctor(UserService.Core.Interfaces.Repositories.IShiftRepository,UserService.Core.Interfaces.Repositories.IUserShiftRepository,UserService.Core.Interfaces.Repositories.IUserRepository,Microsoft.AspNetCore.Http.IHttpContextAccessor,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})
+  id: '#ctor(UserService.Core.Interfaces.Repositories.IShiftRepository,UserService.Core.Interfaces.Repositories.IUserShiftRepository,UserService.Core.Interfaces.Repositories.IUserRepository,Microsoft.AspNetCore.Http.IHttpContextAccessor,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService})'
   parent: UserService.Core.Services.ShiftService
   langs:
   - csharp
   - vb
-  name: ShiftService(IShiftRepository, IUserShiftRepository, IUserRepository, IMapper, ILogger<ShiftService>)
-  nameWithType: ShiftService.ShiftService(IShiftRepository, IUserShiftRepository, IUserRepository, IMapper, ILogger<ShiftService>)
-  fullName: UserService.Core.Services.ShiftService.ShiftService(UserService.Core.Interfaces.IShiftRepository, UserService.Core.Interfaces.IUserShiftRepository, UserService.Core.Interfaces.IUserRepository, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.ShiftService>)
+  name: ShiftService(IShiftRepository, IUserShiftRepository, IUserRepository, IHttpContextAccessor, IMapper, ILogger<ShiftService>)
+  nameWithType: ShiftService.ShiftService(IShiftRepository, IUserShiftRepository, IUserRepository, IHttpContextAccessor, IMapper, ILogger<ShiftService>)
+  fullName: UserService.Core.Services.ShiftService.ShiftService(UserService.Core.Interfaces.Repositories.IShiftRepository, UserService.Core.Interfaces.Repositories.IUserShiftRepository, UserService.Core.Interfaces.Repositories.IUserRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.ShiftService>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 9
+    startLine: 13
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
   syntax:
-    content: public ShiftService(IShiftRepository shiftRepository, IUserShiftRepository userShiftRepository, IUserRepository userRepository, IMapper mapper, ILogger<ShiftService> logger)
+    content: public ShiftService(IShiftRepository shiftRepository, IUserShiftRepository userShiftRepository, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger<ShiftService> logger)
     parameters:
     - id: shiftRepository
-      type: UserService.Core.Interfaces.IShiftRepository
+      type: UserService.Core.Interfaces.Repositories.IShiftRepository
     - id: userShiftRepository
-      type: UserService.Core.Interfaces.IUserShiftRepository
+      type: UserService.Core.Interfaces.Repositories.IUserShiftRepository
     - id: userRepository
-      type: UserService.Core.Interfaces.IUserRepository
+      type: UserService.Core.Interfaces.Repositories.IUserRepository
+    - id: httpContextAccessor
+      type: Microsoft.AspNetCore.Http.IHttpContextAccessor
     - id: mapper
       type: AutoMapper.IMapper
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.ShiftService}
-    content.vb: Public Sub New(shiftRepository As IShiftRepository, userShiftRepository As IUserShiftRepository, userRepository As IUserRepository, mapper As IMapper, logger As ILogger(Of ShiftService))
+    content.vb: Public Sub New(shiftRepository As IShiftRepository, userShiftRepository As IUserShiftRepository, userRepository As IUserRepository, httpContextAccessor As IHttpContextAccessor, mapper As IMapper, logger As ILogger(Of ShiftService))
   overload: UserService.Core.Services.ShiftService.#ctor*
-  nameWithType.vb: ShiftService.New(IShiftRepository, IUserShiftRepository, IUserRepository, IMapper, ILogger(Of ShiftService))
-  fullName.vb: UserService.Core.Services.ShiftService.New(UserService.Core.Interfaces.IShiftRepository, UserService.Core.Interfaces.IUserShiftRepository, UserService.Core.Interfaces.IUserRepository, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.ShiftService))
-  name.vb: New(IShiftRepository, IUserShiftRepository, IUserRepository, IMapper, ILogger(Of ShiftService))
+  nameWithType.vb: ShiftService.New(IShiftRepository, IUserShiftRepository, IUserRepository, IHttpContextAccessor, IMapper, ILogger(Of ShiftService))
+  fullName.vb: UserService.Core.Services.ShiftService.New(UserService.Core.Interfaces.Repositories.IShiftRepository, UserService.Core.Interfaces.Repositories.IUserShiftRepository, UserService.Core.Interfaces.Repositories.IUserRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.ShiftService))
+  name.vb: New(IShiftRepository, IUserShiftRepository, IUserRepository, IHttpContextAccessor, IMapper, ILogger(Of ShiftService))
 - uid: UserService.Core.Services.ShiftService.GetAllAsync
   commentId: M:UserService.Core.Services.ShiftService.GetAllAsync
   id: GetAllAsync
@@ -106,10 +108,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAllAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 23
+    startLine: 28
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -121,7 +123,7 @@ items:
     content.vb: Public Function GetAllAsync() As Task(Of IEnumerable(Of ShiftDto))
   overload: UserService.Core.Services.ShiftService.GetAllAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.GetAllAsync
+  - UserService.Core.Interfaces.Services.IShiftService.GetAllAsync
 - uid: UserService.Core.Services.ShiftService.GetByIdAsync(System.String)
   commentId: M:UserService.Core.Services.ShiftService.GetByIdAsync(System.String)
   id: GetByIdAsync(System.String)
@@ -137,10 +139,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetByIdAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 29
+    startLine: 34
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -155,7 +157,7 @@ items:
     content.vb: Public Function GetByIdAsync(id As String) As Task(Of ShiftDto)
   overload: UserService.Core.Services.ShiftService.GetByIdAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.GetByIdAsync(System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.GetByIdAsync(System.String)
   nameWithType.vb: ShiftService.GetByIdAsync(String)
   fullName.vb: UserService.Core.Services.ShiftService.GetByIdAsync(String)
   name.vb: GetByIdAsync(String)
@@ -174,10 +176,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreateAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 41
+    startLine: 46
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -192,7 +194,7 @@ items:
     content.vb: Public Function CreateAsync(dto As CreateShiftDto) As Task(Of ShiftDto)
   overload: UserService.Core.Services.ShiftService.CreateAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
+  - UserService.Core.Interfaces.Services.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
 - uid: UserService.Core.Services.ShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
   commentId: M:UserService.Core.Services.ShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
   id: UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
@@ -208,10 +210,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdateAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 70
+    startLine: 80
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -228,7 +230,7 @@ items:
     content.vb: Public Function UpdateAsync(id As String, dto As UpdateShiftDto) As Task(Of ShiftDto)
   overload: UserService.Core.Services.ShiftService.UpdateAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
+  - UserService.Core.Interfaces.Services.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
   nameWithType.vb: ShiftService.UpdateAsync(String, UpdateShiftDto)
   fullName.vb: UserService.Core.Services.ShiftService.UpdateAsync(String, UserService.Core.DTOs.Shift.UpdateShiftDto)
   name.vb: UpdateAsync(String, UpdateShiftDto)
@@ -247,10 +249,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 130
+    startLine: 140
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -265,7 +267,7 @@ items:
     content.vb: Public Function DeleteAsync(id As String) As Task(Of Boolean)
   overload: UserService.Core.Services.ShiftService.DeleteAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.DeleteAsync(System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.DeleteAsync(System.String)
   nameWithType.vb: ShiftService.DeleteAsync(String)
   fullName.vb: UserService.Core.Services.ShiftService.DeleteAsync(String)
   name.vb: DeleteAsync(String)
@@ -284,10 +286,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsShiftActive
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 151
+    startLine: 161
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -302,7 +304,7 @@ items:
     content.vb: Public Function IsShiftActive(shiftId As String) As Task(Of Boolean)
   overload: UserService.Core.Services.ShiftService.IsShiftActive*
   implements:
-  - UserService.Core.Interfaces.IShiftService.IsShiftActive(System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.IsShiftActive(System.String)
   nameWithType.vb: ShiftService.IsShiftActive(String)
   fullName.vb: UserService.Core.Services.ShiftService.IsShiftActive(String)
   name.vb: IsShiftActive(String)
@@ -321,10 +323,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignUserToShiftAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 163
+    startLine: 173
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -341,7 +343,7 @@ items:
     content.vb: Public Function AssignUserToShiftAsync(userId As String, shiftId As String) As Task(Of Boolean)
   overload: UserService.Core.Services.ShiftService.AssignUserToShiftAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.AssignUserToShiftAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.AssignUserToShiftAsync(System.String,System.String)
   nameWithType.vb: ShiftService.AssignUserToShiftAsync(String, String)
   fullName.vb: UserService.Core.Services.ShiftService.AssignUserToShiftAsync(String, String)
   name.vb: AssignUserToShiftAsync(String, String)
@@ -360,10 +362,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemoveUserFromShiftAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 214
+    startLine: 225
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -380,7 +382,7 @@ items:
     content.vb: Public Function RemoveUserFromShiftAsync(userId As String, shiftId As String) As Task(Of Boolean)
   overload: UserService.Core.Services.ShiftService.RemoveUserFromShiftAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
   nameWithType.vb: ShiftService.RemoveUserFromShiftAsync(String, String)
   fullName.vb: UserService.Core.Services.ShiftService.RemoveUserFromShiftAsync(String, String)
   name.vb: RemoveUserFromShiftAsync(String, String)
@@ -399,10 +401,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsUserAssignedToShiftAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 360
+    startLine: 251
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -419,7 +421,7 @@ items:
     content.vb: Public Function IsUserAssignedToShiftAsync(userId As String, shiftId As String) As Task(Of Object)
   overload: UserService.Core.Services.ShiftService.IsUserAssignedToShiftAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
   nameWithType.vb: ShiftService.IsUserAssignedToShiftAsync(String, String)
   fullName.vb: UserService.Core.Services.ShiftService.IsUserAssignedToShiftAsync(String, String)
   name.vb: IsUserAssignedToShiftAsync(String, String)
@@ -438,10 +440,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MassAssignShiftToRoleAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 365
+    startLine: 256
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -458,7 +460,7 @@ items:
     content.vb: Public Function MassAssignShiftToRoleAsync(roleId As String, shiftId As String) As Task(Of MassAssignShiftResultDto)
   overload: UserService.Core.Services.ShiftService.MassAssignShiftToRoleAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
   nameWithType.vb: ShiftService.MassAssignShiftToRoleAsync(String, String)
   fullName.vb: UserService.Core.Services.ShiftService.MassAssignShiftToRoleAsync(String, String)
   name.vb: MassAssignShiftToRoleAsync(String, String)
@@ -477,10 +479,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MassRemoveUsersFromShiftByRoleAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 462
+    startLine: 353
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -497,7 +499,7 @@ items:
     content.vb: Public Function MassRemoveUsersFromShiftByRoleAsync(roleId As String, shiftId As String) As Task(Of MassAssignShiftResultDto)
   overload: UserService.Core.Services.ShiftService.MassRemoveUsersFromShiftByRoleAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
   nameWithType.vb: ShiftService.MassRemoveUsersFromShiftByRoleAsync(String, String)
   fullName.vb: UserService.Core.Services.ShiftService.MassRemoveUsersFromShiftByRoleAsync(String, String)
   name.vb: MassRemoveUsersFromShiftByRoleAsync(String, String)
@@ -516,10 +518,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/ShiftService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUsersAssignedToShiftAsync
     path: src/UserService.Core/Services/ShiftService.cs
-    startLine: 532
+    startLine: 423
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -534,7 +536,7 @@ items:
     content.vb: Public Function GetUsersAssignedToShiftAsync(shiftId As String) As Task(Of UsersAssignedToShiftDto)
   overload: UserService.Core.Services.ShiftService.GetUsersAssignedToShiftAsync*
   implements:
-  - UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(System.String)
+  - UserService.Core.Interfaces.Services.IShiftService.GetUsersAssignedToShiftAsync(System.String)
   nameWithType.vb: ShiftService.GetUsersAssignedToShiftAsync(String)
   fullName.vb: UserService.Core.Services.ShiftService.GetUsersAssignedToShiftAsync(String)
   name.vb: GetUsersAssignedToShiftAsync(String)
@@ -580,13 +582,13 @@ references:
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: UserService.Core.Interfaces.IShiftService
-  commentId: T:UserService.Core.Interfaces.IShiftService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IShiftService.html
+- uid: UserService.Core.Interfaces.Services.IShiftService
+  commentId: T:UserService.Core.Interfaces.Services.IShiftService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IShiftService.html
   name: IShiftService
   nameWithType: IShiftService
-  fullName: UserService.Core.Interfaces.IShiftService
+  fullName: UserService.Core.Interfaces.Services.IShiftService
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -813,12 +815,12 @@ references:
   name: System
   nameWithType: System
   fullName: System
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -831,6 +833,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -843,36 +849,48 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: UserService.Core.Services.ShiftService.#ctor*
   commentId: Overload:UserService.Core.Services.ShiftService.#ctor
-  href: UserService.Core.Services.ShiftService.html#UserService_Core_Services_ShiftService__ctor_UserService_Core_Interfaces_IShiftRepository_UserService_Core_Interfaces_IUserShiftRepository_UserService_Core_Interfaces_IUserRepository_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_ShiftService__
+  href: UserService.Core.Services.ShiftService.html#UserService_Core_Services_ShiftService__ctor_UserService_Core_Interfaces_Repositories_IShiftRepository_UserService_Core_Interfaces_Repositories_IUserShiftRepository_UserService_Core_Interfaces_Repositories_IUserRepository_Microsoft_AspNetCore_Http_IHttpContextAccessor_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_ShiftService__
   name: ShiftService
   nameWithType: ShiftService.ShiftService
   fullName: UserService.Core.Services.ShiftService.ShiftService
   nameWithType.vb: ShiftService.New
   fullName.vb: UserService.Core.Services.ShiftService.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IShiftRepository
-  commentId: T:UserService.Core.Interfaces.IShiftRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IShiftRepository.html
+- uid: UserService.Core.Interfaces.Repositories.IShiftRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IShiftRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IShiftRepository.html
   name: IShiftRepository
   nameWithType: IShiftRepository
-  fullName: UserService.Core.Interfaces.IShiftRepository
-- uid: UserService.Core.Interfaces.IUserShiftRepository
-  commentId: T:UserService.Core.Interfaces.IUserShiftRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserShiftRepository.html
+  fullName: UserService.Core.Interfaces.Repositories.IShiftRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserShiftRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserShiftRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserShiftRepository.html
   name: IUserShiftRepository
   nameWithType: IUserShiftRepository
-  fullName: UserService.Core.Interfaces.IUserShiftRepository
-- uid: UserService.Core.Interfaces.IUserRepository
-  commentId: T:UserService.Core.Interfaces.IUserRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserRepository.html
+  fullName: UserService.Core.Interfaces.Repositories.IUserShiftRepository
+- uid: UserService.Core.Interfaces.Repositories.IUserRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IUserRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IUserRepository.html
   name: IUserRepository
   nameWithType: IUserRepository
-  fullName: UserService.Core.Interfaces.IUserRepository
+  fullName: UserService.Core.Interfaces.Repositories.IUserRepository
+- uid: Microsoft.AspNetCore.Http.IHttpContextAccessor
+  commentId: T:Microsoft.AspNetCore.Http.IHttpContextAccessor
+  parent: Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor
+  name: IHttpContextAccessor
+  nameWithType: IHttpContextAccessor
+  fullName: Microsoft.AspNetCore.Http.IHttpContextAccessor
 - uid: AutoMapper.IMapper
   commentId: T:AutoMapper.IMapper
   parent: AutoMapper
@@ -913,6 +931,81 @@ references:
     name: ShiftService
     href: UserService.Core.Services.ShiftService.html
   - name: )
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
+  href: UserService.html
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+- uid: Microsoft.AspNetCore.Http
+  commentId: N:Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Http
+  nameWithType: Microsoft.AspNetCore.Http
+  fullName: Microsoft.AspNetCore.Http
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
 - uid: AutoMapper
   commentId: N:AutoMapper
   isExternal: true
@@ -990,23 +1083,23 @@ references:
   name: GetAllAsync
   nameWithType: ShiftService.GetAllAsync
   fullName: UserService.Core.Services.ShiftService.GetAllAsync
-- uid: UserService.Core.Interfaces.IShiftService.GetAllAsync
-  commentId: M:UserService.Core.Interfaces.IShiftService.GetAllAsync
-  parent: UserService.Core.Interfaces.IShiftService
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetAllAsync
+- uid: UserService.Core.Interfaces.Services.IShiftService.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.GetAllAsync
+  parent: UserService.Core.Interfaces.Services.IShiftService
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetAllAsync
   name: GetAllAsync()
   nameWithType: IShiftService.GetAllAsync()
-  fullName: UserService.Core.Interfaces.IShiftService.GetAllAsync()
+  fullName: UserService.Core.Interfaces.Services.IShiftService.GetAllAsync()
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.GetAllAsync
+  - uid: UserService.Core.Interfaces.Services.IShiftService.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetAllAsync
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetAllAsync
   - name: (
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.GetAllAsync
+  - uid: UserService.Core.Interfaces.Services.IShiftService.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetAllAsync
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetAllAsync
   - name: (
   - name: )
 - uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Shift.ShiftDto}}
@@ -1127,21 +1220,21 @@ references:
   name: GetByIdAsync
   nameWithType: ShiftService.GetByIdAsync
   fullName: UserService.Core.Services.ShiftService.GetByIdAsync
-- uid: UserService.Core.Interfaces.IShiftService.GetByIdAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.GetByIdAsync(System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.GetByIdAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.GetByIdAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetByIdAsync_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetByIdAsync_System_String_
   name: GetByIdAsync(string)
   nameWithType: IShiftService.GetByIdAsync(string)
-  fullName: UserService.Core.Interfaces.IShiftService.GetByIdAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.GetByIdAsync(string)
   nameWithType.vb: IShiftService.GetByIdAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.GetByIdAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.GetByIdAsync(String)
   name.vb: GetByIdAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.GetByIdAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.GetByIdAsync(System.String)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetByIdAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetByIdAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1149,9 +1242,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.GetByIdAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.GetByIdAsync(System.String)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetByIdAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetByIdAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1208,26 +1301,26 @@ references:
   name: CreateAsync
   nameWithType: ShiftService.CreateAsync
   fullName: UserService.Core.Services.ShiftService.CreateAsync
-- uid: UserService.Core.Interfaces.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
-  commentId: M:UserService.Core.Interfaces.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
-  parent: UserService.Core.Interfaces.IShiftService
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_CreateAsync_UserService_Core_DTOs_Shift_CreateShiftDto_
+- uid: UserService.Core.Interfaces.Services.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
+  parent: UserService.Core.Interfaces.Services.IShiftService
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_CreateAsync_UserService_Core_DTOs_Shift_CreateShiftDto_
   name: CreateAsync(CreateShiftDto)
   nameWithType: IShiftService.CreateAsync(CreateShiftDto)
-  fullName: UserService.Core.Interfaces.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
     name: CreateAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_CreateAsync_UserService_Core_DTOs_Shift_CreateShiftDto_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_CreateAsync_UserService_Core_DTOs_Shift_CreateShiftDto_
   - name: (
   - uid: UserService.Core.DTOs.Shift.CreateShiftDto
     name: CreateShiftDto
     href: UserService.Core.DTOs.Shift.CreateShiftDto.html
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.CreateAsync(UserService.Core.DTOs.Shift.CreateShiftDto)
     name: CreateAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_CreateAsync_UserService_Core_DTOs_Shift_CreateShiftDto_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_CreateAsync_UserService_Core_DTOs_Shift_CreateShiftDto_
   - name: (
   - uid: UserService.Core.DTOs.Shift.CreateShiftDto
     name: CreateShiftDto
@@ -1284,21 +1377,21 @@ references:
   name: UpdateAsync
   nameWithType: ShiftService.UpdateAsync
   fullName: UserService.Core.Services.ShiftService.UpdateAsync
-- uid: UserService.Core.Interfaces.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
-  commentId: M:UserService.Core.Interfaces.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_UpdateAsync_System_String_UserService_Core_DTOs_Shift_UpdateShiftDto_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_UpdateAsync_System_String_UserService_Core_DTOs_Shift_UpdateShiftDto_
   name: UpdateAsync(string, UpdateShiftDto)
   nameWithType: IShiftService.UpdateAsync(string, UpdateShiftDto)
-  fullName: UserService.Core.Interfaces.IShiftService.UpdateAsync(string, UserService.Core.DTOs.Shift.UpdateShiftDto)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.UpdateAsync(string, UserService.Core.DTOs.Shift.UpdateShiftDto)
   nameWithType.vb: IShiftService.UpdateAsync(String, UpdateShiftDto)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.UpdateAsync(String, UserService.Core.DTOs.Shift.UpdateShiftDto)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.UpdateAsync(String, UserService.Core.DTOs.Shift.UpdateShiftDto)
   name.vb: UpdateAsync(String, UpdateShiftDto)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_UpdateAsync_System_String_UserService_Core_DTOs_Shift_UpdateShiftDto_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_UpdateAsync_System_String_UserService_Core_DTOs_Shift_UpdateShiftDto_
   - name: (
   - uid: System.String
     name: string
@@ -1311,9 +1404,9 @@ references:
     href: UserService.Core.DTOs.Shift.UpdateShiftDto.html
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.UpdateAsync(System.String,UserService.Core.DTOs.Shift.UpdateShiftDto)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_UpdateAsync_System_String_UserService_Core_DTOs_Shift_UpdateShiftDto_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_UpdateAsync_System_String_UserService_Core_DTOs_Shift_UpdateShiftDto_
   - name: (
   - uid: System.String
     name: String
@@ -1338,21 +1431,21 @@ references:
   name: DeleteAsync
   nameWithType: ShiftService.DeleteAsync
   fullName: UserService.Core.Services.ShiftService.DeleteAsync
-- uid: UserService.Core.Interfaces.IShiftService.DeleteAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.DeleteAsync(System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.DeleteAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_DeleteAsync_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_DeleteAsync_System_String_
   name: DeleteAsync(string)
   nameWithType: IShiftService.DeleteAsync(string)
-  fullName: UserService.Core.Interfaces.IShiftService.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.DeleteAsync(string)
   nameWithType.vb: IShiftService.DeleteAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.DeleteAsync(String)
   name.vb: DeleteAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1360,9 +1453,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1410,21 +1503,21 @@ references:
   name: IsShiftActive
   nameWithType: ShiftService.IsShiftActive
   fullName: UserService.Core.Services.ShiftService.IsShiftActive
-- uid: UserService.Core.Interfaces.IShiftService.IsShiftActive(System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.IsShiftActive(System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.IsShiftActive(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.IsShiftActive(System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_IsShiftActive_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_IsShiftActive_System_String_
   name: IsShiftActive(string)
   nameWithType: IShiftService.IsShiftActive(string)
-  fullName: UserService.Core.Interfaces.IShiftService.IsShiftActive(string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.IsShiftActive(string)
   nameWithType.vb: IShiftService.IsShiftActive(String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.IsShiftActive(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.IsShiftActive(String)
   name.vb: IsShiftActive(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.IsShiftActive(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.IsShiftActive(System.String)
     name: IsShiftActive
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_IsShiftActive_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_IsShiftActive_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1432,9 +1525,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.IsShiftActive(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.IsShiftActive(System.String)
     name: IsShiftActive
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_IsShiftActive_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_IsShiftActive_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1447,21 +1540,21 @@ references:
   name: AssignUserToShiftAsync
   nameWithType: ShiftService.AssignUserToShiftAsync
   fullName: UserService.Core.Services.ShiftService.AssignUserToShiftAsync
-- uid: UserService.Core.Interfaces.IShiftService.AssignUserToShiftAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.AssignUserToShiftAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.AssignUserToShiftAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.AssignUserToShiftAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_AssignUserToShiftAsync_System_String_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_AssignUserToShiftAsync_System_String_System_String_
   name: AssignUserToShiftAsync(string, string)
   nameWithType: IShiftService.AssignUserToShiftAsync(string, string)
-  fullName: UserService.Core.Interfaces.IShiftService.AssignUserToShiftAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.AssignUserToShiftAsync(string, string)
   nameWithType.vb: IShiftService.AssignUserToShiftAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.AssignUserToShiftAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.AssignUserToShiftAsync(String, String)
   name.vb: AssignUserToShiftAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.AssignUserToShiftAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.AssignUserToShiftAsync(System.String,System.String)
     name: AssignUserToShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_AssignUserToShiftAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_AssignUserToShiftAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1475,9 +1568,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.AssignUserToShiftAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.AssignUserToShiftAsync(System.String,System.String)
     name: AssignUserToShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_AssignUserToShiftAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_AssignUserToShiftAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1496,21 +1589,21 @@ references:
   name: RemoveUserFromShiftAsync
   nameWithType: ShiftService.RemoveUserFromShiftAsync
   fullName: UserService.Core.Services.ShiftService.RemoveUserFromShiftAsync
-- uid: UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_RemoveUserFromShiftAsync_System_String_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_RemoveUserFromShiftAsync_System_String_System_String_
   name: RemoveUserFromShiftAsync(string, string)
   nameWithType: IShiftService.RemoveUserFromShiftAsync(string, string)
-  fullName: UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.RemoveUserFromShiftAsync(string, string)
   nameWithType.vb: IShiftService.RemoveUserFromShiftAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.RemoveUserFromShiftAsync(String, String)
   name.vb: RemoveUserFromShiftAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
     name: RemoveUserFromShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_RemoveUserFromShiftAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_RemoveUserFromShiftAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1524,9 +1617,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.RemoveUserFromShiftAsync(System.String,System.String)
     name: RemoveUserFromShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_RemoveUserFromShiftAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_RemoveUserFromShiftAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1545,21 +1638,21 @@ references:
   name: IsUserAssignedToShiftAsync
   nameWithType: ShiftService.IsUserAssignedToShiftAsync
   fullName: UserService.Core.Services.ShiftService.IsUserAssignedToShiftAsync
-- uid: UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_IsUserAssignedToShiftAsync_System_String_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_IsUserAssignedToShiftAsync_System_String_System_String_
   name: IsUserAssignedToShiftAsync(string, string)
   nameWithType: IShiftService.IsUserAssignedToShiftAsync(string, string)
-  fullName: UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.IsUserAssignedToShiftAsync(string, string)
   nameWithType.vb: IShiftService.IsUserAssignedToShiftAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.IsUserAssignedToShiftAsync(String, String)
   name.vb: IsUserAssignedToShiftAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
     name: IsUserAssignedToShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_IsUserAssignedToShiftAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_IsUserAssignedToShiftAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1573,9 +1666,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.IsUserAssignedToShiftAsync(System.String,System.String)
     name: IsUserAssignedToShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_IsUserAssignedToShiftAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_IsUserAssignedToShiftAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1629,21 +1722,21 @@ references:
   name: MassAssignShiftToRoleAsync
   nameWithType: ShiftService.MassAssignShiftToRoleAsync
   fullName: UserService.Core.Services.ShiftService.MassAssignShiftToRoleAsync
-- uid: UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_MassAssignShiftToRoleAsync_System_String_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_MassAssignShiftToRoleAsync_System_String_System_String_
   name: MassAssignShiftToRoleAsync(string, string)
   nameWithType: IShiftService.MassAssignShiftToRoleAsync(string, string)
-  fullName: UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.MassAssignShiftToRoleAsync(string, string)
   nameWithType.vb: IShiftService.MassAssignShiftToRoleAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.MassAssignShiftToRoleAsync(String, String)
   name.vb: MassAssignShiftToRoleAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
     name: MassAssignShiftToRoleAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_MassAssignShiftToRoleAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_MassAssignShiftToRoleAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1657,9 +1750,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.MassAssignShiftToRoleAsync(System.String,System.String)
     name: MassAssignShiftToRoleAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_MassAssignShiftToRoleAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_MassAssignShiftToRoleAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1711,21 +1804,21 @@ references:
   name: MassRemoveUsersFromShiftByRoleAsync
   nameWithType: ShiftService.MassRemoveUsersFromShiftByRoleAsync
   fullName: UserService.Core.Services.ShiftService.MassRemoveUsersFromShiftByRoleAsync
-- uid: UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_MassRemoveUsersFromShiftByRoleAsync_System_String_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_MassRemoveUsersFromShiftByRoleAsync_System_String_System_String_
   name: MassRemoveUsersFromShiftByRoleAsync(string, string)
   nameWithType: IShiftService.MassRemoveUsersFromShiftByRoleAsync(string, string)
-  fullName: UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.MassRemoveUsersFromShiftByRoleAsync(string, string)
   nameWithType.vb: IShiftService.MassRemoveUsersFromShiftByRoleAsync(String, String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.MassRemoveUsersFromShiftByRoleAsync(String, String)
   name.vb: MassRemoveUsersFromShiftByRoleAsync(String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
     name: MassRemoveUsersFromShiftByRoleAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_MassRemoveUsersFromShiftByRoleAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_MassRemoveUsersFromShiftByRoleAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1739,9 +1832,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.MassRemoveUsersFromShiftByRoleAsync(System.String,System.String)
     name: MassRemoveUsersFromShiftByRoleAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_MassRemoveUsersFromShiftByRoleAsync_System_String_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_MassRemoveUsersFromShiftByRoleAsync_System_String_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1760,21 +1853,21 @@ references:
   name: GetUsersAssignedToShiftAsync
   nameWithType: ShiftService.GetUsersAssignedToShiftAsync
   fullName: UserService.Core.Services.ShiftService.GetUsersAssignedToShiftAsync
-- uid: UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(System.String)
-  parent: UserService.Core.Interfaces.IShiftService
+- uid: UserService.Core.Interfaces.Services.IShiftService.GetUsersAssignedToShiftAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IShiftService.GetUsersAssignedToShiftAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IShiftService
   isExternal: true
-  href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetUsersAssignedToShiftAsync_System_String_
+  href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetUsersAssignedToShiftAsync_System_String_
   name: GetUsersAssignedToShiftAsync(string)
   nameWithType: IShiftService.GetUsersAssignedToShiftAsync(string)
-  fullName: UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IShiftService.GetUsersAssignedToShiftAsync(string)
   nameWithType.vb: IShiftService.GetUsersAssignedToShiftAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IShiftService.GetUsersAssignedToShiftAsync(String)
   name.vb: GetUsersAssignedToShiftAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.GetUsersAssignedToShiftAsync(System.String)
     name: GetUsersAssignedToShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetUsersAssignedToShiftAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetUsersAssignedToShiftAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1782,9 +1875,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IShiftService.GetUsersAssignedToShiftAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IShiftService.GetUsersAssignedToShiftAsync(System.String)
     name: GetUsersAssignedToShiftAsync
-    href: UserService.Core.Interfaces.IShiftService.html#UserService_Core_Interfaces_IShiftService_GetUsersAssignedToShiftAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IShiftService.html#UserService_Core_Interfaces_Services_IShiftService_GetUsersAssignedToShiftAsync_System_String_
   - name: (
   - uid: System.String
     name: String

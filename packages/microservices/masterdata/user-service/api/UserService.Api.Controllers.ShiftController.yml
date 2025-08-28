@@ -5,7 +5,7 @@ items:
   id: ShiftController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.ShiftController.#ctor(UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})
+  - UserService.Api.Controllers.ShiftController.#ctor(UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})
   - UserService.Api.Controllers.ShiftController.Create(UserService.Core.DTOs.Shift.CreateShiftDto)
   - UserService.Api.Controllers.ShiftController.Delete(System.String)
   - UserService.Api.Controllers.ShiftController.GetAll
@@ -22,10 +22,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ShiftController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftController
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 12
+    startLine: 13
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -255,25 +255,25 @@ items:
     arguments:
     - type: System.String
       value: api/[controller]
-- uid: UserService.Api.Controllers.ShiftController.#ctor(UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})
-  commentId: M:UserService.Api.Controllers.ShiftController.#ctor(UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})
-  id: '#ctor(UserService.Core.Interfaces.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})'
+- uid: UserService.Api.Controllers.ShiftController.#ctor(UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})
+  commentId: M:UserService.Api.Controllers.ShiftController.#ctor(UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})
+  id: '#ctor(UserService.Core.Interfaces.Services.IShiftService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController})'
   parent: UserService.Api.Controllers.ShiftController
   langs:
   - csharp
   - vb
   name: ShiftController(IShiftService, ILogger<ShiftController>)
   nameWithType: ShiftController.ShiftController(IShiftService, ILogger<ShiftController>)
-  fullName: UserService.Api.Controllers.ShiftController.ShiftController(UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.ShiftController>)
+  fullName: UserService.Api.Controllers.ShiftController.ShiftController(UserService.Core.Interfaces.Services.IShiftService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.ShiftController>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ShiftController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 20
+    startLine: 21
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -281,13 +281,13 @@ items:
     content: public ShiftController(IShiftService shiftService, ILogger<ShiftController> logger)
     parameters:
     - id: shiftService
-      type: UserService.Core.Interfaces.IShiftService
+      type: UserService.Core.Interfaces.Services.IShiftService
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController}
     content.vb: Public Sub New(shiftService As IShiftService, logger As ILogger(Of ShiftController))
   overload: UserService.Api.Controllers.ShiftController.#ctor*
   nameWithType.vb: ShiftController.New(IShiftService, ILogger(Of ShiftController))
-  fullName.vb: UserService.Api.Controllers.ShiftController.New(UserService.Core.Interfaces.IShiftService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.ShiftController))
+  fullName.vb: UserService.Api.Controllers.ShiftController.New(UserService.Core.Interfaces.Services.IShiftService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.ShiftController))
   name.vb: New(IShiftService, ILogger(Of ShiftController))
 - uid: UserService.Api.Controllers.ShiftController.GetAll
   commentId: M:UserService.Api.Controllers.ShiftController.GetAll
@@ -304,10 +304,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ShiftController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAll
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 26
+    startLine: 27
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -373,10 +373,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ShiftController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetById
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 44
+    startLine: 45
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -459,10 +459,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ShiftController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Create
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 73
+    startLine: 74
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -544,10 +544,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ShiftController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Update
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 133
+    startLine: 134
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -645,10 +645,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ShiftController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Delete
     path: src/UserService.Api/Controllers/ShiftController.cs
-    startLine: 217
+    startLine: 218
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -10251,20 +10251,20 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.ShiftController.#ctor*
   commentId: Overload:UserService.Api.Controllers.ShiftController.#ctor
-  href: UserService.Api.Controllers.ShiftController.html#UserService_Api_Controllers_ShiftController__ctor_UserService_Core_Interfaces_IShiftService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_ShiftController__
+  href: UserService.Api.Controllers.ShiftController.html#UserService_Api_Controllers_ShiftController__ctor_UserService_Core_Interfaces_Services_IShiftService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_ShiftController__
   name: ShiftController
   nameWithType: ShiftController.ShiftController
   fullName: UserService.Api.Controllers.ShiftController.ShiftController
   nameWithType.vb: ShiftController.New
   fullName.vb: UserService.Api.Controllers.ShiftController.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IShiftService
-  commentId: T:UserService.Core.Interfaces.IShiftService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IShiftService.html
+- uid: UserService.Core.Interfaces.Services.IShiftService
+  commentId: T:UserService.Core.Interfaces.Services.IShiftService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IShiftService.html
   name: IShiftService
   nameWithType: IShiftService
-  fullName: UserService.Core.Interfaces.IShiftService
+  fullName: UserService.Core.Interfaces.Services.IShiftService
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ShiftController}
   parent: Microsoft.Extensions.Logging
@@ -10298,12 +10298,12 @@ references:
     name: ShiftController
     href: UserService.Api.Controllers.ShiftController.html
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -10316,6 +10316,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -10328,6 +10332,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true

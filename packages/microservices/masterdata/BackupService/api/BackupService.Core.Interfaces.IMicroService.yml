@@ -1,0 +1,511 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Interfaces.IMicroService
+  commentId: T:BackupService.Core.Interfaces.IMicroService
+  id: IMicroService
+  parent: BackupService.Core.Interfaces
+  children:
+  - BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync(BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  - BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  - BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync(System.Threading.CancellationToken)
+  - BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  - BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync(System.String,BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  langs:
+  - csharp
+  - vb
+  name: IMicroService
+  nameWithType: IMicroService
+  fullName: BackupService.Core.Interfaces.IMicroService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IMicroservice.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IMicroService
+    path: BackupService.Core/Interfaces/IMicroservice.cs
+    startLine: 5
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: public interface IMicroService
+    content.vb: Public Interface IMicroService
+- uid: BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync(BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync(BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  id: CreateMicroserviceAsync(BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IMicroService
+  langs:
+  - csharp
+  - vb
+  name: CreateMicroserviceAsync(MicroserviceRequest, CancellationToken)
+  nameWithType: IMicroService.CreateMicroserviceAsync(MicroserviceRequest, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync(BackupService.Core.Dtos.MicroserviceRequest, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IMicroservice.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreateMicroserviceAsync
+    path: BackupService.Core/Interfaces/IMicroservice.cs
+    startLine: 7
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: Task<Microservice> CreateMicroserviceAsync(MicroserviceRequest request, CancellationToken ct = default)
+    parameters:
+    - id: request
+      type: BackupService.Core.Dtos.MicroserviceRequest
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Entities.Microservice}
+    content.vb: Function CreateMicroserviceAsync(request As MicroserviceRequest, ct As CancellationToken = Nothing) As Task(Of Microservice)
+  overload: BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync*
+- uid: BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync(System.String,BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync(System.String,BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  id: UpdateMicroserviceAsync(System.String,BackupService.Core.Dtos.MicroserviceRequest,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IMicroService
+  langs:
+  - csharp
+  - vb
+  name: UpdateMicroserviceAsync(string, MicroserviceRequest, CancellationToken)
+  nameWithType: IMicroService.UpdateMicroserviceAsync(string, MicroserviceRequest, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync(string, BackupService.Core.Dtos.MicroserviceRequest, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IMicroservice.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdateMicroserviceAsync
+    path: BackupService.Core/Interfaces/IMicroservice.cs
+    startLine: 8
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: Task<Microservice> UpdateMicroserviceAsync(string name, MicroserviceRequest request, CancellationToken ct = default)
+    parameters:
+    - id: name
+      type: System.String
+    - id: request
+      type: BackupService.Core.Dtos.MicroserviceRequest
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Entities.Microservice}
+    content.vb: Function UpdateMicroserviceAsync(name As String, request As MicroserviceRequest, ct As CancellationToken = Nothing) As Task(Of Microservice)
+  overload: BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync*
+  nameWithType.vb: IMicroService.UpdateMicroserviceAsync(String, MicroserviceRequest, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync(String, BackupService.Core.Dtos.MicroserviceRequest, System.Threading.CancellationToken)
+  name.vb: UpdateMicroserviceAsync(String, MicroserviceRequest, CancellationToken)
+- uid: BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  id: GetMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IMicroService
+  langs:
+  - csharp
+  - vb
+  name: GetMicroserviceAsync(string, CancellationToken)
+  nameWithType: IMicroService.GetMicroserviceAsync(string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync(string, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IMicroservice.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetMicroserviceAsync
+    path: BackupService.Core/Interfaces/IMicroservice.cs
+    startLine: 9
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: Task<Microservice> GetMicroserviceAsync(string name, CancellationToken ct = default)
+    parameters:
+    - id: name
+      type: System.String
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Entities.Microservice}
+    content.vb: Function GetMicroserviceAsync(name As String, ct As CancellationToken = Nothing) As Task(Of Microservice)
+  overload: BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync*
+  nameWithType.vb: IMicroService.GetMicroserviceAsync(String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync(String, System.Threading.CancellationToken)
+  name.vb: GetMicroserviceAsync(String, CancellationToken)
+- uid: BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync(System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync(System.Threading.CancellationToken)
+  id: GetAllMicroservicesAsync(System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IMicroService
+  langs:
+  - csharp
+  - vb
+  name: GetAllMicroservicesAsync(CancellationToken)
+  nameWithType: IMicroService.GetAllMicroservicesAsync(CancellationToken)
+  fullName: BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IMicroservice.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetAllMicroservicesAsync
+    path: BackupService.Core/Interfaces/IMicroservice.cs
+    startLine: 10
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: Task<List<Microservice>> GetAllMicroservicesAsync(CancellationToken ct = default)
+    parameters:
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Entities.Microservice}}
+    content.vb: Function GetAllMicroservicesAsync(ct As CancellationToken = Nothing) As Task(Of List(Of Microservice))
+  overload: BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync*
+- uid: BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  id: DeleteMicroserviceAsync(System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IMicroService
+  langs:
+  - csharp
+  - vb
+  name: DeleteMicroserviceAsync(string, CancellationToken)
+  nameWithType: IMicroService.DeleteMicroserviceAsync(string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync(string, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IMicroservice.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: DeleteMicroserviceAsync
+    path: BackupService.Core/Interfaces/IMicroservice.cs
+    startLine: 11
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: Task DeleteMicroserviceAsync(string name, CancellationToken ct = default)
+    parameters:
+    - id: name
+      type: System.String
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function DeleteMicroserviceAsync(name As String, ct As CancellationToken = Nothing) As Task
+  overload: BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync*
+  nameWithType.vb: IMicroService.DeleteMicroserviceAsync(String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync(String, System.Threading.CancellationToken)
+  name.vb: DeleteMicroserviceAsync(String, CancellationToken)
+references:
+- uid: BackupService.Core.Interfaces
+  commentId: N:BackupService.Core.Interfaces
+  href: BackupService.html
+  name: BackupService.Core.Interfaces
+  nameWithType: BackupService.Core.Interfaces
+  fullName: BackupService.Core.Interfaces
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+- uid: BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync
+  href: BackupService.Core.Interfaces.IMicroService.html#BackupService_Core_Interfaces_IMicroService_CreateMicroserviceAsync_BackupService_Core_Dtos_MicroserviceRequest_System_Threading_CancellationToken_
+  name: CreateMicroserviceAsync
+  nameWithType: IMicroService.CreateMicroserviceAsync
+  fullName: BackupService.Core.Interfaces.IMicroService.CreateMicroserviceAsync
+- uid: BackupService.Core.Dtos.MicroserviceRequest
+  commentId: T:BackupService.Core.Dtos.MicroserviceRequest
+  parent: BackupService.Core.Dtos
+  href: BackupService.Core.Dtos.MicroserviceRequest.html
+  name: MicroserviceRequest
+  nameWithType: MicroserviceRequest
+  fullName: BackupService.Core.Dtos.MicroserviceRequest
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task{BackupService.Core.Entities.Microservice}
+  commentId: T:System.Threading.Tasks.Task{BackupService.Core.Entities.Microservice}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<Microservice>
+  nameWithType: Task<Microservice>
+  fullName: System.Threading.Tasks.Task<BackupService.Core.Entities.Microservice>
+  nameWithType.vb: Task(Of Microservice)
+  fullName.vb: System.Threading.Tasks.Task(Of BackupService.Core.Entities.Microservice)
+  name.vb: Task(Of Microservice)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: BackupService.Core.Entities.Microservice
+    name: Microservice
+    href: BackupService.Core.Entities.Microservice.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Entities.Microservice
+    name: Microservice
+    href: BackupService.Core.Entities.Microservice.html
+  - name: )
+- uid: BackupService.Core.Dtos
+  commentId: N:BackupService.Core.Dtos
+  href: BackupService.html
+  name: BackupService.Core.Dtos
+  nameWithType: BackupService.Core.Dtos
+  fullName: BackupService.Core.Dtos
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Dtos
+    name: Dtos
+    href: BackupService.Core.Dtos.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Dtos
+    name: Dtos
+    href: BackupService.Core.Dtos.html
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync
+  href: BackupService.Core.Interfaces.IMicroService.html#BackupService_Core_Interfaces_IMicroService_UpdateMicroserviceAsync_System_String_BackupService_Core_Dtos_MicroserviceRequest_System_Threading_CancellationToken_
+  name: UpdateMicroserviceAsync
+  nameWithType: IMicroService.UpdateMicroserviceAsync
+  fullName: BackupService.Core.Interfaces.IMicroService.UpdateMicroserviceAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync
+  href: BackupService.Core.Interfaces.IMicroService.html#BackupService_Core_Interfaces_IMicroService_GetMicroserviceAsync_System_String_System_Threading_CancellationToken_
+  name: GetMicroserviceAsync
+  nameWithType: IMicroService.GetMicroserviceAsync
+  fullName: BackupService.Core.Interfaces.IMicroService.GetMicroserviceAsync
+- uid: BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync
+  href: BackupService.Core.Interfaces.IMicroService.html#BackupService_Core_Interfaces_IMicroService_GetAllMicroservicesAsync_System_Threading_CancellationToken_
+  name: GetAllMicroservicesAsync
+  nameWithType: IMicroService.GetAllMicroservicesAsync
+  fullName: BackupService.Core.Interfaces.IMicroService.GetAllMicroservicesAsync
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Entities.Microservice}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Entities.Microservice}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<List<Microservice>>
+  nameWithType: Task<List<Microservice>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.List<BackupService.Core.Entities.Microservice>>
+  nameWithType.vb: Task(Of List(Of Microservice))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.List(Of BackupService.Core.Entities.Microservice))
+  name.vb: Task(Of List(Of Microservice))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: BackupService.Core.Entities.Microservice
+    name: Microservice
+    href: BackupService.Core.Entities.Microservice.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Entities.Microservice
+    name: Microservice
+    href: BackupService.Core.Entities.Microservice.html
+  - name: )
+  - name: )
+- uid: BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync
+  href: BackupService.Core.Interfaces.IMicroService.html#BackupService_Core_Interfaces_IMicroService_DeleteMicroserviceAsync_System_String_System_Threading_CancellationToken_
+  name: DeleteMicroserviceAsync
+  nameWithType: IMicroService.DeleteMicroserviceAsync
+  fullName: BackupService.Core.Interfaces.IMicroService.DeleteMicroserviceAsync
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
