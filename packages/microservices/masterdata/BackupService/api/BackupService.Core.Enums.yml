@@ -1,0 +1,62 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Enums
+  commentId: N:BackupService.Core.Enums
+  id: BackupService.Core.Enums
+  children:
+  - BackupService.Core.Enums.BackupType
+  - BackupService.Core.Enums.MicroserviceStatus
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Core.Enums
+  nameWithType: BackupService.Core.Enums
+  fullName: BackupService.Core.Enums
+  type: Namespace
+  assemblies:
+  - BackupService.Core
+references:
+- uid: BackupService.Core.Enums.BackupType
+  commentId: T:BackupService.Core.Enums.BackupType
+  parent: BackupService.Core.Enums
+  href: BackupService.Core.Enums.BackupType.html
+  name: BackupType
+  nameWithType: BackupType
+  fullName: BackupService.Core.Enums.BackupType
+- uid: BackupService.Core.Enums.MicroserviceStatus
+  commentId: T:BackupService.Core.Enums.MicroserviceStatus
+  parent: BackupService.Core.Enums
+  href: BackupService.Core.Enums.MicroserviceStatus.html
+  name: MicroserviceStatus
+  nameWithType: MicroserviceStatus
+  fullName: BackupService.Core.Enums.MicroserviceStatus
+- uid: BackupService.Core.Enums
+  commentId: N:BackupService.Core.Enums
+  href: BackupService.html
+  name: BackupService.Core.Enums
+  nameWithType: BackupService.Core.Enums
+  fullName: BackupService.Core.Enums
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html

@@ -5,7 +5,7 @@ items:
   id: UserRoleController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.UserRoleController.#ctor(UserService.Core.Interfaces.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})
+  - UserService.Api.Controllers.UserRoleController.#ctor(UserService.Core.Interfaces.Services.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})
   - UserService.Api.Controllers.UserRoleController.AddRoleToUser(System.String,System.String)
   - UserService.Api.Controllers.UserRoleController.RemoveRoleFromUser(System.String,System.String)
   langs:
@@ -19,10 +19,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UserRoleController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserRoleController
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 9
+    startLine: 6
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -239,25 +239,25 @@ items:
     arguments:
     - type: System.String
       value: api/[controller]
-- uid: UserService.Api.Controllers.UserRoleController.#ctor(UserService.Core.Interfaces.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})
-  commentId: M:UserService.Api.Controllers.UserRoleController.#ctor(UserService.Core.Interfaces.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})
-  id: '#ctor(UserService.Core.Interfaces.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})'
+- uid: UserService.Api.Controllers.UserRoleController.#ctor(UserService.Core.Interfaces.Services.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})
+  commentId: M:UserService.Api.Controllers.UserRoleController.#ctor(UserService.Core.Interfaces.Services.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})
+  id: '#ctor(UserService.Core.Interfaces.Services.IUserRoleService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController})'
   parent: UserService.Api.Controllers.UserRoleController
   langs:
   - csharp
   - vb
   name: UserRoleController(IUserRoleService, ILogger<UserRoleController>)
   nameWithType: UserRoleController.UserRoleController(IUserRoleService, ILogger<UserRoleController>)
-  fullName: UserService.Api.Controllers.UserRoleController.UserRoleController(UserService.Core.Interfaces.IUserRoleService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.UserRoleController>)
+  fullName: UserService.Api.Controllers.UserRoleController.UserRoleController(UserService.Core.Interfaces.Services.IUserRoleService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.UserRoleController>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UserRoleController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 9
+    startLine: 6
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -265,13 +265,13 @@ items:
     content: public UserRoleController(IUserRoleService userRoleService, ILogger<UserRoleController> logger)
     parameters:
     - id: userRoleService
-      type: UserService.Core.Interfaces.IUserRoleService
+      type: UserService.Core.Interfaces.Services.IUserRoleService
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController}
     content.vb: Public Sub New(userRoleService As IUserRoleService, logger As ILogger(Of UserRoleController))
   overload: UserService.Api.Controllers.UserRoleController.#ctor*
   nameWithType.vb: UserRoleController.New(IUserRoleService, ILogger(Of UserRoleController))
-  fullName.vb: UserService.Api.Controllers.UserRoleController.New(UserService.Core.Interfaces.IUserRoleService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.UserRoleController))
+  fullName.vb: UserService.Api.Controllers.UserRoleController.New(UserService.Core.Interfaces.Services.IUserRoleService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.UserRoleController))
   name.vb: New(IUserRoleService, ILogger(Of UserRoleController))
 - uid: UserService.Api.Controllers.UserRoleController.AddRoleToUser(System.String,System.String)
   commentId: M:UserService.Api.Controllers.UserRoleController.AddRoleToUser(System.String,System.String)
@@ -288,10 +288,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UserRoleController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AddRoleToUser
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 20
+    startLine: 17
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -392,10 +392,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UserRoleController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RemoveRoleFromUser
     path: src/UserService.Api/Controllers/UserRoleController.cs
-    startLine: 85
+    startLine: 82
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -9479,20 +9479,20 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.UserRoleController.#ctor*
   commentId: Overload:UserService.Api.Controllers.UserRoleController.#ctor
-  href: UserService.Api.Controllers.UserRoleController.html#UserService_Api_Controllers_UserRoleController__ctor_UserService_Core_Interfaces_IUserRoleService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_UserRoleController__
+  href: UserService.Api.Controllers.UserRoleController.html#UserService_Api_Controllers_UserRoleController__ctor_UserService_Core_Interfaces_Services_IUserRoleService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_UserRoleController__
   name: UserRoleController
   nameWithType: UserRoleController.UserRoleController
   fullName: UserService.Api.Controllers.UserRoleController.UserRoleController
   nameWithType.vb: UserRoleController.New
   fullName.vb: UserService.Api.Controllers.UserRoleController.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IUserRoleService
-  commentId: T:UserService.Core.Interfaces.IUserRoleService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserRoleService.html
+- uid: UserService.Core.Interfaces.Services.IUserRoleService
+  commentId: T:UserService.Core.Interfaces.Services.IUserRoleService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserRoleService.html
   name: IUserRoleService
   nameWithType: IUserRoleService
-  fullName: UserService.Core.Interfaces.IUserRoleService
+  fullName: UserService.Core.Interfaces.Services.IUserRoleService
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UserRoleController}
   parent: Microsoft.Extensions.Logging
@@ -9526,12 +9526,12 @@ references:
     name: UserRoleController
     href: UserService.Api.Controllers.UserRoleController.html
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -9544,6 +9544,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -9556,6 +9560,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true

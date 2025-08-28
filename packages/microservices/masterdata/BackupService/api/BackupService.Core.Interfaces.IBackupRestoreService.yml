@@ -1,0 +1,345 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Interfaces.IBackupRestoreService
+  commentId: T:BackupService.Core.Interfaces.IBackupRestoreService
+  id: IBackupRestoreService
+  parent: BackupService.Core.Interfaces
+  children:
+  - BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync(System.String,System.String,System.Threading.CancellationToken)
+  - BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  langs:
+  - csharp
+  - vb
+  name: IBackupRestoreService
+  nameWithType: IBackupRestoreService
+  fullName: BackupService.Core.Interfaces.IBackupRestoreService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IBackupRestoreService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IBackupRestoreService
+    path: BackupService.Core/Interfaces/IBackupRestoreService.cs
+    startLine: 6
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  syntax:
+    content: public interface IBackupRestoreService
+    content.vb: Public Interface IBackupRestoreService
+- uid: BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  id: RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IBackupRestoreService
+  langs:
+  - csharp
+  - vb
+  name: RestoreBackupAsync(string, string, CancellationToken)
+  nameWithType: IBackupRestoreService.RestoreBackupAsync(string, string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync(string, string, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IBackupRestoreService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: RestoreBackupAsync
+    path: BackupService.Core/Interfaces/IBackupRestoreService.cs
+    startLine: 15
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  summary: Restores a SQL dump backup to a PostgreSQL database
+  example: []
+  syntax:
+    content: Task<RestoreResult> RestoreBackupAsync(string microservice, string backupFilePath, CancellationToken ct = default)
+    parameters:
+    - id: microservice
+      type: System.String
+      description: Name of the microservice
+    - id: backupFilePath
+      type: System.String
+      description: Full path to the SQL dump backup file
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: Cancellation token
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Dtos.RestoreResult}
+      description: RestoreResult with details of the restore operation
+    content.vb: Function RestoreBackupAsync(microservice As String, backupFilePath As String, ct As CancellationToken = Nothing) As Task(Of RestoreResult)
+  overload: BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync*
+  nameWithType.vb: IBackupRestoreService.RestoreBackupAsync(String, String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync(String, String, System.Threading.CancellationToken)
+  name.vb: RestoreBackupAsync(String, String, CancellationToken)
+- uid: BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync(System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync(System.String,System.String,System.Threading.CancellationToken)
+  id: PreviewRestoreAsync(System.String,System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IBackupRestoreService
+  langs:
+  - csharp
+  - vb
+  name: PreviewRestoreAsync(string, string, CancellationToken)
+  nameWithType: IBackupRestoreService.PreviewRestoreAsync(string, string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync(string, string, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Interfaces/IBackupRestoreService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: PreviewRestoreAsync
+    path: BackupService.Core/Interfaces/IBackupRestoreService.cs
+    startLine: 25
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Interfaces
+  summary: Preview what would happen during a restore operation
+  example: []
+  syntax:
+    content: Task<RestorePreviewResult> PreviewRestoreAsync(string microservice, string backupFilePath, CancellationToken ct = default)
+    parameters:
+    - id: microservice
+      type: System.String
+      description: Name of the microservice
+    - id: backupFilePath
+      type: System.String
+      description: Full path to the SQL dump backup file
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: Cancellation token
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Dtos.RestorePreviewResult}
+      description: RestorePreviewResult with estimated restore details
+    content.vb: Function PreviewRestoreAsync(microservice As String, backupFilePath As String, ct As CancellationToken = Nothing) As Task(Of RestorePreviewResult)
+  overload: BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync*
+  nameWithType.vb: IBackupRestoreService.PreviewRestoreAsync(String, String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync(String, String, System.Threading.CancellationToken)
+  name.vb: PreviewRestoreAsync(String, String, CancellationToken)
+references:
+- uid: BackupService.Core.Interfaces
+  commentId: N:BackupService.Core.Interfaces
+  href: BackupService.html
+  name: BackupService.Core.Interfaces
+  nameWithType: BackupService.Core.Interfaces
+  fullName: BackupService.Core.Interfaces
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+- uid: BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync
+  href: BackupService.Core.Interfaces.IBackupRestoreService.html#BackupService_Core_Interfaces_IBackupRestoreService_RestoreBackupAsync_System_String_System_String_System_Threading_CancellationToken_
+  name: RestoreBackupAsync
+  nameWithType: IBackupRestoreService.RestoreBackupAsync
+  fullName: BackupService.Core.Interfaces.IBackupRestoreService.RestoreBackupAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task{BackupService.Core.Dtos.RestoreResult}
+  commentId: T:System.Threading.Tasks.Task{BackupService.Core.Dtos.RestoreResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RestoreResult>
+  nameWithType: Task<RestoreResult>
+  fullName: System.Threading.Tasks.Task<BackupService.Core.Dtos.RestoreResult>
+  nameWithType.vb: Task(Of RestoreResult)
+  fullName.vb: System.Threading.Tasks.Task(Of BackupService.Core.Dtos.RestoreResult)
+  name.vb: Task(Of RestoreResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: BackupService.Core.Dtos.RestoreResult
+    name: RestoreResult
+    href: BackupService.Core.Dtos.RestoreResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Dtos.RestoreResult
+    name: RestoreResult
+    href: BackupService.Core.Dtos.RestoreResult.html
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync*
+  commentId: Overload:BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync
+  href: BackupService.Core.Interfaces.IBackupRestoreService.html#BackupService_Core_Interfaces_IBackupRestoreService_PreviewRestoreAsync_System_String_System_String_System_Threading_CancellationToken_
+  name: PreviewRestoreAsync
+  nameWithType: IBackupRestoreService.PreviewRestoreAsync
+  fullName: BackupService.Core.Interfaces.IBackupRestoreService.PreviewRestoreAsync
+- uid: System.Threading.Tasks.Task{BackupService.Core.Dtos.RestorePreviewResult}
+  commentId: T:System.Threading.Tasks.Task{BackupService.Core.Dtos.RestorePreviewResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RestorePreviewResult>
+  nameWithType: Task<RestorePreviewResult>
+  fullName: System.Threading.Tasks.Task<BackupService.Core.Dtos.RestorePreviewResult>
+  nameWithType.vb: Task(Of RestorePreviewResult)
+  fullName.vb: System.Threading.Tasks.Task(Of BackupService.Core.Dtos.RestorePreviewResult)
+  name.vb: Task(Of RestorePreviewResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: BackupService.Core.Dtos.RestorePreviewResult
+    name: RestorePreviewResult
+    href: BackupService.Core.Dtos.RestorePreviewResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Dtos.RestorePreviewResult
+    name: RestorePreviewResult
+    href: BackupService.Core.Dtos.RestorePreviewResult.html
+  - name: )

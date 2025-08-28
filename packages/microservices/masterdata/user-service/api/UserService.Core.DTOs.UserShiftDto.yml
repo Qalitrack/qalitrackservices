@@ -20,7 +20,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UserShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserShiftDto
     path: src/UserService.Core/DTOs/Shift/UserShiftDto.cs
     startLine: 2
@@ -55,7 +55,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UserShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserId
     path: src/UserService.Core/DTOs/Shift/UserShiftDto.cs
     startLine: 4
@@ -84,7 +84,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UserShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftId
     path: src/UserService.Core/DTOs/Shift/UserShiftDto.cs
     startLine: 5
@@ -113,7 +113,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UserShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftName
     path: src/UserService.Core/DTOs/Shift/UserShiftDto.cs
     startLine: 6
@@ -142,7 +142,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Shift/UserShiftDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignedAt
     path: src/UserService.Core/DTOs/Shift/UserShiftDto.cs
     startLine: 7

@@ -25,7 +25,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Shift
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 5
@@ -67,7 +67,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 7
@@ -106,7 +106,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 9
@@ -145,7 +145,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: StartTime
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 11
@@ -184,7 +184,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EndTime
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 13
@@ -223,7 +223,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Mode
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 15
@@ -262,7 +262,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AutoRepeatDaily
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 19
@@ -291,7 +291,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: DurationMinutes
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 22
@@ -320,7 +320,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 25
@@ -359,7 +359,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserShifts
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 46

@@ -1,0 +1,147 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Enums.MicroserviceStatus
+  commentId: T:BackupService.Core.Enums.MicroserviceStatus
+  id: MicroserviceStatus
+  parent: BackupService.Core.Enums
+  children:
+  - BackupService.Core.Enums.MicroserviceStatus.Active
+  - BackupService.Core.Enums.MicroserviceStatus.Inactive
+  - BackupService.Core.Enums.MicroserviceStatus.Paused
+  langs:
+  - csharp
+  - vb
+  name: MicroserviceStatus
+  nameWithType: MicroserviceStatus
+  fullName: BackupService.Core.Enums.MicroserviceStatus
+  type: Enum
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Enums/MicroserviceStatus.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: MicroserviceStatus
+    path: BackupService.Core/Enums/MicroserviceStatus.cs
+    startLine: 2
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Enums
+  syntax:
+    content: public enum MicroserviceStatus
+    content.vb: Public Enum MicroserviceStatus
+- uid: BackupService.Core.Enums.MicroserviceStatus.Active
+  commentId: F:BackupService.Core.Enums.MicroserviceStatus.Active
+  id: Active
+  parent: BackupService.Core.Enums.MicroserviceStatus
+  langs:
+  - csharp
+  - vb
+  name: Active
+  nameWithType: MicroserviceStatus.Active
+  fullName: BackupService.Core.Enums.MicroserviceStatus.Active
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Enums/MicroserviceStatus.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Active
+    path: BackupService.Core/Enums/MicroserviceStatus.cs
+    startLine: 4
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Enums
+  syntax:
+    content: Active = 0
+    return:
+      type: BackupService.Core.Enums.MicroserviceStatus
+- uid: BackupService.Core.Enums.MicroserviceStatus.Inactive
+  commentId: F:BackupService.Core.Enums.MicroserviceStatus.Inactive
+  id: Inactive
+  parent: BackupService.Core.Enums.MicroserviceStatus
+  langs:
+  - csharp
+  - vb
+  name: Inactive
+  nameWithType: MicroserviceStatus.Inactive
+  fullName: BackupService.Core.Enums.MicroserviceStatus.Inactive
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Enums/MicroserviceStatus.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Inactive
+    path: BackupService.Core/Enums/MicroserviceStatus.cs
+    startLine: 5
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Enums
+  syntax:
+    content: Inactive = 1
+    return:
+      type: BackupService.Core.Enums.MicroserviceStatus
+- uid: BackupService.Core.Enums.MicroserviceStatus.Paused
+  commentId: F:BackupService.Core.Enums.MicroserviceStatus.Paused
+  id: Paused
+  parent: BackupService.Core.Enums.MicroserviceStatus
+  langs:
+  - csharp
+  - vb
+  name: Paused
+  nameWithType: MicroserviceStatus.Paused
+  fullName: BackupService.Core.Enums.MicroserviceStatus.Paused
+  type: Field
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Enums/MicroserviceStatus.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Paused
+    path: BackupService.Core/Enums/MicroserviceStatus.cs
+    startLine: 6
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Enums
+  syntax:
+    content: Paused = 2
+    return:
+      type: BackupService.Core.Enums.MicroserviceStatus
+references:
+- uid: BackupService.Core.Enums
+  commentId: N:BackupService.Core.Enums
+  href: BackupService.html
+  name: BackupService.Core.Enums
+  nameWithType: BackupService.Core.Enums
+  fullName: BackupService.Core.Enums
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+- uid: BackupService.Core.Enums.MicroserviceStatus
+  commentId: T:BackupService.Core.Enums.MicroserviceStatus
+  parent: BackupService.Core.Enums
+  href: BackupService.Core.Enums.MicroserviceStatus.html
+  name: MicroserviceStatus
+  nameWithType: MicroserviceStatus
+  fullName: BackupService.Core.Enums.MicroserviceStatus

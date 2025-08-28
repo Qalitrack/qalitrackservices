@@ -21,7 +21,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserShiftInfoDto
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 5
@@ -56,7 +56,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftId
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 7
@@ -85,7 +85,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftName
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 8
@@ -114,7 +114,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftMode
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 9
@@ -143,7 +143,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: AssignedAt
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 10
@@ -172,7 +172,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/Report/UserReportDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/DTOs/Report/UserReportDto.cs
     startLine: 11

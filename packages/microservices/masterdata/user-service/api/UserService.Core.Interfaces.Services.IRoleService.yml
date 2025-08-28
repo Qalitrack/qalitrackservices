@@ -1,0 +1,601 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.Services.IRoleService
+  commentId: T:UserService.Core.Interfaces.Services.IRoleService
+  id: IRoleService
+  parent: UserService.Core.Interfaces.Services
+  children:
+  - UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.IRoleService.CreateAsync(UserService.Core.DTOs.Roles.CreateRoleDto)
+  - UserService.Core.Interfaces.Services.IRoleService.DeleteAsync(System.String)
+  - UserService.Core.Interfaces.Services.IRoleService.GetAllAsync
+  - UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync(System.String)
+  - UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync(System.String,System.String)
+  - UserService.Core.Interfaces.Services.IRoleService.UpdateAsync(System.String,UserService.Core.DTOs.Roles.UpdateRoleDto)
+  langs:
+  - csharp
+  - vb
+  name: IRoleService
+  nameWithType: IRoleService
+  fullName: UserService.Core.Interfaces.Services.IRoleService
+  type: Interface
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: IRoleService
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 4
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: public interface IRoleService
+    content.vb: Public Interface IRoleService
+- uid: UserService.Core.Interfaces.Services.IRoleService.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.Services.IRoleService.GetAllAsync
+  id: GetAllAsync
+  parent: UserService.Core.Interfaces.Services.IRoleService
+  langs:
+  - csharp
+  - vb
+  name: GetAllAsync()
+  nameWithType: IRoleService.GetAllAsync()
+  fullName: UserService.Core.Interfaces.Services.IRoleService.GetAllAsync()
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetAllAsync
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 7
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<IEnumerable<RoleDto>> GetAllAsync()
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Roles.RoleDto}}
+    content.vb: Function GetAllAsync() As Task(Of IEnumerable(Of RoleDto))
+  overload: UserService.Core.Interfaces.Services.IRoleService.GetAllAsync*
+- uid: UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync(System.String)
+  id: GetByIdAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IRoleService
+  langs:
+  - csharp
+  - vb
+  name: GetByIdAsync(string)
+  nameWithType: IRoleService.GetByIdAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetByIdAsync
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 8
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<RoleDto?> GetByIdAsync(string id)
+    parameters:
+    - id: id
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Roles.RoleDto}
+    content.vb: Function GetByIdAsync(id As String) As Task(Of RoleDto)
+  overload: UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync*
+  nameWithType.vb: IRoleService.GetByIdAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync(String)
+  name.vb: GetByIdAsync(String)
+- uid: UserService.Core.Interfaces.Services.IRoleService.CreateAsync(UserService.Core.DTOs.Roles.CreateRoleDto)
+  commentId: M:UserService.Core.Interfaces.Services.IRoleService.CreateAsync(UserService.Core.DTOs.Roles.CreateRoleDto)
+  id: CreateAsync(UserService.Core.DTOs.Roles.CreateRoleDto)
+  parent: UserService.Core.Interfaces.Services.IRoleService
+  langs:
+  - csharp
+  - vb
+  name: CreateAsync(CreateRoleDto)
+  nameWithType: IRoleService.CreateAsync(CreateRoleDto)
+  fullName: UserService.Core.Interfaces.Services.IRoleService.CreateAsync(UserService.Core.DTOs.Roles.CreateRoleDto)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreateAsync
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 9
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<RoleDto> CreateAsync(CreateRoleDto dto)
+    parameters:
+    - id: dto
+      type: UserService.Core.DTOs.Roles.CreateRoleDto
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Roles.RoleDto}
+    content.vb: Function CreateAsync(dto As CreateRoleDto) As Task(Of RoleDto)
+  overload: UserService.Core.Interfaces.Services.IRoleService.CreateAsync*
+- uid: UserService.Core.Interfaces.Services.IRoleService.UpdateAsync(System.String,UserService.Core.DTOs.Roles.UpdateRoleDto)
+  commentId: M:UserService.Core.Interfaces.Services.IRoleService.UpdateAsync(System.String,UserService.Core.DTOs.Roles.UpdateRoleDto)
+  id: UpdateAsync(System.String,UserService.Core.DTOs.Roles.UpdateRoleDto)
+  parent: UserService.Core.Interfaces.Services.IRoleService
+  langs:
+  - csharp
+  - vb
+  name: UpdateAsync(string, UpdateRoleDto)
+  nameWithType: IRoleService.UpdateAsync(string, UpdateRoleDto)
+  fullName: UserService.Core.Interfaces.Services.IRoleService.UpdateAsync(string, UserService.Core.DTOs.Roles.UpdateRoleDto)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UpdateAsync
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 10
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<RoleDto?> UpdateAsync(string id, UpdateRoleDto dto)
+    parameters:
+    - id: id
+      type: System.String
+    - id: dto
+      type: UserService.Core.DTOs.Roles.UpdateRoleDto
+    return:
+      type: System.Threading.Tasks.Task{UserService.Core.DTOs.Roles.RoleDto}
+    content.vb: Function UpdateAsync(id As String, dto As UpdateRoleDto) As Task(Of RoleDto)
+  overload: UserService.Core.Interfaces.Services.IRoleService.UpdateAsync*
+  nameWithType.vb: IRoleService.UpdateAsync(String, UpdateRoleDto)
+  fullName.vb: UserService.Core.Interfaces.Services.IRoleService.UpdateAsync(String, UserService.Core.DTOs.Roles.UpdateRoleDto)
+  name.vb: UpdateAsync(String, UpdateRoleDto)
+- uid: UserService.Core.Interfaces.Services.IRoleService.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IRoleService.DeleteAsync(System.String)
+  id: DeleteAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IRoleService
+  langs:
+  - csharp
+  - vb
+  name: DeleteAsync(string)
+  nameWithType: IRoleService.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IRoleService.DeleteAsync(string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: DeleteAsync
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 11
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<bool> DeleteAsync(string id)
+    parameters:
+    - id: id
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function DeleteAsync(id As String) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.Services.IRoleService.DeleteAsync*
+  nameWithType.vb: IRoleService.DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IRoleService.DeleteAsync(String)
+  name.vb: DeleteAsync(String)
+- uid: UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync(System.String,System.String)
+  id: AssignPermissionToRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.IRoleService
+  langs:
+  - csharp
+  - vb
+  name: AssignPermissionToRoleAsync(string, string)
+  nameWithType: IRoleService.AssignPermissionToRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: AssignPermissionToRoleAsync
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 16
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId)
+    parameters:
+    - id: roleId
+      type: System.String
+    - id: permissionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function AssignPermissionToRoleAsync(roleId As String, permissionId As String) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync*
+  nameWithType.vb: IRoleService.AssignPermissionToRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync(String, String)
+  name.vb: AssignPermissionToRoleAsync(String, String)
+- uid: UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync(System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync(System.String,System.String)
+  id: RemovePermissionFromRoleAsync(System.String,System.String)
+  parent: UserService.Core.Interfaces.Services.IRoleService
+  langs:
+  - csharp
+  - vb
+  name: RemovePermissionFromRoleAsync(string, string)
+  nameWithType: IRoleService.RemovePermissionFromRoleAsync(string, string)
+  fullName: UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/user-service/src/UserService.Core/Interfaces/Services/IRoleService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: RemovePermissionFromRoleAsync
+    path: src/UserService.Core/Interfaces/Services/IRoleService.cs
+    startLine: 17
+  assemblies:
+  - UserService.Core
+  namespace: UserService.Core.Interfaces.Services
+  syntax:
+    content: Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
+    parameters:
+    - id: roleId
+      type: System.String
+    - id: permissionId
+      type: System.String
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Function RemovePermissionFromRoleAsync(roleId As String, permissionId As String) As Task(Of Boolean)
+  overload: UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync*
+  nameWithType.vb: IRoleService.RemovePermissionFromRoleAsync(String, String)
+  fullName.vb: UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync(String, String)
+  name.vb: RemovePermissionFromRoleAsync(String, String)
+references:
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
+  href: UserService.html
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
+- uid: UserService.Core.Interfaces.Services.IRoleService.GetAllAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.IRoleService.GetAllAsync
+  href: UserService.Core.Interfaces.Services.IRoleService.html#UserService_Core_Interfaces_Services_IRoleService_GetAllAsync
+  name: GetAllAsync
+  nameWithType: IRoleService.GetAllAsync
+  fullName: UserService.Core.Interfaces.Services.IRoleService.GetAllAsync
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Roles.RoleDto}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Roles.RoleDto}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<IEnumerable<RoleDto>>
+  nameWithType: Task<IEnumerable<RoleDto>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<UserService.Core.DTOs.Roles.RoleDto>>
+  nameWithType.vb: Task(Of IEnumerable(Of RoleDto))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of UserService.Core.DTOs.Roles.RoleDto))
+  name.vb: Task(Of IEnumerable(Of RoleDto))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: UserService.Core.DTOs.Roles.RoleDto
+    name: RoleDto
+    href: UserService.Core.DTOs.Roles.RoleDto.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Roles.RoleDto
+    name: RoleDto
+    href: UserService.Core.DTOs.Roles.RoleDto.html
+  - name: )
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync
+  href: UserService.Core.Interfaces.Services.IRoleService.html#UserService_Core_Interfaces_Services_IRoleService_GetByIdAsync_System_String_
+  name: GetByIdAsync
+  nameWithType: IRoleService.GetByIdAsync
+  fullName: UserService.Core.Interfaces.Services.IRoleService.GetByIdAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{UserService.Core.DTOs.Roles.RoleDto}
+  commentId: T:System.Threading.Tasks.Task{UserService.Core.DTOs.Roles.RoleDto}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RoleDto>
+  nameWithType: Task<RoleDto>
+  fullName: System.Threading.Tasks.Task<UserService.Core.DTOs.Roles.RoleDto>
+  nameWithType.vb: Task(Of RoleDto)
+  fullName.vb: System.Threading.Tasks.Task(Of UserService.Core.DTOs.Roles.RoleDto)
+  name.vb: Task(Of RoleDto)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: UserService.Core.DTOs.Roles.RoleDto
+    name: RoleDto
+    href: UserService.Core.DTOs.Roles.RoleDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UserService.Core.DTOs.Roles.RoleDto
+    name: RoleDto
+    href: UserService.Core.DTOs.Roles.RoleDto.html
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: UserService.Core.Interfaces.Services.IRoleService.CreateAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.IRoleService.CreateAsync
+  href: UserService.Core.Interfaces.Services.IRoleService.html#UserService_Core_Interfaces_Services_IRoleService_CreateAsync_UserService_Core_DTOs_Roles_CreateRoleDto_
+  name: CreateAsync
+  nameWithType: IRoleService.CreateAsync
+  fullName: UserService.Core.Interfaces.Services.IRoleService.CreateAsync
+- uid: UserService.Core.DTOs.Roles.CreateRoleDto
+  commentId: T:UserService.Core.DTOs.Roles.CreateRoleDto
+  parent: UserService.Core.DTOs.Roles
+  href: UserService.Core.DTOs.Roles.CreateRoleDto.html
+  name: CreateRoleDto
+  nameWithType: CreateRoleDto
+  fullName: UserService.Core.DTOs.Roles.CreateRoleDto
+- uid: UserService.Core.DTOs.Roles
+  commentId: N:UserService.Core.DTOs.Roles
+  href: UserService.html
+  name: UserService.Core.DTOs.Roles
+  nameWithType: UserService.Core.DTOs.Roles
+  fullName: UserService.Core.DTOs.Roles
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Roles
+    name: Roles
+    href: UserService.Core.DTOs.Roles.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.DTOs
+    name: DTOs
+    href: UserService.Core.DTOs.html
+  - name: .
+  - uid: UserService.Core.DTOs.Roles
+    name: Roles
+    href: UserService.Core.DTOs.Roles.html
+- uid: UserService.Core.Interfaces.Services.IRoleService.UpdateAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.IRoleService.UpdateAsync
+  href: UserService.Core.Interfaces.Services.IRoleService.html#UserService_Core_Interfaces_Services_IRoleService_UpdateAsync_System_String_UserService_Core_DTOs_Roles_UpdateRoleDto_
+  name: UpdateAsync
+  nameWithType: IRoleService.UpdateAsync
+  fullName: UserService.Core.Interfaces.Services.IRoleService.UpdateAsync
+- uid: UserService.Core.DTOs.Roles.UpdateRoleDto
+  commentId: T:UserService.Core.DTOs.Roles.UpdateRoleDto
+  parent: UserService.Core.DTOs.Roles
+  href: UserService.Core.DTOs.Roles.UpdateRoleDto.html
+  name: UpdateRoleDto
+  nameWithType: UpdateRoleDto
+  fullName: UserService.Core.DTOs.Roles.UpdateRoleDto
+- uid: UserService.Core.Interfaces.Services.IRoleService.DeleteAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.IRoleService.DeleteAsync
+  href: UserService.Core.Interfaces.Services.IRoleService.html#UserService_Core_Interfaces_Services_IRoleService_DeleteAsync_System_String_
+  name: DeleteAsync
+  nameWithType: IRoleService.DeleteAsync
+  fullName: UserService.Core.Interfaces.Services.IRoleService.DeleteAsync
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync
+  href: UserService.Core.Interfaces.Services.IRoleService.html#UserService_Core_Interfaces_Services_IRoleService_AssignPermissionToRoleAsync_System_String_System_String_
+  name: AssignPermissionToRoleAsync
+  nameWithType: IRoleService.AssignPermissionToRoleAsync
+  fullName: UserService.Core.Interfaces.Services.IRoleService.AssignPermissionToRoleAsync
+- uid: UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync*
+  commentId: Overload:UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync
+  href: UserService.Core.Interfaces.Services.IRoleService.html#UserService_Core_Interfaces_Services_IRoleService_RemovePermissionFromRoleAsync_System_String_System_String_
+  name: RemovePermissionFromRoleAsync
+  nameWithType: IRoleService.RemovePermissionFromRoleAsync
+  fullName: UserService.Core.Interfaces.Services.IRoleService.RemovePermissionFromRoleAsync

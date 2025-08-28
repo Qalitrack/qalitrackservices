@@ -4,6 +4,7 @@ items:
   commentId: N:UserService.Core.Utilities
   id: UserService.Core.Utilities
   children:
+  - UserService.Core.Utilities.AuthUtils
   - UserService.Core.Utilities.StringUtils
   langs:
   - csharp
@@ -15,6 +16,12 @@ items:
   assemblies:
   - UserService.Core
 references:
+- uid: UserService.Core.Utilities.AuthUtils
+  commentId: T:UserService.Core.Utilities.AuthUtils
+  href: UserService.Core.Utilities.AuthUtils.html
+  name: AuthUtils
+  nameWithType: AuthUtils
+  fullName: UserService.Core.Utilities.AuthUtils
 - uid: UserService.Core.Utilities.StringUtils
   commentId: T:UserService.Core.Utilities.StringUtils
   href: UserService.Core.Utilities.StringUtils.html

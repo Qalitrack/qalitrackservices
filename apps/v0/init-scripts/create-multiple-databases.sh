@@ -14,6 +14,15 @@ function create_user_and_database() {
 EOSQL
 }
 
+# Create schema for backup service
+function create_backup_schema() {
+    echo "Creating schema 'backup' in database 'backupservicedb'..."
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "backupservicedb" <<-EOSQL
+        CREATE SCHEMA IF NOT EXISTS backup;
+        GRANT ALL ON SCHEMA backup TO backupservice;
+EOSQL
+}
+
 if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
     echo "Multiple database creation requested: $POSTGRES_MULTIPLE_DATABASES"
     for db in $(echo $POSTGRES_MULTIPLE_DATABASES | tr ',' ' '); do
@@ -22,3 +31,6 @@ if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
     done
     echo "Multiple databases created"
 fi
+
+# Always create the backup schema for backupservicedb
+create_backup_schema

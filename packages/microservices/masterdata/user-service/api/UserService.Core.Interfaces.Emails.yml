@@ -1,0 +1,70 @@
+### YamlMime:ManagedReference
+items:
+- uid: UserService.Core.Interfaces.Emails
+  commentId: N:UserService.Core.Interfaces.Emails
+  id: UserService.Core.Interfaces.Emails
+  children:
+  - UserService.Core.Interfaces.Emails.IEmailQueueService
+  - UserService.Core.Interfaces.Emails.IEmailService
+  langs:
+  - csharp
+  - vb
+  name: UserService.Core.Interfaces.Emails
+  nameWithType: UserService.Core.Interfaces.Emails
+  fullName: UserService.Core.Interfaces.Emails
+  type: Namespace
+  assemblies:
+  - UserService.Core
+references:
+- uid: UserService.Core.Interfaces.Emails.IEmailQueueService
+  commentId: T:UserService.Core.Interfaces.Emails.IEmailQueueService
+  parent: UserService.Core.Interfaces.Emails
+  href: UserService.Core.Interfaces.Emails.IEmailQueueService.html
+  name: IEmailQueueService
+  nameWithType: IEmailQueueService
+  fullName: UserService.Core.Interfaces.Emails.IEmailQueueService
+- uid: UserService.Core.Interfaces.Emails.IEmailService
+  commentId: T:UserService.Core.Interfaces.Emails.IEmailService
+  parent: UserService.Core.Interfaces.Emails
+  href: UserService.Core.Interfaces.Emails.IEmailService.html
+  name: IEmailService
+  nameWithType: IEmailService
+  fullName: UserService.Core.Interfaces.Emails.IEmailService
+- uid: UserService.Core.Interfaces.Emails
+  commentId: N:UserService.Core.Interfaces.Emails
+  href: UserService.html
+  name: UserService.Core.Interfaces.Emails
+  nameWithType: UserService.Core.Interfaces.Emails
+  fullName: UserService.Core.Interfaces.Emails
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html

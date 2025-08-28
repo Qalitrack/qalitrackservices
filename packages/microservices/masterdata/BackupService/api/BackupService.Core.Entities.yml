@@ -1,0 +1,82 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Entities
+  commentId: N:BackupService.Core.Entities
+  id: BackupService.Core.Entities
+  children:
+  - BackupService.Core.Entities.BackupChain
+  - BackupService.Core.Entities.BackupMetadata
+  - BackupService.Core.Entities.Microservice
+  - BackupService.Core.Entities.ScheduledBackup
+  - BackupService.Core.Entities.WalFileInfo
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Core.Entities
+  nameWithType: BackupService.Core.Entities
+  fullName: BackupService.Core.Entities
+  type: Namespace
+  assemblies:
+  - BackupService.Core
+references:
+- uid: BackupService.Core.Entities.BackupChain
+  commentId: T:BackupService.Core.Entities.BackupChain
+  href: BackupService.Core.Entities.BackupChain.html
+  name: BackupChain
+  nameWithType: BackupChain
+  fullName: BackupService.Core.Entities.BackupChain
+- uid: BackupService.Core.Entities.BackupMetadata
+  commentId: T:BackupService.Core.Entities.BackupMetadata
+  parent: BackupService.Core.Entities
+  href: BackupService.Core.Entities.BackupMetadata.html
+  name: BackupMetadata
+  nameWithType: BackupMetadata
+  fullName: BackupService.Core.Entities.BackupMetadata
+- uid: BackupService.Core.Entities.Microservice
+  commentId: T:BackupService.Core.Entities.Microservice
+  href: BackupService.Core.Entities.Microservice.html
+  name: Microservice
+  nameWithType: Microservice
+  fullName: BackupService.Core.Entities.Microservice
+- uid: BackupService.Core.Entities.ScheduledBackup
+  commentId: T:BackupService.Core.Entities.ScheduledBackup
+  href: BackupService.Core.Entities.ScheduledBackup.html
+  name: ScheduledBackup
+  nameWithType: ScheduledBackup
+  fullName: BackupService.Core.Entities.ScheduledBackup
+- uid: BackupService.Core.Entities.WalFileInfo
+  commentId: T:BackupService.Core.Entities.WalFileInfo
+  href: BackupService.Core.Entities.WalFileInfo.html
+  name: WalFileInfo
+  nameWithType: WalFileInfo
+  fullName: BackupService.Core.Entities.WalFileInfo
+- uid: BackupService.Core.Entities
+  commentId: N:BackupService.Core.Entities
+  href: BackupService.html
+  name: BackupService.Core.Entities
+  nameWithType: BackupService.Core.Entities
+  fullName: BackupService.Core.Entities
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Entities
+    name: Entities
+    href: BackupService.Core.Entities.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Entities
+    name: Entities
+    href: BackupService.Core.Entities.html

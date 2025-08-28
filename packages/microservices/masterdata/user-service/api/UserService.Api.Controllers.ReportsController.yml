@@ -5,7 +5,7 @@ items:
   id: ReportsController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.ReportsController.#ctor(UserService.Core.Interfaces.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})
+  - UserService.Api.Controllers.ReportsController.#ctor(UserService.Core.Interfaces.Services.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})
   - UserService.Api.Controllers.ReportsController.GetShiftDetails(System.String)
   - UserService.Api.Controllers.ReportsController.GetShiftReport(UserService.Core.DTOs.Common.PaginationParameters)
   - UserService.Api.Controllers.ReportsController.GetUserDetails(System.String)
@@ -21,7 +21,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ReportsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ReportsController
     path: src/UserService.Api/Controllers/ReportsController.cs
     startLine: 8
@@ -241,22 +241,22 @@ items:
   - type: Microsoft.AspNetCore.Mvc.ApiControllerAttribute
     ctor: Microsoft.AspNetCore.Mvc.ApiControllerAttribute.#ctor
     arguments: []
-- uid: UserService.Api.Controllers.ReportsController.#ctor(UserService.Core.Interfaces.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})
-  commentId: M:UserService.Api.Controllers.ReportsController.#ctor(UserService.Core.Interfaces.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})
-  id: '#ctor(UserService.Core.Interfaces.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})'
+- uid: UserService.Api.Controllers.ReportsController.#ctor(UserService.Core.Interfaces.Services.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})
+  commentId: M:UserService.Api.Controllers.ReportsController.#ctor(UserService.Core.Interfaces.Services.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})
+  id: '#ctor(UserService.Core.Interfaces.Services.IReportService,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController})'
   parent: UserService.Api.Controllers.ReportsController
   langs:
   - csharp
   - vb
   name: ReportsController(IReportService, ILogger<ReportsController>)
   nameWithType: ReportsController.ReportsController(IReportService, ILogger<ReportsController>)
-  fullName: UserService.Api.Controllers.ReportsController.ReportsController(UserService.Core.Interfaces.IReportService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.ReportsController>)
+  fullName: UserService.Api.Controllers.ReportsController.ReportsController(UserService.Core.Interfaces.Services.IReportService, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.ReportsController>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ReportsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/ReportsController.cs
     startLine: 16
@@ -267,13 +267,13 @@ items:
     content: public ReportsController(IReportService reportService, ILogger<ReportsController> logger)
     parameters:
     - id: reportService
-      type: UserService.Core.Interfaces.IReportService
+      type: UserService.Core.Interfaces.Services.IReportService
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController}
     content.vb: Public Sub New(reportService As IReportService, logger As ILogger(Of ReportsController))
   overload: UserService.Api.Controllers.ReportsController.#ctor*
   nameWithType.vb: ReportsController.New(IReportService, ILogger(Of ReportsController))
-  fullName.vb: UserService.Api.Controllers.ReportsController.New(UserService.Core.Interfaces.IReportService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.ReportsController))
+  fullName.vb: UserService.Api.Controllers.ReportsController.New(UserService.Core.Interfaces.Services.IReportService, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.ReportsController))
   name.vb: New(IReportService, ILogger(Of ReportsController))
 - uid: UserService.Api.Controllers.ReportsController.GetShiftReport(UserService.Core.DTOs.Common.PaginationParameters)
   commentId: M:UserService.Api.Controllers.ReportsController.GetShiftReport(UserService.Core.DTOs.Common.PaginationParameters)
@@ -290,7 +290,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ReportsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetShiftReport
     path: src/UserService.Api/Controllers/ReportsController.cs
     startLine: 24
@@ -395,10 +395,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ReportsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserReport
     path: src/UserService.Api/Controllers/ReportsController.cs
-    startLine: 50
+    startLine: 49
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -503,10 +503,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ReportsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetShiftDetails
     path: src/UserService.Api/Controllers/ReportsController.cs
-    startLine: 72
+    startLine: 70
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -607,10 +607,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/ReportsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserDetails
     path: src/UserService.Api/Controllers/ReportsController.cs
-    startLine: 101
+    startLine: 98
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -9694,20 +9694,20 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.ReportsController.#ctor*
   commentId: Overload:UserService.Api.Controllers.ReportsController.#ctor
-  href: UserService.Api.Controllers.ReportsController.html#UserService_Api_Controllers_ReportsController__ctor_UserService_Core_Interfaces_IReportService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_ReportsController__
+  href: UserService.Api.Controllers.ReportsController.html#UserService_Api_Controllers_ReportsController__ctor_UserService_Core_Interfaces_Services_IReportService_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_ReportsController__
   name: ReportsController
   nameWithType: ReportsController.ReportsController
   fullName: UserService.Api.Controllers.ReportsController.ReportsController
   nameWithType.vb: ReportsController.New
   fullName.vb: UserService.Api.Controllers.ReportsController.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IReportService
-  commentId: T:UserService.Core.Interfaces.IReportService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IReportService.html
+- uid: UserService.Core.Interfaces.Services.IReportService
+  commentId: T:UserService.Core.Interfaces.Services.IReportService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IReportService.html
   name: IReportService
   nameWithType: IReportService
-  fullName: UserService.Core.Interfaces.IReportService
+  fullName: UserService.Core.Interfaces.Services.IReportService
 - uid: Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController}
   commentId: T:Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.ReportsController}
   parent: Microsoft.Extensions.Logging
@@ -9741,12 +9741,12 @@ references:
     name: ReportsController
     href: UserService.Api.Controllers.ReportsController.html
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -9759,6 +9759,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -9771,6 +9775,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: Microsoft.Extensions.Logging.ILogger`1
   commentId: T:Microsoft.Extensions.Logging.ILogger`1
   isExternal: true

@@ -5,7 +5,7 @@ items:
   id: PermissionsService
   parent: UserService.Core.Services
   children:
-  - UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService})
+  - UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.Repositories.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService},Microsoft.AspNetCore.Http.IHttpContextAccessor)
   - UserService.Core.Services.PermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
   - UserService.Core.Services.PermissionsService.DeleteAsync(System.String)
   - UserService.Core.Services.PermissionsService.GetAllAsync
@@ -23,10 +23,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionsService
     path: src/UserService.Core/Services/PermissonsService.cs
-    startLine: 12
+    startLine: 16
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -36,7 +36,7 @@ items:
   inheritance:
   - System.Object
   implements:
-  - UserService.Core.Interfaces.IPermissionsService
+  - UserService.Core.Interfaces.Services.IPermissionsService
   inheritedMembers:
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
@@ -45,42 +45,44 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
-- uid: UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService})
-  commentId: M:UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService})
-  id: '#ctor(UserService.Core.Interfaces.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService})'
+- uid: UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.Repositories.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService},Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  commentId: M:UserService.Core.Services.PermissionsService.#ctor(UserService.Core.Interfaces.Repositories.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService},Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  id: '#ctor(UserService.Core.Interfaces.Repositories.IPermissionsRepository,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService},Microsoft.AspNetCore.Http.IHttpContextAccessor)'
   parent: UserService.Core.Services.PermissionsService
   langs:
   - csharp
   - vb
-  name: PermissionsService(IPermissionsRepository, IMapper, ILogger<PermissionsService>)
-  nameWithType: PermissionsService.PermissionsService(IPermissionsRepository, IMapper, ILogger<PermissionsService>)
-  fullName: UserService.Core.Services.PermissionsService.PermissionsService(UserService.Core.Interfaces.IPermissionsRepository, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.PermissionsService>)
+  name: PermissionsService(IPermissionsRepository, IMapper, ILogger<PermissionsService>, IHttpContextAccessor)
+  nameWithType: PermissionsService.PermissionsService(IPermissionsRepository, IMapper, ILogger<PermissionsService>, IHttpContextAccessor)
+  fullName: UserService.Core.Services.PermissionsService.PermissionsService(UserService.Core.Interfaces.Repositories.IPermissionsRepository, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Core.Services.PermissionsService>, Microsoft.AspNetCore.Http.IHttpContextAccessor)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Core/Services/PermissonsService.cs
-    startLine: 18
+    startLine: 16
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
   syntax:
-    content: public PermissionsService(IPermissionsRepository permissionsRepository, IMapper mapper, ILogger<PermissionsService> logger)
+    content: public PermissionsService(IPermissionsRepository permissionsRepository, IMapper mapper, ILogger<PermissionsService> logger, IHttpContextAccessor httpContextAccessor)
     parameters:
     - id: permissionsRepository
-      type: UserService.Core.Interfaces.IPermissionsRepository
+      type: UserService.Core.Interfaces.Repositories.IPermissionsRepository
     - id: mapper
       type: AutoMapper.IMapper
     - id: logger
       type: Microsoft.Extensions.Logging.ILogger{UserService.Core.Services.PermissionsService}
-    content.vb: Public Sub New(permissionsRepository As IPermissionsRepository, mapper As IMapper, logger As ILogger(Of PermissionsService))
+    - id: httpContextAccessor
+      type: Microsoft.AspNetCore.Http.IHttpContextAccessor
+    content.vb: Public Sub New(permissionsRepository As IPermissionsRepository, mapper As IMapper, logger As ILogger(Of PermissionsService), httpContextAccessor As IHttpContextAccessor)
   overload: UserService.Core.Services.PermissionsService.#ctor*
-  nameWithType.vb: PermissionsService.New(IPermissionsRepository, IMapper, ILogger(Of PermissionsService))
-  fullName.vb: UserService.Core.Services.PermissionsService.New(UserService.Core.Interfaces.IPermissionsRepository, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.PermissionsService))
-  name.vb: New(IPermissionsRepository, IMapper, ILogger(Of PermissionsService))
+  nameWithType.vb: PermissionsService.New(IPermissionsRepository, IMapper, ILogger(Of PermissionsService), IHttpContextAccessor)
+  fullName.vb: UserService.Core.Services.PermissionsService.New(UserService.Core.Interfaces.Repositories.IPermissionsRepository, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Core.Services.PermissionsService), Microsoft.AspNetCore.Http.IHttpContextAccessor)
+  name.vb: New(IPermissionsRepository, IMapper, ILogger(Of PermissionsService), IHttpContextAccessor)
 - uid: UserService.Core.Services.PermissionsService.GetAllAsync
   commentId: M:UserService.Core.Services.PermissionsService.GetAllAsync
   id: GetAllAsync
@@ -96,7 +98,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAllAsync
     path: src/UserService.Core/Services/PermissonsService.cs
     startLine: 28
@@ -111,7 +113,7 @@ items:
     content.vb: Public Function GetAllAsync() As Task(Of IEnumerable(Of PermissionDto))
   overload: UserService.Core.Services.PermissionsService.GetAllAsync*
   implements:
-  - UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+  - UserService.Core.Interfaces.Services.IPermissionsService.GetAllAsync
 - uid: UserService.Core.Services.PermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
   commentId: M:UserService.Core.Services.PermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
   id: CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
@@ -127,7 +129,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: CreateAsync
     path: src/UserService.Core/Services/PermissonsService.cs
     startLine: 35
@@ -145,7 +147,7 @@ items:
     content.vb: Public Function CreateAsync(dto As CreatePermissionDto) As Task(Of PermissionDto)
   overload: UserService.Core.Services.PermissionsService.CreateAsync*
   implements:
-  - UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  - UserService.Core.Interfaces.Services.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
 - uid: UserService.Core.Services.PermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
   commentId: M:UserService.Core.Services.PermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
   id: UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
@@ -161,10 +163,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UpdateAsync
     path: src/UserService.Core/Services/PermissonsService.cs
-    startLine: 49
+    startLine: 51
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -181,7 +183,7 @@ items:
     content.vb: Public Function UpdateAsync(id As String, dto As UpdatePermissionDto) As Task(Of PermissionDto)
   overload: UserService.Core.Services.PermissionsService.UpdateAsync*
   implements:
-  - UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  - UserService.Core.Interfaces.Services.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
   nameWithType.vb: PermissionsService.UpdateAsync(String, UpdatePermissionDto)
   fullName.vb: UserService.Core.Services.PermissionsService.UpdateAsync(String, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
   name.vb: UpdateAsync(String, UpdatePermissionDto)
@@ -200,10 +202,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: DeleteAsync
     path: src/UserService.Core/Services/PermissonsService.cs
-    startLine: 92
+    startLine: 96
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -218,7 +220,7 @@ items:
     content.vb: Public Function DeleteAsync(id As String) As Task(Of Boolean)
   overload: UserService.Core.Services.PermissionsService.DeleteAsync*
   implements:
-  - UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+  - UserService.Core.Interfaces.Services.IPermissionsService.DeleteAsync(System.String)
   nameWithType.vb: PermissionsService.DeleteAsync(String)
   fullName.vb: UserService.Core.Services.PermissionsService.DeleteAsync(String)
   name.vb: DeleteAsync(String)
@@ -237,10 +239,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetRolesForPermissionAsync
     path: src/UserService.Core/Services/PermissonsService.cs
-    startLine: 129
+    startLine: 123
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -255,7 +257,7 @@ items:
     content.vb: Public Function GetRolesForPermissionAsync(permissionId As String) As Task(Of IEnumerable(Of RoleDto))
   overload: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync*
   implements:
-  - UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  - UserService.Core.Interfaces.Services.IPermissionsService.GetRolesForPermissionAsync(System.String)
   nameWithType.vb: PermissionsService.GetRolesForPermissionAsync(String)
   fullName.vb: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync(String)
   name.vb: GetRolesForPermissionAsync(String)
@@ -274,10 +276,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Services/PermissonsService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetByIdAsync
     path: src/UserService.Core/Services/PermissonsService.cs
-    startLine: 145
+    startLine: 131
   assemblies:
   - UserService.Core
   namespace: UserService.Core.Services
@@ -292,7 +294,7 @@ items:
     content.vb: Public Function GetByIdAsync(id As String) As Task(Of PermissionDto)
   overload: UserService.Core.Services.PermissionsService.GetByIdAsync*
   implements:
-  - UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+  - UserService.Core.Interfaces.Services.IPermissionsService.GetByIdAsync(System.String)
   nameWithType.vb: PermissionsService.GetByIdAsync(String)
   fullName.vb: UserService.Core.Services.PermissionsService.GetByIdAsync(String)
   name.vb: GetByIdAsync(String)
@@ -338,13 +340,13 @@ references:
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: UserService.Core.Interfaces.IPermissionsService
-  commentId: T:UserService.Core.Interfaces.IPermissionsService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IPermissionsService.html
+- uid: UserService.Core.Interfaces.Services.IPermissionsService
+  commentId: T:UserService.Core.Interfaces.Services.IPermissionsService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html
   name: IPermissionsService
   nameWithType: IPermissionsService
-  fullName: UserService.Core.Interfaces.IPermissionsService
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -571,12 +573,12 @@ references:
   name: System
   nameWithType: System
   fullName: System
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -589,6 +591,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -601,22 +607,26 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: UserService.Core.Services.PermissionsService.#ctor*
   commentId: Overload:UserService.Core.Services.PermissionsService.#ctor
-  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService__ctor_UserService_Core_Interfaces_IPermissionsRepository_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_PermissionsService__
+  href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService__ctor_UserService_Core_Interfaces_Repositories_IPermissionsRepository_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Core_Services_PermissionsService__Microsoft_AspNetCore_Http_IHttpContextAccessor_
   name: PermissionsService
   nameWithType: PermissionsService.PermissionsService
   fullName: UserService.Core.Services.PermissionsService.PermissionsService
   nameWithType.vb: PermissionsService.New
   fullName.vb: UserService.Core.Services.PermissionsService.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IPermissionsRepository
-  commentId: T:UserService.Core.Interfaces.IPermissionsRepository
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IPermissionsRepository.html
+- uid: UserService.Core.Interfaces.Repositories.IPermissionsRepository
+  commentId: T:UserService.Core.Interfaces.Repositories.IPermissionsRepository
+  parent: UserService.Core.Interfaces.Repositories
+  href: UserService.Core.Interfaces.Repositories.IPermissionsRepository.html
   name: IPermissionsRepository
   nameWithType: IPermissionsRepository
-  fullName: UserService.Core.Interfaces.IPermissionsRepository
+  fullName: UserService.Core.Interfaces.Repositories.IPermissionsRepository
 - uid: AutoMapper.IMapper
   commentId: T:AutoMapper.IMapper
   parent: AutoMapper
@@ -657,6 +667,52 @@ references:
     name: PermissionsService
     href: UserService.Core.Services.PermissionsService.html
   - name: )
+- uid: Microsoft.AspNetCore.Http.IHttpContextAccessor
+  commentId: T:Microsoft.AspNetCore.Http.IHttpContextAccessor
+  parent: Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor
+  name: IHttpContextAccessor
+  nameWithType: IHttpContextAccessor
+  fullName: Microsoft.AspNetCore.Http.IHttpContextAccessor
+- uid: UserService.Core.Interfaces.Repositories
+  commentId: N:UserService.Core.Interfaces.Repositories
+  href: UserService.html
+  name: UserService.Core.Interfaces.Repositories
+  nameWithType: UserService.Core.Interfaces.Repositories
+  fullName: UserService.Core.Interfaces.Repositories
+  spec.csharp:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
+  spec.vb:
+  - uid: UserService
+    name: UserService
+    href: UserService.html
+  - name: .
+  - uid: UserService.Core
+    name: Core
+    href: UserService.Core.html
+  - name: .
+  - uid: UserService.Core.Interfaces
+    name: Interfaces
+    href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Repositories
+    name: Repositories
+    href: UserService.Core.Interfaces.Repositories.html
 - uid: AutoMapper
   commentId: N:AutoMapper
   isExternal: true
@@ -728,29 +784,66 @@ references:
     name: Logging
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: Microsoft.AspNetCore.Http
+  commentId: N:Microsoft.AspNetCore.Http
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Http
+  nameWithType: Microsoft.AspNetCore.Http
+  fullName: Microsoft.AspNetCore.Http
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Http
+    name: Http
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http
 - uid: UserService.Core.Services.PermissionsService.GetAllAsync*
   commentId: Overload:UserService.Core.Services.PermissionsService.GetAllAsync
   href: UserService.Core.Services.PermissionsService.html#UserService_Core_Services_PermissionsService_GetAllAsync
   name: GetAllAsync
   nameWithType: PermissionsService.GetAllAsync
   fullName: UserService.Core.Services.PermissionsService.GetAllAsync
-- uid: UserService.Core.Interfaces.IPermissionsService.GetAllAsync
-  commentId: M:UserService.Core.Interfaces.IPermissionsService.GetAllAsync
-  parent: UserService.Core.Interfaces.IPermissionsService
-  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetAllAsync
+- uid: UserService.Core.Interfaces.Services.IPermissionsService.GetAllAsync
+  commentId: M:UserService.Core.Interfaces.Services.IPermissionsService.GetAllAsync
+  parent: UserService.Core.Interfaces.Services.IPermissionsService
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetAllAsync
   name: GetAllAsync()
   nameWithType: IPermissionsService.GetAllAsync()
-  fullName: UserService.Core.Interfaces.IPermissionsService.GetAllAsync()
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService.GetAllAsync()
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetAllAsync
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetAllAsync
   - name: (
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsService.GetAllAsync
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.GetAllAsync
     name: GetAllAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetAllAsync
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetAllAsync
   - name: (
   - name: )
 - uid: System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{UserService.Core.DTOs.Permissions.PermissionDto}}
@@ -871,26 +964,26 @@ references:
   name: CreateAsync
   nameWithType: PermissionsService.CreateAsync
   fullName: UserService.Core.Services.PermissionsService.CreateAsync
-- uid: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
-  commentId: M:UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
-  parent: UserService.Core.Interfaces.IPermissionsService
-  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
+- uid: UserService.Core.Interfaces.Services.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  commentId: M:UserService.Core.Interfaces.Services.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  parent: UserService.Core.Interfaces.Services.IPermissionsService
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
   name: CreateAsync(CreatePermissionDto)
   nameWithType: IPermissionsService.CreateAsync(CreatePermissionDto)
-  fullName: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
     name: CreateAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
   - name: (
   - uid: UserService.Core.DTOs.Permissions.CreatePermissionDto
     name: CreatePermissionDto
     href: UserService.Core.DTOs.Permissions.CreatePermissionDto.html
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.CreateAsync(UserService.Core.DTOs.Permissions.CreatePermissionDto)
     name: CreateAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_CreateAsync_UserService_Core_DTOs_Permissions_CreatePermissionDto_
   - name: (
   - uid: UserService.Core.DTOs.Permissions.CreatePermissionDto
     name: CreatePermissionDto
@@ -980,21 +1073,21 @@ references:
   name: UpdateAsync
   nameWithType: PermissionsService.UpdateAsync
   fullName: UserService.Core.Services.PermissionsService.UpdateAsync
-- uid: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
-  commentId: M:UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
-  parent: UserService.Core.Interfaces.IPermissionsService
+- uid: UserService.Core.Interfaces.Services.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  commentId: M:UserService.Core.Interfaces.Services.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  parent: UserService.Core.Interfaces.Services.IPermissionsService
   isExternal: true
-  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
   name: UpdateAsync(string, UpdatePermissionDto)
   nameWithType: IPermissionsService.UpdateAsync(string, UpdatePermissionDto)
-  fullName: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(string, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService.UpdateAsync(string, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
   nameWithType.vb: IPermissionsService.UpdateAsync(String, UpdatePermissionDto)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(String, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  fullName.vb: UserService.Core.Interfaces.Services.IPermissionsService.UpdateAsync(String, UserService.Core.DTOs.Permissions.UpdatePermissionDto)
   name.vb: UpdateAsync(String, UpdatePermissionDto)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
   - name: (
   - uid: System.String
     name: string
@@ -1007,9 +1100,9 @@ references:
     href: UserService.Core.DTOs.Permissions.UpdatePermissionDto.html
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.UpdateAsync(System.String,UserService.Core.DTOs.Permissions.UpdatePermissionDto)
     name: UpdateAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_UpdateAsync_System_String_UserService_Core_DTOs_Permissions_UpdatePermissionDto_
   - name: (
   - uid: System.String
     name: String
@@ -1045,21 +1138,21 @@ references:
   name: DeleteAsync
   nameWithType: PermissionsService.DeleteAsync
   fullName: UserService.Core.Services.PermissionsService.DeleteAsync
-- uid: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
-  parent: UserService.Core.Interfaces.IPermissionsService
+- uid: UserService.Core.Interfaces.Services.IPermissionsService.DeleteAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IPermissionsService.DeleteAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IPermissionsService
   isExternal: true
-  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DeleteAsync_System_String_
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_DeleteAsync_System_String_
   name: DeleteAsync(string)
   nameWithType: IPermissionsService.DeleteAsync(string)
-  fullName: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService.DeleteAsync(string)
   nameWithType.vb: IPermissionsService.DeleteAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IPermissionsService.DeleteAsync(String)
   name.vb: DeleteAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1067,9 +1160,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsService.DeleteAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.DeleteAsync(System.String)
     name: DeleteAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_DeleteAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_DeleteAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1117,21 +1210,21 @@ references:
   name: GetRolesForPermissionAsync
   nameWithType: PermissionsService.GetRolesForPermissionAsync
   fullName: UserService.Core.Services.PermissionsService.GetRolesForPermissionAsync
-- uid: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
-  parent: UserService.Core.Interfaces.IPermissionsService
+- uid: UserService.Core.Interfaces.Services.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IPermissionsService
   isExternal: true
-  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetRolesForPermissionAsync_System_String_
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetRolesForPermissionAsync_System_String_
   name: GetRolesForPermissionAsync(string)
   nameWithType: IPermissionsService.GetRolesForPermissionAsync(string)
-  fullName: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService.GetRolesForPermissionAsync(string)
   nameWithType.vb: IPermissionsService.GetRolesForPermissionAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IPermissionsService.GetRolesForPermissionAsync(String)
   name.vb: GetRolesForPermissionAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.GetRolesForPermissionAsync(System.String)
     name: GetRolesForPermissionAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetRolesForPermissionAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetRolesForPermissionAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1139,9 +1232,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsService.GetRolesForPermissionAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.GetRolesForPermissionAsync(System.String)
     name: GetRolesForPermissionAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetRolesForPermissionAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetRolesForPermissionAsync_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -1201,21 +1294,21 @@ references:
   name: GetByIdAsync
   nameWithType: PermissionsService.GetByIdAsync
   fullName: UserService.Core.Services.PermissionsService.GetByIdAsync
-- uid: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
-  commentId: M:UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
-  parent: UserService.Core.Interfaces.IPermissionsService
+- uid: UserService.Core.Interfaces.Services.IPermissionsService.GetByIdAsync(System.String)
+  commentId: M:UserService.Core.Interfaces.Services.IPermissionsService.GetByIdAsync(System.String)
+  parent: UserService.Core.Interfaces.Services.IPermissionsService
   isExternal: true
-  href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetByIdAsync_System_String_
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetByIdAsync_System_String_
   name: GetByIdAsync(string)
   nameWithType: IPermissionsService.GetByIdAsync(string)
-  fullName: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(string)
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService.GetByIdAsync(string)
   nameWithType.vb: IPermissionsService.GetByIdAsync(String)
-  fullName.vb: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(String)
+  fullName.vb: UserService.Core.Interfaces.Services.IPermissionsService.GetByIdAsync(String)
   name.vb: GetByIdAsync(String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.GetByIdAsync(System.String)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetByIdAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetByIdAsync_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -1223,9 +1316,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IPermissionsService.GetByIdAsync(System.String)
+  - uid: UserService.Core.Interfaces.Services.IPermissionsService.GetByIdAsync(System.String)
     name: GetByIdAsync
-    href: UserService.Core.Interfaces.IPermissionsService.html#UserService_Core_Interfaces_IPermissionsService_GetByIdAsync_System_String_
+    href: UserService.Core.Interfaces.Services.IPermissionsService.html#UserService_Core_Interfaces_Services_IPermissionsService_GetByIdAsync_System_String_
   - name: (
   - uid: System.String
     name: String

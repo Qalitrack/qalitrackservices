@@ -17,7 +17,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Filters/ModelValidationFilter.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ModelValidationFilter
     path: src/UserService.Api/Filters/ModelValidationFilter.cs
     startLine: 6
@@ -102,7 +102,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Filters/ModelValidationFilter.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: OnActionExecuting
     path: src/UserService.Api/Filters/ModelValidationFilter.cs
     startLine: 8

@@ -5,7 +5,7 @@ items:
   id: PermissionsController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.PermissionsController.#ctor(UserService.Core.Interfaces.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})
+  - UserService.Api.Controllers.PermissionsController.#ctor(UserService.Core.Interfaces.Services.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})
   - UserService.Api.Controllers.PermissionsController.Create(UserService.Core.DTOs.Permissions.CreatePermissionDto)
   - UserService.Api.Controllers.PermissionsController.Delete(System.String)
   - UserService.Api.Controllers.PermissionsController.GetAll
@@ -23,10 +23,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PermissionsController
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 12
+    startLine: 8
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -256,25 +256,25 @@ items:
     arguments:
     - type: System.String
       value: api/[controller]
-- uid: UserService.Api.Controllers.PermissionsController.#ctor(UserService.Core.Interfaces.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})
-  commentId: M:UserService.Api.Controllers.PermissionsController.#ctor(UserService.Core.Interfaces.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})
-  id: '#ctor(UserService.Core.Interfaces.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})'
+- uid: UserService.Api.Controllers.PermissionsController.#ctor(UserService.Core.Interfaces.Services.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})
+  commentId: M:UserService.Api.Controllers.PermissionsController.#ctor(UserService.Core.Interfaces.Services.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})
+  id: '#ctor(UserService.Core.Interfaces.Services.IPermissionsService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.PermissionsController})'
   parent: UserService.Api.Controllers.PermissionsController
   langs:
   - csharp
   - vb
   name: PermissionsController(IPermissionsService, IMapper, ILogger<PermissionsController>)
   nameWithType: PermissionsController.PermissionsController(IPermissionsService, IMapper, ILogger<PermissionsController>)
-  fullName: UserService.Api.Controllers.PermissionsController.PermissionsController(UserService.Core.Interfaces.IPermissionsService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.PermissionsController>)
+  fullName: UserService.Api.Controllers.PermissionsController.PermissionsController(UserService.Core.Interfaces.Services.IPermissionsService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.PermissionsController>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 21
+    startLine: 17
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -282,7 +282,7 @@ items:
     content: public PermissionsController(IPermissionsService permissionService, IMapper mapper, ILogger<PermissionsController> logger)
     parameters:
     - id: permissionService
-      type: UserService.Core.Interfaces.IPermissionsService
+      type: UserService.Core.Interfaces.Services.IPermissionsService
     - id: mapper
       type: AutoMapper.IMapper
     - id: logger
@@ -290,7 +290,7 @@ items:
     content.vb: Public Sub New(permissionService As IPermissionsService, mapper As IMapper, logger As ILogger(Of PermissionsController))
   overload: UserService.Api.Controllers.PermissionsController.#ctor*
   nameWithType.vb: PermissionsController.New(IPermissionsService, IMapper, ILogger(Of PermissionsController))
-  fullName.vb: UserService.Api.Controllers.PermissionsController.New(UserService.Core.Interfaces.IPermissionsService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.PermissionsController))
+  fullName.vb: UserService.Api.Controllers.PermissionsController.New(UserService.Core.Interfaces.Services.IPermissionsService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.PermissionsController))
   name.vb: New(IPermissionsService, IMapper, ILogger(Of PermissionsController))
 - uid: UserService.Api.Controllers.PermissionsController.GetAll
   commentId: M:UserService.Api.Controllers.PermissionsController.GetAll
@@ -307,10 +307,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetAll
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 28
+    startLine: 24
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -356,10 +356,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetById
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 44
+    startLine: 40
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -413,10 +413,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Create
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 63
+    startLine: 59
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -469,10 +469,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Update
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 86
+    startLine: 82
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -532,10 +532,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Delete
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 112
+    startLine: 108
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -589,10 +589,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/PermissionsController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetRolesForPermission
     path: src/UserService.Api/Controllers/PermissionsController.cs
-    startLine: 141
+    startLine: 137
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -10150,20 +10150,20 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.PermissionsController.#ctor*
   commentId: Overload:UserService.Api.Controllers.PermissionsController.#ctor
-  href: UserService.Api.Controllers.PermissionsController.html#UserService_Api_Controllers_PermissionsController__ctor_UserService_Core_Interfaces_IPermissionsService_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_PermissionsController__
+  href: UserService.Api.Controllers.PermissionsController.html#UserService_Api_Controllers_PermissionsController__ctor_UserService_Core_Interfaces_Services_IPermissionsService_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_PermissionsController__
   name: PermissionsController
   nameWithType: PermissionsController.PermissionsController
   fullName: UserService.Api.Controllers.PermissionsController.PermissionsController
   nameWithType.vb: PermissionsController.New
   fullName.vb: UserService.Api.Controllers.PermissionsController.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IPermissionsService
-  commentId: T:UserService.Core.Interfaces.IPermissionsService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IPermissionsService.html
+- uid: UserService.Core.Interfaces.Services.IPermissionsService
+  commentId: T:UserService.Core.Interfaces.Services.IPermissionsService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IPermissionsService.html
   name: IPermissionsService
   nameWithType: IPermissionsService
-  fullName: UserService.Core.Interfaces.IPermissionsService
+  fullName: UserService.Core.Interfaces.Services.IPermissionsService
 - uid: AutoMapper.IMapper
   commentId: T:AutoMapper.IMapper
   parent: AutoMapper
@@ -10204,12 +10204,12 @@ references:
     name: PermissionsController
     href: UserService.Api.Controllers.PermissionsController.html
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -10222,6 +10222,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -10234,6 +10238,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: AutoMapper
   commentId: N:AutoMapper
   isExternal: true

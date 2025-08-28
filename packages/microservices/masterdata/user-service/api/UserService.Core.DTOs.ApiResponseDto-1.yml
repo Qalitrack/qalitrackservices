@@ -17,7 +17,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/ApiResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ApiResponseDto
     path: src/UserService.Core/DTOs/ApiResponseDto.cs
     startLine: 10
@@ -62,7 +62,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/DTOs/ApiResponseDto.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Data
     path: src/UserService.Core/DTOs/ApiResponseDto.cs
     startLine: 12

@@ -20,7 +20,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Permission.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Permission
     path: src/UserService.Core/Entities/Permission.cs
     startLine: 2
@@ -62,7 +62,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Permission.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Name
     path: src/UserService.Core/Entities/Permission.cs
     startLine: 4
@@ -91,7 +91,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Permission.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Description
     path: src/UserService.Core/Entities/Permission.cs
     startLine: 5
@@ -120,7 +120,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Permission.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: RolePermissions
     path: src/UserService.Core/Entities/Permission.cs
     startLine: 8
@@ -149,7 +149,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Permission.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserPermissions
     path: src/UserService.Core/Entities/Permission.cs
     startLine: 9

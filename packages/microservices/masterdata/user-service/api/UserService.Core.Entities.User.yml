@@ -9,7 +9,6 @@ items:
   - UserService.Core.Entities.User.Email
   - UserService.Core.Entities.User.FirstName
   - UserService.Core.Entities.User.IsActive
-  - UserService.Core.Entities.User.IsDeleted
   - UserService.Core.Entities.User.IsFirstLogin
   - UserService.Core.Entities.User.IsOnline
   - UserService.Core.Entities.User.LastName
@@ -31,7 +30,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: User
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 6
@@ -50,6 +49,7 @@ items:
   - UserService.Core.Entities.BaseEntity.UpdatedAt
   - UserService.Core.Entities.BaseEntity.CreatedBy
   - UserService.Core.Entities.BaseEntity.UpdatedBy
+  - UserService.Core.Entities.BaseEntity.IsDeleted
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
   - System.Object.GetHashCode
@@ -72,7 +72,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: FirstName
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 7
@@ -111,7 +111,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: LastName
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 9
@@ -150,7 +150,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: MobileNumber
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 11
@@ -189,7 +189,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Email
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 13
@@ -228,7 +228,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Password
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 15
@@ -267,7 +267,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsActive
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 18
@@ -296,7 +296,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsFirstLogin
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 19
@@ -310,35 +310,6 @@ items:
       type: System.Boolean
     content.vb: Public Property IsFirstLogin As Boolean
   overload: UserService.Core.Entities.User.IsFirstLogin*
-- uid: UserService.Core.Entities.User.IsDeleted
-  commentId: P:UserService.Core.Entities.User.IsDeleted
-  id: IsDeleted
-  parent: UserService.Core.Entities.User
-  langs:
-  - csharp
-  - vb
-  name: IsDeleted
-  nameWithType: User.IsDeleted
-  fullName: UserService.Core.Entities.User.IsDeleted
-  type: Property
-  source:
-    remote:
-      path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
-      branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
-    id: IsDeleted
-    path: src/UserService.Core/Entities/MainEntity.cs
-    startLine: 20
-  assemblies:
-  - UserService.Core
-  namespace: UserService.Core.Entities
-  syntax:
-    content: public bool IsDeleted { get; set; }
-    parameters: []
-    return:
-      type: System.Boolean
-    content.vb: Public Property IsDeleted As Boolean
-  overload: UserService.Core.Entities.User.IsDeleted*
 - uid: UserService.Core.Entities.User.TwoFactorEnabled
   commentId: P:UserService.Core.Entities.User.TwoFactorEnabled
   id: TwoFactorEnabled
@@ -354,7 +325,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: TwoFactorEnabled
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 21
@@ -383,7 +354,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserRoles
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 24
@@ -412,7 +383,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserShifts
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 25
@@ -441,7 +412,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: PersonalAccessTokens
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 26
@@ -470,7 +441,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UserPermissions
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 27
@@ -499,7 +470,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: IsOnline
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 29
@@ -538,7 +509,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/MainEntity.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ActiveTokenCount
     path: src/UserService.Core/Entities/MainEntity.cs
     startLine: 31
@@ -646,6 +617,13 @@ references:
   name: UpdatedBy
   nameWithType: BaseEntity.UpdatedBy
   fullName: UserService.Core.Entities.BaseEntity.UpdatedBy
+- uid: UserService.Core.Entities.BaseEntity.IsDeleted
+  commentId: P:UserService.Core.Entities.BaseEntity.IsDeleted
+  parent: UserService.Core.Entities.BaseEntity
+  href: UserService.Core.Entities.BaseEntity.html#UserService_Core_Entities_BaseEntity_IsDeleted
+  name: IsDeleted
+  nameWithType: BaseEntity.IsDeleted
+  fullName: UserService.Core.Entities.BaseEntity.IsDeleted
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -936,12 +914,6 @@ references:
   name: IsFirstLogin
   nameWithType: User.IsFirstLogin
   fullName: UserService.Core.Entities.User.IsFirstLogin
-- uid: UserService.Core.Entities.User.IsDeleted*
-  commentId: Overload:UserService.Core.Entities.User.IsDeleted
-  href: UserService.Core.Entities.User.html#UserService_Core_Entities_User_IsDeleted
-  name: IsDeleted
-  nameWithType: User.IsDeleted
-  fullName: UserService.Core.Entities.User.IsDeleted
 - uid: UserService.Core.Entities.User.TwoFactorEnabled*
   commentId: Overload:UserService.Core.Entities.User.TwoFactorEnabled
   href: UserService.Core.Entities.User.html#UserService_Core_Entities_User_TwoFactorEnabled

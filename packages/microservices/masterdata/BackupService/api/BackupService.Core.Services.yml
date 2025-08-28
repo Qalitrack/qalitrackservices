@@ -1,0 +1,81 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Services
+  commentId: N:BackupService.Core.Services
+  id: BackupService.Core.Services
+  children:
+  - BackupService.Core.Services.BackupCreationService
+  - BackupService.Core.Services.BackupRestoreService
+  - BackupService.Core.Services.BackupVerificationService
+  - BackupService.Core.Services.DatabaseBackupService
+  - BackupService.Core.Services.DatabaseBackupService.BackupJob
+  - BackupService.Core.Services.JsonBackupMetadataService
+  - BackupService.Core.Services.MicroService
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Core.Services
+  nameWithType: BackupService.Core.Services
+  fullName: BackupService.Core.Services
+  type: Namespace
+  assemblies:
+  - BackupService.Core
+references:
+- uid: BackupService.Core.Services.BackupCreationService
+  commentId: T:BackupService.Core.Services.BackupCreationService
+  href: BackupService.Core.Services.BackupCreationService.html
+  name: BackupCreationService
+  nameWithType: BackupCreationService
+  fullName: BackupService.Core.Services.BackupCreationService
+- uid: BackupService.Core.Services.JsonBackupMetadataService
+  commentId: T:BackupService.Core.Services.JsonBackupMetadataService
+  href: BackupService.Core.Services.JsonBackupMetadataService.html
+  name: JsonBackupMetadataService
+  nameWithType: JsonBackupMetadataService
+  fullName: BackupService.Core.Services.JsonBackupMetadataService
+- uid: BackupService.Core.Services.BackupRestoreService
+  commentId: T:BackupService.Core.Services.BackupRestoreService
+  href: BackupService.Core.Services.BackupRestoreService.html
+  name: BackupRestoreService
+  nameWithType: BackupRestoreService
+  fullName: BackupService.Core.Services.BackupRestoreService
+- uid: BackupService.Core.Services.BackupVerificationService
+  commentId: T:BackupService.Core.Services.BackupVerificationService
+  href: BackupService.Core.Services.BackupVerificationService.html
+  name: BackupVerificationService
+  nameWithType: BackupVerificationService
+  fullName: BackupService.Core.Services.BackupVerificationService
+- uid: BackupService.Core.Services.DatabaseBackupService
+  commentId: T:BackupService.Core.Services.DatabaseBackupService
+  href: BackupService.Core.Services.DatabaseBackupService.html
+  name: DatabaseBackupService
+  nameWithType: DatabaseBackupService
+  fullName: BackupService.Core.Services.DatabaseBackupService
+- uid: BackupService.Core.Services.DatabaseBackupService.BackupJob
+  commentId: T:BackupService.Core.Services.DatabaseBackupService.BackupJob
+  href: BackupService.Core.Services.DatabaseBackupService.html
+  name: DatabaseBackupService.BackupJob
+  nameWithType: DatabaseBackupService.BackupJob
+  fullName: BackupService.Core.Services.DatabaseBackupService.BackupJob
+  spec.csharp:
+  - uid: BackupService.Core.Services.DatabaseBackupService
+    name: DatabaseBackupService
+    href: BackupService.Core.Services.DatabaseBackupService.html
+  - name: .
+  - uid: BackupService.Core.Services.DatabaseBackupService.BackupJob
+    name: BackupJob
+    href: BackupService.Core.Services.DatabaseBackupService.BackupJob.html
+  spec.vb:
+  - uid: BackupService.Core.Services.DatabaseBackupService
+    name: DatabaseBackupService
+    href: BackupService.Core.Services.DatabaseBackupService.html
+  - name: .
+  - uid: BackupService.Core.Services.DatabaseBackupService.BackupJob
+    name: BackupJob
+    href: BackupService.Core.Services.DatabaseBackupService.BackupJob.html
+- uid: BackupService.Core.Services.MicroService
+  commentId: T:BackupService.Core.Services.MicroService
+  href: BackupService.Core.Services.MicroService.html
+  name: MicroService
+  nameWithType: MicroService
+  fullName: BackupService.Core.Services.MicroService

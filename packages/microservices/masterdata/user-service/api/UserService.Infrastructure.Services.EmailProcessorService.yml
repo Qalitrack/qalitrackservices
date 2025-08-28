@@ -18,7 +18,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailProcessorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EmailProcessorService
     path: src/UserService.Infrastructure/Services/EmailProcessorService.cs
     startLine: 8
@@ -61,10 +61,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailProcessorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Services/EmailProcessorService.cs
-    startLine: 14
+    startLine: 8
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -97,10 +97,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailProcessorService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ExecuteAsync
     path: src/UserService.Infrastructure/Services/EmailProcessorService.cs
-    startLine: 24
+    startLine: 14
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services

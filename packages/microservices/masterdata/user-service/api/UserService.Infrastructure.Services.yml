@@ -6,11 +6,11 @@ items:
   children:
   - UserService.Infrastructure.Services.EmailProcessorService
   - UserService.Infrastructure.Services.EmailQueueService
-  - UserService.Infrastructure.Services.HealthCheckService
   - UserService.Infrastructure.Services.MemoryCacheService
   - UserService.Infrastructure.Services.NullEmailService
   - UserService.Infrastructure.Services.RedisCacheService
   - UserService.Infrastructure.Services.ReportService
+  - UserService.Infrastructure.Services.ShiftLoginRestrictionService
   - UserService.Infrastructure.Services.ShiftMonitorService
   - UserService.Infrastructure.Services.SmtpEmailService
   langs:
@@ -36,12 +36,6 @@ references:
   name: EmailQueueService
   nameWithType: EmailQueueService
   fullName: UserService.Infrastructure.Services.EmailQueueService
-- uid: UserService.Infrastructure.Services.HealthCheckService
-  commentId: T:UserService.Infrastructure.Services.HealthCheckService
-  href: UserService.Infrastructure.Services.HealthCheckService.html
-  name: HealthCheckService
-  nameWithType: HealthCheckService
-  fullName: UserService.Infrastructure.Services.HealthCheckService
 - uid: UserService.Infrastructure.Services.MemoryCacheService
   commentId: T:UserService.Infrastructure.Services.MemoryCacheService
   href: UserService.Infrastructure.Services.MemoryCacheService.html
@@ -66,6 +60,12 @@ references:
   name: ReportService
   nameWithType: ReportService
   fullName: UserService.Infrastructure.Services.ReportService
+- uid: UserService.Infrastructure.Services.ShiftLoginRestrictionService
+  commentId: T:UserService.Infrastructure.Services.ShiftLoginRestrictionService
+  href: UserService.Infrastructure.Services.ShiftLoginRestrictionService.html
+  name: ShiftLoginRestrictionService
+  nameWithType: ShiftLoginRestrictionService
+  fullName: UserService.Infrastructure.Services.ShiftLoginRestrictionService
 - uid: UserService.Infrastructure.Services.ShiftMonitorService
   commentId: T:UserService.Infrastructure.Services.ShiftMonitorService
   href: UserService.Infrastructure.Services.ShiftMonitorService.html

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "./src",
+          "files": [
+            "UserService.Api/UserService.Api.csproj",
+            "UserService.Core/UserService.Core.csproj",
+            "UserService.Infrastructure/UserService.Infrastructure.csproj"
+          ]
+        }
+      ],
+      "dest": "api",
+      "includePrivateMembers": false,
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false,
+      "noRestore": false,
+      "namespaceLayout": "flattened",
+      "memberLayout": "samePage",
+      "allowCompilationErrors": true
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}",
+          "toc.yml",
+          "index.md"
+        ],
+        "exclude": [
+          "_site/**",
+          "obj/**",
+          "bin/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      },
+      {
+        "files": [
+          "templates/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "QaliTrack User Service",
+      "_appTitle": "QaliTrack User Service API Documentation",
+      "_enableSearch": true,
+      "_enableNewTab": true,
+      "_disableNavbar": false,
+      "_disableBreadcrumb": false,
+      "_disableToc": false,
+      "_disableAffix": false,
+      "_enableSourceMap": false,
+      "pdf": false,
+      "_gitContribute": {
+        "repo": "https://github.com/yourusername/qalitrackservices",
+        "branch": "main",
+        "path": "packages/microservices/userservice"
+      },
+      "_footer": "© 2024 QaliTrack. Generated with DocFX.",
+      "_appFooter": "QaliTrack User Service Documentation"
+    },
+    "postProcessors": ["ExtractSearchIndex"]
+  }
+}

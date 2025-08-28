@@ -79,6 +79,54 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Backup Service API V1");
     c.RoutePrefix = string.Empty; // Set Swagger UI at the root URL
 });
+// Serve static files including documentation
+app.UseStaticFiles();
+
+// Configure documentation serving
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs")),
+    RequestPath = "/docs"
+});
+
+// Documentation default route
+app.MapGet("/docs", () => Results.Redirect("/docs/index.html"));
+app.MapFallback("/docs/{**path}", async context =>
+{
+    var path = context.Request.Path.Value?.Replace("/docs/", "") ?? "index.html";
+    if (string.IsNullOrEmpty(path) || path == "/")
+        path = "index.html";
+    
+    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs", path);
+    if (File.Exists(filePath))
+    {
+        // Set proper Content-Type based on file extension
+        var extension = Path.GetExtension(filePath).ToLowerInvariant();
+        var contentType = extension switch
+        {
+            ".html" => "text/html; charset=utf-8",
+            ".css" => "text/css; charset=utf-8",
+            ".js" => "application/javascript; charset=utf-8",
+            ".json" => "application/json; charset=utf-8",
+            ".png" => "image/png",
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".svg" => "image/svg+xml",
+            ".ico" => "image/x-icon",
+            ".yml" or ".yaml" => "text/yaml; charset=utf-8",
+            _ => "application/octet-stream"
+        };
+        
+        context.Response.ContentType = contentType;
+        await context.Response.SendFileAsync(filePath);
+    }
+    else
+    {
+        context.Response.StatusCode = 404;
+        await context.Response.WriteAsync("Documentation file not found");
+    }
+});
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -104,6 +152,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<BackupServiceDbContext>();
+
     
     // Apply migrations
     dbContext.Database.Migrate();
@@ -117,14 +166,5 @@ using (var scope = app.Services.CreateScope())
 var urls = builder.Configuration["ASPNETCORE_URLS"]?.Split(';') 
           ?? new[] { "https://localhost:7000", "http://localhost:5000" };
 
-// Print the Swagger URL to console
-foreach (var url in urls)
-{
-    var cleanUrl = url.Trim();
-    Console.WriteLine("🚀 Backup Service is running!");
-    Console.WriteLine($"📚 Swagger UI: {cleanUrl}");
-    Console.WriteLine($"🔗 API Documentation: {cleanUrl}/swagger/v1/swagger.json");
-    Console.WriteLine("----------------------------------------------------------");
-}
 
 app.Run();

@@ -20,10 +20,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EmailQueueService
     path: src/UserService.Infrastructure/Services/EmailQueueService.cs
-    startLine: 7
+    startLine: 8
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -33,7 +33,7 @@ items:
   inheritance:
   - System.Object
   implements:
-  - UserService.Core.Interfaces.IEmailQueueService
+  - UserService.Core.Interfaces.Emails.IEmailQueueService
   inheritedMembers:
   - System.Object.Equals(System.Object)
   - System.Object.Equals(System.Object,System.Object)
@@ -57,10 +57,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Infrastructure/Services/EmailQueueService.cs
-    startLine: 12
+    startLine: 13
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -89,10 +89,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EnqueueEmailAsync
     path: src/UserService.Infrastructure/Services/EmailQueueService.cs
-    startLine: 27
+    startLine: 28
   assemblies:
   - UserService.Infrastructure
   namespace: UserService.Infrastructure.Services
@@ -107,7 +107,7 @@ items:
     content.vb: Public Function EnqueueEmailAsync(emailRequest As EmailRequest) As Task
   overload: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync*
   implements:
-  - UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  - UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
 - uid: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
   commentId: M:UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
   id: EnqueueEmailAsync(System.String,System.String,System.String)
@@ -123,7 +123,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: EnqueueEmailAsync
     path: src/UserService.Infrastructure/Services/EmailQueueService.cs
     startLine: 41
@@ -145,7 +145,7 @@ items:
     content.vb: Public Function EnqueueEmailAsync([to] As String, subject As String, body As String) As Task
   overload: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync*
   implements:
-  - UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  - UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
   nameWithType.vb: EmailQueueService.EnqueueEmailAsync(String, String, String)
   fullName.vb: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync(String, String, String)
   name.vb: EnqueueEmailAsync(String, String, String)
@@ -164,7 +164,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Infrastructure/Services/EmailQueueService.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetEmailReader
     path: src/UserService.Infrastructure/Services/EmailQueueService.cs
     startLine: 54
@@ -219,13 +219,13 @@ references:
   nameWithType.vb: Object
   fullName.vb: Object
   name.vb: Object
-- uid: UserService.Core.Interfaces.IEmailQueueService
-  commentId: T:UserService.Core.Interfaces.IEmailQueueService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IEmailQueueService.html
+- uid: UserService.Core.Interfaces.Emails.IEmailQueueService
+  commentId: T:UserService.Core.Interfaces.Emails.IEmailQueueService
+  parent: UserService.Core.Interfaces.Emails
+  href: UserService.Core.Interfaces.Emails.IEmailQueueService.html
   name: IEmailQueueService
   nameWithType: IEmailQueueService
-  fullName: UserService.Core.Interfaces.IEmailQueueService
+  fullName: UserService.Core.Interfaces.Emails.IEmailQueueService
 - uid: System.Object.Equals(System.Object)
   commentId: M:System.Object.Equals(System.Object)
   parent: System.Object
@@ -452,12 +452,12 @@ references:
   name: System
   nameWithType: System
   fullName: System
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Emails
+  commentId: N:UserService.Core.Interfaces.Emails
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Emails
+  nameWithType: UserService.Core.Interfaces.Emails
+  fullName: UserService.Core.Interfaces.Emails
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -470,6 +470,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -482,6 +486,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Emails
+    name: Emails
+    href: UserService.Core.Interfaces.Emails.html
 - uid: UserService.Infrastructure.Services.EmailQueueService.#ctor*
   commentId: Overload:UserService.Infrastructure.Services.EmailQueueService.#ctor
   href: UserService.Infrastructure.Services.EmailQueueService.html#UserService_Infrastructure_Services_EmailQueueService__ctor_Microsoft_Extensions_Logging_ILogger_UserService_Infrastructure_Services_EmailQueueService__
@@ -595,21 +603,21 @@ references:
   name: EnqueueEmailAsync
   nameWithType: EmailQueueService.EnqueueEmailAsync
   fullName: UserService.Infrastructure.Services.EmailQueueService.EnqueueEmailAsync
-- uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
-  commentId: M:UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
-  parent: UserService.Core.Interfaces.IEmailQueueService
+- uid: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  commentId: M:UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  parent: UserService.Core.Interfaces.Emails.IEmailQueueService
   name: EnqueueEmailAsync(EmailRequest)
   nameWithType: IEmailQueueService.EnqueueEmailAsync(EmailRequest)
-  fullName: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  fullName: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  - uid: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
     name: EnqueueEmailAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.EmailRequest
     name: EmailRequest
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
+  - uid: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(UserService.Core.DTOs.Common.EmailRequest)
     name: EnqueueEmailAsync
   - name: (
   - uid: UserService.Core.DTOs.Common.EmailRequest
@@ -705,19 +713,19 @@ references:
     name: Tasks
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
-- uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
-  commentId: M:UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
-  parent: UserService.Core.Interfaces.IEmailQueueService
+- uid: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  commentId: M:UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  parent: UserService.Core.Interfaces.Emails.IEmailQueueService
   isExternal: true
   href: https://learn.microsoft.com/dotnet/api/system.string
   name: EnqueueEmailAsync(string, string, string)
   nameWithType: IEmailQueueService.EnqueueEmailAsync(string, string, string)
-  fullName: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(string, string, string)
+  fullName: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(string, string, string)
   nameWithType.vb: IEmailQueueService.EnqueueEmailAsync(String, String, String)
-  fullName.vb: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(String, String, String)
+  fullName.vb: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(String, String, String)
   name.vb: EnqueueEmailAsync(String, String, String)
   spec.csharp:
-  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  - uid: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
     name: EnqueueEmailAsync
   - name: (
   - uid: System.String
@@ -738,7 +746,7 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: UserService.Core.Interfaces.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
+  - uid: UserService.Core.Interfaces.Emails.IEmailQueueService.EnqueueEmailAsync(System.String,System.String,System.String)
     name: EnqueueEmailAsync
   - name: (
   - uid: System.String

@@ -18,7 +18,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: ShiftMode
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 49
@@ -43,7 +43,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Strict
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 51
@@ -51,7 +51,7 @@ items:
   - UserService.Core
   namespace: UserService.Core.Entities
   syntax:
-    content: Strict = 0
+    content: Strict = 1
     return:
       type: UserService.Core.Entities.ShiftMode
 - uid: UserService.Core.Entities.ShiftMode.Open
@@ -69,7 +69,7 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Core/Entities/Shift.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Open
     path: src/UserService.Core/Entities/Shift.cs
     startLine: 52
@@ -77,7 +77,7 @@ items:
   - UserService.Core
   namespace: UserService.Core.Entities
   syntax:
-    content: Open = 1
+    content: Open = 0
     return:
       type: UserService.Core.Entities.ShiftMode
 references:

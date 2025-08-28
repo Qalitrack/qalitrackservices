@@ -5,7 +5,7 @@ items:
   id: UsersController
   parent: UserService.Api.Controllers
   children:
-  - UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
+  - UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
   - UserService.Api.Controllers.UsersController.Create(UserService.Core.DTOs.User.CreateUserDto)
   - UserService.Api.Controllers.UsersController.Delete(System.String)
   - UserService.Api.Controllers.UsersController.GetById(System.String)
@@ -26,10 +26,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: UsersController
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 17
+    startLine: 11
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -255,25 +255,25 @@ items:
     arguments:
     - type: System.String
       value: api/v{version:apiVersion}/[controller]
-- uid: UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
-  commentId: M:UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
-  id: '#ctor(UserService.Core.Interfaces.IUserService,UserService.Core.Interfaces.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})'
+- uid: UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
+  commentId: M:UserService.Api.Controllers.UsersController.#ctor(UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})
+  id: '#ctor(UserService.Core.Interfaces.Services.IUserService,UserService.Core.Interfaces.Services.IUserRoleService,AutoMapper.IMapper,Microsoft.Extensions.Logging.ILogger{UserService.Api.Controllers.UsersController})'
   parent: UserService.Api.Controllers.UsersController
   langs:
   - csharp
   - vb
   name: UsersController(IUserService, IUserRoleService, IMapper, ILogger<UsersController>)
   nameWithType: UsersController.UsersController(IUserService, IUserRoleService, IMapper, ILogger<UsersController>)
-  fullName: UserService.Api.Controllers.UsersController.UsersController(UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IUserRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.UsersController>)
+  fullName: UserService.Api.Controllers.UsersController.UsersController(UserService.Core.Interfaces.Services.IUserService, UserService.Core.Interfaces.Services.IUserRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger<UserService.Api.Controllers.UsersController>)
   type: Constructor
   source:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: .ctor
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 17
+    startLine: 11
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -281,9 +281,9 @@ items:
     content: public UsersController(IUserService userService, IUserRoleService userRoleService, IMapper mapper, ILogger<UsersController> logger)
     parameters:
     - id: userService
-      type: UserService.Core.Interfaces.IUserService
+      type: UserService.Core.Interfaces.Services.IUserService
     - id: userRoleService
-      type: UserService.Core.Interfaces.IUserRoleService
+      type: UserService.Core.Interfaces.Services.IUserRoleService
     - id: mapper
       type: AutoMapper.IMapper
     - id: logger
@@ -291,7 +291,7 @@ items:
     content.vb: Public Sub New(userService As IUserService, userRoleService As IUserRoleService, mapper As IMapper, logger As ILogger(Of UsersController))
   overload: UserService.Api.Controllers.UsersController.#ctor*
   nameWithType.vb: UsersController.New(IUserService, IUserRoleService, IMapper, ILogger(Of UsersController))
-  fullName.vb: UserService.Api.Controllers.UsersController.New(UserService.Core.Interfaces.IUserService, UserService.Core.Interfaces.IUserRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.UsersController))
+  fullName.vb: UserService.Api.Controllers.UsersController.New(UserService.Core.Interfaces.Services.IUserService, UserService.Core.Interfaces.Services.IUserRoleService, AutoMapper.IMapper, Microsoft.Extensions.Logging.ILogger(Of UserService.Api.Controllers.UsersController))
   name.vb: New(IUserService, IUserRoleService, IMapper, ILogger(Of UsersController))
 - uid: UserService.Api.Controllers.UsersController.GetById(System.String)
   commentId: M:UserService.Api.Controllers.UsersController.GetById(System.String)
@@ -308,10 +308,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetById
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 34
+    startLine: 28
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -365,10 +365,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Create
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 46
+    startLine: 40
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -421,10 +421,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Update
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 100
+    startLine: 94
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -484,10 +484,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Delete
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 163
+    startLine: 157
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -541,10 +541,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: Restore
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 210
+    startLine: 204
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -598,10 +598,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserPermissions
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 221
+    startLine: 215
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -655,10 +655,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetUserPermissionsDebug
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 257
+    startLine: 251
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -712,10 +712,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetPaged
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 276
+    startLine: 270
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -770,10 +770,10 @@ items:
     remote:
       path: packages/microservices/masterdata/user-service/src/UserService.Api/Controllers/UsersController.cs
       branch: main
-      repo: https://github.com/adarlegendre/qalitrackservices.git
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
     id: GetDeletedPaged
     path: src/UserService.Api/Controllers/UsersController.cs
-    startLine: 291
+    startLine: 285
   assemblies:
   - UserService.Api
   namespace: UserService.Api.Controllers
@@ -9811,27 +9811,27 @@ references:
   - name: )
 - uid: UserService.Api.Controllers.UsersController.#ctor*
   commentId: Overload:UserService.Api.Controllers.UsersController.#ctor
-  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController__ctor_UserService_Core_Interfaces_IUserService_UserService_Core_Interfaces_IUserRoleService_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_UsersController__
+  href: UserService.Api.Controllers.UsersController.html#UserService_Api_Controllers_UsersController__ctor_UserService_Core_Interfaces_Services_IUserService_UserService_Core_Interfaces_Services_IUserRoleService_AutoMapper_IMapper_Microsoft_Extensions_Logging_ILogger_UserService_Api_Controllers_UsersController__
   name: UsersController
   nameWithType: UsersController.UsersController
   fullName: UserService.Api.Controllers.UsersController.UsersController
   nameWithType.vb: UsersController.New
   fullName.vb: UserService.Api.Controllers.UsersController.New
   name.vb: New
-- uid: UserService.Core.Interfaces.IUserService
-  commentId: T:UserService.Core.Interfaces.IUserService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserService.html
+- uid: UserService.Core.Interfaces.Services.IUserService
+  commentId: T:UserService.Core.Interfaces.Services.IUserService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserService.html
   name: IUserService
   nameWithType: IUserService
-  fullName: UserService.Core.Interfaces.IUserService
-- uid: UserService.Core.Interfaces.IUserRoleService
-  commentId: T:UserService.Core.Interfaces.IUserRoleService
-  parent: UserService.Core.Interfaces
-  href: UserService.Core.Interfaces.IUserRoleService.html
+  fullName: UserService.Core.Interfaces.Services.IUserService
+- uid: UserService.Core.Interfaces.Services.IUserRoleService
+  commentId: T:UserService.Core.Interfaces.Services.IUserRoleService
+  parent: UserService.Core.Interfaces.Services
+  href: UserService.Core.Interfaces.Services.IUserRoleService.html
   name: IUserRoleService
   nameWithType: IUserRoleService
-  fullName: UserService.Core.Interfaces.IUserRoleService
+  fullName: UserService.Core.Interfaces.Services.IUserRoleService
 - uid: AutoMapper.IMapper
   commentId: T:AutoMapper.IMapper
   parent: AutoMapper
@@ -9872,12 +9872,12 @@ references:
     name: UsersController
     href: UserService.Api.Controllers.UsersController.html
   - name: )
-- uid: UserService.Core.Interfaces
-  commentId: N:UserService.Core.Interfaces
+- uid: UserService.Core.Interfaces.Services
+  commentId: N:UserService.Core.Interfaces.Services
   href: UserService.html
-  name: UserService.Core.Interfaces
-  nameWithType: UserService.Core.Interfaces
-  fullName: UserService.Core.Interfaces
+  name: UserService.Core.Interfaces.Services
+  nameWithType: UserService.Core.Interfaces.Services
+  fullName: UserService.Core.Interfaces.Services
   spec.csharp:
   - uid: UserService
     name: UserService
@@ -9890,6 +9890,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
   spec.vb:
   - uid: UserService
     name: UserService
@@ -9902,6 +9906,10 @@ references:
   - uid: UserService.Core.Interfaces
     name: Interfaces
     href: UserService.Core.Interfaces.html
+  - name: .
+  - uid: UserService.Core.Interfaces.Services
+    name: Services
+    href: UserService.Core.Interfaces.Services.html
 - uid: AutoMapper
   commentId: N:AutoMapper
   isExternal: true

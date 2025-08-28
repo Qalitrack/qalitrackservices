@@ -1,0 +1,102 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Interfaces
+  commentId: N:BackupService.Core.Interfaces
+  id: BackupService.Core.Interfaces
+  children:
+  - BackupService.Core.Interfaces.IBackupCreationService
+  - BackupService.Core.Interfaces.IBackupMetadataService
+  - BackupService.Core.Interfaces.IBackupRestoreService
+  - BackupService.Core.Interfaces.IBackupVerificationService
+  - BackupService.Core.Interfaces.IDatabaseBackupService
+  - BackupService.Core.Interfaces.IMicroService
+  - BackupService.Core.Interfaces.IMicroserviceRepository
+  langs:
+  - csharp
+  - vb
+  name: BackupService.Core.Interfaces
+  nameWithType: BackupService.Core.Interfaces
+  fullName: BackupService.Core.Interfaces
+  type: Namespace
+  assemblies:
+  - BackupService.Core
+references:
+- uid: BackupService.Core.Interfaces.IBackupCreationService
+  commentId: T:BackupService.Core.Interfaces.IBackupCreationService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupCreationService.html
+  name: IBackupCreationService
+  nameWithType: IBackupCreationService
+  fullName: BackupService.Core.Interfaces.IBackupCreationService
+- uid: BackupService.Core.Interfaces.IBackupMetadataService
+  commentId: T:BackupService.Core.Interfaces.IBackupMetadataService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupMetadataService.html
+  name: IBackupMetadataService
+  nameWithType: IBackupMetadataService
+  fullName: BackupService.Core.Interfaces.IBackupMetadataService
+- uid: BackupService.Core.Interfaces.IBackupRestoreService
+  commentId: T:BackupService.Core.Interfaces.IBackupRestoreService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupRestoreService.html
+  name: IBackupRestoreService
+  nameWithType: IBackupRestoreService
+  fullName: BackupService.Core.Interfaces.IBackupRestoreService
+- uid: BackupService.Core.Interfaces.IBackupVerificationService
+  commentId: T:BackupService.Core.Interfaces.IBackupVerificationService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupVerificationService.html
+  name: IBackupVerificationService
+  nameWithType: IBackupVerificationService
+  fullName: BackupService.Core.Interfaces.IBackupVerificationService
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService
+  commentId: T:BackupService.Core.Interfaces.IDatabaseBackupService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html
+  name: IDatabaseBackupService
+  nameWithType: IDatabaseBackupService
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService
+- uid: BackupService.Core.Interfaces.IMicroService
+  commentId: T:BackupService.Core.Interfaces.IMicroService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IMicroService.html
+  name: IMicroService
+  nameWithType: IMicroService
+  fullName: BackupService.Core.Interfaces.IMicroService
+- uid: BackupService.Core.Interfaces.IMicroserviceRepository
+  commentId: T:BackupService.Core.Interfaces.IMicroserviceRepository
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IMicroserviceRepository.html
+  name: IMicroserviceRepository
+  nameWithType: IMicroserviceRepository
+  fullName: BackupService.Core.Interfaces.IMicroserviceRepository
+- uid: BackupService.Core.Interfaces
+  commentId: N:BackupService.Core.Interfaces
+  href: BackupService.html
+  name: BackupService.Core.Interfaces
+  nameWithType: BackupService.Core.Interfaces
+  fullName: BackupService.Core.Interfaces
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html

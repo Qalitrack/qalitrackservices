@@ -1,0 +1,862 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Entities.BackupChain
+  commentId: T:BackupService.Core.Entities.BackupChain
+  id: BackupChain
+  parent: BackupService.Core.Entities
+  children:
+  - BackupService.Core.Entities.BackupChain.ChainId
+  - BackupService.Core.Entities.BackupChain.FullBackupFile
+  - BackupService.Core.Entities.BackupChain.Id
+  - BackupService.Core.Entities.BackupChain.Incrementals
+  - BackupService.Core.Entities.BackupChain.LastLsn
+  - BackupService.Core.Entities.BackupChain.Lsn
+  - BackupService.Core.Entities.BackupChain.MicroserviceId
+  - BackupService.Core.Entities.BackupChain.MicroserviceName
+  - BackupService.Core.Entities.BackupChain.Timeline
+  - BackupService.Core.Entities.BackupChain.Timestamp
+  langs:
+  - csharp
+  - vb
+  name: BackupChain
+  nameWithType: BackupChain
+  fullName: BackupService.Core.Entities.BackupChain
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: BackupChain
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 4
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public class BackupChain
+    content.vb: Public Class BackupChain
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: BackupService.Core.Entities.BackupChain.Id
+  commentId: P:BackupService.Core.Entities.BackupChain.Id
+  id: Id
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: BackupChain.Id
+  fullName: BackupService.Core.Entities.BackupChain.Id
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Id
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 6
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public int Id { get; init; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Id As Integer
+  overload: BackupService.Core.Entities.BackupChain.Id*
+- uid: BackupService.Core.Entities.BackupChain.MicroserviceId
+  commentId: P:BackupService.Core.Entities.BackupChain.MicroserviceId
+  id: MicroserviceId
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: MicroserviceId
+  nameWithType: BackupChain.MicroserviceId
+  fullName: BackupService.Core.Entities.BackupChain.MicroserviceId
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: MicroserviceId
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 8
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public int MicroserviceId { get; init; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property MicroserviceId As Integer
+  overload: BackupService.Core.Entities.BackupChain.MicroserviceId*
+- uid: BackupService.Core.Entities.BackupChain.MicroserviceName
+  commentId: P:BackupService.Core.Entities.BackupChain.MicroserviceName
+  id: MicroserviceName
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: MicroserviceName
+  nameWithType: BackupChain.MicroserviceName
+  fullName: BackupService.Core.Entities.BackupChain.MicroserviceName
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: MicroserviceName
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 9
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public string MicroserviceName { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property MicroserviceName As String
+  overload: BackupService.Core.Entities.BackupChain.MicroserviceName*
+- uid: BackupService.Core.Entities.BackupChain.FullBackupFile
+  commentId: P:BackupService.Core.Entities.BackupChain.FullBackupFile
+  id: FullBackupFile
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: FullBackupFile
+  nameWithType: BackupChain.FullBackupFile
+  fullName: BackupService.Core.Entities.BackupChain.FullBackupFile
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: FullBackupFile
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 10
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public string FullBackupFile { get; init; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FullBackupFile As String
+  overload: BackupService.Core.Entities.BackupChain.FullBackupFile*
+- uid: BackupService.Core.Entities.BackupChain.Timestamp
+  commentId: P:BackupService.Core.Entities.BackupChain.Timestamp
+  id: Timestamp
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: Timestamp
+  nameWithType: BackupChain.Timestamp
+  fullName: BackupService.Core.Entities.BackupChain.Timestamp
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Timestamp
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 11
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public DateTime Timestamp { get; init; }
+    parameters: []
+    return:
+      type: System.DateTime
+    content.vb: Public Property Timestamp As Date
+  overload: BackupService.Core.Entities.BackupChain.Timestamp*
+- uid: BackupService.Core.Entities.BackupChain.Incrementals
+  commentId: P:BackupService.Core.Entities.BackupChain.Incrementals
+  id: Incrementals
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: Incrementals
+  nameWithType: BackupChain.Incrementals
+  fullName: BackupService.Core.Entities.BackupChain.Incrementals
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Incrementals
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 12
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public List<string> Incrementals { get; init; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.List{System.String}
+    content.vb: Public Property Incrementals As List(Of String)
+  overload: BackupService.Core.Entities.BackupChain.Incrementals*
+- uid: BackupService.Core.Entities.BackupChain.ChainId
+  commentId: P:BackupService.Core.Entities.BackupChain.ChainId
+  id: ChainId
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: ChainId
+  nameWithType: BackupChain.ChainId
+  fullName: BackupService.Core.Entities.BackupChain.ChainId
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: ChainId
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 14
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public string ChainId { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property ChainId As String
+  overload: BackupService.Core.Entities.BackupChain.ChainId*
+- uid: BackupService.Core.Entities.BackupChain.Lsn
+  commentId: P:BackupService.Core.Entities.BackupChain.Lsn
+  id: Lsn
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: Lsn
+  nameWithType: BackupChain.Lsn
+  fullName: BackupService.Core.Entities.BackupChain.Lsn
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Lsn
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 16
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public string? Lsn { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Lsn As String
+  overload: BackupService.Core.Entities.BackupChain.Lsn*
+- uid: BackupService.Core.Entities.BackupChain.Timeline
+  commentId: P:BackupService.Core.Entities.BackupChain.Timeline
+  id: Timeline
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: Timeline
+  nameWithType: BackupChain.Timeline
+  fullName: BackupService.Core.Entities.BackupChain.Timeline
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: Timeline
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 18
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: public int? Timeline { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Int32}
+    content.vb: Public Property Timeline As Integer?
+  overload: BackupService.Core.Entities.BackupChain.Timeline*
+- uid: BackupService.Core.Entities.BackupChain.LastLsn
+  commentId: P:BackupService.Core.Entities.BackupChain.LastLsn
+  id: LastLsn
+  parent: BackupService.Core.Entities.BackupChain
+  langs:
+  - csharp
+  - vb
+  name: LastLsn
+  nameWithType: BackupChain.LastLsn
+  fullName: BackupService.Core.Entities.BackupChain.LastLsn
+  type: Property
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Entities/BackupChain.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: LastLsn
+    path: BackupService.Core/Entities/BackupChain.cs
+    startLine: 21
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Entities
+  syntax:
+    content: >-
+      [JsonPropertyName("lastLsn")]
+
+      public string? LastLsn { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: >-
+      <JsonPropertyName("lastLsn")>
+
+      Public Property LastLsn As String
+  overload: BackupService.Core.Entities.BackupChain.LastLsn*
+  attributes:
+  - type: System.Text.Json.Serialization.JsonPropertyNameAttribute
+    ctor: System.Text.Json.Serialization.JsonPropertyNameAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: lastLsn
+references:
+- uid: BackupService.Core.Entities
+  commentId: N:BackupService.Core.Entities
+  href: BackupService.html
+  name: BackupService.Core.Entities
+  nameWithType: BackupService.Core.Entities
+  fullName: BackupService.Core.Entities
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Entities
+    name: Entities
+    href: BackupService.Core.Entities.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Entities
+    name: Entities
+    href: BackupService.Core.Entities.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: BackupService.Core.Entities.BackupChain.Id*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.Id
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_Id
+  name: Id
+  nameWithType: BackupChain.Id
+  fullName: BackupService.Core.Entities.BackupChain.Id
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: BackupService.Core.Entities.BackupChain.MicroserviceId*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.MicroserviceId
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_MicroserviceId
+  name: MicroserviceId
+  nameWithType: BackupChain.MicroserviceId
+  fullName: BackupService.Core.Entities.BackupChain.MicroserviceId
+- uid: BackupService.Core.Entities.BackupChain.MicroserviceName*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.MicroserviceName
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_MicroserviceName
+  name: MicroserviceName
+  nameWithType: BackupChain.MicroserviceName
+  fullName: BackupService.Core.Entities.BackupChain.MicroserviceName
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: BackupService.Core.Entities.BackupChain.FullBackupFile*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.FullBackupFile
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_FullBackupFile
+  name: FullBackupFile
+  nameWithType: BackupChain.FullBackupFile
+  fullName: BackupService.Core.Entities.BackupChain.FullBackupFile
+- uid: BackupService.Core.Entities.BackupChain.Timestamp*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.Timestamp
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_Timestamp
+  name: Timestamp
+  nameWithType: BackupChain.Timestamp
+  fullName: BackupService.Core.Entities.BackupChain.Timestamp
+- uid: System.DateTime
+  commentId: T:System.DateTime
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.datetime
+  name: DateTime
+  nameWithType: DateTime
+  fullName: System.DateTime
+  nameWithType.vb: Date
+  fullName.vb: Date
+  name.vb: Date
+- uid: BackupService.Core.Entities.BackupChain.Incrementals*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.Incrementals
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_Incrementals
+  name: Incrementals
+  nameWithType: BackupChain.Incrementals
+  fullName: BackupService.Core.Entities.BackupChain.Incrementals
+- uid: System.Collections.Generic.List{System.String}
+  commentId: T:System.Collections.Generic.List{System.String}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<string>
+  nameWithType: List<string>
+  fullName: System.Collections.Generic.List<string>
+  nameWithType.vb: List(Of String)
+  fullName.vb: System.Collections.Generic.List(Of String)
+  name.vb: List(Of String)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: BackupService.Core.Entities.BackupChain.ChainId*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.ChainId
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_ChainId
+  name: ChainId
+  nameWithType: BackupChain.ChainId
+  fullName: BackupService.Core.Entities.BackupChain.ChainId
+- uid: BackupService.Core.Entities.BackupChain.Lsn*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.Lsn
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_Lsn
+  name: Lsn
+  nameWithType: BackupChain.Lsn
+  fullName: BackupService.Core.Entities.BackupChain.Lsn
+- uid: BackupService.Core.Entities.BackupChain.Timeline*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.Timeline
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_Timeline
+  name: Timeline
+  nameWithType: BackupChain.Timeline
+  fullName: BackupService.Core.Entities.BackupChain.Timeline
+- uid: System.Nullable{System.Int32}
+  commentId: T:System.Nullable{System.Int32}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int?
+  nameWithType: int?
+  fullName: int?
+  nameWithType.vb: Integer?
+  fullName.vb: Integer?
+  name.vb: Integer?
+  spec.csharp:
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+  spec.vb:
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: BackupService.Core.Entities.BackupChain.LastLsn*
+  commentId: Overload:BackupService.Core.Entities.BackupChain.LastLsn
+  href: BackupService.Core.Entities.BackupChain.html#BackupService_Core_Entities_BackupChain_LastLsn
+  name: LastLsn
+  nameWithType: BackupChain.LastLsn
+  fullName: BackupService.Core.Entities.BackupChain.LastLsn

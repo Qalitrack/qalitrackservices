@@ -1,0 +1,1597 @@
+### YamlMime:ManagedReference
+items:
+- uid: BackupService.Core.Services.DatabaseBackupService
+  commentId: T:BackupService.Core.Services.DatabaseBackupService
+  id: DatabaseBackupService
+  parent: BackupService.Core.Services
+  children:
+  - BackupService.Core.Services.DatabaseBackupService.#ctor(BackupService.Core.Interfaces.IMicroserviceRepository,BackupService.Core.Interfaces.IBackupCreationService,BackupService.Core.Interfaces.IBackupMetadataService,BackupService.Core.Interfaces.IBackupRestoreService,BackupService.Core.Interfaces.IBackupVerificationService,Quartz.ISchedulerFactory,System.IO.Abstractions.IFileSystem,Microsoft.Extensions.Logging.ILogger{BackupService.Core.Services.DatabaseBackupService})
+  - BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+  - BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+  - BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+  - BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  - BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  - BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  - BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync(System.String,System.Threading.CancellationToken)
+  langs:
+  - csharp
+  - vb
+  name: DatabaseBackupService
+  nameWithType: DatabaseBackupService
+  fullName: BackupService.Core.Services.DatabaseBackupService
+  type: Class
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: DatabaseBackupService
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 12
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  syntax:
+    content: 'public class DatabaseBackupService : IDatabaseBackupService'
+    content.vb: Public Class DatabaseBackupService Implements IDatabaseBackupService
+  inheritance:
+  - System.Object
+  implements:
+  - BackupService.Core.Interfaces.IDatabaseBackupService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: BackupService.Core.Services.DatabaseBackupService.#ctor(BackupService.Core.Interfaces.IMicroserviceRepository,BackupService.Core.Interfaces.IBackupCreationService,BackupService.Core.Interfaces.IBackupMetadataService,BackupService.Core.Interfaces.IBackupRestoreService,BackupService.Core.Interfaces.IBackupVerificationService,Quartz.ISchedulerFactory,System.IO.Abstractions.IFileSystem,Microsoft.Extensions.Logging.ILogger{BackupService.Core.Services.DatabaseBackupService})
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.#ctor(BackupService.Core.Interfaces.IMicroserviceRepository,BackupService.Core.Interfaces.IBackupCreationService,BackupService.Core.Interfaces.IBackupMetadataService,BackupService.Core.Interfaces.IBackupRestoreService,BackupService.Core.Interfaces.IBackupVerificationService,Quartz.ISchedulerFactory,System.IO.Abstractions.IFileSystem,Microsoft.Extensions.Logging.ILogger{BackupService.Core.Services.DatabaseBackupService})
+  id: '#ctor(BackupService.Core.Interfaces.IMicroserviceRepository,BackupService.Core.Interfaces.IBackupCreationService,BackupService.Core.Interfaces.IBackupMetadataService,BackupService.Core.Interfaces.IBackupRestoreService,BackupService.Core.Interfaces.IBackupVerificationService,Quartz.ISchedulerFactory,System.IO.Abstractions.IFileSystem,Microsoft.Extensions.Logging.ILogger{BackupService.Core.Services.DatabaseBackupService})'
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: DatabaseBackupService(IMicroserviceRepository, IBackupCreationService, IBackupMetadataService, IBackupRestoreService, IBackupVerificationService, ISchedulerFactory, IFileSystem, ILogger<DatabaseBackupService>)
+  nameWithType: DatabaseBackupService.DatabaseBackupService(IMicroserviceRepository, IBackupCreationService, IBackupMetadataService, IBackupRestoreService, IBackupVerificationService, ISchedulerFactory, IFileSystem, ILogger<DatabaseBackupService>)
+  fullName: BackupService.Core.Services.DatabaseBackupService.DatabaseBackupService(BackupService.Core.Interfaces.IMicroserviceRepository, BackupService.Core.Interfaces.IBackupCreationService, BackupService.Core.Interfaces.IBackupMetadataService, BackupService.Core.Interfaces.IBackupRestoreService, BackupService.Core.Interfaces.IBackupVerificationService, Quartz.ISchedulerFactory, System.IO.Abstractions.IFileSystem, Microsoft.Extensions.Logging.ILogger<BackupService.Core.Services.DatabaseBackupService>)
+  type: Constructor
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: .ctor
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 23
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  syntax:
+    content: public DatabaseBackupService(IMicroserviceRepository microserviceRepository, IBackupCreationService creationService, IBackupMetadataService metadataService, IBackupRestoreService restorationService, IBackupVerificationService verificationService, ISchedulerFactory schedulerFactory, IFileSystem fileSystem, ILogger<DatabaseBackupService> logger)
+    parameters:
+    - id: microserviceRepository
+      type: BackupService.Core.Interfaces.IMicroserviceRepository
+    - id: creationService
+      type: BackupService.Core.Interfaces.IBackupCreationService
+    - id: metadataService
+      type: BackupService.Core.Interfaces.IBackupMetadataService
+    - id: restorationService
+      type: BackupService.Core.Interfaces.IBackupRestoreService
+    - id: verificationService
+      type: BackupService.Core.Interfaces.IBackupVerificationService
+    - id: schedulerFactory
+      type: Quartz.ISchedulerFactory
+    - id: fileSystem
+      type: System.IO.Abstractions.IFileSystem
+    - id: logger
+      type: Microsoft.Extensions.Logging.ILogger{BackupService.Core.Services.DatabaseBackupService}
+    content.vb: Public Sub New(microserviceRepository As IMicroserviceRepository, creationService As IBackupCreationService, metadataService As IBackupMetadataService, restorationService As IBackupRestoreService, verificationService As IBackupVerificationService, schedulerFactory As ISchedulerFactory, fileSystem As IFileSystem, logger As ILogger(Of DatabaseBackupService))
+  overload: BackupService.Core.Services.DatabaseBackupService.#ctor*
+  nameWithType.vb: DatabaseBackupService.New(IMicroserviceRepository, IBackupCreationService, IBackupMetadataService, IBackupRestoreService, IBackupVerificationService, ISchedulerFactory, IFileSystem, ILogger(Of DatabaseBackupService))
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.New(BackupService.Core.Interfaces.IMicroserviceRepository, BackupService.Core.Interfaces.IBackupCreationService, BackupService.Core.Interfaces.IBackupMetadataService, BackupService.Core.Interfaces.IBackupRestoreService, BackupService.Core.Interfaces.IBackupVerificationService, Quartz.ISchedulerFactory, System.IO.Abstractions.IFileSystem, Microsoft.Extensions.Logging.ILogger(Of BackupService.Core.Services.DatabaseBackupService))
+  name.vb: New(IMicroserviceRepository, IBackupCreationService, IBackupMetadataService, IBackupRestoreService, IBackupVerificationService, ISchedulerFactory, IFileSystem, ILogger(Of DatabaseBackupService))
+- uid: BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+  id: CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: CreateBackupAsync(BackupType, string, string, string?, CancellationToken)
+  nameWithType: DatabaseBackupService.CreateBackupAsync(BackupType, string, string, string?, CancellationToken)
+  fullName: BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType, string, string, string?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: CreateBackupAsync
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 43
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  summary: Creates a SQL dump backup (only BackupType.Full supported)
+  example: []
+  syntax:
+    content: public Task<BackupResult> CreateBackupAsync(BackupType type, string microservice, string saveLocation, string? cronSchedule = null, CancellationToken ct = default)
+    parameters:
+    - id: type
+      type: BackupService.Core.Enums.BackupType
+    - id: microservice
+      type: System.String
+    - id: saveLocation
+      type: System.String
+    - id: cronSchedule
+      type: System.String
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Dtos.BackupResult}
+    content.vb: Public Function CreateBackupAsync(type As BackupType, microservice As String, saveLocation As String, cronSchedule As String = Nothing, ct As CancellationToken = Nothing) As Task(Of BackupResult)
+  overload: BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync*
+  implements:
+  - BackupService.Core.Interfaces.IDatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+  nameWithType.vb: DatabaseBackupService.CreateBackupAsync(BackupType, String, String, String, CancellationToken)
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType, String, String, String, System.Threading.CancellationToken)
+  name.vb: CreateBackupAsync(BackupType, String, String, String, CancellationToken)
+- uid: BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  id: RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: RestoreBackupAsync(string, string, CancellationToken)
+  nameWithType: DatabaseBackupService.RestoreBackupAsync(string, string, CancellationToken)
+  fullName: BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync(string, string, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: RestoreBackupAsync
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 62
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  summary: Restores a SQL dump backup from the specified file path
+  example: []
+  syntax:
+    content: public Task<RestoreResult> RestoreBackupAsync(string microservice, string backupFilePath, CancellationToken ct = default)
+    parameters:
+    - id: microservice
+      type: System.String
+    - id: backupFilePath
+      type: System.String
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Dtos.RestoreResult}
+    content.vb: Public Function RestoreBackupAsync(microservice As String, backupFilePath As String, ct As CancellationToken = Nothing) As Task(Of RestoreResult)
+  overload: BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync*
+  implements:
+  - BackupService.Core.Interfaces.IDatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  nameWithType.vb: DatabaseBackupService.RestoreBackupAsync(String, String, CancellationToken)
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync(String, String, System.Threading.CancellationToken)
+  name.vb: RestoreBackupAsync(String, String, CancellationToken)
+- uid: BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+  id: GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: GetAvailableBackupsAsync(string?, CancellationToken)
+  nameWithType: DatabaseBackupService.GetAvailableBackupsAsync(string?, CancellationToken)
+  fullName: BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync(string?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetAvailableBackupsAsync
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 91
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  summary: Gets list of available backup files
+  example: []
+  syntax:
+    content: public Task<List<BackupFileInfo>> GetAvailableBackupsAsync(string? microservice = null, CancellationToken ct = default)
+    parameters:
+    - id: microservice
+      type: System.String
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Dtos.BackupFileInfo}}
+    content.vb: Public Function GetAvailableBackupsAsync(microservice As String = Nothing, ct As CancellationToken = Nothing) As Task(Of List(Of BackupFileInfo))
+  overload: BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync*
+  implements:
+  - BackupService.Core.Interfaces.IDatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+  nameWithType.vb: DatabaseBackupService.GetAvailableBackupsAsync(String, CancellationToken)
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync(String, System.Threading.CancellationToken)
+  name.vb: GetAvailableBackupsAsync(String, CancellationToken)
+- uid: BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync(System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync(System.String,System.Threading.CancellationToken)
+  id: ValidateAllBackupsAsync(System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: ValidateAllBackupsAsync(string?, CancellationToken)
+  nameWithType: DatabaseBackupService.ValidateAllBackupsAsync(string?, CancellationToken)
+  fullName: BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync(string?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: ValidateAllBackupsAsync
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 98
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  syntax:
+    content: public Task ValidateAllBackupsAsync(string? microservice = null, CancellationToken ct = default)
+    parameters:
+    - id: microservice
+      type: System.String
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function ValidateAllBackupsAsync(microservice As String = Nothing, ct As CancellationToken = Nothing) As Task
+  overload: BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync*
+  nameWithType.vb: DatabaseBackupService.ValidateAllBackupsAsync(String, CancellationToken)
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync(String, System.Threading.CancellationToken)
+  name.vb: ValidateAllBackupsAsync(String, CancellationToken)
+- uid: BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+  id: GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: GetBackupStatisticsAsync(string?, CancellationToken)
+  nameWithType: DatabaseBackupService.GetBackupStatisticsAsync(string?, CancellationToken)
+  fullName: BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync(string?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetBackupStatisticsAsync
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 116
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  summary: Gets backup statistics
+  example: []
+  syntax:
+    content: public Task<BackupStatistics> GetBackupStatisticsAsync(string? microservice = null, CancellationToken ct = default)
+    parameters:
+    - id: microservice
+      type: System.String
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{BackupService.Core.Dtos.BackupStatistics}
+    content.vb: Public Function GetBackupStatisticsAsync(microservice As String = Nothing, ct As CancellationToken = Nothing) As Task(Of BackupStatistics)
+  overload: BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync*
+  implements:
+  - BackupService.Core.Interfaces.IDatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+  nameWithType.vb: DatabaseBackupService.GetBackupStatisticsAsync(String, CancellationToken)
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync(String, System.Threading.CancellationToken)
+  name.vb: GetBackupStatisticsAsync(String, CancellationToken)
+- uid: BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  id: UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: UnscheduleBackupAsync(string, BackupType, CancellationToken)
+  nameWithType: DatabaseBackupService.UnscheduleBackupAsync(string, BackupType, CancellationToken)
+  fullName: BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync(string, BackupService.Core.Enums.BackupType, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: UnscheduleBackupAsync
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 139
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  summary: Unschedules a backup (only BackupType.Full supported)
+  example: []
+  syntax:
+    content: public Task<bool> UnscheduleBackupAsync(string microservice, BackupType type, CancellationToken ct = default)
+    parameters:
+    - id: microservice
+      type: System.String
+    - id: type
+      type: BackupService.Core.Enums.BackupType
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Function UnscheduleBackupAsync(microservice As String, type As BackupType, ct As CancellationToken = Nothing) As Task(Of Boolean)
+  overload: BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync*
+  implements:
+  - BackupService.Core.Interfaces.IDatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  nameWithType.vb: DatabaseBackupService.UnscheduleBackupAsync(String, BackupType, CancellationToken)
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync(String, BackupService.Core.Enums.BackupType, System.Threading.CancellationToken)
+  name.vb: UnscheduleBackupAsync(String, BackupType, CancellationToken)
+- uid: BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  id: GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  parent: BackupService.Core.Services.DatabaseBackupService
+  langs:
+  - csharp
+  - vb
+  name: GetScheduledBackupsAsync(CancellationToken)
+  nameWithType: DatabaseBackupService.GetScheduledBackupsAsync(CancellationToken)
+  fullName: BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: packages/microservices/masterdata/BackupService/BackupService.Core/Services/DatabaseBackupService.cs
+      branch: main
+      repo: https://github.com/Joshuaisikah/qalitrackservices.git
+    id: GetScheduledBackupsAsync
+    path: BackupService.Core/Services/DatabaseBackupService.cs
+    startLine: 162
+  assemblies:
+  - BackupService.Core
+  namespace: BackupService.Core.Services
+  summary: Gets list of scheduled backups
+  example: []
+  syntax:
+    content: public Task<List<ScheduledBackup>> GetScheduledBackupsAsync(CancellationToken ct = default)
+    parameters:
+    - id: ct
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Entities.ScheduledBackup}}
+    content.vb: Public Function GetScheduledBackupsAsync(ct As CancellationToken = Nothing) As Task(Of List(Of ScheduledBackup))
+  overload: BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync*
+  implements:
+  - BackupService.Core.Interfaces.IDatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+references:
+- uid: BackupService.Core.Services
+  commentId: N:BackupService.Core.Services
+  href: BackupService.html
+  name: BackupService.Core.Services
+  nameWithType: BackupService.Core.Services
+  fullName: BackupService.Core.Services
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Services
+    name: Services
+    href: BackupService.Core.Services.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Services
+    name: Services
+    href: BackupService.Core.Services.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService
+  commentId: T:BackupService.Core.Interfaces.IDatabaseBackupService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html
+  name: IDatabaseBackupService
+  nameWithType: IDatabaseBackupService
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: BackupService.Core.Interfaces
+  commentId: N:BackupService.Core.Interfaces
+  href: BackupService.html
+  name: BackupService.Core.Interfaces
+  nameWithType: BackupService.Core.Interfaces
+  fullName: BackupService.Core.Interfaces
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Interfaces
+    name: Interfaces
+    href: BackupService.Core.Interfaces.html
+- uid: BackupService.Core.Services.DatabaseBackupService.#ctor*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.#ctor
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService__ctor_BackupService_Core_Interfaces_IMicroserviceRepository_BackupService_Core_Interfaces_IBackupCreationService_BackupService_Core_Interfaces_IBackupMetadataService_BackupService_Core_Interfaces_IBackupRestoreService_BackupService_Core_Interfaces_IBackupVerificationService_Quartz_ISchedulerFactory_System_IO_Abstractions_IFileSystem_Microsoft_Extensions_Logging_ILogger_BackupService_Core_Services_DatabaseBackupService__
+  name: DatabaseBackupService
+  nameWithType: DatabaseBackupService.DatabaseBackupService
+  fullName: BackupService.Core.Services.DatabaseBackupService.DatabaseBackupService
+  nameWithType.vb: DatabaseBackupService.New
+  fullName.vb: BackupService.Core.Services.DatabaseBackupService.New
+  name.vb: New
+- uid: BackupService.Core.Interfaces.IMicroserviceRepository
+  commentId: T:BackupService.Core.Interfaces.IMicroserviceRepository
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IMicroserviceRepository.html
+  name: IMicroserviceRepository
+  nameWithType: IMicroserviceRepository
+  fullName: BackupService.Core.Interfaces.IMicroserviceRepository
+- uid: BackupService.Core.Interfaces.IBackupCreationService
+  commentId: T:BackupService.Core.Interfaces.IBackupCreationService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupCreationService.html
+  name: IBackupCreationService
+  nameWithType: IBackupCreationService
+  fullName: BackupService.Core.Interfaces.IBackupCreationService
+- uid: BackupService.Core.Interfaces.IBackupMetadataService
+  commentId: T:BackupService.Core.Interfaces.IBackupMetadataService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupMetadataService.html
+  name: IBackupMetadataService
+  nameWithType: IBackupMetadataService
+  fullName: BackupService.Core.Interfaces.IBackupMetadataService
+- uid: BackupService.Core.Interfaces.IBackupRestoreService
+  commentId: T:BackupService.Core.Interfaces.IBackupRestoreService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupRestoreService.html
+  name: IBackupRestoreService
+  nameWithType: IBackupRestoreService
+  fullName: BackupService.Core.Interfaces.IBackupRestoreService
+- uid: BackupService.Core.Interfaces.IBackupVerificationService
+  commentId: T:BackupService.Core.Interfaces.IBackupVerificationService
+  parent: BackupService.Core.Interfaces
+  href: BackupService.Core.Interfaces.IBackupVerificationService.html
+  name: IBackupVerificationService
+  nameWithType: IBackupVerificationService
+  fullName: BackupService.Core.Interfaces.IBackupVerificationService
+- uid: Quartz.ISchedulerFactory
+  commentId: T:Quartz.ISchedulerFactory
+  parent: Quartz
+  isExternal: true
+  name: ISchedulerFactory
+  nameWithType: ISchedulerFactory
+  fullName: Quartz.ISchedulerFactory
+- uid: System.IO.Abstractions.IFileSystem
+  commentId: T:System.IO.Abstractions.IFileSystem
+  parent: System.IO.Abstractions
+  isExternal: true
+  name: IFileSystem
+  nameWithType: IFileSystem
+  fullName: System.IO.Abstractions.IFileSystem
+- uid: Microsoft.Extensions.Logging.ILogger{BackupService.Core.Services.DatabaseBackupService}
+  commentId: T:Microsoft.Extensions.Logging.ILogger{BackupService.Core.Services.DatabaseBackupService}
+  parent: Microsoft.Extensions.Logging
+  definition: Microsoft.Extensions.Logging.ILogger`1
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<DatabaseBackupService>
+  nameWithType: ILogger<DatabaseBackupService>
+  fullName: Microsoft.Extensions.Logging.ILogger<BackupService.Core.Services.DatabaseBackupService>
+  nameWithType.vb: ILogger(Of DatabaseBackupService)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of BackupService.Core.Services.DatabaseBackupService)
+  name.vb: ILogger(Of DatabaseBackupService)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - uid: BackupService.Core.Services.DatabaseBackupService
+    name: DatabaseBackupService
+    href: BackupService.Core.Services.DatabaseBackupService.html
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Services.DatabaseBackupService
+    name: DatabaseBackupService
+    href: BackupService.Core.Services.DatabaseBackupService.html
+  - name: )
+- uid: Quartz
+  commentId: N:Quartz
+  isExternal: true
+  name: Quartz
+  nameWithType: Quartz
+  fullName: Quartz
+- uid: System.IO.Abstractions
+  commentId: N:System.IO.Abstractions
+  isExternal: true
+  name: System.IO.Abstractions
+  nameWithType: System.IO.Abstractions
+  fullName: System.IO.Abstractions
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+  - name: .
+  - uid: System.IO
+    name: IO
+    isExternal: true
+  - name: .
+  - uid: System.IO.Abstractions
+    name: Abstractions
+    isExternal: true
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+  - name: .
+  - uid: System.IO
+    name: IO
+    isExternal: true
+  - name: .
+  - uid: System.IO.Abstractions
+    name: Abstractions
+    isExternal: true
+- uid: Microsoft.Extensions.Logging.ILogger`1
+  commentId: T:Microsoft.Extensions.Logging.ILogger`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  name: ILogger<TCategoryName>
+  nameWithType: ILogger<TCategoryName>
+  fullName: Microsoft.Extensions.Logging.ILogger<TCategoryName>
+  nameWithType.vb: ILogger(Of TCategoryName)
+  fullName.vb: Microsoft.Extensions.Logging.ILogger(Of TCategoryName)
+  name.vb: ILogger(Of TCategoryName)
+  spec.csharp:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: <
+  - name: TCategoryName
+  - name: '>'
+  spec.vb:
+  - uid: Microsoft.Extensions.Logging.ILogger`1
+    name: ILogger
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TCategoryName
+  - name: )
+- uid: Microsoft.Extensions.Logging
+  commentId: N:Microsoft.Extensions.Logging
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.Logging
+  nameWithType: Microsoft.Extensions.Logging
+  fullName: Microsoft.Extensions.Logging
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.Logging
+    name: Logging
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging
+- uid: BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService_CreateBackupAsync_BackupService_Core_Enums_BackupType_System_String_System_String_System_String_System_Threading_CancellationToken_
+  name: CreateBackupAsync
+  nameWithType: DatabaseBackupService.CreateBackupAsync
+  fullName: BackupService.Core.Services.DatabaseBackupService.CreateBackupAsync
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IDatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IDatabaseBackupService
+  isExternal: true
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_CreateBackupAsync_BackupService_Core_Enums_BackupType_System_String_System_String_System_String_System_Threading_CancellationToken_
+  name: CreateBackupAsync(BackupType, string, string, string, CancellationToken)
+  nameWithType: IDatabaseBackupService.CreateBackupAsync(BackupType, string, string, string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType, string, string, string, System.Threading.CancellationToken)
+  nameWithType.vb: IDatabaseBackupService.CreateBackupAsync(BackupType, String, String, String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IDatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType, String, String, String, System.Threading.CancellationToken)
+  name.vb: CreateBackupAsync(BackupType, String, String, String, CancellationToken)
+  spec.csharp:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+    name: CreateBackupAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_CreateBackupAsync_BackupService_Core_Enums_BackupType_System_String_System_String_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: BackupService.Core.Enums.BackupType
+    name: BackupType
+    href: BackupService.Core.Enums.BackupType.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.CreateBackupAsync(BackupService.Core.Enums.BackupType,System.String,System.String,System.String,System.Threading.CancellationToken)
+    name: CreateBackupAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_CreateBackupAsync_BackupService_Core_Enums_BackupType_System_String_System_String_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: BackupService.Core.Enums.BackupType
+    name: BackupType
+    href: BackupService.Core.Enums.BackupType.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: BackupService.Core.Enums.BackupType
+  commentId: T:BackupService.Core.Enums.BackupType
+  parent: BackupService.Core.Enums
+  href: BackupService.Core.Enums.BackupType.html
+  name: BackupType
+  nameWithType: BackupType
+  fullName: BackupService.Core.Enums.BackupType
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task{BackupService.Core.Dtos.BackupResult}
+  commentId: T:System.Threading.Tasks.Task{BackupService.Core.Dtos.BackupResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<BackupResult>
+  nameWithType: Task<BackupResult>
+  fullName: System.Threading.Tasks.Task<BackupService.Core.Dtos.BackupResult>
+  nameWithType.vb: Task(Of BackupResult)
+  fullName.vb: System.Threading.Tasks.Task(Of BackupService.Core.Dtos.BackupResult)
+  name.vb: Task(Of BackupResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: BackupService.Core.Dtos.BackupResult
+    name: BackupResult
+    href: BackupService.Core.Dtos.BackupResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Dtos.BackupResult
+    name: BackupResult
+    href: BackupService.Core.Dtos.BackupResult.html
+  - name: )
+- uid: BackupService.Core.Enums
+  commentId: N:BackupService.Core.Enums
+  href: BackupService.html
+  name: BackupService.Core.Enums
+  nameWithType: BackupService.Core.Enums
+  fullName: BackupService.Core.Enums
+  spec.csharp:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+  spec.vb:
+  - uid: BackupService
+    name: BackupService
+    href: BackupService.html
+  - name: .
+  - uid: BackupService.Core
+    name: Core
+    href: BackupService.Core.html
+  - name: .
+  - uid: BackupService.Core.Enums
+    name: Enums
+    href: BackupService.Core.Enums.html
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService_RestoreBackupAsync_System_String_System_String_System_Threading_CancellationToken_
+  name: RestoreBackupAsync
+  nameWithType: DatabaseBackupService.RestoreBackupAsync
+  fullName: BackupService.Core.Services.DatabaseBackupService.RestoreBackupAsync
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IDatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IDatabaseBackupService
+  isExternal: true
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_RestoreBackupAsync_System_String_System_String_System_Threading_CancellationToken_
+  name: RestoreBackupAsync(string, string, CancellationToken)
+  nameWithType: IDatabaseBackupService.RestoreBackupAsync(string, string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService.RestoreBackupAsync(string, string, System.Threading.CancellationToken)
+  nameWithType.vb: IDatabaseBackupService.RestoreBackupAsync(String, String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IDatabaseBackupService.RestoreBackupAsync(String, String, System.Threading.CancellationToken)
+  name.vb: RestoreBackupAsync(String, String, CancellationToken)
+  spec.csharp:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+    name: RestoreBackupAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_RestoreBackupAsync_System_String_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.RestoreBackupAsync(System.String,System.String,System.Threading.CancellationToken)
+    name: RestoreBackupAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_RestoreBackupAsync_System_String_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.Threading.Tasks.Task{BackupService.Core.Dtos.RestoreResult}
+  commentId: T:System.Threading.Tasks.Task{BackupService.Core.Dtos.RestoreResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RestoreResult>
+  nameWithType: Task<RestoreResult>
+  fullName: System.Threading.Tasks.Task<BackupService.Core.Dtos.RestoreResult>
+  nameWithType.vb: Task(Of RestoreResult)
+  fullName.vb: System.Threading.Tasks.Task(Of BackupService.Core.Dtos.RestoreResult)
+  name.vb: Task(Of RestoreResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: BackupService.Core.Dtos.RestoreResult
+    name: RestoreResult
+    href: BackupService.Core.Dtos.RestoreResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Dtos.RestoreResult
+    name: RestoreResult
+    href: BackupService.Core.Dtos.RestoreResult.html
+  - name: )
+- uid: BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService_GetAvailableBackupsAsync_System_String_System_Threading_CancellationToken_
+  name: GetAvailableBackupsAsync
+  nameWithType: DatabaseBackupService.GetAvailableBackupsAsync
+  fullName: BackupService.Core.Services.DatabaseBackupService.GetAvailableBackupsAsync
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IDatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IDatabaseBackupService
+  isExternal: true
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetAvailableBackupsAsync_System_String_System_Threading_CancellationToken_
+  name: GetAvailableBackupsAsync(string, CancellationToken)
+  nameWithType: IDatabaseBackupService.GetAvailableBackupsAsync(string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService.GetAvailableBackupsAsync(string, System.Threading.CancellationToken)
+  nameWithType.vb: IDatabaseBackupService.GetAvailableBackupsAsync(String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IDatabaseBackupService.GetAvailableBackupsAsync(String, System.Threading.CancellationToken)
+  name.vb: GetAvailableBackupsAsync(String, CancellationToken)
+  spec.csharp:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+    name: GetAvailableBackupsAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetAvailableBackupsAsync_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetAvailableBackupsAsync(System.String,System.Threading.CancellationToken)
+    name: GetAvailableBackupsAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetAvailableBackupsAsync_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Dtos.BackupFileInfo}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Dtos.BackupFileInfo}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<List<BackupFileInfo>>
+  nameWithType: Task<List<BackupFileInfo>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.List<BackupService.Core.Dtos.BackupFileInfo>>
+  nameWithType.vb: Task(Of List(Of BackupFileInfo))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.List(Of BackupService.Core.Dtos.BackupFileInfo))
+  name.vb: Task(Of List(Of BackupFileInfo))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: BackupService.Core.Dtos.BackupFileInfo
+    name: BackupFileInfo
+    href: BackupService.Core.Dtos.BackupFileInfo.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Dtos.BackupFileInfo
+    name: BackupFileInfo
+    href: BackupService.Core.Dtos.BackupFileInfo.html
+  - name: )
+  - name: )
+- uid: BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService_ValidateAllBackupsAsync_System_String_System_Threading_CancellationToken_
+  name: ValidateAllBackupsAsync
+  nameWithType: DatabaseBackupService.ValidateAllBackupsAsync
+  fullName: BackupService.Core.Services.DatabaseBackupService.ValidateAllBackupsAsync
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService_GetBackupStatisticsAsync_System_String_System_Threading_CancellationToken_
+  name: GetBackupStatisticsAsync
+  nameWithType: DatabaseBackupService.GetBackupStatisticsAsync
+  fullName: BackupService.Core.Services.DatabaseBackupService.GetBackupStatisticsAsync
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IDatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IDatabaseBackupService
+  isExternal: true
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetBackupStatisticsAsync_System_String_System_Threading_CancellationToken_
+  name: GetBackupStatisticsAsync(string, CancellationToken)
+  nameWithType: IDatabaseBackupService.GetBackupStatisticsAsync(string, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService.GetBackupStatisticsAsync(string, System.Threading.CancellationToken)
+  nameWithType.vb: IDatabaseBackupService.GetBackupStatisticsAsync(String, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IDatabaseBackupService.GetBackupStatisticsAsync(String, System.Threading.CancellationToken)
+  name.vb: GetBackupStatisticsAsync(String, CancellationToken)
+  spec.csharp:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+    name: GetBackupStatisticsAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetBackupStatisticsAsync_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetBackupStatisticsAsync(System.String,System.Threading.CancellationToken)
+    name: GetBackupStatisticsAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetBackupStatisticsAsync_System_String_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.Threading.Tasks.Task{BackupService.Core.Dtos.BackupStatistics}
+  commentId: T:System.Threading.Tasks.Task{BackupService.Core.Dtos.BackupStatistics}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<BackupStatistics>
+  nameWithType: Task<BackupStatistics>
+  fullName: System.Threading.Tasks.Task<BackupService.Core.Dtos.BackupStatistics>
+  nameWithType.vb: Task(Of BackupStatistics)
+  fullName.vb: System.Threading.Tasks.Task(Of BackupService.Core.Dtos.BackupStatistics)
+  name.vb: Task(Of BackupStatistics)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: BackupService.Core.Dtos.BackupStatistics
+    name: BackupStatistics
+    href: BackupService.Core.Dtos.BackupStatistics.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Dtos.BackupStatistics
+    name: BackupStatistics
+    href: BackupService.Core.Dtos.BackupStatistics.html
+  - name: )
+- uid: BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService_UnscheduleBackupAsync_System_String_BackupService_Core_Enums_BackupType_System_Threading_CancellationToken_
+  name: UnscheduleBackupAsync
+  nameWithType: DatabaseBackupService.UnscheduleBackupAsync
+  fullName: BackupService.Core.Services.DatabaseBackupService.UnscheduleBackupAsync
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IDatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IDatabaseBackupService
+  isExternal: true
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_UnscheduleBackupAsync_System_String_BackupService_Core_Enums_BackupType_System_Threading_CancellationToken_
+  name: UnscheduleBackupAsync(string, BackupType, CancellationToken)
+  nameWithType: IDatabaseBackupService.UnscheduleBackupAsync(string, BackupType, CancellationToken)
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService.UnscheduleBackupAsync(string, BackupService.Core.Enums.BackupType, System.Threading.CancellationToken)
+  nameWithType.vb: IDatabaseBackupService.UnscheduleBackupAsync(String, BackupType, CancellationToken)
+  fullName.vb: BackupService.Core.Interfaces.IDatabaseBackupService.UnscheduleBackupAsync(String, BackupService.Core.Enums.BackupType, System.Threading.CancellationToken)
+  name.vb: UnscheduleBackupAsync(String, BackupType, CancellationToken)
+  spec.csharp:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+    name: UnscheduleBackupAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_UnscheduleBackupAsync_System_String_BackupService_Core_Enums_BackupType_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: BackupService.Core.Enums.BackupType
+    name: BackupType
+    href: BackupService.Core.Enums.BackupType.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.UnscheduleBackupAsync(System.String,BackupService.Core.Enums.BackupType,System.Threading.CancellationToken)
+    name: UnscheduleBackupAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_UnscheduleBackupAsync_System_String_BackupService_Core_Enums_BackupType_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: BackupService.Core.Enums.BackupType
+    name: BackupType
+    href: BackupService.Core.Enums.BackupType.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync*
+  commentId: Overload:BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync
+  href: BackupService.Core.Services.DatabaseBackupService.html#BackupService_Core_Services_DatabaseBackupService_GetScheduledBackupsAsync_System_Threading_CancellationToken_
+  name: GetScheduledBackupsAsync
+  nameWithType: DatabaseBackupService.GetScheduledBackupsAsync
+  fullName: BackupService.Core.Services.DatabaseBackupService.GetScheduledBackupsAsync
+- uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  commentId: M:BackupService.Core.Interfaces.IDatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  parent: BackupService.Core.Interfaces.IDatabaseBackupService
+  isExternal: true
+  href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetScheduledBackupsAsync_System_Threading_CancellationToken_
+  name: GetScheduledBackupsAsync(CancellationToken)
+  nameWithType: IDatabaseBackupService.GetScheduledBackupsAsync(CancellationToken)
+  fullName: BackupService.Core.Interfaces.IDatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+    name: GetScheduledBackupsAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetScheduledBackupsAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: BackupService.Core.Interfaces.IDatabaseBackupService.GetScheduledBackupsAsync(System.Threading.CancellationToken)
+    name: GetScheduledBackupsAsync
+    href: BackupService.Core.Interfaces.IDatabaseBackupService.html#BackupService_Core_Interfaces_IDatabaseBackupService_GetScheduledBackupsAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Entities.ScheduledBackup}}
+  commentId: T:System.Threading.Tasks.Task{System.Collections.Generic.List{BackupService.Core.Entities.ScheduledBackup}}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<List<ScheduledBackup>>
+  nameWithType: Task<List<ScheduledBackup>>
+  fullName: System.Threading.Tasks.Task<System.Collections.Generic.List<BackupService.Core.Entities.ScheduledBackup>>
+  nameWithType.vb: Task(Of List(Of ScheduledBackup))
+  fullName.vb: System.Threading.Tasks.Task(Of System.Collections.Generic.List(Of BackupService.Core.Entities.ScheduledBackup))
+  name.vb: Task(Of List(Of ScheduledBackup))
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: BackupService.Core.Entities.ScheduledBackup
+    name: ScheduledBackup
+    href: BackupService.Core.Entities.ScheduledBackup.html
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: BackupService.Core.Entities.ScheduledBackup
+    name: ScheduledBackup
+    href: BackupService.Core.Entities.ScheduledBackup.html
+  - name: )
+  - name: )
