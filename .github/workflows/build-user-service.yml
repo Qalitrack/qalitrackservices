@@ -275,12 +275,12 @@ jobs:
           sed -i "/postgres-db:/,/user-service:/ s|build:|# build:|g" deployment/docker-compose.yml
           sed -i "/postgres-db:/,/user-service:/ s|context: .|# context: .|g" deployment/docker-compose.yml
           sed -i "/postgres-db:/,/user-service:/ s|dockerfile: Dockerfile.postgres|# dockerfile: Dockerfile.postgres|g" deployment/docker-compose.yml
-          sed -i "/postgres-db:/,/user-service:/ { /# build:/a\\      image: $POSTGRES_IMAGE_TAG }" deployment/docker-compose.yml
+          sed -i '/postgres-db:/,/user-service:/ { /# build:/a\\      image: '"$POSTGRES_IMAGE_TAG"' }' deployment/docker-compose.yml
           # Comment build for user-service
           sed -i "/user-service:/,$ s|build:|# build:|g" deployment/docker-compose.yml
           sed -i "/user-service:/,$ s|context: .|# context: .|g" deployment/docker-compose.yml
           sed -i "/user-service:/,$ s|dockerfile: Dockerfile|# dockerfile: Dockerfile|g" deployment/docker-compose.yml
-          sed -i "/user-service:/,$ { /# build:/a\\      image: $USER_IMAGE_TAG }" deployment/docker-compose.yml
+          sed -i '/user-service:/,$ { /# build:/a\\      image: '"$USER_IMAGE_TAG"' }' deployment/docker-compose.yml
       
       - name: Upload deployment files
         uses: actions/upload-artifact@v4
