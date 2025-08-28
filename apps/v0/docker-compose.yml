@@ -97,9 +97,6 @@ services:
   # User Service - NEW ADDITION
   user-service:
     image: ghcr.io/qalitrack/qalitrackservices/user-service:latest
-    build:
-      context: ../../packages/microservices/masterdata/user-service
-      dockerfile: Dockerfile
     ports:
       - "7006:80"
     environment:
