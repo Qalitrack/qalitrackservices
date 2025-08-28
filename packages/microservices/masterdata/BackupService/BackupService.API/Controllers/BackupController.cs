@@ -39,9 +39,6 @@ namespace BackupService.API.Controllers
         {
             try
             {
-                _logger.LogInformation("Creating {BackupType} backup for microservice: {Microservice}", 
-                    request.Type, request.Microservice);
-
                 // Validate microservice exists
                 var microservice = await _microserviceService.GetMicroserviceAsync(request.Microservice, ct);
                 
@@ -82,8 +79,7 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
 {
     try
     {
-        _logger.LogInformation("Restoring backup for microservice: {Microservice}, BackupId: {BackupId}", 
-            request.Microservice, request.BackupId);
+    
 
         // Validate microservice exists
         var microservice = await _microserviceService.GetMicroserviceAsync(request.Microservice, ct);
@@ -191,8 +187,7 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
         {
             try
             {
-                _logger.LogInformation("Getting available backups for microservice: {Microservice}", microservice ?? "all");
-
+        
                 var backups = await _backupService.GetAvailableBackupsAsync(microservice, ct);
                 return Ok(backups);
             }
@@ -219,7 +214,6 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
         {
             try
             {
-                _logger.LogInformation("Getting backup statistics for microservice: {Microservice}", microservice ?? "all");
 
                 var statistics = await _backupService.GetBackupStatisticsAsync(microservice, ct);
                 return Ok(statistics);
@@ -241,7 +235,6 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
         {
             try
             {
-                _logger.LogInformation("Getting scheduled backups");
 
                 var scheduledBackups = await _backupService.GetScheduledBackupsAsync(ct);
                 return Ok(scheduledBackups);
@@ -268,8 +261,6 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
         {
             try
             {
-                _logger.LogInformation("Unscheduling {BackupType} backup for microservice: {Microservice}", 
-                    backupType, microservice);
 
                 var result = await _backupService.UnscheduleBackupAsync(microservice, backupType, ct);
                 
