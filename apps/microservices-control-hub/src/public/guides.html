@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Guides - Control Hub</title>
+    <link rel="stylesheet" href="/css/guides.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='20'>📚</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="breadcrumb">
+                <a href="/">🏠 Control Hub</a>
+                <span class="separator">›</span>
+                <span class="current">Service Guides</span>
+            </nav>
+            <div class="page-title">
+                <h1>📚 Service Guides</h1>
+                <p>Browse documentation for your microservices</p>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="search-section">
+                <input type="text" id="searchInput" placeholder="🔍 Search services..." aria-label="Search services">
+            </div>
+            
+            <div class="guides-section">
+                <div class="section-header">
+                    <h2>Available Documentation</h2>
+                    <span class="service-count" id="serviceCount">Loading...</span>
+                </div>
+                <div id="services-list" class="services-grid">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading service guides...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/guides.js"></script>
+</body>
+</html>
