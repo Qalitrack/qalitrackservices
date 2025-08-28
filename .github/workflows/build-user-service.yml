@@ -271,16 +271,97 @@ jobs:
           cp -r ${{ env.SERVICE_PATH }}/scripts deployment/scripts
           USER_IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:main-${{ github.sha }}"
           POSTGRES_IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/userservice-postgres:main-${{ github.sha }}"
-          # Comment build for postgres-db
-          sed -i "/postgres-db:/,/user-service:/ s|build:|# build:|g" deployment/docker-compose.yml
-          sed -i "/postgres-db:/,/user-service:/ s|context: .|# context: .|g" deployment/docker-compose.yml
-          sed -i "/postgres-db:/,/user-service:/ s|dockerfile: Dockerfile.postgres|# dockerfile: Dockerfile.postgres|g" deployment/docker-compose.yml
-          sed -i '/postgres-db:/,/user-service:/ { /# build:/a\\      image: '"$POSTGRES_IMAGE_TAG"' }' deployment/docker-compose.yml
-          # Comment build for user-service
-          sed -i "/user-service:/,$ s|build:|# build:|g" deployment/docker-compose.yml
-          sed -i "/user-service:/,$ s|context: .|# context: .|g" deployment/docker-compose.yml
-          sed -i "/user-service:/,$ s|dockerfile: Dockerfile|# dockerfile: Dockerfile|g" deployment/docker-compose.yml
-          sed -i '/user-service:/,$ { /# build:/a\\      image: '"$USER_IMAGE_TAG"' }' deployment/docker-compose.yml
+          
+          # Create a clean docker-compose.yml with proper image references
+          cat > deployment/docker-compose.yml << EOF
+          version: '3.8'
+
+          services:
+            user-service:
+              image: $USER_IMAGE_TAG
+              container_name: user-service
+              restart: unless-stopped
+              environment:
+                - ASPNETCORE_ENVIRONMENT=Production
+                - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=userservicedb;Username=userservice;Password=userservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+                - ConnectionStrings__Redis=redis:6379,password=userservice123
+                - UsePostgreSQL=true
+                - UseRedis=true
+                - Email__FromEmail=noreply@qalitrack.com
+                - Email__FromName=QaliTrack System
+                - Email__SmtpHost=smtp.gmail.com
+                - Email__SmtpPort=587
+                - Email__SmtpUsername=joshuaiska@gmail.com
+                - Email__SmtpPassword=dgln ffbs ixvg pxuj
+                - Email__EnableSsl=true
+                - RabbitMQ__Host=rabbitmq
+                - RabbitMQ__Port=5672
+                - RabbitMQ__Username=admin
+                - RabbitMQ__Password=securepassword
+                - RabbitMQ__VirtualHost=/
+              ports:
+                - "8080:80"
+              volumes:
+                - ./data:/app/data
+                - ./logs:/app/logs
+              depends_on:
+                - postgres-db
+                - redis
+                - rabbitmq
+              networks:
+                - userservice-network
+
+            postgres-db:
+              image: $POSTGRES_IMAGE_TAG
+              container_name: userservice-postgres-db
+              restart: unless-stopped
+              environment:
+                - POSTGRES_USER=userservice
+                - POSTGRES_PASSWORD=userservice123
+                - POSTGRES_DB=userservicedb
+              ports:
+                - "5434:5432"
+              volumes:
+                - postgres_data:/var/lib/postgresql/data
+              networks:
+                - userservice-network
+
+            redis:
+              image: redis:7-alpine
+              container_name: userservice-redis
+              restart: unless-stopped
+              command: redis-server --requirepass userservice123
+              ports:
+                - "6379:6379"
+              volumes:
+                - redis_data:/data
+              networks:
+                - userservice-network
+
+            rabbitmq:
+              image: rabbitmq:3-management-alpine
+              container_name: userservice-rabbitmq
+              restart: unless-stopped
+              environment:
+                - RABBITMQ_DEFAULT_USER=admin
+                - RABBITMQ_DEFAULT_PASS=securepassword
+              ports:
+                - "5672:5672"
+                - "15672:15672"
+              volumes:
+                - rabbitmq_data:/var/lib/rabbitmq
+              networks:
+                - userservice-network
+
+          networks:
+            userservice-network:
+              driver: bridge
+
+          volumes:
+            postgres_data:
+            redis_data:
+            rabbitmq_data:
+          EOF
       
       - name: Upload deployment files
         uses: actions/upload-artifact@v4
