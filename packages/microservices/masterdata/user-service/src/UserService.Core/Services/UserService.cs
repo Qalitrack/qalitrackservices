@@ -30,7 +30,6 @@ namespace UserService.Core.Services
             var user = await userRepository.GetByIdAsync(id, true);
             if (user == null)
             {
-                _logger.LogInformation("User with ID {UserId} not found for restore", id);
                 return false;
             }
 
@@ -47,23 +46,9 @@ namespace UserService.Core.Services
     
             if (user == null) 
             {
-                _logger.LogInformation("User with ID {UserId} not found", id);
                 return null;
             }
-
-            _logger.LogInformation("User found. UserRoles count: {Count}", 
-                user.UserRoles?.Count ?? 0);
-        
-            if (user.UserRoles != null)
-            {
-                foreach (var userRole in user.UserRoles)
-                {
-                    _logger.LogInformation("Role: {RoleName}, IsDeleted: {IsDeleted}", 
-                        userRole.Role?.Name, 
-                        userRole.IsDeleted || userRole.Role?.IsDeleted == true);
-                }
-            }
-
+            
             return mapper.Map<UserReadDto>(user);
         }
 
@@ -94,7 +79,6 @@ namespace UserService.Core.Services
             var existingUser = await userRepository.GetByIdAsync(id, true);
             if (existingUser == null)
             {
-                _logger.LogInformation("User with ID {UserId} not found for update", id);
                 return null;
             }
 
@@ -122,7 +106,6 @@ namespace UserService.Core.Services
             var user = await userRepository.GetByIdAsync(id, true);
             if (user == null)
             {
-                _logger.LogInformation("User with ID {UserId} not found for deletion", id);
                 return false;
             }
 
@@ -270,7 +253,6 @@ namespace UserService.Core.Services
             var user = await userRepository.GetByIdAsync(userId, true);
             if (user == null)
             {
-                _logger.LogInformation("User with ID {UserId} not found for status update", userId);
                 return false;
             }
 

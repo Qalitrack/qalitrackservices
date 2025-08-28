@@ -68,8 +68,7 @@ namespace UserService.Core.Services
             {
                 // Call the repository to update the user status
                 await _userStatusRepository.UpdateUserStatusAsync(update.UserId, update.IsActive);
-                _logger.LogInformation("Successfully updated user {UserId} status to {Status}", 
-                    update.UserId, update.IsActive ? "online" : "offline");
+           
             }
             catch (Exception ex)
             {

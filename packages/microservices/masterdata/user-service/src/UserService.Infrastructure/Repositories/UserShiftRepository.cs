@@ -2,26 +2,28 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Utilities;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories;
 
-public class UserShiftRepository : Repository<UserShift>,IUserShiftRepository
+public class UserShiftRepository : Repository<UserShift>, IUserShiftRepository
 {
     private readonly UserServiceDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<UserShiftRepository> logger;
+    private readonly ILogger<UserShiftRepository> _logger;
 
-    public UserShiftRepository(UserServiceDbContext context) : base(context, new HttpContextAccessor(), new LoggerFactory().CreateLogger<UserShiftRepository>())
+    public UserShiftRepository(
+        UserServiceDbContext context,
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<UserShiftRepository> logger
+    ) : base(context, httpContextAccessor, logger)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
-        _httpContextAccessor = (IHttpContextAccessor)GetType().GetField("_httpContextAccessor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
-        logger = (ILogger<UserShiftRepository>)GetType().GetField("logger", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this);
+        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
-
     public async Task<IEnumerable<UserShift>> GetAllAsync()
     {
         return await _context.UserShifts.ToListAsync();

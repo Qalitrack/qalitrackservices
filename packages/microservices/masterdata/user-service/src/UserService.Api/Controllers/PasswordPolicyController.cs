@@ -5,11 +5,13 @@ using UserService.Core.DTOs;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UserService.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class PasswordPolicyController : ControllerBase
     {
         private readonly PasswordPolicyService _passwordPolicyService;
@@ -31,7 +33,6 @@ namespace UserService.Api.Controllers
                 var policy = await _passwordPolicyService.GetPolicyAsync();
                 if (policy == null)
                 {
-                    _logger.LogInformation("No password policy found");
                     return NotFound("No password policy found");
                 }
                 return Ok(policy);
@@ -62,12 +63,10 @@ namespace UserService.Api.Controllers
                 }
 
                 await _passwordPolicyService.UpdatePolicyAsync(policy);
-                _logger.LogInformation("Password policy updated successfully");
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating password policy");
                 return StatusCode(500, "An error occurred while updating the password policy");
             }
         }

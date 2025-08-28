@@ -1,9 +1,5 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Core.Interfaces;
-using Microsoft.Extensions.Logging;
 using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers

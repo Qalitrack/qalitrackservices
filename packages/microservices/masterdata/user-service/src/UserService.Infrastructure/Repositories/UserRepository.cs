@@ -144,7 +144,7 @@ namespace UserService.Infrastructure.Repositories
             user.IsDeleted = false;
             user.IsActive = true;  // Ensure user is active after restoration
             user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -176,7 +176,7 @@ namespace UserService.Infrastructure.Repositories
                     
                     user.IsActive = isActive;
                     user.UpdatedAt = DateTime.UtcNow;
-                    user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+                    user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
                     
                     
                     return await _context.SaveChangesAsync() > 0;
@@ -190,43 +190,33 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<User?> GetByIdAsync(string id, bool includeRoles = true)
              {
-            logger.LogInformation("🔍 GetByIdAsync - Starting for UserId: {UserId}, includeRoles: {IncludeRoles}", id, includeRoles);
-            
             try
             {
-                logger.LogInformation("1. Creating base query...");
                 var query = _context.Users.AsQueryable();
 
-                logger.LogInformation("2. includeRoles flag is: {IncludeRoles}", includeRoles);
                 
                 if (includeRoles)
                 {
-                    logger.LogInformation("3. Adding UserRoles and Role includes to query...");
                     query = query
                         .Include(u => u.UserRoles)
                         .ThenInclude(ur => ur.Role);
                 }
 
-                logger.LogInformation("4. Executing query...");
                 var user = await query.Include(user => user.UserRoles).ThenInclude(userRole => userRole.Role)
                     .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
 
                 if (user == null)
                 {
-                    logger.LogWarning("❌ User with ID {UserId} not found or is deleted", id);
                     return null;
                 }
 
-                logger.LogInformation("✅ User {UserId} found successfully", id);
                 
                 if (includeRoles)
                 {
-                    logger.LogInformation("5. Checking loaded roles...");
     
                     // Use pattern matching for cleaner null checks
                     if (user.UserRoles is { Count: > 0 } userRoles)
                     {
-                        logger.LogInformation("6. Number of roles loaded: {RoleCount}", userRoles.Count);
         
                         foreach (var userRole in userRoles)
                         {
@@ -235,7 +225,6 @@ namespace UserService.Infrastructure.Repositories
                                 ? $"RoleId: {userRole.RoleId}, RoleName: {role.Name}" 
                                 : $"RoleId: {userRole.RoleId}, Role is null";
             
-                            logger.LogInformation("   - {RoleInfo}", roleInfo);
                         }
                     }
                     else
@@ -273,8 +262,6 @@ namespace UserService.Infrastructure.Repositories
                 if (user.UserShifts?.Any() == true)
                 {
                     var shiftCount = user.UserShifts.Count();
-                    logger.LogInformation("Soft deleting user {UserId} - removing from {ShiftCount} shifts", id, shiftCount);
-                    
                     // Remove user from all shifts
                     _context.UserShifts.RemoveRange(user.UserShifts);
                 }
@@ -282,7 +269,6 @@ namespace UserService.Infrastructure.Repositories
                 if (user.UserRoles?.Any() == true)
                 {
                     var roleCount = user.UserRoles.Count();
-                    logger.LogInformation("Soft deleting user {UserId} - removing {RoleCount} role assignments", id, roleCount);
                     
                     // Remove all role assignments
                     _context.UserRoles.RemoveRange(user.UserRoles);
@@ -291,12 +277,11 @@ namespace UserService.Infrastructure.Repositories
                 // Perform soft delete
                 user.IsDeleted = true;
                 user.UpdatedAt = DateTime.UtcNow;
-                user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+                user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
                 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 
-                logger.LogInformation("Successfully soft deleted user {UserId} with cascading cleanup", id);
                 return true;
             }
             catch (Exception ex)
@@ -445,7 +430,7 @@ namespace UserService.Infrastructure.Repositories
             existingUser.IsActive = entity.IsActive;
             existingUser.IsFirstLogin = entity.IsFirstLogin;
             existingUser.UpdatedAt = DateTime.UtcNow;
-            existingUser.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+            existingUser.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
             await _context.SaveChangesAsync();
             return existingUser;
         }

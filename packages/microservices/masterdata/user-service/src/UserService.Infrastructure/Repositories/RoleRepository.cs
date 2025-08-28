@@ -92,12 +92,7 @@ namespace UserService.Infrastructure.Repositories
             return await _context.Roles
                 .FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.Trim().ToLower() && !r.IsDeleted);
         }
-
-        public async Task<bool> DoesRoleExistAsync(string roleName)
-        {
-            return await _context.Roles
-                .AnyAsync(r => r.Name == roleName && !r.IsDeleted);
-        }
+        
 
         public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
         {
@@ -122,14 +117,7 @@ namespace UserService.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
-
-
-        public async Task<IEnumerable<Role>> GetByIdsAsync(IEnumerable<string> select)
-        {
-            return await _context.Roles
-                .Where(r => select.Contains(r.Id))
-                .ToListAsync(); 
-        }
+        
 
         public async Task<Role?> GetRoleWithPermissionsAsync(string roleName)
         {

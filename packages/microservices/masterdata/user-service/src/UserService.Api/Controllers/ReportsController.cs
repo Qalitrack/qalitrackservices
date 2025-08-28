@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Report;
 using UserService.Core.DTOs.Common;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
@@ -34,7 +33,6 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Generating paginated shift report with page {Page}, size {PageSize}", parameters.Page, parameters.PageSize);
                 var report = await _reportService.GenerateShiftReportAsync(parameters);
                 return Ok(report);
             }
@@ -60,7 +58,6 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Generating paginated user report with page {Page}, size {PageSize}", parameters.Page, parameters.PageSize);
                 var report = await _reportService.GenerateUserReportAsync(parameters);
                 return Ok(report);
             }
@@ -82,7 +79,6 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Generating shift details report for shift {ShiftId}", shiftId);
                 var report = await _reportService.GetShiftDetailsReportAsync(shiftId);
                 
                 if (report == null)
@@ -111,7 +107,6 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Generating user details report for user {UserId}", userId);
                 var report = await _reportService.GetUserDetailsReportAsync(userId);
                 
                 if (report == null)
