@@ -96,22 +96,16 @@ namespace UserService.Infrastructure.Repositories
 
             if (entity is BaseEntity baseEntity)
             {
-                // Soft delete
                 var currentUserId = GetCurrentUserId();
                 baseEntity.IsDeleted = true;
                 baseEntity.UpdatedAt = DateTime.UtcNow;
                 baseEntity.UpdatedBy = currentUserId;
-                
+
                 await _dbContext.SaveChangesAsync();
-            }
-            else
-            {
-                // Hard delete for entities that don't support soft delete
-                _dbSet.Remove(entity);
-                await _dbContext.SaveChangesAsync();
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         // Restore method for soft-deleted entities
@@ -174,18 +168,5 @@ namespace UserService.Infrastructure.Repositories
 
             return id;
         }
-
-        // Common helper methods
-        protected async Task<bool> ExistsAsync(object id)
-        {
-            return await _dbSet.FindAsync(id) != null;
-        }
-        
-        protected async Task<int> SaveChangesAsync()
-        {
-            return await _dbContext.SaveChangesAsync();
-        }
-        
-        protected IQueryable<T> Query => _dbSet.AsQueryable();
     }
 }

@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Common;
+using UserService.Core.DTOs.UserRole;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
+using AutoMapper;
 
 namespace UserService.Core.Services
 {
@@ -10,6 +12,7 @@ namespace UserService.Core.Services
         IUserRepository userRepository,
         IRoleRepository roleRepository,
         ICacheService cacheService,
+        IMapper mapper,
         ILogger<UserRoleService> logger)
         : IUserRoleService
     {
@@ -81,6 +84,29 @@ namespace UserService.Core.Services
             else
             {
                 return new ServiceResult { Success = false, Message = "User is not assigned to this role." };
+            }
+        }
+
+        public async Task<PagedResult<UserRoleDto>> GetDeletedPagedAsync(PaginationParameters parameters)
+        {
+            try
+            {
+                var pagedResult = await userRoleRepository.GetDeletedPagedAsync(parameters);
+                
+                var userRoleDtos = mapper.Map<List<UserRoleDto>>(pagedResult.Items);
+
+                return new PagedResult<UserRoleDto>
+                {
+                    Items = userRoleDtos,
+                    Page = pagedResult.Page,
+                    PageSize = pagedResult.PageSize,
+                    TotalCount = pagedResult.TotalCount
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error retrieving deleted user-role relationships");
+                throw;
             }
         }
     }

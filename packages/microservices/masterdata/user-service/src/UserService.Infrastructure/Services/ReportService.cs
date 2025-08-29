@@ -64,9 +64,9 @@ namespace UserService.Infrastructure.Services
                     IsActive = s.IsActive,
                     CreatedBy = s.CreatedBy,
                     UpdatedBy = s.UpdatedBy,
-                    AssignedUsersCount = s.UserShifts?.Count ?? 0,
+                    AssignedUsersCount = s.UserShifts?.Count(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted) ?? 0,
                     LastModified = s.UpdatedAt > s.CreatedAt ? s.UpdatedAt : s.CreatedAt,
-                    AssignedUsers = s.UserShifts?.Where(us => us.User != null && !us.User.IsDeleted)
+                    AssignedUsers = s.UserShifts?.Where(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted)
                                                 .Select(us => new AssignedUserDto
                                                 {
                                                     Id = us.User.Id,
@@ -136,7 +136,7 @@ namespace UserService.Infrastructure.Services
                     UpdatedBy = u.UpdatedBy,
                     LastModified = u.UpdatedAt > u.CreatedAt ? u.UpdatedAt : u.CreatedAt,
                     AssignedShifts = u.UserShifts
-                        .Where(us => us.Shift != null)
+                        .Where(us => !us.IsDeleted && us.Shift != null && !us.Shift.IsDeleted)
                         .Select(us => new UserShiftInfoDto
                         {
                             ShiftId = us.ShiftId,
@@ -188,9 +188,9 @@ namespace UserService.Infrastructure.Services
                     EndTime = shift.EndTime,
                     Mode = shift.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected
                     IsActive = shift.IsActive,
-                    AssignedUsersCount = shift.UserShifts?.Count ?? 0,
+                    AssignedUsersCount = shift.UserShifts?.Count(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted) ?? 0,
                     LastModified = shift.UpdatedAt > shift.CreatedAt ? shift.UpdatedAt : shift.CreatedAt,
-                    AssignedUsers = shift.UserShifts?.Where(us => us.User != null && !us.User.IsDeleted)
+                    AssignedUsers = shift.UserShifts?.Where(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted)
                                                   .Select(us => new AssignedUserDto
                                                   {
                                                       Id = us.User.Id,
@@ -232,14 +232,15 @@ namespace UserService.Infrastructure.Services
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     IsActive = !user.IsDeleted,
-                    AssignedShifts = user.UserShifts?.Select(us => new UserShiftInfoDto
-                    {
-                        ShiftId = us.ShiftId,
-                        ShiftName = us.Shift?.Name ?? "Unknown",
-                        ShiftMode = us.Shift?.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected
-                        AssignedAt = us.AssignedAt,
-                        IsActive = us.Shift?.IsActive ?? false
-                    }).ToList()
+                    AssignedShifts = user.UserShifts?.Where(us => !us.IsDeleted && us.Shift != null && !us.Shift.IsDeleted)
+                        .Select(us => new UserShiftInfoDto
+                        {
+                            ShiftId = us.ShiftId,
+                            ShiftName = us.Shift?.Name ?? "Unknown",
+                            ShiftMode = us.Shift?.Mode == ShiftMode.Open ? "Open" : "Strict",
+                            AssignedAt = us.AssignedAt,
+                            IsActive = us.Shift?.IsActive ?? false
+                        }).ToList()
                 };
             }
             catch (Exception ex)

@@ -12,7 +12,6 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<PasswordPolicy?> GetCurrentPolicyAsync()
         {
-            // Assume only one active policy exists, or fetch the latest by UpdatedAt
             return await _context.PasswordPolicies
                 .OrderByDescending(p => p.UpdatedAt)
                 .FirstOrDefaultAsync();

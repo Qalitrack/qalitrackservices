@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Api.Controllers
 {
@@ -141,6 +142,43 @@ namespace UserService.Api.Controllers
                     Errors = (string[])null, 
                     StatusCode = 400 
                 });
+            }
+        }
+
+        [HttpGet("deleted")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDeletedUserRoles(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false)
+        {
+            try
+            {
+                var parameters = new PaginationParameters
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    Search = search,
+                    SortBy = sortBy,
+                    SortDescending = sortDescending
+                };
+
+                var result = await _userRoleService.GetDeletedPagedAsync(parameters);
+                
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving deleted user-role relationships");
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    new { Success = false, Message = "An error occurred while retrieving deleted user-role relationships" });
             }
         }
     }

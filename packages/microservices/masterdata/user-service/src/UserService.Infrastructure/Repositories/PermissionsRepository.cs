@@ -9,13 +9,14 @@ using UserService.Core.DTOs.Roles;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
+using UserService.Core.DTOs.Common;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
 {
     public class PermissionsRepository(
         UserServiceDbContext dbContext,
-        IHttpContextAccessor httpContextAccessor,ILogger<PermissionsRepository> logger)
+        IHttpContextAccessor httpContextAccessor, ILogger<PermissionsRepository> logger)
         : Repository<Permission>(dbContext, httpContextAccessor, logger), IPermissionsRepository
     {
         private readonly UserServiceDbContext _dbContext = dbContext;
@@ -31,24 +32,24 @@ namespace UserService.Infrastructure.Repositories
         {
             var query = _dbContext.Permissions
                 .Where(p => !p.IsDeleted && p.Id == id);
-            
+
             if (includeRelated)
             {
                 query = query
                     .Include(p => p.RolePermissions.Where(rp => !rp.IsDeleted))
                     .ThenInclude(rp => rp.Role);
             }
-            
+
             return await query
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
 
-        public  async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id)
         {
             return await base.DeleteAsync(id);
         }
-        
+
 
         public async Task<bool> DoesPermissionExistAsync(string name)
         {
@@ -76,7 +77,7 @@ namespace UserService.Infrastructure.Repositories
 
             // If we had access to RolePermissionRepository, we'd use:
             // await rolePermissionRepository.CreateAsync(rolePermission);
-            
+
             // For now, manually set audit fields (consistent with base repository logic)
             var currentUserId = GetCurrentUserId();
             rolePermission.Id = Guid.NewGuid().ToString();
@@ -90,28 +91,7 @@ namespace UserService.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
             return true;
         }
-
-        public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
-        {
-            var rolePermission = await _dbContext.RolePermissions
-                .AsTracking()
-                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && 
-                                          rp.PermissionId == permissionId && 
-                                          !rp.IsDeleted);
-
-            if (rolePermission == null)
-                return false;
-
-            // Apply the same soft delete logic as base repository
-            var currentUserId = GetCurrentUserId();
-            rolePermission.IsDeleted = true;
-            rolePermission.UpdatedAt = DateTime.UtcNow;
-            rolePermission.UpdatedBy = currentUserId;
-
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-
+        
         public async Task<IEnumerable<Role>> GetRolesForPermissionAsync(string permissionId)
         {
             return await _dbContext.RolePermissions
@@ -126,6 +106,54 @@ namespace UserService.Infrastructure.Repositories
                 .Select(rp => rp.Role)
                 .Distinct()
                 .ToListAsync();
+        }
+
+        public async Task<PagedResult<Permission>> GetDeletedPagedAsync(PaginationParameters parameters)
+        {
+            var query = _dbContext.Permissions
+                .IgnoreQueryFilters()
+                .Where(p => p.IsDeleted);
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            {
+                var searchTerm = parameters.Search.ToLower();
+                query = query.Where(p => p.Name.ToLower().Contains(searchTerm));
+            }
+
+            // Apply sorting
+            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
+            {
+                query = parameters.SortBy.ToLower() switch
+                {
+                    "name" => parameters.SortDescending 
+                        ? query.OrderByDescending(p => p.Name)
+                        : query.OrderBy(p => p.Name),
+                    "createdat" => parameters.SortDescending 
+                        ? query.OrderByDescending(p => p.CreatedAt)
+                        : query.OrderBy(p => p.CreatedAt),
+                    _ => query.OrderBy(p => p.Name)
+                };
+            }
+            else
+            {
+                query = query.OrderBy(p => p.Name);
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((parameters.Page - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return new PagedResult<Permission>
+            {
+                Items = items,
+                Page = parameters.Page,
+                PageSize = parameters.PageSize,
+                TotalCount = totalCount
+            };
         }
     }
 }

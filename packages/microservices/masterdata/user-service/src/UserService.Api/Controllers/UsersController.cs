@@ -12,7 +12,7 @@ namespace UserService.Api.Controllers
     [Authorize]
     [ApiController]
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     public class UsersController(
         IUserService userService,
         IUserRoleService userRoleService,
@@ -249,24 +249,6 @@ namespace UserService.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{userId}/permissions/debug")]
-        [Authorize(Policy = "users.manage")]
-        public async Task<IActionResult> GetUserPermissionsDebug(string userId)
-        {
-            var userRoles = await _userRoleService.GetUserRolesAsync(userId);
-            var permissions = await _userService.GetUserPermissionsAsync(userId);
-            
-            var result = new
-            {
-                userId,
-                totalPermissions = permissions?.Count() ?? 0,
-                permissions = permissions?.Select(p => new { p.Id, p.Name }) ?? Enumerable.Empty<object>(),
-                roles = userRoles ?? Enumerable.Empty<string>(),
-                timestamp = DateTime.UtcNow
-            };
-            
-            return Ok(result);
-        }
 
         [HttpGet("paged")]
         [Authorize(Policy = "users.view")]

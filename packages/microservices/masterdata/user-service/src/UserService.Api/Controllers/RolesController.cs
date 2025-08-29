@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Api.Controllers
 {
@@ -95,11 +96,12 @@ namespace UserService.Api.Controllers
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
                 _logger.LogWarning(ex, "Validation error creating role");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
@@ -117,11 +119,12 @@ namespace UserService.Api.Controllers
                 };
 
                 _logger.LogWarning(ex, "Database constraint error creating role: {ErrorMessage}", errorMessage);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = errorMessage, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = errorMessage,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (InvalidOperationException ex)
@@ -131,11 +134,12 @@ namespace UserService.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while creating role");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred while creating the role", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "An error occurred while creating the role",
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
         }
@@ -163,11 +167,12 @@ namespace UserService.Api.Controllers
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
                 _logger.LogWarning(ex, "Validation error updating role with ID: {RoleId}", id);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
@@ -185,20 +190,22 @@ namespace UserService.Api.Controllers
                 };
 
                 _logger.LogWarning(ex, "Database constraint error updating role: {ErrorMessage}", errorMessage);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = errorMessage, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = errorMessage,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 404 
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 404
                 });
             }
             catch (InvalidOperationException ex)
@@ -208,11 +215,12 @@ namespace UserService.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while updating role with ID: {RoleId}", id);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred while updating the role", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "An error occurred while updating the role",
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
         }
@@ -244,7 +252,7 @@ namespace UserService.Api.Controllers
                 _logger.LogInformation("Successfully deleted role with ID {RoleId}", id);
                 return Ok(new { Message = "Role deleted successfully" });
             }
-                catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
             {
                 string errorMessage = pgEx.SqlState switch
                 {
@@ -254,11 +262,12 @@ namespace UserService.Api.Controllers
                 };
 
                 _logger.LogWarning(ex, "Database constraint error deleting role: {ErrorMessage}", errorMessage);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = errorMessage, 
-                    Errors = ("Error kinldy contact support"), 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = errorMessage,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (InvalidOperationException ex)
@@ -268,17 +277,18 @@ namespace UserService.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while deleting role with ID: {RoleId}", id);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred while deleting the role", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "An error occurred while deleting the role",
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
         }
-        
-        
-        
+
+
+
         [HttpPost("{roleId}/permissions/{permissionId}")]
         [Authorize(Policy = "roles.manage")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -292,7 +302,7 @@ namespace UserService.Api.Controllers
             try
             {
                 _logger.LogInformation("Assigning permission {PermissionId} to role {RoleId}", permissionId, roleId);
-                
+
                 if (string.IsNullOrWhiteSpace(roleId) || string.IsNullOrWhiteSpace(permissionId))
                 {
                     _logger.LogWarning("Role ID or Permission ID is missing");
@@ -309,11 +319,12 @@ namespace UserService.Api.Controllers
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Invalid operation when assigning permission {PermissionId} to role {RoleId}", permissionId, roleId);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Exception ex)
@@ -335,7 +346,7 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                
+
                 if (string.IsNullOrWhiteSpace(roleId) || string.IsNullOrWhiteSpace(permissionId))
                 {
                     _logger.LogWarning("Role ID or Permission ID is missing");
@@ -348,7 +359,7 @@ namespace UserService.Api.Controllers
                     return NotFound("The specified permission was not assigned to this role");
                 }
 
-                
+
                 return Ok(new { Message = "Permission removed from role" });
             }
             catch (KeyNotFoundException ex)
@@ -358,17 +369,55 @@ namespace UserService.Api.Controllers
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Invalid operation when removing permission {PermissionId} from role {RoleId}", permissionId, roleId);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error removing permission {PermissionId} from role {RoleId}", permissionId, roleId);
                 return StatusCode(500, "Error removing permission from role");
+            }
+        }
+
+        [HttpGet("deleted")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(PagedResult<RoleDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDeletedRoles(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false)
+        {
+            try
+            {
+                var parameters = new PaginationParameters
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    Search = search,
+                    SortBy = sortBy,
+                    SortDescending = sortDescending
+                };
+
+                var result = await _roleService.GetDeletedPagedAsync(parameters);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving deleted roles");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { Success = false, Message = "An error occurred while retrieving deleted roles" });
             }
         }
     }

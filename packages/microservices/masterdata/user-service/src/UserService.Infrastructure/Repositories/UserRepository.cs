@@ -22,7 +22,6 @@ namespace UserService.Infrastructure.Repositories
         private readonly UserServiceDbContext _context = context;
         public async Task<IEnumerable<Permission>>GetUserPermissionsAsync(string userId)
         {
-            // Get permissions ONLY from roles (pure RBAC)
             var rolePermissions = await _context.UserRoles
                 .Where(ur => ur.UserId == userId && !ur.IsDeleted)
                 .Include(ur => ur.Role)
@@ -71,26 +70,26 @@ namespace UserService.Infrastructure.Repositories
         public async Task<IEnumerable<UserShift>> GetUserShiftsAsync(string userId)
         {
             return await _context.UserShifts
-                .Where(us => us.UserId == userId)
+                .Where(us => us.UserId == userId && !us.IsDeleted)
                 .ToListAsync();
         }
 
         public async Task<UserShift?> GetUserShiftByShiftIdAsync(string userId, string shiftId)
         {
             return await _context.UserShifts
-                .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId);   
+                .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);   
         }
 
         public async Task<bool> AssignShiftToUserAsync(string userId, string shiftId)
         {
             return await _context.UserShifts
-                .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId);
+                .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);
         }
 
         public async Task<bool> RemoveShiftFromUserAsync(string userId, string shiftId)
         {
             return await _context.UserShifts
-                .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId);
+                .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);
         }
 
         public async Task<bool> HasPermissionAsync(string userId, string permissionName)

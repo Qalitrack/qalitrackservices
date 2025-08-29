@@ -1,6 +1,6 @@
 using UserService.Core.DTOs.User;
 
-namespace UserService.Core.Interfaces.Repositories
+namespace UserService.Core.Interfaces.Services
 {
     public interface ITokenService
     {

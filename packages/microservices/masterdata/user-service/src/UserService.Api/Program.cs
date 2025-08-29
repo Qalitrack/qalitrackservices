@@ -1,149 +1,38 @@
-using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using UserService.Core.ServiceRegistration;
+using UserService.Infrastructure.ServiceRegistration;
+using UserService.Infrastructure.Data;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using UserService.Api.Authorization;
 using UserService.Core.Mappings;
-using UserService.Core.Services;
-using UserService.Infrastructure.Data;
-using UserService.Infrastructure.Repositories;
-using UserService.Infrastructure.Services;
-using UserService.Api.Middleware;
-using UserService.Api.Filters;
-using UserService.Core.Interfaces.Emails;
-using UserService.Core.Interfaces.Repositories;
-using UserService.Core.Interfaces.Services;
-using System.IO.Abstractions;
-using StackExchange.Redis;
+using System.Security.Claims; 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("logs/user-service-.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-
 try
 {
-    Log.Information("Starting application...");
+    // Configure logging
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .WriteTo.Console()
+        .CreateLogger();
+    builder.Host.UseSerilog();
+    Log.Information("Starting UserService application...");
 
-    // Configure to listen on port 8080
-  //  builder.WebHost.UseUrls("http://localhost:8081");
-
-    // Add services to the container
-    builder.Services.AddControllers(options =>
-        {
-            options.Filters.Add<ModelValidationFilter>();
-        })
-        .AddJsonOptions(options =>
-        {        
-            options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve property casing
-        });
-    
-    builder.Services.AddEndpointsApiExplorer();
-    
-    // Add API Versioning
-    builder.Services.AddApiVersioning(options =>
-    {
-        options.AssumeDefaultVersionWhenUnspecified = true;
-        options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
-        options.ApiVersionReader = Asp.Versioning.ApiVersionReader.Combine(
-            new Asp.Versioning.UrlSegmentApiVersionReader(),
-            new Asp.Versioning.HeaderApiVersionReader("X-Version"),
-            new Asp.Versioning.QueryStringApiVersionReader("version")
-        );
-    }).AddMvc().AddApiExplorer(setup =>
-    {
-        setup.GroupNameFormat = "'v'VVV";
-        setup.SubstituteApiVersionInUrl = true;
-    });
-    
-    // Register application services
-    RegisterServices(builder.Services, builder);
-    
-    // Configure database
-    ConfigureDatabase(builder);
-    
-    // Configure JWT Authentication
-    ConfigureJwtAuthentication(builder);
-    
-    // Configure Authorization
-    ConfigureAuthorization(builder.Services);
-    
-    // Configure Swagger
-    ConfigureSwagger(builder.Services);
-    
-    // Configure CORS
-    ConfigureCors(builder.Services);
-    
-    //Add health checks
+    // Configure services
+    ConfigureServices(builder);
     
     var app = builder.Build();
     
-    // Configure the HTTP request pipeline
-    ConfigureMiddleware(app);
+    // Configure middleware pipeline
+    ConfigurePipeline(app);
     
-    // Serve static files including documentation
-    app.UseStaticFiles();
-
-    // Configure documentation serving
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
-            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs")),
-        RequestPath = "/docs"
-    });
-
-    // Documentation default route
-    app.MapGet("/docs", () => Results.Redirect("/docs/index.html"));
-    app.MapFallback("/docs/{**path}", async context =>
-    {
-        var path = context.Request.Path.Value?.Replace("/docs/", "") ?? "index.html";
-        if (string.IsNullOrEmpty(path) || path == "/")
-            path = "index.html";
-        
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs", path);
-        if (File.Exists(filePath))
-        {
-            // Set proper Content-Type based on file extension
-            var extension = Path.GetExtension(filePath).ToLowerInvariant();
-            var contentType = extension switch
-            {
-                ".html" => "text/html; charset=utf-8",
-                ".css" => "text/css; charset=utf-8",
-                ".js" => "application/javascript; charset=utf-8",
-                ".json" => "application/json; charset=utf-8",
-                ".png" => "image/png",
-                ".jpg" or ".jpeg" => "image/jpeg",
-                ".svg" => "image/svg+xml",
-                ".ico" => "image/x-icon",
-                ".yml" or ".yaml" => "text/yaml; charset=utf-8",
-                _ => "application/octet-stream"
-            };
-            
-            context.Response.ContentType = contentType;
-            await context.Response.SendFileAsync(filePath);
-        }
-        else
-        {
-            context.Response.StatusCode = 404;
-            await context.Response.WriteAsync("Documentation file not found");
-        }
-    });
-    
-    // Run migrations and seed database
-    await InitializeDatabaseAsync(app);
-    
-    Log.Information("Application is now running...");
+    Log.Information("UserService application started successfully");
     app.Run();
 }
 catch (Exception ex)
@@ -156,326 +45,145 @@ finally
     Log.CloseAndFlush();
 }
 
-static void RegisterServices(IServiceCollection services, WebApplicationBuilder builder)
+static void ConfigureServices(WebApplicationBuilder builder)
 {
-    // Core Services - Register base service first, then decorate with caching
-    services.AddScoped<UserService.Core.Services.UserService>();
-    services.AddScoped<IUserService>(provider =>
+    var services = builder.Services;
+    
+    // Configure MVC
+    services.AddControllers();
+    services.AddEndpointsApiExplorer();
+    
+    // Configure API versioning
+    services.AddApiVersioning(options =>
     {
-        var baseUserService = provider.GetRequiredService<UserService.Core.Services.UserService>();
-        var cacheService = provider.GetRequiredService<ICacheService>();
-        return new CachedUserService(baseUserService, cacheService);
-    });
-    services.AddScoped<IRoleService, RoleService>();
-    services.AddScoped<IShiftService, ShiftService>();
-    services.AddScoped<IUserRoleService, UserRoleService>();
-    services.AddScoped<IPermissionsService, PermissionsService>();
-    services.AddScoped<ITokenService, TokenService>();
-    services.AddScoped<IUserStatusService, UserStatusService>();
-    services.AddScoped<IReportService, ReportService>();
-    services.AddScoped<ITwoFactorService, TwoFactorService>();
-    services.AddScoped<PasswordPolicyService>();
-    services.AddScoped<IPasswordPolicyRepository, PasswordPolicyRepository>();
-
-    // Email queue services for improved performance
-    services.AddSingleton<EmailQueueService>();
-    services.AddScoped<IEmailQueueService>(provider => provider.GetRequiredService<EmailQueueService>());
-
-    // JWT Configuration Service
-    services.AddScoped<IJwtConfigurationService, JwtConfigurationService>();
-
-    // Repositories
-    services.AddScoped<IUserRepository, UserRepository>();
-    services.AddScoped<IRoleRepository, RoleRepository>();
-    services.AddScoped<IShiftRepository, ShiftRepository>();
-    services.AddScoped<IUserShiftRepository, UserShiftRepository>();
-    services.AddScoped<ITokenRepository, TokenRepository>();
-    services.AddScoped<IPermissionsRepository, PermissionsRepository>();
-    services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
-    services.AddScoped<IUserStatusRepository, UserStatusRepository>();
-    services.AddScoped<IUserRoleRepository, UserRoleRepository>();
-    builder.Services.AddScoped<IShiftLoginRestrictionService, ShiftLoginRestrictionService>();
-    // In Program.cs or your DI configuration class
-    // Infrastructure
-    services.AddHttpContextAccessor();
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+        options.ApiVersionReader = new Asp.Versioning.UrlSegmentApiVersionReader();
+    }).AddMvc();
+    
+    // Register application services
+    services.AddCoreServices();
+    services.AddInfrastructureServices(builder.Configuration);
     services.AddAutoMapper(typeof(UserProfile));
-    services.AddHealthChecks(); // This registers all necessary health check services
-
-    // Configure caching for 1000+ users
-    var useRedis = builder.Configuration.GetValue<bool>("UseRedis", false);
-    var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
-
-    if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
+    
+    // Configure PostgreSQL
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Database connection string is not configured.");
+    services.AddDbContext<UserServiceDbContext>(options =>
     {
-        services.AddStackExchangeRedisCache(options =>
+        options.UseNpgsql(connectionString, sqlOptions =>
         {
-            options.Configuration = redisConnectionString;
-            options.InstanceName = "UserService";
+            sqlOptions.MigrationsAssembly("UserService.Infrastructure");
+            sqlOptions.CommandTimeout(15);
+            sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
         });
-        Log.Information("Redis distributed cache configured for 1000+ users");
-    }
-    else
-    {
-        services.AddMemoryCache();
-        Log.Information("Memory cache configured (suitable for <500 users)");
-    }
-
-    if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
-    {
-        services.AddSingleton<IConnectionMultiplexer>(
-            ConnectionMultiplexer.Connect(redisConnectionString)
-        );
-    }
-    // Register BackupOptions from configuration
-    // Register our health check service
-    builder.Services.AddHttpContextAccessor();
-    // Register cache service based on configuration
-    if (useRedis && !string.IsNullOrEmpty(redisConnectionString))
-    {
-        services.AddScoped<ICacheService, RedisCacheService>();
-    }
-    else
-    {
-        services.AddScoped<ICacheService, MemoryCacheService>();
-    }
-    services.AddSingleton<IFileSystem, FileSystem>();
-    // Register the backup event consumer
-
-    services.AddHostedService<ShiftMonitorService>();
-    services.AddHostedService<EmailProcessorService>();
-
-    // Register SMTP Email Service for 2FA
-    services.AddScoped<IEmailService, SmtpEmailService>();
-
-    Log.Information("Application services registered.");
-}    
-
-static void ConfigureDatabase(WebApplicationBuilder builder)
-{
-    // Configure database - PostgreSQL for production, SQLite for development
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    var usePostgreSql = builder.Configuration.GetValue<bool>("UsePostgreSQL", false);
-    
-    builder.Services.AddDbContext<UserServiceDbContext>(options =>
-    {
-        if (usePostgreSql && !string.IsNullOrEmpty(connectionString))
-        {
-            options.UseNpgsql(connectionString, sqlOptions =>
-            {
-                sqlOptions.MigrationsAssembly("UserService.Infrastructure");
-                sqlOptions.CommandTimeout(15); // Reduced for better performance
-                sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
-            });
-        }
-        else
-        {
-            options.UseSqlite(
-                connectionString ?? "Data Source=user-service.db",
-                sqlOptions => 
-                {
-                    sqlOptions.MigrationsAssembly("UserService.Infrastructure");
-                    sqlOptions.CommandTimeout(15);
-                });
-        }
-        
-        // Performance optimizations for 1000+ users
-        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        options.EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
     });
-            
-    Log.Information("Database configured.");
-}
-
-static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
-{
-    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-    
-    // Priority: Environment variables > appsettings.json
-    var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ??
-                   jwtSettings["SecretKey"] ?? 
-                   builder.Configuration["Jwt:SecretKey"] ??
-                   throw new InvalidOperationException("JWT Secret Key is not configured. Set JWT_SECRET_KEY environment variable or Jwt:SecretKey in configuration.");
-    
-    var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ??
-                jwtSettings["Issuer"] ?? 
-                builder.Configuration["Jwt:Issuer"] ?? 
-                "UserService";
-    
-    var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ??
-                  jwtSettings["Audience"] ?? 
-                  builder.Configuration["Jwt:Audience"] ?? 
-                  "UserService";
-
-    // Validate secret key security
-    if (secretKey.Length < 32)
-    {
-        throw new InvalidOperationException("JWT Secret Key must be at least 32 characters long for security.");
-    }
-    
-    if (secretKey == "your-super-secret-key-here-minimum-32-characters" || 
-        secretKey == "YourSuperSecretJwtSigningKeyThatMustBeAtLeast32CharactersLong!")
-    {
-        throw new InvalidOperationException("Default JWT Secret Key detected. Please set a secure key in configuration or JWT_SECRET_KEY environment variable.");
-    }
-
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-  builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false; // Set to true in production
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = key,
-            ValidateIssuer = true,
-            ValidIssuer = issuer,
-            ValidateAudience = true,
-            ValidAudience = audience,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            NameClaimType = "sub",
-            RoleClaimType = "role"
-        };
-
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-                
-                if (string.IsNullOrEmpty(token) && context.Request.Query.TryGetValue("access_token", out var tokenValues))
-                {
-                    token = tokenValues.FirstOrDefault();
-                }
-
-                if (!string.IsNullOrEmpty(token))
-                {
-                    if (!token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) && 
-                        !token.Contains(' '))
-                    {
-                        token = "Bearer " + token;
-                        context.Request.Headers["Authorization"] = token;
-                    }
-                    
-                    var tokenPreview = token.Length > 10 
-                        ? token.Substring(0, 10) + "..." 
-                        : "[invalid]";
-                }
-                else
-                {
-                    Log.Debug("No JWT token found in the request");
-                }
-                
-                return Task.CompletedTask;
-            },
-            
-            OnTokenValidated = context =>
-            {
-                var identity = context.Principal?.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    var sub = identity.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-                    if (sub != null)
-                    {
-                        if (!identity.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
-                            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, sub));
-                            
-                        if (!identity.HasClaim(c => c.Type == ClaimTypes.Name))
-                            identity.AddClaim(new Claim(ClaimTypes.Name, sub));
-                    }
-                    
-                }
-
-                var userId = context.Principal?.FindFirst("sub")?.Value;
-                
-                return Task.CompletedTask;
-            },
-            
-            OnAuthenticationFailed = context =>
-            {
-                Log.Error(context.Exception, "JWT Authentication failed");
-                
-                if (context.Exception is SecurityTokenExpiredException)
-                {
-                    Log.Warning("Token has expired");
-                    context.Response.Headers.Append("Token-Expired", "true");
-                }
-                else if (context.Exception is SecurityTokenInvalidSignatureException)
-                {
-                    Log.Error("Token signature validation failed. This could be due to an invalid secret key.");
-                }
-                else if (context.Exception is SecurityTokenNoExpirationException)
-                {
-                    Log.Error("Token has no expiration");
-                }
-                
-                return Task.CompletedTask;
-            },
-            
-            OnForbidden = context =>
-            {
-                var userId = context.Principal?.FindFirst("sub")?.Value ?? "unknown";
-                return Task.CompletedTask;
-            }
-        };
-    });
-}
-
-static void ConfigureAuthorization(IServiceCollection services)
-{
+    // Configure authorization
     services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
     services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-    
     services.AddAuthorization(options =>
     {
-        // Add default policy that requires authentication
         options.DefaultPolicy = new AuthorizationPolicyBuilder()
             .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
             .RequireAuthenticatedUser()
             .Build();
-            
-        // Add a policy that requires the user to be an admin
         options.AddPolicy("RequireAdminRole", policy => 
             policy.RequireRole("Admin")
-                  .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
     });
-    
+var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? 
+                builder.Configuration["JwtSettings:SecretKey"] ??
+                throw new InvalidOperationException("JWT Secret Key is not configured.");
+
+var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ??
+             builder.Configuration["JwtSettings:Issuer"] ??
+             "UserService";
+
+var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ??
+               builder.Configuration["JwtSettings:Audience"] ??
+               "UserService";
+// Validate secret key length
+if (secretKey.Length < 32)
+{
+    throw new InvalidOperationException("JWT Secret Key must be at least 32 characters long for security.");
 }
 
-static void ConfigureSwagger(IServiceCollection services)
+
+// Ensure proper encoding and key creation
+var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+var key = new SymmetricSecurityKey(keyBytes);
+
+services.AddAuthentication(options =>
 {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; 
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = key,
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+        ValidateAudience = true,
+        ValidAudience = audience,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero, 
+        NameClaimType = ClaimTypes.NameIdentifier,
+        RoleClaimType = ClaimTypes.Role
+    };
+
+    // Add event handling for better debugging
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("Token validated successfully");
+            return Task.CompletedTask;
+        }
+    };
+});
+  
+    // Configure CORS
+    services.AddCors(options =>
+    {
+        options.AddPolicy("RestrictedCors", policy =>
+        {
+            policy.WithOrigins("https://yourdomain.com")
+                  .WithMethods("GET", "POST", "PUT", "DELETE")
+                  .WithHeaders("Content-Type", "Authorization");
+        });
+    });
+    
+    // Configure Swagger
     services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo 
         { 
             Title = "UserService API", 
-            Version = "v1",
-            Description = "UserService API",
-            Contact = new OpenApiContact
-            {
-                Name = "Support",
-                Email = "support@example.com"
-            }
+            Version = "v1"
         });
-        
-        // Add JWT Authentication to Swagger
+
+        // Define the JWT Bearer scheme
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            Description = "JWT Authorization header using the Bearer scheme",
+            Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
             Name = "Authorization",
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.Http,
             Scheme = "bearer",
             BearerFormat = "JWT"
         });
-        
+
+        // Apply the security requirement globally or to specific endpoints
         c.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             {
@@ -487,68 +195,34 @@ static void ConfigureSwagger(IServiceCollection services)
                         Id = "Bearer"
                     }
                 },
-                Array.Empty<string>()
+                new string[] { }
             }
         });
-        
-        // Enable XML comments if available
-        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-        if (File.Exists(xmlPath))
-        {
-            c.IncludeXmlComments(xmlPath);
-        }
     });
-    
-    Log.Information("Swagger configured.");
 }
 
-static void ConfigureCors(IServiceCollection services)
+static void ConfigurePipeline(WebApplication app)
 {
-    services.AddCors(options =>
+    app.UseSerilogRequestLogging();
+    app.UseRouting();
+    
+    // Debug middleware (remove in production)
+    if (app.Environment.IsDevelopment())
     {
-        options.AddPolicy("RestrictedCors", policy =>
+        app.Use(async (context, next) =>
         {
-            policy.WithOrigins("https://localhost:3000", "https://localhost:3001", "https://yourdomain.com")
-                  .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                  .WithHeaders("Content-Type", "Authorization", "X-Requested-With")
-                  .AllowCredentials();
+            var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(authHeader))
+            {
+                Console.WriteLine($"Auth Header: {authHeader}");
+            }
+            await next();
         });
-        
-        // Development policy for local testing
-        options.AddPolicy("DevelopmentCors", policy =>
-        {
-            policy.WithOrigins("http://localhost:3000", "https://localhost:3000", 
-                              "http://localhost:3001", "https://localhost:3001")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
-        });
-    });
-    
-    Log.Information("CORS configured with restricted origins.");
-}
-
-static void ConfigureMiddleware(WebApplication app)
-{
-    // Add global exception handling middleware first
-    app.UseMiddleware<GlobalExceptionMiddleware>();
-    
-    // Add validation middleware
-    app.UseMiddleware<ValidationMiddleware>();
-    
-    // Add rate limiting middleware - Redis-based for 1000+ users
-    var useRedisRateLimit = app.Configuration.GetValue<bool>("UseRedis", false);
-    if (useRedisRateLimit)
-    {
-        app.UseMiddleware<RedisRateLimitMiddleware>();
-    }
-    else
-    {
-        app.UseMiddleware<RateLimitMiddleware>();
     }
     
-    // Enable Swagger in all environments for testing containers
+    app.UseCors("RestrictedCors");
+    app.UseAuthentication(); // This must come before Authorization
+    app.UseAuthorization();
     app.UseSwagger();
     app.UseSwaggerUI(c => 
     {
@@ -556,48 +230,12 @@ static void ConfigureMiddleware(WebApplication app)
         c.RoutePrefix = string.Empty;
     });
     
-    if (!app.Environment.IsDevelopment())
-    {
-        app.UseHsts();
-    }
+    app.MapControllers();
+    app.MapHealthChecks("/health");
     
-    app.UseSerilogRequestLogging();
-    app.UseRouting();
-    
-    // CORS must come before UseAuthentication and UseAuthorization
-    var corsPolicy = app.Environment.IsDevelopment() ? "DevelopmentCors" : "RestrictedCors";
-    app.UseCors(corsPolicy);
-    
-    // Authentication must come before Authorization
-    app.UseAuthentication();
-    app.UseAuthorization();
-
-    app.UseEndpoints(endpoints =>
-    {
-        endpoints.MapControllers();
-        endpoints.MapHealthChecks("/health");
-    });
-    
-    Log.Information("Middleware pipeline configured.");
-}
-
-static async Task InitializeDatabaseAsync(WebApplication app)
-{
+    // Initialize database
     using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    
-    try
-    {
-        var context = services.GetRequiredService<UserServiceDbContext>();
-        await context.Database.MigrateAsync();
-        
-        // Seed initial data if needed
-        await PrepDb.PrepPopulation(app, isProduction: false);        
-        Log.Information("Database initialized successfully.");
-    }
-    catch (Exception ex)
-    {
-        Log.Error(ex, "An error occurred while initializing the database");
-        throw;
-    }
+    var context = scope.ServiceProvider.GetRequiredService<UserServiceDbContext>();
+    context.Database.Migrate();
+    PrepDb.PrepPopulation(app, isProduction: false);
 }
