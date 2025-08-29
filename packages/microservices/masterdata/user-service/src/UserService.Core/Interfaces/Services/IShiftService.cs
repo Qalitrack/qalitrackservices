@@ -1,4 +1,6 @@
 using UserService.Core.DTOs.Shift;
+using UserService.Core.DTOs.Common;
+using UserService.Core.DTOs;
 
 // Assuming you have relevant DTOs for Shift
 
@@ -26,5 +28,11 @@ namespace UserService.Core.Interfaces.Services
         Task<MassAssignShiftResultDto> MassAssignShiftToRoleAsync(string roleId, string shiftId);
         Task<MassAssignShiftResultDto> MassRemoveUsersFromShiftByRoleAsync(string roleId, string shiftId);
         Task<UsersAssignedToShiftDto> GetUsersAssignedToShiftAsync(string? shiftId);
+
+        // Get deleted shifts with pagination
+        Task<PagedResult<ShiftDto>> GetDeletedPagedAsync(PaginationParameters parameters);
+        
+        // Get deleted user shifts with pagination
+        Task<PagedResult<UserShiftDto>> GetDeletedUserShiftsPagedAsync(PaginationParameters parameters);
     }
 }

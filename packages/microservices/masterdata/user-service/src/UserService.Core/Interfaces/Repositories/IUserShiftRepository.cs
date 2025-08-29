@@ -1,4 +1,5 @@
 using UserService.Core.Entities;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Core.Interfaces.Repositories;
 
@@ -10,4 +11,5 @@ public interface IUserShiftRepository : IRepository<UserShift>
     Task<IEnumerable<UserShift>> GetShiftsForUserAsync(string? userId, string? shiftId);
     Task<IEnumerable<UserShift>> GetUsersAssignedToShiftAsync(string shiftId); // Get users assigned to a shift
     Task<bool> DeleteAsync(string id, string shiftId);
+    Task<PagedResult<UserShift>> GetDeletedPagedAsync(PaginationParameters parameters);
 }

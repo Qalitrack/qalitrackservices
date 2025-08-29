@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Utilities;
+using UserService.Core.DTOs.Common;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories;
@@ -12,7 +13,7 @@ public class UserShiftRepository : Repository<UserShift>, IUserShiftRepository
 {
     private readonly UserServiceDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<UserShiftRepository> _logger;
+    private readonly new ILogger<UserShiftRepository> _logger;
 
     public UserShiftRepository(
         UserServiceDbContext context,
@@ -26,20 +27,26 @@ public class UserShiftRepository : Repository<UserShift>, IUserShiftRepository
     }
     public async Task<IEnumerable<UserShift>> GetAllAsync()
     {
-        return await _context.UserShifts.ToListAsync();
+        return await _context.UserShifts
+            .Include(us => us.User)
+            .Include(us => us.Shift)
+            .Where(us => !us.IsDeleted)
+            .ToListAsync();
     }
     
 
     public async Task<UserShift?> GetByIdAsync(string id, bool b)
     {
-        return await _context.UserShifts.FindAsync(id);
+        return await _context.UserShifts
+            .Include(us => us.User)
+            .Include(us => us.Shift)
+            .FirstOrDefaultAsync(us => us.Id == id && !us.IsDeleted);
     }
 
     public new  async Task<UserShift> CreateAsync(UserShift userShift)
     {
         if (userShift == null)
             throw new ArgumentNullException(nameof(userShift));
-        // Add the userShift to the context using the base class method
         userShift.CreatedAt = DateTime.UtcNow;
         userShift.UpdatedAt = DateTime.UtcNow;
         userShift.CreatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
@@ -51,20 +58,28 @@ public class UserShiftRepository : Repository<UserShift>, IUserShiftRepository
     public async Task<bool> IsUserAssignedToShiftAsync(string userId, string shiftId)
     {
         return await _context.UserShifts
-            .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId);  
+            .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);  
     }
 
     public async Task<IEnumerable<UserShift>> GetShiftsForUserAsync(string? userId, string? shiftId)
     {
-        return await _context.UserShifts
-            .Where(us => us.UserId == userId && us.ShiftId == shiftId)
-            .ToListAsync();
+        var query = _context.UserShifts
+            .Include(us => us.Shift)
+            .Where(us => !us.IsDeleted && us.Shift != null && !us.Shift.IsDeleted);
+
+        if (!string.IsNullOrEmpty(userId))
+            query = query.Where(us => us.UserId == userId);
+
+        if (!string.IsNullOrEmpty(shiftId))
+            query = query.Where(us => us.ShiftId == shiftId);
+
+        return await query.ToListAsync();
     }
 
     public async Task<IEnumerable<UserShift>> GetUsersAssignedToShiftAsync(string shiftId)
     {
         return await _context.UserShifts
-            .Where(us => us.ShiftId == shiftId)
+            .Where(us => us.ShiftId == shiftId && !us.IsDeleted && us.User != null && !us.User.IsDeleted)
             .Select(us => new UserShift
             {
                 UserId = us.UserId,
@@ -106,7 +121,8 @@ public class UserShiftRepository : Repository<UserShift>, IUserShiftRepository
 
     public async Task<bool> DeleteAsync(string id)
     {
-        var userShift = await _context.UserShifts.FindAsync(id);
+        var userShift = await _context.UserShifts
+            .FirstOrDefaultAsync(us => us.Id == id && !us.IsDeleted);
         if (userShift == null)
             return false;
         userShift.IsDeleted = true;
@@ -134,6 +150,41 @@ public class UserShiftRepository : Repository<UserShift>, IUserShiftRepository
     
         await _context.SaveChangesAsync();
         return true;
+    }
+    
+    public async Task<PagedResult<UserShift>> GetDeletedPagedAsync(PaginationParameters parameters)
+    {
+        if (parameters == null)
+            throw new ArgumentNullException(nameof(parameters));
+
+        var query = _context.UserShifts
+            .Include(us => us.User)
+            .Include(us => us.Shift)
+            .Where(us => us.IsDeleted)
+            .IgnoreQueryFilters();
+
+        // Apply search if provided
+        if (!string.IsNullOrEmpty(parameters.Search))
+        {
+            query = query.Where(us => 
+                (us.User != null && us.User.Email.Contains(parameters.Search)) ||
+                (us.Shift != null && us.Shift.Name.Contains(parameters.Search)));
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .OrderByDescending(us => us.UpdatedAt)
+            .Skip((parameters.Page - 1) * parameters.PageSize)
+            .Take(parameters.PageSize)
+            .ToListAsync();
+
+        return new PagedResult<UserShift>
+        {
+            Items = items,
+            Page = parameters.Page,
+            PageSize = parameters.PageSize,
+            TotalCount = totalCount
+        };
     }
     
 }

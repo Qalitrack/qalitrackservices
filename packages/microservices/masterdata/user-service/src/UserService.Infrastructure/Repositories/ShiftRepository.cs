@@ -5,6 +5,7 @@ using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Utilities;
+using UserService.Core.DTOs.Common;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories;
@@ -17,19 +18,23 @@ public class ShiftRepository(
     private readonly UserServiceDbContext _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 
-    public new async Task<IEnumerable<Shift>> GetAllAsync()
+    public async Task<IEnumerable<Shift>> GetAllAsync()
     {
-        return await _context.Shifts.ToListAsync();
+        return await _context.Shifts
+            .Where(s => !s.IsDeleted)
+            .ToListAsync();
     }
 
     public async Task<Shift?> GetByIdAsync(string id)
     {
-        return await _context.Shifts.FirstOrDefaultAsync(s => s.Id == id);
+        return await _context.Shifts
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
     }
 
-    public new async Task<Shift?> GetByIdAsync(string id, bool b)
+    public async Task<Shift?> GetByIdAsync(string id, bool b)
     {
-        return await _context.Shifts.FirstOrDefaultAsync(s => s.Id == id);
+        return await _context.Shifts
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
     }
 
     public  async Task<bool> DeleteAsync(string id)
@@ -77,12 +82,69 @@ public class ShiftRepository(
 
     public async Task<bool> IsShiftActiveAsync(string shiftId)
     {
-        var shift = await _context.Shifts.FindAsync(shiftId);
+        var shift = await _context.Shifts
+            .FirstOrDefaultAsync(s => s.Id == shiftId && !s.IsDeleted);
         if (shift == null)
             return false;
 
         return shift.IsActive;
     }
 
-   
+    public async Task<PagedResult<Shift>> GetDeletedPagedAsync(PaginationParameters parameters)
+    {
+        if (parameters == null)
+            throw new ArgumentNullException(nameof(parameters));
+
+        var query = _context.Shifts
+            .IgnoreQueryFilters()
+            .Where(s => s.IsDeleted)
+            .AsQueryable();
+
+        // Apply search filter
+        if (!string.IsNullOrWhiteSpace(parameters.Search))
+        {
+            var searchTerm = parameters.Search.ToLower();
+            query = query.Where(s =>
+                s.Name.ToLower().Contains(searchTerm) ||
+                s.Description.ToLower().Contains(searchTerm));
+        }
+
+        // Apply sorting
+        switch (parameters.SortBy?.ToLower())
+        {
+            case "name":
+                query = parameters.SortDescending
+                    ? query.OrderByDescending(s => s.Name)
+                    : query.OrderBy(s => s.Name);
+                break;
+            case "description":
+                query = parameters.SortDescending
+                    ? query.OrderByDescending(s => s.Description)
+                    : query.OrderBy(s => s.Description);
+                break;
+            case "createdat":
+                query = parameters.SortDescending
+                    ? query.OrderByDescending(s => s.CreatedAt)
+                    : query.OrderBy(s => s.CreatedAt);
+                break;
+            default:
+                query = query.OrderBy(s => s.Name);
+                break;
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((parameters.Page - 1) * parameters.PageSize)
+            .Take(parameters.PageSize)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return new PagedResult<Shift>
+        {
+            Items = items,
+            Page = parameters.Page,
+            PageSize = parameters.PageSize,
+            TotalCount = totalCount
+        };
+    }
 }

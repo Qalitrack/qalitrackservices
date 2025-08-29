@@ -1,14 +1,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using UserService.Core.DTOs;
 using UserService.Core.DTOs.Permissions;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Entities;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Utilities;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Core.Services;
 
@@ -20,18 +19,18 @@ public class PermissionsService(
     ILogger<PermissionsService> logger,
     IHttpContextAccessor httpContextAccessor)
     : IPermissionsService
-{ 
+{
     private readonly IPermissionsRepository _permissionsRepository = permissionsRepository ?? throw new ArgumentNullException(nameof(permissionsRepository));
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly ILogger<PermissionsService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor??throw new ArgumentException();
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentException();
 
     public async Task<IEnumerable<PermissionDto>> GetAllAsync()
     {
         var permissions = await _permissionsRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<PermissionDto>>(permissions);
     }
-    
+
 
     public async Task<PermissionDto> CreateAsync(CreatePermissionDto dto)
     {
@@ -87,7 +86,7 @@ public class PermissionsService(
             var updatedPermission = await _permissionsRepository.UpdateAsync(permissionToUpdate);
             return _mapper.Map<PermissionDto>(updatedPermission);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log the error
             throw;
@@ -127,7 +126,7 @@ public class PermissionsService(
         return _mapper.Map<IEnumerable<RoleDto>>(roles);
     }
 
-  
+
 
     public async Task<PermissionDto?> GetByIdAsync(string id)
     {
@@ -136,5 +135,22 @@ public class PermissionsService(
 
         var permission = await _permissionsRepository.GetByIdAsync(id, false);
         return permission == null ? null : _mapper.Map<PermissionDto>(permission);
+    }
+    
+    public async Task<PagedResult<PermissionDto>> GetDeletedPagedAsync(PaginationParameters parameters)
+    {
+        if (parameters == null)
+            throw new ArgumentNullException(nameof(parameters));
+
+        var pagedPermissions = await _permissionsRepository.GetDeletedPagedAsync(parameters);
+        var mappedPermissions = _mapper.Map<IEnumerable<PermissionDto>>(pagedPermissions.Items);
+
+        return new PagedResult<PermissionDto>
+        {
+            Items = mappedPermissions,
+            Page = pagedPermissions.Page,
+            PageSize = pagedPermissions.PageSize,
+            TotalCount = pagedPermissions.TotalCount
+        };
     }
 }
