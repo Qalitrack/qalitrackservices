@@ -1,21 +1,19 @@
 using UserService.Core.DTOs.Permissions;
 using UserService.Core.DTOs.Roles;
+using UserService.Core.DTOs.Common; 
 
 namespace UserService.Core.Interfaces.Services
 {
-    public interface IPermissionsService 
+    public interface IPermissionsService
     {
-        // CRUD Operations for Permission
-        Task<IEnumerable<PermissionDto>> GetAllAsync();  // Get all permissions
-        Task<PermissionDto> CreateAsync(DTOs.Permissions.CreatePermissionDto dto);  // Create a new permission
-        Task<PermissionDto?> UpdateAsync(string id, DTOs.Permissions.UpdatePermissionDto dto);  // Update an existing permission
-        Task<bool> DeleteAsync(string id);  // Soft delete a permission (set IsDeleted = true)
-
-        // Permission-Specific Operations
-        //  Task<bool> DoesPermissionExistAsync(string name);  // Check if a permission with a specific name exists
-        Task<IEnumerable<RoleDto>> GetRolesForPermissionAsync(string permissionId);  // Get all roles that have a specific permission
-     //   Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId);  // Assign a permission to a role
-       // Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);  // Remove a permission from a role
+      
+        Task<IEnumerable<PermissionDto>> GetAllAsync();  
+        Task<PermissionDto> CreateAsync(DTOs.Permissions.CreatePermissionDto dto);  
+        Task<PermissionDto?> UpdateAsync(string id, DTOs.Permissions.UpdatePermissionDto dto);  
+        Task<bool> DeleteAsync(string id);  
+        Task<IEnumerable<RoleDto>> GetRolesForPermissionAsync(string permissionId); 
         Task<PermissionDto?> GetByIdAsync(string id);
+
+        Task<PagedResult<PermissionDto>> GetDeletedPagedAsync(PaginationParameters parameters);
     }
 }

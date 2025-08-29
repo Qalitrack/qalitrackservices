@@ -8,6 +8,7 @@ public class UserShiftProfile : Profile
 {
     public UserShiftProfile()
     {
-        CreateMap<UserShift, UserShiftDto>();
+        CreateMap<UserShift, UserShiftDto>()
+            .ForMember(dest => dest.ShiftName, opt => opt.MapFrom(src => src.Shift.Name));
     }
 }

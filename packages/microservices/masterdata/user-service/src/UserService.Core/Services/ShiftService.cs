@@ -3,11 +3,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Shift;
+using UserService.Core.DTOs;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Utilities;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Core.Services
 {
@@ -143,14 +145,11 @@ namespace UserService.Core.Services
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("Shift ID is required", nameof(id));
 
-            // Check if shift exists
             var shift = await _shiftRepository.GetByIdAsync(id);
             if (shift == null)
                 throw new Exception("Shift not found");
 
-            // Check if any users are assigned to this shift by getting all user shifts
-            // and filtering by the shift ID
-            var allUserShifts = await _userShiftRepository.GetAllAsync();
+                var allUserShifts = await _userShiftRepository.GetAllAsync();
             var hasUsers = allUserShifts.Any(us => us.ShiftId == id);
             
             if (hasUsers)
@@ -186,30 +185,25 @@ namespace UserService.Core.Services
                 throw new Exception("User does not exist or is deleted");
             }
 
-            // Check if the shift exists
             var shift = await _shiftRepository.GetByIdAsync(shiftId);
             if (shift == null)
                 throw new Exception("Shift not found");
 
-            // Check if the user is already assigned to this shift
             var existingAssignment = (await _userShiftRepository.GetShiftsForUserAsync(userId, shiftId))
                 .FirstOrDefault(us => us.ShiftId == shiftId);
 
             if (existingAssignment != null)
                 throw new ValidationException("User is already assigned to this shift");
 
-            // Check if the user has overlapping shifts
             var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId, shiftId: null); // Get all shifts for the user
             foreach (var existingShift in userShifts)
             {
-                // Check if the shift times overlap
                 if (shift.StartTime < existingShift.Shift.EndTime && shift.EndTime > existingShift.Shift.StartTime)
                 {
                     throw new ValidationException("User already has an overlapping shift.");
                 }
             }
 
-            // Create new user-shift assignment
             var userShift = new UserShift
             {
                 UserId = userId,
@@ -231,14 +225,12 @@ namespace UserService.Core.Services
             if (string.IsNullOrEmpty(shiftId))
                 throw new ArgumentException("Shift ID is required", nameof(shiftId));
 
-            // Check if the user exists and is not soft deleted
             var user = await _userRepository.GetByIdAsync(userId, true);
             if (user == null)
             {
                 throw new Exception("User does not exist or is deleted");
             }
 
-            // Check if the assignment exists
             var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId, shiftId);
             var userShift = userShifts.FirstOrDefault(us => us.ShiftId == shiftId);
             
@@ -275,7 +267,6 @@ namespace UserService.Core.Services
 
         try
         {
-            // Get all users with the specified role
             var users = (await _userRepository.GetUsersByRoleAsync(roleId)).ToList();
             result.TotalUsersProcessed = users.Count;
 
@@ -283,38 +274,32 @@ namespace UserService.Core.Services
             {
                 try
                 {
-                    // Get the shift details
                     var shift = await _shiftRepository.GetByIdAsync(shiftId);
                     if (shift == null)
                     {
                         throw new Exception($"Shift with ID {shiftId} not found");
                     }
 
-                    // Check if user already has this shift assigned
                     var isAssigned = await _userShiftRepository.IsUserAssignedToShiftAsync(user.Id, shiftId);
                     if (isAssigned)
                     {
-                        continue;  // Skip user if already assigned to this shift
+                        continue;  
                     }
 
-                    // Check if the user has overlapping shifts
                     var userShifts = await _userShiftRepository.GetShiftsForUserAsync(user.Id, shiftId: null); // Get all shifts for the user
                     foreach (var existingShift in userShifts)
                     {
-                        // Check if the shift times overlap
                         if (existingShift.Shift.StartTime < shift.StartTime && existingShift.Shift.EndTime > shift.StartTime ||
                             existingShift.Shift.StartTime < shift.EndTime && existingShift.Shift.EndTime > shift.EndTime ||
                             shift.StartTime < existingShift.Shift.EndTime && shift.EndTime > existingShift.Shift.StartTime)
                         {
-                            // Skip this user if there is an overlap
                             result.UsersFailed++;
                             result.FailedUserIds.Add(user.Id);
                             result.FailedUserMessages[user.Id] = $"User has overlapping shift with shift {shiftId}";
-                            break;  // No need to assign this user to the shift
+                            break; 
                         }
                     }
 
-                    // If no overlapping shift found, proceed with assignment
                     var success = await AssignUserToShiftAsync(user.Id, shiftId);
                     if (success)
                     {
@@ -335,7 +320,6 @@ namespace UserService.Core.Services
                 }
             }
 
-            // Update final success status based on results
             result.Success = result.UsersFailed == 0;
             result.Message = result.UsersFailed == 0 
                 ? $"Successfully assigned shift to {result.UsersAssigned} users"
@@ -370,7 +354,6 @@ namespace UserService.Core.Services
 
             try
             {
-                // Get all users with the specified role
                 var users = (await _userRepository.GetUsersByRoleAsync(roleId)).ToList();
                 result.TotalUsersProcessed = users.Count;
 
@@ -378,14 +361,12 @@ namespace UserService.Core.Services
                 {
                     try
                     {
-                        // Check if user has this shift assigned
                         var isAssigned = await _userShiftRepository.IsUserAssignedToShiftAsync(user.Id, shiftId);
                         if (!isAssigned)
                         {
                             continue;
                         }
 
-                        // Try to remove the shift
                         var success = await RemoveUserFromShiftAsync(user.Id, shiftId);
                         if (success)
                         {
@@ -406,7 +387,6 @@ namespace UserService.Core.Services
                     }
                 }
 
-                // Update final success status based on results
                 result.Success = result.UsersFailed == 0;
                 result.Message = result.UsersFailed == 0 
                     ? $"Successfully removed shift from {result.UsersAssigned} users"
@@ -428,17 +408,14 @@ namespace UserService.Core.Services
 
             try
             {
-                // Get all users assigned to this shift
                 var userShifts = await _userShiftRepository.GetUsersAssignedToShiftAsync(shiftId);
                 
-                // Get the shift details
                 var shift = await _shiftRepository.GetByIdAsync(shiftId);
                 if (shift == null)
                 {
                     throw new Exception($"Shift with ID {shiftId} not found");
                 }
 
-                // Extract user details from user shifts
                 var users = userShifts.Select(us => new UserDetailsDto
                 {
                     Id = us.User.Id,
@@ -460,6 +437,40 @@ namespace UserService.Core.Services
                 _logger.LogError(ex, "Error getting users assigned to shift {ShiftId}", shiftId);
                 throw;
             }
+        }
+
+        public async Task<PagedResult<ShiftDto>> GetDeletedPagedAsync(PaginationParameters parameters)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            var pagedShifts = await _shiftRepository.GetDeletedPagedAsync(parameters);
+            var mappedShifts = _mapper.Map<IEnumerable<ShiftDto>>(pagedShifts.Items);
+
+            return new PagedResult<ShiftDto>
+            {
+                Items = mappedShifts,
+                Page = pagedShifts.Page,
+                PageSize = pagedShifts.PageSize,
+                TotalCount = pagedShifts.TotalCount
+            };
+        }
+
+        public async Task<PagedResult<UserShiftDto>> GetDeletedUserShiftsPagedAsync(PaginationParameters parameters)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            var pagedUserShifts = await _userShiftRepository.GetDeletedPagedAsync(parameters);
+            var mappedUserShifts = _mapper.Map<IEnumerable<UserShiftDto>>(pagedUserShifts.Items);
+
+            return new PagedResult<UserShiftDto>
+            {
+                Items = mappedUserShifts,
+                Page = pagedUserShifts.Page,
+                PageSize = pagedUserShifts.PageSize,
+                TotalCount = pagedUserShifts.TotalCount
+            };
         }
     }
 }

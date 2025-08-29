@@ -1,16 +1,13 @@
-namespace UserService.Core.DTOs.Permissions;
+namespace UserService.Core.DTOs.UserRole;
 
-public class PermissionDto
+public class UserRoleDto
 {
     public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    
+    public string UserId { get; set; } = string.Empty;
+    public string RoleId { get; set; } = string.Empty;
+    public DateTime AssignedAt { get; set; }
     public string? CreatedBy { get; set; }
-    
     public string? UpdatedBy { get; set; }
-    
     public DateTime CreatedAt { get; set; }
-    
     public DateTime? UpdatedAt { get; set; }
 }
