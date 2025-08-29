@@ -1,4 +1,4 @@
-namespace UserService.Core.DTOs.PasswordPolicy
+namespace UserService.Core.DTOs.Auth
 {
     public class PasswordPolicyDto
     {
