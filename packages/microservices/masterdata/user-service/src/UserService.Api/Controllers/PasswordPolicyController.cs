@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.Entities;
 using UserService.Core.Services;
-using UserService.Core.DTOs;
+using UserService.Core.DTOs.PasswordPolicy;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
@@ -26,7 +26,7 @@ namespace UserService.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PasswordPolicy>> GetCurrentPolicy()
+        public async Task<ActionResult<PasswordPolicyDto>> GetCurrentPolicy()
         {
             try
             {
@@ -35,7 +35,22 @@ namespace UserService.Api.Controllers
                 {
                     return NotFound("No password policy found");
                 }
-                return Ok(policy);
+                var dto = new PasswordPolicyDto
+                {
+                    Id = new Guid(policy.Id),
+                    MinimumLength = policy.MinimumLength,
+                    RequireUppercase = policy.RequireUppercase,
+                    RequireLowercase = policy.RequireLowercase,
+                    RequireDigit = policy.RequireDigit,
+                    RequireSpecialCharacter = policy.RequireSpecialCharacter,
+                    MaxAgeDays = policy.MaxAgeDays,
+                    CreatedAt = policy.CreatedAt,
+                    UpdatedAt = policy.UpdatedAt,
+                    CreatedBy = policy.CreatedBy,
+                    UpdatedBy = policy.UpdatedBy,
+                    IsDeleted = policy.IsDeleted
+                };
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -44,8 +59,8 @@ namespace UserService.Api.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult> UpdatePolicy([FromBody] PasswordPolicy policy)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdatePolicy(Guid id, [FromBody] PasswordPolicyUpdateDto policyDto)
         {
             if (!ModelState.IsValid)
             {
@@ -55,18 +70,25 @@ namespace UserService.Api.Controllers
 
             try
             {
-                // Since only one policy is allowed, we'll update the existing one or create a new one
                 var currentPolicy = await _passwordPolicyService.GetPolicyAsync();
-                if (currentPolicy != null)
+                if (currentPolicy == null || new Guid(currentPolicy.Id) != id)
                 {
-                    policy.Id = currentPolicy.Id; // Ensure we update the existing policy
+                    return NotFound("Password policy not found");
                 }
 
-                await _passwordPolicyService.UpdatePolicyAsync(policy);
+                currentPolicy.MinimumLength = policyDto.MinimumLength;
+                currentPolicy.RequireUppercase = policyDto.RequireUppercase;
+                currentPolicy.RequireLowercase = policyDto.RequireLowercase;
+                currentPolicy.RequireDigit = policyDto.RequireDigit;
+                currentPolicy.RequireSpecialCharacter = policyDto.RequireSpecialCharacter;
+                currentPolicy.MaxAgeDays = policyDto.MaxAgeDays;
+
+                await _passwordPolicyService.UpdatePolicyAsync(currentPolicy);
                 return Ok();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating password policy");
                 return StatusCode(500, "An error occurred while updating the password policy");
             }
         }

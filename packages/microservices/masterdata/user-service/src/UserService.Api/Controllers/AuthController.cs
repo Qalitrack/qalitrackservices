@@ -310,12 +310,10 @@ namespace UserService.Api.Controllers
                     return BadRequest(new { message = "No token provided" });
                 }
 
-                // Try to get user ID from token even if it's expired
                 var userId = await _tokenService.GetUserIdFromTokenAsync(token);
                 
                 if (userId == null)
                 {
-                    // If we can't get user ID, try to extract it manually from the token
                     try
                     {
                         var tokenHandler = new JwtSecurityTokenHandler();
@@ -339,13 +337,10 @@ namespace UserService.Api.Controllers
                     }
                 }
                 
-                // Update user's status using service layer
                 await _userService.UpdateUserActiveStatusAsync(userId.Value.ToString(), false);
                 
-                // Delete all tokens for this user using service layer
                 var tokensDeleted = await _tokenService.DeleteAllTokensForUserAsync(userId.Value);
                 
-                // Also enqueue the status update for background processing (for any other systems that might be listening)
                 _userStatusService.EnqueueStatusUpdate(userId.Value.ToString(), false);
                 
                 if (tokensDeleted)

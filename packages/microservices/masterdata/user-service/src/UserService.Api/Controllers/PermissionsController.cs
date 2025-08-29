@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Core.DTOs.Common;
 using UserService.Core.DTOs.Permissions;
 using UserService.Core.Interfaces.Services;
 
@@ -148,6 +149,22 @@ namespace UserService.Api.Controllers
             {
                 _logger.LogError(ex, $"Error getting roles for permission ID: {permissionId}");
                 return StatusCode(500, "An error occurred while retrieving roles for the permission");
+            }
+        }
+        [HttpGet("deleted")]
+        [Authorize(Roles = "Admin")]
+
+        public async Task<IActionResult> GetDeletedPaged([FromQuery] PaginationParameters parameters)
+        {
+            try
+            {
+                var result = await _permissionService.GetDeletedPagedAsync(parameters);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting deleted permissions");
+                return StatusCode(500, "An error occurred while retrieving deleted permissions");
             }
         }
     }
