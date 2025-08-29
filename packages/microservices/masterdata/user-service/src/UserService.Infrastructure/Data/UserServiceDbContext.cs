@@ -232,4 +232,4 @@ public class UserServiceDbContext : DbContext
             entity.Property(e => e.MaxAgeDays).HasDefaultValue(90);
         });
     }
-}
+} 

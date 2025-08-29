@@ -23,10 +23,10 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<UserServic
 
         // Get database configuration
         var connectionString = configuration.GetConnectionString("DefaultConnection");
-        var usePostgreSQL = configuration.GetValue<bool>("UsePostgreSQL", false);
+        var usePostgreSql = configuration.GetValue<bool>("UsePostgreSQL", false);
 
         // Configure the appropriate database provider
-        if (usePostgreSQL && !string.IsNullOrEmpty(connectionString))
+        if (usePostgreSql && !string.IsNullOrEmpty(connectionString))
         {
             Console.WriteLine($"Using PostgreSQL with connection: {MaskConnectionString(connectionString)}");
             optionsBuilder.UseNpgsql(connectionString, sqlOptions =>

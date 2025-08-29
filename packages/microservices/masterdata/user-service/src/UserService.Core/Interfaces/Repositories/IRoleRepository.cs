@@ -1,4 +1,5 @@
 using UserService.Core.Entities;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Core.Interfaces.Repositories
 {
@@ -11,7 +12,10 @@ namespace UserService.Core.Interfaces.Repositories
         // Get all permissions associated with a specific role
         Task<object> AddAsync(Role role);
         Task SaveChangesAsync();
-        
+
         Task<Role?> GetRoleWithPermissionsAsync(string roleName);
+
+        // Get deleted roles with pagination
+        Task<PagedResult<Role>> GetDeletedPagedAsync(PaginationParameters parameters);
     }
 }

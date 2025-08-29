@@ -8,6 +8,10 @@ public class RolePermissionProfile : Profile
 {
     public RolePermissionProfile()
     {
-        CreateMap<RolePermission, RolePermissionDto>();
+        CreateMap<RolePermission, RolePermissionDto>()
+            .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
+            .ForMember(dest => dest.UpdatedBy, opt => opt.MapFrom(src => src.UpdatedBy))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
     }
 }

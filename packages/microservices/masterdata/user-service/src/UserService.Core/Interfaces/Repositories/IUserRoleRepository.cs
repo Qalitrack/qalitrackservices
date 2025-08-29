@@ -1,4 +1,5 @@
 using UserService.Core.Entities;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Core.Interfaces.Repositories
 {
@@ -15,5 +16,7 @@ namespace UserService.Core.Interfaces.Repositories
             CancellationToken cancellationToken = default);
 
         Task<int> RemoveRoleFromAllUsersAsync(string id);
+
+        Task<PagedResult<UserRole>> GetDeletedPagedAsync(PaginationParameters parameters);
     }
 }

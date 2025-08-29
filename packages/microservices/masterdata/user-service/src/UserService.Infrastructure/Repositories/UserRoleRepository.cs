@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces.Repositories;
+using UserService.Core.DTOs.Common;
 using UserService.Infrastructure.Data;
 
 namespace UserService.Infrastructure.Repositories
@@ -169,6 +170,67 @@ namespace UserService.Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
             return count;
+        }
+
+        public async Task<PagedResult<UserRole>> GetDeletedPagedAsync(PaginationParameters parameters)
+        {
+            var query = _context.UserRoles
+                .IgnoreQueryFilters()
+                .Where(ur => ur.IsDeleted)
+                .Include(ur => ur.User)
+                .Include(ur => ur.Role)
+                .AsQueryable();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            {
+                var searchTerm = parameters.Search.ToLower();
+                query = query.Where(ur => 
+                    ur.UserId.ToLower().Contains(searchTerm) ||
+                    ur.RoleId.ToLower().Contains(searchTerm) ||
+                    (ur.User != null && ur.User.Email.ToLower().Contains(searchTerm)) ||
+                    (ur.Role != null && ur.Role.Name.ToLower().Contains(searchTerm)));
+            }
+
+            // Apply sorting
+            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
+            {
+                query = parameters.SortBy.ToLower() switch
+                {
+                    "userid" => parameters.SortDescending 
+                        ? query.OrderByDescending(ur => ur.UserId)
+                        : query.OrderBy(ur => ur.UserId),
+                    "roleid" => parameters.SortDescending 
+                        ? query.OrderByDescending(ur => ur.RoleId)
+                        : query.OrderBy(ur => ur.RoleId),
+                    "assignedat" => parameters.SortDescending 
+                        ? query.OrderByDescending(ur => ur.AssignedAt)
+                        : query.OrderBy(ur => ur.AssignedAt),
+                    "createdat" => parameters.SortDescending 
+                        ? query.OrderByDescending(ur => ur.CreatedAt)
+                        : query.OrderBy(ur => ur.CreatedAt),
+                    _ => query.OrderBy(ur => ur.AssignedAt)
+                };
+            }
+            else
+            {
+                query = query.OrderBy(ur => ur.AssignedAt);
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((parameters.Page - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return new PagedResult<UserRole>
+            {
+                Items = items,
+                Page = parameters.Page,
+                PageSize = parameters.PageSize,
+                TotalCount = totalCount
+            };
         }
     }
 }
