@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Shift;
+using UserService.Core.DTOs;
 using UserService.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.DTOs.Common;
 
 namespace UserService.Api.Controllers
 {
@@ -256,7 +258,80 @@ namespace UserService.Api.Controllers
                 return StatusCode(500, "An error occurred while deleting the shift");
             }
         }
-        
+
+        [HttpGet("deleted")]
+        [Authorize(Policy = "shifts.view")]
+        [ProducesResponseType(typeof(PagedResult<ShiftDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDeletedShifts(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false)
+        {
+            try
+            {
+                var parameters = new PaginationParameters
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    Search = search,
+                    SortBy = sortBy,
+                    SortDescending = sortDescending
+                };
+
+                var result = await _shiftService.GetDeletedPagedAsync(parameters);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving deleted shifts");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { Success = false, Message = "An error occurred while retrieving deleted shifts" });
+            }
+        }
+
+        [HttpGet("user-shifts/deleted")]
+        [Authorize(Policy = "shifts.view")]
+        [ProducesResponseType(typeof(PagedResult<UserShiftDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDeletedUserShifts(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false)
+        {
+            try
+            {
+                var parameters = new PaginationParameters
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    Search = search,
+                    SortBy = sortBy,
+                    SortDescending = sortDescending
+                };
+
+                var result = await _shiftService.GetDeletedUserShiftsPagedAsync(parameters);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving deleted user shifts");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { Success = false, Message = "An error occurred while retrieving deleted user shifts" });
+            }
+        }
     }
 }
 
