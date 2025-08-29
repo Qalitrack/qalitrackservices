@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using UserService.Core.DTOs.Auth;
 
 namespace UserService.Api.Controllers
 {
