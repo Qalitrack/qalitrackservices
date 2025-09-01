@@ -188,12 +188,11 @@ namespace UserService.Infrastructure.Repositories
         }
 
         public async Task<User?> GetByIdAsync(string id, bool includeRoles = true)
-             {
+        {
             try
             {
                 var query = _context.Users.AsQueryable();
 
-                
                 if (includeRoles)
                 {
                     query = query
@@ -209,26 +208,18 @@ namespace UserService.Infrastructure.Repositories
                     return null;
                 }
 
-                
                 if (includeRoles)
                 {
-    
                     // Use pattern matching for cleaner null checks
                     if (user.UserRoles is { Count: > 0 } userRoles)
                     {
-        
                         foreach (var userRole in userRoles)
                         {
                             // Use null-conditional operator and pattern matching
                             var roleInfo = userRole.Role is { } role 
                                 ? $"RoleId: {userRole.RoleId}, RoleName: {role.Name}" 
                                 : $"RoleId: {userRole.RoleId}, Role is null";
-            
                         }
-                    }
-                    else
-                    {
-                        logger.LogInformation("6. No roles found for user");
                     }
                 }
 
