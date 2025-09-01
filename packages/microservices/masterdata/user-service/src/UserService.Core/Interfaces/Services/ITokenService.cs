@@ -1,4 +1,5 @@
 using UserService.Core.DTOs.User;
+using UserService.Core.Entities;
 
 namespace UserService.Core.Interfaces.Services
 {

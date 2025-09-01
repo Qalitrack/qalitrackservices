@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using UserService.Core.Entities;
 
-namespace UserService.Core.Interfaces;
+namespace UserService.Core.Entities;
 
 public class PersonalAccessToken : BaseEntity
 {
