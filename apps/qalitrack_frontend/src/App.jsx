@@ -9,12 +9,14 @@ import Reports from './pages/Reports';
 import System from './pages/System';
 import Vehicle from './components/weighing/Vehicles';
 import Drivers from './components/weighing/Drivers';
-
+import ProtectedRoute from './App/ProtectedRoutes';
+import Login from './pages/userservice/Login';
 export default function App(){
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<MainLayout/>}>
+        <Route path="/login" element={<Login/>}/>
+        <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route path="/" element={<Dashboard/>}/>
           <Route path="/weighing/factory" element={<FactoryWeighing/>}/>
           <Route path="/weighing/vehicle" element={<Vehicle/>}/>
