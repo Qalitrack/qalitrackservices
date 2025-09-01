@@ -187,14 +187,6 @@ namespace UserService.Api.Controllers
                     // You already have the `user` data from the login, so there's no need to query the database again
                     UserReadDto? user = await _userService.GetByIdAsync(userId); // This line can be skipped if you store the user from login in the session
                     
-                    
-                    if (user.Roles != null)
-                    {
-                        foreach (var role in user.Roles)
-                        {
-                            _logger.LogInformation("Role: {RoleName}", role);
-                        }
-                    }
                     var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(user);
 
                     await _userService.UpdateUserActiveStatusAsync(userId, true);

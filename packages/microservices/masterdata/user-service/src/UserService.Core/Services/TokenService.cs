@@ -8,6 +8,7 @@ using UserService.Core.DTOs.User;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
+using UserService.Core.Entities;
 
 namespace UserService.Core.Services
 {

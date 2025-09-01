@@ -1,3 +1,5 @@
+using UserService.Core.Entities;
+
 namespace UserService.Core.Interfaces.Repositories
 {
     public interface ITokenRepository: IRepository<PersonalAccessToken>
