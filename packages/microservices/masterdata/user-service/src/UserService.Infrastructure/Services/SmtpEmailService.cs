@@ -20,7 +20,6 @@ public class SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailSer
             var fromEmail = configuration["Email:FromEmail"];
             var fromName = configuration["Email:FromName"];
             var enableSsl = bool.Parse(configuration["Email:EnableSsl"] ?? "true");
-            logger.LogInformation("SMTP Config: Host={Host}, Port={Port}, Username={Username}", smtpHost, smtpPort, smtpUsername);
             if (string.IsNullOrEmpty(smtpHost) || string.IsNullOrEmpty(smtpUsername))
             {
                 logger.LogWarning("SMTP configuration incomplete. Email not sent to {To}", to);

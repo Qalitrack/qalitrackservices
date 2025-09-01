@@ -141,9 +141,7 @@ namespace UserService.Infrastructure.Repositories
                     _logger.LogWarning("User ID not found in claims, defaulting to 'System'");
                     return "System";
                 }
-
-                _logger.LogInformation("Retrieved user ID: {UserId}", userId);
-                return userId;
+                    return userId;
             }
             catch (Exception ex)
             {
