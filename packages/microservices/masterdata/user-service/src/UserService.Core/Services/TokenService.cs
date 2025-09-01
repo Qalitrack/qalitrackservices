@@ -40,7 +40,7 @@ namespace UserService.Core.Services
                        "UserService";
 
             _expiration = TimeSpan.FromMinutes(
-                configuration.GetValue<int>("JwtSettings:ExpiryInMinutes", 60));
+                configuration.GetValue<int>("JwtSettings:ExpiryInMinutes", 480));
         }
 
         public async Task<PersonalAccessToken> GenerateTokenForAuthenticatedUserAsync(UserReadDto user)
