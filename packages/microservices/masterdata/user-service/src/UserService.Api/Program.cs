@@ -157,9 +157,10 @@ services.AddAuthentication(options =>
     {
         options.AddPolicy("RestrictedCors", policy =>
         {
-            policy.WithOrigins("https://yourdomain.com")
-                  .WithMethods("GET", "POST", "PUT", "DELETE")
-                  .WithHeaders("Content-Type", "Authorization");
+            policy.SetIsOriginAllowed(origin =>
+                    origin.StartsWith("http://localhost") || origin.StartsWith("http://127.0.0.1"))
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
     });
     
