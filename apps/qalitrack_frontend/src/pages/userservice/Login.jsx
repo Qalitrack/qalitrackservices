@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "./Auth/Auth.js";
+import { apiClient } from "./Auth/Client.js";
 
 export default function Login() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("Daphne Smith");
     const [password, setPassword] = useState("••••••••••••");
     const [showPassword, setShowPassword] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [show2FA, setShow2FA] = useState(false);
+    const [verificationCode, setVerificationCode] = useState("");
+    const [sessionId, setSessionId] = useState("");
+    const [maskedEmail, setMaskedEmail] = useState("");
+    const [twoFAError, setTwoFAError] = useState("");
 
     const slides = [
         {
@@ -36,21 +44,93 @@ export default function Login() {
 
         // Validate inputs
         if (!email || !password) {
-            alert("Please enter both email and password");
-            return;
+            return; // The error will be handled by the validation below
         }
 
         try {
             const result = await login(email, password);
 
             if (result.success) {
-                console.log("Login successful!");
-            } else {
-                // Login failed - error is already set in the hook
-                console.log("Login failed:", result.error);
+                console.log("Server response:", result.data);
+
+                // Check if 2FA is required - handle different response structures
+                const serverData = result.data?.data || result.data;
+
+                if (serverData?.requires2FA) {
+                    setShow2FA(true);
+                    setSessionId(serverData.sessionId);
+                    setMaskedEmail(serverData.email);
+                    console.log("2FA required:", serverData.message);
+                } else {
+                    // Normal login success - redirect to dashboard
+                    console.log("Login successful - no 2FA required!");
+                    navigate('/dashboard');
+                }
             }
         } catch (err) {
             console.error("Unexpected error during login:", err);
+        }
+    };
+
+    const handle2FASubmit = async (e) => {
+        e.preventDefault();
+
+        if (!verificationCode) {
+            return;
+        }
+
+        setTwoFAError(""); // Clear any previous 2FA errors
+
+        try {
+            // Call your 2FA verification endpoint
+            const response = await apiClient.post('/Auth/verify-2fa', {
+                sessionId,
+                code: verificationCode
+            });
+
+            console.log("2FA Response:", response.data);
+
+            if (response.data.success) {
+                const userData = response.data.data;
+
+                console.log("2FA verification successful!");
+
+                // Store the auth token and user data
+                if (userData?.token) {
+                    localStorage.setItem('authToken', userData.token);
+                }
+
+                if (userData) {
+                    // Store user information
+                    const userInfo = {
+                        id: userData.id,
+                        email: userData.email,
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        userRoles: userData.userRoles
+                    };
+                    localStorage.setItem('user', JSON.stringify(userInfo));
+                }
+
+                // Redirect to dashboard
+                console.log("Redirecting to dashboard...");
+                navigate('/dashboard');
+            }
+        } catch (err) {
+            console.error("2FA verification failed:", err);
+
+            // Extract error message from server response
+            let errorMessage = "2FA verification failed";
+
+            if (err.response?.data?.message) {
+                errorMessage = err.response.data.message;
+            } else if (err.response?.status === 400) {
+                errorMessage = "Invalid or expired verification code";
+            } else if (err.request) {
+                errorMessage = "Network error. Please try again.";
+            }
+
+            setTwoFAError(errorMessage);
         }
     };
 
@@ -76,65 +156,144 @@ export default function Login() {
                         {/* Welcome Message */}
                         <div className="mb-6 sm:mb-8">
                             <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
-                                Welcome Back👋
+                                {show2FA ? "Enter Verification Code" : "Welcome Back👋"}
                             </h2>
+                            {show2FA && (
+                                <p className="text-sm text-gray-600">
+                                    We've sent a verification code to {maskedEmail}
+                                </p>
+                            )}
                         </div>
+
+                        {/* Error Display */}
+                        {(error || twoFAError) && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                                {twoFAError || error}
+                            </div>
+                        )}
+
+                        {/* Validation Error Display */}
+                        {(!email || !password) && !error && !twoFAError && !show2FA && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                                Please enter both email and password
+                            </div>
+                        )}
 
                         {/* Login Form */}
-                        <div className="space-y-4 sm:space-y-6">
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Email Address
-                                </label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors bg-white text-gray-900 text-sm sm:text-base"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Password
-                                </label>
-                                <div className="relative">
+                        {!show2FA ? (
+                            <div className="space-y-4 sm:space-y-6">
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Email Address
+                                    </label>
                                     <input
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors bg-white text-gray-900 pr-10 sm:pr-12 text-sm sm:text-base"
+                                        id="email"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className={`w-full px-3 py-2 sm:px-4 sm:py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors bg-white text-gray-900 text-sm sm:text-base ${
+                                            error ? 'border-red-300' : 'border-gray-300'
+                                        }`}
                                         required
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                                    >
-                                        {showPassword ? <EyeOff size={18} className="sm:w-5 sm:h-5" /> : <Eye size={18} className="sm:w-5 sm:h-5" />}
-                                    </button>
                                 </div>
-                            </div>
 
-                            <button
-                                type="button"
-                                onClick={handleSubmit}
-                                className="w-full bg-amber-500 text-white py-2.5 sm:py-3 px-4 rounded-lg font-medium hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors text-sm sm:text-base"
-                            >
-                                Login
-                            </button>
-                        </div>
+                                <div>
+                                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Password
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            id="password"
+                                            type={showPassword ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className={`w-full px-3 py-2 sm:px-4 sm:py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors bg-white text-gray-900 pr-10 sm:pr-12 text-sm sm:text-base ${
+                                                error ? 'border-red-300' : 'border-gray-300'
+                                            }`}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={18} className="sm:w-5 sm:h-5" /> : <Eye size={18} className="sm:w-5 sm:h-5" />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={handleSubmit}
+                                    disabled={loading}
+                                    className={`w-full py-2.5 sm:py-3 px-4 rounded-lg font-medium focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors text-sm sm:text-base ${
+                                        loading
+                                            ? 'bg-gray-400 text-white cursor-not-allowed'
+                                            : 'bg-amber-500 text-white hover:bg-amber-600'
+                                    }`}
+                                >
+                                    {loading ? 'Logging in...' : 'Login'}
+                                </button>
+                            </div>
+                        ) : (
+                            /* 2FA Form */
+                            <div className="space-y-4 sm:space-y-6">
+                                <div>
+                                    <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Verification Code
+                                    </label>
+                                    <input
+                                        id="verificationCode"
+                                        type="text"
+                                        value={verificationCode}
+                                        onChange={(e) => setVerificationCode(e.target.value)}
+                                        placeholder="Enter 6-digit code"
+                                        maxLength="6"
+                                        className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors bg-white text-gray-900 text-sm sm:text-base text-center text-2xl tracking-widest font-mono"
+                                        required
+                                    />
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={handle2FASubmit}
+                                    disabled={loading || !verificationCode}
+                                    className={`w-full py-2.5 sm:py-3 px-4 rounded-lg font-medium focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors text-sm sm:text-base ${
+                                        loading || !verificationCode
+                                            ? 'bg-gray-400 text-white cursor-not-allowed'
+                                            : 'bg-amber-500 text-white hover:bg-amber-600'
+                                    }`}
+                                >
+                                    {loading ? 'Verifying...' : 'Verify Code'}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShow2FA(false);
+                                        setVerificationCode("");
+                                        setSessionId("");
+                                        setMaskedEmail("");
+                                        setTwoFAError("");
+                                        clearError();
+                                    }}
+                                    className="w-full py-2 px-4 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                                >
+                                    ← Back to Login
+                                </button>
+                            </div>
+                        )}
 
                         {/* Sign Up Link */}
-                        <p className="text-center text-gray-600 mt-4 sm:mt-6 text-sm">
-                            Don't have an account?{" "}
-                            <a href="#" className="text-amber-500 hover:text-amber-600 font-medium transition-colors">
-                                Sign up
-                            </a>
-                        </p>
+                        {!show2FA && (
+                            <p className="text-center text-gray-600 mt-4 sm:mt-6 text-sm">
+                                Don't have an account?{" "}
+                                <a href="#" className="text-amber-500 hover:text-amber-600 font-medium transition-colors">
+                                    Sign up
+                                </a>
+                            </p>
+                        )}
                     </div>
                 </div>
 
