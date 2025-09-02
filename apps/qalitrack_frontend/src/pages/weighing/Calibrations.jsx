@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addCalibration, updateCalibration, deleteCalibration } from '../store/calibrationSlice';
+import { addCalibration, updateCalibration, deleteCalibration } from '/src/store/calibrationSlice';
 
 export default function Calibrations() {
   const dispatch = useDispatch();

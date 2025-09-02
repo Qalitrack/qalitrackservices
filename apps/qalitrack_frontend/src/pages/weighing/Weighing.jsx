@@ -1,14 +1,14 @@
 import { Suspense, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Loader2 } from "lucide-react";
-import { deactivateTransaction, completeWeighing } from "../store/weighingSlice";
+import { deactivateTransaction, completeWeighing } from "/src/store/weighingSlice";
 
 // Lazy load heavy components
-const WeighbridgePanel = lazy(() => import("../components/WeighbridgePanel"));
-const CameraGrid = lazy(() => import("../components/CameraGrid"));
-const WeighingForm = lazy(() => import("../components/WeighingForm"));
-const TransactionList = lazy(() => import("../components/TransactionList"));
-const HardwareControls = lazy(() => import("../components/HardwareControls"));
+const WeighbridgePanel = lazy(() => import("/src/components/WeighbridgePanel"));
+const CameraGrid = lazy(() => import("/src/components/CameraGrid"));
+const WeighingForm = lazy(() => import("/src/components/WeighingForm"));
+const TransactionList = lazy(() => import("/src/components/TransactionList"));
+const HardwareControls = lazy(() => import("/src/components/HardwareControls"));
 export default function Weighing() {
   const dispatch = useDispatch();
   const transactions = useSelector((state) => state.weighing.transactions);

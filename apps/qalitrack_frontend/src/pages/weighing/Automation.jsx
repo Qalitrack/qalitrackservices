@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setDeviceState, addAlert } from '../store/automationSlice';
+import { setDeviceState, addAlert } from '/src/store/automationSlice';
 
 export default function Automation() {
   const dispatch = useDispatch();
