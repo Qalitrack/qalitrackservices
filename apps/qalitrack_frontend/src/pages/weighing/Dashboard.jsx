@@ -1,10 +1,10 @@
 // src/pages/Dashboard.jsx
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import KPIWidget from '../components/KPIWidget';
-import LiveWeighbridgeStatus from '../components/LiveWeighbridgeStatus';
-import ProcessFlow from '../components/ProcessFlow';
-import AlertsPanel from '../components/AlertsPanel';
+import KPIWidget from '/src/components/KPIWidget.jsx';
+import LiveWeighbridgeStatus from '/src/components/LiveWeighbridgeStatus.jsx';
+import ProcessFlow from '/src/components/ProcessFlow';
+import AlertsPanel from '/src/components/AlertsPanel';
 import {
   Truck,
   ClipboardList,
