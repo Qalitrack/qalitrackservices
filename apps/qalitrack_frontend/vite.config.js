@@ -4,7 +4,21 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: [
+          // [
+          //   "babel-plugin-react-router",
+          //   {
+          //     future: {
+          //       v7_startTransition: true,   // ✅ Opt-in to React Router v7 transition behavior
+          //       v7_relativeSplatPath: true, // ✅ Opt-in to new relative splat path behavior
+          //     },
+          //   },
+          // ],
+        ],
+      },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'logo192.png', 'logo512.png'],
@@ -25,15 +39,19 @@ export default defineConfig({
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: ({url}) => url.origin.includes('api.') || url.pathname.startsWith('/api/'),
+            urlPattern: ({ url }) =>
+              url.origin.includes('api.') || url.pathname.startsWith('/api/'),
             handler: 'NetworkFirst',
             options: {
               cacheName: 'bamburi-api-cache',
-              expiration: { maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 }
-            }
-          }
-        ]
-      }
-    })
-  ]
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 24 * 60 * 60, // 1 day
+              },
+            },
+          },
+        ],
+      },
+    }),
+  ],
 });
