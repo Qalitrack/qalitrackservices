@@ -74,7 +74,6 @@ namespace UserService.Infrastructure.Repositories
 
                 if (changes > 0)
                 {
-                    _logger.LogInformation("Created new token for user {UserId}", token.UserId);
                     return token;
                 }
 
@@ -109,14 +108,12 @@ namespace UserService.Infrastructure.Repositories
 
                 if (!tokens.Any())
                 {
-                    _logger.LogInformation("No tokens found to delete for user {UserId}", userId);
                     return false;
                 }
 
                 _dbContext.PersonalAccessTokens.RemoveRange(tokens);
                 int changes = await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("Deleted {Count} tokens for user {UserId}", tokens.Count, userId);
                 return changes > 0;
             }
             catch (Exception ex)

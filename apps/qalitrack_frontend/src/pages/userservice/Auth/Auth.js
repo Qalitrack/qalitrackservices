@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { apiClient } from './Client.js'
+import { apiClient } from './Client';
 
 // Example usage in your Login component:
 // import useAuth from './useAuth';
@@ -29,18 +29,47 @@ const useAuth = () => {
                 password
             });
 
-            console.log('Login successful:', response);
+            // Store token and user data based on actual server response structure
+            if (response.data) {
+                // Store the entire response data or specific fields as needed
+                localStorage.setItem('authToken', response.data.token || response.data.accessToken);
 
-            // Store token in localStorage or wherever you manage auth state
-            if (response.data && response.data.token) {
-                localStorage.setItem('authToken', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                // Store user info if it exists in the response
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
             }
 
             return { success: true, data: response.data };
 
         } catch (err) {
-            const errorMessage = err.response?.data?.message || err.message || 'Login failed';
+            let errorMessage = 'Login failed';
+
+            if (err.response) {
+                // Server responded with error status (axios)
+                const { status, data } = err.response;
+
+                if (status === 401 && data && data.message) {
+                    // Your server returns: { "message": "Invalid email or password" }
+                    errorMessage = data.message;
+                } else if (data && typeof data === 'object') {
+                    errorMessage = data.message ||
+                        data.error ||
+                        data.details ||
+                        `Server error: ${status}`;
+                } else if (typeof data === 'string') {
+                    errorMessage = data;
+                } else {
+                    errorMessage = `Server error: ${status}`;
+                }
+            } else if (err.request) {
+                // Request was made but no response received (network error)
+                errorMessage = 'Network error. Please check your connection.';
+            } else {
+                // Something else happened
+                errorMessage = err.message || 'An unexpected error occurred';
+            }
+
             setError(errorMessage);
             return { success: false, error: errorMessage };
         } finally {
