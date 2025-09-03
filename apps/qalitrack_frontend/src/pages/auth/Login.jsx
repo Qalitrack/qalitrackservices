@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useAuth from '../../helpers/auth.js';
-import { apiClient } from './Auth/Client.js'; // Import your API client
+import { apiClient } from '../../helpers/apiClients.js'; // Import your API client
 
 export default function Login() {
     const [email, setEmail] = useState("");
