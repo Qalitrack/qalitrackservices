@@ -28,11 +28,18 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Role?> GetByIdAsync(string id, bool b)
+        public async Task<Role?> GetByIdAsync(string id, bool includePermissions = true)
         {
-            return await _context.Roles
-                .Include(r => r.RolePermissions)
-                    .ThenInclude(rp => rp.Permission)
+            var query = _context.Roles.AsQueryable();
+            
+            if (includePermissions)
+            {
+                query = query
+                    .Include(r => r.RolePermissions)
+                        .ThenInclude(rp => rp.Permission);
+            }
+            
+            return await query
                 .FirstOrDefaultAsync(r => r.Id == id && !r.IsDeleted);
         }
 
@@ -41,7 +48,17 @@ namespace UserService.Infrastructure.Repositories
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            return await CreateAsync(entity);
+            // Set audit fields
+            entity.CreatedAt = DateTime.UtcNow;
+            entity.CreatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User) ?? "System";
+            entity.UpdatedAt = entity.CreatedAt;
+            entity.UpdatedBy = entity.CreatedBy;
+            entity.IsDeleted = false;
+
+            _context.Roles.Add(entity);
+            await _context.SaveChangesAsync();
+            
+            return entity;
         }
 
         public async Task<Role?> UpdateAsync(Role entity)
@@ -77,39 +94,46 @@ namespace UserService.Infrastructure.Repositories
             if (role == null)
                 return false;
 
+            // Check if role is assigned to users
             if (role.UserRoles != null && role.UserRoles.Any())
             {
                 throw new InvalidOperationException("Cannot delete role that is assigned to users.");
             }
         
+            // Soft delete
             role.IsDeleted = true;
+            role.UpdatedAt = DateTime.UtcNow;
+            role.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
+            
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<Role?> GetByNameAsync(string roleName)
         {
+            if (string.IsNullOrWhiteSpace(roleName))
+                return null;
+                
             return await _context.Roles
                 .FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.Trim().ToLower() && !r.IsDeleted);
         }
-        
 
         public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
         {
+            if (string.IsNullOrWhiteSpace(roleId))
+                return new List<Permission>();
+                
             return await _context.RolePermissions
-                .Where(rp => rp.RoleId == roleId)
+                .Where(rp => rp.RoleId == roleId && !rp.IsDeleted)
                 .Select(rp => rp.Permission)
                 .ToListAsync();
         }
-        
 
         public async Task<object> AddAsync(Role role)
         {
-            //use the create method in the base class
-            role.CreatedAt = DateTime.UtcNow;
-            role.CreatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
-            role.UpdatedAt = role.CreatedAt;
-            role.UpdatedBy = role.CreatedBy;
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+                
             return await CreateAsync(role);
         }
 
@@ -117,14 +141,16 @@ namespace UserService.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
-        
 
         public async Task<Role?> GetRoleWithPermissionsAsync(string roleName)
         {
+            if (string.IsNullOrWhiteSpace(roleName))
+                return null;
+                
             return await _context.Roles
-                .Include(r => r.RolePermissions)
+                .Include(r => r.RolePermissions.Where(rp => !rp.IsDeleted))
                     .ThenInclude(rp => rp.Permission)
-                .FirstOrDefaultAsync(r => r.Name == roleName);
+                .FirstOrDefaultAsync(r => r.Name == roleName && !r.IsDeleted);
         }
 
         public async Task<PagedResult<Role>> GetDeletedPagedAsync(PaginationParameters parameters)
@@ -145,31 +171,23 @@ namespace UserService.Infrastructure.Repositories
                 var searchTerm = parameters.Search.ToLower();
                 query = query.Where(r =>
                     r.Name.ToLower().Contains(searchTerm) ||
-                    r.Description.ToLower().Contains(searchTerm));
+                    (r.Description != null && r.Description.ToLower().Contains(searchTerm)));
             }
 
             // Apply sorting
-            switch (parameters.SortBy?.ToLower())
+            query = parameters.SortBy?.ToLower() switch
             {
-                case "name":
-                    query = parameters.SortDescending
-                        ? query.OrderByDescending(r => r.Name)
-                        : query.OrderBy(r => r.Name);
-                    break;
-                case "description":
-                    query = parameters.SortDescending
-                        ? query.OrderByDescending(r => r.Description)
-                        : query.OrderBy(r => r.Description);
-                    break;
-                case "createdat":
-                    query = parameters.SortDescending
-                        ? query.OrderByDescending(r => r.CreatedAt)
-                        : query.OrderBy(r => r.CreatedAt);
-                    break;
-                default:
-                    query = query.OrderBy(r => r.Name);
-                    break;
-            }
+                "name" => parameters.SortDescending
+                    ? query.OrderByDescending(r => r.Name)
+                    : query.OrderBy(r => r.Name),
+                "description" => parameters.SortDescending
+                    ? query.OrderByDescending(r => r.Description)
+                    : query.OrderBy(r => r.Description),
+                "createdat" => parameters.SortDescending
+                    ? query.OrderByDescending(r => r.CreatedAt)
+                    : query.OrderBy(r => r.CreatedAt),
+                _ => query.OrderBy(r => r.Name)
+            };
 
             var totalCount = await query.CountAsync();
             var items = await query
