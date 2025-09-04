@@ -12,7 +12,6 @@ const UserServiceLayout = lazy(() => import("../layouts/UserServiceLayout.jsx"))
 const Login = lazy(() => import("../pages/auth/Login.jsx"));
 
 // Admin Components
-const AdminDashboard = lazy(() => import("../components/user/AdminDashboard.jsx"));
 
 // Operator/Shared Components
 const Dashboard = lazy(() => import("../pages/weighing/Dashboard.jsx"));
@@ -24,7 +23,7 @@ const Reports = lazy(() => import("../pages/weighing/Reports.jsx"));
 const System = lazy(() => import("../pages/weighing/System.jsx"));
 const Vehicle = lazy(() => import("../components/weighing/Vehicles.jsx"));
 const Drivers = lazy(() => import("../components/weighing/Drivers.jsx"));
-
+const AdminDashboard = lazy(() => import("../pages/Userservice/AdminDashboard.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -136,7 +135,7 @@ export const routes = [
                 children: [
                     {
                         path: "dashboard",
-                        element: <Dashboard />
+                        element: <AdminDashboard />
                     },
                     {
                         path: "weighing/factory",

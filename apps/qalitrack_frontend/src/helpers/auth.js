@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiClient } from './apiClients.js';
+import axios from "axios";
 
 const useAuth = () => {
     const [loading, setLoading] = useState(false);
@@ -7,21 +8,33 @@ const useAuth = () => {
     const [sessionId, setSessionId] = useState('');
     const [maskedEmail, setMaskedEmail] = useState('');
     const [requires2FA, setRequires2FA] = useState(false);
+    const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
+    const [userId, setUserId] = useState('');
 
     const login = async (email, password) => {
         setLoading(true);
         setError('');
         setRequires2FA(false);
+        setRequiresPasswordChange(false);
 
         try {
             const response = await apiClient.post('/Auth/login', {
                 email,
                 password
             });
-            console.log(response);
 
-            // Adjust for nested data structure in response
             const responseData = response.data?.data || response.data;
+
+            if (responseData?.message === "First login detected") {
+                setRequiresPasswordChange(true);
+                setUserId(responseData.userId);
+                return {
+                    success: true,
+                    requiresPasswordChange: true,
+                    userId: responseData.userId,
+                    message: responseData.message
+                };
+            }
 
             // Check if 2FA is required
             if (responseData?.requires2FA) {
@@ -66,7 +79,63 @@ const useAuth = () => {
             setLoading(false);
         }
     };
+    const updatePassword = async (currentPassword, newPassword, confirmPassword) => {
+        if (!userId) {
+            const errorMessage = 'No active session. Please login again.';
+            console.error('No userId:', errorMessage); // Debug log
+            setError(errorMessage);
+            return { success: false, error: errorMessage };
+        }
 
+        console.log('Sending updatePassword request:', { userId, currentPassword, newPassword, confirmPassword }); // Debug log
+        setLoading(true);
+        setError('');
+
+        try {
+            const response = await apiClient.put(`/Auth/update-password/${userId}`, {
+                currentPassword,
+                newPassword,
+                confirmPassword
+            }, {
+                headers: {
+                    'accept': '*/*',
+                    'Content-Type': 'application/json',
+                    'Authorization': undefined
+                }
+            });
+
+
+            const responseData = response.data?.data || response.data;
+
+            if (responseData) {
+                if (responseData.token) {
+                    localStorage.setItem('authToken', responseData.token);
+                }
+
+                const userData = {
+                    id: responseData.id || userId,
+                    email: responseData.email || '',
+                    firstName: responseData.firstName || '',
+                    lastName: responseData.lastName || '',
+                    userRoles: responseData.userRoles || []
+                };
+                localStorage.setItem('user', JSON.stringify(userData));
+            }
+
+            setRequiresPasswordChange(false);
+            setUserId('');
+
+            return { success: true, data: responseData };
+
+        } catch (err) {
+            const errorMessage = extractErrorMessage(err);
+            console.error('Update password error:', err, 'Message:', errorMessage); // Debug log
+            setError(errorMessage);
+            return { success: false, error: errorMessage };
+        } finally {
+            setLoading(false);
+        }
+    };
     const verify2FA = async (code) => {
         if (!sessionId) {
             const errorMessage = 'No active session. Please login again.';
@@ -152,8 +221,10 @@ const useAuth = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
         setRequires2FA(false);
+        setRequiresPasswordChange(false);
         setSessionId('');
         setMaskedEmail('');
+        setUserId('');
         setError('');
     };
 
@@ -177,18 +248,28 @@ const useAuth = () => {
         setError('');
     };
 
+    const resetPasswordChangeState = () => {
+        setRequiresPasswordChange(false);
+        setUserId('');
+        setError('');
+    };
+
     return {
         login,
         verify2FA,
+        updatePassword,
         logout,
         isAuthenticated,
         getCurrentUser,
         clearError,
         reset2FAState,
+        resetPasswordChangeState,
         loading,
         error,
         requires2FA,
-        maskedEmail
+        requiresPasswordChange,
+        maskedEmail,
+        userId
     };
 };
 

@@ -10,16 +10,27 @@ export default function Login() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [verificationCode, setVerificationCode] = useState('');
 
+    // Password change form states
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const navigate = useNavigate();
     const {
         login,
         verify2FA,
+        updatePassword,
         loading,
         error,
         requires2FA,
+        requiresPasswordChange,
         maskedEmail,
         clearError,
         reset2FAState,
+        resetPasswordChangeState,
         getCurrentUser,
     } = useAuth();
 
@@ -73,8 +84,10 @@ export default function Login() {
         if (result.success) {
             if (result.requires2FA) {
                 console.log('2FA required, showing verification form');
+            } else if (result.requiresPasswordChange) {
+                console.log('Password change required, showing password change form');
             } else {
-                // Direct login success (no 2FA required)
+                // Direct login success (no 2FA or password change required)
                 handleRedirect();
             }
         }
@@ -96,14 +109,53 @@ export default function Login() {
         // Errors are handled by the useAuth hook and displayed via the error state
     };
 
+    const handlePasswordChangeSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            return; // Let the browser handle required field validation
+        }
+
+        if (newPassword !== confirmPassword) {
+            // You might want to handle this validation in the useAuth hook instead
+            return;
+        }
+
+        const result = await updatePassword(currentPassword, newPassword, confirmPassword);
+
+        if (result.success) {
+            handleRedirect();
+        }
+        // Errors are handled by the useAuth hook and displayed via the error state
+    };
+
     const handleBackToLogin = () => {
         reset2FAState();
         setVerificationCode('');
     };
 
+    const handleBackToLoginFromPasswordChange = () => {
+        resetPasswordChangeState();
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+    };
+
     const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
     const prevSlide = () =>
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+
+    const getFormTitle = () => {
+        if (requires2FA) return 'Enter Verification Code';
+        if (requiresPasswordChange) return 'Update Your Password';
+        return 'Welcome Back';
+    };
+
+    const getFormSubtitle = () => {
+        if (requires2FA) return `We've sent a verification code to ${maskedEmail}`;
+        if (requiresPasswordChange) return 'Please update your password to continue';
+        return null;
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 sm:p-8">
@@ -119,11 +171,11 @@ export default function Login() {
 
                         <div className="mb-6 sm:mb-8">
                             <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
-                                {requires2FA ? 'Enter Verification Code' : 'Welcome Back'}
+                                {getFormTitle()}
                             </h2>
-                            {requires2FA && (
+                            {getFormSubtitle() && (
                                 <p className="text-sm text-gray-600">
-                                    We've sent a verification code to {maskedEmail}
+                                    {getFormSubtitle()}
                                 </p>
                             )}
                         </div>
@@ -134,7 +186,8 @@ export default function Login() {
                             </div>
                         )}
 
-                        {!requires2FA ? (
+                        {!requires2FA && !requiresPasswordChange ? (
+                            // Regular login form
                             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -185,7 +238,8 @@ export default function Login() {
                                     {loading ? 'Logging in...' : 'Login'}
                                 </button>
                             </form>
-                        ) : (
+                        ) : requires2FA ? (
+                            // 2FA verification form
                             <form onSubmit={handle2FASubmit} className="space-y-4 sm:space-y-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -217,6 +271,103 @@ export default function Login() {
                                 <button
                                     type="button"
                                     onClick={handleBackToLogin}
+                                    className="w-full py-2 px-4 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                                >
+                                    ← Back to Login
+                                </button>
+                            </form>
+                        ) : (
+                            // Password change form
+                            <form onSubmit={handlePasswordChangeSubmit} className="space-y-4 sm:space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Current Password
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showCurrentPassword ? 'text' : 'password'}
+                                            value={currentPassword}
+                                            onChange={(e) => {
+                                                setCurrentPassword(e.target.value);
+                                                clearError();
+                                            }}
+                                            required
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        New Password
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showNewPassword ? 'text' : 'password'}
+                                            value={newPassword}
+                                            onChange={(e) => {
+                                                setNewPassword(e.target.value);
+                                                clearError();
+                                            }}
+                                            required
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Confirm New Password
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            value={confirmPassword}
+                                            onChange={(e) => {
+                                                setConfirmPassword(e.target.value);
+                                                clearError();
+                                            }}
+                                            required
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                    {newPassword && confirmPassword && newPassword !== confirmPassword && (
+                                        <p className="text-red-500 text-sm mt-1">Passwords do not match</p>
+                                    )}
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading || !currentPassword || !newPassword || !confirmPassword || newPassword !== confirmPassword}
+                                    className="w-full py-2.5 px-4 rounded-lg font-medium bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    {loading ? 'Updating Password...' : 'Update Password'}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={handleBackToLoginFromPasswordChange}
                                     className="w-full py-2 px-4 text-sm text-gray-600 hover:text-gray-800 transition-colors"
                                 >
                                     ← Back to Login
