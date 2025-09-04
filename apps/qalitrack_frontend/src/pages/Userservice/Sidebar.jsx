@@ -12,21 +12,27 @@ import {
     Factory,
     Truck,
     User,
+    Shield,
+    Settings,
+    Users,
+    Lock
 } from "lucide-react";
+import useAuth from "../helpers/auth";
 
-const currentUserRole = "operator"; // or "admin"
-
-export default function Sidebar() {
+export default function UserServiceSidebar() {
     const location = useLocation();
     const [openMenus, setOpenMenus] = useState({});
+    const { getCurrentUser } = useAuth();
+    const user = getCurrentUser();
+    const currentUserRole = user?.userRoles?.[0]?.toLowerCase() || "admin";
 
     useEffect(() => {
-        // Determine the root path for the current user's role
-        const rootPath = `/${currentUserRole}`;
-
-        // Auto-open submenu based on current route and role
-        if (location.pathname.startsWith(`${rootPath}/weighing`)) {
-            setOpenMenus((prev) => ({ ...prev, weighing: true }));
+        // Auto-open submenu based on current route
+        if (location.pathname.includes("/admin/users")) {
+            setOpenMenus((prev) => ({ ...prev, userManagement: true }));
+        }
+        if (location.pathname.includes("/admin/security")) {
+            setOpenMenus((prev) => ({ ...prev, security: true }));
         }
     }, [location.pathname]);
 
@@ -36,35 +42,73 @@ export default function Sidebar() {
 
     const linkClasses = ({ isActive }) =>
         `flex items-center gap-2 px-3 py-2 rounded transition-colors hover:bg-gray-100 ${
-            isActive ? "bg-gray-200 font-medium border-l-4 border-green-500" : ""
+            isActive ? "bg-gray-200 font-medium border-l-4 border-amber-500" : ""
         }`;
 
     const menuItems = [
         {
-            key: "dashboard",
+            key: "admin-dashboard",
             label: "Dashboard",
             icon: <LayoutDashboard size={18} />,
-            path: "/dashboard", // Will be resolved to /{role}/dashboard
+            path: "/admin/dashboard",
+        },
+        {
+            key: "userManagement",
+            label: "User Management",
+            icon: <Users size={18} />,
+            children: [
+                {
+                    key: "users-list",
+                    label: "All Users",
+                    icon: <User size={16} />,
+                    path: "users",
+                },
+                {
+                    key: "roles",
+                    label: "Roles & Permissions",
+                    icon: <Shield size={16} />,
+                    path: "roles",
+                },
+            ],
+        },
+        {
+            key: "security",
+            label: "Security",
+            icon: <Lock size={18} />,
+            children: [
+                {
+                    key: "password-policy",
+                    label: "Password Policy",
+                    icon: <Shield size={16} />,
+                    path: "security/password-policy",
+                },
+                {
+                    key: "authentication",
+                    label: "Authentication",
+                    icon: <Lock size={16} />,
+                    path: "security/authentication",
+                },
+            ],
         },
         {
             key: "weighing",
-            label: "Weighing",
+            label: "Weighing Management",
             icon: <Scale size={18} />,
             children: [
                 {
-                    key: "weighing-factory",
-                    label: "Factory Weighing",
+                    key: "factory-settings",
+                    label: "Factory Settings",
                     icon: <Factory size={16} />,
                     path: "weighing/factory",
                 },
                 {
-                    key: "weighing-vehicles",
+                    key: "vehicles",
                     label: "Vehicles",
                     icon: <Truck size={16} />,
                     path: "weighing/vehicle",
                 },
                 {
-                    key: "weighing-drivers",
+                    key: "drivers",
                     label: "Drivers",
                     icon: <User size={16} />,
                     path: "weighing/drivers",
@@ -72,66 +116,36 @@ export default function Sidebar() {
             ],
         },
         {
-            key: "automation",
-            label: "Automation",
-            icon: <Cog size={18} />,
-            path: "automation",
-        },
-        {
-            key: "calibrations",
-            label: "Calibrations",
-            icon: <Wrench size={18} />,
-            path: "calibrations",
-        },
-        {
-            key: "analytics",
-            label: "Analytics",
-            icon: <BarChart3 size={18} />,
-            path: "analytics",
-        },
-        {
-            key: "reports",
-            label: "Reports",
-            icon: <FileText size={18} />,
-            path: "reports",
-        },
-        {
             key: "system",
-            label: "System",
-            icon: <Cog size={18} />,
+            label: "System Settings",
+            icon: <Settings size={18} />,
             path: "system",
         },
     ];
 
-    // Helper function to build the correct relative or absolute path
+    // Helper function to build the correct path
     const getPath = (item) => {
-        const rootPath = `/${currentUserRole}`;
+        const rootPath = "/admin";
 
-        // Check if the item has an absolute path specified
         if (item.path.startsWith('/')) {
-            // For absolute paths like "/dashboard", convert to role-based path
-            if (item.path === '/dashboard') {
-                return rootPath; // Root dashboard for the role
-            }
             return item.path;
         }
 
-        // For relative paths, prepend the role-based root path
         return `${rootPath}/${item.path}`;
     };
 
     return (
-        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-            <div className="px-4 py-4 font-bold text-2xl">Qalitrack</div>
+        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
+            <div className="px-4 py-4 font-bold text-2xl">Admin Panel</div>
 
-            <nav className="flex-1 px-2 space-y-1">
+            <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
                 {menuItems.map((item) =>
                         item.children ? (
                             <div key={item.key}>
                                 <button
                                     onClick={() => toggleMenu(item.key)}
                                     className={`flex items-center justify-between w-full px-3 py-2 rounded hover:bg-gray-100 ${
-                                        openMenus[item.key] ? "bg-gray-200 font-medium" : ""
+                                        openMenus[item.key] ? "bg-gray-100 font-medium" : ""
                                     }`}
                                 >
                 <span className="flex items-center gap-2">
@@ -169,7 +183,7 @@ export default function Sidebar() {
                 )}
             </nav>
 
-            <div className="p-3 text-sm text-gray-500 border-t">v0.1</div>
+            <div className="p-3 text-sm text-gray-500 border-t">Version 1.0.0</div>
         </aside>
     );
 }
