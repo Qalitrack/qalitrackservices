@@ -31,12 +31,7 @@ class ApiClient {
                 return response;
             },
             (error) => {
-                // Handle 401 errors globally (optional)
                 if (error.response?.status === 401) {
-                    // Optional: Clear auth data and redirect to login
-                    // localStorage.removeItem('authToken');
-                    // localStorage.removeItem('user');
-                    // window.location.href = '/login';
                 }
                 return Promise.reject(error);
             }
