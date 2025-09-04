@@ -16,8 +16,10 @@ import {
 
 export default function UserServiceSidebar() {
     const linkClasses = ({ isActive }) =>
-        `flex items-center gap-2 px-3 py-2 rounded transition-colors hover:bg-gray-100 ${
-            isActive ? "bg-gray-200 font-medium border-l-4 border-amber-500" : ""
+        `flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-200 ${
+            isActive
+                ? "bg-amber-100 text-amber-700 font-semibold border-l-4 border-amber-500"
+                : "text-gray-600 hover:bg-gray-100"
         }`;
 
     const menuItems = [
@@ -35,9 +37,9 @@ export default function UserServiceSidebar() {
         },
         {
             key: "roles",
-            label: "Roles & Permissions",
+            label: "Permissions",
             icon: <Shield size={18} />,
-            path: "/admin/roles",
+            path: "/admin/security/permissions",
         },
         {
             key: "password-policy",
@@ -54,23 +56,29 @@ export default function UserServiceSidebar() {
     ];
 
     return (
-        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
-            <div className="px-4 py-4 font-bold text-2xl">Admin Panel</div>
+        <aside className="w-20 md:w-64 bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300">
+            <div className="px-4 py-4 font-bold text-xl md:text-2xl text-center">
+                <span className="hidden md:inline">Admin Panel</span>
+                <span className="md:hidden">AP</span>
+            </div>
 
-            <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
+            <nav className="flex-1 px-2 space-y-2 overflow-y-auto">
                 {menuItems.map((item) => (
                     <NavLink
                         key={item.key}
                         to={item.path}
                         className={linkClasses}
+                        title={item.label} // Add title for hover tooltip on small screens
                     >
                         {item.icon}
-                        {item.label}
+                        <span className="hidden md:inline">{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
 
-            <div className="p-3 text-sm text-gray-500 border-t">Version 1.0.0</div>
+            <div className="p-3 text-xs text-gray-500 border-t text-center hidden md:block">
+                Version 1.0.0
+            </div>
         </aside>
     );
 }

@@ -8,11 +8,11 @@ export default function UserServiceLayout() {
     const isRootPath = location.pathname === "/admin" || location.pathname === "/admin/";
 
     return (
-        <div className="flex h-screen bg-gray-50">
+        <div className="flex h-screen bg-gray-50 overflow-hidden">
             <Sidebar />
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-col flex-1 min-w-0">
                 <Topbar />
-                <main className="flex-1 p-4 overflow-y-auto">
+                <main className="flex-1 p-2 md:p-4 overflow-y-auto">
                     {isRootPath ? <AdminDashboard /> : <Outlet />}
                 </main>
             </div>
