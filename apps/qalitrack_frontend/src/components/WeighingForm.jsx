@@ -1,170 +1,196 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTransaction } from "../store/weighingSlice";
-import { Truck, ClipboardList, User, Package } from "lucide-react";
+import { Truck, ClipboardList, Package, FileText, Factory, Box } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function WeighingForm() {
   const dispatch = useDispatch();
 
-  const [form, setForm] = useState({
-    type: "inbound",
-    plate: "",
-    driver: "",
-    orderId: "",
+  const defaultForm = {
+    documentType: "Delivery Note",
+    deliveryNoteNo: "",
+    referenceNo: "",
     batch: "",
+    sourcePlant: "",
+    destination: "",
+    operation: "Outbound Product Dispatch",
+    plate: "",
+    vehicleType: "Truck",
+    model: "",
+    fromAnotherPlant: false,
+    otherPlantName: "",
+    material: "",
+    supplier: "",
+    cementType: "",
+    bagSize: "",
     w1: "",
-  });
+    w2: "",
+    netWeight: "",
+  };
+
+  const [form, setForm] = useState(defaultForm);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!form.plate || !form.driver || !form.orderId || !form.w1) {
-      toast.error("Please fill all required fields");
+    if (!form.plate || !form.deliveryNoteNo || !form.w1) {
+      toast.error("Please fill required fields");
       return;
     }
+
+    // calculate net weight if both available
+    const net = form.w1 && form.w2 ? parseFloat(form.w1) - parseFloat(form.w2) : null;
 
     dispatch(
       addTransaction({
         ...form,
         id: Date.now().toString(),
         date: new Date().toISOString(),
-        w1: parseFloat(form.w1),
-        w2: null,
-        ttat: null,
+        w1: form.w1 ? parseFloat(form.w1) : null,
+        w2: form.w2 ? parseFloat(form.w2) : null,
+        netWeight: net,
         deactivated: false,
       })
     );
 
     toast.success("Transaction saved");
-
-    setForm({
-      type: "inbound",
-      plate: "",
-      driver: "",
-      orderId: "",
-      batch: "",
-      w1: "",
-    });
+    setForm(defaultForm);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white shadow-md rounded-lg p-4 border space-y-4"
-    >
+    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-4 border space-y-6">
       <h2 className="text-xl font-bold text-amber-600 flex items-center gap-2">
-        <ClipboardList className="w-5 h-5" /> New Weighing Transaction
+        <ClipboardList className="w-5 h-5" /> Vehicle Weighing Transaction
       </h2>
 
-      {/* Transaction Type */}
-      <div>
-        <label className="block font-medium text-gray-700">Transaction Type</label>
-        <select
-          name="type"
-          value={form.type}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 w-full"
-        >
-          <option value="inbound">Inbound</option>
-          <option value="outbound">Outbound</option>
-        </select>
-      </div>
-
-      {/* Plate Number */}
-      <div>
-        <label className="block font-medium text-gray-700">Plate Number</label>
-        <div className="flex items-center border rounded px-2">
-          <Truck className="w-4 h-4 text-gray-500 mr-2" />
-          <input
-            type="text"
-            name="plate"
-            value={form.plate}
-            onChange={handleChange}
-            className="flex-1 py-2 outline-none"
-            placeholder="e.g. KAA 123A"
-            required
-          />
+      {/* Document Information */}
+      <section>
+        <h3 className="font-semibold text-gray-700 mb-2">Document Information</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label>Document Type</label>
+            <select name="documentType" value={form.documentType} onChange={handleChange} className="w-full border rounded px-2 py-1">
+              <option value="Delivery Note">Delivery Note</option>
+              <option value="Invoice">Invoice</option>
+            </select>
+          </div>
+          <div>
+            <label>Delivery Note No</label>
+            <input name="deliveryNoteNo" value={form.deliveryNoteNo} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Reference No</label>
+            <input name="referenceNo" value={form.referenceNo} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Batch</label>
+            <input name="batch" value={form.batch} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Source Plant</label>
+            <input name="sourcePlant" value={form.sourcePlant} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Destination</label>
+            <input name="destination" value={form.destination} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div className="col-span-2">
+            <label>Operation</label>
+            <select name="operation" value={form.operation} onChange={handleChange} className="w-full border rounded px-2 py-1">
+              <option>Outbound Product Dispatch</option>
+              <option>Inbound Material Receipt</option>
+            </select>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Driver Name */}
-      <div>
-        <label className="block font-medium text-gray-700">Driver Name</label>
-        <div className="flex items-center border rounded px-2">
-          <User className="w-4 h-4 text-gray-500 mr-2" />
-          <input
-            type="text"
-            name="driver"
-            value={form.driver}
-            onChange={handleChange}
-            className="flex-1 py-2 outline-none"
-            placeholder="Driver full name"
-            required
-          />
+      {/* Vehicle Information */}
+      <section>
+        <h3 className="font-semibold text-gray-700 mb-2">Vehicle Information</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label>Registration Number</label>
+            <input name="plate" value={form.plate} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Vehicle Type</label>
+            <select name="vehicleType" value={form.vehicleType} onChange={handleChange} className="w-full border rounded px-2 py-1">
+              <option>Truck</option>
+              <option>Trailer</option>
+            </select>
+          </div>
+          <div>
+            <label>Model</label>
+            <input name="model" value={form.model} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div className="flex items-center space-x-2">
+            <input type="checkbox" name="fromAnotherPlant" checked={form.fromAnotherPlant} onChange={handleChange} />
+            <label>Vehicle from another plant</label>
+          </div>
+          {form.fromAnotherPlant && (
+            <div className="col-span-2">
+              <label>Other Plant Name</label>
+              <input name="otherPlantName" value={form.otherPlantName} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+            </div>
+          )}
         </div>
-      </div>
+      </section>
 
-      {/* Order ID */}
-      <div>
-        <label className="block font-medium text-gray-700">Order ID</label>
-        <div className="flex items-center border rounded px-2">
-          <Package className="w-4 h-4 text-gray-500 mr-2" />
-          <input
-            type="text"
-            name="orderId"
-            value={form.orderId}
-            onChange={handleChange}
-            className="flex-1 py-2 outline-none"
-            placeholder="Order number"
-            required
-          />
+      {/* Material Information */}
+      <section>
+        <h3 className="font-semibold text-gray-700 mb-2">Material Information</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label>Material</label>
+            <input name="material" value={form.material} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Supplier</label>
+            <input name="supplier" value={form.supplier} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Cement Type</label>
+            <input name="cementType" value={form.cementType} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Bag Size</label>
+            <input name="bagSize" value={form.bagSize} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Batch */}
-      <div>
-        <label className="block font-medium text-gray-700">Batch</label>
-        <input
-          type="text"
-          name="batch"
-          value={form.batch}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 w-full"
-          placeholder="Batch number"
-        />
-      </div>
-
-      {/* Weight 1 */}
-      <div>
-        <label className="block font-medium text-gray-700">Weight 1 (Tons)</label>
-        <input
-          type="number"
-          name="w1"
-          value={form.w1}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 w-full"
-          placeholder="First weight"
-          required
-        />
-      </div>
+      {/* Weight Management */}
+      <section>
+        <h3 className="font-semibold text-gray-700 mb-2">Weight Management</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label>First Weight (kg)</label>
+            <input type="number" name="w1" value={form.w1} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Second Weight (kg)</label>
+            <input type="number" name="w2" value={form.w2} onChange={handleChange} className="w-full border rounded px-2 py-1" />
+          </div>
+          <div>
+            <label>Net Weight (kg)</label>
+            <input type="number" name="netWeight" value={form.netWeight || ""} readOnly className="w-full border rounded px-2 py-1 bg-gray-100" />
+          </div>
+        </div>
+      </section>
 
       {/* Submit */}
-      <button
-        type="submit"
-        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded w-full font-semibold"
-      >
+      <button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-white py-2 rounded font-semibold">
         Save Transaction
       </button>
-
-      <p className="text-xs text-gray-500">
-        * ERP Integration for fetching driver/order/batch info will be added later.
-      </p>
     </form>
   );
 }
