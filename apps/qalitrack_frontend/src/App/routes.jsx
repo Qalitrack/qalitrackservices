@@ -23,31 +23,47 @@ const Drivers = lazy(() => import("../components/weighing/Drivers.jsx"));
 
 export const routes = [
   // Redirect root ("/") → login
-  { path: "/", component: () => <Navigate to="/login" replace /> },
+  { path: "/", component: () => <Navigate to="/admin" replace /> },
 
   // Login
   { path: "/login", component: Login },
 
   // Admin routes
+  // {
+  //   path: "/admin",
+  //   component: MainLayout,
+  //   children: [
+  //     { index: true, component: AdminDashboard },
+  //     { path: "operator", component: Dashboard },
+  //     { path: "operator/weighing/factory", component: FactoryWeighing },
+  //     { path: "operator/weighing/vehicle", component: Vehicle },
+  //     { path: "operator/weighing/drivers", component: Drivers },
+  //     { path: "operator/automation", component: Automation },
+  //     { path: "operator/calibrations", component: Calibrations },
+  //     { path: "operator/analytics", component: Analytics },
+  //     { path: "operator/reports", component: Reports },
+  //     { path: "operator/system", component: System },
+  //   ],
+  // },
+
+  // Operator routes
   {
     path: "/admin",
     component: MainLayout,
     children: [
-      { index: true, component: AdminDashboard },
-      { path: "operator", component: Dashboard },
-      { path: "operator/weighing/factory", component: FactoryWeighing },
-      { path: "operator/weighing/vehicle", component: Vehicle },
-      { path: "operator/weighing/drivers", component: Drivers },
-      { path: "operator/automation", component: Automation },
-      { path: "operator/calibrations", component: Calibrations },
-      { path: "operator/analytics", component: Analytics },
-      { path: "operator/reports", component: Reports },
-      { path: "operator/system", component: System },
+       { index: true, component: AdminDashboard },
+      { index: true, component: Dashboard },
+      { path: "weighing/factory", component: FactoryWeighing },
+      { path: "weighing/vehicle", component: Vehicle },
+      { path: "weighing/drivers", component: Drivers },
+      { path: "automation", component: Automation },
+      { path: "calibrations", component: Calibrations },
+      { path: "analytics", component: Analytics },
+      { path: "reports", component: Reports },
+      { path: "system", component: System },
     ],
   },
-
-  // Operator routes
-  {
+    {
     path: "/operator",
     component: MainLayout,
     children: [

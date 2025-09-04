@@ -14,38 +14,45 @@ import {
   User,
 } from "lucide-react";
 
-// TODO: Replace with Redux/Context later
 const currentUserRole = "admin"; // or "operator"
 
 export default function Sidebar() {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
 
-  // Auto-open submenu based on current route
   useEffect(() => {
-    if (location.pathname.startsWith("/weighing")) {
+    // Determine the root path for the current user's role
+    const rootPath = `/${currentUserRole}`;
+    
+    // Auto-open submenu based on current route and role
+    if (location.pathname.startsWith(`${rootPath}/weighing`)) {
       setOpenMenus((prev) => ({ ...prev, weighing: true }));
     }
   }, [location.pathname]);
 
-  // Toggle submenu
   const toggleMenu = (key) => {
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Link style helper
   const linkClasses = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-2 rounded transition-colors hover:bg-gray-100 ${
       isActive ? "bg-gray-200 font-medium border-l-4 border-green-500" : ""
     }`;
 
-  // Menu config with role restrictions
   const menuItems = [
     {
-      key: "/",
+      key: "admin-dashboard",
+      label: "Admin Dashboard",
+      icon: <LayoutDashboard size={18} />,
+      roles: ["admin"],
+      path: "/admin",
+    },
+    {
+      key: "operator-dashboard",
       label: "Dashboard",
       icon: <LayoutDashboard size={18} />,
-      roles: ["admin", "operator"],
+      roles: ["operator"],
+      path: "/operator",
     },
     {
       key: "weighing",
@@ -54,58 +61,78 @@ export default function Sidebar() {
       roles: ["admin", "operator"],
       children: [
         {
-          key: "/weighing/factory",
+          key: "weighing-factory",
           label: "Factory Weighing",
           icon: <Factory size={16} />,
           roles: ["admin", "operator"],
+          path: "weighing/factory",
         },
         {
-          key: "/weighing/vehicle",
+          key: "weighing-vehicles",
           label: "Vehicles",
           icon: <Truck size={16} />,
           roles: ["admin", "operator"],
+          path: "weighing/vehicle",
         },
         {
-          key: "/weighing/drivers",
+          key: "weighing-drivers",
           label: "Drivers",
           icon: <User size={16} />,
           roles: ["admin"],
+          path: "weighing/drivers",
         },
       ],
     },
     {
-      key: "/automation",
+      key: "automation",
       label: "Automation",
       icon: <Cog size={18} />,
       roles: ["admin"],
+      path: "automation",
     },
     {
-      key: "/calibrations",
+      key: "calibrations",
       label: "Calibrations",
       icon: <Wrench size={18} />,
       roles: ["admin", "operator"],
+      path: "calibrations",
     },
     {
-      key: "/analytics",
+      key: "analytics",
       label: "Analytics",
       icon: <BarChart3 size={18} />,
       roles: ["admin"],
+      path: "analytics",
     },
     {
-      key: "/reports",
+      key: "reports",
       label: "Reports",
       icon: <FileText size={18} />,
       roles: ["admin", "operator"],
+      path: "reports",
     },
     {
-      key: "/system",
+      key: "system",
       label: "System",
       icon: <Cog size={18} />,
       roles: ["admin"],
+      path: "system",
     },
   ];
 
-  // Filter by role
+  // Helper function to build the correct relative or absolute path
+  const getPath = (item) => {
+    const rootPath = `/${currentUserRole}`;
+    
+    // Check if the item has an absolute path specified
+    if (item.path.startsWith('/')) {
+        return item.path;
+    }
+    
+    // For nested routes, make sure the path is relative
+    return `${rootPath}/${item.path}`;
+  };
+
   const filteredMenu = menuItems.filter((item) => {
     if (!item.roles.includes(currentUserRole)) return false;
     if (item.children) {
@@ -145,7 +172,11 @@ export default function Sidebar() {
               {openMenus[item.key] && (
                 <div className="ml-6 mt-1 space-y-1">
                   {item.children.map((child) => (
-                    <NavLink key={child.key} to={child.key} className={linkClasses}>
+                    <NavLink
+                      key={child.key}
+                      to={getPath(child)}
+                      className={linkClasses}
+                    >
                       {child.icon}
                       {child.label}
                     </NavLink>
@@ -154,7 +185,7 @@ export default function Sidebar() {
               )}
             </div>
           ) : (
-            <NavLink key={item.key} to={item.key} className={linkClasses}>
+            <NavLink key={item.key} to={getPath(item)} className={linkClasses}>
               {item.icon}
               {item.label}
             </NavLink>
