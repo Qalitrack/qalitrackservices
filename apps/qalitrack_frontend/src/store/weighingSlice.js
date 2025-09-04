@@ -12,7 +12,7 @@ const weighingSlice = createSlice({
         id: Date.now().toString(),
         date: new Date().toISOString(),
         w2: null,
-        net: null,
+        netWeight: null,
         ttat: null,
         deactivated: false,
       });
@@ -23,10 +23,10 @@ const weighingSlice = createSlice({
 
       if (tx) {
         // Business rules
-        if (tx.direction === "inbound" && w2 >= tx.w1) {
+        if (tx.operation === "Inbound Material Receipt" && w2 >= tx.w1) {
           throw new Error("Inbound transaction invalid: W2 must be less than W1.");
         }
-        if (tx.direction === "outbound" && w2 <= tx.w1) {
+        if (tx.operation === "Outbound Product Dispatch" && w2 <= tx.w1) {
           throw new Error("Outbound transaction invalid: W2 must be greater than W1.");
         }
 
@@ -35,10 +35,10 @@ const weighingSlice = createSlice({
         tx.ttat = Math.floor((Date.now() - new Date(tx.date)) / 1000);
 
         // Auto calculate net
-        if (tx.direction === "inbound") {
-          tx.net = tx.w1 - w2;
-        } else if (tx.direction === "outbound") {
-          tx.net = w2 - tx.w1;
+        if (tx.operation === "Inbound Material Receipt") {
+          tx.netWeight = tx.w1 - w2;
+        } else if (tx.operation === "Outbound Product Dispatch") {
+          tx.netWeight = w2 - tx.w1;
         }
       }
     },
