@@ -24,6 +24,8 @@ const System = lazy(() => import("../pages/weighing/System.jsx"));
 const Vehicle = lazy(() => import("../components/weighing/Vehicles.jsx"));
 const Drivers = lazy(() => import("../components/weighing/Drivers.jsx"));
 const AdminDashboard = lazy(() => import("../pages/Userservice/AdminDashboard.jsx"));
+const PasswordPolicy = lazy(() => import("../pages/Userservice/PasswordPolicy.jsx"));
+const Permissions = lazy(() => import("../pages/Userservice/Permissions.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -138,36 +140,12 @@ export const routes = [
                         element: <AdminDashboard />
                     },
                     {
-                        path: "weighing/factory",
-                        element: <FactoryWeighing />
+                        path: "security/password-policy",
+                        element: <PasswordPolicy />
                     },
                     {
-                        path: "weighing/vehicle",
-                        element: <Vehicle />
-                    },
-                    {
-                        path: "weighing/drivers",
-                        element: <Drivers />
-                    },
-                    {
-                        path: "automation",
-                        element: <Automation />
-                    },
-                    {
-                        path: "calibrations",
-                        element: <Calibrations />
-                    },
-                    {
-                        path: "analytics",
-                        element: <Analytics />
-                    },
-                    {
-                        path: "reports",
-                        element: <Reports />
-                    },
-                    {
-                        path: "system",
-                        element: <System />
+                        path: "security/permissions",
+                        element: <Permissions />
                     }
                 ]
             }
