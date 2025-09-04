@@ -52,9 +52,9 @@ export default function Topbar() {
     };
 
     return (
-        <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4">
+        <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-2 md:px-4">
             {/* Breadcrumb */}
-            <div className="font-medium text-gray-700 flex items-center gap-1 text-sm">
+            <div className="hidden md:flex font-medium text-gray-700 items-center gap-1 text-sm">
                 <Link to="/" className="hover:underline text-gray-500">
                     Home
                 </Link>
@@ -77,9 +77,9 @@ export default function Topbar() {
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
                 {/* Search */}
-                <div className="relative">
+                <div className="relative hidden md:block">
                     <Search
                         className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
                         size={16}
@@ -103,10 +103,10 @@ export default function Topbar() {
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setDropdownOpen(!dropdownOpen)}
-                        className="h-9 px-3 border rounded flex items-center gap-2 hover:bg-gray-50"
+                        className="h-9 px-2 md:px-3 border rounded flex items-center gap-2 hover:bg-gray-50"
                     >
                         <User size={18} className="text-gray-600" />
-                        <span className="text-sm text-gray-700">{userName}</span>
+                        <span className="hidden sm:inline text-sm text-gray-700">{userName}</span>
                     </button>
 
                     {dropdownOpen && (
