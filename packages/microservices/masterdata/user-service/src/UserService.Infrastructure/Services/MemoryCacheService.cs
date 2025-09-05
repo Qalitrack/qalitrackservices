@@ -125,4 +125,64 @@ public class MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheSer
             logger.LogError(ex, "Error removing cache values for pattern: {Pattern}", pattern);
         }
     }
+
+    public async Task ReleaseLockAsync(string lockKey)
+    {
+        await Task.Run(() =>
+        {
+            try
+            {
+                memoryCache.Remove(lockKey);
+                lock (_lockObject)
+                {
+                    _cacheKeys.Remove(lockKey);
+                }
+                logger.LogDebug("Lock released: {LockKey}", lockKey);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error releasing lock: {LockKey}", lockKey);
+            }
+        });
+    }
+
+    public async Task<bool> AcquireLockAsync(string lockKey, TimeSpan timeout)
+    {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                // Try to add the lock to the cache - if it's not there, we get the lock
+                var lockAcquired = memoryCache.TryGetValue(lockKey, out _) == false;
+                
+                if (lockAcquired)
+                {
+                    // Set lock with the specified timeout
+                    var cacheOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = timeout,
+                        Priority = CacheItemPriority.High
+                    };
+                    
+                    memoryCache.Set(lockKey, true, cacheOptions);
+                    lock (_lockObject)
+                    {
+                        _cacheKeys.Add(lockKey);
+                    }
+                    logger.LogDebug("Lock acquired: {LockKey}", lockKey);
+                }
+                else
+                {
+                    logger.LogDebug("Failed to acquire lock: {LockKey}", lockKey);
+                }
+                
+                return lockAcquired;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error acquiring lock: {LockKey}", lockKey);
+                return false;
+            }
+        });
+    }
 }

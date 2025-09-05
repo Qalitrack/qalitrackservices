@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using UserService.Core.DTOs.Common;
+using UserService.Core.Interfaces.Emails;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Utilities;
 using UserService.Infrastructure.Data;
@@ -116,36 +117,54 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<bool> RestoreAsync(string id)
         {
-            // First check if user exists (without filter)
-            var user = await _context.Users
-                .IgnoreQueryFilters()
-                .AsTracking()
-                .FirstOrDefaultAsync(u => u.Id == id);
+            // Create execution strategy from the context
+            var strategy = _context.Database.CreateExecutionStrategy();
 
-            if (user == null)
+            return await strategy.ExecuteAsync(async () =>
             {
-                return false; // User doesn't exist
-            }
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    // First check if user exists (without filter)
+                    var user = await _context.Users
+                        .IgnoreQueryFilters()
+                        .AsTracking()
+                        .FirstOrDefaultAsync(u => u.Id == id);
 
-            if (!user.IsDeleted)
-            {
-                return false; // User is already active
-            }
+                    if (user == null)
+                    {
+                        return false; // User doesn't exist
+                    }
 
-            // Check if password hash is valid
-            if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2a$"))
-            {
-                // If password hash is invalid, set a default password that needs to be changed
-                user.Password = BCrypt.Net.BCrypt.HashPassword("ChangeMe123!");
-                user.IsFirstLogin = true;
-            }
+                    if (!user.IsDeleted)
+                    {
+                        return false; // User is already active
+                    }
 
-            user.IsDeleted = false;
-            user.IsActive = true;  // Ensure user is active after restoration
-            user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
-            await _context.SaveChangesAsync();
-            return true;
+                    // Check if password hash is valid
+                    if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2a$"))
+                    {
+                        // If password hash is invalid, set a default password that needs to be changed
+                        user.Password = BCrypt.Net.BCrypt.HashPassword("ChangeMe123!");
+                        user.IsFirstLogin = true;
+                    }
+
+                    user.IsDeleted = false;
+                    user.UpdatedAt = DateTime.UtcNow;
+                    user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
+
+                    logger.LogInformation("[UserRepository] Set IsDeleted=false for user {UserId}", id);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    logger.LogError(ex, "Error restoring user {UserId}", id);
+                    throw;
+                }
+            });
         }
 
         public async Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
@@ -234,60 +253,56 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<bool> DeleteAsync(string id)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            // Create execution strategy from the context
+            var strategy = _context.Database.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
             {
-                var user = await _context.Users
-                    .Include(u => u.UserShifts)
-                    .Include(u => u.UserRoles)
-                    .IgnoreQueryFilters()
-                    .AsTracking()
-                    .FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null) return false;
-
-                if (user.IsDeleted) return false; // Already deleted
-
-                // Log cascading deletions
-                if (user.UserShifts?.Any() == true)
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
                 {
-                    var shiftCount = user.UserShifts.Count();
-                    // Remove user from all shifts
-                    _context.UserShifts.RemoveRange(user.UserShifts);
-                }
+                    var user = await _context.Users
+                        .IgnoreQueryFilters()
+                        .AsTracking()
+                        .FirstOrDefaultAsync(u => u.Id == id);
 
-                if (user.UserRoles?.Any() == true)
-                {
-                    var roleCount = user.UserRoles.Count();
+                    if (user == null) 
+                    {
+                        logger.LogWarning("[UserRepository] User {UserId} not found for deletion", id);
+                        return false;
+                    }
                     
-                    // Remove all role assignments
-                    _context.UserRoles.RemoveRange(user.UserRoles);
-                }
+                    if (user.IsDeleted) 
+                    {
+                        logger.LogWarning("[UserRepository] User {UserId} already marked as deleted", id);
+                        return false; // Already deleted
+                    }
 
-                // Perform soft delete
-                user.IsDeleted = true;
-                user.UpdatedAt = DateTime.UtcNow;
-                user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
-                
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-                
-                return true;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                logger.LogError(ex, "Error soft deleting user {UserId}", id);
-                throw;
-            }
+                    user.IsDeleted = true;
+                    user.UpdatedAt = DateTime.UtcNow;
+                    user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
+
+                    logger.LogInformation("[UserRepository] Set IsDeleted=true for user {UserId}", id);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    logger.LogError(ex, "Error deleting user {UserId}", id);
+                    throw;
+                }
+            });
         }
 
         public async Task<PagedResult<User>> GetPagedAsync(PaginationParameters parameters)
         {
+            // This query will only return users where IsDeleted is false
             var query = _context.Users
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
-                .Where(u => !u.IsDeleted);
+                .Where(u => u.IsDeleted == false); // Explicitly check for false
 
             // Apply search filter
             if (!string.IsNullOrWhiteSpace(parameters.Search))
@@ -342,11 +357,12 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<PagedResult<User>> GetDeletedPagedAsync(PaginationParameters parameters)
         {
+            // This query will only return users where IsDeleted is true
             var query = _context.Users
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
                 .IgnoreQueryFilters()
-                .Where(u => u.IsDeleted);
+                .Where(u => u.IsDeleted == true); // Explicitly check for true
 
             // Apply search filter
             if (!string.IsNullOrWhiteSpace(parameters.Search))
@@ -424,5 +440,70 @@ namespace UserService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return existingUser;
         }
+        
+        // Function 1: Get user roles by user ID
+public async Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId)
+{
+    if (string.IsNullOrWhiteSpace(userId))
+        return new List<Role>();
+        
+    return await _context.UserRoles
+        .Where(ur => ur.UserId == userId && !ur.IsDeleted)
+        .Include(ur => ur.Role)
+        .Select(ur => ur.Role)
+        .Where(r => r != null && !r.IsDeleted)
+        .ToListAsync();
+}
+
+    // Function 2: Reset user password and send email
+    public async Task<bool> ResetUserPasswordAsync(string userId, IEmailQueueService emailQueueService)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentException("User ID is required", nameof(userId));
+            
+        var user = await _context.Users
+            .AsTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+            
+        if (user == null)
+            return false;
+            
+        // Set default password and mark as first login
+        const string defaultPassword = "ChangeMe123!";
+        user.Password = BCrypt.Net.BCrypt.HashPassword(defaultPassword);
+        user.IsFirstLogin = true;
+        user.UpdatedAt = DateTime.UtcNow;
+        user.UpdatedBy = AuthUtils.GetUserIdFromClaims(HttpContextAccessor.HttpContext?.User);
+        
+        await _context.SaveChangesAsync();
+        
+        // Send email with new password
+        try
+        {
+            var emailSubject = "Password Reset - Please Change Your Password";
+            var emailBody = $@"
+                Dear {user.FirstName} {user.LastName},
+                
+                Your password has been reset. Please use the following temporary password to log in:
+                
+                Password: {defaultPassword}
+                
+                For security reasons, you will be required to change this password upon your next login.
+                
+                If you did not request this password reset, please contact your system administrator immediately.
+                
+                Best regards,
+                System Administrator";
+                
+            await emailQueueService.EnqueueEmailAsync(user.Email, emailSubject, emailBody);
+            
+            return true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to queue password reset email for user {UserId}", userId);
+            return true;
+        }
+      }
     }
 }

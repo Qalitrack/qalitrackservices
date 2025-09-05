@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Roles;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.DTOs.Common;
+using UserService.Core.DTOs.Permissions;
+using UserService.Core.Entities;
 
 namespace UserService.Api.Controllers
 {
@@ -418,6 +420,40 @@ namespace UserService.Api.Controllers
                 _logger.LogError(ex, "Error retrieving deleted roles");
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new { Success = false, Message = "An error occurred while retrieving deleted roles" });
+            }
+        }
+        
+        [HttpGet("{roleId}/permissions")]
+        [Authorize(Policy = "roles.view")]
+        [ProducesResponseType(typeof(IEnumerable<PermissionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<PermissionDto>>> GetRolePermissions(string roleId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(roleId))
+                {
+                    _logger.LogWarning("Get role permissions called with empty roleId");
+                    return BadRequest("Role ID is required");
+                }
+
+                var permissions = await _roleService.GetPermissionsForRoleAsync(roleId);
+                var permissionDtos = _mapper.Map<IEnumerable<PermissionDto>>(permissions);
+                return Ok(permissionDtos);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Role not found when getting permissions for role {RoleId}", roleId);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting permissions for role {RoleId}", roleId);
+                return StatusCode(500, "An error occurred while retrieving role permissions");
             }
         }
     }
