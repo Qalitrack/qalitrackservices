@@ -3,7 +3,9 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import weighingReducer from './weighingSlice';
 import automationReducer from './automationSlice';
-import calibrationReducer from './calibrationSlice'; // ⬅ added
+import calibrationReducer from './calibrationSlice';
+import vehicleReducer from './Vehicleslice';
+// ⬅ added
 
 const persistConfig = {
   key: 'root',
@@ -14,7 +16,9 @@ const persistConfig = {
 const rootReducer = combineReducers({
   weighing: weighingReducer,
   automation: automationReducer,
-  calibration: calibrationReducer // ⬅ added
+  calibration: calibrationReducer,
+  vehicles: vehicleReducer,
+  // ⬅ added
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
