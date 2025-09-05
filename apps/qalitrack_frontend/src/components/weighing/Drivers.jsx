@@ -1,109 +1,177 @@
-// src/pages/Drivers.jsx
 import { useState } from "react";
-import { User, PlusCircle, Trash2 } from "lucide-react";
+import { Pencil, Trash2, UserPlus } from "lucide-react";
 
-export default function Drivers() {
+export default function DriverPortal() {
   const [drivers, setDrivers] = useState([]);
-  const [form, setForm] = useState({ name: "", idNumber: "", phone: "" });
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [form, setForm] = useState({
+    name: "",
+    licenseNo: "",
+    phone: "",
+    employer: "",
+    assignedVehicle: "",
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleAdd = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name || !form.idNumber) return;
-    setDrivers([...drivers, { ...form, id: Date.now() }]);
-    setForm({ name: "", idNumber: "", phone: "" });
+
+    if (!form.name || !form.licenseNo) {
+      alert("Driver name and license number are required");
+      return;
+    }
+
+    if (editingIndex !== null) {
+      const updated = [...drivers];
+      updated[editingIndex] = form;
+      setDrivers(updated);
+      setEditingIndex(null);
+    } else {
+      setDrivers([...drivers, form]);
+    }
+
+    setForm({
+      name: "",
+      licenseNo: "",
+      phone: "",
+      employer: "",
+      assignedVehicle: "",
+    });
   };
 
-  const handleDelete = (id) => {
-    setDrivers(drivers.filter((d) => d.id !== id));
+  const handleEdit = (index) => {
+    setForm(drivers[index]);
+    setEditingIndex(index);
+  };
+
+  const handleDelete = (index) => {
+    if (confirm("Are you sure you want to delete this driver?")) {
+      setDrivers(drivers.filter((_, i) => i !== index));
+    }
   };
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-2 text-amber-600">
-        <User className="w-7 h-7" />
-        <h1 className="text-2xl font-bold">Drivers</h1>
-      </div>
+    <div className="bg-white shadow rounded-lg p-4 border">
+      <h2 className="text-xl font-bold text-amber-600 mb-4 flex items-center gap-2">
+        <UserPlus className="w-5 h-5" /> Driver Management
+      </h2>
 
-      {/* Form */}
-      <form
-        onSubmit={handleAdd}
-        className="bg-white shadow rounded-lg p-4 border grid gap-3 md:grid-cols-4"
-      >
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Driver Name"
-          className="border rounded px-3 py-2"
-        />
-        <input
-          type="text"
-          name="idNumber"
-          value={form.idNumber}
-          onChange={handleChange}
-          placeholder="ID Number"
-          className="border rounded px-3 py-2"
-        />
-        <input
-          type="text"
-          name="phone"
-          value={form.phone}
-          onChange={handleChange}
-          placeholder="Phone Number"
-          className="border rounded px-3 py-2"
-        />
+      {/* Driver Form */}
+      <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label>Driver Name</label>
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+              required
+            />
+          </div>
+          <div>
+            <label>License No.</label>
+            <input
+              name="licenseNo"
+              value={form.licenseNo}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+              required
+            />
+          </div>
+          <div>
+            <label>Phone</label>
+            <input
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+              type="tel"
+            />
+          </div>
+          <div>
+            <label>Employer / Transporter</label>
+            <input
+              name="employer"
+              value={form.employer}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+            />
+          </div>
+          <div className="col-span-2">
+            <label>Assigned Vehicle (Plate)</label>
+            <input
+              name="assignedVehicle"
+              value={form.assignedVehicle}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+            />
+          </div>
+        </div>
         <button
           type="submit"
-          className="flex items-center justify-center gap-2 bg-amber-500 text-white rounded px-4 py-2 hover:bg-amber-600"
+          className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded font-semibold"
         >
-          <PlusCircle size={18} /> Add
+          {editingIndex !== null ? "Update Driver" : "Add Driver"}
         </button>
       </form>
 
       {/* Driver List */}
-      <div className="bg-white shadow rounded-lg border overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-100 text-left">
+      <h3 className="text-lg font-semibold text-gray-700 mb-2">
+        Registered Drivers
+      </h3>
+      {drivers.length === 0 ? (
+        <p className="text-gray-500 text-sm">No drivers added yet.</p>
+      ) : (
+        <table className="w-full text-sm border">
+          <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 border">Name</th>
-              <th className="px-4 py-2 border">ID</th>
-              <th className="px-4 py-2 border">Phone</th>
-              <th className="px-4 py-2 border">Actions</th>
+              <th className="border px-2 py-1">Name</th>
+              <th className="border px-2 py-1">License No.</th>
+              <th className="border px-2 py-1">Phone</th>
+              <th className="border px-2 py-1">Employer</th>
+              <th className="border px-2 py-1">Assigned Vehicle</th>
+              <th className="border px-2 py-1">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {drivers.map((d) => (
-              <tr key={d.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{d.name}</td>
-                <td className="px-4 py-2 border">{d.idNumber}</td>
-                <td className="px-4 py-2 border">{d.phone}</td>
-                <td className="px-4 py-2 border">
+            {drivers.map((d, i) => (
+              <tr key={i}>
+                <td className="border px-2 py-1">{d.name}</td>
+                <td className="border px-2 py-1">{d.licenseNo}</td>
+                <td className="border px-2 py-1">{d.phone}</td>
+                <td className="border px-2 py-1">{d.employer}</td>
+                <td className="border px-2 py-1">
+                  {d.assignedVehicle || "-"}
+                </td>
+                <td className="border px-2 py-1 flex gap-2">
                   <button
-                    onClick={() => handleDelete(d.id)}
-                    className="text-red-600 hover:text-red-800 flex items-center gap-1"
+                    type="button"
+                    onClick={() => handleEdit(i)}
+                    className="text-blue-600 hover:text-blue-800"
                   >
-                    <Trash2 size={16} /> Remove
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(i)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
               </tr>
             ))}
-            {drivers.length === 0 && (
-              <tr>
-                <td colSpan="4" className="text-center py-4 text-gray-500">
-                  No drivers added yet 👷
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
-      </div>
+      )}
     </div>
   );
 }
