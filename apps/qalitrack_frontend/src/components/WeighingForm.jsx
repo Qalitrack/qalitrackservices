@@ -4,6 +4,32 @@ import { addTransaction } from "../store/weighingSlice";
 import { ClipboardList } from "lucide-react";
 import toast from "react-hot-toast";
 
+// Mock Weighing Panel (replace with real hardware integration later)
+function WeighingPanel({ onCapture }) {
+  const simulateCapture = () => {
+    const weight = Math.floor(Math.random() * 30000) + 5000; // mock random weight
+    toast.success("Weight Captured");
+    onCapture(weight);
+  };
+
+  return (
+    <div className="border rounded p-3 bg-gray-50">
+      <h4 className="font-medium text-gray-700 mb-2">Weighing Panel</h4>
+      <button
+        type="button"
+        onClick={simulateCapture}
+        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+      >
+        Capture Weight
+      </button>
+      {/* 
+        Integration point: Replace simulateCapture() with 
+        actual hardware API (e.g., from Masterdom/ERP).
+      */}
+    </div>
+  );
+}
+
 export default function WeighingForm() {
   const dispatch = useDispatch();
   const vehicles = useSelector((state) => state.vehicles);
@@ -41,6 +67,20 @@ export default function WeighingForm() {
     }));
   };
 
+  const handleWeightCapture = (weight) => {
+    setForm((prev) => {
+      if (!prev.w1) {
+        return { ...prev, w1: weight };
+      } else if (!prev.w2) {
+        const net = prev.w1 ? prev.w1 - weight : null;
+        return { ...prev, w2: weight, netWeight: net };
+      } else {
+        toast.error("Both weights already captured");
+        return prev;
+      }
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -49,7 +89,6 @@ export default function WeighingForm() {
       return;
     }
 
-    // calculate net weight if both available
     const net =
       form.w1 && form.w2 ? parseFloat(form.w1) - parseFloat(form.w2) : null;
 
@@ -322,7 +361,7 @@ export default function WeighingForm() {
             />
           </div>
           <div>
-            <label>Cement Type</label>
+            <label>Type</label>
             <input
               name="cementType"
               value={form.cementType}
@@ -379,6 +418,9 @@ export default function WeighingForm() {
             />
           </div>
         </div>
+
+        {/* Weighing Panel */}
+        <WeighingPanel onCapture={handleWeightCapture} />
       </section>
 
       {/* Submit */}
