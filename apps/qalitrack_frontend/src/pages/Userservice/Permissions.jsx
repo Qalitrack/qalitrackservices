@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+
 import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission } from '../../helpers/UserService/Permissions/permissions.js';
-import { Edit, Trash2, ShieldAlert, PlusCircle, Users } from 'lucide-react';
+import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 // A reusable Modal component
@@ -25,6 +26,7 @@ const Permissions = () => {
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
     const [isRolesModalOpen, setRolesModalOpen] = useState(false);
+    const [isLogsModalOpen, setLogsModalOpen] = useState(false);
     const [selectedPermission, setSelectedPermission] = useState(null);
     const [rolesForPermission, setRolesForPermission] = useState([]);
     const [newPermission, setNewPermission] = useState({ name: '', description: '' });
@@ -69,6 +71,11 @@ const Permissions = () => {
     const handleDeleteClick = (permission) => {
         setSelectedPermission(permission);
         setDeleteModalOpen(true);
+    };
+
+    const handleLogsClick = (permission) => {
+        setSelectedPermission(permission);
+        setLogsModalOpen(true);
     };
 
     const handleViewRolesClick = async (permission) => {
@@ -178,11 +185,11 @@ const Permissions = () => {
 
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-800">
                     <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Description</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">Description</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Last Updated</th>
                         <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                     </tr>
                     </thead>
@@ -195,13 +202,16 @@ const Permissions = () => {
                                 {format(parseISO(permission.updatedAt), "PPP")}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                                <button onClick={() => handleViewRolesClick(permission)} className="text-blue-600 hover:text-blue-900 transition-colors">
+                                <button onClick={() => handleLogsClick(permission)} className="text-gray-600 hover:text-gray-900 transition-colors" title="View Logs">
+                                    <FileText size={18} />
+                                </button>
+                                <button onClick={() => handleViewRolesClick(permission)} className="text-blue-600 hover:text-blue-900 transition-colors" title="View Roles">
                                     <Users size={18} />
                                 </button>
-                                <button onClick={() => handleEditClick(permission)} className="text-amber-600 hover:text-amber-900 transition-colors">
+                                <button onClick={() => handleEditClick(permission)} className="text-amber-600 hover:text-amber-900 transition-colors" title="Edit Permission">
                                     <Edit size={18} />
                                 </button>
-                                <button onClick={() => handleDeleteClick(permission)} className="text-red-600 hover:text-red-900 transition-colors">
+                                <button onClick={() => handleDeleteClick(permission)} className="text-red-600 hover:text-red-900 transition-colors" title="Delete Permission">
                                     <Trash2 size={18} />
                                 </button>
                             </td>
@@ -322,6 +332,42 @@ const Permissions = () => {
                         </button>
                         <button onClick={handleDelete} disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-300">
                             {isUpdating ? 'Deleting...' : 'Delete'}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Logs Modal */}
+            <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
+                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 className="text-lg font-bold mb-4">Audit Logs for "{selectedPermission?.name}"</h3>
+                    {selectedPermission && (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Created At:</p>
+                                <p className="text-gray-600">{format(parseISO(selectedPermission.createdAt), "PPP p")}</p>
+                            </div>
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Created By:</p>
+                                <p className="text-gray-600">{selectedPermission.createdBy || 'N/A'}</p>
+                            </div>
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Last Updated At:</p>
+                                <p className="text-gray-600">{format(parseISO(selectedPermission.updatedAt), "PPP p")}</p>
+                            </div>
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Updated By:</p>
+                                <p className="text-gray-600">{selectedPermission.updatedBy || 'N/A'}</p>
+                            </div>
+                        </div>
+                    )}
+                    <div className="flex justify-end mt-6">
+                        <button
+                            type="button"
+                            onClick={() => setLogsModalOpen(false)}
+                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-sm font-medium transition-colors duration-200"
+                        >
+                            Close
                         </button>
                     </div>
                 </div>

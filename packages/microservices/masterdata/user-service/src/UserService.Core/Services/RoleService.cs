@@ -233,6 +233,22 @@ public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string perm
     return true;
 }
 
+public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
+{
+    if (string.IsNullOrEmpty(roleId))
+        throw new ArgumentException("Role ID is required", nameof(roleId));
+
+    // Check if role exists
+    var role = await _roleRepository.GetByIdAsync(roleId, false);
+    if (role == null)
+    {
+        throw new KeyNotFoundException("Role not found.");
+    }
+
+    // Get permissions for the role
+    return await _roleRepository.GetPermissionsForRoleAsync(roleId);
+}
+
 public async Task<PagedResult<RoleDto>> GetDeletedPagedAsync(PaginationParameters parameters)
 {
     if (parameters == null)

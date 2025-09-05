@@ -26,6 +26,7 @@ const Drivers = lazy(() => import("../components/weighing/Drivers.jsx"));
 const AdminDashboard = lazy(() => import("../pages/Userservice/AdminDashboard.jsx"));
 const PasswordPolicy = lazy(() => import("../pages/Userservice/PasswordPolicy.jsx"));
 const Permissions = lazy(() => import("../pages/Userservice/Permissions.jsx"));
+const Roles = lazy(() => import("../pages/Userservice/Roles.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -146,6 +147,10 @@ export const routes = [
                     {
                         path: "security/permissions",
                         element: <Permissions />
+                    },
+                    {
+                        path: "security/roles",
+                        element: <Roles />
                     }
                 ]
             }

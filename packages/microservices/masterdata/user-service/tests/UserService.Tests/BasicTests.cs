@@ -7,6 +7,7 @@ using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
+using UserService.Core.Interfaces.Emails;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Mappings;
@@ -19,22 +20,23 @@ public class UserServiceTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IRoleService> _mockRoleService;
+    private readonly Mock<IEmailQueueService> _mockEmailQueueService; // Add this
     private readonly IMapper _mapper;
     private readonly UserService.Core.Services.UserService _userService;
     private readonly ILogger<UserService.Core.Services.UserService> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    
 
     public UserServiceTests()
     {
         _mockUserRepository = new Mock<IUserRepository>();
         _mockRoleService = new Mock<IRoleService>();
+        _mockEmailQueueService = new Mock<IEmailQueueService>(); // Add this
         _logger = new Logger<UserService.Core.Services.UserService>(new LoggerFactory());
         _httpContextAccessor = new HttpContextAccessor();
-        
+    
         // Initialize missing mocks
         var mockRoleRepository = new Mock<IRoleRepository>();
-        
+    
         // Create a simple mock for PasswordPolicyService
         var mockPasswordPolicyService = new Mock<UserService.Core.Services.PasswordPolicyService>(
             new Mock<IPasswordPolicyRepository>().Object,
@@ -43,17 +45,18 @@ public class UserServiceTests
             new Logger<PasswordPolicyService>(new LoggerFactory()),
             _mockUserRepository.Object
         );
-        
+    
         var config = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>());
         _mapper = config.CreateMapper();
-        
+    
         _userService = new UserService.Core.Services.UserService(
             _mockUserRepository.Object,
             _mapper,
             mockRoleRepository.Object,
             _httpContextAccessor,
+            _mockEmailQueueService.Object,  // Add this parameter
             mockPasswordPolicyService.Object
-            );
+        );
     }
 
     [Fact]

@@ -36,10 +36,16 @@ export default function UserServiceSidebar() {
             path: "/admin/users",
         },
         {
-            key: "roles",
+            key: "persmissions",
             label: "Permissions",
             icon: <Shield size={18} />,
             path: "/admin/security/permissions",
+        },
+        {
+            key: "roles",
+            label: "Roles",
+            icon: <Users size={18} />,
+            path: "/admin/security/roles",
         },
         {
             key: "password-policy",
