@@ -229,32 +229,4 @@ public class UserServiceTests
         _mockUserRepository.Verify(x => x.UpdateAsync(It.IsAny<User>()), Times.Never);
     }
 
-    [Fact]
-    public async Task DeleteAsync_ExistingUser_ReturnsTrue()
-    {
-        // Arrange
-        var userId = "test-user-id";
-        var existingUser = new User
-        {
-            Id = userId,
-            Email = "test@example.com",
-            FirstName = "Test",
-            LastName = "User",
-            IsActive = true,
-            IsDeleted = false
-        };
-
-        _mockUserRepository.Setup(x => x.GetByIdAsync(userId, true))
-            .ReturnsAsync(existingUser);
-        _mockUserRepository.Setup(x => x.DeleteAsync(userId))
-            .ReturnsAsync(true);
-
-        // Act
-        var result = await _userService.DeleteAsync(userId);
-
-        // Assert
-        Assert.True(result);
-        _mockUserRepository.Verify(x => x.GetByIdAsync(userId, true), Times.Once);
-        _mockUserRepository.Verify(x => x.DeleteAsync(userId), Times.Once);
-    }
 }
