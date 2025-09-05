@@ -37,23 +37,29 @@ export default function Weighing() {
         {/* Left: Weighbridge + Cameras */}
         <div className="lg:col-span-2 space-y-4">
           <Suspense fallback={<SectionLoader title="Loading weighbridge..." />}>
-            <WeighbridgePanel />
+            <form/>
           </Suspense>
-          <Suspense fallback={<SectionLoader title="Loading cameras..." />}>
-            <CameraGrid refreshMs={1500} />
-          </Suspense>
-          <Suspense fallback={<SectionLoader title="Loading controls..." />}>
-            <HardwareControls refreshMs={1500} />
-          </Suspense>
-        
-        </div>
-
-        {/* Right: Transaction Form */}
-        <div>
+          <div>
           <Suspense fallback={<SectionLoader title="Loading form..." />}>
             <WeighingForm />
           </Suspense>
         </div>
+          {/* <Suspense fallback={<SectionLoader title="Loading cameras..." />}>
+            <CameraGrid refreshMs={1500} />
+          </Suspense> */}
+          <Suspense fallback={<SectionLoader title="Loading controls..." />}>
+            <HardwareControls refreshMs={1500} />
+          </Suspense>
+          
+        
+        </div>
+
+        {/* Right: Transaction Form */}
+        {/* <div>
+          <Suspense fallback={<SectionLoader title="Loading form..." />}>
+            <WeighingForm />
+          </Suspense>
+        </div> */}
       </div>
 
       {/* Bottom: Transaction List */}
