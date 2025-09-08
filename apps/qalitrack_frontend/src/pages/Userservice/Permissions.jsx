@@ -32,6 +32,8 @@ const Permissions = () => {
     const [newPermission, setNewPermission] = useState({ name: '', description: '' });
     const [isUpdating, setIsUpdating] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: '' });
+    const [modalFeedback, setModalFeedback] = useState({ text: '', type: '' });
+
 
     const showMessage = (text, type) => {
         setFeedbackMessage({ text, type });
@@ -60,16 +62,19 @@ const Permissions = () => {
     // Handlers for opening modals
     const handleAddClick = () => {
         setNewPermission({ name: '', description: '' });
+        setModalFeedback({ text: '', type: '' }); // Clear previous feedback
         setAddModalOpen(true);
     };
 
     const handleEditClick = (permission) => {
         setSelectedPermission({ ...permission });
+        setModalFeedback({ text: '', type: '' }); // Clear previous feedback
         setEditModalOpen(true);
     };
 
     const handleDeleteClick = (permission) => {
         setSelectedPermission(permission);
+        setModalFeedback({ text: '', type: '' }); // Clear previous feedback
         setDeleteModalOpen(true);
     };
 
@@ -108,14 +113,14 @@ const Permissions = () => {
         if (!selectedPermission) return;
 
         setIsUpdating(true);
+        setModalFeedback({ text: '', type: '' });
         try {
             await updatePermission(selectedPermission);
-            setEditModalOpen(false);
             await loadPermissions(); // Refresh the list
-            showMessage('Permission updated successfully!', 'success');
+            setModalFeedback({ text: 'Permission updated successfully!', type: 'success' });
         } catch (err) {
             console.error("Failed to update permission:", err);
-            showMessage(err.message || 'Failed to update permission.', 'error');
+            setModalFeedback({ text: err.message || 'Failed to update permission.', type: 'error' });
         } finally {
             setIsUpdating(false);
         }
@@ -125,14 +130,15 @@ const Permissions = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         setIsUpdating(true);
+        setModalFeedback({ text: '', type: '' });
         try {
             await createPermission(newPermission);
-            setAddModalOpen(false);
+            setNewPermission({ name: '', description: '' }); // Clear form
             await loadPermissions(); // Refresh the list
-            showMessage('Permission created successfully!', 'success');
+            setModalFeedback({ text: 'Permission created successfully!', type: 'success' });
         } catch (err) {
             console.error("Failed to create permission:", err);
-            showMessage(err.message || 'Failed to create permission.', 'error');
+            setModalFeedback({ text: err.message || 'Failed to create permission.', type: 'error' });
         } finally {
             setIsUpdating(false);
         }
@@ -143,14 +149,18 @@ const Permissions = () => {
         if (!selectedPermission) return;
 
         setIsUpdating(true);
+        setModalFeedback({ text: '', type: '' });
         try {
             await deletePermission(selectedPermission.id);
-            setDeleteModalOpen(false);
             await loadPermissions(); // Refresh the list
-            showMessage('Permission deleted successfully!', 'success');
+            setModalFeedback({ text: 'Permission deleted successfully!', type: 'success' });
+            // Optionally close the modal after a delay or keep it open
+            setTimeout(() => {
+                setDeleteModalOpen(false);
+            }, 2000);
         } catch (err) {
             console.error("Failed to delete permission:", err);
-            showMessage(err.message || 'Failed to delete permission.', 'error');
+            setModalFeedback({ text: err.message || 'Failed to delete permission.', type: 'error' });
         } finally {
             setIsUpdating(false);
         }
@@ -224,6 +234,11 @@ const Permissions = () => {
             {/* Edit Modal */}
             <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)}>
                 <h3 className="text-lg font-bold mb-4">Edit Permission</h3>
+                {modalFeedback.text && (
+                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {modalFeedback.text}
+                    </div>
+                )}
                 {selectedPermission && (
                     <form onSubmit={handleUpdate} className="space-y-4">
                         <div>
@@ -250,7 +265,7 @@ const Permissions = () => {
                         </div>
                         <div className="flex justify-end space-x-3 pt-4">
                             <button type="button" onClick={() => setEditModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                Cancel
+                                Close
                             </button>
                             <button type="submit" disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300">
                                 {isUpdating ? 'Saving...' : 'Save Changes'}
@@ -263,6 +278,11 @@ const Permissions = () => {
             {/* Add Modal */}
             <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)}>
                 <h3 className="text-lg font-bold mb-4">Add New Permission</h3>
+                {modalFeedback.text && (
+                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {modalFeedback.text}
+                    </div>
+                )}
                 <form onSubmit={handleCreate} className="space-y-4">
                     <div>
                         <label htmlFor="newName" className="block text-sm font-medium text-gray-700">Name</label>
@@ -290,13 +310,45 @@ const Permissions = () => {
                     </div>
                     <div className="flex justify-end space-x-3 pt-4">
                         <button type="button" onClick={() => setAddModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            Cancel
+                            Close
                         </button>
                         <button type="submit" disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300">
                             {isUpdating ? 'Adding...' : 'Add Permission'}
                         </button>
                     </div>
                 </form>
+            </Modal>
+
+            {/* Delete Confirmation Modal */}
+            <Modal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+                <div className="text-center">
+                    <ShieldAlert className="mx-auto h-12 w-12 text-red-500" />
+                    <h3 className="mt-2 text-lg font-bold text-gray-800">Delete Permission</h3>
+                    <p className="mt-2 text-sm text-gray-600">
+                        Are you sure you want to delete the permission "{selectedPermission?.name}"? This action cannot be undone.
+                    </p>
+                    {modalFeedback.text && (
+                        <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                            {modalFeedback.text}
+                        </div>
+                    )}
+                </div>
+                {!modalFeedback.text || modalFeedback.type !== 'success' ? (
+                    <div className="mt-6 flex justify-center space-x-4">
+                        <button onClick={() => setDeleteModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button onClick={handleDelete} disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-400">
+                            {isUpdating ? 'Deleting...' : 'Delete'}
+                        </button>
+                    </div>
+                ) : (
+                    <div className="mt-6 flex justify-center">
+                        <button onClick={() => setDeleteModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            Close
+                        </button>
+                    </div>
+                )}
             </Modal>
 
             {/* Roles Modal */}
@@ -315,25 +367,6 @@ const Permissions = () => {
                     <button type="button" onClick={() => setRolesModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                         Close
                     </button>
-                </div>
-            </Modal>
-
-            {/* Delete Confirmation Modal */}
-            <Modal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
-                 <div className="text-center">
-                    <ShieldAlert className="mx-auto h-12 w-12 text-red-500" />
-                    <h3 className="text-lg font-bold mt-4">Delete Permission?</h3>
-                    <p className="text-sm text-gray-500 mt-2">
-                        Are you sure you want to delete the permission "{selectedPermission?.name}"? This action cannot be undone.
-                    </p>
-                    <div className="flex justify-center space-x-4 mt-6">
-                        <button type="button" onClick={() => setDeleteModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            Cancel
-                        </button>
-                        <button onClick={handleDelete} disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-300">
-                            {isUpdating ? 'Deleting...' : 'Delete'}
-                        </button>
-                    </div>
                 </div>
             </Modal>
 
