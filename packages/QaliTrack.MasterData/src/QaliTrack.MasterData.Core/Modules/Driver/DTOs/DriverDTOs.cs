@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace QaliTrack.MasterData.Core.Modules.Driver.DTOs;
 
 /// <summary>
@@ -5,22 +7,53 @@ namespace QaliTrack.MasterData.Core.Modules.Driver.DTOs;
 /// </summary>
 public class CreateDriverDto
 {
+    [Required(ErrorMessage = "First name is required")]
+    [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters")]
     public string FirstName { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Last name is required")]
+    [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters")]
     public string LastName { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Date of birth is required")]
     public DateTime DateOfBirth { get; set; }
+    
+    [Required(ErrorMessage = "Phone number is required")]
+    [StringLength(20, ErrorMessage = "Phone number cannot exceed 20 characters")]
     public string PhoneNumber { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Please provide a valid email address")]
+    [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
     public string Email { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Address is required")]
+    [StringLength(500, ErrorMessage = "Address cannot exceed 500 characters")]
     public string Address { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Employee ID is required")]
+    [StringLength(50, ErrorMessage = "Employee ID cannot exceed 50 characters")]
     public string EmployeeId { get; set; } = string.Empty;
+    
     public DateTime HireDate { get; set; } = DateTime.Today;
-    public Guid OrganizationId { get; set; }
     
     // Optional basic fields
+    [StringLength(50, ErrorMessage = "Middle name cannot exceed 50 characters")]
     public string? MiddleName { get; set; }
+    
+    [StringLength(10, ErrorMessage = "Gender cannot exceed 10 characters")]
     public string? Gender { get; set; }
+    
+    [StringLength(50, ErrorMessage = "Nationality cannot exceed 50 characters")]
     public string? Nationality { get; set; }
+    
+    [StringLength(100, ErrorMessage = "City cannot exceed 100 characters")]
     public string? City { get; set; }
+    
+    [StringLength(100, ErrorMessage = "Country cannot exceed 100 characters")]
     public string? Country { get; set; }
+    
+    [StringLength(20, ErrorMessage = "Employment type cannot exceed 20 characters")]
     public string? EmploymentType { get; set; } = "FullTime";
 }
 

@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  qalitrack-datamanager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qalitrack-datamanager
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DB_PROVIDER=PostgreSQL
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=qalitrack_datamanager
+      - DB_USER=postgres
+      - DB_PASSWORD=qalitrack123
+      - MASTER_DATA_SERVICE_URL=http://qalitrack-masterdata
+    depends_on:
+      - postgres
+    volumes:
+      - ./data:/data
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: qalitrack-datamanager-postgres
+    environment:
+      - POSTGRES_DB=qalitrack_datamanager
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qalitrack123
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Optional: Redis for caching (future use)
+  redis:
+    image: redis:7-alpine
+    container_name: qalitrack-datamanager-redis
+    ports:
+      - "6380:6379"  # Different port to avoid conflicts
+    volumes:
+      - redis_data:/data
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Optional: Documentation server (if DocFX is generated)
+  docs:
+    image: nginx:alpine
+    container_name: qalitrack-datamanager-docs
+    ports:
+      - "8080:80"
+    volumes:
+      - ./_site:/usr/share/nginx/html:ro
+    networks:
+      - qalitrack-network
+    restart: unless-stopped
+    depends_on:
+      - qalitrack-datamanager
+    profiles:
+      - docs
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  qalitrack-network:
+    driver: bridge

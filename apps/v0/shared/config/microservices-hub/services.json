@@ -1,0 +1,99 @@
+{
+  "infrastructure": {
+    "name": "QaliTrack Infrastructure Services",
+    "environment": "${ENVIRONMENT}",
+    "services": [
+      {
+        "name": "PostgreSQL Main",
+        "type": "database",
+        "url": "http://postgres:${POSTGRES_PORT}",
+        "healthCheck": "http://postgres:${POSTGRES_PORT}/health",
+        "description": "Main PostgreSQL database for microservices",
+        "critical": true
+      },
+      {
+        "name": "PostgreSQL Backup",
+        "type": "database", 
+        "url": "http://postgres-backup:${POSTGRES_BACKUP_PORT}",
+        "healthCheck": "http://postgres-backup:${POSTGRES_BACKUP_PORT}/health",
+        "description": "Backup PostgreSQL database service",
+        "critical": false
+      },
+      {
+        "name": "Redis Cache",
+        "type": "cache",
+        "url": "http://redis:${REDIS_PORT}",
+        "healthCheck": "redis://redis:${REDIS_PORT}/ping",
+        "description": "Redis caching and session storage",
+        "critical": true
+      },
+      {
+        "name": "RabbitMQ",
+        "type": "messaging",
+        "url": "http://rabbitmq:${RABBITMQ_MGMT_PORT}",
+        "healthCheck": "http://rabbitmq:${RABBITMQ_MGMT_PORT}/api/health/checks/aliveness",
+        "description": "Message broker for async communication",
+        "critical": true
+      },
+      {
+        "name": "HashiCorp Vault",
+        "type": "secrets",
+        "url": "http://vault:${VAULT_PORT}",
+        "healthCheck": "http://vault:${VAULT_PORT}/v1/sys/health",
+        "description": "Secrets management and encryption",
+        "critical": true
+      },
+      {
+        "name": "MinIO",
+        "type": "storage",
+        "url": "http://minio:${MINIO_CONSOLE_PORT}",
+        "healthCheck": "http://minio:${MINIO_PORT}/minio/health/live",
+        "description": "S3-compatible object storage",
+        "critical": true
+      },
+      {
+        "name": "ZincSearch",
+        "type": "search",
+        "url": "http://zincsearch:${ZINCSEARCH_PORT}",
+        "healthCheck": "http://zincsearch:${ZINCSEARCH_PORT}/healthz",
+        "description": "Full-text search engine",
+        "critical": false
+      },
+      {
+        "name": "Mailpit",
+        "type": "email",
+        "url": "http://mailpit:${MAILPIT_WEB_PORT}",
+        "healthCheck": "http://mailpit:${MAILPIT_WEB_PORT}/api/v1/info",
+        "description": "Email testing and SMTP server",
+        "critical": false
+      },
+      {
+        "name": "Nginx",
+        "type": "proxy",
+        "url": "http://nginx:80",
+        "healthCheck": "http://nginx:80/health",
+        "description": "Reverse proxy and load balancer",
+        "critical": true
+      }
+    ]
+  },
+  "monitoring": {
+    "refreshInterval": 30,
+    "alertThresholds": {
+      "responseTime": 5000,
+      "errorRate": 0.05,
+      "uptime": 0.99
+    },
+    "notifications": {
+      "enabled": true,
+      "channels": ["email", "webhook"]
+    }
+  },
+  "dashboard": {
+    "title": "QaliTrack Infrastructure Status",
+    "theme": "dark",
+    "autoRefresh": true,
+    "showMetrics": true,
+    "showLogs": false
+  }
+}

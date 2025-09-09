@@ -1,0 +1,128 @@
+# QaliTrack Data Manager API Test File
+# Use with VS Code REST Client extension or similar tools
+
+@baseUrl = http://localhost:5001
+@orgId = 123e4567-e89b-12d3-a456-426614174000
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Detailed Health Check
+GET {{baseUrl}}/health/detailed
+
+### Get Weight Measurements (Empty at first)
+GET {{baseUrl}}/weightdata
+X-Organization-Id: {{orgId}}
+
+### Get Transactions (Empty at first)
+GET {{baseUrl}}/transactions
+X-Organization-Id: {{orgId}}
+
+### Get Compliance Checks (Empty at first)  
+GET {{baseUrl}}/compliance
+X-Organization-Id: {{orgId}}
+
+### Get Analytics Metrics (Empty at first)
+GET {{baseUrl}}/analytics/metrics
+X-Organization-Id: {{orgId}}
+
+### Get Operational Alerts (Empty at first)
+GET {{baseUrl}}/operations/alerts
+X-Organization-Id: {{orgId}}
+
+### Get Sync Sessions
+GET {{baseUrl}}/datasync/sessions
+
+### Get Archive Jobs
+GET {{baseUrl}}/archive/jobs
+
+### Create a Test Weight Measurement
+POST {{baseUrl}}/weightdata
+Content-Type: application/json
+X-Organization-Id: {{orgId}}
+
+{
+    "transactionId": "456e7890-f12b-34c5-d678-901234567890",
+    "weighbridgeId": "789e0123-456f-78a9-bcde-f01234567890",
+    "weight": 25000.50,
+    "measurementType": "Entry",
+    "temperature": 25.5,
+    "humidity": 60.0,
+    "notes": "Test weight measurement via API",
+    "organizationId": "{{orgId}}"
+}
+
+### Create a Test Transaction
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+X-Organization-Id: {{orgId}}
+
+{
+    "transactionType": "Purchase",
+    "vehicleId": "321f6543-210e-dcba-9876-543210fedcba",
+    "driverId": "654c9876-543a-1234-5678-9abcdef01234",
+    "supplierId": "987d6543-210a-bcde-f012-3456789abcde",
+    "productId": "147e2580-369b-147c-258d-0369be147cf0",
+    "routeId": "258f1470-258d-0369-cf0b-e147258d0369",
+    "weighbridgeId": "789e0123-456f-78a9-bcde-f01234567890",
+    "priority": 1,
+    "unitPrice": 50.00,
+    "currency": "USD",
+    "paymentTerms": "Net 30",
+    "deliveryTerms": "FOB",
+    "specialInstructions": "Handle with care - fragile goods",
+    "organizationId": "{{orgId}}"
+}
+
+### Create Test Compliance Check
+POST {{baseUrl}}/compliance
+Content-Type: application/json
+X-Organization-Id: {{orgId}}
+
+{
+    "transactionId": "456e7890-f12b-34c5-d678-901234567890",
+    "vehicleId": "321f6543-210e-dcba-9876-543210fedcba",
+    "driverId": "654c9876-543a-1234-5678-9abcdef01234",
+    "complianceType": "Weight"
+}
+
+### Create Test Alert
+POST {{baseUrl}}/operations/alerts
+Content-Type: application/json
+X-Organization-Id: {{orgId}}
+
+{
+    "alertType": "System",
+    "severity": "Medium",
+    "message": "Weighbridge calibration due",
+    "entityType": "Weighbridge",
+    "entityId": "789e0123-456f-78a9-bcde-f01234567890"
+}
+
+### Create Test Dashboard
+POST {{baseUrl}}/analytics/dashboards
+Content-Type: application/json
+X-Organization-Id: {{orgId}}
+
+{
+    "name": "Operations Dashboard",
+    "description": "Real-time operations monitoring dashboard",
+    "configuration": "{\"widgets\": [{\"type\": \"kpi\", \"metric\": \"totalTransactions\"}]}",
+    "dashboardType": "Operational"
+}
+
+### Test Pagination
+GET {{baseUrl}}/weightdata?page=1&page_size=5
+X-Organization-Id: {{orgId}}
+
+### Test Search
+GET {{baseUrl}}/transactions?search=TXN
+X-Organization-Id: {{orgId}}
+
+### Test Filtering
+GET {{baseUrl}}/compliance?status=Pass&complianceType=Weight
+X-Organization-Id: {{orgId}}
+
+### Test Ordering
+GET {{baseUrl}}/operations/alerts?ordering=-alertTime
+X-Organization-Id: {{orgId}}

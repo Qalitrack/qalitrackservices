@@ -1,110 +1,172 @@
 using Microsoft.EntityFrameworkCore;
 using QaliTrack.MasterData.Infrastructure.Data;
-using QaliTrack.MasterData.Api.Infrastructure;
+using QaliTrack.MasterData.Infrastructure.Repositories;
+using QaliTrack.MasterData.Core.Common;
+using QaliTrack.MasterData.Api.Services;
+using AutoMapper;
+using System.Text.Json.Serialization;
+using SqliteExceptions = EntityFramework.Exceptions.Sqlite.ExceptionProcessorExtensions;
+using PostgresExceptions = EntityFramework.Exceptions.PostgreSQL.ExceptionProcessorExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers(options =>
+// Load .env file if it exists
+var envFile = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+if (File.Exists(envFile))
 {
-    // Configure lowercase routing for Django-style URLs
-    options.Conventions.Add(new Microsoft.AspNetCore.Mvc.ApplicationModels.RouteTokenTransformerConvention(new LowercaseParameterTransformer()));
-    
-    // Add Django-style query parameter binding
-    options.ModelBinderProviders.Insert(0, new QueryParametersModelBinderProvider());
-});
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddHealthChecks();
+    Console.WriteLine($"Loading environment variables from: {envFile}");
+    foreach (var line in File.ReadAllLines(envFile))
+    {
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith('#'))
+            continue;
 
-// Configure Django-style modules (INSTALLED_APPS equivalent)
-builder.Services.ConfigureModules();
+        var parts = line.Split('=', 2);
+        if (parts.Length == 2)
+        {
+            var key = parts[0].Trim();
+            var value = parts[1].Trim();
+            
+            // Only set from .env if environment variable doesn't already exist
+            // This ensures Docker environment variables take precedence
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(key)))
+            {
+                Environment.SetEnvironmentVariable(key, value);
+            }
+        }
+    }
+}
+
+// Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Use PascalCase
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { 
-        Title = "QaliTrack Master Data API", 
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+    { 
+        Title = "QaliTrack MasterData API", 
         Version = "v1",
-        Description = "Consolidated Master Data Service with Django-style modular architecture"
+        Description = "Master data management for QaliTrack weighbridge system - Cement industry operations"
     });
 });
 
-// Configure Database (Django-style with .env support)
-builder.Services.ConfigureDatabase(builder.Configuration);
+// Database configuration service
+builder.Services.AddScoped<IDatabaseConfigurationService, DatabaseConfigurationService>();
 
-// Configure AutoMapper
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+// Database context with flexible provider
+builder.Services.AddDbContext<MasterDataDbContext>((serviceProvider, options) =>
+{
+    var dbConfigService = serviceProvider.GetRequiredService<IDatabaseConfigurationService>();
+    var connectionString = dbConfigService.GetConnectionStringAsync().Result;
+    var provider = dbConfigService.GetDatabaseProvider();
 
-// Configure FluentValidation (will add later)
-// builder.Services.AddFluentValidationAutoValidation();
-// builder.Services.AddFluentValidationClientsideAdapters();
+    switch (provider.ToUpper())
+    {
+        case "SQLITE":
+            options.UseSqlite(connectionString);
+            SqliteExceptions.UseExceptionProcessor(options);
+            break;
+        case "POSTGRESQL":
+        case "POSTGRES":
+            options.UseNpgsql(connectionString);
+            PostgresExceptions.UseExceptionProcessor(options);
+            break;
+        default:
+            throw new NotSupportedException($"Database provider '{provider}' is not supported.");
+    }
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.LogTo(Console.WriteLine);
+    }
+});
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
+
+// Repository pattern
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+// Add CORS support
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<MasterDataDbContext>("database");
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+// Enable Swagger in all environments except Production
+if (!app.Environment.IsProduction())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "QaliTrack Master Data API v1");
-    c.RoutePrefix = string.Empty; // Set Swagger UI at root
-});
-
-// Serve static files including documentation
-app.UseStaticFiles();
-
-// Configure documentation serving
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs")),
-    RequestPath = "/docs"
-});
-
-// Documentation default route
-app.MapGet("/docs", () => Results.Redirect("/docs/index.html"));
-app.MapFallback("/docs/{**path}", async context =>
-{
-    var path = context.Request.Path.Value?.Replace("/docs/", "") ?? "index.html";
-    if (string.IsNullOrEmpty(path) || path == "/")
-        path = "index.html";
-    
-    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs", path);
-    if (File.Exists(filePath))
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-        // Set proper Content-Type based on file extension
-        var extension = Path.GetExtension(filePath).ToLowerInvariant();
-        var contentType = extension switch
-        {
-            ".html" => "text/html; charset=utf-8",
-            ".css" => "text/css; charset=utf-8",
-            ".js" => "application/javascript; charset=utf-8",
-            ".json" => "application/json; charset=utf-8",
-            ".png" => "image/png",
-            ".jpg" or ".jpeg" => "image/jpeg",
-            ".svg" => "image/svg+xml",
-            ".ico" => "image/x-icon",
-            ".yml" or ".yaml" => "text/yaml; charset=utf-8",
-            _ => "application/octet-stream"
-        };
-        
-        context.Response.ContentType = contentType;
-        await context.Response.SendFileAsync(filePath);
-    }
-    else
-    {
-        context.Response.StatusCode = 404;
-        await context.Response.WriteAsync("Documentation file not found");
-    }
-});
-
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-    context.Database.EnsureCreated();
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "QaliTrack MasterData API v1");
+        c.RoutePrefix = string.Empty; // Serve Swagger at root
+    });
 }
 
-// app.UseHttpsRedirection(); // Removed to avoid HTTPS redirect warnings
+// Use CORS
+app.UseCors("AllowAll");
+
 app.UseAuthorization();
+
 app.MapControllers();
+
+// Health check endpoints
 app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready");
+
+// Simple health endpoint with service info
+app.MapGet("/health/info", (IDatabaseConfigurationService dbConfig) => new { 
+    status = "healthy", 
+    service = "QaliTrack MasterData API",
+    timestamp = DateTime.UtcNow,
+    version = "1.0.0",
+    database_provider = dbConfig.GetDatabaseProvider(),
+    environment = app.Environment.EnvironmentName
+});
+
+// Auto-migrate database on startup (optional, can be disabled via environment variable)
+var autoMigrate = Environment.GetEnvironmentVariable("AUTO_MIGRATE")?.ToLower() != "false";
+if (autoMigrate)
+{
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Running database migrations...");
+        await context.Database.MigrateAsync();
+        logger.LogInformation("Database migrations completed successfully");
+    }
+    catch (Exception ex)
+    {
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Error running database migrations");
+        
+        // Don't fail startup if migrations fail, just log the error
+        // This allows the service to start and be diagnosed
+    }
+}
 
 app.Run();

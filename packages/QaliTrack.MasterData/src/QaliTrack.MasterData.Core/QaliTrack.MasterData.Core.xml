@@ -140,9 +140,10 @@
             Supplier-specific profile for business entities
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.TransporterProfile">
+        <member name="T:QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities.ScheduleAgreement">
             <summary>
-            Transporter-specific profile for business entities
+            Long-term supply agreements for cement materials and products
+            Used for HODIM integration and structured procurement
             </summary>
         </member>
         <member name="T:QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto">
@@ -165,98 +166,88 @@
             Detailed DTO for single driver view - without child collections
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.CreateOrganizationDto">
+        <member name="T:QaliTrack.MasterData.Core.Modules.Driver.Entities.Driver">
             <summary>
-            Simplified DTO for creating an organization - only essential fields
+            Simplified driver entity for cement weighbridge operations
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto">
+        <member name="T:QaliTrack.MasterData.Core.Modules.HardwareManagement.Entities.AnprCamera">
             <summary>
-            DTO for updating basic organization information
+            ANPR (Automatic Number Plate Recognition) camera configuration
+            Specifically designed for HIKVision camera integration
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.OrganizationSummaryDto">
+        <member name="T:QaliTrack.MasterData.Core.Modules.HardwareManagement.Entities.PlcConfiguration">
             <summary>
-            Simplified DTO for organization list view
+            PLC (Programmable Logic Controller) configuration for weighbridge automation
+            Specifically designed for Siemens Logo 8 integration
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Organization.DTOs.OrganizationDetailDto">
+        <member name="T:QaliTrack.MasterData.Core.Modules.HardwareManagement.Entities.Weighbridge">
             <summary>
-            Detailed DTO for single organization view - without child collections
+            Weighbridge hardware configuration for cement operations
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverSaccoMembership">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.PackagingType">
             <summary>
-            Driver-SACCO membership relationship
-            Addresses the missing relationship between drivers and SACCO organizations
+            Types of product packaging (50kg Bags, 25kg Bags, Bulk)
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleTransporterOwnership">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.ProductBase">
             <summary>
-            Vehicle-Transporter ownership relationship
-            Addresses the missing relationship for fleet management
+            Base product definitions (OPC 42.5N, Clinker Grade A, etc.)
+            Contains core product information before packaging variants
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverVehicleAssignment">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.ProductCategory">
             <summary>
-            Driver-Vehicle assignment relationship
-            Addresses the missing relationship for current and historical vehicle assignments
+            Hierarchical product categories (Cement → OPC/PPC, Clinker, Raw Materials)
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.DriverTransporterEmployment">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.ProductSpecification">
             <summary>
-            Driver-Transporter employment relationship
-            Addresses the missing relationship for employment tracking
+            Quality specifications and test requirements for products
+            (Compressive Strength, Fineness, Chemical Composition, etc.)
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.ProductSupplierCatalog">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.ProductUsagePermission">
             <summary>
-            Product-Supplier catalog relationship
-            Addresses the missing many-to-many relationship between products and suppliers
+            Defines which products can be sold/transferred from each site
+            Controls business rules for product-site combinations
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.RouteWeighbridgeAssociation">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.ProductVariant">
             <summary>
-            Route-Weighbridge association relationship
-            Addresses the missing relationship between routes and weighbridges
+            Product variants combining base products with packaging types
+            (OPC 42.5N in 50kg bags vs OPC 42.5N in 25kg bags)
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.OrganizationWeighbridgeOwnership">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.SiteCapability">
             <summary>
-            Organization-Weighbridge ownership relationship
-            Addresses the missing relationship for asset management
+            Defines what each site can produce or handle
+            Controls operational capabilities per location
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.VehicleSaccoRegistration">
+        <member name="T:QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities.SiteProductConstraint">
             <summary>
-            Vehicle-SACCO registration relationship
-            Addresses the missing relationship for regulatory compliance
+            Business rules for inter-site product transfers
+            Prevents invalid product routes between sites
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Relationships.Entities.UserOrganizationRole">
+        <member name="T:QaliTrack.MasterData.Core.Modules.SiteManagement.Entities.LocationType">
             <summary>
-            User-Organization-Role matrix
-            Addresses the missing relationship for comprehensive access control
+            Types of business locations (Plant, Warehouse, Terminal, Branch)
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto">
+        <member name="T:QaliTrack.MasterData.Core.Modules.SiteManagement.Entities.Site">
             <summary>
-            Simplified DTO for creating a SACCO - only essential fields
+            Physical business locations (plants, warehouses, terminals, branches)
+            Replaces the multi-tenant OrganizationLocation with single-organization, multi-site approach
             </summary>
         </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto">
+        <member name="T:QaliTrack.MasterData.Core.Modules.SiteManagement.Entities.Zone">
             <summary>
-            DTO for updating basic SACCO information
-            </summary>
-        </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoSummaryDto">
-            <summary>
-            Simplified DTO for SACCO list view
-            </summary>
-        </member>
-        <member name="T:QaliTrack.MasterData.Core.Modules.Sacco.DTOs.SaccoDetailDto">
-            <summary>
-            Detailed DTO for single SACCO view - without child collections
+            Regional zones for organizing sites (e.g., Coastal Region, Eastern Region, Central Region)
             </summary>
         </member>
         <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleDto">
@@ -282,6 +273,11 @@
         <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.VehicleDetailDto">
             <summary>
             Detailed DTO for single vehicle view - without child collections
+            </summary>
+        </member>
+        <member name="T:QaliTrack.MasterData.Core.Modules.Vehicle.Entities.DriverVehicleAssignment">
+            <summary>
+            Driver-Vehicle assignment for cement operations
             </summary>
         </member>
     </members>

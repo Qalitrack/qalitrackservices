@@ -7,6 +7,11 @@ public class ApiResponse<T>
     public T? Data { get; set; }
     public List<string> Errors { get; set; } = new();
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    
+    // Pagination properties
+    public int? TotalCount { get; set; }
+    public int? Page { get; set; }
+    public int? PageSize { get; set; }
 
     public static ApiResponse<T> SuccessResponse(T data, string message = "Operation successful")
     {

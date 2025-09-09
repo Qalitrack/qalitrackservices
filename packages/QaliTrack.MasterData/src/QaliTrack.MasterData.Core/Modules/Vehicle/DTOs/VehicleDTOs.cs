@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace QaliTrack.MasterData.Core.Modules.Vehicle.DTOs;
 
 /// <summary>
@@ -5,25 +7,54 @@ namespace QaliTrack.MasterData.Core.Modules.Vehicle.DTOs;
 /// </summary>
 public class CreateVehicleDto
 {
+    [Required(ErrorMessage = "Registration number is required")]
+    [StringLength(20, ErrorMessage = "Registration number cannot exceed 20 characters")]
     public string RegistrationNumber { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Make is required")]
+    [StringLength(50, ErrorMessage = "Make cannot exceed 50 characters")]
     public string Make { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Model is required")]
+    [StringLength(50, ErrorMessage = "Model cannot exceed 50 characters")]
     public string Model { get; set; } = string.Empty;
+    
+    [Range(1900, 2030, ErrorMessage = "Year must be between 1900 and 2030")]
     public int Year { get; set; }
+    
+    [StringLength(30, ErrorMessage = "Color cannot exceed 30 characters")]
     public string Color { get; set; } = string.Empty;
+    
+    [StringLength(17, ErrorMessage = "VIN cannot exceed 17 characters")]
     public string VIN { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Fuel type is required")]
+    [StringLength(20, ErrorMessage = "Fuel type cannot exceed 20 characters")]
     public string FuelType { get; set; } = string.Empty;
-    public Guid VehicleTypeId { get; set; }
-    public Guid OrganizationId { get; set; }
+    
+    public Guid? VehicleTypeId { get; set; }
     
     // Optional basic fields
+    [StringLength(50, ErrorMessage = "Engine number cannot exceed 50 characters")]
     public string? EngineNumber { get; set; }
+    
+    [Range(0, double.MaxValue, ErrorMessage = "Max weight must be positive")]
     public decimal? MaxWeight { get; set; }
+    
+    [Range(0, double.MaxValue, ErrorMessage = "Tare weight must be positive")]
     public decimal? TareWeight { get; set; }
+    
+    [Range(0, double.MaxValue, ErrorMessage = "Payload capacity must be positive")]
     public decimal? PayloadCapacity { get; set; }
+    
+    [Range(0, double.MaxValue, ErrorMessage = "Current mileage must be positive")]
     public decimal? CurrentMileage { get; set; }
+    
     public DateTime? LastInspectionDate { get; set; }
     public DateTime? InsuranceExpiryDate { get; set; }
     public DateTime? RegistrationExpiryDate { get; set; }
+    
+    [StringLength(1000, ErrorMessage = "Notes cannot exceed 1000 characters")]
     public string? Notes { get; set; }
 }
 

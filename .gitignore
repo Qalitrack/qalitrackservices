@@ -98,9 +98,13 @@ bower_components/
 
 # ASP.NET Core
 wwwroot/lib/
+wwwroot/docs/
 appsettings.Development.json
 appsettings.Production.json
 appsettings.Staging.json
+
+# DocFX generated files
+_site/
 
 # Java
 *.class

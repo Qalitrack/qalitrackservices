@@ -1,0 +1,46 @@
+services:
+  microservices-control-hub:
+    image: ghcr.io/qalitrack/qalitrackservices/microservices-control-hub:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-microservices-control-hub
+    restart: unless-stopped
+    ports:
+      - "${MICROSERVICES_HUB_PORT}:3000"
+    environment:
+      - NODE_ENV=${ENVIRONMENT}
+      - PORT=3000
+      - CONFIG_PATH=/app/config/services.json
+      - ENVIRONMENT=${ENVIRONMENT}
+      - PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - NETWORK_SUBNET=${NETWORK_SUBNET}
+    volumes:
+      - ./shared/config/microservices-hub:/app/config:ro
+      - microservices_hub_data:/app/data
+    networks:
+      - qalitrack-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      vault:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "project=${COMPOSE_PROJECT_NAME}"
+      - "environment=${ENVIRONMENT}"
+      - "service.type=monitoring"
+      - "traefik.enable=true"
+      - "traefik.http.routers.microservices-hub.rule=Host(\`${MICROSERVICES_HUB_HOST}\`)"
+      - "traefik.http.services.microservices-hub.loadbalancer.server.port=3000"
+
+volumes:
+  microservices_hub_data:
+    name: ${COMPOSE_PROJECT_NAME}_microservices_hub_data
+    labels:
+      - "project=${COMPOSE_PROJECT_NAME}"
+      - "environment=${ENVIRONMENT}"
