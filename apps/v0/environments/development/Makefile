@@ -33,7 +33,8 @@ help:
 	@echo "$(BLUE)🛠️  Development Environment Commands$(RESET)"
 	@echo ""
 	@echo "$(YELLOW)Setup:$(RESET)"
-	@echo "  $(GREEN)generate$(RESET)           - Generate files from templates"
+	@echo "  $(GREEN)generate$(RESET)           - Generate missing files from templates"
+	@echo "  $(GREEN)FORCE=true generate$(RESET) - Force regenerate all files from templates"
 	@echo "  $(GREEN)info$(RESET)               - Show environment information"
 	@echo ""
 	@echo "$(YELLOW)Infrastructure:$(RESET)"
@@ -106,13 +107,30 @@ generate:
 		echo "$(GREEN)✓$(RESET) Environment secrets already exist"; \
 	fi
 	@mkdir -p infrastructure applications
-	@echo "$(BLUE)🏗️  Generating infrastructure files from templates...$(RESET)"
-	@for template in ../../shared/templates/infrastructure/*.yml; do \
-		filename=$$(basename $$template); \
-		echo "  $(GREEN)✓$(RESET) Generating infrastructure/$$filename"; \
-		envsubst < $$template > infrastructure/$$filename; \
-	done
-	@echo "$(GREEN)✅ Infrastructure files generated successfully!$(RESET)"
+	@if [ "$(FORCE)" = "true" ]; then \
+		echo "$(YELLOW)⚠️  FORCE=true - Regenerating all infrastructure files...$(RESET)"; \
+		for template in ../../shared/templates/infrastructure/*.yml; do \
+			filename=$$(basename $$template); \
+			echo "  $(GREEN)✓$(RESET) Generating infrastructure/$$filename"; \
+			envsubst < $$template > infrastructure/$$filename; \
+		done; \
+		echo "$(GREEN)✅ Infrastructure files regenerated successfully!$(RESET)"; \
+	else \
+		files_generated=false; \
+		for template in ../../shared/templates/infrastructure/*.yml; do \
+			filename=$$(basename $$template); \
+			if [ ! -f infrastructure/$$filename ]; then \
+				echo "  $(GREEN)✓$(RESET) Generating infrastructure/$$filename"; \
+				envsubst < $$template > infrastructure/$$filename; \
+				files_generated=true; \
+			fi; \
+		done; \
+		if [ "$$files_generated" = "true" ]; then \
+			echo "$(GREEN)✅ Missing infrastructure files generated successfully!$(RESET)"; \
+		else \
+			echo "$(GREEN)✓$(RESET) All infrastructure files already exist (use FORCE=true to regenerate)"; \
+		fi; \
+	fi
 
 # Infrastructure commands
 infra-up: generate
