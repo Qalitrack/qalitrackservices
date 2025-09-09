@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: qs-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: products_dashboard_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - qs-network
+
+  backend:
+    build:
+      context: ../qs-website
+      dockerfile: Dockerfile.backend
+    container_name: qs-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - JWT_SECRET=your_super_secret_jwt_key_change_in_production
+      - MONGODB_URI=mongodb://mongodb:27017/products_dashboard_db
+    depends_on:
+      - mongodb
+    networks:
+      - qs-network
+
+  frontend:
+    build:
+      context: ../qs-website
+      dockerfile: Dockerfile
+    container_name: qs-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - qs-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  qs-network:
+    driver: bridge
