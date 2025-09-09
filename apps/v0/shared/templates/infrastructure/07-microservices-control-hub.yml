@@ -16,7 +16,7 @@ services:
       - ./shared/config/microservices-hub:/app/config:ro
       - microservices_hub_data:/app/data
     networks:
-      - qalitrack-network
+      - qalitrack
     depends_on:
       postgres:
         condition: service_healthy
