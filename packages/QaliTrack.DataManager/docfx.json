@@ -1,0 +1,76 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": ".",
+          "files": [
+            "**/*.csproj"
+          ]
+        }
+      ],
+      "dest": "api",
+      "includePrivateMembers": false,
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false,
+      "noRestore": false,
+      "namespaceLayout": "flattened",
+      "memberLayout": "samePage",
+      "allowCompilationErrors": true
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}",
+          "toc.yml",
+          "index.md"
+        ],
+        "exclude": [
+          "_site/**",
+          "obj/**",
+          "bin/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      },
+      {
+        "files": [
+          "templates/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "QaliTrack Data Manager Service",
+      "_appTitle": "QaliTrack Data Manager Service API Documentation",
+      "_enableSearch": true,
+      "_enableNewTab": true,
+      "_disableNavbar": false,
+      "_disableBreadcrumb": false,
+      "_disableToc": false,
+      "_disableAffix": false,
+      "_enableSourceMap": false,
+      "pdf": false,
+      "_gitContribute": {
+        "repo": "https://github.com/yourusername/qalitrackservices",
+        "branch": "main",
+        "path": "packages/QaliTrack.DataManager"
+      },
+      "_footer": "© 2024 QaliTrack. Generated with DocFX.",
+      "_appFooter": "QaliTrack Data Manager Service Documentation"
+    },
+    "postProcessors": ["ExtractSearchIndex"]
+  }
+}

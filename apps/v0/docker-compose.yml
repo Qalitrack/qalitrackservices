@@ -29,9 +29,12 @@ services:
       - "7001:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Vault__Address=http://vault:8200
+      - Vault__RoleName=qalitrack-services
       - ConnectionStrings__DefaultConnection=Host=postgres;Database=masterdata;Username=masterdata;Password=masterdata123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60
     depends_on:
       - postgres
+      - vault-init
     networks:
       - microservices
     restart: unless-stopped
@@ -42,6 +45,10 @@ services:
       - "7002:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Vault__Address=http://vault:8200
+      - Vault__RoleName=qalitrack-services
+    depends_on:
+      - vault-init
     networks:
       - microservices
     restart: unless-stopped
@@ -52,6 +59,10 @@ services:
       - "7003:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Vault__Address=http://vault:8200
+      - Vault__RoleName=qalitrack-services
+    depends_on:
+      - vault-init
     networks:
       - microservices
     restart: unless-stopped
@@ -94,6 +105,7 @@ services:
     networks:
       - microservices
     restart: unless-stopped
+
   # User Service - NEW ADDITION
   user-service:
     image: ghcr.io/qalitrack/qalitrackservices/user-service:latest
@@ -232,13 +244,100 @@ services:
       - microservices
     restart: unless-stopped
 
+  # HashiCorp Vault (free version)
+  vault:
+    image: hashicorp/vault:latest
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=myroot
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      - VAULT_API_ADDR=http://0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data:/vault/data
+      - vault_logs:/vault/logs
+    networks:
+      - microservices
+    restart: unless-stopped
+    command: ["vault", "server", "-dev"]
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password123
+    volumes:
+      - minio_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # ZincSearch
+  zincsearch:
+    image: public.ecr.aws/zinclabs/zincsearch:latest
+    ports:
+      - "4080:4080"
+    environment:
+      - ZINC_FIRST_ADMIN_USER=admin
+      - ZINC_FIRST_ADMIN_PASSWORD=password123
+      - ZINC_DATA_PATH=/data
+    volumes:
+      - zincsearch_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  # Vault initialization service (runs once to setup secrets)
+  vault-init:
+    image: hashicorp/vault:latest
+    depends_on:
+      - vault
+      - postgres
+    networks:
+      - microservices
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=myroot
+    command: |
+      sh -c "
+        apk add --no-cache curl &&
+        echo 'Waiting for Vault to be ready...' &&
+        while ! curl -s http://vault:8200/v1/sys/health > /dev/null; do
+          sleep 2
+        done &&
+        echo 'Vault is ready, initializing secrets...' &&
+        vault kv put secret/database/masterdata connection_string='Host=postgres;Database=masterdata;Username=masterdata;Password=masterdata123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60' &&
+        vault kv put secret/database/backup connection_string='Host=postgres-backup;Database=backupservicedb;Username=backupservice;Password=backupservice123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60' &&
+        vault kv put secret/services/rabbitmq default_user='admin' default_password='password' &&
+        vault kv put secret/services/minio root_user='admin' root_password='password123' &&
+        vault kv put secret/services/zincsearch admin_user='admin' admin_password='password123' &&
+        echo 'Vault basic initialization complete!'
+      "
+    restart: "no"
+
 volumes:
   postgres_data:
   postgres_backup_data:
-  postgres_userservice_data:  # ADD THIS LINE
+  postgres_userservice_data:
   redis_data:
   rabbitmq_data:
   mailpit_data:
+  vault_data:
+  vault_logs:
+  minio_data:
+  zincsearch_data:
 
 networks:
   microservices:
@@ -253,3 +352,12 @@ networks:
 #    - Weight Data Service: http://localhost:7003
 #    - Operational Data Service: http://localhost:7004
 #    - Backup Service: http://localhost:7005
+#    - User Service: http://localhost:7006
+#    - PostgreSQL: localhost:5432 (admin/password)
+#    - Redis: localhost:6379
+#    - RabbitMQ Management: http://localhost:15672 (admin/password)
+#    - Mailpit: http://localhost:8025
+#    - Vault: http://localhost:8200 (token: myroot)
+#    - MinIO Console: http://localhost:9001 (admin/password123)
+#    - MinIO API: http://localhost:9000 (admin/password123)
+#    - ZincSearch: http://localhost:4080 (admin/password123)

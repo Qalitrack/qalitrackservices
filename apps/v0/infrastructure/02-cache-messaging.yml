@@ -1,0 +1,40 @@
+services:
+  # Redis Cache (Admin credentials for Vault to manage dynamic users)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass vault-redis-admin-pass
+    volumes:
+      - redis_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "vault-redis-admin-pass", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # RabbitMQ Message Broker (Admin credentials for Vault to manage dynamic users)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=vault-rabbitmq-admin
+      - RABBITMQ_DEFAULT_PASS=vault-rabbitmq-admin-pass
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Volumes and networks defined in 00-volumes-networks.yml

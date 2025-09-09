@@ -1,0 +1,109 @@
+# API Gateway Configuration for QaliTrack
+# Routes all API requests through the future API Gateway service
+
+# Upstream for API Gateway (when implemented)
+upstream api_gateway {
+    server ${COMPOSE_PROJECT_NAME}-api-gateway:${API_GATEWAY_PORT} fail_timeout=5s max_fails=3;
+    # Fallback - direct service routing (temporary until gateway is implemented)
+    server ${COMPOSE_PROJECT_NAME}-qalitrack-masterdata:${MASTERDATA_PORT} backup;
+}
+
+# Upstream for individual services (fallback)
+upstream masterdata_service {
+    server ${COMPOSE_PROJECT_NAME}-qalitrack-masterdata:${MASTERDATA_PORT};
+}
+
+upstream transaction_service {
+    server ${COMPOSE_PROJECT_NAME}-transaction-service:${TRANSACTION_PORT};
+}
+
+upstream weight_data_service {
+    server ${COMPOSE_PROJECT_NAME}-weight-data-service:${WEIGHT_DATA_PORT};
+}
+
+upstream backup_service {
+    server ${COMPOSE_PROJECT_NAME}-backup-service:${BACKUP_SERVICE_PORT};
+}
+
+# API Gateway Server Block
+server {
+    listen 80;
+    server_name ${API_DOMAIN};
+
+    # Security Headers
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Rate limiting for API
+    limit_req zone=api burst=20 nodelay;
+
+    # Health check endpoint
+    location /health {
+        access_log off;
+        return 200 "API Gateway healthy\n";
+        add_header Content-Type text/plain;
+    }
+
+    # API Gateway routing (primary)
+    location /api/ {
+        # Remove /api prefix before forwarding
+        rewrite ^/api/(.*)$ /$1 break;
+        
+        proxy_pass http://api_gateway;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
+        
+        # Timeout settings
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+        
+        # Buffer settings
+        proxy_buffering on;
+        proxy_buffer_size 4k;
+        proxy_buffers 8 4k;
+        
+        # Error handling
+        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    }
+
+    # Direct service routing (fallback until API Gateway is implemented)
+    location /direct/masterdata/ {
+        rewrite ^/direct/masterdata/(.*)$ /$1 break;
+        proxy_pass http://masterdata_service;
+        include /etc/nginx/conf.d/proxy_common.conf;
+    }
+
+    location /direct/transaction/ {
+        rewrite ^/direct/transaction/(.*)$ /$1 break;
+        proxy_pass http://transaction_service;
+        include /etc/nginx/conf.d/proxy_common.conf;
+    }
+
+    location /direct/weight-data/ {
+        rewrite ^/direct/weight-data/(.*)$ /$1 break;
+        proxy_pass http://weight_data_service;
+        include /etc/nginx/conf.d/proxy_common.conf;
+    }
+
+    location /direct/backup/ {
+        rewrite ^/direct/backup/(.*)$ /$1 break;
+        proxy_pass http://backup_service;
+        include /etc/nginx/conf.d/proxy_common.conf;
+    }
+
+    # Default route to API Gateway
+    location / {
+        proxy_pass http://api_gateway;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
