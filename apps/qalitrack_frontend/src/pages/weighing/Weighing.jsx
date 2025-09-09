@@ -33,27 +33,39 @@ export default function Weighing() {
       <h1 className="text-2xl font-bold text-amber-600">Factory Weighing</h1>
 
       {/* Top Section: Weighbridge + Cameras + Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid  gap-4">
         {/* Left: Weighbridge + Cameras */}
         <div className="lg:col-span-2 space-y-4">
           <Suspense fallback={<SectionLoader title="Loading weighbridge..." />}>
+            <form/>
+          </Suspense>
+          <div>
+            {/* <Suspense fallback={<SectionLoader title="Loading form..." />}>
             <WeighbridgePanel />
+            </Suspense> */}
+          </div>
+
+          <div>
+          <Suspense fallback={<SectionLoader title="Loading form..." />}>
+            <WeighingForm />
           </Suspense>
-          <Suspense fallback={<SectionLoader title="Loading cameras..." />}>
+         </div>
+          {/* <Suspense fallback={<SectionLoader title="Loading cameras..." />}>
             <CameraGrid refreshMs={1500} />
-          </Suspense>
+          </Suspense> */}
           <Suspense fallback={<SectionLoader title="Loading controls..." />}>
             <HardwareControls refreshMs={1500} />
           </Suspense>
+          
         
         </div>
 
         {/* Right: Transaction Form */}
-        <div>
+        {/* <div>
           <Suspense fallback={<SectionLoader title="Loading form..." />}>
             <WeighingForm />
           </Suspense>
-        </div>
+        </div> */}
       </div>
 
       {/* Bottom: Transaction List */}
