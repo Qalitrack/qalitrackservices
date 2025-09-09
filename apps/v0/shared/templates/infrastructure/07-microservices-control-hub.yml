@@ -35,7 +35,7 @@ services:
       - "environment=${ENVIRONMENT}"
       - "service.type=monitoring"
       - "traefik.enable=true"
-      - "traefik.http.routers.microservices-hub.rule=Host(\`${MICROSERVICES_HUB_HOST}\`)"
+      - "traefik.http.routers.microservices-hub.rule=Host('${MICROSERVICES_HUB_HOST}')"
       - "traefik.http.services.microservices-hub.loadbalancer.server.port=3000"
 
 volumes:
