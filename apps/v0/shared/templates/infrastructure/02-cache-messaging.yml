@@ -1,0 +1,48 @@
+services:
+  # Redis Cache (Admin credentials for Vault to manage dynamic users)
+  redis:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    command: redis-server --requirepass ${REDIS_ADMIN_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - qalitrack
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_ADMIN_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "qalitrack.service=cache"
+      - "qalitrack.environment=${ENVIRONMENT}"
+
+  # RabbitMQ Message Broker (Admin credentials for Vault to manage dynamic users)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}-rabbitmq
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MGMT_PORT}:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_ADMIN_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_ADMIN_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - qalitrack
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "qalitrack.service=messaging"
+      - "qalitrack.environment=${ENVIRONMENT}"
+
+# Volumes and networks defined in 00-volumes-networks.yml

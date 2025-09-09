@@ -1,0 +1,33 @@
+services:
+  # Dummy service to create volumes and networks
+  setup:
+    image: alpine:latest
+    command: echo "Infrastructure volumes and networks created"
+    restart: "no"
+    networks:
+      - microservices
+
+volumes:
+  postgres_data:
+    name: v0_postgres_data
+  postgres_backup_data:
+    name: v0_postgres_backup_data
+  redis_data:
+    name: v0_redis_data
+  rabbitmq_data:
+    name: v0_rabbitmq_data
+  mailpit_data:
+    name: v0_mailpit_data
+  vault_data:
+    name: v0_vault_data
+  vault_logs:
+    name: v0_vault_logs
+  minio_data:
+    name: v0_minio_data
+  zincsearch_data:
+    name: v0_zincsearch_data
+
+networks:
+  microservices:
+    name: v0_microservices
+    driver: bridge

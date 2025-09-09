@@ -1,0 +1,16 @@
+- name: Home
+  href: index.md
+- name: Documentation
+  items:
+    - name: Getting Started
+      href: docs/getting-started.md
+    - name: Architecture
+      href: docs/architecture.md
+    - name: Database Schema
+      href: docs/database-schema.md
+    - name: API Guidelines
+      href: docs/api-guidelines.md
+    - name: Deployment
+      href: docs/deployment.md
+- name: API Reference
+  href: api/

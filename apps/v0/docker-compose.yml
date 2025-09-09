@@ -105,6 +105,7 @@ services:
     networks:
       - microservices
     restart: unless-stopped
+
   # User Service - NEW ADDITION
   user-service:
     image: ghcr.io/qalitrack/qalitrackservices/user-service:latest
@@ -318,6 +319,7 @@ services:
         done &&
         echo 'Vault is ready, initializing secrets...' &&
         vault kv put secret/database/masterdata connection_string='Host=postgres;Database=masterdata;Username=masterdata;Password=masterdata123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60' &&
+        vault kv put secret/database/backup connection_string='Host=postgres-backup;Database=backupservicedb;Username=backupservice;Password=backupservice123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60' &&
         vault kv put secret/services/rabbitmq default_user='admin' default_password='password' &&
         vault kv put secret/services/minio root_user='admin' root_password='password123' &&
         vault kv put secret/services/zincsearch admin_user='admin' admin_password='password123' &&

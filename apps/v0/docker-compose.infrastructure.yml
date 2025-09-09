@@ -1,0 +1,308 @@
+services:
+  # Infrastructure Services Only - Phase 1 Vault Dynamic Secrets Integration
+
+  # Main PostgreSQL Database (Admin credentials for Vault to manage dynamic users)
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=microservices
+      - POSTGRES_USER=vault-admin
+      - POSTGRES_PASSWORD=vault-postgres-admin-pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vault-admin -d microservices"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Backup Service PostgreSQL Database (Admin credentials for Vault to manage dynamic users)
+  postgres-backup:
+    image: postgres:15-alpine
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=backupservicedb
+      - POSTGRES_USER=vault-backup-admin
+      - POSTGRES_PASSWORD=vault-backup-admin-pass
+    volumes:
+      - postgres_backup_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vault-backup-admin -d backupservicedb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis Cache (Admin credentials for Vault to manage dynamic users)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass vault-redis-admin-pass
+    volumes:
+      - redis_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "vault-redis-admin-pass", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # RabbitMQ Message Broker (Admin credentials for Vault to manage dynamic users)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=vault-rabbitmq-admin
+      - RABBITMQ_DEFAULT_PASS=vault-rabbitmq-admin-pass
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Mailpit Email Testing Service (No authentication required - testing tool)
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+      - MP_MAX_MESSAGES=5000
+      - MP_DATABASE=/data/mailpit.db
+    volumes:
+      - mailpit_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8025"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # HashiCorp Vault (Development Mode)
+  vault:
+    image: hashicorp/vault:latest
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=myroot
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      - VAULT_API_ADDR=http://0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data:/vault/data
+      - vault_logs:/vault/logs
+    networks:
+      - microservices
+    restart: unless-stopped
+    command: ["vault", "server", "-dev"]
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8200/v1/sys/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MinIO Object Storage (Admin credentials for Vault to manage dynamic access keys)
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=vault-minio-admin
+      - MINIO_ROOT_PASSWORD=vault-minio-admin-pass
+    volumes:
+      - minio_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # ZincSearch (Admin credentials for Vault to manage dynamic users)
+  zincsearch:
+    image: public.ecr.aws/zinclabs/zincsearch:latest
+    ports:
+      - "4080:4080"
+    environment:
+      - ZINC_FIRST_ADMIN_USER=vault-zinc-admin
+      - ZINC_FIRST_ADMIN_PASSWORD=vault-zinc-admin-pass
+      - ZINC_DATA_PATH=/data
+    volumes:
+      - zincsearch_data:/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Vault Initialization Service (Enhanced for Phase 1)
+  vault-init:
+    image: hashicorp/vault:latest
+    depends_on:
+      - vault
+      - postgres
+      - postgres-backup
+      - redis
+      - rabbitmq
+      - mailpit
+      - minio
+      - zincsearch
+    networks:
+      - microservices
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=myroot
+    command: |
+      sh -c "
+        apk add --no-cache curl &&
+        echo 'Waiting for Vault to be ready...' &&
+        while ! curl -s http://vault:8200/v1/sys/health > /dev/null; do
+          sleep 2
+        done &&
+        echo 'Vault is ready, initializing dynamic secrets engines...' &&
+        
+        # Wait a bit more for Vault to be fully initialized
+        sleep 5 &&
+        
+        # Enable PostgreSQL secrets engine for main database
+        vault secrets enable -path=database database &&
+        
+        # Configure PostgreSQL connection for main database
+        vault write database/config/postgres-main \
+          plugin_name=postgresql-database-plugin \
+          connection_url='postgresql://{{username}}:{{password}}@postgres:5432/microservices?sslmode=disable' \
+          allowed_roles='postgres-main-role' \
+          username='vault-admin' \
+          password='vault-postgres-admin-pass' &&
+          
+        # Create PostgreSQL role for main database
+        vault write database/roles/postgres-main-role \
+          db_name=postgres-main \
+          creation_statements='CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD \"{{password}}\" VALID UNTIL \"{{expiration}}\"; GRANT CONNECT ON DATABASE microservices TO \"{{name}}\"; GRANT USAGE ON SCHEMA public TO \"{{name}}\"; GRANT CREATE ON SCHEMA public TO \"{{name}}\"; GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO \"{{name}}\"; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO \"{{name}}\";' \
+          default_ttl='1h' \
+          max_ttl='24h' &&
+          
+        # Configure PostgreSQL connection for backup database  
+        vault write database/config/postgres-backup \
+          plugin_name=postgresql-database-plugin \
+          connection_url='postgresql://{{username}}:{{password}}@postgres-backup:5432/backupservicedb?sslmode=disable' \
+          allowed_roles='postgres-backup-role' \
+          username='vault-backup-admin' \
+          password='vault-backup-admin-pass' &&
+          
+        # Create PostgreSQL role for backup database
+        vault write database/roles/postgres-backup-role \
+          db_name=postgres-backup \
+          creation_statements='CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD \"{{password}}\" VALID UNTIL \"{{expiration}}\"; GRANT CONNECT ON DATABASE backupservicedb TO \"{{name}}\"; GRANT USAGE ON SCHEMA public TO \"{{name}}\"; GRANT CREATE ON SCHEMA public TO \"{{name}}\"; GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO \"{{name}}\"; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO \"{{name}}\";' \
+          default_ttl='1h' \
+          max_ttl='24h' &&
+          
+        # Enable RabbitMQ secrets engine
+        vault secrets enable -path=rabbitmq rabbitmq &&
+        
+        # Configure RabbitMQ connection
+        vault write rabbitmq/config/connection \
+          connection_uri='http://rabbitmq:15672' \
+          username='vault-rabbitmq-admin' \
+          password='vault-rabbitmq-admin-pass' &&
+          
+        # Create RabbitMQ role
+        vault write rabbitmq/roles/rabbitmq-role \
+          vhosts='{"/":{"write": ".*", "read": ".*"}}' \
+          tags='management' &&
+          
+        # Store static service configuration (services that don't have Vault secrets engines)
+        vault kv put secret/services/redis \
+          host='redis' \
+          port='6379' \
+          admin_password='vault-redis-admin-pass' &&
+          
+        vault kv put secret/services/minio \
+          endpoint='minio:9000' \
+          console_endpoint='minio:9001' \
+          admin_access_key='vault-minio-admin' \
+          admin_secret_key='vault-minio-admin-pass' &&
+          
+        vault kv put secret/services/zincsearch \
+          host='zincsearch' \
+          port='4080' \
+          admin_username='vault-zinc-admin' \
+          admin_password='vault-zinc-admin-pass' &&
+          
+        vault kv put secret/services/mailpit \
+          smtp_host='mailpit' \
+          smtp_port='1025' \
+          web_port='8025' \
+          note='No authentication required - testing service accepts any credentials' &&
+          
+        echo 'Phase 1 dynamic secrets engines initialization complete!' &&
+        echo 'PostgreSQL and RabbitMQ configured with dynamic credential generation.' &&
+        echo 'Redis, MinIO, ZincSearch, and Mailpit configured with admin credentials for future dynamic integration.'
+      "
+    restart: "no"
+
+volumes:
+  postgres_data:
+  postgres_backup_data:
+  redis_data:
+  rabbitmq_data:
+  mailpit_data:
+  vault_data:
+  vault_logs:
+  minio_data:
+  zincsearch_data:
+
+networks:
+  microservices:
+    driver: bridge
+
+# Phase 1 Infrastructure Services
+# Access URLs (using admin credentials - applications get dynamic credentials from Vault):
+#   - Vault UI: http://localhost:8200 (token: myroot)
+#   - PostgreSQL Main: localhost:5432 (vault-admin/vault-postgres-admin-pass)
+#   - PostgreSQL Backup: localhost:5435 (vault-backup-admin/vault-backup-admin-pass)
+#   - Redis: localhost:6379 (password: vault-redis-admin-pass)
+#   - RabbitMQ Management: http://localhost:15672 (vault-rabbitmq-admin/vault-rabbitmq-admin-pass)
+#   - Mailpit: http://localhost:8025 (no authentication required)
+#   - MinIO Console: http://localhost:9001 (vault-minio-admin/vault-minio-admin-pass)
+#   - MinIO API: http://localhost:9000
+#   - ZincSearch: http://localhost:4080 (vault-zinc-admin/vault-zinc-admin-pass)
+#
+# Usage:
+#   docker-compose -f docker-compose.infrastructure.yml up -d
+#   docker-compose -f docker-compose.infrastructure.yml ps
+#   docker-compose -f docker-compose.infrastructure.yml logs -f vault-init

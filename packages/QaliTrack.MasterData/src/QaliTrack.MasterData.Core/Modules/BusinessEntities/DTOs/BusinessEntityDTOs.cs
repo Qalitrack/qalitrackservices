@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs;
 
 /// <summary>
@@ -5,19 +7,47 @@ namespace QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs;
 /// </summary>
 public class CreateBusinessEntityDto
 {
+    [Required(ErrorMessage = "Business entity name is required")]
+    [StringLength(200, ErrorMessage = "Name cannot exceed 200 characters")]
     public string Name { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Business entity code is required")]
+    [StringLength(50, ErrorMessage = "Code cannot exceed 50 characters")]
     public string Code { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Registration number is required")]
+    [StringLength(100, ErrorMessage = "Registration number cannot exceed 100 characters")]
     public string RegistrationNumber { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Contact email is required")]
+    [EmailAddress(ErrorMessage = "Please provide a valid email address")]
+    [StringLength(100, ErrorMessage = "Contact email cannot exceed 100 characters")]
     public string ContactEmail { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Contact phone is required")]
+    [StringLength(20, ErrorMessage = "Contact phone cannot exceed 20 characters")]
     public string ContactPhone { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Address is required")]
+    [StringLength(500, ErrorMessage = "Address cannot exceed 500 characters")]
     public string Address { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Entity type is required")]
+    [StringLength(50, ErrorMessage = "Entity type cannot exceed 50 characters")]
     public string EntityType { get; set; } = "Company"; // Customer, Supplier, Transporter, Company
-    public Guid OrganizationId { get; set; }
     
     // Optional basic fields
+    [StringLength(50, ErrorMessage = "Tax number cannot exceed 50 characters")]
     public string? TaxNumber { get; set; }
+    
+    [StringLength(100, ErrorMessage = "City cannot exceed 100 characters")]
     public string? City { get; set; }
+    
+    [StringLength(100, ErrorMessage = "Country cannot exceed 100 characters")]
     public string? Country { get; set; }
+    
+    [StringLength(200, ErrorMessage = "Website cannot exceed 200 characters")]
+    [Url(ErrorMessage = "Please provide a valid website URL")]
     public string? Website { get; set; }
 }
 
@@ -26,23 +56,54 @@ public class CreateBusinessEntityDto
 /// </summary>
 public class UpdateBusinessEntityDto
 {
-    public string Name { get; set; } = string.Empty;
-    public string ContactEmail { get; set; } = string.Empty;
-    public string ContactPhone { get; set; } = string.Empty;
-    public string Address { get; set; } = string.Empty;
-    public string Status { get; set; } = "Active";
+    [StringLength(200, ErrorMessage = "Name cannot exceed 200 characters")]
+    public string? Name { get; set; }
+    
+    [EmailAddress(ErrorMessage = "Please provide a valid email address")]
+    [StringLength(100, ErrorMessage = "Contact email cannot exceed 100 characters")]
+    public string? ContactEmail { get; set; }
+    
+    [StringLength(20, ErrorMessage = "Contact phone cannot exceed 20 characters")]
+    public string? ContactPhone { get; set; }
+    
+    [StringLength(500, ErrorMessage = "Address cannot exceed 500 characters")]
+    public string? Address { get; set; }
+    
+    [StringLength(20, ErrorMessage = "Status cannot exceed 20 characters")]
+    public string? Status { get; set; }
     
     // Optional fields
+    [StringLength(50, ErrorMessage = "Tax number cannot exceed 50 characters")]
     public string? TaxNumber { get; set; }
+    
+    [StringLength(100, ErrorMessage = "City cannot exceed 100 characters")]
     public string? City { get; set; }
+    
+    [StringLength(100, ErrorMessage = "State cannot exceed 100 characters")]
     public string? State { get; set; }
+    
+    [StringLength(100, ErrorMessage = "Country cannot exceed 100 characters")]
     public string? Country { get; set; }
+    
+    [StringLength(20, ErrorMessage = "Postal code cannot exceed 20 characters")]
     public string? PostalCode { get; set; }
+    
+    [StringLength(200, ErrorMessage = "Website cannot exceed 200 characters")]
+    [Url(ErrorMessage = "Please provide a valid website URL")]
     public string? Website { get; set; }
+    
+    [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]
     public string? Description { get; set; }
+    
+    [StringLength(1000, ErrorMessage = "Notes cannot exceed 1000 characters")]
     public string? Notes { get; set; }
+    
     public DateTime? EstablishedDate { get; set; }
+    
+    [Range(1, int.MaxValue, ErrorMessage = "Employee count must be greater than 0")]
     public int? EmployeeCount { get; set; }
+    
+    [StringLength(100, ErrorMessage = "Industry cannot exceed 100 characters")]
     public string? Industry { get; set; }
 }
 

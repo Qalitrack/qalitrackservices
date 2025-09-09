@@ -4,11 +4,12 @@ using QaliTrack.MasterData.Core.Common;
 using QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities;
 using QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs;
 using QaliTrack.MasterData.Infrastructure.Data;
+using EntityFramework.Exceptions.Common;
 
 namespace QaliTrack.MasterData.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("business-entities")]
 [Tags("Business Entity Module")]
 public class BusinessEntityController : ControllerBase
 {
@@ -45,7 +46,7 @@ public class BusinessEntityController : ControllerBase
                     CreatedAt = be.CreatedAt,
                     IsCustomer = be.CustomerProfile != null,
                     IsSupplier = be.SupplierProfile != null,
-                    IsTransporter = be.TransporterProfile != null
+                    IsTransporter = false
                 })
                 .AsQueryable();
 
@@ -71,7 +72,6 @@ public class BusinessEntityController : ControllerBase
             var entity = await _context.BusinessEntities
                 .Include(be => be.CustomerProfile)
                 .Include(be => be.SupplierProfile)
-                .Include(be => be.TransporterProfile)
                 .FirstOrDefaultAsync(be => be.Id == id);
 
             if (entity == null)
@@ -105,7 +105,7 @@ public class BusinessEntityController : ControllerBase
                 UpdatedAt = entity.UpdatedAt,
                 IsCustomer = entity.CustomerProfile != null,
                 IsSupplier = entity.SupplierProfile != null,
-                IsTransporter = entity.TransporterProfile != null
+                IsTransporter = false
             };
 
             return Ok(ApiResponse<BusinessEntityDetailDto>.SuccessResponse(dto));
@@ -139,7 +139,6 @@ public class BusinessEntityController : ControllerBase
                 EntityType = dto.EntityType,
                 Status = "Active",
                 Website = dto.Website ?? string.Empty,
-                OrganizationId = dto.OrganizationId
             };
 
             _context.BusinessEntities.Add(entity);
@@ -170,6 +169,10 @@ public class BusinessEntityController : ControllerBase
             return CreatedAtAction(nameof(GetBusinessEntity), 
                 new { id = entity.Id }, 
                 ApiResponse<BusinessEntityDetailDto>.SuccessResponse(detailDto, "Business entity created successfully"));
+        }
+        catch (UniqueConstraintException)
+        {
+            return BadRequest(ApiResponse<BusinessEntityDetailDto>.ErrorResponse("A business entity with this code already exists"));
         }
         catch (Exception ex)
         {
@@ -747,245 +750,6 @@ public class BusinessEntityController : ControllerBase
 
     #endregion
 
-    #region Transporter Profile Management
-
-    /// <summary>
-    /// Create transporter profile for business entity
-    /// </summary>
-    [HttpPost("{id}/transporter-profile")]
-    public async Task<ActionResult<ApiResponse<TransporterProfileDto>>> CreateTransporterProfile(Guid id, CreateTransporterProfileDto dto)
-    {
-        try
-        {
-            dto.BusinessEntityId = id;
-            
-            var profile = new TransporterProfile
-            {
-                Id = Guid.NewGuid(),
-                BusinessEntityId = dto.BusinessEntityId,
-                TransporterType = dto.TransporterType,
-                FleetSize = dto.FleetSize,
-                OperatingLicense = dto.OperatingLicense,
-                LicenseExpiryDate = dto.LicenseExpiryDate,
-                ServiceAreas = dto.ServiceAreas,
-                BaseRate = dto.BaseRate,
-                RateStructure = dto.RateStructure,
-                Status = "Active"
-            };
-
-            _context.TransporterProfiles.Add(profile);
-            await _context.SaveChangesAsync();
-
-            var responseDto = new TransporterProfileDto
-            {
-                Id = profile.Id,
-                BusinessEntityId = profile.BusinessEntityId,
-                TransporterType = profile.TransporterType,
-                FleetSize = profile.FleetSize,
-                OperatingLicense = profile.OperatingLicense,
-                LicenseExpiryDate = profile.LicenseExpiryDate,
-                ServiceAreas = profile.ServiceAreas,
-                BaseRate = profile.BaseRate ?? 0,
-                RateStructure = profile.RateStructure,
-                Status = profile.Status,
-                CreatedAt = profile.CreatedAt
-            };
-
-            return Ok(ApiResponse<TransporterProfileDto>.SuccessResponse(responseDto, "Transporter profile created successfully"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponse<TransporterProfileDto>.ErrorResponse("Error creating transporter profile", ex.Message));
-        }
-    }
-
-    /// <summary>
-    /// Update transporter profile for business entity
-    /// </summary>
-    [HttpPut("{id}/transporter-profile")]
-    public async Task<ActionResult<ApiResponse<TransporterProfileDto>>> UpdateTransporterProfile(Guid id, UpdateTransporterProfileDto dto)
-    {
-        try
-        {
-            var profile = await _context.TransporterProfiles
-                .FirstOrDefaultAsync(tp => tp.BusinessEntityId == id);
-
-            if (profile == null)
-            {
-                return NotFound(ApiResponse<TransporterProfileDto>.ErrorResponse("Transporter profile not found"));
-            }
-
-            profile.TransporterType = dto.TransporterType;
-            profile.FleetSize = dto.FleetSize;
-            profile.OperatingLicense = dto.OperatingLicense;
-            profile.LicenseExpiryDate = dto.LicenseExpiryDate;
-            profile.ServiceAreas = dto.ServiceAreas;
-            profile.BaseRate = dto.BaseRate;
-            profile.RateStructure = dto.RateStructure;
-            profile.Status = dto.Status;
-            profile.Notes = dto.Notes ?? string.Empty;
-
-            await _context.SaveChangesAsync();
-
-            var responseDto = new TransporterProfileDto
-            {
-                Id = profile.Id,
-                BusinessEntityId = profile.BusinessEntityId,
-                TransporterType = profile.TransporterType,
-                FleetSize = profile.FleetSize,
-                OperatingLicense = profile.OperatingLicense,
-                LicenseExpiryDate = profile.LicenseExpiryDate,
-                Rating = (int)(profile.Rating ?? 0),
-                ServiceAreas = profile.ServiceAreas,
-                SpecializedServices = profile.SpecializedServices,
-                BaseRate = profile.BaseRate ?? 0,
-                RateStructure = profile.RateStructure,
-                Status = profile.Status,
-                Notes = profile.Notes,
-                CreatedAt = profile.CreatedAt
-            };
-
-            return Ok(ApiResponse<TransporterProfileDto>.SuccessResponse(responseDto, "Transporter profile updated successfully"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponse<TransporterProfileDto>.ErrorResponse("Error updating transporter profile", ex.Message));
-        }
-    }
-
-    /// <summary>
-    /// Partially update transporter profile for business entity
-    /// </summary>
-    [HttpPatch("{id}/transporter-profile")]
-    public async Task<ActionResult<ApiResponse<TransporterProfileDto>>> PatchTransporterProfile(Guid id, PatchTransporterProfileDto dto)
-    {
-        try
-        {
-            var profile = await _context.TransporterProfiles
-                .FirstOrDefaultAsync(tp => tp.BusinessEntityId == id);
-
-            if (profile == null)
-            {
-                return NotFound(ApiResponse<TransporterProfileDto>.ErrorResponse("Transporter profile not found"));
-            }
-
-            if (dto.TransporterType != null)
-                profile.TransporterType = dto.TransporterType;
-            if (dto.FleetSize.HasValue)
-                profile.FleetSize = dto.FleetSize.Value;
-            if (dto.OperatingLicense != null)
-                profile.OperatingLicense = dto.OperatingLicense;
-            if (dto.LicenseExpiryDate.HasValue)
-                profile.LicenseExpiryDate = dto.LicenseExpiryDate.Value;
-            if (dto.ServiceAreas != null)
-                profile.ServiceAreas = dto.ServiceAreas;
-            if (dto.BaseRate.HasValue)
-                profile.BaseRate = dto.BaseRate.Value;
-            if (dto.RateStructure != null)
-                profile.RateStructure = dto.RateStructure;
-            if (dto.Status != null)
-                profile.Status = dto.Status;
-            if (dto.Notes != null)
-                profile.Notes = dto.Notes;
-
-            await _context.SaveChangesAsync();
-
-            var responseDto = new TransporterProfileDto
-            {
-                Id = profile.Id,
-                BusinessEntityId = profile.BusinessEntityId,
-                TransporterType = profile.TransporterType,
-                FleetSize = profile.FleetSize,
-                OperatingLicense = profile.OperatingLicense,
-                LicenseExpiryDate = profile.LicenseExpiryDate,
-                Rating = (int)(profile.Rating ?? 0),
-                ServiceAreas = profile.ServiceAreas,
-                SpecializedServices = profile.SpecializedServices,
-                BaseRate = profile.BaseRate ?? 0,
-                RateStructure = profile.RateStructure,
-                Status = profile.Status,
-                Notes = profile.Notes,
-                CreatedAt = profile.CreatedAt
-            };
-
-            return Ok(ApiResponse<TransporterProfileDto>.SuccessResponse(responseDto, "Transporter profile updated successfully"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponse<TransporterProfileDto>.ErrorResponse("Error updating transporter profile", ex.Message));
-        }
-    }
-
-    /// <summary>
-    /// Delete transporter profile for business entity
-    /// </summary>
-    [HttpDelete("{id}/transporter-profile")]
-    public async Task<ActionResult<ApiResponse<object>>> DeleteTransporterProfile(Guid id)
-    {
-        try
-        {
-            var profile = await _context.TransporterProfiles
-                .FirstOrDefaultAsync(tp => tp.BusinessEntityId == id);
-
-            if (profile == null)
-            {
-                return NotFound(ApiResponse.CreateError("Transporter profile not found"));
-            }
-
-            _context.TransporterProfiles.Remove(profile);
-            await _context.SaveChangesAsync();
-
-            return Ok(ApiResponse.CreateSuccess("Transporter profile deleted successfully"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponse.CreateError("Error deleting transporter profile", ex.Message));
-        }
-    }
-
-    /// <summary>
-    /// Get transporter profile for business entity
-    /// </summary>
-    [HttpGet("{id}/transporter-profile")]
-    public async Task<ActionResult<ApiResponse<TransporterProfileDto>>> GetTransporterProfile(Guid id)
-    {
-        try
-        {
-            var profile = await _context.TransporterProfiles
-                .FirstOrDefaultAsync(tp => tp.BusinessEntityId == id);
-
-            if (profile == null)
-            {
-                return NotFound(ApiResponse<TransporterProfileDto>.ErrorResponse("Transporter profile not found"));
-            }
-
-            var dto = new TransporterProfileDto
-            {
-                Id = profile.Id,
-                BusinessEntityId = profile.BusinessEntityId,
-                TransporterType = profile.TransporterType,
-                FleetSize = profile.FleetSize,
-                OperatingLicense = profile.OperatingLicense,
-                LicenseExpiryDate = profile.LicenseExpiryDate,
-                Rating = (int)(profile.Rating ?? 0),
-                ServiceAreas = profile.ServiceAreas,
-                SpecializedServices = profile.SpecializedServices,
-                BaseRate = profile.BaseRate ?? 0,
-                RateStructure = profile.RateStructure,
-                Status = profile.Status,
-                Notes = profile.Notes,
-                CreatedAt = profile.CreatedAt
-            };
-
-            return Ok(ApiResponse<TransporterProfileDto>.SuccessResponse(dto));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ApiResponse<TransporterProfileDto>.ErrorResponse("Error retrieving transporter profile", ex.Message));
-        }
-    }
-
-    #endregion
 
     #region Contacts Management
 

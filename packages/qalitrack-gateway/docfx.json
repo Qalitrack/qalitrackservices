@@ -4,7 +4,7 @@
     {
       "src": [
         {
-          "src": "src",
+          "src": ".",
           "files": [
             "**/*.csproj"
           ]
@@ -14,9 +14,10 @@
       "includePrivateMembers": false,
       "disableGitFeatures": false,
       "disableDefaultFilter": false,
-      "noRestore": true,
+      "noRestore": false,
       "namespaceLayout": "flattened",
-      "memberLayout": "samePage"
+      "memberLayout": "samePage",
+      "allowCompilationErrors": true
     }
   ],
   "build": {
@@ -39,6 +40,11 @@
         "files": [
           "images/**"
         ]
+      },
+      {
+        "files": [
+          "templates/**"
+        ]
       }
     ],
     "output": "_site",
@@ -51,12 +57,19 @@
       "_appTitle": "QaliTrack Gateway Service API Documentation",
       "_enableSearch": true,
       "_enableNewTab": true,
+      "_disableNavbar": false,
+      "_disableBreadcrumb": false,
+      "_disableToc": false,
+      "_disableAffix": false,
+      "_enableSourceMap": false,
       "pdf": false,
       "_gitContribute": {
         "repo": "https://github.com/yourusername/qalitrackservices",
         "branch": "main",
         "path": "packages/qalitrack-gateway"
-      }
+      },
+      "_footer": "© 2025 QaliTrack. Generated with DocFX.",
+      "_appFooter": "QaliTrack Gateway Service Documentation"
     },
     "postProcessors": ["ExtractSearchIndex"]
   }

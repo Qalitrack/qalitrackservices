@@ -32,6 +32,15 @@ The QaliTrack system includes comprehensive SACCO (Savings and Credit Cooperativ
 - Integration arrows showing multi-SACCO vehicle ownership
 - Driver membership patterns and workflows
 
+## 📚 **Reference Materials**
+
+### **Industry Reference Documentation (`/reference/`)**
+Real-world business process documentation and industry requirements:
+- **[Bamburi Flow](reference/bamburi-flow/)** - Bamburi Group weighbridge processes and dispatch workflows
+- Process flow diagrams and operational requirements
+- Business rules and compliance patterns
+- Integration patterns and automation workflows
+
 ## Structure
 
 ### Requirements Documentation (`/requirements/`)

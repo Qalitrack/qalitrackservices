@@ -27,12 +27,9 @@ public class BusinessEntity : BaseEntity
     public DateTime? EstablishedDate { get; set; }
     public int? EmployeeCount { get; set; }
     public string? Industry { get; set; }
-    public Guid OrganizationId { get; set; }
-
     // Navigation properties
     public virtual CustomerProfile? CustomerProfile { get; set; }
     public virtual SupplierProfile? SupplierProfile { get; set; }
-    public virtual TransporterProfile? TransporterProfile { get; set; }
     public virtual ICollection<BusinessEntityContact> Contacts { get; set; } = new List<BusinessEntityContact>();
     public virtual ICollection<BusinessEntityLocation> Locations { get; set; } = new List<BusinessEntityLocation>();
     public virtual ICollection<BusinessEntityDocument> Documents { get; set; } = new List<BusinessEntityDocument>();
@@ -89,30 +86,6 @@ public class SupplierProfile : BaseEntity
     public virtual ICollection<SupplierPerformance> PerformanceRecords { get; set; } = new List<SupplierPerformance>();
 }
 
-/// <summary>
-/// Transporter-specific profile for business entities
-/// </summary>
-public class TransporterProfile : BaseEntity
-{
-    public Guid BusinessEntityId { get; set; }
-    public string TransporterType { get; set; } = "Active";
-    public int FleetSize { get; set; }
-    public string? OperatingLicense { get; set; }
-    public DateTime? LicenseExpiryDate { get; set; }
-    public decimal? Rating { get; set; }
-    public string ServiceAreas { get; set; } = string.Empty; // JSON array of service areas
-    public string SpecializedServices { get; set; } = string.Empty; // JSON array of specialized services
-    public decimal? BaseRate { get; set; }
-    public string? RateStructure { get; set; }
-    public string Status { get; set; } = "Active";
-    public string? Notes { get; set; }
-
-    // Navigation properties
-    public virtual BusinessEntity BusinessEntity { get; set; } = null!;
-    public virtual ICollection<TransporterContract> Contracts { get; set; } = new List<TransporterContract>();
-    public virtual ICollection<TransporterPerformance> PerformanceRecords { get; set; } = new List<TransporterPerformance>();
-    public virtual ICollection<TransporterInsurance> InsurancePolicies { get; set; } = new List<TransporterInsurance>();
-}
 
 public class BusinessEntityContact : BaseEntity
 {
@@ -236,48 +209,6 @@ public class SupplierPerformance : BaseEntity
     public virtual SupplierProfile SupplierProfile { get; set; } = null!;
 }
 
-public class TransporterContract : BaseEntity
-{
-    public Guid TransporterProfileId { get; set; }
-    public string ContractNumber { get; set; } = string.Empty;
-    public string Title { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public string Status { get; set; } = "Active";
-    public string? Terms { get; set; }
-
-    // Navigation properties
-    public virtual TransporterProfile TransporterProfile { get; set; } = null!;
-}
-
-public class TransporterPerformance : BaseEntity
-{
-    public Guid TransporterProfileId { get; set; }
-    public DateTime EvaluationDate { get; set; }
-    public decimal OnTimeDeliveryScore { get; set; }
-    public decimal SafetyScore { get; set; }
-    public decimal CommunicationScore { get; set; }
-    public decimal OverallScore { get; set; }
-    public string? Comments { get; set; }
-
-    // Navigation properties
-    public virtual TransporterProfile TransporterProfile { get; set; } = null!;
-}
-
-public class TransporterInsurance : BaseEntity
-{
-    public Guid TransporterProfileId { get; set; }
-    public string PolicyNumber { get; set; } = string.Empty;
-    public string InsuranceType { get; set; } = string.Empty;
-    public string Provider { get; set; } = string.Empty;
-    public decimal CoverageAmount { get; set; }
-    public DateTime EffectiveDate { get; set; }
-    public DateTime ExpiryDate { get; set; }
-    public string Status { get; set; } = "Active";
-
-    // Navigation properties
-    public virtual TransporterProfile TransporterProfile { get; set; } = null!;
-}
 
 // Enumerations
 public enum BusinessEntityType
@@ -333,21 +264,6 @@ public enum SupplierStatus
     Blacklisted
 }
 
-public enum TransporterType
-{
-    Individual,
-    Company,
-    Cooperative,
-    Government
-}
-
-public enum TransporterStatus
-{
-    Active,
-    Inactive,
-    Suspended,
-    UnderReview
-}
 
 public enum ContactType
 {
@@ -412,4 +328,28 @@ public enum InsuranceStatus
     Expired,
     Cancelled,
     Suspended
+}
+
+/// <summary>
+/// Long-term supply agreements for cement materials and products
+/// Used for HODIM integration and structured procurement
+/// </summary>
+public class ScheduleAgreement : BaseEntity
+{
+    public string AgreementNumber { get; set; } = string.Empty;
+    public Guid SupplierId { get; set; }
+    public Guid ProductVariantId { get; set; }
+    public DateTime ValidFrom { get; set; }
+    public DateTime ValidTo { get; set; }
+    public decimal PricePerUnit { get; set; }
+    public string Currency { get; set; } = "KSH";
+    public string DeliveryTerms { get; set; } = string.Empty;
+    public decimal? MinQuantity { get; set; }
+    public decimal? MaxQuantity { get; set; }
+    public int? LeadTimeDays { get; set; }
+    public string Status { get; set; } = "Active";
+    public string? Notes { get; set; }
+
+    // Navigation properties
+    public virtual SupplierProfile Supplier { get; set; } = null!;
 }

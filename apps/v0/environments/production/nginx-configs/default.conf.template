@@ -1,0 +1,84 @@
+# QaliTrack Nginx Configuration Template
+# Generated from domains configuration
+
+# Default HTTP to HTTPS redirect (commented for development)
+${SSL_REDIRECT_BLOCK}
+
+# Main API Gateway server block
+server {
+    listen ${SSL_LISTEN_DIRECTIVE};
+    server_name ${API_DOMAIN};
+    
+    ${SSL_CERTIFICATE_BLOCK}
+    
+    # SSL optimization (production only)
+    ${SSL_OPTIMIZATION_BLOCK}
+    
+    # Rate limiting for API
+    limit_req zone=api burst=20 nodelay;
+    
+    # Security headers
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    # Health check endpoint
+    location /health {
+        access_log off;
+        return 200 "QaliTrack API Gateway healthy\n";
+        add_header Content-Type text/plain;
+    }
+    
+    # API Gateway routing (main route)
+    location /api/ {
+        # Remove /api prefix before forwarding to gateway
+        rewrite ^/api/(.*)$ /$1 break;
+        
+        proxy_pass http://${COMPOSE_PROJECT_NAME}-api-gateway:${API_GATEWAY_PORT};
+        include /etc/nginx/conf.d/proxy_common.conf;
+        
+        # API-specific timeouts
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+    
+    # Default route to API Gateway
+    location / {
+        proxy_pass http://${COMPOSE_PROJECT_NAME}-api-gateway:${API_GATEWAY_PORT};
+        include /etc/nginx/conf.d/proxy_common.conf;
+    }
+}
+
+# Main application/admin server block
+server {
+    listen ${SSL_LISTEN_DIRECTIVE};
+    server_name ${DOMAIN_NAME};
+    
+    ${SSL_CERTIFICATE_BLOCK}
+    
+    # SSL optimization (production only)
+    ${SSL_OPTIMIZATION_BLOCK}
+    
+    # Security headers for main app
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    location / {
+        # Route to future frontend application
+        proxy_pass http://${COMPOSE_PROJECT_NAME}-qalitrack-frontend:3000;
+        include /etc/nginx/conf.d/proxy_common.conf;
+    }
+}
+
+# WWW redirect server block (if www domain exists)
+${WWW_REDIRECT_BLOCK}
+
+# Admin interface server block
+${ADMIN_SERVER_BLOCK}
+
+# Media server block (future)
+${MEDIA_SERVER_BLOCK}

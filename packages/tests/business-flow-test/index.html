@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QaliTrack Business Flow Test Interface</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 QaliTrack Business Flow Test Interface</h1>
+            <p>Step-by-step testing of Bamburi Cement operations workflow</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="api-config">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3>🔧 API Configuration</h3>
+                <button class="btn btn-test" onclick="workflowManager.showConfigModal()">⚙️ Configure</button>
+            </div>
+            <p>
+                <strong>MasterData API:</strong> <span id="masterDataUrl">http://localhost:5004</span> 
+                <button class="btn btn-test" onclick="workflowManager.testConnection('masterData')">Test</button>
+                <span class="status-indicator status-pending" id="masterDataStatus"></span>
+            </p>
+            <p>
+                <strong>DataManager API:</strong> <span id="dataManagerUrl">http://localhost:5005</span> 
+                <button class="btn btn-test" onclick="workflowManager.testConnection('dataManager')">Test</button>
+                <span class="status-indicator status-pending" id="dataManagerStatus"></span>
+            </p>
+        </div>
+
+        <!-- Level 0: Foundation Data -->
+        <div class="workflow-section">
+            <div class="section-header">🏗️ Level 0: Foundation Data (Pure Reference Tables)</div>
+            <div class="section-content">
+                
+                <div class="step">
+                    <h4><span class="step-number">1A</span> Location Types <span class="status-indicator status-pending" id="status-location-types"></span></h4>
+                    <div class="dependencies">✅ No dependencies - Can be created first</div>
+                    <p>Create Plant, Warehouse, Terminal, Branch classifications</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createLocationTypes()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadLocationTypes()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: Plant (PLT), Warehouse (WHR), Terminal (TRM), Branch (BRC)
+                    </div>
+                    <div class="response-area" id="response-location-types"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">1B</span> Zones <span class="status-indicator status-pending" id="status-zones"></span></h4>
+                    <div class="dependencies">✅ No dependencies - Can be created first</div>
+                    <p>Create regional zones for Kenya operations</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createZones()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadZones()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: Coastal Region (COAST), Eastern Region (EAST), Central Region (CENTRAL)
+                    </div>
+                    <div class="response-area" id="response-zones"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">1C</span> Product Categories <span class="status-indicator status-pending" id="status-product-categories"></span></h4>
+                    <div class="dependencies">✅ No dependencies - Root categories first</div>
+                    <p>Create product category hierarchy (Root → Child)</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createProductCategories()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadProductCategories()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: Cement → OPC/PPC, Clinker, Raw Materials
+                    </div>
+                    <div class="response-area" id="response-product-categories"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">1D</span> Packaging Types <span class="status-indicator status-pending" id="status-packaging-types"></span></h4>
+                    <div class="dependencies">✅ No dependencies - Pure reference</div>
+                    <p>Create packaging method references</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createPackagingTypes()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadPackagingTypes()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: 50kg Bags, 25kg Bags, Bulk, Container
+                    </div>
+                    <div class="response-area" id="response-packaging-types"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Level 1: Business Configuration -->
+        <div class="workflow-section">
+            <div class="section-header">🏢 Level 1: Business Configuration</div>
+            <div class="section-content">
+
+                <div class="step">
+                    <h4><span class="step-number">2A</span> Sites <span class="status-indicator status-pending" id="status-sites"></span></h4>
+                    <div class="dependencies">⚠️ Depends on: Location Types + Zones</div>
+                    <p>Create physical site locations</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createSites()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadSites()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: Mombasa Plant, Nairobi Grinding Station, BSP Plant, Kitui Road Terminal
+                    </div>
+                    <div class="response-area" id="response-sites"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">2B</span> Business Entities <span class="status-indicator status-pending" id="status-business-entities"></span></h4>
+                    <div class="dependencies">✅ No dependencies - Core business entities</div>
+                    <p>Create customers, suppliers, transporters</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createBusinessEntities()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadBusinessEntities()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: ABC Construction Ltd, Sunrise Builders, Kenya Limestone Quarries, Coastal Gypsum Suppliers
+                    </div>
+                    <div class="response-area" id="response-business-entities"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">2C</span> Vehicles & Drivers <span class="status-indicator status-pending" id="status-vehicles-drivers"></span></h4>
+                    <div class="dependencies">✅ No dependencies - Fleet management</div>
+                    <p>Create vehicle fleet and driver records</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createVehiclesDrivers()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadVehiclesDrivers()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: KCA 123A Isuzu FVZ (John Kamau), KBZ 456B Mitsubishi Canter (Mary Wanjiku)
+                    </div>
+                    <div class="response-area" id="response-vehicles-drivers"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Level 2: Operational Configuration -->
+        <div class="workflow-section">
+            <div class="section-header">⚙️ Level 2: Operational Configuration</div>
+            <div class="section-content">
+
+                <div class="step">
+                    <h4><span class="step-number">3A</span> Weighbridges <span class="status-indicator status-pending" id="status-weighbridges"></span></h4>
+                    <div class="dependencies">⚠️ Depends on: Sites</div>
+                    <p>Create weighbridge configurations at sites</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createWeighbridges()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadWeighbridges()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: Main Cement Weighbridge (80T), Entry Weighbridge (60T), Terminal Weighbridge (50T)
+                    </div>
+                    <div class="response-area" id="response-weighbridges"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Level 3: Business Orders -->
+        <div class="workflow-section">
+            <div class="section-header">📋 Level 3: Business Orders & Transactions</div>
+            <div class="section-content">
+
+                <div class="step">
+                    <h4><span class="step-number">4A</span> Customer Orders <span class="status-indicator status-pending" id="status-customer-orders"></span></h4>
+                    <div class="dependencies">⚠️ Depends on: Business Entities + Sites</div>
+                    <p>Create customer sales orders</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createCustomerOrders()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadCustomerOrders()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: ORD-2024-001234 (ABC Construction), ORD-2024-001235 (Sunrise Builders)
+                    </div>
+                    <div class="response-area" id="response-customer-orders"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">4B</span> Purchase Orders <span class="status-indicator status-pending" id="status-purchase-orders"></span></h4>
+                    <div class="dependencies">⚠️ Depends on: Business Entities + Sites</div>
+                    <p>Create supplier purchase orders</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createPurchaseOrders()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadPurchaseOrders()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: PO-2024-000456 (Kenya Limestone), PO-2024-000457 (Coastal Gypsum)
+                    </div>
+                    <div class="response-area" id="response-purchase-orders"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">4C</span> Weighing Transactions <span class="status-indicator status-pending" id="status-weighing-transactions"></span></h4>
+                    <div class="dependencies">⚠️ Depends on: ALL previous levels</div>
+                    <p>Process weighing transactions for order fulfillment</p>
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createWeighingTransactions()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadWeighingTransactions()">Load Existing</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: TXN-2024-001234 - Vehicle KCA 123A - Outbound cement delivery
+                    </div>
+                    <div class="response-area" id="response-weighing-transactions"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="workflow-section">
+            <div class="section-header">🔄 Workflow Actions</div>
+            <div class="section-content workflow-actions">
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="createAllSampleData()">🚀 Create All Sample Data</button>
+                    <button class="btn btn-load" onclick="loadAllData()">📊 Load All Existing Data</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">🧹 Clear All Data</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="data/sample-data.js"></script>
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/workflow-manager.js"></script>
+    <script src="assets/js/business-flow-functions.js"></script>
+</body>
+</html>

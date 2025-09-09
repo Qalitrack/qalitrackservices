@@ -1,0 +1,28 @@
+services:
+  # Mailpit Email Testing Service (No authentication required - testing tool)
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: qalitrack-dev-mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+      - MP_MAX_MESSAGES=5000
+      - MP_DATABASE=/data/mailpit.db
+    volumes:
+      - mailpit_data:/data
+    networks:
+      - qalitrack
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8025"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "qalitrack.service=email"
+      - "qalitrack.environment=development"
+
+# Volumes and networks defined in 00-volumes-networks.yml
