@@ -13,7 +13,7 @@ services:
       - qs-network
 
   backend:
-    image: ghcr.io/surgbc-projects/qalitrackservices/qs-website-backend:main
+    image: ghcr.io/qalitrack/qs-website-backend:main
     container_name: qs-backend
     restart: unless-stopped
     env_file:
@@ -26,7 +26,7 @@ services:
       - qs-network
 
   frontend:
-    image: ghcr.io/surgbc-projects/qalitrackservices/qs-website-frontend:main
+    image: ghcr.io/qalitrack/qs-website-frontend:main
     container_name: qs-frontend
     restart: unless-stopped
     depends_on:
