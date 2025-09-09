@@ -127,12 +127,7 @@ jobs:
         run: |
           cd ${{ env.SERVICE_PATH }}
           echo "Running unit tests..."
-          # Try dotnet test first, fallback to xunit console runner if needed
-          if ! dotnet test tests/UserService.Tests/UserService.Tests.csproj -c Release --verbosity normal --logger "console;verbosity=detailed" --results-directory TestResults/ --blame --test-adapter-path:. --logger:html; then
-            echo "dotnet test failed, trying xunit console runner..."
-            dotnet tool install --global dotnet-xunit --version 2.4.2
-            dotnet xunit tests/UserService.Tests/bin/Release/net8.0/UserService.Tests.dll -verbose -html TestResults/test-results.html
-          fi
+          dotnet test tests/UserService.Tests/UserService.Tests.csproj -c Release --verbosity normal --logger "console;verbosity=detailed" --results-directory TestResults/ --blame --logger:trx;LogFileName=test-results.trx
         continue-on-error: false
       
       - name: Run database migrations
