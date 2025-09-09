@@ -39,8 +39,8 @@ jobs:
     - name: Build and push Frontend Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
-        file: ./Dockerfile
+        context: ./apps/qs-website
+        file: ./apps/qs-website/Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -75,8 +75,8 @@ jobs:
     - name: Build and push Backend Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
-        file: ./Dockerfile.backend
+        context: ./apps/qs-website
+        file: ./apps/qs-website/Dockerfile.backend
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
