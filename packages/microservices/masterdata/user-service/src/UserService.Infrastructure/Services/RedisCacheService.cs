@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Services;
+using System.Text.Json.Serialization;
 
 namespace UserService.Infrastructure.Services;
 
@@ -26,7 +27,8 @@ public class RedisCacheService : ICacheService
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-            WriteIndented = false
+            WriteIndented = false,
+            ReferenceHandler = ReferenceHandler.Preserve
         };
     }
 
@@ -136,15 +138,27 @@ public class RedisCacheService : ICacheService
             var database = _connectionMultiplexer.GetDatabase();
             var server = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
             
-            // Use Redis SCAN to find keys matching the pattern
-            var keys = server.Keys(pattern: pattern, pageSize: 1000);
-            
+            var keys = new List<RedisKey>();
+            foreach (var key in server.Keys(pattern: pattern, pageSize: 1000))
+            {
+                keys.Add(key);
+                _logger.LogDebug("Found key matching pattern {Pattern}: {Key}", pattern, key);
+            }
+
             if (keys.Any())
             {
-                // Batch delete keys for better performance
-                var keyArray = keys.ToArray();
-                await database.KeyDeleteAsync(keyArray);
+                await database.KeyDeleteAsync(keys.ToArray());
+                _logger.LogInformation("Deleted {Count} keys matching pattern: {Pattern}", keys.Count, pattern);
                 
+                // Verify deletion
+                foreach (var key in keys)
+                {
+                    var exists = await database.KeyExistsAsync(key);
+                    if (exists)
+                    {
+                        _logger.LogWarning("Key {Key} still exists after deletion for pattern: {Pattern}", key, pattern);
+                    }
+                }
             }
             else
             {
@@ -154,6 +168,47 @@ public class RedisCacheService : ICacheService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error removing cache values for pattern: {Pattern}", pattern);
+        }
+    }
+
+    public async Task<bool> AcquireLockAsync(string lockKey, TimeSpan lockTimeout)
+    {
+        if (string.IsNullOrWhiteSpace(lockKey))
+        {
+            _logger.LogWarning("Invalid lock key provided");
+            return false;
+        }
+
+        try
+        {
+            var database = _connectionMultiplexer.GetDatabase();
+            bool acquired = await database.StringSetAsync(lockKey, "locked", lockTimeout, When.NotExists);
+            _logger.LogDebug(acquired ? "Acquired lock for key: {LockKey}" : "Failed to acquire lock for key: {LockKey}", lockKey);
+            return acquired;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error acquiring lock for key: {LockKey}", lockKey);
+            return false;
+        }
+    }
+
+    public async Task ReleaseLockAsync(string lockKey)
+    {
+        if (string.IsNullOrWhiteSpace(lockKey))
+        {
+            return;
+        }
+
+        try
+        {
+            var database = _connectionMultiplexer.GetDatabase();
+            await database.KeyDeleteAsync(lockKey);
+            _logger.LogDebug("Released lock for key: {LockKey}", lockKey);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error releasing lock for key: {LockKey}", lockKey);
         }
     }
 }

@@ -24,27 +24,25 @@ namespace UserService.Api.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{userId}/shift/{shiftId}")]
+        [HttpGet("{userId}/shifts")]
         [Authorize(Policy = "users.view")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> GetUserShift(string userId, string shiftId)
+        public async Task<ActionResult> GetUserShifts(string userId)
         {
             try
             {
-                bool isAssigned = (bool)await _shiftService.IsUserAssignedToShiftAsync(userId, shiftId);
-                var message = isAssigned 
-                    ? $"User {userId} is assigned to shift {shiftId}"
-                    : $"User {userId} is not assigned to shift {shiftId}";
+                var userShifts = await _shiftService.GetShiftsForUserAsync(userId);
                 
                 return Ok(new { 
-                    isAssigned, 
-                    message 
+                    success = true,
+                    shifts = userShifts,
+                    message = $"Retrieved shifts for user {userId}" 
                 });
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
-                _logger.LogWarning(ex, "Validation error checking user shift assignment for user {UserId} and shift {ShiftId}", userId, shiftId);
+                _logger.LogWarning(ex, "Validation error retrieving shifts for user {UserId}", userId);
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
@@ -61,7 +59,7 @@ namespace UserService.Api.Controllers
                     _ => $"Database error: {pgEx.MessageText}"
                 };
 
-                _logger.LogWarning(ex, "Database constraint error checking user shift assignment: {ErrorMessage}", errorMessage);
+                _logger.LogWarning(ex, "Database constraint error retrieving shifts for user: {ErrorMessage}", errorMessage);
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
@@ -69,12 +67,22 @@ namespace UserService.Api.Controllers
                     StatusCode = 400 
                 });
             }
+            catch (Exception ex) when (ex.Message == "User does not exist or is deleted")
+            {
+                _logger.LogWarning(ex, "Attempted to retrieve shifts for inactive user {UserId}", userId);
+                return NotFound(new { 
+                    Success = false, 
+                    Message = "User is not active or does not exist", 
+                    Errors = (string[])null, 
+                    StatusCode = 404 
+                });
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error checking if user {UserId} is assigned to shift {ShiftId}", userId, shiftId);
+                _logger.LogError(ex, "Error retrieving shifts for user {UserId}", userId);
                 return BadRequest(new { 
                     Success = false, 
-                    Message = "An error occurred while checking user shift assignment", 
+                    Message = "An error occurred while retrieving user shifts", 
                     Errors = (string[])null, 
                     StatusCode = 400 
                 });
@@ -98,7 +106,7 @@ namespace UserService.Api.Controllers
                     });
                 }
                 
-                return CreatedAtAction(nameof(GetUserShift), new { userId, shiftId }, new {
+                return CreatedAtAction(nameof(GetUserShifts), new { userId }, new {
                     success = true,
                     message = $"Successfully assigned shift {shiftId} to user {userId}"
                 });
@@ -405,4 +413,4 @@ namespace UserService.Api.Controllers
             }
         }
     }
-} 
+}

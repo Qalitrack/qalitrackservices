@@ -31,4 +31,8 @@ public interface IUserService
     // User status management
     Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive);
     Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName);
+    // Get all roles assigned to a specific user
+    Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId);
+    
+    Task<bool> ResetUserPasswordAsync(string userId);
 }

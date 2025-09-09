@@ -1,5 +1,6 @@
 using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
+using UserService.Core.Interfaces.Emails;
 
 namespace UserService.Core.Interfaces.Repositories
 {
@@ -19,5 +20,8 @@ namespace UserService.Core.Interfaces.Repositories
         Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive);
         Task<PagedResult<User>> GetPagedAsync(PaginationParameters parameters);
         Task<PagedResult<User>> GetDeletedPagedAsync(PaginationParameters parameters);
+        Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId);
+        
+        Task<bool> ResetUserPasswordAsync(string userId, IEmailQueueService emailQueueService);
     }
 }

@@ -30,16 +30,28 @@ export default function UserServiceSidebar() {
             path: "/admin/dashboard",
         },
         {
-            key: "users-list",
-            label: "All Users",
+            key: "Shifts",
+            label: "Shifts",
             icon: <User size={18} />,
-            path: "/admin/users",
+            path: "/admin/shifts",
         },
         {
-            key: "roles",
+        key: "shift-assignment",
+        label: "Shift Assignment",
+        icon: <User size={18} />,
+        path: "/admin/shift-assignment",
+        },
+        {
+            key: "persmissions",
             label: "Permissions",
             icon: <Shield size={18} />,
             path: "/admin/security/permissions",
+        },
+        {
+            key: "roles",
+            label: "Roles",
+            icon: <Users size={18} />,
+            path: "/admin/security/roles",
         },
         {
             key: "password-policy",

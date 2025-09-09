@@ -66,14 +66,19 @@ public class ShiftRepository(
         if (existingShift == null)
             return null;
 
-        // Only update specific fields to avoid constraint issues
-        existingShift.Name = shift.Name;
-        existingShift.Description = shift.Description;
-        existingShift.StartTime = shift.StartTime;
-        existingShift.EndTime = shift.EndTime;
-        existingShift.Mode = shift.Mode;
+        // Preserve audit fields that shouldn't be overwritten
+        var originalCreatedAt = existingShift.CreatedAt;
+        var originalCreatedBy = existingShift.CreatedBy;
+
+        // Update all properties
+        _context.Entry(existingShift).CurrentValues.SetValues(shift);
+    
+        // Restore preserved audit fields and set update audit fields
+        existingShift.CreatedAt = originalCreatedAt;
+        existingShift.CreatedBy = originalCreatedBy;
         existingShift.UpdatedAt = DateTime.UtcNow;
         existingShift.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User) ?? "System";
+        existingShift.IsDeleted = false; // Ensure it stays not deleted
 
         await _context.SaveChangesAsync();
         return existingShift;

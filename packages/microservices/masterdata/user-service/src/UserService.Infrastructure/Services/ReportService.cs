@@ -65,7 +65,7 @@ namespace UserService.Infrastructure.Services
                     CreatedBy = s.CreatedBy,
                     UpdatedBy = s.UpdatedBy,
                     AssignedUsersCount = s.UserShifts?.Count(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted) ?? 0,
-                    LastModified = s.UpdatedAt > s.CreatedAt ? s.UpdatedAt : s.CreatedAt,
+                    UpdatedAt = s.UpdatedAt > s.CreatedAt ? s.UpdatedAt : s.CreatedAt,
                     AssignedUsers = s.UserShifts?.Where(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted)
                                                 .Select(us => new AssignedUserDto
                                                 {
@@ -189,7 +189,7 @@ namespace UserService.Infrastructure.Services
                     Mode = shift.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected
                     IsActive = shift.IsActive,
                     AssignedUsersCount = shift.UserShifts?.Count(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted) ?? 0,
-                    LastModified = shift.UpdatedAt > shift.CreatedAt ? shift.UpdatedAt : shift.CreatedAt,
+                    UpdatedAt = shift.UpdatedAt > shift.CreatedAt ? shift.UpdatedAt : shift.CreatedAt,
                     AssignedUsers = shift.UserShifts?.Where(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted)
                                                   .Select(us => new AssignedUserDto
                                                   {
