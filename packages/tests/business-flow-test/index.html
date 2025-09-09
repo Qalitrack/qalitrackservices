@@ -42,6 +42,23 @@
                     <h4><span class="step-number">1A</span> Location Types <span class="status-indicator status-pending" id="status-location-types"></span></h4>
                     <div class="dependencies">✅ No dependencies - Can be created first</div>
                     <p>Create Plant, Warehouse, Terminal, Branch classifications</p>
+                    
+                    <!-- Form for creating/updating location types -->
+                    <div class="entity-form" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <h5 style="margin-bottom: 10px; color: #495057;">Create/Update Location Type</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="locationTypeId" placeholder="ID (for update)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="locationTypeName" placeholder="Name (e.g., Plant)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="locationTypeCode" placeholder="Code (e.g., PLT)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <textarea id="locationTypeDescription" placeholder="Description (optional)" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;" rows="2"></textarea>
+                        <div>
+                            <button class="btn btn-create" onclick="createSingleLocationType()" style="margin-right: 5px;">Create</button>
+                            <button class="btn btn-load" onclick="updateSingleLocationType()" style="margin-right: 5px; background: #ffc107; color: #212529;">Update</button>
+                            <button class="btn btn-load" onclick="clearLocationTypeForm()">Clear Form</button>
+                        </div>
+                    </div>
+                    
                     <div class="button-group">
                         <button class="btn btn-create" onclick="createLocationTypes()">Create Sample Data</button>
                         <button class="btn btn-load" onclick="loadLocationTypes()">Load Existing</button>
@@ -49,6 +66,31 @@
                     <div class="sample-data">
                         Sample: Plant (PLT), Warehouse (WHR), Terminal (TRM), Branch (BRC)
                     </div>
+                    
+                    <!-- Table for displaying location types -->
+                    <div class="data-table" style="margin-top: 15px; background: white; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <div class="table-header" style="background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #e9ecef; font-weight: bold;">
+                            Location Types Data
+                            <button class="btn btn-load" onclick="loadLocationTypes()" style="float: right; padding: 5px 10px; font-size: 12px;">🔄 Refresh</button>
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">ID</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Name</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Code</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Description</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="locationTypesTableBody">
+                                    <tr><td colspan="5" style="padding: 20px; text-align: center; color: #6c757d;">Click "Load Existing" to fetch data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
                     <div class="response-area" id="response-location-types"></div>
                 </div>
 
@@ -56,6 +98,23 @@
                     <h4><span class="step-number">1B</span> Zones <span class="status-indicator status-pending" id="status-zones"></span></h4>
                     <div class="dependencies">✅ No dependencies - Can be created first</div>
                     <p>Create regional zones for Kenya operations</p>
+                    
+                    <!-- Form for creating/updating zones -->
+                    <div class="entity-form" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <h5 style="margin-bottom: 10px; color: #495057;">Create/Update Zone</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="zoneId" placeholder="ID (for update)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="zoneName" placeholder="Name (e.g., Coastal Region)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="zoneCode" placeholder="Code (e.g., COAST)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <textarea id="zoneDescription" placeholder="Description (optional)" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;" rows="2"></textarea>
+                        <div>
+                            <button class="btn btn-create" onclick="createSingleZone()" style="margin-right: 5px;">Create</button>
+                            <button class="btn btn-load" onclick="updateSingleZone()" style="margin-right: 5px; background: #ffc107; color: #212529;">Update</button>
+                            <button class="btn btn-load" onclick="clearZoneForm()">Clear Form</button>
+                        </div>
+                    </div>
+                    
                     <div class="button-group">
                         <button class="btn btn-create" onclick="createZones()">Create Sample Data</button>
                         <button class="btn btn-load" onclick="loadZones()">Load Existing</button>
@@ -63,6 +122,31 @@
                     <div class="sample-data">
                         Sample: Coastal Region (COAST), Eastern Region (EAST), Central Region (CENTRAL)
                     </div>
+                    
+                    <!-- Table for displaying zones -->
+                    <div class="data-table" style="margin-top: 15px; background: white; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <div class="table-header" style="background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #e9ecef; font-weight: bold;">
+                            Zones Data
+                            <button class="btn btn-load" onclick="loadZones()" style="float: right; padding: 5px 10px; font-size: 12px;">🔄 Refresh</button>
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">ID</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Name</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Code</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Description</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zonesTableBody">
+                                    <tr><td colspan="5" style="padding: 20px; text-align: center; color: #6c757d;">Click "Load Existing" to fetch data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
                     <div class="response-area" id="response-zones"></div>
                 </div>
 
@@ -120,6 +204,32 @@
                     <h4><span class="step-number">2B</span> Business Entities <span class="status-indicator status-pending" id="status-business-entities"></span></h4>
                     <div class="dependencies">✅ No dependencies - Core business entities</div>
                     <p>Create customers, suppliers, transporters</p>
+                    
+                    <!-- Form for creating/updating business entities -->
+                    <div class="entity-form" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <h5 style="margin-bottom: 10px; color: #495057;">Create/Update Business Entity</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="businessEntityId" placeholder="ID (for update)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="businessEntityName" placeholder="Name (e.g., ABC Construction Ltd)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="businessEntityCode" placeholder="Code (e.g., ABC001)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <select id="businessEntityType" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="">Select Type</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Supplier">Supplier</option>
+                                <option value="Transporter">Transporter</option>
+                                <option value="Both">Both</option>
+                            </select>
+                            <input type="text" id="businessEntityContact" placeholder="Contact Info" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <button class="btn btn-create" onclick="createSingleBusinessEntity()" style="margin-right: 5px;">Create</button>
+                            <button class="btn btn-load" onclick="updateSingleBusinessEntity()" style="margin-right: 5px; background: #ffc107; color: #212529;">Update</button>
+                            <button class="btn btn-load" onclick="clearBusinessEntityForm()">Clear Form</button>
+                        </div>
+                    </div>
+                    
                     <div class="button-group">
                         <button class="btn btn-create" onclick="createBusinessEntities()">Create Sample Data</button>
                         <button class="btn btn-load" onclick="loadBusinessEntities()">Load Existing</button>
@@ -127,21 +237,154 @@
                     <div class="sample-data">
                         Sample: ABC Construction Ltd, Sunrise Builders, Kenya Limestone Quarries, Coastal Gypsum Suppliers
                     </div>
+                    
+                    <!-- Table for displaying business entities -->
+                    <div class="data-table" style="margin-top: 15px; background: white; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <div class="table-header" style="background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #e9ecef; font-weight: bold;">
+                            Business Entities Data
+                            <button class="btn btn-load" onclick="loadBusinessEntities()" style="float: right; padding: 5px 10px; font-size: 12px;">🔄 Refresh</button>
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">ID</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Name</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Code</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Type</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Contact</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="businessEntitiesTableBody">
+                                    <tr><td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">Click "Load Existing" to fetch data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
                     <div class="response-area" id="response-business-entities"></div>
                 </div>
 
                 <div class="step">
-                    <h4><span class="step-number">2C</span> Vehicles & Drivers <span class="status-indicator status-pending" id="status-vehicles-drivers"></span></h4>
+                    <h4><span class="step-number">2C</span> Vehicles <span class="status-indicator status-pending" id="status-vehicles"></span></h4>
                     <div class="dependencies">✅ No dependencies - Fleet management</div>
-                    <p>Create vehicle fleet and driver records</p>
+                    <p>Create vehicle fleet records</p>
+                    
+                    <!-- Form for creating/updating vehicles -->
+                    <div class="entity-form" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <h5 style="margin-bottom: 10px; color: #495057;">Create/Update Vehicle</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="vehicleId" placeholder="ID (for update)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="vehicleRegistration" placeholder="Registration (e.g., KCA 123A)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="vehicleMake" placeholder="Make (e.g., Isuzu)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="vehicleModel" placeholder="Model (e.g., FVZ)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="number" id="vehicleCapacity" placeholder="Capacity (tons)" step="0.1" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <div></div>
+                        </div>
+                        <div>
+                            <button class="btn btn-create" onclick="createSingleVehicle()" style="margin-right: 5px;">Create</button>
+                            <button class="btn btn-load" onclick="updateSingleVehicle()" style="margin-right: 5px; background: #ffc107; color: #212529;">Update</button>
+                            <button class="btn btn-load" onclick="clearVehicleForm()">Clear Form</button>
+                        </div>
+                    </div>
+                    
                     <div class="button-group">
                         <button class="btn btn-create" onclick="createVehiclesDrivers()">Create Sample Data</button>
-                        <button class="btn btn-load" onclick="loadVehiclesDrivers()">Load Existing</button>
+                        <button class="btn btn-load" onclick="loadVehicles()">Load Vehicles</button>
                     </div>
                     <div class="sample-data">
-                        Sample: KCA 123A Isuzu FVZ (John Kamau), KBZ 456B Mitsubishi Canter (Mary Wanjiku)
+                        Sample: KCA 123A Isuzu FVZ, KBZ 456B Mitsubishi Canter
                     </div>
-                    <div class="response-area" id="response-vehicles-drivers"></div>
+                    
+                    <!-- Table for displaying vehicles -->
+                    <div class="data-table" style="margin-top: 15px; background: white; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <div class="table-header" style="background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #e9ecef; font-weight: bold;">
+                            Vehicles Data
+                            <button class="btn btn-load" onclick="loadVehicles()" style="float: right; padding: 5px 10px; font-size: 12px;">🔄 Refresh</button>
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">ID</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Registration</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Make</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Model</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Capacity</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vehiclesTableBody">
+                                    <tr><td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">Click "Load Vehicles" to fetch data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="response-area" id="response-vehicles"></div>
+                </div>
+
+                <div class="step">
+                    <h4><span class="step-number">2D</span> Drivers <span class="status-indicator status-pending" id="status-drivers"></span></h4>
+                    <div class="dependencies">✅ No dependencies - Driver management</div>
+                    <p>Create driver records</p>
+                    
+                    <!-- Form for creating/updating drivers -->
+                    <div class="entity-form" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <h5 style="margin-bottom: 10px; color: #495057;">Create/Update Driver</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="driverId" placeholder="ID (for update)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="driverName" placeholder="Name (e.g., John Kamau)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" id="driverLicense" placeholder="License (e.g., DL123456789)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="driverPhone" placeholder="Phone (e.g., +254701234567)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="email" id="driverEmail" placeholder="Email" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <button class="btn btn-create" onclick="createSingleDriver()" style="margin-right: 5px;">Create</button>
+                            <button class="btn btn-load" onclick="updateSingleDriver()" style="margin-right: 5px; background: #ffc107; color: #212529;">Update</button>
+                            <button class="btn btn-load" onclick="clearDriverForm()">Clear Form</button>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-create" onclick="createVehiclesDrivers()">Create Sample Data</button>
+                        <button class="btn btn-load" onclick="loadDrivers()">Load Drivers</button>
+                    </div>
+                    <div class="sample-data">
+                        Sample: John Kamau (DL123456789), Mary Wanjiku (DL987654321)
+                    </div>
+                    
+                    <!-- Table for displaying drivers -->
+                    <div class="data-table" style="margin-top: 15px; background: white; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <div class="table-header" style="background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #e9ecef; font-weight: bold;">
+                            Drivers Data
+                            <button class="btn btn-load" onclick="loadDrivers()" style="float: right; padding: 5px 10px; font-size: 12px;">🔄 Refresh</button>
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">ID</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Name</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">License</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Phone</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Email</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e9ecef;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="driversTableBody">
+                                    <tr><td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">Click "Load Drivers" to fetch data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="response-area" id="response-drivers"></div>
                 </div>
 
             </div>
@@ -237,5 +480,6 @@
     <script src="assets/js/api-client.js"></script>
     <script src="assets/js/workflow-manager.js"></script>
     <script src="assets/js/business-flow-functions.js"></script>
+    <script src="assets/js/entity-forms.js"></script>
 </body>
 </html>
