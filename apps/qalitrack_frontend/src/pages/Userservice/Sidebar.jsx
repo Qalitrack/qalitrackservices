@@ -30,10 +30,16 @@ export default function UserServiceSidebar() {
             path: "/admin/dashboard",
         },
         {
-            key: "users-list",
-            label: "All Users",
+            key: "Shifts",
+            label: "Shifts",
             icon: <User size={18} />,
-            path: "/admin/users",
+            path: "/admin/shifts",
+        },
+        {
+        key: "shift-assignment",
+        label: "Shift Assignment",
+        icon: <User size={18} />,
+        path: "/admin/shift-assignment",
         },
         {
             key: "persmissions",

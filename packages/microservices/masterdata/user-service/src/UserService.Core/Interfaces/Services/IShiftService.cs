@@ -29,6 +29,9 @@ namespace UserService.Core.Interfaces.Services
         Task<MassAssignShiftResultDto> MassRemoveUsersFromShiftByRoleAsync(string roleId, string shiftId);
         Task<UsersAssignedToShiftDto> GetUsersAssignedToShiftAsync(string? shiftId);
 
+        // Get all shifts for a specific user
+        Task<IEnumerable<ShiftDto>> GetShiftsForUserAsync(string userId);
+
         // Get deleted shifts with pagination
         Task<PagedResult<ShiftDto>> GetDeletedPagedAsync(PaginationParameters parameters);
         

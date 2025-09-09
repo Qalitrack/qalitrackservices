@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission } from '../../helpers/UserService/Permissions/permissions.js';
-import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText } from 'lucide-react';
+import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission, fetchDeletedPermissions, restorePermission } from '../../helpers/UserService/Permissions/permissions.js';
+import { fetchUserById } from '../../helpers/UserService/Users/users.js';
+import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText, RefreshCw } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 // A reusable Modal component
@@ -20,6 +21,8 @@ const Permissions = () => {
     const [permissions, setPermissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showDeleted, setShowDeleted] = useState(false);
+    const [actionLoading, setActionLoading] = useState(null);
 
     // State for modals
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -33,6 +36,7 @@ const Permissions = () => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: '' });
     const [modalFeedback, setModalFeedback] = useState({ text: '', type: '' });
+    const [userDetails, setUserDetails] = useState({});
 
 
     const showMessage = (text, type) => {
@@ -42,11 +46,12 @@ const Permissions = () => {
         }, 5000);
     };
 
-    const loadPermissions = async () => {
+    const loadPermissions = async (deleted) => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchPermissions();
+            const fetchFunction = deleted ? fetchDeletedPermissions : fetchPermissions;
+            const data = await fetchFunction();
             setPermissions(data);
         } catch (err) {
             setError(err.message || 'Failed to fetch permissions.');
@@ -56,8 +61,20 @@ const Permissions = () => {
     };
 
     useEffect(() => {
-        loadPermissions();
-    }, []);
+        loadPermissions(showDeleted);
+    }, [showDeleted]);
+
+    const loadUserDetails = async (userId) => {
+        if (!userId || userDetails[userId]) return; // Don't fetch if no ID or already fetched
+
+        try {
+            const user = await fetchUserById(userId);
+            setUserDetails(prev => ({ ...prev, [userId]: user.email }));
+        } catch (error) {
+            console.error(`Failed to fetch user ${userId}`, error);
+            setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' })); // Handle error case
+        }
+    };
 
     // Handlers for opening modals
     const handleAddClick = () => {
@@ -78,8 +95,14 @@ const Permissions = () => {
         setDeleteModalOpen(true);
     };
 
+    const handleToggleShowDeleted = () => {
+        setShowDeleted(prev => !prev);
+    };
+
     const handleLogsClick = (permission) => {
         setSelectedPermission(permission);
+        loadUserDetails(permission.createdBy);
+        loadUserDetails(permission.updatedBy);
         setLogsModalOpen(true);
     };
 
@@ -118,6 +141,9 @@ const Permissions = () => {
             await updatePermission(selectedPermission);
             await loadPermissions(); // Refresh the list
             setModalFeedback({ text: 'Permission updated successfully!', type: 'success' });
+            setTimeout(() => {
+                setEditModalOpen(false);
+            }, 3000);
         } catch (err) {
             console.error("Failed to update permission:", err);
             setModalFeedback({ text: err.message || 'Failed to update permission.', type: 'error' });
@@ -136,6 +162,9 @@ const Permissions = () => {
             setNewPermission({ name: '', description: '' }); // Clear form
             await loadPermissions(); // Refresh the list
             setModalFeedback({ text: 'Permission created successfully!', type: 'success' });
+            setTimeout(() => {
+                setAddModalOpen(false);
+            }, 3000);
         } catch (err) {
             console.error("Failed to create permission:", err);
             setModalFeedback({ text: err.message || 'Failed to create permission.', type: 'error' });
@@ -145,23 +174,28 @@ const Permissions = () => {
     };
 
     // Handler for confirming deletion
-    const handleDelete = async () => {
-        if (!selectedPermission) return;
+    const handleToggleDelete = async (permission) => {
+        const action = permission.isDeleted ? 'restore' : 'delete';
+        const actionVerb = permission.isDeleted ? 'restored' : 'deleted';
 
         setIsUpdating(true);
         setModalFeedback({ text: '', type: '' });
         try {
-            await deletePermission(selectedPermission.id);
-            await loadPermissions(); // Refresh the list
-            setModalFeedback({ text: 'Permission deleted successfully!', type: 'success' });
-            // Optionally close the modal after a delay or keep it open
+            if (permission.isDeleted) {
+                await restorePermission(permission.id);
+            } else {
+                await deletePermission(permission.id);
+            }
+            setModalFeedback({ text: `Permission successfully ${actionVerb}.`, type: 'success' });
+            loadPermissions(showDeleted);
+            // Don't close the modal immediately to show success message
             setTimeout(() => {
                 setDeleteModalOpen(false);
-            }, 2000);
+                showMessage(`Permission successfully ${actionVerb}.`, 'success');
+            }, 1500);
         } catch (err) {
-            console.error("Failed to delete permission:", err);
-            setModalFeedback({ text: err.message || 'Failed to delete permission.', type: 'error' });
-        } finally {
+            console.error(`Failed to ${action} permission:`, err);
+            setModalFeedback({ text: err.message || `Failed to ${action} permission.`, type: 'error' });
             setIsUpdating(false);
         }
     };
@@ -178,13 +212,25 @@ const Permissions = () => {
         <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-800">Manage Permissions</h2>
-                <button
-                    onClick={handleAddClick}
-                    className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
-                >
-                    <PlusCircle size={18} />
-                    <span>Add Permission</span>
-                </button>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-700">Show Deleted</label>
+                        <input
+                            type="checkbox"
+                            id="show-deleted"
+                            checked={showDeleted}
+                            onChange={handleToggleShowDeleted}
+                            className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                        />
+                    </div>
+                    <button
+                        onClick={handleAddClick}
+                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                    >
+                        <PlusCircle size={18} />
+                        <span>Add Permission</span>
+                    </button>
+                </div>
             </div>
 
             {feedbackMessage.text && (
@@ -200,30 +246,42 @@ const Permissions = () => {
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">Description</th>
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
+
                     </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                     {permissions.map((permission) => (
-                        <tr key={permission.id} className="hover:bg-gray-50">
+                        <tr key={permission.id} className={`hover:bg-gray-50 ${permission.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{permission.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">{permission.description}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {format(parseISO(permission.updatedAt), "PPP")}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
+                            <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium space-x-4">
                                 <button onClick={() => handleLogsClick(permission)} className="text-gray-600 hover:text-gray-900 transition-colors" title="View Logs">
                                     <FileText size={18} />
                                 </button>
-                                <button onClick={() => handleViewRolesClick(permission)} className="text-blue-600 hover:text-blue-900 transition-colors" title="View Roles">
-                                    <Users size={18} />
-                                </button>
-                                <button onClick={() => handleEditClick(permission)} className="text-amber-600 hover:text-amber-900 transition-colors" title="Edit Permission">
-                                    <Edit size={18} />
-                                </button>
-                                <button onClick={() => handleDeleteClick(permission)} className="text-red-600 hover:text-red-900 transition-colors" title="Delete Permission">
-                                    <Trash2 size={18} />
-                                </button>
+                                {!showDeleted && (
+                                    <>
+                                        <button onClick={() => handleViewRolesClick(permission)} className="text-blue-600 hover:text-blue-900 transition-colors" title="View Roles">
+                                            <Users size={18} />
+                                        </button>
+                                        <button onClick={() => handleEditClick(permission)} className="text-amber-600 hover:text-amber-900 transition-colors" title="Edit Permission" disabled={permission.isDeleted}>
+                                            <Edit size={18} />
+                                        </button>
+                                    </>
+                                )}
+                                {!showDeleted && (
+                                    <button
+                                        onClick={() => handleDeleteClick(permission)}
+                                        className={`text-red-600 hover:text-red-800 transition-colors ${actionLoading === permission.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        title="Delete Permission"
+                                        disabled={actionLoading === permission.id}
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                )}
                             </td>
                         </tr>
                     ))}
@@ -338,7 +396,7 @@ const Permissions = () => {
                         <button onClick={() => setDeleteModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                             Cancel
                         </button>
-                        <button onClick={handleDelete} disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-400">
+                        <button onClick={() => handleToggleDelete(selectedPermission)} disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-400">
                             {isUpdating ? 'Deleting...' : 'Delete'}
                         </button>
                     </div>
@@ -382,7 +440,7 @@ const Permissions = () => {
                             </div>
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
                                 <p className="font-semibold text-gray-700">Created By:</p>
-                                <p className="text-gray-600">{selectedPermission.createdBy || 'N/A'}</p>
+                                <p className="text-gray-600">{userDetails[selectedPermission.createdBy] || selectedPermission.createdBy || 'N/A'}</p>
                             </div>
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
                                 <p className="font-semibold text-gray-700">Last Updated At:</p>
@@ -390,7 +448,7 @@ const Permissions = () => {
                             </div>
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
                                 <p className="font-semibold text-gray-700">Updated By:</p>
-                                <p className="text-gray-600">{selectedPermission.updatedBy || 'N/A'}</p>
+                                <p className="text-gray-600">{userDetails[selectedPermission.updatedBy] || selectedPermission.updatedBy || 'N/A'}</p>
                             </div>
                         </div>
                     )}

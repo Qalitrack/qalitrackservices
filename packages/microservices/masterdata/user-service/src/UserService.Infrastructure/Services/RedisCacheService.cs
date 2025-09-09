@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Services;
+using System.Text.Json.Serialization;
 
 namespace UserService.Infrastructure.Services;
 
@@ -26,7 +27,8 @@ public class RedisCacheService : ICacheService
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-            WriteIndented = false
+            WriteIndented = false,
+            ReferenceHandler = ReferenceHandler.Preserve
         };
     }
 

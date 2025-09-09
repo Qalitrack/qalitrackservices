@@ -75,6 +75,48 @@ export const deleteRole = async (roleId) => {
 };
 
 /**
+ * Fetches all deleted roles from the server.
+ * @returns {Promise<Array>} A promise that resolves to an array of role objects.
+ */
+export const fetchDeletedRoles = async (signal) => {
+    try {
+        const response = await apiClient.get('/Roles/deleted', { signal });
+        const responseData = response.data;
+
+        if (responseData && Array.isArray(responseData.items)) {
+            return responseData.items;
+        } else if (Array.isArray(responseData)) {
+            return responseData;
+        } else {
+            throw new Error('Invalid response data: Expected an array of roles.');
+        }
+    } catch (err) {
+        if (err.name !== 'CanceledError') {
+            console.error('Fetch deleted roles error:', err);
+        }
+        throw err;
+    }
+};
+
+/**
+ * Restores a specific role on the server.
+ * @param {string} roleId - The ID of the role to restore.
+ * @returns {Promise<any>} A promise that resolves when the restoration is successful.
+ */
+export const restoreRole = async (roleId) => {
+    try {
+        if (!roleId) {
+            throw new Error('Role ID is missing. Cannot restore role.');
+        }
+        const response = await apiClient.patch(`/Roles/${roleId}/restore`);
+        return response.data;
+    } catch (err) {
+        console.error('Restore role error:', err);
+        throw err;
+    }
+};
+
+/**
  * Fetches all permissions for a specific role.
  * @param {string} roleId - The ID of the role.
  * @returns {Promise<Array>} A promise that resolves to an array of permission objects.
