@@ -7,10 +7,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx-configs/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx-configs/conf.d:/etc/nginx/conf.d:ro
-      - ./nginx-configs/ssl:/etc/nginx/ssl:ro
-      - ./nginx-configs/domains.txt:/etc/nginx/domains.txt:ro
+      - ../nginx-configs/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx-configs/conf.d:/etc/nginx/conf.d:ro
+      - ../nginx-configs/ssl:/etc/nginx/ssl:ro
+      - ../nginx-configs/domains.txt:/etc/nginx/domains.txt:ro
       - nginx_logs:/var/log/nginx
       - nginx_cache:/var/cache/nginx
     networks:
