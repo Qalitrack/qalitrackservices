@@ -65,7 +65,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     services.AddCoreServices();
     services.AddInfrastructureServices(builder.Configuration);
     services.AddAutoMapper(typeof(UserProfile));
-    
+    services.AddOutputCache();
     // Configure PostgreSQL
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Database connection string is not configured.");
     services.AddDbContext<UserServiceDbContext>(options =>
@@ -225,6 +225,7 @@ static void ConfigurePipeline(WebApplication app)
     app.UseAuthentication(); // This must come before Authorization
     app.UseAuthorization();
     app.UseSwagger();
+    app.UseOutputCache();
     app.UseSwaggerUI(c => 
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API V1");
@@ -240,3 +241,4 @@ static void ConfigurePipeline(WebApplication app)
     context.Database.Migrate();
     PrepDb.PrepPopulation(app, isProduction: false);
 }
+

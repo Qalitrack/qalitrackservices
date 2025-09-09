@@ -162,7 +162,7 @@ public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permis
         throw new ArgumentException("Permission ID is required", nameof(permissionId));
 
     // Check if role exists
-    var role = await _roleRepository.GetByIdAsync(roleId,true);
+    var role = await _roleRepository.GetByIdAsync(roleId, true);
     if (role == null)
     {
         throw new KeyNotFoundException("Role not found.");
@@ -175,62 +175,80 @@ public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permis
     }
 
     // Check if permission exists
-    var permission = await _permissionRepository.GetByIdAsync(permissionId,true);
+    var permission = await _permissionRepository.GetByIdAsync(permissionId, true);
     if (permission == null)
     {
         throw new KeyNotFoundException("Permission not found.");
     }
 
-    // Check if the role already has this permission
-    var existingRolePermission = await _rolePermissionRepository.GetByRoleAndPermissionAsync(roleId, permissionId);
-    if (existingRolePermission != null)
+    // Use our new method that properly handles both new assignments and restoring deleted ones
+    var success = await _rolePermissionRepository.AssignOrRestorePermissionToRoleAsync(roleId, permissionId);
+    
+    if (success)
     {
-        return true; // Already assigned
+        _logger.LogInformation("Permission {PermissionId} successfully assigned to role {RoleId}", permissionId, roleId);
     }
-
-    // Assign the permission
-    var rolePermission = new RolePermission
+    else
     {
-        RoleId = roleId,
-        PermissionId = permissionId,
-        AssignedAt = DateTime.UtcNow
-    };
-
-    await _rolePermissionRepository.AddAsync(rolePermission);
-    await _rolePermissionRepository.SaveChangesAsync();
-    return true;
+        _logger.LogWarning("Failed to assign permission {PermissionId} to role {RoleId}", permissionId, roleId);
+    }
+    
+    return success;
 }
 
 public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId)
 {
     if (string.IsNullOrEmpty(roleId))
         throw new ArgumentException("Role ID is required", nameof(roleId));
+    
     if (string.IsNullOrEmpty(permissionId))
         throw new ArgumentException("Permission ID is required", nameof(permissionId));
 
-    // Check if role exists and is active
-    var role = await _roleRepository.GetByIdAsync(roleId, true);
+    // Check if role exists - adding the second parameter for includeRelated
+    var role = await _roleRepository.GetByIdAsync(roleId, false);
+    if (role == null)
+    {
+        _logger.LogWarning("Cannot remove permission from non-existent role: {RoleId}", roleId);
+        return false;
+    }
+
+    // Check if permission exists - adding the second parameter for includeRelated
+    var permission = await _permissionRepository.GetByIdAsync(permissionId, false);
+    if (permission == null)
+    {
+        _logger.LogWarning("Cannot remove non-existent permission: {PermissionId}", permissionId);
+        return false;
+    }
+
+    // Use the specialized method to delete by both roleId and permissionId
+    var success = await _rolePermissionRepository.DeleteByRoleAndPermissionAsync(roleId, permissionId);
+    
+    if (success)
+    {
+        _logger.LogInformation("Removed permission {PermissionId} from role {RoleId}", permissionId, roleId);
+    }
+    else
+    {
+        _logger.LogWarning("Permission {PermissionId} was not assigned to role {RoleId}", permissionId, roleId);
+    }
+    
+    return success;
+}
+
+public async Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId)
+{
+    if (string.IsNullOrEmpty(roleId))
+        throw new ArgumentException("Role ID is required", nameof(roleId));
+
+    // Check if role exists
+    var role = await _roleRepository.GetByIdAsync(roleId, false);
     if (role == null)
     {
         throw new KeyNotFoundException("Role not found.");
     }
 
-    if (!role.IsActive)
-    {
-        throw new InvalidOperationException("Cannot remove permissions from an inactive role.");
-    }
-
-    // Get the role-permission relationship
-    var rolePermission = await _rolePermissionRepository.GetByRoleAndPermissionAsync(roleId, permissionId);
-    if (rolePermission == null)
-    {
-        return false; // Not assigned, nothing to remove
-    }
-
-    // Remove the permission
-    await _rolePermissionRepository.DeleteAsync(rolePermission);
-    await _rolePermissionRepository.SaveChangesAsync();
-    return true;
+    // Get permissions for the role
+    return await _roleRepository.GetPermissionsForRoleAsync(roleId);
 }
 
 public async Task<PagedResult<RoleDto>> GetDeletedPagedAsync(PaginationParameters parameters)

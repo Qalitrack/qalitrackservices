@@ -33,7 +33,24 @@ class ApiClient {
             (error) => {
                 if (error.response?.status === 401) {
                 }
-                return Promise.reject(error);
+
+                const serverMessage = error.response?.data?.message;
+                const serverErrors = error.response?.data?.errors;
+
+                let errorMessage = error.message;
+
+                if (serverMessage) {
+                    errorMessage = serverMessage;
+                } else if (serverErrors && typeof serverErrors === 'object') {
+                    errorMessage = Object.values(serverErrors).flat().join('; ');
+                } else if (error.response?.data && typeof error.response.data === 'string') {
+                    errorMessage = error.response.data;
+                }
+
+                const customError = new Error(errorMessage);
+                customError.originalError = error;
+
+                return Promise.reject(customError);
             }
         );
     }
