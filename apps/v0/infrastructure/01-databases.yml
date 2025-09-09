@@ -1,0 +1,45 @@
+services:
+  # Main PostgreSQL Database (Admin credentials for Vault to manage dynamic users)
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=microservices
+      - POSTGRES_USER=vault-admin
+      - POSTGRES_PASSWORD=vault-postgres-admin-pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vault-admin -d microservices"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Backup Service PostgreSQL Database (Admin credentials for Vault to manage dynamic users)
+  postgres-backup:
+    image: postgres:15-alpine
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=backupservicedb
+      - POSTGRES_USER=vault-backup-admin
+      - POSTGRES_PASSWORD=vault-backup-admin-pass
+    volumes:
+      - postgres_backup_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vault-backup-admin -d backupservicedb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+# Volumes and networks defined in 00-volumes-networks.yml

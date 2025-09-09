@@ -1,0 +1,46 @@
+services:
+  microservices-control-hub:
+    image: ghcr.io/qalitrack/qalitrackservices/microservices-control-hub:latest
+    container_name: qalitrack-dev-microservices-control-hub
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - CONFIG_PATH=/app/config/services.json
+      - ENVIRONMENT=development
+      - PROJECT_NAME=qalitrack-dev
+      - NETWORK_SUBNET=172.20.0.0/16
+    volumes:
+      - ./shared/config/microservices-hub:/app/config:ro
+      - microservices_hub_data:/app/data
+    networks:
+      - qalitrack-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      vault:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "project=qalitrack-dev"
+      - "environment=development"
+      - "service.type=monitoring"
+      - "traefik.enable=true"
+      - "traefik.http.routers.microservices-hub.rule=Host(\`status.localhost\`)"
+      - "traefik.http.services.microservices-hub.loadbalancer.server.port=3000"
+
+volumes:
+  microservices_hub_data:
+    name: qalitrack-dev_microservices_hub_data
+    labels:
+      - "project=qalitrack-dev"
+      - "environment=development"

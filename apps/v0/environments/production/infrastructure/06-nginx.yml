@@ -1,0 +1,39 @@
+services:
+  # Nginx Reverse Proxy and Load Balancer
+  nginx:
+    image: nginx:alpine
+    container_name: -nginx
+    ports:
+      - ":80"
+      - ":443"
+    volumes:
+      - ./nginx-configs/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx-configs/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx-configs/ssl:/etc/nginx/ssl:ro
+      - ./nginx-configs/domains.txt:/etc/nginx/domains.txt:ro
+      - nginx_logs:/var/log/nginx
+      - nginx_cache:/var/cache/nginx
+    networks:
+      - qalitrack
+    restart: unless-stopped
+    depends_on:
+      - vault
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      - ENVIRONMENT=
+      - API_DOMAIN=
+      - DOMAIN_NAME=
+      - SSL_ENABLED=
+      - NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-auto}
+      - NGINX_WORKER_CONNECTIONS=${NGINX_WORKER_CONNECTIONS:-1024}
+    labels:
+      - "qalitrack.service=nginx"
+      - "qalitrack.environment="
+
+# Volumes and networks defined in 00-volumes-networks.yml

@@ -1,0 +1,57 @@
+services:
+  # Main PostgreSQL Database (Admin credentials for Vault to manage dynamic users)
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}-postgres
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      - POSTGRES_DB=microservices
+      - POSTGRES_USER=${POSTGRES_ADMIN_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
+      - POSTGRES_MAX_CONNECTIONS=${POSTGRES_MAX_CONNECTIONS:-200}
+      - POSTGRES_SHARED_BUFFERS=${POSTGRES_SHARED_BUFFERS:-256MB}
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=${POSTGRES_EFFECTIVE_CACHE_SIZE:-1GB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ADMIN_USER} -d microservices"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "qalitrack.service=database"
+      - "qalitrack.environment=${ENVIRONMENT}"
+
+  # Backup Service PostgreSQL Database
+  postgres-backup:
+    image: postgres:15-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}-postgres-backup
+    ports:
+      - "${POSTGRES_BACKUP_PORT}:5432"
+    environment:
+      - POSTGRES_DB=backupservicedb
+      - POSTGRES_USER=${POSTGRES_BACKUP_ADMIN_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_BACKUP_ADMIN_PASSWORD}
+      - POSTGRES_MAX_CONNECTIONS=${POSTGRES_MAX_CONNECTIONS:-200}
+    volumes:
+      - postgres_backup_data:/var/lib/postgresql/data
+    networks:
+      - qalitrack
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_BACKUP_ADMIN_USER} -d backupservicedb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "qalitrack.service=database-backup"
+      - "qalitrack.environment=${ENVIRONMENT}"
+
+# Volumes and networks defined in 00-volumes-networks.yml

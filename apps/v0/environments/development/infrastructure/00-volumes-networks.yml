@@ -1,0 +1,40 @@
+services:
+  # Setup service to create volumes and networks
+  setup:
+    image: alpine:latest
+    command: echo "Infrastructure volumes and networks created for development"
+    restart: "no"
+    networks:
+      - qalitrack
+
+volumes:
+  postgres_data:
+    name: qalitrack-dev_postgres_data
+  postgres_backup_data:
+    name: qalitrack-dev_postgres_backup_data
+  redis_data:
+    name: qalitrack-dev_redis_data
+  rabbitmq_data:
+    name: qalitrack-dev_rabbitmq_data
+  mailpit_data:
+    name: qalitrack-dev_mailpit_data
+  vault_data:
+    name: qalitrack-dev_vault_data
+  vault_logs:
+    name: qalitrack-dev_vault_logs
+  minio_data:
+    name: qalitrack-dev_minio_data
+  zincsearch_data:
+    name: qalitrack-dev_zincsearch_data
+  nginx_logs:
+    name: qalitrack-dev_nginx_logs
+  nginx_cache:
+    name: qalitrack-dev_nginx_cache
+
+networks:
+  qalitrack:
+    name: qalitrack-dev_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

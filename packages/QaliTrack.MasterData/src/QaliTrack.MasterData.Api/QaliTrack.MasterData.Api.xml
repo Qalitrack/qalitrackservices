@@ -79,31 +79,6 @@
             Get supplier profile for business entity
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.BusinessEntityController.CreateTransporterProfile(System.Guid,QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.CreateTransporterProfileDto)">
-            <summary>
-            Create transporter profile for business entity
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.BusinessEntityController.UpdateTransporterProfile(System.Guid,QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.UpdateTransporterProfileDto)">
-            <summary>
-            Update transporter profile for business entity
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.BusinessEntityController.PatchTransporterProfile(System.Guid,QaliTrack.MasterData.Core.Modules.BusinessEntities.DTOs.PatchTransporterProfileDto)">
-            <summary>
-            Partially update transporter profile for business entity
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.BusinessEntityController.DeleteTransporterProfile(System.Guid)">
-            <summary>
-            Delete transporter profile for business entity
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.BusinessEntityController.GetTransporterProfile(System.Guid)">
-            <summary>
-            Get transporter profile for business entity
-            </summary>
-        </member>
         <member name="M:QaliTrack.MasterData.Api.Controllers.BusinessEntityController.GetBusinessEntityContacts(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
             <summary>
             Get contacts for business entity
@@ -129,988 +104,234 @@
             Add contact to business entity
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDrivers(QaliTrack.MasterData.Core.Common.QueryParameters)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetWeighbridges(QaliTrack.MasterData.Core.Common.QueryParameters)">
             <summary>
-            Get drivers with pagination and filtering - Returns summary view only
+            Get weighbridges
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriver(System.Guid)">
-            <summary>
-            Get driver details by ID - Returns detailed view without child collections
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.CreateDriver(QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverDto)">
-            <summary>
-            Create new driver - Only essential fields required
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.UpdateDriver(System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverDto)">
-            <summary>
-            Update driver basic information
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.DeleteDriver(System.Guid)">
-            <summary>
-            Delete driver (soft delete)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriverLicense(System.Guid)">
-            <summary>
-            Get driver license
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.UpdateDriverLicense(System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverLicenseDto)">
-            <summary>
-            Update driver license
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.PatchDriverLicense(System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverLicenseDto)">
-            <summary>
-            Partially update driver license
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.DeleteDriverLicense(System.Guid)">
-            <summary>
-            Delete driver license
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.CreateDriverLicense(System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverLicenseDto)">
-            <summary>
-            Create/Update driver license
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriverTrainings(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver trainings
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.UpdateDriverTraining(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverTrainingDto)">
-            <summary>
-            Update driver training
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.PatchDriverTraining(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverTrainingDto)">
-            <summary>
-            Partially update driver training
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.DeleteDriverTraining(System.Guid,System.Guid)">
-            <summary>
-            Delete driver training
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.CreateDriverTraining(System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverTrainingDto)">
-            <summary>
-            Add driver training
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriverMedicalRecords(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver medical records
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.UpdateDriverMedicalRecord(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.UpdateDriverMedicalDto)">
-            <summary>
-            Update driver medical record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.PatchDriverMedicalRecord(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.PatchDriverMedicalDto)">
-            <summary>
-            Partially update driver medical record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.DeleteDriverMedicalRecord(System.Guid,System.Guid)">
-            <summary>
-            Delete driver medical record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.CreateDriverMedicalRecord(System.Guid,QaliTrack.MasterData.Core.Modules.Driver.DTOs.CreateDriverMedicalDto)">
-            <summary>
-            Add driver medical record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriverDocuments(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver documents
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriverSaccos(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver's SACCO memberships
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriverVehicles(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver's vehicle assignments
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.DriverController.GetDriverEmployment(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver's employment history with transporters
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.OrganizationController.GetOrganizations(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get organizations with Django-style filtering, searching, and pagination
-            </summary>
-            <param name="queryParams">Query parameters for filtering, search, and pagination</param>
-            <returns>Paginated list of organizations</returns>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.OrganizationController.GetOrganization(System.Guid)">
-            <summary>
-            Get organization by ID
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.OrganizationController.CreateOrganization(QaliTrack.MasterData.Core.Modules.Organization.DTOs.CreateOrganizationDto)">
-            <summary>
-            Create new organization
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.OrganizationController.UpdateOrganization(System.Guid,QaliTrack.MasterData.Core.Modules.Organization.DTOs.UpdateOrganizationDto)">
-            <summary>
-            Update organization
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.OrganizationController.DeleteOrganization(System.Guid)">
-            <summary>
-            Delete organization (soft delete)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.OrganizationController.GetOrganizationUsers(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get organization users
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.OrganizationController.GetOrganizationLocations(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get organization locations
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.GetProducts(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get products with Django-style filtering, searching, and pagination
-            </summary>
-            <param name="queryParams">Query parameters for filtering, search, and pagination</param>
-            <returns>Paginated list of products</returns>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.GetProduct(System.Guid)">
-            <summary>
-            Get product by ID
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.CreateProduct(QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDto)">
-            <summary>
-            Create new product
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.UpdateProduct(System.Guid,QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDto)">
-            <summary>
-            Update product
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.DeleteProduct(System.Guid)">
-            <summary>
-            Delete product (soft delete)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.GetProductSpecifications(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get product specifications
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.UpdateProductSpecification(System.Guid,QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductSpecificationDto)">
-            <summary>
-            Update product specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.PatchProductSpecification(System.Guid,QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductSpecificationDto)">
-            <summary>
-            Partially update product specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.DeleteProductSpecification(System.Guid)">
-            <summary>
-            Delete product specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.CreateProductSpecification(System.Guid,QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductSpecificationDto)">
-            <summary>
-            Add specification to product
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.GetProductDocuments(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get product documents
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.UpdateProductDocument(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Product.DTOs.UpdateProductDocumentDto)">
-            <summary>
-            Update product document
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.PatchProductDocument(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Product.DTOs.PatchProductDocumentDto)">
-            <summary>
-            Partially update product document
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.DeleteProductDocument(System.Guid,System.Guid)">
-            <summary>
-            Delete product document
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductController.CreateProductDocument(System.Guid,QaliTrack.MasterData.Core.Modules.Product.DTOs.CreateProductDocumentDto)">
-            <summary>
-            Add document to product
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetDriverSaccoMemberships(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver-sacco memberships with pagination
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetDriverSaccoMembership(System.Guid)">
-            <summary>
-            Get specific driver-sacco membership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.CreateDriverSaccoMembership(QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateDriverSaccoMembershipDto)">
-            <summary>
-            Create driver-sacco membership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.UpdateDriverSaccoMembership(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverSaccoMembershipDto)">
-            <summary>
-            Update driver-sacco membership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.PatchDriverSaccoMembership(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.PatchDriverSaccoMembershipDto)">
-            <summary>
-            Partially update driver-sacco membership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.DeleteDriverSaccoMembership(System.Guid)">
-            <summary>
-            Delete driver-sacco membership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetDriverVehicleAssignments(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver-vehicle assignments with pagination
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.CreateDriverVehicleAssignment(QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateDriverVehicleAssignmentDto)">
-            <summary>
-            Create driver-vehicle assignment
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetDriverVehicleAssignment(System.Guid)">
-            <summary>
-            Get specific driver-vehicle assignment
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.UpdateDriverVehicleAssignment(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateDriverVehicleAssignmentDto)">
-            <summary>
-            Update driver-vehicle assignment
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.DeleteDriverVehicleAssignment(System.Guid)">
-            <summary>
-            Delete driver-vehicle assignment
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetVehicleTransporterOwnerships(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get vehicle-transporter ownerships with pagination
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetVehicleTransporterOwnership(System.Guid)">
-            <summary>
-            Get specific vehicle-transporter ownership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.CreateVehicleTransporterOwnership(QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateVehicleTransporterOwnershipDto)">
-            <summary>
-            Create vehicle-transporter ownership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.UpdateVehicleTransporterOwnership(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.UpdateVehicleTransporterOwnershipDto)">
-            <summary>
-            Update vehicle-transporter ownership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.PatchVehicleTransporterOwnership(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.PatchVehicleTransporterOwnershipDto)">
-            <summary>
-            Partially update vehicle-transporter ownership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.DeleteVehicleTransporterOwnership(System.Guid)">
-            <summary>
-            Delete vehicle-transporter ownership
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetDriverTransporterEmployments(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get driver-transporter employments with pagination
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.CreateDriverTransporterEmployment(QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateDriverTransporterEmploymentDto)">
-            <summary>
-            Create driver-transporter employment
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetProductSupplierCatalogs(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get product-supplier catalogs with pagination
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.CreateProductSupplierCatalog(QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateProductSupplierCatalogDto)">
-            <summary>
-            Create product-supplier catalog
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetRouteWeighbridgeAssociations(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get route-weighbridge associations with pagination
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.CreateRouteWeighbridgeAssociation(QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateRouteWeighbridgeAssociationDto)">
-            <summary>
-            Create route-weighbridge association
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetVehicleSaccoRegistrations(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get vehicle-sacco registrations with pagination
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.CreateVehicleSaccoRegistration(QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateVehicleSaccoRegistrationDto)">
-            <summary>
-            Create vehicle-sacco registration
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetTransporterVehicles(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get all vehicles owned by a specific transporter
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RelationshipsController.GetSaccoDrivers(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get all drivers who are members of a specific SACCO
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.GetReports(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get reports with Django-style filtering, searching, and pagination
-            </summary>
-            <param name="queryParams">Query parameters for filtering, search, and pagination</param>
-            <returns>Paginated list of reports</returns>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.GetReport(System.Guid)">
-            <summary>
-            Get report by ID
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.CreateReport(QaliTrack.MasterData.Core.Modules.Report.DTOs.CreateReportDto)">
-            <summary>
-            Create new report
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.UpdateReport(System.Guid,QaliTrack.MasterData.Core.Modules.Report.DTOs.UpdateReportDto)">
-            <summary>
-            Update report
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.DeleteReport(System.Guid)">
-            <summary>
-            Delete report (soft delete)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.ExecuteReport(System.Guid,QaliTrack.MasterData.Core.Modules.Report.DTOs.ReportExecutionRequestDto)">
-            <summary>
-            Execute report
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.GetReportExecutions(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get report executions
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.GetReportTemplates(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get report templates
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.CreateReportTemplate(System.Guid,QaliTrack.MasterData.Core.Modules.Report.DTOs.CreateReportTemplateDto)">
-            <summary>
-            Add template to report
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.GetReportSchedules(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get report schedules
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.CreateReportSchedule(System.Guid,QaliTrack.MasterData.Core.Modules.Report.DTOs.CreateReportScheduleDto)">
-            <summary>
-            Add schedule to report
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.GetReportPermissions(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get report permissions
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.ReportController.CreateReportPermission(System.Guid,QaliTrack.MasterData.Core.Modules.Report.DTOs.CreateReportPermissionDto)">
-            <summary>
-            Add permission to report
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.GetRoutes(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get routes with Django-style filtering, searching, and pagination
-            </summary>
-            <param name="queryParams">Query parameters for filtering, search, and pagination</param>
-            <returns>Paginated list of routes</returns>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.GetRoute(System.Guid)">
-            <summary>
-            Get route by ID
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.CreateRoute(QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteDto)">
-            <summary>
-            Create new route
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.UpdateRoute(System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteDto)">
-            <summary>
-            Update route
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.DeleteRoute(System.Guid)">
-            <summary>
-            Delete route (soft delete)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.PatchRoute(System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteDto)">
-            <summary>
-            Partially update route
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.GetRouteWaypoints(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get route waypoints
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.CreateRouteWaypoint(System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteWaypointDto)">
-            <summary>
-            Add waypoint to route
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.GetRouteWaypoint(System.Guid,System.Guid)">
-            <summary>
-            Get single route waypoint
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.UpdateRouteWaypoint(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteWaypointDto)">
-            <summary>
-            Update route waypoint
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.PatchRouteWaypoint(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteWaypointDto)">
-            <summary>
-            Partially update route waypoint
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.DeleteRouteWaypoint(System.Guid,System.Guid)">
-            <summary>
-            Delete route waypoint
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.GetRouteSchedules(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get route schedules
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.GetRouteSchedule(System.Guid,System.Guid)">
-            <summary>
-            Get single route schedule
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.CreateRouteSchedule(System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteScheduleDto)">
-            <summary>
-            Add schedule to route
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.UpdateRouteSchedule(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteScheduleDto)">
-            <summary>
-            Update route schedule
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.PatchRouteSchedule(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteScheduleDto)">
-            <summary>
-            Partially update route schedule
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.DeleteRouteSchedule(System.Guid,System.Guid)">
-            <summary>
-            Delete route schedule
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.GetRouteHistory(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get route history
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.CreateRouteHistory(System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.CreateRouteHistoryDto)">
-            <summary>
-            Add history record to route
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.UpdateRouteHistory(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.UpdateRouteHistoryDto)">
-            <summary>
-            Update route history record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.PatchRouteHistory(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Route.DTOs.PatchRouteHistoryDto)">
-            <summary>
-            Partially update route history record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.RouteController.DeleteRouteHistory(System.Guid,System.Guid)">
-            <summary>
-            Delete route history record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccos(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get SACCOs with Django-style filtering, searching, and pagination
-            </summary>
-            <param name="queryParams">Query parameters for filtering, search, and pagination</param>
-            <returns>Paginated list of SACCOs</returns>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSacco(System.Guid)">
-            <summary>
-            Get SACCO by ID
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.CreateSacco(QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoDto)">
-            <summary>
-            Create new SACCO
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.UpdateSacco(System.Guid,QaliTrack.MasterData.Core.Modules.Sacco.DTOs.UpdateSaccoDto)">
-            <summary>
-            Update SACCO
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.DeleteSacco(System.Guid)">
-            <summary>
-            Delete SACCO (soft delete)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccoMembers(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get SACCO members
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.CreateSaccoMember(System.Guid,QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoMemberDto)">
-            <summary>
-            Create SACCO member
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccoFinancial(System.Guid)">
-            <summary>
-            Get SACCO financial information
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.CreateSaccoFinancial(System.Guid,QaliTrack.MasterData.Core.Modules.Sacco.DTOs.CreateSaccoFinancialDto)">
-            <summary>
-            Create or update SACCO financial information
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccoCommittees(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get SACCO committees
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccoServices(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get SACCO services
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccoLoans(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get SACCO loans
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccoDrivers(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get all drivers who are members of this SACCO
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.AddDriverToSacco(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateDriverSaccoMembershipDto)">
-            <summary>
-            Add a driver membership to this SACCO
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.RemoveDriverFromSacco(System.Guid,System.Guid)">
-            <summary>
-            Remove a driver membership from this SACCO
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.SaccoController.GetSaccoVehicles(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get all vehicles registered under this SACCO
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicles(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get vehicles with Django-style filtering, searching, and pagination
-            </summary>
-            <param name="queryParams">Query parameters for filtering, search, and pagination</param>
-            <returns>Paginated list of vehicles</returns>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicle(System.Guid)">
-            <summary>
-            Get vehicle by ID
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.CreateVehicle(QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleDto)">
-            <summary>
-            Create new vehicle
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.UpdateVehicle(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleDto)">
-            <summary>
-            Update vehicle
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.DeleteVehicle(System.Guid)">
-            <summary>
-            Delete vehicle (soft delete)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.PatchVehicle(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleDto)">
-            <summary>
-            Partially update vehicle
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleRegistration(System.Guid)">
-            <summary>
-            Get vehicle registration details
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.UpdateVehicleRegistration(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleRegistrationDto)">
-            <summary>
-            Update vehicle registration
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.CreateVehicleRegistration(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleRegistrationDto)">
-            <summary>
-            Create or update vehicle registration
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.PatchVehicleRegistration(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleRegistrationDto)">
-            <summary>
-            Partially update vehicle registration
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.DeleteVehicleRegistration(System.Guid)">
-            <summary>
-            Delete vehicle registration
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleSpecification(System.Guid)">
-            <summary>
-            Get vehicle specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.UpdateVehicleSpecification(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleSpecificationDto)">
-            <summary>
-            Update vehicle specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.CreateVehicleSpecification(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleSpecificationDto)">
-            <summary>
-            Create vehicle specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.PatchVehicleSpecification(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleSpecificationDto)">
-            <summary>
-            Partially update vehicle specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.DeleteVehicleSpecification(System.Guid)">
-            <summary>
-            Delete vehicle specification
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleInspections(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get vehicle inspections
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.UpdateVehicleInspection(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleInspectionDto)">
-            <summary>
-            Update vehicle inspection
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.CreateVehicleInspection(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleInspectionDto)">
-            <summary>
-            Create vehicle inspection
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.PatchVehicleInspection(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleInspectionDto)">
-            <summary>
-            Partially update vehicle inspection
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.DeleteVehicleInspection(System.Guid,System.Guid)">
-            <summary>
-            Delete vehicle inspection
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleInsurance(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get vehicle insurance policies
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.UpdateVehicleInsurance(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleInsuranceDto)">
-            <summary>
-            Update vehicle insurance policy
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.CreateVehicleInsurance(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleInsuranceDto)">
-            <summary>
-            Create vehicle insurance policy
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.PatchVehicleInsurance(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleInsuranceDto)">
-            <summary>
-            Partially update vehicle insurance policy
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.DeleteVehicleInsurance(System.Guid,System.Guid)">
-            <summary>
-            Delete vehicle insurance policy
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleMaintenance(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get vehicle maintenance records
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.UpdateVehicleMaintenance(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleMaintenanceDto)">
-            <summary>
-            Update vehicle maintenance record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.CreateVehicleMaintenance(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleMaintenanceDto)">
-            <summary>
-            Create vehicle maintenance record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.PatchVehicleMaintenance(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleMaintenanceDto)">
-            <summary>
-            Partially update vehicle maintenance record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.DeleteVehicleMaintenance(System.Guid,System.Guid)">
-            <summary>
-            Delete vehicle maintenance record
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleDocuments(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get vehicle documents
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.CreateVehicleDocument(System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.CreateVehicleDocumentDto)">
-            <summary>
-            Create vehicle document
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.UpdateVehicleDocument(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.UpdateVehicleDocumentDto)">
-            <summary>
-            Update vehicle document
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.PatchVehicleDocument(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Vehicle.DTOs.PatchVehicleDocumentDto)">
-            <summary>
-            Partially update vehicle document
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.DeleteVehicleDocument(System.Guid,System.Guid)">
-            <summary>
-            Delete vehicle document
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleOwnership(System.Guid)">
-            <summary>
-            Get vehicle ownership information (which transporter owns this vehicle)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.SetVehicleOwnership(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateVehicleTransporterOwnershipDto)">
-            <summary>
-            Set or update vehicle ownership (assign vehicle to transporter)
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.GetVehicleDrivers(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get current driver assignments for this vehicle
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.VehicleController.AssignDriverToVehicle(System.Guid,QaliTrack.MasterData.Core.Modules.Relationships.DTOs.CreateDriverVehicleAssignmentDto)">
-            <summary>
-            Assign a driver to this vehicle
-            </summary>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridges(QaliTrack.MasterData.Core.Common.QueryParameters)">
-            <summary>
-            Get weighbridges with Django-style filtering, searching, and pagination
-            </summary>
-            <param name="queryParams">Query parameters for filtering, search, and pagination</param>
-            <returns>Paginated list of weighbridges</returns>
-        </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridge(System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetWeighbridge(System.Guid)">
             <summary>
             Get weighbridge by ID
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.CreateWeighbridge(QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.CreateWeighbridgeDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetWeighbridgesBySite(System.Guid)">
+            <summary>
+            Get weighbridges by site ID
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.CreateWeighbridge(QaliTrack.MasterData.Core.Modules.HardwareManagement.DTOs.CreateWeighbridgeDto)">
             <summary>
             Create new weighbridge
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.UpdateWeighbridge(System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.UpdateWeighbridgeDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.UpdateWeighbridge(System.Guid,QaliTrack.MasterData.Core.Modules.HardwareManagement.DTOs.UpdateWeighbridgeDto)">
             <summary>
             Update weighbridge
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.DeleteWeighbridge(System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.DeleteWeighbridge(System.Guid)">
             <summary>
-            Delete weighbridge (soft delete)
+            Delete weighbridge
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.PatchWeighbridge(System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetPlcConfigurations(QaliTrack.MasterData.Core.Common.QueryParameters)">
             <summary>
-            Partially update weighbridge
+            Get PLC configurations
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridgeTransactions(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetPlcConfiguration(System.Guid)">
             <summary>
-            Get weighbridge transactions
+            Get PLC configuration by ID
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.CreateTransaction(System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.CreateWeighbridgeTransactionDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetPlcConfigurationsByWeighbridge(System.Guid)">
             <summary>
-            Create weighbridge transaction
+            Get PLC configurations by weighbridge ID
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridgeTransaction(System.Guid,System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.CreatePlcConfiguration(QaliTrack.MasterData.Core.Modules.HardwareManagement.DTOs.CreatePlcConfigurationDto)">
             <summary>
-            Get single weighbridge transaction
+            Create new PLC configuration
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.UpdateWeighbridgeTransaction(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.UpdateWeighbridgeTransactionDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.UpdatePlcConfiguration(System.Guid,QaliTrack.MasterData.Core.Modules.HardwareManagement.DTOs.UpdatePlcConfigurationDto)">
             <summary>
-            Update weighbridge transaction
+            Update PLC configuration
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.PatchWeighbridgeTransaction(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeTransactionDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.DeletePlcConfiguration(System.Guid)">
             <summary>
-            Partially update weighbridge transaction
+            Delete PLC configuration
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.DeleteWeighbridgeTransaction(System.Guid,System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetAnprCameras(QaliTrack.MasterData.Core.Common.QueryParameters)">
             <summary>
-            Delete weighbridge transaction
+            Get ANPR cameras
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridgeCalibrations(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetAnprCamera(System.Guid)">
             <summary>
-            Get weighbridge calibrations
+            Get ANPR camera by ID
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.CreateWeighbridgeCalibration(System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.CreateWeighbridgeCalibrationDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.GetAnprCamerasByWeighbridge(System.Guid)">
             <summary>
-            Add calibration record to weighbridge
+            Get ANPR cameras by weighbridge ID
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridgeCalibration(System.Guid,System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.CreateAnprCamera(QaliTrack.MasterData.Core.Modules.HardwareManagement.DTOs.CreateAnprCameraDto)">
             <summary>
-            Get single weighbridge calibration
+            Create new ANPR camera
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.UpdateWeighbridgeCalibration(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.UpdateWeighbridgeCalibrationDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.UpdateAnprCamera(System.Guid,QaliTrack.MasterData.Core.Modules.HardwareManagement.DTOs.UpdateAnprCameraDto)">
             <summary>
-            Update weighbridge calibration
+            Update ANPR camera
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.PatchWeighbridgeCalibration(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeCalibrationDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.HardwareManagementController.DeleteAnprCamera(System.Guid)">
             <summary>
-            Partially update weighbridge calibration
+            Delete ANPR camera
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.DeleteWeighbridgeCalibration(System.Guid,System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductCategories(QaliTrack.MasterData.Core.Common.QueryParameters)">
             <summary>
-            Delete weighbridge calibration
+            Get product categories with hierarchy support
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridgeMaintenance(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductCategory(System.Guid)">
             <summary>
-            Get weighbridge maintenance records
+            Get product category by ID
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridgeMaintenanceRecord(System.Guid,System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.CreateProductCategory(QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.CreateProductCategoryDto)">
             <summary>
-            Get single weighbridge maintenance record
+            Create new product category
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.CreateWeighbridgeMaintenance(System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.CreateWeighbridgeMaintenanceDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.UpdateProductCategory(System.Guid,QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.UpdateProductCategoryDto)">
             <summary>
-            Add maintenance record to weighbridge
+            Update product category
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.UpdateWeighbridgeMaintenance(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.UpdateWeighbridgeMaintenanceDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.DeleteProductCategory(System.Guid)">
             <summary>
-            Update weighbridge maintenance record
+            Delete product category
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.PatchWeighbridgeMaintenance(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeMaintenanceDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetPackagingTypes(QaliTrack.MasterData.Core.Common.QueryParameters)">
             <summary>
-            Partially update weighbridge maintenance record
+            Get packaging types
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.DeleteWeighbridgeMaintenance(System.Guid,System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetPackagingType(System.Guid)">
             <summary>
-            Delete weighbridge maintenance record
+            Get packaging type by ID
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.GetWeighbridgeDocuments(System.Guid,QaliTrack.MasterData.Core.Common.QueryParameters)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.CreatePackagingType(QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.CreatePackagingTypeDto)">
             <summary>
-            Get weighbridge documents
+            Create new packaging type
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.CreateWeighbridgeDocument(System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.CreateWeighbridgeDocumentDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.UpdatePackagingType(System.Guid,QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.UpdatePackagingTypeDto)">
             <summary>
-            Add document to weighbridge
+            Update packaging type
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.UpdateWeighbridgeDocument(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.UpdateWeighbridgeDocumentDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.DeletePackagingType(System.Guid)">
             <summary>
-            Update weighbridge document
+            Delete packaging type
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.PatchWeighbridgeDocument(System.Guid,System.Guid,QaliTrack.MasterData.Core.Modules.Weighbridge.DTOs.PatchWeighbridgeDocumentDto)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductBases(QaliTrack.MasterData.Core.Common.QueryParameters)">
             <summary>
-            Partially update weighbridge document
+            Get base products
             </summary>
         </member>
-        <member name="M:QaliTrack.MasterData.Api.Controllers.WeighbridgeController.DeleteWeighbridgeDocument(System.Guid,System.Guid)">
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductBase(System.Guid)">
             <summary>
-            Delete weighbridge document
+            Get base product by ID
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductSpecifications(System.Guid)">
+            <summary>
+            Get product specifications by product ID
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.CreateProductBase(QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.CreateProductBaseDto)">
+            <summary>
+            Create new base product
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.UpdateProductBase(System.Guid,QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.UpdateProductBaseDto)">
+            <summary>
+            Update base product
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.DeleteProductBase(System.Guid)">
+            <summary>
+            Delete base product
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductVariants(QaliTrack.MasterData.Core.Common.QueryParameters)">
+            <summary>
+            Get product variants
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductVariant(System.Guid)">
+            <summary>
+            Get product variant by ID
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductVariantsByProduct(System.Guid)">
+            <summary>
+            Get product variants by product ID
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.CreateProductVariant(QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.CreateProductVariantDto)">
+            <summary>
+            Create new product variant
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.UpdateProductVariant(System.Guid,QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.UpdateProductVariantDto)">
+            <summary>
+            Update product variant
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.DeleteProductVariant(System.Guid)">
+            <summary>
+            Delete product variant
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductUsagePermissions(QaliTrack.MasterData.Core.Common.QueryParameters)">
+            <summary>
+            Get product usage permissions
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetProductUsagePermissionsBySite(System.Guid)">
+            <summary>
+            Get product usage permissions by site ID
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.CreateProductUsagePermission(QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.CreateProductUsagePermissionDto)">
+            <summary>
+            Create new product usage permission
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetSiteCapabilities(QaliTrack.MasterData.Core.Common.QueryParameters)">
+            <summary>
+            Get site capabilities
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.GetSiteCapabilitiesBySite(System.Guid)">
+            <summary>
+            Get site capabilities by site ID
+            </summary>
+        </member>
+        <member name="M:QaliTrack.MasterData.Api.Controllers.ProductCatalogController.CreateSiteCapability(QaliTrack.MasterData.Core.Modules.ProductCatalog.DTOs.CreateSiteCapabilityDto)">
+            <summary>
+            Create new site capability
             </summary>
         </member>
         <member name="T:QaliTrack.MasterData.Api.Infrastructure.QueryParametersModelBinder">

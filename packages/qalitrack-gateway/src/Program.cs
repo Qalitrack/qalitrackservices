@@ -309,6 +309,23 @@ app.MapFallback("/docs/{**path}", async context =>
     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "docs", path);
     if (File.Exists(filePath))
     {
+        // Set proper Content-Type based on file extension
+        var extension = Path.GetExtension(filePath).ToLowerInvariant();
+        var contentType = extension switch
+        {
+            ".html" => "text/html; charset=utf-8",
+            ".css" => "text/css; charset=utf-8",
+            ".js" => "application/javascript; charset=utf-8",
+            ".json" => "application/json; charset=utf-8",
+            ".png" => "image/png",
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".svg" => "image/svg+xml",
+            ".ico" => "image/x-icon",
+            ".yml" or ".yaml" => "text/yaml; charset=utf-8",
+            _ => "application/octet-stream"
+        };
+        
+        context.Response.ContentType = contentType;
         await context.Response.SendFileAsync(filePath);
     }
     else

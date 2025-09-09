@@ -1,14 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using QaliTrack.MasterData.Core.Modules.Organization.Entities;
+using QaliTrack.MasterData.Core.Modules.SiteManagement.Entities;
 using QaliTrack.MasterData.Core.Modules.BusinessEntities.Entities;
 using QaliTrack.MasterData.Core.Modules.Driver.Entities;
 using QaliTrack.MasterData.Core.Modules.Vehicle.Entities;
-using QaliTrack.MasterData.Core.Modules.Sacco.Entities;
-using QaliTrack.MasterData.Core.Modules.Product.Entities;
-using QaliTrack.MasterData.Core.Modules.Route.Entities;
-using QaliTrack.MasterData.Core.Modules.Weighbridge.Entities;
-using QaliTrack.MasterData.Core.Modules.Report.Entities;
-using QaliTrack.MasterData.Core.Modules.Relationships.Entities;
+using QaliTrack.MasterData.Core.Modules.ProductCatalog.Entities;
+using QaliTrack.MasterData.Core.Modules.HardwareManagement.Entities;
 
 namespace QaliTrack.MasterData.Infrastructure.Data;
 
@@ -18,19 +14,16 @@ public class MasterDataDbContext : DbContext
     {
     }
 
-    #region Organization Module Entities
-    public DbSet<Organization> Organizations { get; set; }
-    public DbSet<OrganizationUser> OrganizationUsers { get; set; }
-    public DbSet<OrganizationLocation> OrganizationLocations { get; set; }
-    public DbSet<OrganizationSettings> OrganizationSettings { get; set; }
-    public DbSet<OrganizationSubscription> OrganizationSubscriptions { get; set; }
+    #region Site Management Module Entities
+    public DbSet<Zone> Zones { get; set; }
+    public DbSet<LocationType> LocationTypes { get; set; }
+    public DbSet<Site> Sites { get; set; }
     #endregion
 
     #region Business Entities Module
     public DbSet<BusinessEntity> BusinessEntities { get; set; }
     public DbSet<CustomerProfile> CustomerProfiles { get; set; }
     public DbSet<SupplierProfile> SupplierProfiles { get; set; }
-    public DbSet<TransporterProfile> TransporterProfiles { get; set; }
     public DbSet<BusinessEntityContact> BusinessEntityContacts { get; set; }
     public DbSet<BusinessEntityLocation> BusinessEntityLocations { get; set; }
     public DbSet<BusinessEntityDocument> BusinessEntityDocuments { get; set; }
@@ -38,136 +31,80 @@ public class MasterDataDbContext : DbContext
     public DbSet<CustomerOrder> CustomerOrders { get; set; }
     public DbSet<SupplierContract> SupplierContracts { get; set; }
     public DbSet<SupplierPerformance> SupplierPerformances { get; set; }
-    public DbSet<TransporterContract> TransporterContracts { get; set; }
-    public DbSet<TransporterPerformance> TransporterPerformances { get; set; }
-    public DbSet<TransporterInsurance> TransporterInsurances { get; set; }
+    public DbSet<ScheduleAgreement> ScheduleAgreements { get; set; }
     #endregion
 
     #region Driver Module Entities
     public DbSet<Driver> Drivers { get; set; }
-    public DbSet<DriverLicense> DriverLicenses { get; set; }
-    public DbSet<DriverProfile> DriverProfiles { get; set; }
-    public DbSet<DriverDocument> DriverDocuments { get; set; }
-    public DbSet<DriverTraining> DriverTrainings { get; set; }
-    public DbSet<DriverMedical> DriverMedicals { get; set; }
-    public DbSet<DriverViolation> DriverViolations { get; set; }
-    public DbSet<DriverPerformance> DriverPerformances { get; set; }
     #endregion
 
     #region Vehicle Module Entities
     public DbSet<Vehicle> Vehicles { get; set; }
-    public DbSet<VehicleType> VehicleTypes { get; set; }
-    public DbSet<VehicleRegistration> VehicleRegistrations { get; set; }
-    public DbSet<VehicleSpecification> VehicleSpecifications { get; set; }
-    public DbSet<VehicleDocument> VehicleDocuments { get; set; }
-    public DbSet<VehicleInspection> VehicleInspections { get; set; }
-    public DbSet<VehicleInsurance> VehicleInsurances { get; set; }
-    public DbSet<VehicleMaintenance> VehicleMaintenances { get; set; }
-    #endregion
-
-    #region SACCO Module Entities
-    public DbSet<Sacco> Saccos { get; set; }
-    public DbSet<SaccoMember> SaccoMembers { get; set; }
-    public DbSet<SaccoCommittee> SaccoCommittees { get; set; }
-    public DbSet<SaccoCommitteeMember> SaccoCommitteeMembers { get; set; }
-    public DbSet<SaccoMeeting> SaccoMeetings { get; set; }
-    public DbSet<SaccoFinancial> SaccoFinancials { get; set; }
-    public DbSet<SaccoShare> SaccoShares { get; set; }
-    public DbSet<SaccoLoan> SaccoLoans { get; set; }
-    public DbSet<SaccoService> SaccoServices { get; set; }
-    #endregion
-
-    #region Product Module Entities
-    public DbSet<Product> Products { get; set; }
-    public DbSet<ProductSpecification> ProductSpecifications { get; set; }
-    public DbSet<ProductDocument> ProductDocuments { get; set; }
-    public DbSet<ProductPricing> ProductPricings { get; set; }
-    #endregion
-
-    #region Route Module Entities
-    public DbSet<Route> Routes { get; set; }
-    public DbSet<RouteWaypoint> RouteWaypoints { get; set; }
-    public DbSet<RouteSchedule> RouteSchedules { get; set; }
-    public DbSet<RouteHistory> RouteHistories { get; set; }
-    #endregion
-
-    #region Weighbridge Module Entities
-    public DbSet<Weighbridge> Weighbridges { get; set; }
-    public DbSet<WeighbridgeCalibration> WeighbridgeCalibrations { get; set; }
-    public DbSet<WeighbridgeMaintenance> WeighbridgeMaintenances { get; set; }
-    public DbSet<WeighbridgeTransaction> WeighbridgeTransactions { get; set; }
-    public DbSet<WeighbridgeDocument> WeighbridgeDocuments { get; set; }
-    #endregion
-
-    #region Report Module Entities
-    public DbSet<Report> Reports { get; set; }
-    public DbSet<ReportTemplate> ReportTemplates { get; set; }
-    public DbSet<ReportSchedule> ReportSchedules { get; set; }
-    public DbSet<ReportExecution> ReportExecutions { get; set; }
-    public DbSet<ReportPermission> ReportPermissions { get; set; }
-    #endregion
-
-    #region Cross-Module Relationships
-    public DbSet<DriverSaccoMembership> DriverSaccoMemberships { get; set; }
-    public DbSet<VehicleTransporterOwnership> VehicleTransporterOwnerships { get; set; }
     public DbSet<DriverVehicleAssignment> DriverVehicleAssignments { get; set; }
-    public DbSet<DriverTransporterEmployment> DriverTransporterEmployments { get; set; }
-    public DbSet<ProductSupplierCatalog> ProductSupplierCatalogs { get; set; }
-    public DbSet<RouteWeighbridgeAssociation> RouteWeighbridgeAssociations { get; set; }
-    public DbSet<OrganizationWeighbridgeOwnership> OrganizationWeighbridgeOwnerships { get; set; }
-    public DbSet<VehicleSaccoRegistration> VehicleSaccoRegistrations { get; set; }
-    public DbSet<UserOrganizationRole> UserOrganizationRoles { get; set; }
+    #endregion
+
+    #region Product Catalog Module Entities
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+    public DbSet<PackagingType> PackagingTypes { get; set; }
+    public DbSet<ProductBase> ProductBases { get; set; }
+    public DbSet<ProductVariant> ProductVariants { get; set; }
+    public DbSet<ProductSpecification> ProductSpecifications { get; set; }
+    public DbSet<ProductUsagePermission> ProductUsagePermissions { get; set; }
+    public DbSet<SiteCapability> SiteCapabilities { get; set; }
+    public DbSet<SiteProductConstraint> SiteProductConstraints { get; set; }
+    #endregion
+
+    #region Hardware Management Module Entities
+    public DbSet<Weighbridge> Weighbridges { get; set; }
+    public DbSet<PlcConfiguration> PlcConfigurations { get; set; }
+    public DbSet<AnprCamera> AnprCameras { get; set; }
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        ConfigureOrganizationModule(modelBuilder);
+        ConfigureSiteManagementModule(modelBuilder);
         ConfigureBusinessEntitiesModule(modelBuilder);
         ConfigureDriverModule(modelBuilder);
         ConfigureVehicleModule(modelBuilder);
-        ConfigureSaccoModule(modelBuilder);
-        ConfigureProductModule(modelBuilder);
-        ConfigureRouteModule(modelBuilder);
-        ConfigureWeighbridgeModule(modelBuilder);
-        ConfigureReportModule(modelBuilder);
-        ConfigureCrossModuleRelationships(modelBuilder);
+        ConfigureProductCatalogModule(modelBuilder);
+        ConfigureHardwareManagementModule(modelBuilder);
         ConfigureIndexes(modelBuilder);
         ConfigureGlobalFilters(modelBuilder);
     }
 
-    private void ConfigureOrganizationModule(ModelBuilder modelBuilder)
+    private void ConfigureSiteManagementModule(ModelBuilder modelBuilder)
     {
-        // Organization configuration
-        modelBuilder.Entity<Organization>(entity =>
+        // Zone configuration
+        modelBuilder.Entity<Zone>(entity =>
         {
             entity.HasIndex(e => e.Code).IsUnique();
             entity.HasIndex(e => e.Name);
-            entity.HasIndex(e => e.Status);
         });
 
-        // One-to-many relationships
-        modelBuilder.Entity<OrganizationUser>()
-            .HasOne(ou => ou.Organization)
-            .WithMany(o => o.Users)
-            .HasForeignKey(ou => ou.OrganizationId);
+        // LocationType configuration
+        modelBuilder.Entity<LocationType>(entity =>
+        {
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.Name);
+        });
 
-        modelBuilder.Entity<OrganizationLocation>()
-            .HasOne(ol => ol.Organization)
-            .WithMany(o => o.Locations)
-            .HasForeignKey(ol => ol.OrganizationId);
+        // Site configuration
+        modelBuilder.Entity<Site>(entity =>
+        {
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => new { e.LocationTypeId, e.ZoneId });
 
-        // One-to-one relationships
-        modelBuilder.Entity<OrganizationSettings>()
-            .HasOne(os => os.Organization)
-            .WithOne(o => o.Settings)
-            .HasForeignKey<OrganizationSettings>(os => os.OrganizationId);
+            entity.HasOne(s => s.LocationType)
+                .WithMany(lt => lt.Sites)
+                .HasForeignKey(s => s.LocationTypeId);
 
-        modelBuilder.Entity<OrganizationSubscription>()
-            .HasOne(os => os.Organization)
-            .WithOne(o => o.Subscription)
-            .HasForeignKey<OrganizationSubscription>(os => os.OrganizationId);
+            entity.HasOne(s => s.Zone)
+                .WithMany(z => z.Sites)
+                .HasForeignKey(s => s.ZoneId)
+                .IsRequired(false);
+        });
     }
 
     private void ConfigureBusinessEntitiesModule(ModelBuilder modelBuilder)
@@ -176,7 +113,7 @@ public class MasterDataDbContext : DbContext
         modelBuilder.Entity<BusinessEntity>(entity =>
         {
             entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => new { e.OrganizationId, e.Name });
+            entity.HasIndex(e => e.Name);
             entity.HasIndex(e => e.RegistrationNumber);
             entity.HasIndex(e => e.ContactEmail);
         });
@@ -192,11 +129,18 @@ public class MasterDataDbContext : DbContext
             .WithOne(be => be.SupplierProfile)
             .HasForeignKey<SupplierProfile>(sp => sp.BusinessEntityId);
 
-        modelBuilder.Entity<TransporterProfile>()
-            .HasOne(tp => tp.BusinessEntity)
-            .WithOne(be => be.TransporterProfile)
-            .HasForeignKey<TransporterProfile>(tp => tp.BusinessEntityId);
+        // Schedule Agreement configuration
+        modelBuilder.Entity<ScheduleAgreement>()
+            .HasOne(sa => sa.Supplier)
+            .WithMany()
+            .HasForeignKey(sa => sa.SupplierId);
 
+        // Other relationships remain the same as original configuration
+        ConfigureBusinessEntityRelationships(modelBuilder);
+    }
+
+    private void ConfigureBusinessEntityRelationships(ModelBuilder modelBuilder)
+    {
         // One-to-many relationships
         modelBuilder.Entity<BusinessEntityContact>()
             .HasOne(bec => bec.BusinessEntity)
@@ -233,21 +177,6 @@ public class MasterDataDbContext : DbContext
             .HasOne(sp => sp.SupplierProfile)
             .WithMany(spp => spp.PerformanceRecords)
             .HasForeignKey(sp => sp.SupplierProfileId);
-
-        modelBuilder.Entity<TransporterContract>()
-            .HasOne(tc => tc.TransporterProfile)
-            .WithMany(tp => tp.Contracts)
-            .HasForeignKey(tc => tc.TransporterProfileId);
-
-        modelBuilder.Entity<TransporterPerformance>()
-            .HasOne(tp => tp.TransporterProfile)
-            .WithMany(tpp => tpp.PerformanceRecords)
-            .HasForeignKey(tp => tp.TransporterProfileId);
-
-        modelBuilder.Entity<TransporterInsurance>()
-            .HasOne(ti => ti.TransporterProfile)
-            .WithMany(tp => tp.InsurancePolicies)
-            .HasForeignKey(ti => ti.TransporterProfileId);
     }
 
     private void ConfigureDriverModule(ModelBuilder modelBuilder)
@@ -257,45 +186,8 @@ public class MasterDataDbContext : DbContext
         {
             entity.HasIndex(e => e.EmployeeId).IsUnique();
             entity.HasIndex(e => e.Email).IsUnique();
-            entity.HasIndex(e => new { e.OrganizationId, e.Status });
+            entity.HasIndex(e => e.Status);
         });
-
-        // One-to-one relationships
-        modelBuilder.Entity<DriverLicense>()
-            .HasOne(dl => dl.Driver)
-            .WithOne(d => d.License)
-            .HasForeignKey<DriverLicense>(dl => dl.DriverId);
-
-        modelBuilder.Entity<DriverProfile>()
-            .HasOne(dp => dp.Driver)
-            .WithOne(d => d.Profile)
-            .HasForeignKey<DriverProfile>(dp => dp.DriverId);
-
-        // One-to-many relationships
-        modelBuilder.Entity<DriverDocument>()
-            .HasOne(dd => dd.Driver)
-            .WithMany(d => d.Documents)
-            .HasForeignKey(dd => dd.DriverId);
-
-        modelBuilder.Entity<DriverTraining>()
-            .HasOne(dt => dt.Driver)
-            .WithMany(d => d.Trainings)
-            .HasForeignKey(dt => dt.DriverId);
-
-        modelBuilder.Entity<DriverMedical>()
-            .HasOne(dm => dm.Driver)
-            .WithMany(d => d.MedicalRecords)
-            .HasForeignKey(dm => dm.DriverId);
-
-        modelBuilder.Entity<DriverViolation>()
-            .HasOne(dv => dv.Driver)
-            .WithMany(d => d.Violations)
-            .HasForeignKey(dv => dv.DriverId);
-
-        modelBuilder.Entity<DriverPerformance>()
-            .HasOne(dp => dp.Driver)
-            .WithMany(d => d.PerformanceRecords)
-            .HasForeignKey(dp => dp.DriverId);
     }
 
     private void ConfigureVehicleModule(ModelBuilder modelBuilder)
@@ -303,457 +195,171 @@ public class MasterDataDbContext : DbContext
         // Vehicle configuration
         modelBuilder.Entity<Vehicle>(entity =>
         {
-            entity.HasIndex(e => e.RegistrationNumber).IsUnique();
-            entity.HasIndex(e => e.VIN).IsUnique();
-            entity.HasIndex(e => new { e.OrganizationId, e.Status });
-        });
-
-        // Vehicle-VehicleType relationship
-        modelBuilder.Entity<Vehicle>()
-            .HasOne(v => v.VehicleType)
-            .WithMany(vt => vt.Vehicles)
-            .HasForeignKey(v => v.VehicleTypeId);
-
-        // One-to-one relationships
-        modelBuilder.Entity<VehicleRegistration>()
-            .HasOne(vr => vr.Vehicle)
-            .WithOne(v => v.Registration)
-            .HasForeignKey<VehicleRegistration>(vr => vr.VehicleId);
-
-        modelBuilder.Entity<VehicleSpecification>()
-            .HasOne(vs => vs.Vehicle)
-            .WithOne(v => v.Specification)
-            .HasForeignKey<VehicleSpecification>(vs => vs.VehicleId);
-
-        // One-to-many relationships
-        modelBuilder.Entity<VehicleDocument>()
-            .HasOne(vd => vd.Vehicle)
-            .WithMany(v => v.Documents)
-            .HasForeignKey(vd => vd.VehicleId);
-
-        modelBuilder.Entity<VehicleInspection>()
-            .HasOne(vi => vi.Vehicle)
-            .WithMany(v => v.Inspections)
-            .HasForeignKey(vi => vi.VehicleId);
-
-        modelBuilder.Entity<VehicleInsurance>()
-            .HasOne(vi => vi.Vehicle)
-            .WithMany(v => v.InsurancePolicies)
-            .HasForeignKey(vi => vi.VehicleId);
-
-        modelBuilder.Entity<VehicleMaintenance>()
-            .HasOne(vm => vm.Vehicle)
-            .WithMany(v => v.MaintenanceRecords)
-            .HasForeignKey(vm => vm.VehicleId);
-    }
-
-    private void ConfigureSaccoModule(ModelBuilder modelBuilder)
-    {
-        // SACCO configuration
-        modelBuilder.Entity<Sacco>(entity =>
-        {
-            entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => e.RegistrationNumber).IsUnique();
-            entity.HasIndex(e => e.Name);
-        });
-
-        // One-to-many relationships
-        modelBuilder.Entity<SaccoMember>()
-            .HasOne(sm => sm.Sacco)
-            .WithMany(s => s.Members)
-            .HasForeignKey(sm => sm.SaccoId);
-
-        modelBuilder.Entity<SaccoCommittee>()
-            .HasOne(sc => sc.Sacco)
-            .WithMany(s => s.Committees)
-            .HasForeignKey(sc => sc.SaccoId);
-
-        modelBuilder.Entity<SaccoMeeting>()
-            .HasOne(sm => sm.Sacco)
-            .WithMany(s => s.Meetings)
-            .HasForeignKey(sm => sm.SaccoId);
-
-        modelBuilder.Entity<SaccoShare>()
-            .HasOne(ss => ss.Sacco)
-            .WithMany(s => s.Shares)
-            .HasForeignKey(ss => ss.SaccoId);
-
-        modelBuilder.Entity<SaccoLoan>()
-            .HasOne(sl => sl.Sacco)
-            .WithMany(s => s.Loans)
-            .HasForeignKey(sl => sl.SaccoId);
-
-        modelBuilder.Entity<SaccoService>()
-            .HasOne(ss => ss.Sacco)
-            .WithMany(s => s.Services)
-            .HasForeignKey(ss => ss.SaccoId);
-
-        // One-to-one relationship
-        modelBuilder.Entity<SaccoFinancial>()
-            .HasOne(sf => sf.Sacco)
-            .WithOne(s => s.Financial)
-            .HasForeignKey<SaccoFinancial>(sf => sf.SaccoId);
-
-        // Committee member relationships
-        modelBuilder.Entity<SaccoCommitteeMember>()
-            .HasOne(scm => scm.Committee)
-            .WithMany(sc => sc.CommitteeMembers)
-            .HasForeignKey(scm => scm.SaccoCommitteeId);
-
-        modelBuilder.Entity<SaccoCommitteeMember>()
-            .HasOne(scm => scm.Member)
-            .WithMany()
-            .HasForeignKey(scm => scm.SaccoMemberId);
-
-        // Share and loan member relationships
-        modelBuilder.Entity<SaccoShare>()
-            .HasOne(ss => ss.Member)
-            .WithMany()
-            .HasForeignKey(ss => ss.SaccoMemberId);
-
-        modelBuilder.Entity<SaccoLoan>()
-            .HasOne(sl => sl.Member)
-            .WithMany()
-            .HasForeignKey(sl => sl.SaccoMemberId);
-
-        // Meeting committee relationship (optional)
-        modelBuilder.Entity<SaccoMeeting>()
-            .HasOne(sm => sm.Committee)
-            .WithMany()
-            .HasForeignKey(sm => sm.SaccoCommitteeId)
-            .IsRequired(false);
-    }
-
-    private void ConfigureProductModule(ModelBuilder modelBuilder)
-    {
-        // Product configuration
-        modelBuilder.Entity<Product>(entity =>
-        {
-            entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => new { e.OrganizationId, e.Name });
-            entity.HasIndex(e => e.Category);
+            entity.HasIndex(e => e.NumberPlate).IsUnique();
             entity.HasIndex(e => e.Status);
-        });
-
-        // One-to-many relationships
-        modelBuilder.Entity<ProductSpecification>()
-            .HasOne(ps => ps.Product)
-            .WithMany(p => p.Specifications)
-            .HasForeignKey(ps => ps.ProductId);
-
-        modelBuilder.Entity<ProductDocument>()
-            .HasOne(pd => pd.Product)
-            .WithMany(p => p.Documents)
-            .HasForeignKey(pd => pd.ProductId);
-
-        modelBuilder.Entity<ProductPricing>()
-            .HasOne(pp => pp.Product)
-            .WithMany(p => p.Pricing)
-            .HasForeignKey(pp => pp.ProductId);
-    }
-
-    private void ConfigureRouteModule(ModelBuilder modelBuilder)
-    {
-        // Route configuration
-        modelBuilder.Entity<Route>(entity =>
-        {
-            entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => new { e.OrganizationId, e.Name });
-            entity.HasIndex(e => e.Status);
-            entity.HasIndex(e => e.RouteType);
-        });
-
-        // One-to-many relationships
-        modelBuilder.Entity<RouteWaypoint>()
-            .HasOne(rw => rw.Route)
-            .WithMany(r => r.Waypoints)
-            .HasForeignKey(rw => rw.RouteId);
-
-        modelBuilder.Entity<RouteSchedule>()
-            .HasOne(rs => rs.Route)
-            .WithMany(r => r.Schedules)
-            .HasForeignKey(rs => rs.RouteId);
-
-        modelBuilder.Entity<RouteHistory>()
-            .HasOne(rh => rh.Route)
-            .WithMany(r => r.History)
-            .HasForeignKey(rh => rh.RouteId);
-
-        // Waypoint ordering
-        modelBuilder.Entity<RouteWaypoint>()
-            .HasIndex(e => new { e.RouteId, e.SequenceOrder });
-    }
-
-    private void ConfigureWeighbridgeModule(ModelBuilder modelBuilder)
-    {
-        // Weighbridge configuration
-        modelBuilder.Entity<Weighbridge>(entity =>
-        {
-            entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => new { e.OrganizationId, e.Name });
-            entity.HasIndex(e => e.Status);
-            entity.HasIndex(e => e.Type);
-            entity.HasIndex(e => e.Location);
-        });
-
-        // One-to-many relationships
-        modelBuilder.Entity<WeighbridgeCalibration>()
-            .HasOne(wc => wc.Weighbridge)
-            .WithMany(w => w.Calibrations)
-            .HasForeignKey(wc => wc.WeighbridgeId);
-
-        modelBuilder.Entity<WeighbridgeMaintenance>()
-            .HasOne(wm => wm.Weighbridge)
-            .WithMany(w => w.MaintenanceRecords)
-            .HasForeignKey(wm => wm.WeighbridgeId);
-
-        modelBuilder.Entity<WeighbridgeTransaction>()
-            .HasOne(wt => wt.Weighbridge)
-            .WithMany(w => w.Transactions)
-            .HasForeignKey(wt => wt.WeighbridgeId);
-
-        modelBuilder.Entity<WeighbridgeDocument>()
-            .HasOne(wd => wd.Weighbridge)
-            .WithMany(w => w.Documents)
-            .HasForeignKey(wd => wd.WeighbridgeId);
-
-        // Additional indexes for performance
-        modelBuilder.Entity<WeighbridgeTransaction>()
-            .HasIndex(e => e.TicketNumber)
-            .IsUnique();
-
-        modelBuilder.Entity<WeighbridgeTransaction>()
-            .HasIndex(e => e.TransactionDate);
-
-        modelBuilder.Entity<WeighbridgeCalibration>()
-            .HasIndex(e => e.CertificateNumber)
-            .IsUnique();
-    }
-
-    private void ConfigureReportModule(ModelBuilder modelBuilder)
-    {
-        // Report configuration
-        modelBuilder.Entity<Report>(entity =>
-        {
-            entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => new { e.OrganizationId, e.Name });
-            entity.HasIndex(e => e.Category);
-            entity.HasIndex(e => e.Status);
-            entity.HasIndex(e => e.ReportType);
-        });
-
-        // One-to-many relationships
-        modelBuilder.Entity<ReportTemplate>()
-            .HasOne(rt => rt.Report)
-            .WithMany(r => r.Templates)
-            .HasForeignKey(rt => rt.ReportId);
-
-        modelBuilder.Entity<ReportSchedule>()
-            .HasOne(rs => rs.Report)
-            .WithMany(r => r.Schedules)
-            .HasForeignKey(rs => rs.ReportId);
-
-        modelBuilder.Entity<ReportExecution>()
-            .HasOne(re => re.Report)
-            .WithMany(r => r.Executions)
-            .HasForeignKey(re => re.ReportId);
-
-        modelBuilder.Entity<ReportExecution>()
-            .HasOne(re => re.Schedule)
-            .WithMany(rs => rs.Executions)
-            .HasForeignKey(re => re.ScheduleId)
-            .IsRequired(false);
-
-        modelBuilder.Entity<ReportPermission>()
-            .HasOne(rp => rp.Report)
-            .WithMany(r => r.Permissions)
-            .HasForeignKey(rp => rp.ReportId);
-
-        // Additional indexes for performance
-        modelBuilder.Entity<ReportExecution>()
-            .HasIndex(e => e.ExecutionId)
-            .IsUnique();
-
-        modelBuilder.Entity<ReportExecution>()
-            .HasIndex(e => e.StartTime);
-
-        modelBuilder.Entity<ReportSchedule>()
-            .HasIndex(e => e.NextRunTime);
-
-        modelBuilder.Entity<ReportPermission>()
-            .HasIndex(e => new { e.UserId, e.ReportId })
-            .IsUnique();
-    }
-
-    private void ConfigureCrossModuleRelationships(ModelBuilder modelBuilder)
-    {
-        // Driver-SACCO membership
-        modelBuilder.Entity<DriverSaccoMembership>(entity =>
-        {
-            entity.HasIndex(e => new { e.DriverId, e.SaccoId }).IsUnique();
-            entity.HasIndex(e => e.MembershipNumber).IsUnique();
-            
-            entity.HasOne(e => e.Driver)
-                .WithMany()
-                .HasForeignKey(e => e.DriverId);
-                
-            entity.HasOne(e => e.Sacco)
-                .WithMany()
-                .HasForeignKey(e => e.SaccoId);
-        });
-
-        // Vehicle-Transporter ownership
-        modelBuilder.Entity<VehicleTransporterOwnership>(entity =>
-        {
-            entity.HasIndex(e => new { e.VehicleId, e.TransporterProfileId });
-            
-            entity.HasOne(e => e.Vehicle)
-                .WithMany()
-                .HasForeignKey(e => e.VehicleId);
-                
-            entity.HasOne(e => e.TransporterProfile)
-                .WithMany()
-                .HasForeignKey(e => e.TransporterProfileId);
         });
 
         // Driver-Vehicle assignment
         modelBuilder.Entity<DriverVehicleAssignment>(entity =>
         {
             entity.HasIndex(e => new { e.DriverId, e.VehicleId, e.IsActive });
-            
-            entity.HasOne(e => e.Driver)
-                .WithMany()
-                .HasForeignKey(e => e.DriverId);
-                
-            entity.HasOne(e => e.Vehicle)
-                .WithMany()
-                .HasForeignKey(e => e.VehicleId);
+        });
+    }
+
+    private void ConfigureProductCatalogModule(ModelBuilder modelBuilder)
+    {
+        // ProductCategory configuration with self-referencing relationship
+        modelBuilder.Entity<ProductCategory>(entity =>
+        {
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.Name);
+
+            entity.HasOne(pc => pc.ParentCategory)
+                .WithMany(pc => pc.SubCategories)
+                .HasForeignKey(pc => pc.ParentCategoryId)
+                .IsRequired(false);
         });
 
-        // Driver-Transporter employment
-        modelBuilder.Entity<DriverTransporterEmployment>(entity =>
+        // PackagingType configuration
+        modelBuilder.Entity<PackagingType>(entity =>
         {
-            entity.HasIndex(e => new { e.DriverId, e.TransporterProfileId });
-            
-            entity.HasOne(e => e.Driver)
-                .WithMany()
-                .HasForeignKey(e => e.DriverId);
-                
-            entity.HasOne(e => e.TransporterProfile)
-                .WithMany()
-                .HasForeignKey(e => e.TransporterProfileId);
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.Name);
         });
 
-        // Product-Supplier catalog
-        modelBuilder.Entity<ProductSupplierCatalog>(entity =>
+        // ProductBase configuration
+        modelBuilder.Entity<ProductBase>(entity =>
         {
-            entity.HasIndex(e => new { e.ProductId, e.SupplierProfileId });
-            
-            entity.HasOne(e => e.Product)
-                .WithMany()
-                .HasForeignKey(e => e.ProductId);
-                
-            entity.HasOne(e => e.SupplierProfile)
-                .WithMany()
-                .HasForeignKey(e => e.SupplierProfileId);
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => new { e.CategoryId, e.Name });
+
+            entity.HasOne(pb => pb.Category)
+                .WithMany(pc => pc.Products)
+                .HasForeignKey(pb => pb.CategoryId);
         });
 
-        // Route-Weighbridge association
-        modelBuilder.Entity<RouteWeighbridgeAssociation>(entity =>
+        // ProductVariant configuration
+        modelBuilder.Entity<ProductVariant>(entity =>
         {
-            entity.HasIndex(e => new { e.RouteId, e.WeighbridgeId });
-            
-            entity.HasOne(e => e.Route)
-                .WithMany()
-                .HasForeignKey(e => e.RouteId);
-                
-            entity.HasOne(e => e.Weighbridge)
-                .WithMany()
-                .HasForeignKey(e => e.WeighbridgeId);
+            entity.HasIndex(e => e.VariantCode).IsUnique();
+            entity.HasIndex(e => new { e.ProductBaseId, e.PackagingTypeId });
+
+            entity.HasOne(pv => pv.ProductBase)
+                .WithMany(pb => pb.Variants)
+                .HasForeignKey(pv => pv.ProductBaseId);
+
+            entity.HasOne(pv => pv.PackagingType)
+                .WithMany(pt => pt.ProductVariants)
+                .HasForeignKey(pv => pv.PackagingTypeId);
         });
 
-        // Organization-Weighbridge ownership
-        modelBuilder.Entity<OrganizationWeighbridgeOwnership>(entity =>
+        // ProductSpecification configuration
+        modelBuilder.Entity<ProductSpecification>(entity =>
         {
-            entity.HasIndex(e => new { e.OrganizationId, e.WeighbridgeId });
-            
-            entity.HasOne(e => e.Organization)
-                .WithMany()
-                .HasForeignKey(e => e.OrganizationId);
-                
-            entity.HasOne(e => e.Weighbridge)
-                .WithMany()
-                .HasForeignKey(e => e.WeighbridgeId);
+            entity.HasOne(ps => ps.ProductBase)
+                .WithMany(pb => pb.Specifications)
+                .HasForeignKey(ps => ps.ProductBaseId);
         });
 
-        // Vehicle-SACCO registration
-        modelBuilder.Entity<VehicleSaccoRegistration>(entity =>
+        // ProductUsagePermission configuration
+        modelBuilder.Entity<ProductUsagePermission>(entity =>
         {
-            entity.HasIndex(e => new { e.VehicleId, e.SaccoId });
-            entity.HasIndex(e => e.RegistrationNumber).IsUnique();
-            
-            entity.HasOne(e => e.Vehicle)
-                .WithMany()
-                .HasForeignKey(e => e.VehicleId);
-                
-            entity.HasOne(e => e.Sacco)
-                .WithMany()
-                .HasForeignKey(e => e.SaccoId);
+            entity.HasIndex(e => new { e.ProductVariantId, e.SiteId, e.UsageType });
+
+            entity.HasOne(pup => pup.ProductVariant)
+                .WithMany(pv => pv.UsagePermissions)
+                .HasForeignKey(pup => pup.ProductVariantId);
         });
 
-        // User-Organization-Role (User and Role entities not defined in this context)
-        modelBuilder.Entity<UserOrganizationRole>(entity =>
+        // SiteCapability configuration
+        modelBuilder.Entity<SiteCapability>(entity =>
         {
-            entity.HasIndex(e => new { e.UserId, e.OrganizationId, e.RoleId }).IsUnique();
-            
-            entity.HasOne(e => e.Organization)
+            entity.HasIndex(e => new { e.SiteId, e.ProductCategoryId, e.CapabilityType });
+
+            entity.HasOne(sc => sc.ProductCategory)
                 .WithMany()
-                .HasForeignKey(e => e.OrganizationId);
+                .HasForeignKey(sc => sc.ProductCategoryId);
+        });
+
+        // SiteProductConstraint configuration
+        modelBuilder.Entity<SiteProductConstraint>(entity =>
+        {
+            entity.HasIndex(e => new { e.FromSiteId, e.ToSiteId, e.ProductCategoryId });
+
+            entity.HasOne(spc => spc.ProductCategory)
+                .WithMany()
+                .HasForeignKey(spc => spc.ProductCategoryId);
+        });
+    }
+
+    private void ConfigureHardwareManagementModule(ModelBuilder modelBuilder)
+    {
+        // Weighbridge configuration
+        modelBuilder.Entity<Weighbridge>(entity =>
+        {
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => new { e.SiteId, e.Name });
+        });
+
+        // PlcConfiguration configuration
+        modelBuilder.Entity<PlcConfiguration>(entity =>
+        {
+            entity.HasIndex(e => e.PlcAddress);
+
+            entity.HasOne(pc => pc.Weighbridge)
+                .WithMany(w => w.PlcConfigurations)
+                .HasForeignKey(pc => pc.WeighbridgeId);
+        });
+
+        // AnprCamera configuration
+        modelBuilder.Entity<AnprCamera>(entity =>
+        {
+            entity.HasIndex(e => e.IpAddress);
+            entity.HasIndex(e => new { e.WeighbridgeId, e.Position });
+
+            entity.HasOne(ac => ac.Weighbridge)
+                .WithMany(w => w.AnprCameras)
+                .HasForeignKey(ac => ac.WeighbridgeId);
         });
     }
 
     private void ConfigureIndexes(ModelBuilder modelBuilder)
     {
-        // Global performance indexes
-        modelBuilder.Entity<Organization>().HasIndex(e => e.IsDeleted);
+        // Global performance indexes for soft delete
+        modelBuilder.Entity<Zone>().HasIndex(e => e.IsDeleted);
+        modelBuilder.Entity<LocationType>().HasIndex(e => e.IsDeleted);
+        modelBuilder.Entity<Site>().HasIndex(e => e.IsDeleted);
         modelBuilder.Entity<BusinessEntity>().HasIndex(e => e.IsDeleted);
         modelBuilder.Entity<Driver>().HasIndex(e => e.IsDeleted);
         modelBuilder.Entity<Vehicle>().HasIndex(e => e.IsDeleted);
-        modelBuilder.Entity<Sacco>().HasIndex(e => e.IsDeleted);
-        modelBuilder.Entity<Product>().HasIndex(e => e.IsDeleted);
-        modelBuilder.Entity<Route>().HasIndex(e => e.IsDeleted);
+        modelBuilder.Entity<ProductCategory>().HasIndex(e => e.IsDeleted);
+        modelBuilder.Entity<ProductBase>().HasIndex(e => e.IsDeleted);
+        modelBuilder.Entity<ProductVariant>().HasIndex(e => e.IsDeleted);
         modelBuilder.Entity<Weighbridge>().HasIndex(e => e.IsDeleted);
-        modelBuilder.Entity<Report>().HasIndex(e => e.IsDeleted);
 
         // Timestamp indexes for common queries
-        modelBuilder.Entity<Organization>().HasIndex(e => e.CreatedAt);
+        modelBuilder.Entity<Zone>().HasIndex(e => e.CreatedAt);
+        modelBuilder.Entity<Site>().HasIndex(e => e.CreatedAt);
         modelBuilder.Entity<BusinessEntity>().HasIndex(e => e.CreatedAt);
         modelBuilder.Entity<Driver>().HasIndex(e => e.CreatedAt);
         modelBuilder.Entity<Vehicle>().HasIndex(e => e.CreatedAt);
-        modelBuilder.Entity<Sacco>().HasIndex(e => e.CreatedAt);
-        modelBuilder.Entity<Product>().HasIndex(e => e.CreatedAt);
-        modelBuilder.Entity<Route>().HasIndex(e => e.CreatedAt);
+        modelBuilder.Entity<ProductBase>().HasIndex(e => e.CreatedAt);
         modelBuilder.Entity<Weighbridge>().HasIndex(e => e.CreatedAt);
-        modelBuilder.Entity<Report>().HasIndex(e => e.CreatedAt);
     }
 
     private void ConfigureGlobalFilters(ModelBuilder modelBuilder)
     {
         // Global soft delete filter for ALL entities that inherit BaseEntity
-        // This prevents the EF Core warnings about orphaned relationships
         
-        // Organization Module
-        modelBuilder.Entity<Organization>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<OrganizationUser>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<OrganizationLocation>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<OrganizationSettings>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<OrganizationSubscription>().HasQueryFilter(e => !e.IsDeleted);
+        // Site Management Module
+        modelBuilder.Entity<Zone>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<LocationType>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Site>().HasQueryFilter(e => !e.IsDeleted);
         
         // BusinessEntity Module
         modelBuilder.Entity<BusinessEntity>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<CustomerProfile>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<SupplierProfile>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<TransporterProfile>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<BusinessEntityContact>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<BusinessEntityLocation>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<BusinessEntityDocument>().HasQueryFilter(e => !e.IsDeleted);
@@ -761,77 +367,29 @@ public class MasterDataDbContext : DbContext
         modelBuilder.Entity<CustomerOrder>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<SupplierContract>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<SupplierPerformance>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<TransporterContract>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<TransporterPerformance>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<TransporterInsurance>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ScheduleAgreement>().HasQueryFilter(e => !e.IsDeleted);
         
         // Driver Module
         modelBuilder.Entity<Driver>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverLicense>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverProfile>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverDocument>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverTraining>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverMedical>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverViolation>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverPerformance>().HasQueryFilter(e => !e.IsDeleted);
         
         // Vehicle Module
         modelBuilder.Entity<Vehicle>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleType>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleRegistration>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleSpecification>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleDocument>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleInspection>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleInsurance>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleMaintenance>().HasQueryFilter(e => !e.IsDeleted);
-        
-        // SACCO Module
-        modelBuilder.Entity<Sacco>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoMember>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoCommittee>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoCommitteeMember>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoMeeting>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoFinancial>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoShare>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoLoan>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<SaccoService>().HasQueryFilter(e => !e.IsDeleted);
-        
-        // Product Module
-        modelBuilder.Entity<Product>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ProductSpecification>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ProductDocument>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ProductPricing>().HasQueryFilter(e => !e.IsDeleted);
-        
-        // Route Module
-        modelBuilder.Entity<Route>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<RouteWaypoint>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<RouteSchedule>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<RouteHistory>().HasQueryFilter(e => !e.IsDeleted);
-        
-        // Weighbridge Module
-        modelBuilder.Entity<Weighbridge>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<WeighbridgeCalibration>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<WeighbridgeMaintenance>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<WeighbridgeTransaction>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<WeighbridgeDocument>().HasQueryFilter(e => !e.IsDeleted);
-        
-        // Report Module
-        modelBuilder.Entity<Report>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ReportTemplate>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ReportSchedule>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ReportExecution>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ReportPermission>().HasQueryFilter(e => !e.IsDeleted);
-
-        // Cross-Module Relationships
-        modelBuilder.Entity<DriverSaccoMembership>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleTransporterOwnership>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<DriverVehicleAssignment>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DriverTransporterEmployment>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ProductSupplierCatalog>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<RouteWeighbridgeAssociation>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<OrganizationWeighbridgeOwnership>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<VehicleSaccoRegistration>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<UserOrganizationRole>().HasQueryFilter(e => !e.IsDeleted);
+        
+        // Product Catalog Module
+        modelBuilder.Entity<ProductCategory>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<PackagingType>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ProductBase>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ProductVariant>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ProductSpecification>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ProductUsagePermission>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<SiteCapability>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<SiteProductConstraint>().HasQueryFilter(e => !e.IsDeleted);
+        
+        // Hardware Management Module
+        modelBuilder.Entity<Weighbridge>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<PlcConfiguration>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<AnprCamera>().HasQueryFilter(e => !e.IsDeleted);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
