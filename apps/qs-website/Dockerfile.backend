@@ -6,10 +6,10 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --omit=dev
+# Install dependencies (all for now, can optimize later)
+RUN npm ci
 
-# Copy server file
+# Copy server file and backend directory
 COPY server.js ./
 COPY backend/ ./backend/
 
