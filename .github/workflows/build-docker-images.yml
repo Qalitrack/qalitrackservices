@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: qalitrack/qs-website
+  IMAGE_NAME: surgbc-projects/qs-website
 
 jobs:
   build-frontend:
