@@ -21,73 +21,79 @@ namespace UserService.Infrastructure.Services
         }
 
         public async Task<(bool IsAllowed, string Reason)> CanUserLoginAsync(string userId)
-        {
-            var stopwatch = Stopwatch.StartNew();
-            try
             {
-                // Check if user is an admin first (bypass all restrictions)
-                var isPrivilegedUser = await IsUserAdminAsync(userId);
-                if (isPrivilegedUser)
+                var stopwatch = Stopwatch.StartNew();
+                try
                 {
-                    return (true, "Privileged user - access granted");
-                }
-
-                var currentTime = TimeOnly.FromDateTime(DateTime.UtcNow);
-
-                // 1. Get all currently running shifts (both Strict and Open)
-                var runningShifts = await GetCurrentlyRunningShifts(currentTime);
-                
-                if (!runningShifts.Any())
-                {
-                    return (true, "No active shifts");
-                }
-
-                // 2. Separate Strict and Open shifts
-                var strictShifts = runningShifts.Where(s => s.Mode == ShiftMode.Strict).ToList();
-
-                // 3. Get user assignments (like ReportService does)
-                var userAssignments = await _context.UserShifts
-                    .Include(us => us.Shift)
-                    .Where(us => us.UserId == userId)
-                    .ToListAsync();
-                
-                // 4. Check strict shift rules first
-                if (strictShifts.Any())
-                {
-                    var assignedToStrictShift = userAssignments
-                        .Any(us => strictShifts.Any(s => s.Id == us.ShiftId));
-
-                    if (!assignedToStrictShift)
+                    // Check if user is an admin first (bypass all restrictions)
+                    var isPrivilegedUser = await IsUserAdminAsync(userId);
+                    if (isPrivilegedUser)
                     {
-                        var shiftNames = string.Join(", ", strictShifts.Select(s => s.Name));
-                        return (false, $"Access denied. Active strict shift(s): {shiftNames}");
+                        return (true, "Privileged user - access granted");
                     }
+
+                    var currentTime = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+                    // 1. Get all currently running shifts (both Strict and Open)
+                    var runningShifts = await GetCurrentlyRunningShifts(currentTime);
+                    
+                    if (!runningShifts.Any())
+                    {
+                        return (true, "No active shifts");
+                    }
+
+                    // 2. Separate Strict shifts
+                    var strictShifts = runningShifts.Where(s => s.Mode == ShiftMode.Strict).ToList();
+
+                    // 3. Get user assignments (like ReportService does)
+                    var userAssignments = await _context.UserShifts
+                        .Include(us => us.Shift)
+                        .Where(us => us.UserId == userId)
+                        .ToListAsync();
+                    
+                    // 4. Check strict shift rules
+                    if (strictShifts.Any())
+                    {
+                        var assignedToStrictShift = userAssignments
+                            .Any(us => strictShifts.Any(s => s.Id == us.ShiftId));
+
+                        if (!assignedToStrictShift)
+                        {
+                            var shiftNames = string.Join(", ", strictShifts.Select(s => s.Name));
+                            return (false, $"Access denied. Active strict shift(s): {shiftNames}");
+                        }
+                    }
+
+                    // 5. Allow login if only Open shifts are running or user is assigned to any running shift
+                    var assignedToAnyRunningShift = userAssignments
+                        .Any(us => runningShifts.Any(s => s.Id == us.ShiftId));
+
+                    if (assignedToAnyRunningShift)
+                    {
+                        var assignedShift = userAssignments
+                            .First(us => runningShifts.Any(s => s.Id == us.ShiftId)).Shift;
+                        return (true, $"Assigned to {assignedShift.Mode} shift: {assignedShift.Name}");
+                    }
+
+                    // If only Open shifts are running (no Strict shifts), allow login
+                    if (!strictShifts.Any())
+                    {
+                        return (true, "Access granted. Only open shifts are active");
+                    }
+
+                    return (false, "Access denied. Not assigned to any active strict shifts");
                 }
-
-                // 5. Check if assigned to any running shift (including Open shifts)
-                var assignedToAnyRunningShift = userAssignments
-                    .Any(us => runningShifts.Any(s => s.Id == us.ShiftId));
-
-                if (assignedToAnyRunningShift)
+                catch (Exception ex)
                 {
-                    var assignedShift = userAssignments
-                        .First(us => runningShifts.Any(s => s.Id == us.ShiftId)).Shift;
-                    return (true, $"Assigned to {assignedShift.Mode} shift: {assignedShift.Name}");
+                    _logger.LogError(ex, "[ERROR] in login restriction check for user {UserId}", userId);
+                    return (true, "System error - access granted");
                 }
-                
-                return (false, "Access denied. Not assigned to any active shifts");
+                finally
+                {
+                    _logger.LogInformation("[TIME] Login restriction check completed in {ElapsedMs}ms", 
+                        stopwatch.ElapsedMilliseconds);
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "[ERROR] in login restriction check for user {UserId}", userId);
-                return (true, "System error - access granted");
-            }
-            finally
-            {
-                _logger.LogInformation("[TIME] Login restriction check completed in {ElapsedMs}ms", 
-                    stopwatch.ElapsedMilliseconds);
-            }
-        }
 
         private async Task<List<Shift>> GetCurrentlyRunningShifts(TimeOnly currentTime)
         {

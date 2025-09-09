@@ -1,16 +1,19 @@
+// App/routes.jsx - Clean routes configuration with RBAC
+import React from 'react';
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoutes.jsx";
+import useAuth from '../helpers/auth.js';
 
 // Layout
 const MainLayout = lazy(() => import("../layouts/MainLayout.jsx"));
-
+const UserServiceLayout = lazy(() => import("../layouts/UserServiceLayout.jsx"));
 // Auth
 const Login = lazy(() => import("../pages/auth/Login.jsx"));
 
-// Admin
-const AdminDashboard = lazy(() => import("../components/user/AdminDashboard.jsx"));
+// Admin Components
 
-// Operator
+// Operator/Shared Components
 const Dashboard = lazy(() => import("../pages/weighing/Dashboard.jsx"));
 const FactoryWeighing = lazy(() => import("../pages/weighing/Weighing.jsx"));
 const Automation = lazy(() => import("../pages/weighing/Automation.jsx"));
@@ -20,49 +23,160 @@ const Reports = lazy(() => import("../pages/weighing/Reports.jsx"));
 const System = lazy(() => import("../pages/weighing/System.jsx"));
 const Vehicle = lazy(() => import("../components/weighing/Vehicles.jsx"));
 const Drivers = lazy(() => import("../components/weighing/Drivers.jsx"));
+const AdminDashboard = lazy(() => import("../pages/Userservice/AdminDashboard.jsx"));
+const PasswordPolicy = lazy(() => import("../pages/Userservice/PasswordPolicy.jsx"));
+const Permissions = lazy(() => import("../pages/Userservice/Permissions.jsx"));
+// Root redirect component that handles authenticated users
+const RootRedirect = () => {
+    const { isAuthenticated, getCurrentUser } = useAuth();
 
+    if (!isAuthenticated()) {
+        return <Navigate to="/login" replace />;
+    }
+
+    const user = getCurrentUser();
+    const primaryRole = user?.userRoles?.[0];
+
+    if (primaryRole === 'Admin') {
+        return <Navigate to="/admin" replace />;
+    } else if (primaryRole === 'Operator') {
+        return <Navigate to="/operator" replace />;
+    }
+
+    return <Navigate to="/login" replace />;
+};
+
+// 404 Component
+const NotFound = () => (
+    <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-700 mb-4">404</h1>
+            <p className="text-gray-500 mb-4">Page Not Found</p>
+            <button
+                onClick={() => window.history.back()}
+                className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
+            >
+                Go Back
+            </button>
+        </div>
+    </div>
+);
+
+// Routes configuration
 export const routes = [
-  // Redirect root ("/") → login
-  { path: "/", component: () => <Navigate to="/login" replace /> },
+    // Public routes
+    {
+        path: "/login",
+        element: <Login />
+    },
 
-  // Login
-  { path: "/login", component: Login },
+    // Root redirect
+    {
+        path: "/",
+        element: <RootRedirect />
+    },
 
-  // Admin routes
-  {
-    path: "/admin",
-    component: MainLayout,
-    children: [
-      { index: true, component: AdminDashboard },
-      { path: "operator", component: Dashboard },
-      { path: "operator/weighing/factory", component: FactoryWeighing },
-      { path: "operator/weighing/vehicle", component: Vehicle },
-      { path: "operator/weighing/drivers", component: Drivers },
-      { path: "operator/automation", component: Automation },
-      { path: "operator/calibrations", component: Calibrations },
-      { path: "operator/analytics", component: Analytics },
-      { path: "operator/reports", component: Reports },
-      { path: "operator/system", component: System },
-    ],
-  },
+    // Admin routes - RBAC protected
+    {
+        path: "",
+        element: <ProtectedRoute allowedRoles={["Operator"]} />,
+        children: [
+            {
+                path: "/Operator",
+                element: <MainLayout />,
+                children: [
+                    {
+                        path: "dashboard",
+                        element: <Dashboard />
+                    },
+                    {
+                        path: "weighing/factory",
+                        element: <FactoryWeighing />
+                    },
+                    {
+                        path: "weighing/vehicle",
+                        element: <Vehicle />
+                    },
+                    {
+                        path: "weighing/drivers",
+                        element: <Drivers />
+                    },
+                    {
+                        path: "automation",
+                        element: <Automation />
+                    },
+                    {
+                        path: "calibrations",
+                        element: <Calibrations />
+                    },
+                    {
+                        path: "analytics",
+                        element: <Analytics />
+                    },
+                    {
+                        path: "reports",
+                        element: <Reports />
+                    },
+                    {
+                        path: "system",
+                        element: <System />
+                    }
+                ]
+            }
+        ]
+    },
 
-  // Operator routes
-  {
-    path: "/operator",
-    component: MainLayout,
-    children: [
-      { index: true, component: Dashboard },
-      { path: "weighing/factory", component: FactoryWeighing },
-      { path: "weighing/vehicle", component: Vehicle },
-      { path: "weighing/drivers", component: Drivers },
-      { path: "automation", component: Automation },
-      { path: "calibrations", component: Calibrations },
-      { path: "analytics", component: Analytics },
-      { path: "reports", component: Reports },
-      { path: "system", component: System },
-    ],
-  },
+    // Operator routes - RBAC protected (now matching admin path structure)
+    {
+        path: "",
+        element: <ProtectedRoute allowedRoles={["Admin"]} />,
+        children: [
+            {
+                path: "/Admin",
+                element: <UserServiceLayout />,
+                children: [
+                    {
+                        path: "dashboard",
+                        element: <AdminDashboard />
+                    },
+                    {
+                        path: "security/password-policy",
+                        element: <PasswordPolicy />
+                    },
+                    {
+                        path: "security/permissions",
+                        element: <Permissions />
+                    }
+                ]
+            }
+        ]
+    },
 
-  // 404
-  { path: "*", component: () => <div>404 - Page Not Found</div> },
+    // Shared routes - RBAC protected
+    {
+        path: "",
+        element: <ProtectedRoute allowedRoles={["Admin", "Operator"]} />,
+        children: [
+            {
+                path: "/shared",
+                element: <MainLayout />,
+                children: [
+                    {
+                        path: "reports",
+                        element: <Reports />
+                    },
+                    {
+                        path: "analytics",
+                        element: <Analytics />
+                    }
+                ]
+            }
+        ]
+    },
+
+    // 404 fallback
+    {
+        path: "*",
+        element: <NotFound />
+    }
 ];

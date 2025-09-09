@@ -1,138 +1,177 @@
-// src/pages/Vehicles.jsx
 import { useState } from "react";
-import { Car, PlusCircle, Trash2 } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { addVehicle, updateVehicle, deleteVehicle } from "../../store/Vehicleslice";
+import { Pencil, Trash2, PlusCircle } from "lucide-react";
 
-export default function Vehicles() {
-  const [vehicles, setVehicles] = useState([]);
+export default function VehiclePortal() {
+  const vehicles = useSelector((state) => state.vehicles);
+  const dispatch = useDispatch();
+
+  const [editingIndex, setEditingIndex] = useState(null);
   const [form, setForm] = useState({
     plate: "",
-    brand: "",
+    vehicleType: "Truck",
     model: "",
-    capacity: "",
+    fromAnotherPlant: false,
+    otherPlantName: "",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  const handleAdd = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.plate || !form.brand || !form.model) return;
-    setVehicles([...vehicles, { ...form, id: Date.now() }]);
-    setForm({ plate: "", brand: "", model: "", capacity: "" });
+
+    if (!form.plate) return alert("Registration number is required");
+
+    if (editingIndex !== null) {
+      dispatch(updateVehicle({ index: editingIndex, vehicle: form }));
+      setEditingIndex(null);
+    } else {
+      dispatch(addVehicle(form));
+    }
+
+    setForm({
+      plate: "",
+      vehicleType: "Truck",
+      model: "",
+      fromAnotherPlant: false,
+      otherPlantName: "",
+    });
   };
 
-  const handleDelete = (id) => {
-    setVehicles(vehicles.filter((v) => v.id !== id));
+  const handleEdit = (index) => {
+    setForm(vehicles[index]);
+    setEditingIndex(index);
+  };
+
+  const handleDelete = (index) => {
+    if (confirm("Are you sure you want to delete this vehicle?")) {
+      dispatch(deleteVehicle(index));
+    }
   };
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-2 text-amber-600">
-        <Car className="w-8 h-8" />
-        <h1 className="text-2xl font-bold">Vehicles Management</h1>
-      </div>
+    <div className="bg-white shadow rounded-lg p-4 border">
+      <h2 className="text-xl font-bold text-amber-600 mb-4 flex items-center gap-2">
+        <PlusCircle className="w-5 h-5" /> Vehicle Management
+      </h2>
 
-      {/* Form Section */}
-      <div className="bg-white shadow-lg rounded-lg border p-6">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Add New Vehicle
-        </h2>
-        <form
-          onSubmit={handleAdd}
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
+      {/* Vehicle Form */}
+      <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label>Registration Number</label>
+            <input
+              name="plate"
+              value={form.plate}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+              required
+            />
+          </div>
+          <div>
+            <label>Vehicle Type</label>
+            <select
+              name="vehicleType"
+              value={form.vehicleType}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+            >
+              <option>Truck</option>
+              <option>Trailer</option>
+            </select>
+          </div>
+          <div>
+            <label>Model</label>
+            <input
+              name="model"
+              value={form.model}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              name="fromAnotherPlant"
+              checked={form.fromAnotherPlant}
+              onChange={handleChange}
+            />
+            <label>Vehicle from another plant</label>
+          </div>
+          {form.fromAnotherPlant && (
+            <div className="col-span-2">
+              <label>Other Plant Name</label>
+              <input
+                name="otherPlantName"
+                value={form.otherPlantName}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+              />
+            </div>
+          )}
+        </div>
+        <button
+          type="submit"
+          className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded font-semibold"
         >
-          <input
-            type="text"
-            name="plate"
-            value={form.plate}
-            onChange={handleChange}
-            placeholder="Plate Number"
-            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
-          />
-          <input
-            type="text"
-            name="brand"
-            value={form.brand}
-            onChange={handleChange}
-            placeholder="Brand"
-            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
-          />
-          <input
-            type="text"
-            name="model"
-            value={form.model}
-            onChange={handleChange}
-            placeholder="Model"
-            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
-          />
-          <input
-            type="number"
-            name="capacity"
-            value={form.capacity}
-            onChange={handleChange}
-            placeholder="Capacity (tons)"
-            className="border rounded px-3 py-2 w-full focus:ring focus:ring-amber-200"
-          />
-          <button
-            type="submit"
-            className="flex items-center justify-center gap-2 bg-amber-500 text-white rounded px-4 py-2 hover:bg-amber-600 transition"
-          >
-            <PlusCircle size={18} /> Add Vehicle
-          </button>
-        </form>
-      </div>
+          {editingIndex !== null ? "Update Vehicle" : "Add Vehicle"}
+        </button>
+      </form>
 
       {/* Vehicle List */}
-      <div className="bg-white shadow-lg rounded-lg border overflow-x-auto">
-        <h2 className="text-lg font-semibold text-gray-700 p-4 border-b">
-          Vehicle List
-        </h2>
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-50 text-gray-600">
+      <h3 className="text-lg font-semibold text-gray-700 mb-2">Registered Vehicles</h3>
+      {vehicles.length === 0 ? (
+        <p className="text-gray-500 text-sm">No vehicles added yet.</p>
+      ) : (
+        <table className="w-full text-sm border">
+          <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 border">Plate</th>
-              <th className="px-4 py-2 border">Brand</th>
-              <th className="px-4 py-2 border">Model</th>
-              <th className="px-4 py-2 border">Capacity (tons)</th>
-              <th className="px-4 py-2 border">Actions</th>
+              <th className="border px-2 py-1">Plate</th>
+              <th className="border px-2 py-1">Type</th>
+              <th className="border px-2 py-1">Model</th>
+              <th className="border px-2 py-1">From Plant?</th>
+              <th className="border px-2 py-1">Other Plant</th>
+              <th className="border px-2 py-1">Actions</th>
             </tr>
           </thead>
           <tbody>
             {vehicles.map((v, i) => (
-              <tr
-                key={v.id}
-                className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
-              >
-                <td className="px-4 py-2 border font-medium">{v.plate}</td>
-                <td className="px-4 py-2 border">{v.brand}</td>
-                <td className="px-4 py-2 border">{v.model}</td>
-                <td className="px-4 py-2 border text-center">{v.capacity}</td>
-                <td className="px-4 py-2 border text-center">
+              <tr key={i}>
+                <td className="border px-2 py-1">{v.plate}</td>
+                <td className="border px-2 py-1">{v.vehicleType}</td>
+                <td className="border px-2 py-1">{v.model}</td>
+                <td className="border px-2 py-1">{v.fromAnotherPlant ? "Yes" : "No"}</td>
+                <td className="border px-2 py-1">
+                  {v.fromAnotherPlant ? v.otherPlantName : "-"}
+                </td>
+                <td className="border px-2 py-1 flex gap-2">
                   <button
-                    onClick={() => handleDelete(v.id)}
-                    className="flex items-center gap-1 px-3 py-1 text-red-600 bg-red-50 rounded hover:bg-red-100 transition"
+                    type="button"
+                    onClick={() => handleEdit(i)}
+                    className="text-blue-600 hover:text-blue-800"
                   >
-                    <Trash2 size={16} /> Remove
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(i)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
               </tr>
             ))}
-            {vehicles.length === 0 && (
-              <tr>
-                <td
-                  colSpan="5"
-                  className="text-center py-6 text-gray-500 italic"
-                >
-                  No vehicles added yet 🚚
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
-      </div>
+      )}
     </div>
   );
 }
