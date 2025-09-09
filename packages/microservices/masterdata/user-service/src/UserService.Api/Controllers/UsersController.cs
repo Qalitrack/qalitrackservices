@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.User;
 using UserService.Core.DTOs.Common;
+using UserService.Core.DTOs.Roles;
 using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
@@ -202,15 +203,17 @@ namespace UserService.Api.Controllers
             }
         }
 
+
         [HttpPatch("{id}/restore")]
         [Authorize(Policy = "users.manage")]
-        public async Task Restore(string id)
+        public async Task<IActionResult> Restore(string id)
         {
             var result = await _userService.RestoreAsync(id);
             if (!result)
             {
-                throw new KeyNotFoundException($"Deleted user with ID {id} not found");
+                return NotFound(new { message = $"Deleted user with ID {id} not found" });
             }
+            return Ok(new { message = "User restored successfully" });
         }
 
         [HttpGet("{userId}/permissions")]
@@ -277,6 +280,115 @@ namespace UserService.Api.Controllers
             {
                 _logger.LogError(ex, "Error getting paged deleted users");
                 throw;
+            }
+        }
+        [HttpPost("{userId}/reset-password")]
+        [Authorize(Policy = "users.manage")]
+        public async Task<IActionResult> ResetPassword(string userId)
+        {
+            try
+            {
+                var result = await _userService.ResetUserPasswordAsync(userId);
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        Success = false,
+                        Message = $"User with ID {userId} not found or password reset failed",
+                        Errors = (string[])null,
+                        StatusCode = 404
+                    });
+                }
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Password reset initiated successfully"
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User not found for password reset: {UserId}", userId);
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 404
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Invalid operation for password reset: {UserId}", userId);
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error resetting password for user: {UserId}", userId);
+                return StatusCode(500, new
+                {
+                    Success = false,
+                    Message = "An error occurred while resetting the password",
+                    Errors = (string[])null,
+                    StatusCode = 500
+                });
+            }
+        }
+        
+        [HttpGet("{userId}/roles")]
+        [Authorize(Policy = "users.view")]
+       
+        public async Task<IActionResult> GetUserRoles(string userId)
+        {
+            try
+            {
+                var roles = await _userService.GetUserRolesByUserIdAsync(userId);
+                var roleDtos = _mapper.Map<IEnumerable<RoleDto>>(roles);
+                var enumerable = roleDtos as RoleDto[] ?? roleDtos.ToArray();
+                return Ok(new
+                {
+                    Success = true,
+                    Roles = enumerable,
+                    Count = enumerable.Count()
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User not found for roles retrieval: {UserId}", userId);
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 404
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid user ID for roles retrieval: {UserId}", userId);
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving roles for user: {UserId}", userId);
+                return StatusCode(500, new
+                {
+                    Success = false,
+                    Message = "An error occurred while retrieving user roles",
+                    Errors = (string[])null,
+                    StatusCode = 500
+                });
             }
         }
     }

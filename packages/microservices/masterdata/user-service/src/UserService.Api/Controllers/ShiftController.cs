@@ -135,7 +135,7 @@ namespace UserService.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "shifts.manage")]  // Permission-based policy check
+        [Authorize(Policy = "shifts.manage")]
         [ProducesResponseType(typeof(ShiftDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -144,24 +144,20 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                // Get the existing shift first
-                var existingShift = await _shiftService.GetByIdAsync(id);
-                if (existingShift == null)
-                    return NotFound();
-
-                // Only update the fields that are provided in the request
-                // Create an UpdateShiftDto with existing values
-                var updateDto = new UpdateShiftDto
+                
+                // Just pass the DTO directly - your service handles null checks
+                var shift = await _shiftService.UpdateAsync(id, dto);
+                
+                if (shift == null)
                 {
-                    Name = dto.Name ?? existingShift.Name,
-                    StartTime = dto.StartTime != default ? dto.StartTime : existingShift.StartTime,
-                    DurationMinutes = dto.DurationMinutes ?? existingShift.DurationMinutes,
-                    Description = dto.Description ?? existingShift.Description,
-                    Mode = dto.Mode.HasValue ? dto.Mode.Value : existingShift.Mode,
-                    AutoRepeatDaily = dto.AutoRepeatDaily ?? existingShift.AutoRepeatDaily
-                };
-
-                var shift = await _shiftService.UpdateAsync(id, updateDto);
+                    _logger.LogWarning("Controller: Service returned null for shift {ShiftId}", id);
+                    return NotFound(new { 
+                        Success = false, 
+                        Message = $"Shift with ID {id} not found", 
+                        Errors = (string[])null, 
+                        StatusCode = 404 
+                    });
+                }
                 return Ok(shift);
             }
             catch (Exception ex) when (ex.Message == "Shift not found")
@@ -295,43 +291,7 @@ namespace UserService.Api.Controllers
                     new { Success = false, Message = "An error occurred while retrieving deleted shifts" });
             }
         }
-
-        [HttpGet("user-shifts/deleted")]
-        [Authorize(Policy = "shifts.view")]
-        [ProducesResponseType(typeof(PagedResult<UserShiftDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDeletedUserShifts(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string? search = null,
-            [FromQuery] string? sortBy = null,
-            [FromQuery] bool sortDescending = false)
-        {
-            try
-            {
-                var parameters = new PaginationParameters
-                {
-                    Page = page,
-                    PageSize = pageSize,
-                    Search = search,
-                    SortBy = sortBy,
-                    SortDescending = sortDescending
-                };
-
-                var result = await _shiftService.GetDeletedUserShiftsPagedAsync(parameters);
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving deleted user shifts");
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { Success = false, Message = "An error occurred while retrieving deleted user shifts" });
-            }
-        }
+        
     }
 }
 

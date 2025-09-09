@@ -1,5 +1,6 @@
 using UserService.Core.DTOs.Roles;
 using UserService.Core.DTOs.Common;
+using UserService.Core.Entities;
 
 namespace UserService.Core.Interfaces.Services
 {
@@ -12,7 +13,7 @@ namespace UserService.Core.Interfaces.Services
         Task<bool> DeleteAsync(string id);
         Task<bool> AssignPermissionToRoleAsync(string roleId, string permissionId);
         Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);
-
+        Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId);
         Task<PagedResult<RoleDto>> GetDeletedPagedAsync(PaginationParameters parameters);
     }
 }
