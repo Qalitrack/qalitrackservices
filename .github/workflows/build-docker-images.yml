@@ -6,7 +6,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: surgbc-projects/qs-website
 
 jobs:
   build-frontend:
@@ -30,7 +29,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend
+        images: ${{ env.REGISTRY }}/${{ github.repository }}/qs-website-frontend
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -66,7 +65,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend
+        images: ${{ env.REGISTRY }}/${{ github.repository }}/qs-website-backend
         tags: |
           type=ref,event=branch
           type=ref,event=pr
