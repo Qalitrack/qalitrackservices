@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: qs-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: products_dashboard_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - qs-network
+
+  backend:
+    image: ghcr.io/qalitrack/qalitrackservices/qs-website-backend:main
+    container_name: qs-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - mongodb
+    networks:
+      - qs-network
+
+  frontend:
+    image: ghcr.io/qalitrack/qalitrackservices/qs-website-frontend:main
+    container_name: qs-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - qs-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  qs-network:
+    driver: bridge

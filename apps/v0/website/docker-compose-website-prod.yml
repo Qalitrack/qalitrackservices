@@ -13,24 +13,20 @@ services:
       - qs-network
 
   backend:
-    build:
-      context: ../qs-website
-      dockerfile: Dockerfile.backend
+    image: ghcr.io/qalitrack/qalitrackservices/qs-website-backend:main
     container_name: qs-backend
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
-      - JWT_SECRET=your_super_secret_jwt_key_change_in_production
-      - MONGODB_URI=mongodb://mongodb:27017/products_dashboard_db
     depends_on:
       - mongodb
     networks:
       - qs-network
 
   frontend:
-    build:
-      context: ../qs-website
-      dockerfile: Dockerfile
+    image: ghcr.io/qalitrack/qalitrackservices/qs-website-frontend:main
     container_name: qs-frontend
     restart: unless-stopped
     depends_on:
