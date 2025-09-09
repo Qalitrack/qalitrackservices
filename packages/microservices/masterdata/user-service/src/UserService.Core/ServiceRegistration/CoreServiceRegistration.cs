@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using UserService.Core.Services;
 using UserService.Core.Interfaces.Services;
 
@@ -14,7 +15,8 @@ public static class CoreServiceRegistration
         {
             var baseUserService = provider.GetRequiredService<UserService.Core.Services.UserService>();
             var cacheService = provider.GetRequiredService<ICacheService>();
-            return new CachedUserService(baseUserService, cacheService);
+            var logger = provider.GetRequiredService<ILogger<UserService.Core.Services.CachedUserService>>();
+            return new CachedUserService(baseUserService, cacheService, logger);
         });
 
         services.AddScoped<IRoleService, RoleService>();

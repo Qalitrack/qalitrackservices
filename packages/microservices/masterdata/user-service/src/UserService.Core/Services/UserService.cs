@@ -8,6 +8,7 @@ using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
+using UserService.Core.Interfaces.Emails;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Utilities;
@@ -19,24 +20,16 @@ namespace UserService.Core.Services
         IMapper mapper,
         IRoleRepository roleRepository,
         IHttpContextAccessor httpContextAccessor,
+        IEmailQueueService emailQueueService,
         PasswordPolicyService passwordPolicyService)
         : IUserService
     {
         private readonly ILogger<UserService> _logger = new Logger<UserService>(new LoggerFactory());
         private readonly PasswordPolicyService _passwordPolicyService = passwordPolicyService ?? throw new ArgumentNullException(nameof(passwordPolicyService));
+        private readonly IEmailQueueService _emailQueueService = emailQueueService ?? throw new ArgumentNullException(nameof(emailQueueService));
 
         public async Task<bool> RestoreAsync(string id)
         {
-            var user = await userRepository.GetByIdAsync(id, true);
-            if (user == null)
-            {
-                return false;
-            }
-
-            user.IsDeleted = false;
-            user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
-
             return await userRepository.RestoreAsync(id);
         }
 
@@ -83,6 +76,8 @@ namespace UserService.Core.Services
             }
 
             var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+            
+            // FIXED: Properly preserve all existing user data
             var userToUpdate = new User
             {
                 Id = existingUser.Id,
@@ -90,11 +85,15 @@ namespace UserService.Core.Services
                 LastName = dto.LastName ?? existingUser.LastName,
                 Email = dto.Email ?? existingUser.Email,
                 MobileNumber = dto.MobileNumber ?? existingUser.MobileNumber,
-                Password = existingUser.Password,
+                Password = existingUser.Password, // Keep existing password
                 IsFirstLogin = dto.IsFirstLogin ?? existingUser.IsFirstLogin,
+                IsActive = existingUser.IsActive, // FIXED: Preserve IsActive status
+                CreatedAt = existingUser.CreatedAt, // FIXED: Preserve original CreatedAt
                 UpdatedAt = DateTime.UtcNow,
                 UpdatedBy = currentUserId,
-                CreatedBy = existingUser.CreatedBy
+                CreatedBy = existingUser.CreatedBy, // Keep original creator
+                IsDeleted = existingUser.IsDeleted, // Preserve deletion status
+               
             };
             
             var updatedUser = await userRepository.UpdateAsync(userToUpdate);
@@ -103,14 +102,6 @@ namespace UserService.Core.Services
 
         public async Task<bool> DeleteAsync(string id)
         {
-            var user = await userRepository.GetByIdAsync(id, true);
-            if (user == null)
-            {
-                return false;
-            }
-
-            user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             return await userRepository.DeleteAsync(id);
         }
 
@@ -132,6 +123,7 @@ namespace UserService.Core.Services
                 return null;
             }
 
+            // FIXED: Only update if login validation succeeds - avoid unnecessary DB calls
             user.UpdatedAt = DateTime.UtcNow;
             user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
             await userRepository.UpdateAsync(user);
@@ -257,9 +249,11 @@ namespace UserService.Core.Services
             }
 
             user.IsActive = isActive;
-            user.UpdatedAt = DateTime.UtcNow;
-            user.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
-            return await userRepository.UpdateUserActiveStatusAsync(userId, isActive);
+            // Repository will handle UpdatedAt/UpdatedBy
+            
+            var result = await userRepository.UpdateUserActiveStatusAsync(userId, isActive);
+            
+            return result;
         }
 
         public async Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName)
@@ -271,6 +265,63 @@ namespace UserService.Core.Services
             return role.RolePermissions
                 .Where(rp => rp.Permission != null)
                 .Select(rp => rp.Permission.Name);
+        }
+
+        public async Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("User ID is required", nameof(userId));
+
+            // Check if user exists
+            var user = await userRepository.GetByIdAsync(userId, false);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            // Get roles for the user
+            return await userRepository.GetUserRolesByUserIdAsync(userId);
+        }
+
+        public async Task<bool> ResetUserPasswordAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("User ID is required", nameof(userId));
+
+            try
+            {
+                // Check if user exists first
+                var user = await userRepository.GetByIdAsync(userId, false);
+                if (user == null)
+                {
+                    throw new KeyNotFoundException("User not found.");
+                }
+
+                // Check if user is active
+                if (!user.IsActive)
+                {
+                    throw new InvalidOperationException("Cannot reset password for an inactive user.");
+                }
+
+                // Reset password using repository method
+                var result = await userRepository.ResetUserPasswordAsync(userId, _emailQueueService);
+        
+                if (result)
+                {
+                    _logger.LogInformation("Password reset successfully initiated for user {UserId}", userId);
+                }
+                else
+                {
+                    _logger.LogWarning("Password reset failed for user {UserId}", userId);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error resetting password for user {UserId}", userId);
+                throw;
+            }
         }
     }
 }

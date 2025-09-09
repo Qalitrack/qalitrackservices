@@ -1,16 +1,59 @@
-import React from "react";
-import { BarChart3, Users, Settings, Activity } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { BarChart3, Users as UsersIcon, Settings, Activity } from "lucide-react";
+import { fetchUsers } from "../../helpers/UserService/Users/users.js";
+import { fetchRoles } from "../../helpers/UserService/Roles/Roles.js";
+import Users from "./Users.jsx";
 
 export default function AdminDashboard() {
+    const [stats, setStats] = useState([
+        { label: "Total Users", value: "...", icon: <UsersIcon size={20} className="text-blue-500" /> },
+        { label: "Active Roles", value: "...", icon: <Settings size={20} className="text-green-500" /> },
+        { label: "System Health", value: "98%", icon: <Activity size={20} className="text-amber-500" /> },
+    ]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const [usersData, rolesData] = await Promise.all([
+                    fetchUsers(1, 1, signal), // We only need the total count
+                    fetchRoles(signal)
+                ]);
+
+                setStats(prevStats => [
+                    { ...prevStats[0], value: usersData.totalCount.toString() },
+                    { ...prevStats[1], value: rolesData.length.toString() },
+                    prevStats[2]
+                ]);
+
+            } catch (error) {
+                if (error.name !== 'CanceledError') {
+                    console.error("Failed to fetch dashboard data:", error);
+                    // Optionally set stats to an error state
+                    setStats(prevStats => [
+                        { ...prevStats[0], value: "N/A" },
+                        { ...prevStats[1], value: "N/A" },
+                        prevStats[2]
+                    ]);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+
+        return () => {
+            abortController.abort();
+        };
+    }, []);
+
     // Static greeting
     const greeting = "Welcome to the Admin Dashboard";
-
-    // Stats for dashboard
-    const stats = [
-        { label: "Total Users", value: "124", icon: <Users size={20} className="text-blue-500" /> },
-        { label: "Active Roles", value: "8", icon: <Settings size={20} className="text-green-500" /> },
-        { label: "System Health", value: "98%", icon: <Activity size={20} className="text-amber-500" /> },
-    ];
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
@@ -31,43 +74,16 @@ export default function AdminDashboard() {
                     >
                         <div>
                             <p className="text-sm text-gray-500">{stat.label}</p>
-                            <p className="text-2xl font-semibold mt-1">{stat.value}</p>
+                            <p className="text-2xl font-semibold mt-1">{loading ? '...' : stat.value}</p>
                         </div>
                         <div className="bg-gray-50 p-3 rounded-full">{stat.icon}</div>
                     </div>
                 ))}
             </div>
 
-            {/* Activity Overview */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-                <div className="flex items-center justify-between p-5 border-b border-gray-100">
-                    <h2 className="font-semibold text-lg">Overview</h2>
-                    <div className="flex items-center text-sm text-amber-600 font-medium">
-                        <BarChart3 size={16} className="mr-1" />
-                        <span>Activity Chart</span>
-                    </div>
-                </div>
-
-                <div className="p-5">
-                    <p className="text-gray-500 mb-8">
-                        This administration dashboard provides you with system-wide
-                        management capabilities for users, roles, and application settings.
-                    </p>
-
-                    <div className="flex flex-col md:flex-row gap-4 items-center justify-center p-8 bg-gray-50 rounded-md">
-                        <div className="text-center">
-                            <h3 className="font-medium mb-2">Quick Links</h3>
-                            <div className="flex gap-2">
-                                <button className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors">
-                                    Manage Users
-                                </button>
-                                <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors">
-                                    System Settings
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            {/* Users List */}
+            <div className="mt-8">
+                <Users />
             </div>
         </div>
     );

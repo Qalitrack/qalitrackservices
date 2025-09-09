@@ -50,10 +50,24 @@ namespace UserService.Core.Services
             var success = await userRoleRepository.AssignRoleToUserAsync(userId, roleId);
             if (success)
             {
+                // Comprehensive cache invalidation
+                logger.LogInformation("Role {RoleId} assigned to user {UserId}, invalidating cache", roleId, userId);
                 
                 // Invalidate user permissions cache
                 await cacheService.RemoveAsync($"user_permissions:{userId}");
                 await cacheService.RemovePatternAsync($"user_permission:{userId}:*");
+                
+                // Invalidate user roles cache
+                await cacheService.RemoveAsync($"user_roles:{userId}");
+                
+                // Invalidate the specific user cache
+                await cacheService.RemoveAsync($"user:{userId}");
+                
+                // Invalidate any paged results that might include this user
+                await cacheService.RemovePatternAsync("users:paged:*");
+                
+                // Flag that recent changes have been made
+                await cacheService.SetAsync("users:recent_change", DateTime.UtcNow, TimeSpan.FromMinutes(15));
             }
             else
             {
@@ -76,9 +90,25 @@ namespace UserService.Core.Services
             
             if (success)
             {
+                // Comprehensive cache invalidation
+                logger.LogInformation("Role {RoleId} removed from user {UserId}, invalidating cache", roleId, userId);
+                
                 // Invalidate user permissions cache
                 await cacheService.RemoveAsync($"user_permissions:{userId}");
                 await cacheService.RemovePatternAsync($"user_permission:{userId}:*");
+                
+                // Invalidate user roles cache
+                await cacheService.RemoveAsync($"user_roles:{userId}");
+                
+                // Invalidate the specific user cache
+                await cacheService.RemoveAsync($"user:{userId}");
+                
+                // Invalidate any paged results that might include this user
+                await cacheService.RemovePatternAsync("users:paged:*");
+                
+                // Flag that recent changes have been made
+                await cacheService.SetAsync("users:recent_change", DateTime.UtcNow, TimeSpan.FromMinutes(15));
+                
                 return new ServiceResult { Success = true, Message = "User removed from role." };
             }
             else
