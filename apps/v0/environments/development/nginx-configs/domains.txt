@@ -1,0 +1,14 @@
+# Domain Configuration for QaliTrack
+# List domains that should be included in SSL certificate
+# One domain per line or space-separated on single line
+
+# Production domains (CHANGE THESE)
+yourdomain.com www.yourdomain.com
+api.yourdomain.com
+admin.yourdomain.com
+media.yourdomain.com
+
+# Development domains (for reference)
+# localhost
+# api.localhost
+# admin.localhost
