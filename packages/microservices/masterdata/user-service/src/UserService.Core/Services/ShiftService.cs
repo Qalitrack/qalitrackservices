@@ -80,11 +80,10 @@ namespace UserService.Core.Services
             return _mapper.Map<ShiftDto>(createdShift);
         }
 
-        public async Task<ShiftDto?> UpdateAsync(string id, DTOs.Shift.UpdateShiftDto dto)
+        public async Task<ShiftDto?> UpdateAsync(string id, UpdateShiftDto dto)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("Shift ID is required", nameof(id));
-                
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
 
@@ -92,50 +91,32 @@ namespace UserService.Core.Services
             if (existingShift == null)
                 throw new Exception("Shift not found");
 
-            // Update properties only if they are provided in the DTO
-            if (!string.IsNullOrEmpty(dto.Name))
-                existingShift.Name = dto.Name;
-                
-            if (!string.IsNullOrEmpty(dto.Description))
-                existingShift.Description = dto.Description;
-                
-            // Handle StartTime and DurationMinutes updates
-            var startTime = dto.StartTime != default ? dto.StartTime : DateTime.Today.Add(existingShift.StartTime);
-            var durationMinutes = dto.DurationMinutes ?? existingShift.DurationMinutes ?? 480; // Default 8 hours if null
+            existingShift.Name = dto.Name;
+            existingShift.Description = dto.Description;
+            existingShift.Mode = dto.Mode ?? existingShift.Mode;
+            existingShift.AutoRepeatDaily = dto.AutoRepeatDaily ?? existingShift.AutoRepeatDaily;
 
-            // Validate duration
+            // Handle StartTime and DurationMinutes
+            var startTime = dto.StartTime != default ? dto.StartTime : DateTime.Today.Add(existingShift.StartTime);
+            var durationMinutes = dto.DurationMinutes ?? existingShift.DurationMinutes ?? 480;
+
             if (durationMinutes <= 0)
                 throw new ValidationException("Duration must be greater than 0 minutes");
 
-            // Always recalculate EndTime when either StartTime or DurationMinutes changes
             var calculatedEndTime = startTime.AddMinutes(durationMinutes);
-
-            // Validate shift times - compare time parts only since shifts are time-based
             var startTimeOfDay = startTime.TimeOfDay;
             var endTimeOfDay = calculatedEndTime.TimeOfDay;
-            
-            // Allow overnight shifts (e.g., 22:00 to 06:00), but not same time
+
             if (startTimeOfDay == endTimeOfDay)
                 throw new ValidationException("Start time and end time cannot be the same");
 
-            // Update the shift properties
-            if (dto.StartTime != default)
-                existingShift.StartTime = startTime.TimeOfDay;
-                
-            if (dto.DurationMinutes.HasValue)
-                existingShift.DurationMinutes = durationMinutes;
-
-            // Always update EndTime based on current StartTime and DurationMinutes
+            existingShift.StartTime = dto.StartTime != default ? dto.StartTime.TimeOfDay : existingShift.StartTime;
+            existingShift.DurationMinutes = dto.DurationMinutes ?? existingShift.DurationMinutes;
             existingShift.EndTime = calculatedEndTime.TimeOfDay;
-                
-            if (dto.Mode.HasValue)
-                existingShift.Mode = dto.Mode.Value;
-                
-            if (dto.AutoRepeatDaily.HasValue)
-                existingShift.AutoRepeatDaily = dto.AutoRepeatDaily.Value;
-                
+
             existingShift.UpdatedAt = DateTime.UtcNow;
             existingShift.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+
             var updatedShift = await _shiftRepository.UpdateAsync(existingShift);
             return _mapper.Map<ShiftDto>(updatedShift);
         }
@@ -472,5 +453,33 @@ namespace UserService.Core.Services
                 TotalCount = pagedUserShifts.TotalCount
             };
         }
+
+        public async Task<IEnumerable<ShiftDto>> GetShiftsForUserAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("User ID is required", nameof(userId));
+
+            try
+            {
+                // Check if the user exists and is not soft deleted
+                var user = await _userRepository.GetByIdAsync(userId, true);
+                if (user == null)
+                {
+                    throw new Exception("User does not exist or is deleted");
+                }
+
+                var userShifts = await _userShiftRepository.GetShiftsForUserAsync(userId, null);
+                var shifts = userShifts.Select(us => _mapper.Map<ShiftDto>(us.Shift)).ToList();
+                
+                _logger.LogInformation("Retrieved {ShiftCount} shifts for user {UserId}", shifts.Count, userId);
+                
+                return shifts;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving shifts for user {UserId}", userId);
+                throw;
+            }
+        }
     }
-}
+} 

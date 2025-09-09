@@ -27,6 +27,8 @@ const AdminDashboard = lazy(() => import("../pages/Userservice/AdminDashboard.js
 const PasswordPolicy = lazy(() => import("../pages/Userservice/PasswordPolicy.jsx"));
 const Permissions = lazy(() => import("../pages/Userservice/Permissions.jsx"));
 const Roles = lazy(() => import("../pages/Userservice/Roles.jsx"));
+const Shifts = lazy(() => import("../pages/Userservice/Shifts.jsx"));
+const ShiftAssignment = lazy(() => import("../pages/Userservice/ShiftAssignment.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -151,6 +153,14 @@ export const routes = [
                     {
                         path: "security/roles",
                         element: <Roles />
+                    },
+                    {
+                        path:"shifts",
+                        element: <Shifts />
+                    },
+                    {
+                        path: "shift-assignment",
+                        element: <ShiftAssignment />
                     }
                 ]
             }

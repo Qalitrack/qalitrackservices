@@ -83,14 +83,74 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<bool> AssignShiftToUserAsync(string userId, string shiftId)
         {
-            return await _context.UserShifts
-                .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);
+            // Check if there's an existing relationship (active)
+            var existingAssignment = await _context.UserShifts
+                .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);
+                
+            if (existingAssignment != null)
+            {
+                // Assignment already exists and is active
+                logger.LogDebug("User {UserId} is already assigned to shift {ShiftId}", userId, shiftId);
+                return true;
+            }
+            
+            // Check if there's a soft-deleted relationship
+            var softDeletedAssignment = await _context.UserShifts
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId && us.IsDeleted);
+        
+            if (softDeletedAssignment != null)
+            {
+                // Restore the soft-deleted relationship
+                softDeletedAssignment.IsDeleted = false;
+                softDeletedAssignment.UpdatedAt = DateTime.UtcNow;
+                softDeletedAssignment.UpdatedBy = GetCurrentUserId();
+                softDeletedAssignment.AssignedAt = DateTime.UtcNow;
+                
+                await _context.SaveChangesAsync();
+                logger.LogInformation("Restored previously deleted assignment of user {UserId} to shift {ShiftId}", userId, shiftId);
+                return true;
+            }
+            
+            // Create a new assignment
+            var userShift = new UserShift
+            {
+                UserId = userId,
+                ShiftId = shiftId,
+                AssignedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedBy = GetCurrentUserId(),
+                UpdatedBy = GetCurrentUserId()
+            };
+            
+            await _context.UserShifts.AddAsync(userShift);
+            await _context.SaveChangesAsync();
+            logger.LogInformation("Assigned user {UserId} to shift {ShiftId}", userId, shiftId);
+            return true;
         }
 
         public async Task<bool> RemoveShiftFromUserAsync(string userId, string shiftId)
         {
-            return await _context.UserShifts
-                .AnyAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);
+            // Find the existing assignment
+            var assignment = await _context.UserShifts
+                .FirstOrDefaultAsync(us => us.UserId == userId && us.ShiftId == shiftId && !us.IsDeleted);
+                
+            if (assignment == null)
+            {
+                // Assignment doesn't exist or is already soft-deleted
+                logger.LogDebug("No active assignment found for user {UserId} and shift {ShiftId}", userId, shiftId);
+                return false;
+            }
+            
+            // Soft-delete the assignment
+            assignment.IsDeleted = true;
+            assignment.UpdatedAt = DateTime.UtcNow;
+            assignment.UpdatedBy = GetCurrentUserId();
+            
+            await _context.SaveChangesAsync();
+            logger.LogInformation("Removed shift {ShiftId} assignment from user {UserId}", shiftId, userId);
+            return true;
         }
 
         public async Task<bool> HasPermissionAsync(string userId, string permissionName)
