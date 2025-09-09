@@ -15,25 +15,17 @@ COPY . .
 # Build the frontend
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --omit=dev
+# Production stage - Use nginx to serve static files
+FROM nginx:alpine
 
 # Copy built assets from builder stage
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy source code (for server if needed)
-COPY . .
+# Copy custom nginx config if needed (optional)
+# COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
-EXPOSE 3000
+EXPOSE 80
 
-# Start command
-CMD ["npm", "run", "preview"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

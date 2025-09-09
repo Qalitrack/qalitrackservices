@@ -1,8 +1,11 @@
-name: Build and Push Docker Images
+name: Build QS Website
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'apps/qs-website/**'
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io

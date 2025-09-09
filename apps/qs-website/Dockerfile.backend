@@ -6,18 +6,30 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies (all for now, can optimize later)
-RUN npm ci
+# Install only production dependencies
+RUN npm ci --omit=dev
 
 # Copy server file and backend directory
 COPY server.js ./
 COPY backend/ ./backend/
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
+
+# Change ownership of the app directory
+RUN chown -R nodejs:nodejs /app
+USER nodejs
 
 # Expose port
 EXPOSE 5000
 
 # Set environment variables
 ENV NODE_ENV=production
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:5000/health || exit 1
 
 # Start command
 CMD ["npm", "start"]
