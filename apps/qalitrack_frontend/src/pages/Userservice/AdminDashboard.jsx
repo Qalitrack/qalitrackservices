@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { BarChart3, Users as UsersIcon, Settings, Activity } from "lucide-react";
+import { BarChart3, Users as UsersIcon, Settings, Activity, Clock } from "lucide-react";
 import { fetchUsers } from "../../helpers/UserService/Users/users.js";
 import { fetchRoles } from "../../helpers/UserService/Roles/Roles.js";
+import { fetchShifts, fetchDeletedShifts } from "../../helpers/UserService/Shifts/Shifts.js";
 import Users from "./Users.jsx";
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState([
         { label: "Total Users", value: "...", icon: <UsersIcon size={20} className="text-blue-500" /> },
+        { label: "Inactive Users", value: "...", icon: <UsersIcon size={20} className="text-gray-500" /> },
         { label: "Active Roles", value: "...", icon: <Settings size={20} className="text-green-500" /> },
+        { label: "Active Shifts", value: "...", icon: <Clock size={20} className="text-purple-500" /> },
+        { label: "Inactive Shifts", value: "...", icon: <Clock size={20} className="text-gray-400" /> },
         { label: "System Health", value: "98%", icon: <Activity size={20} className="text-amber-500" /> },
     ]);
     const [loading, setLoading] = useState(true);
@@ -19,15 +23,26 @@ export default function AdminDashboard() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [usersData, rolesData] = await Promise.all([
+                const [usersData, rolesData, shiftsResponse] = await Promise.all([
                     fetchUsers(1, 1, signal), // We only need the total count
-                    fetchRoles(signal)
+                    fetchRoles(signal),
+                    fetchShifts(1, 100, signal) // Fetch more shifts to count active/inactive
                 ]);
+
+                const inactiveUsers = usersData.items?.filter(user => user.isDeleted)?.length || 0;
+
+                // Count active and inactive shifts based on isActive flag
+                const allShifts = shiftsResponse?.items || [];
+                const activeShifts = allShifts.filter(shift => shift.isActive).length;
+                const inactiveShifts = allShifts.filter(shift => !shift.isActive).length;
 
                 setStats(prevStats => [
                     { ...prevStats[0], value: usersData.totalCount.toString() },
-                    { ...prevStats[1], value: rolesData.length.toString() },
-                    prevStats[2]
+                    { ...prevStats[1], value: inactiveUsers.toString() },
+                    { ...prevStats[2], value: rolesData.length.toString() },
+                    { ...prevStats[3], value: activeShifts.toString() },
+                    { ...prevStats[4], value: inactiveShifts.toString() },
+                    prevStats[5]
                 ]);
 
             } catch (error) {
@@ -37,7 +52,10 @@ export default function AdminDashboard() {
                     setStats(prevStats => [
                         { ...prevStats[0], value: "N/A" },
                         { ...prevStats[1], value: "N/A" },
-                        prevStats[2]
+                        { ...prevStats[2], value: "N/A" },
+                        { ...prevStats[3], value: "N/A" },
+                        { ...prevStats[4], value: "N/A" },
+                        prevStats[5]
                     ]);
                 }
             } finally {
@@ -56,7 +74,7 @@ export default function AdminDashboard() {
     const greeting = "Welcome to the Admin Dashboard";
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6 max-w-7xl mx-auto mr-60">
             {/* Welcome Section */}
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-800">{greeting}</h1>
@@ -82,7 +100,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Users List */}
-            <div className="mt-8">
+            <div className="mt-8 w-full max-w-11xl">
                 <Users />
             </div>
         </div>

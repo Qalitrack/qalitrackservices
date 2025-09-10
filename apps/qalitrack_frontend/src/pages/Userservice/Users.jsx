@@ -426,10 +426,10 @@ const Users = () => {
                     <button
                         onClick={handleAddUserClick}
                         className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
-                        >
-                    <PlusCircle size={18} />
-                    <span>Add User</span>
-                </button>
+                    >
+                        <PlusCircle size={18} />
+                        <span>Add User</span>
+                    </button>
                 </div>
             </div>
 
