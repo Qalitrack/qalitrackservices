@@ -21,4 +21,3 @@ export default function KPIWidget({ title, value, icon, bg = "bg-white" }) {
     </div>
   );
 }
-/Users/zawadi/qalitrackservices/apps/qalitrack_frontend/src/components/KPIWidget.jsx

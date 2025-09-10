@@ -543,11 +543,9 @@ const Shifts = () => {
                                 <p className="text-gray-600">{userDetails[logsShift.createdBy] || logsShift.createdBy || 'N/A'}</p>
                             </div>
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">{logsShift.isDeleted ? 'Updated At:' : 'Last Updated At:'}</p>
+                                <p className="font-semibold text-gray-700">Updated At:</p>
                                 <p className="text-gray-600">{
-                                    logsShift.isDeleted
-                                        ? (isValidISODate(logsShift.updatedAt || logsShift.lastModified) ? format(parseISO(logsShift.updatedAt || logsShift.lastModified), "PPP p") : '-')
-                                        : (isValidISODate(logsShift.lastModified) ? format(parseISO(logsShift.lastModified), "PPP p") : '-')
+                                    isValidISODate(logsShift.updatedAt) ? format(parseISO(logsShift.updatedAt), "PPP p") : '-'
                                 }</p>
                             </div>
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">

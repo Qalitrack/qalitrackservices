@@ -75,7 +75,7 @@ export const routes = [
 
     // Root redirect
     {
-        path: "/",
+        path: "/login",
         element: <RootRedirect />
     },
 
