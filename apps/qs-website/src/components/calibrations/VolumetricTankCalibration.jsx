@@ -3,7 +3,7 @@ import Navbar from '../Navbar'; // Using Navbar as per your latest instruction
 import Footer from '../Footer';
 import Scales from '/src/assets/vehicle1.jpg';
 
-import Calibration from '/src/assets/volumetrictank.png';
+
 
 
 
@@ -80,11 +80,7 @@ const VolumetricTankCalibrationPage = () => {
         {/* Right Content Area */}
         <div className="w-full lg:w-3/4 bg-white rounded-lg shadow-md p-8">
           {/* Main Image for the page */}
-          <img 
-            src={Calibration}  // Placeholder image for tank calibration
-            alt="Volumetric Tank Calibration" 
-            className="w-full h-auto rounded-lg mb-8"
-          />
+          
 
           {/* Description Section */}
           <h2 className="text-3xl font-bold text-gray-800 mb-4">DESCRIPTION</h2>
