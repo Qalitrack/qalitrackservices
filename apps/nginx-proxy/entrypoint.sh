@@ -23,7 +23,6 @@ request_ssl_cert() {
         --email admin@qalibrated.co.ke \
         --agree-tos \
         --no-eff-email \
-        --staging \
         -d "$domain" \
         --non-interactive \
         || {
