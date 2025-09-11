@@ -25,10 +25,30 @@ function isValidDateString(dateString) {
 
 function formatTimeOnlyString(timeString) {
   if (!timeString) return '-';
-  const match = timeString.match(/^(\d{2}):(\d{2})(:(\d{2}))?(\.(\d+))?$/);
-  if (!match) return timeString;
-  const [, hours, minutes, , seconds] = match;
-  return `${hours}:${minutes}${seconds ? ':' + seconds : ''}`;
+  try {
+    const date = new Date(timeString);
+    if (isNaN(date.getTime())) return timeString;
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return timeString;
+  }
+}
+
+function formatDateTime(dateTimeString) {
+  if (!dateTimeString) return '-';
+  try {
+    const date = new Date(dateTimeString);
+    if (isNaN(date.getTime())) return dateTimeString;
+    return date.toLocaleString([], {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (e) {
+    return dateTimeString;
+  }
 }
 
 const Modal = ({ children, isOpen }) => {
@@ -42,131 +62,345 @@ const Modal = ({ children, isOpen }) => {
   );
 };
 
+// Helper to check if a date string is a valid ISO date
 function isValidISODate(dateString) {
-  if (!dateString) return false;
-  const date = parseISO(dateString);
-  return date instanceof Date && !isNaN(date);
+    if (!dateString) return false;
+    const date = parseISO(dateString);
+    return date instanceof Date && !isNaN(date);
 }
 
 const Shifts = () => {
-  const [shifts, setShifts] = useState([]);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    pageSize: 10,
-    totalCount: 0,
-    totalPages: 1,
-    hasPreviousPage: false,
-    hasNextPage: false,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: '' });
-  const [isViewUsersModalOpen, setViewUsersModalOpen] = useState(false);
-  const [selectedShiftUsers, setSelectedShiftUsers] = useState([]);
-  const [selectedShift, setSelectedShift] = useState(null);
-  const [showDeleted, setShowDeleted] = useState(false);
-  const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [selectedShiftToEdit, setSelectedShiftToEdit] = useState(null);
-  const [editForm, setEditForm] = useState({
-    name: '',
-    description: '',
-    startTime: '',
-    durationMinutes: 0,
-    mode: 0,
-    autoRepeatDaily: false,
-  });
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [shiftToDelete, setShiftToDelete] = useState(null);
-  const [isAddModalOpen, setAddModalOpen] = useState(false);
-  const [addForm, setAddForm] = useState({
-    name: '',
-    description: '',
-    startTime: '',
-    durationMinutes: 0,
-    mode: 0,
-    autoRepeatDaily: false,
-  });
-  const [addLoading, setAddLoading] = useState(false);
-  const [addError, setAddError] = useState('');
-  const [addSuccess, setAddSuccess] = useState('');
-  const [isLogsModalOpen, setLogsModalOpen] = useState(false);
-  const [logsShift, setLogsShift] = useState(null);
-  const [userDetails, setUserDetails] = useState({});
-
-  const showMessage = (text, type) => {
-    setFeedbackMessage({ text, type });
-    setTimeout(() => {
-      setFeedbackMessage({ text: '', type: '' });
-    }, 3000);
-  };
-
-  const loadData = async (page, deleted) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const fetchFunction = deleted ? fetchDeletedShifts : fetchShifts;
-      const data = await fetchFunction(page, pagination.pageSize);
-      setShifts(data.items || []);
-      setPagination({
-        page: data.page || 1,
-        pageSize: data.pageSize || 10,
-        totalCount: data.totalCount || 0,
-        totalPages: data.totalPages || 1,
-        hasPreviousPage: data.hasPreviousPage || false,
-        hasNextPage: data.hasNextPage || false,
-      });
-    } catch (err) {
-      setError(err.message || 'Failed to fetch shifts.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData(pagination.page, showDeleted);
-    // eslint-disable-next-line
-  }, [pagination.page, showDeleted]);
-
-  const handlePreviousPage = () => {
-    if (pagination.hasPreviousPage) {
-      setPagination((p) => ({ ...p, page: p.page - 1 }));
-    }
-  };
-
-  const handleNextPage = () => {
-    if (pagination.hasNextPage) {
-      setPagination((p) => ({ ...p, page: p.page + 1 }));
-    }
-  };
-
-  const handlePageClick = (page) => {
-    setPagination((p) => ({ ...p, page }));
-  };
-
-  const handleViewUsersClick = (shift) => {
-    setSelectedShift(shift);
-    setSelectedShiftUsers(shift.assignedUsers || []);
-    setViewUsersModalOpen(true);
-  };
-
-  const handleEditClick = (shift) => {
-    setSelectedShiftToEdit(shift);
-    setEditForm({
-      name: shift.name || '',
-      description: shift.description || '',
-      startTime: shift.startTime ? shift.startTime.slice(0, 16) : '',
-      durationMinutes: shift.durationMinutes || 0,
-      mode: shift.mode || 0,
-      autoRepeatDaily: !!shift.autoRepeatDaily,
+    const [shifts, setShifts] = useState([]);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
     });
-    setEditModalOpen(true);
-  };
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: '' });
+    const [isViewUsersModalOpen, setViewUsersModalOpen] = useState(false);
+    const [selectedShiftUsers, setSelectedShiftUsers] = useState([]);
+    const [selectedShift, setSelectedShift] = useState(null);
+    const [showDeleted, setShowDeleted] = useState(false);
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [selectedShiftToEdit, setSelectedShiftToEdit] = useState(null);
+    const [editForm, setEditForm] = useState({
+        name: '',
+        description: '',
+        startTime: '',
+        durationHours: 1,
+        mode: '0', // '0' for Open, '1' for Closed
+        autoRepeatDaily: false,
+    });
+    const [editFormErrors, setEditFormErrors] = useState({});
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [shiftToDelete, setShiftToDelete] = useState(null);
+    const [isAddModalOpen, setAddModalOpen] = useState(false);
+    const [addForm, setAddForm] = useState({
+        name: '',
+        description: '',
+        startTime: '',
+        durationHours: 1,
+        mode: '0', // '0' for Open, '1' for Closed
+        autoRepeatDaily: false,
+    });
+    const [addFormErrors, setAddFormErrors] = useState({});
+    const [addLoading, setAddLoading] = useState(false);
+    const [addError, setAddError] = useState('');
+    const [addSuccess, setAddSuccess] = useState('');
+    const [isLogsModalOpen, setLogsModalOpen] = useState(false);
+    const [logsShift, setLogsShift] = useState(null);
+    const [userDetails, setUserDetails] = useState({});
 
-  const handleDeleteClick = (shift) => {
-    setShiftToDelete(shift);
-    setDeleteModalOpen(true);
-  };
+    const showMessage = (text, type) => {
+        setFeedbackMessage({ text, type });
+        setTimeout(() => {
+            setFeedbackMessage({ text: '', type: '' });
+        }, 3000);
+    };
 
+    const loadData = async (page, deleted) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const fetchFunction = deleted ? fetchDeletedShifts : fetchShifts;
+            const data = await fetchFunction(page, pagination.pageSize);
+            setShifts(data.items || []);
+            setPagination({
+                page: data.page || 1,
+                pageSize: data.pageSize || 10,
+                totalCount: data.totalCount || 0,
+                totalPages: data.totalPages || 1,
+                hasPreviousPage: data.hasPreviousPage || false,
+                hasNextPage: data.hasNextPage || false,
+            });
+        } catch (err) {
+            setError(err.message || 'Failed to fetch shifts.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadData(pagination.page, showDeleted);
+        // eslint-disable-next-line
+    }, [pagination.page, showDeleted]);
+
+    const handlePreviousPage = () => {
+        if (pagination.hasPreviousPage) {
+            setPagination((p) => ({ ...p, page: p.page - 1 }));
+        }
+    };
+
+    const handleNextPage = () => {
+        if (pagination.hasNextPage) {
+            setPagination((p) => ({ ...p, page: p.page + 1 }));
+        }
+    };
+
+    const handlePageClick = (page) => {
+        setPagination((p) => ({ ...p, page }));
+    };
+
+    const handleViewUsersClick = (shift) => {
+        setSelectedShift(shift);
+        setSelectedShiftUsers(shift.assignedUsers || []);
+        setViewUsersModalOpen(true);
+    };
+
+    const handleEditClick = (shift) => {
+        setSelectedShiftToEdit(shift);
+        setEditForm({
+            name: shift.name || '',
+            description: shift.description || '',
+            startTime: shift.startTime ? shift.startTime.slice(0, 16) : '', // for datetime-local input
+            durationHours: shift.durationMinutes ? Math.round(shift.durationMinutes / 60) : 1, // Convert minutes to hours
+            mode: String(shift.mode || '0'), // Ensure mode is a string for the select
+            autoRepeatDaily: !!shift.autoRepeatDaily,
+        });
+        setEditFormErrors({});
+        setEditModalOpen(true);
+    };
+
+    const validateForm = (formData) => {
+        const errors = {};
+        if (!formData.name?.trim()) errors.name = 'Name is required';
+        if (!formData.startTime) errors.startTime = 'Start time is required';
+        if (formData.durationHours <= 0 || !Number.isInteger(Number(formData.durationHours))) {
+            errors.durationHours = 'Duration must be a positive whole number';
+        }
+        return errors;
+    };
+
+    const handleEditFormChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        
+        // Handle numeric inputs
+        let processedValue = value;
+        if (name === 'durationHours') {
+            processedValue = value === '' ? '' : Math.max(1, Math.floor(Number(value)));
+        }
+        
+        const updatedForm = {
+            ...editForm,
+            [name]: type === 'checkbox' ? checked : processedValue,
+        };
+        
+        setEditForm(updatedForm);
+        
+        // Clear error for the current field when user types
+        if (editFormErrors[name]) {
+            const errors = { ...editFormErrors };
+            delete errors[name];
+            setEditFormErrors(errors);
+        }
+    };
+
+    const handleEditFormSubmit = async (e) => {
+        e.preventDefault();
+        if (!selectedShiftToEdit) return;
+        
+        // Validate form
+        const errors = validateForm(editForm);
+        if (Object.keys(errors).length > 0) {
+            setEditFormErrors(errors);
+            return;
+        }
+        
+        try {
+            // Convert startTime to ISO string and hours to minutes
+            const payload = {
+                ...editForm,
+                startTime: editForm.startTime ? new Date(editForm.startTime).toISOString() : '',
+                durationMinutes: Math.round(Number(editForm.durationHours) * 60), // Convert hours to minutes
+                mode: Number(editForm.mode) // Ensure mode is a number
+            };
+            
+            await updateShift(selectedShiftToEdit.id, payload);
+            showMessage('Shift updated successfully!', 'success');
+            setEditModalOpen(false);
+            setSelectedShiftToEdit(null);
+            setEditFormErrors({});
+            loadData(pagination.page, showDeleted);
+        } catch (err) {
+            showMessage(err?.response?.data?.message || 'Failed to update shift.', 'error');
+        }
+    };
+
+    const handleEditModalClose = () => {
+        setEditModalOpen(false);
+        setSelectedShiftToEdit(null);
+        setEditFormErrors({});
+    };
+
+    const handleDeleteClick = (shift) => {
+        setShiftToDelete(shift);
+        setDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!shiftToDelete) return;
+        try {
+            await deleteShift(shiftToDelete.id);
+            showMessage('Shift deleted successfully!', 'success');
+            setDeleteModalOpen(false);
+            setShiftToDelete(null);
+            loadData(pagination.page, showDeleted);
+        } catch (err) {
+            showMessage('Failed to delete shift.', 'error');
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteModalOpen(false);
+        setShiftToDelete(null);
+    };
+
+    const handleAddClick = () => {
+        setAddForm({
+            name: '',
+            description: '',
+            startTime: '',
+            durationMinutes: 0,
+            mode: 0,
+            autoRepeatDaily: false,
+        });
+        setAddError('');
+        setAddSuccess('');
+        setAddModalOpen(true);
+    };
+
+    const handleAddFormChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        
+        // Handle numeric inputs
+        let processedValue = value;
+        if (name === 'durationHours') {
+            processedValue = value === '' ? '' : Math.max(1, Math.floor(Number(value)));
+        }
+        
+        const updatedForm = {
+            ...addForm,
+            [name]: type === 'checkbox' ? checked : processedValue,
+        };
+        
+        setAddForm(updatedForm);
+        
+        // Clear error for the current field when user types
+        if (addFormErrors[name]) {
+            const errors = { ...addFormErrors };
+            delete errors[name];
+            setAddFormErrors(errors);
+        }
+    };
+
+    const handleAddFormSubmit = async (e) => {
+        e.preventDefault();
+        
+        // Validate form
+        const errors = validateForm(addForm);
+        if (Object.keys(errors).length > 0) {
+            setAddFormErrors(errors);
+            return;
+        }
+        
+        setAddLoading(true);
+        setAddError('');
+        setAddSuccess('');
+        
+        try {
+            const payload = {
+                name: addForm.name.trim(),
+                description: addForm.description.trim(),
+                startTime: addForm.startTime ? new Date(addForm.startTime).toISOString() : '',
+                durationMinutes: Math.round(Number(addForm.durationHours) * 60), // Convert hours to minutes
+                mode: Number(addForm.mode), // Ensure mode is a number
+                autoRepeatDaily: addForm.autoRepeatDaily,
+            };
+            
+            await createShift(payload);
+            setAddSuccess('Shift created successfully!');
+            setAddFormErrors({});
+            loadData(pagination.page, showDeleted);
+            
+            // Reset form but keep it open for adding another shift
+            setAddForm({
+                name: '',
+                description: '',
+                startTime: '',
+                durationHours: 1,
+                mode: '0',
+                autoRepeatDaily: false,
+            });
+            
+        } catch (err) {
+            setAddError(err?.response?.data?.message || err.message || 'Failed to create shift.');
+        } finally {
+            setAddLoading(false);
+        }
+    };
+
+    const handleAddModalClose = () => {
+        setAddModalOpen(false);
+        setAddFormErrors({});
+        // Reset form when closing
+        setAddForm({
+            name: '',
+            description: '',
+            startTime: '',
+            durationHours: 1,
+            mode: '0',
+            autoRepeatDaily: false,
+        });
+    };
+
+    const handleLogsClick = (shift) => {
+        setLogsShift(shift);
+        if (shift?.createdBy) loadUserDetails(shift.createdBy);
+        if (shift?.updatedBy) loadUserDetails(shift.updatedBy);
+        setLogsModalOpen(true);
+    };
+
+    const handleLogsModalClose = () => {
+        setLogsModalOpen(false);
+        setLogsShift(null);
+    };
+
+    // Fetch user email by ID and cache it
+    const loadUserDetails = async (userId) => {
+        if (!userId || userDetails[userId]) return;
+        try {
+            const user = await fetchUserById(userId);
+            setUserDetails(prev => ({ ...prev, [userId]: user.email }));
+        } catch (error) {
+            setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' }));
+        }
+    };
+    
   if (loading) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -307,6 +541,9 @@ const Shifts = () => {
                 <td className="px-6 py-4 text-sm font-medium space-x-2">
                   {!showDeleted && (
                     <>
+                        <button className="text-gray-600 hover:text-gray-900 transition-colors" title="Logs" onClick={() => handleLogsClick(shift)}>
+                            <FileText size={18} />
+                        </button>
                       <button
                         className="text-amber-600 hover:text-amber-900 transition-colors"
                         title="Edit Shift"
@@ -445,6 +682,327 @@ const Shifts = () => {
       </div>
 
       {/* Modals (unchanged except responsive width already applied in <Modal>) */}
+        <Modal isOpen={isViewUsersModalOpen}>
+            <h3 className="text-lg font-bold mb-4">Users Assigned to Shift "{selectedShift?.name}"</h3>
+            {selectedShiftUsers.length > 0 ? (
+                <ul className="space-y-2">
+                    {selectedShiftUsers.map(user => (
+                        <li key={user.id} className="bg-gray-100 p-3 rounded-md text-sm font-medium">
+                            {user.firstName} {user.lastName} ({user.email})
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p className="text-sm text-gray-500">No users assigned to this shift.</p>
+            )}
+            <div className="flex justify-end pt-4">
+                <button
+                    type="button"
+                    onClick={() => setViewUsersModalOpen(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                >
+                    Close
+                </button>
+            </div>
+        </Modal>
+
+        <Modal isOpen={isEditModalOpen}>
+            <h3 className="text-lg font-bold mb-4">Edit Shift</h3>
+            <form onSubmit={handleEditFormSubmit} className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Name</label>
+                    <div>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        value={editForm.name} 
+                        onChange={handleEditFormChange} 
+                        className={`mt-1 block w-full border ${editFormErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`} 
+                        required 
+                    />
+                    {editFormErrors.name && <p className="mt-1 text-sm text-red-600">{editFormErrors.name}</p>}
+                </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <input type="text" name="description" value={editForm.description} onChange={handleEditFormChange} className="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                        <input 
+                            type="date" 
+                            name="startDate"
+                            value={editForm.startTime ? editForm.startTime.split('T')[0] : ''}
+                            onChange={(e) => {
+                                const time = editForm.startTime ? editForm.startTime.split('T')[1] : '09:00';
+                                handleEditFormChange({
+                                    target: {
+                                        name: 'startTime',
+                                        value: e.target.value ? `${e.target.value}T${time}` : ''
+                                    }
+                                });
+                            }}
+                            className={`mt-1 block w-full border ${editFormErrors.startTime ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Start Time</label>
+                        <input 
+                            type="time" 
+                            name="startTimeOnly"
+                            value={editForm.startTime ? editForm.startTime.split('T')[1]?.substring(0, 5) || '09:00' : '09:00'}
+                            onChange={(e) => {
+                                const date = editForm.startTime ? editForm.startTime.split('T')[0] : new Date().toISOString().split('T')[0];
+                                handleEditFormChange({
+                                    target: {
+                                        name: 'startTime',
+                                        value: `${date}T${e.target.value}`
+                                    }
+                                });
+                            }}
+                            className={`mt-1 block w-full border ${editFormErrors.startTime ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`}
+                            required
+                        />
+                    </div>
+                    {editFormErrors.startTime && <p className="mt-1 text-sm text-red-600 col-span-2">{editFormErrors.startTime}</p>}
+                </div>
+                <div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Duration</label>
+                        <div className="mt-1 space-y-1">
+                            <div className="flex items-center">
+                                <div className="relative flex-1">
+                                    <input
+                                        type="number"
+                                        name="durationHours"
+                                        value={editForm.durationHours}
+                                        onChange={handleEditFormChange}
+                                        className={`w-full border ${editFormErrors.durationHours ? 'border-red-500' : 'border-gray-300'} rounded-md p-2 pr-16`}
+                                        min="0.5"
+                                        step="0.5"
+                                        placeholder="e.g. 1.5"
+                                        required
+                                    />
+                                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <span className="text-gray-500 text-sm">
+                                            {editForm.durationHours == 1 ? 'hour' : 'hours'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                                {editForm.durationHours === 1 ? '1 hour' : `${editForm.durationHours} hours`} ({Math.floor(editForm.durationHours * 60)} minutes)
+                            </p>
+                            {editFormErrors.durationHours && (
+                                <p className="text-sm text-red-600">{editFormErrors.durationHours}</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Mode</label>
+                    <select
+                        name="mode"
+                        value={editForm.mode}
+                        onChange={handleEditFormChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                        required
+                    >
+                        <option value="0">Open</option>
+                        <option value="1">Closed</option>
+                    </select>
+                </div>
+                <div className="flex items-center">
+                    <input type="checkbox" name="autoRepeatDaily" checked={editForm.autoRepeatDaily} onChange={handleEditFormChange} className="mr-2" />
+                    <label className="text-sm font-medium text-gray-700">Auto Repeat Daily</label>
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                    <button type="button" onClick={handleEditModalClose} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Cancel</button>
+                    <button type="submit" className="px-4 py-2 bg-amber-500 text-white rounded-md text-sm font-medium hover:bg-amber-600">Save</button>
+                </div>
+            </form>
+        </Modal>
+
+        <Modal isOpen={isDeleteModalOpen}>
+            <h3 className="text-lg font-bold mb-4 text-red-700">Confirm Delete</h3>
+            <p className="mb-4">Are you sure you want to delete the shift <span className="font-semibold">{shiftToDelete?.name}</span>? This action cannot be undone.</p>
+            <div className="flex justify-end gap-2">
+                <button onClick={handleCancelDelete} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Cancel</button>
+                <button onClick={handleConfirmDelete} className="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700">Delete</button>
+            </div>
+        </Modal>
+
+        <Modal isOpen={isAddModalOpen}>
+            <h3 className="text-lg font-bold mb-4">Add Shift</h3>
+            <form onSubmit={handleAddFormSubmit} className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Name</label>
+                    <div>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        value={addForm.name} 
+                        onChange={handleAddFormChange} 
+                        className={`mt-1 block w-full border ${addFormErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`} 
+                        required 
+                        disabled={addLoading} 
+                    />
+                    {addFormErrors.name && <p className="mt-1 text-sm text-red-600">{addFormErrors.name}</p>}
+                </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <input type="text" name="description" value={addForm.description} onChange={handleAddFormChange} className="mt-1 block w-full border border-gray-300 rounded-md p-2" required disabled={addLoading} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                        <input 
+                            type="date" 
+                            name="startDate"
+                            value={addForm.startTime ? addForm.startTime.split('T')[0] : ''}
+                            onChange={(e) => {
+                                const time = addForm.startTime ? addForm.startTime.split('T')[1] : '09:00';
+                                handleAddFormChange({
+                                    target: {
+                                        name: 'startTime',
+                                        value: e.target.value ? `${e.target.value}T${time}` : ''
+                                    }
+                                });
+                            }}
+                            className={`mt-1 block w-full border ${addFormErrors.startTime ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`}
+                            required
+                            disabled={addLoading}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Start Time</label>
+                        <input 
+                            type="time" 
+                            name="startTimeOnly"
+                            value={addForm.startTime ? addForm.startTime.split('T')[1]?.substring(0, 5) || '09:00' : '09:00'}
+                            onChange={(e) => {
+                                const date = addForm.startTime ? addForm.startTime.split('T')[0] : new Date().toISOString().split('T')[0];
+                                handleAddFormChange({
+                                    target: {
+                                        name: 'startTime',
+                                        value: `${date}T${e.target.value}`
+                                    }
+                                });
+                            }}
+                            className={`mt-1 block w-full border ${addFormErrors.startTime ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`}
+                            required
+                            disabled={addLoading}
+                        />
+                    </div>
+                    {addFormErrors.startTime && <p className="mt-1 text-sm text-red-600 col-span-2">{addFormErrors.startTime}</p>}
+                </div>
+                <div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Duration</label>
+                        <div className="mt-1 space-y-1">
+                            <div className="flex items-center">
+                                <div className="relative flex-1">
+                                    <input
+                                        type="number"
+                                        name="durationHours"
+                                        value={addForm.durationHours}
+                                        onChange={handleAddFormChange}
+                                        className={`w-full border ${addFormErrors.durationHours ? 'border-red-500' : 'border-gray-300'} rounded-md p-2 pr-16`}
+                                        min="0.5"
+                                        step="0.5"
+                                        placeholder="e.g. 1.5"
+                                        required
+                                        disabled={addLoading}
+                                    />
+                                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <span className="text-gray-500 text-sm">
+                                            {addForm.durationHours == 1 ? 'hour' : 'hours'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                                {addForm.durationHours === 1 ? '1 hour' : `${addForm.durationHours} hours`} ({Math.floor(addForm.durationHours * 60)} minutes)
+                            </p>
+                            {addFormErrors.durationHours && (
+                                <p className="text-sm text-red-600">{addFormErrors.durationHours}</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Mode</label>
+                    <select
+                        name="mode"
+                        value={addForm.mode}
+                        onChange={handleAddFormChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                        required
+                        disabled={addLoading}
+                    >
+                        <option value="0">Open</option>
+                        <option value="1">Closed</option>
+                    </select>
+                </div>
+                <div className="flex items-center">
+                    <input type="checkbox" name="autoRepeatDaily" checked={addForm.autoRepeatDaily} onChange={handleAddFormChange} className="mr-2" disabled={addLoading} />
+                    <label className="text-sm font-medium text-gray-700">Auto Repeat Daily</label>
+                </div>
+                {addError && <div className="text-red-600 text-sm font-medium">{addError}</div>}
+                {addSuccess && <div className="text-green-600 text-sm font-medium">{addSuccess}</div>}
+                <div className="flex justify-end gap-2 pt-2">
+                    <button type="button" onClick={handleAddModalClose} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Close</button>
+                    <button type="submit" className="px-4 py-2 bg-amber-500 text-white rounded-md text-sm font-medium hover:bg-amber-600" disabled={addLoading}>Save</button>
+                </div>
+            </form>
+        </Modal>
+
+        {/* Logs Modal */}
+        <Modal isOpen={isLogsModalOpen}>
+            <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+                <h3 className="text-lg font-bold mb-4">Audit Logs for "{logsShift?.name}"</h3>
+                {logsShift && (
+                    <div className="space-y-4">
+                        {/* Deleted badge if applicable */}
+                        {logsShift.isDeleted && (
+                            <div className="flex items-center mb-2">
+                                <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Deleted Shift</span>
+                            </div>
+                        )}
+                        <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                            <p className="font-semibold text-gray-700">Created At:</p>
+                            <p className="text-gray-600">{isValidISODate(logsShift.createdAt) ? format(parseISO(logsShift.createdAt), "PPP p") : '-'}</p>
+                        </div>
+                        <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                            <p className="font-semibold text-gray-700">Created By:</p>
+                            <p className="text-gray-600">{userDetails[logsShift.createdBy] || logsShift.createdBy || 'N/A'}</p>
+                        </div>
+                        <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                            <p className="font-semibold text-gray-700">Updated At:</p>
+                            <p className="text-gray-600">{
+                                isValidISODate(logsShift.updatedAt) ? format(parseISO(logsShift.updatedAt), "PPP p") : '-'
+                            }</p>
+                        </div>
+                        <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                            <p className="font-semibold text-gray-700">Updated By:</p>
+                            <p className="text-gray-600">{userDetails[logsShift.updatedBy] || logsShift.updatedBy || 'N/A'}</p>
+                        </div>
+                    </div>
+                )}
+                <div className="flex justify-end mt-6">
+                    <button
+                        type="button"
+                        onClick={handleLogsModalClose}
+                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-sm font-medium transition-colors duration-200"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </Modal>
     </div>
   );
 };
