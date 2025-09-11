@@ -21,11 +21,16 @@ FROM nginx:alpine
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 # Copy custom nginx config if needed (optional)
 # COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
 EXPOSE 80
 
-# Start nginx
+# Use custom entrypoint
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
