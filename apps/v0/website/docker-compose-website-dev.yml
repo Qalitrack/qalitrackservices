@@ -12,10 +12,10 @@ services:
 
   backend:
     image: ghcr.io/qalitrack/qalitrackservices/qs-website-backend:main
-    container_name: qs-backend
+    container_name: qs-backend-dev
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "5002:5000"
     env_file:
       - .env
     environment:
@@ -27,10 +27,15 @@ services:
 
   frontend:
     image: ghcr.io/qalitrack/qalitrackservices/qs-website-frontend:main
-    container_name: qs-frontend
+    container_name: qs-frontend-dev
     restart: unless-stopped
     ports:
-      - "3000:80"
+      - "3002:80"
+    env_file:
+      - .env
+    environment:
+      - VITE_API_BASE_URL=https://dev.qalibrated.co.ke/api
+      - VITE_ALLOWED_HOSTS=localhost,dev.qalibrated.co.ke
     depends_on:
       - backend
     networks:
