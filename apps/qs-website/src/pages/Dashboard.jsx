@@ -11,7 +11,7 @@ import ProductFormModal from "../components/dashboard/ProductFormModal";
 import UserFormModal from "../components/dashboard/UserFormModal";
 import MyProfile from "../components/dashboard/MyProfile";
 
-const API_BASE_URL = "http://localhost:5000/api";
+import { API_BASE_URL } from '../utils/config';
 
 const Dashboard = () => {
   const navigate = useNavigate();
