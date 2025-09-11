@@ -409,7 +409,7 @@ const Users = () => {
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
+        <div className="bg-white shadow-lg rounded-xl p-5  md:p-8 max-w-7xl mx-auto my-4 md:my-10">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-800">Users</h2>
                 <div className="flex items-center gap-4">
