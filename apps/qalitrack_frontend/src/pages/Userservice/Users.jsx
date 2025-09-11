@@ -409,8 +409,8 @@ const Users = () => {
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
-            <div className="flex justify-between items-center mb-4">
+        <div className="bg-white shadow-lg rounded-xl p-5 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 md:gap-0">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-800">Users</h2>
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
@@ -426,10 +426,11 @@ const Users = () => {
                     <button
                         onClick={handleAddUserClick}
                         className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
-                        >
-                    <PlusCircle size={18} />
-                    <span>Add User</span>
-                </button>
+                    >
+                        <PlusCircle size={18} />
+                        <span className="hidden md:inline">Add User</span>
+                        <span className="inline md:hidden">Add</span>
+                    </button>
                 </div>
             </div>
 
@@ -443,21 +444,21 @@ const Users = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-800">
                     <tr>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Email</th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Roles</th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Shifts</th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
+                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Email</th>
+                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Roles</th>
+                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Shifts</th>
+                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Status</th>
+                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Last Updated</th>
+                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
                     </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                     {users.map((user) => (
                         <tr key={user.id} className={`hover:bg-gray-50 ${user.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.firstName} {user.lastName}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.email}</td>
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">{user.firstName} {user.lastName}</td>
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
                                 <button
                                     onClick={() => handleViewRolesClick(user)}
                                     className="flex items-center text-amber-500 hover:text-amber-600 transition-colors"
@@ -467,7 +468,7 @@ const Users = () => {
                                     <span>{user.roles ? user.roles.length : '0'}</span>
                                 </button>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
                                 <button
                                     onClick={() => handleViewShiftsClick(user)}
                                     className="flex items-center text-purple-500 hover:text-purple-600 transition-colors"
@@ -477,15 +478,15 @@ const Users = () => {
                                     <span>{userShiftCounts[user.id] || 0}</span>
                                 </button>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap">
                                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(user)}`}>
                                         {getStatusText(user)}
                                     </span>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
                                 {formatDistanceToNow(parseISO(user.updatedAt), { addSuffix: true })}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium space-x-2">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-left text-sm font-medium flex flex-wrap gap-2">
                                 <button
                                     onClick={() => handleLogsClick(user)}
                                     className="text-gray-600 hover:text-gray-900 transition-colors"
@@ -534,7 +535,7 @@ const Users = () => {
                 </table>
             </div>
 
-            <div className="flex justify-between items-center mt-4 text-sm text-gray-700">
+            <div className="flex flex-col md:flex-row justify-between items-center mt-4 text-sm text-gray-700 gap-4 md:gap-0">
                 <div>
                     <p className="text-gray-700">
                         <span className="font-medium">{pagination.page * pagination.pageSize - pagination.pageSize + 1}</span> to <span className="font-medium">{Math.min(pagination.page * pagination.pageSize, pagination.totalCount)}</span> of <span className="font-medium">{pagination.totalCount}</span> rows
@@ -689,27 +690,29 @@ const Users = () => {
                 )}
                 {selectedUser && (
                     <form onSubmit={handleUpdate} className="space-y-4">
-                        <div>
-                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
-                            <input
-                                type="text"
-                                name="firstName"
-                                id="firstName"
-                                value={selectedUser.firstName}
-                                onChange={handleInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
-                            <input
-                                type="text"
-                                name="lastName"
-                                id="lastName"
-                                value={selectedUser.lastName}
-                                onChange={handleInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                            />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
+                                <input
+                                    type="text"
+                                    name="firstName"
+                                    id="firstName"
+                                    value={selectedUser.firstName}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+                                <input
+                                    type="text"
+                                    name="lastName"
+                                    id="lastName"
+                                    value={selectedUser.lastName}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
+                                />
+                            </div>
                         </div>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
@@ -725,231 +728,210 @@ const Users = () => {
                         <div>
                             <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
                             <input
-                                type="text"
+                                type="tel"
                                 name="mobileNumber"
                                 id="mobileNumber"
-                                value={selectedUser.mobileNumber || ''}
+                                value={selectedUser.mobileNumber}
                                 onChange={handleInputChange}
                                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
                             />
                         </div>
                         <div className="flex justify-end space-x-3 pt-4">
-                            <button type="button" onClick={() => setEditModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            <button
+                                type="button"
+                                onClick={() => setEditModalOpen(false)}
+                                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                            >
                                 Cancel
                             </button>
-                            <button type="submit" disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300">
-                                {isUpdating ? 'Saving...' : 'Save Changes'}
+                            <button
+                                type="submit"
+                                disabled={isUpdating}
+                                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300"
+                            >
+                                {isUpdating ? 'Updating...' : 'Update User'}
                             </button>
                         </div>
                     </form>
                 )}
             </Modal>
 
-            <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
-                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-                    <h3 className="text-lg font-bold mb-4">Audit Logs for "{selectedUser?.email}"</h3>
-                    {selectedUser && (
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created At:</p>
-                                <p className="text-gray-600">{format(parseISO(selectedUser.createdAt), "PPP p")}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created By:</p>
-                                <p className="text-gray-600">{userDetails[selectedUser.createdBy] || selectedUser.createdBy || 'N/A'}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Last Updated At:</p>
-                                <p className="text-gray-600">{format(parseISO(selectedUser.updatedAt), "PPP p")}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Updated By:</p>
-                                <p className="text-gray-600">{userDetails[selectedUser.updatedBy] || selectedUser.updatedBy || 'N/A'}</p>
+            {/* Logs Modal */}
+            <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)} size="sm">
+                <h3 className="text-lg font-bold mb-4">User Logs</h3>
+                {selectedUser && (
+                    <div className="space-y-4 text-sm text-gray-700">
+                        <div className="flex items-center space-x-2">
+                            <PlusCircle size={18} className="text-gray-500" />
+                            <div>
+                                <p><strong>Created At:</strong> {format(parseISO(selectedUser.createdAt), 'PPpp')}</p>
+                                <p><strong>Created By:</strong> {userDetails[selectedUser.createdBy] || selectedUser.createdBy}</p>
                             </div>
                         </div>
-                    )}
-                    <div className="flex justify-end mt-6">
-                        <button
-                            type="button"
-                            onClick={() => setLogsModalOpen(false)}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-sm font-medium transition-colors duration-200"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </Modal>
-
-            <Modal isOpen={isResetPasswordModalOpen} onClose={() => setResetPasswordModalOpen(false)}>
-                <div className="text-center">
-                    <ShieldAlert className="mx-auto h-12 w-12 text-amber-500" />
-                    <h3 className="mt-2 text-lg font-bold text-gray-800">Reset Password</h3>
-                    <p className="mt-2 text-sm text-gray-600">
-                        Are you sure you want to reset the password for "{selectedUser?.email}"? An email with reset instructions will be sent to them.
-                    </p>
-                    {modalFeedback.text && (
-                        <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                            {modalFeedback.text}
+                        <div className="flex items-center space-x-2">
+                            <Edit size={18} className="text-gray-500" />
+                            <div>
+                                <p><strong>Last Updated At:</strong> {format(parseISO(selectedUser.updatedAt), 'PPpp')}</p>
+                                <p><strong>Last Updated By:</strong> {userDetails[selectedUser.updatedBy] || selectedUser.updatedBy}</p>
+                            </div>
                         </div>
-                    )}
-                </div>
-                {!modalFeedback.text || modalFeedback.type !== 'success' ? (
-                    <div className="mt-6 flex justify-center space-x-4">
-                        <button onClick={() => setResetPasswordModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            Cancel
-                        </button>
-                        <button onClick={handleConfirmResetPassword} disabled={isUpdating} className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400">
-                            {isUpdating ? 'Sending...' : 'Reset Password'}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="mt-6 flex justify-center">
-                        <button onClick={() => setResetPasswordModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            Close
-                        </button>
+                        <div className="flex items-center space-x-2">
+                            <Trash2 size={18} className="text-gray-500" />
+                            <div>
+                                <p><strong>Deleted:</strong> {selectedUser.isDeleted ? 'Yes' : 'No'}</p>
+                                {selectedUser.isDeleted && (
+                                    <p><strong>Deleted At:</strong> {format(parseISO(selectedUser.deletedAt), 'PPpp')}</p>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={() => setLogsModalOpen(false)}
+                                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
                 )}
             </Modal>
 
-            <Modal isOpen={isManageRolesModalOpen} onClose={() => setManageRolesModalOpen(false)}>
-                <div className="p-6">
-                    <h3 className="text-lg font-bold mb-4">Manage Roles for "{selectedUser?.email}"</h3>
-                    {modalFeedback.text && (
-                        <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                            {modalFeedback.text}
-                        </div>
-                    )}
-                    <div className="space-y-4">
-                        {roles.map((role) => {
-                            const isAssigned = selectedUserRoles.includes(role.id);
-                            return (
-                                <div key={role.id} className="flex items-center justify-between py-2 border-b">
-                                    <div className="flex items-center">
-                                        <input
-                                            type="checkbox"
-                                            id={`role-${role.id}`}
-                                            name="user-role"
-                                            checked={isAssigned}
-                                            onChange={() => handleRoleChange(role.id)}
-                                            className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-                                        />
-                                        <label htmlFor={`role-${role.id}`} className="ml-2 block text-sm font-medium text-gray-700">
-                                            {role.name}
-                                        </label>
-                                    </div>
-                                </div>
-                            );
-                        })}
+            {/* Reset Password Modal */}
+            <Modal isOpen={isResetPasswordModalOpen} onClose={() => setResetPasswordModalOpen(false)} size="sm">
+                <h3 className="text-lg font-bold mb-4">Reset Password</h3>
+                {modalFeedback.text && (
+                    <div className={`p-3 rounded-lg mb-4 text-sm font-medium text-center ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {modalFeedback.text}
                     </div>
-                    <div className="flex justify-between items-center mt-4">
-                        <button
-                            onClick={() => setSelectedUserRoles([])}
-                            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                        >
-                            Clear Selection
-                        </button>
-                        <div className="space-x-3">
+                )}
+                {selectedUser && (
+                    <div className="text-gray-700">
+                        <p className="mb-4">Are you sure you want to send a password reset email to **{selectedUser.email}**?</p>
+                        <div className="flex justify-end space-x-3">
                             <button
-                                onClick={() => setManageRolesModalOpen(false)}
+                                type="button"
+                                onClick={() => setResetPasswordModalOpen(false)}
                                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                             >
                                 Cancel
                             </button>
                             <button
-                                onClick={handleSaveRoles}
+                                type="button"
+                                onClick={handleConfirmResetPassword}
                                 disabled={isUpdating}
-                                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300"
+                                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300"
                             >
-                                {isUpdating ? 'Saving...' : 'Save'}
+                                {isUpdating ? 'Sending...' : 'Send'}
                             </button>
                         </div>
                     </div>
-                </div>
+                )}
             </Modal>
 
-            <Modal isOpen={isViewRolesModalOpen} onClose={() => setViewRolesModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Roles for "{selectedUser?.email}"</h3>
-                {selectedUser?.roles && selectedUser.roles.length > 0 ? (
-                    <ul className="space-y-2">
-                        {selectedUser.roles.map(roleId => (
-                            <li key={roleId} className="bg-gray-100 p-3 rounded-md text-sm font-medium">
-                                {roles.find(r => r.id === roleId)?.name || roleId}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-sm text-gray-500">No roles assigned to this user.</p>
-                )}
-                <div className="flex justify-end pt-4">
+            {/* View Roles Modal */}
+            <Modal isOpen={isViewRolesModalOpen} onClose={() => setViewRolesModalOpen(false)} size="sm">
+                <h3 className="text-lg font-bold mb-4">Roles for {selectedUser?.firstName} {selectedUser?.lastName}</h3>
+                <div className="space-y-2">
+                    {selectedUser?.roles?.length > 0 ? (
+                        selectedUser.roles.map((role, index) => (
+                            <div key={index} className="bg-gray-100 p-2 rounded-md text-gray-700 text-sm">{role.name}</div>
+                        ))
+                    ) : (
+                        <p className="text-gray-500 text-sm">No roles assigned.</p>
+                    )}
+                </div>
+                <div className="flex justify-end mt-4">
                     <button
-                        type="button"
                         onClick={() => setViewRolesModalOpen(false)}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
                     >
                         Close
                     </button>
                 </div>
             </Modal>
-
-            <Modal isOpen={isViewShiftsModalOpen} onClose={() => setViewShiftsModalOpen(false)} size="xl">
-                <div className="p-6 w-full max-w-4xl mx-auto">
-                    <h3 className="text-lg font-bold mb-6">Shifts for "{selectedUser?.email}"</h3>
-                    {selectedUserShifts.length > 0 ? (
-                        <div className="w-full">
-                            <table className="w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mode</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned At</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                {selectedUserShifts.map((raw) => {
-                                    const id = raw.shiftId || raw.id;
-                                    const name = raw.shiftName || raw.name || 'Untitled Shift';
-                                    const mode = raw.shiftMode || raw.mode || 'N/A';
-                                    const assignedAt = raw.assignedAt || raw.startTime || null;
-                                    const active = typeof raw.isActive === 'boolean' ? raw.isActive : !!raw.active;
-                                    const fmt = (val) => {
-                                        if (!val) return 'N/A';
-                                        try { return format(parseISO(val), 'PPP p'); } catch { return val; }
-                                    };
-
-                                    return (
-                                        <tr key={id || Math.random()} className="hover:bg-gray-50 transition-colors duration-150">
-                                            <td className="px-6 py-4 text-sm font-medium text-gray-900">{name}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">{mode}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">{fmt(assignedAt)}</td>
-                                            <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {active ? 'Active' : 'Inactive'}
-                    </span>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="text-center py-8">
-                            <p className="text-sm text-gray-500">No shifts found for this user.</p>
-                        </div>
-                    )}
-
-                    <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-                        <button
-                            type="button"
-                            onClick={() => setViewShiftsModalOpen(false)}
-                            className="px-6 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
-                        >
-                            Close
-                        </button>
+            
+            {/* Manage Roles Modal */}
+            <Modal isOpen={isManageRolesModalOpen} onClose={() => setManageRolesModalOpen(false)} size="sm">
+                <h3 className="text-lg font-bold mb-4">Manage Roles for {selectedUser?.firstName} {selectedUser?.lastName}</h3>
+                {modalFeedback.text && (
+                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {modalFeedback.text}
                     </div>
+                )}
+                <div className="space-y-2">
+                    {roles.length > 0 ? (
+                        roles.map((role) => (
+                            <label key={role.id} className="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedUserRoles.includes(role.id)}
+                                    onChange={() => handleRoleChange(role.id)}
+                                    className="h-4 w-4 rounded text-green-600 border-gray-300 focus:ring-green-500"
+                                />
+                                <span className="text-sm font-medium text-gray-700">{role.name}</span>
+                            </label>
+                        ))
+                    ) : (
+                        <p className="text-gray-500 text-sm">No roles available.</p>
+                    )}
+                </div>
+                <div className="flex justify-end space-x-3 pt-4">
+                    <button
+                        type="button"
+                        onClick={() => setManageRolesModalOpen(false)}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleSaveRoles}
+                        disabled={isUpdating}
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300"
+                    >
+                        {isUpdating ? 'Saving...' : 'Save Roles'}
+                    </button>
+                </div>
+            </Modal>
+
+            {/* View Shifts Modal */}
+            <Modal isOpen={isViewShiftsModalOpen} onClose={() => setViewShiftsModalOpen(false)} size="lg">
+                <h3 className="text-lg font-bold mb-4">Shifts for {selectedUser?.firstName} {selectedUser?.lastName}</h3>
+                <div className="overflow-x-auto">
+                    {selectedUserShifts.length > 0 ? (
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shift Date</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {selectedUserShifts.map(shift => (
+                                    <tr key={shift.id}>
+                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{format(parseISO(shift.startTime), 'PP')}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.startTime), 'p')}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.endTime), 'p')}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                                            {formatDistanceToNow(parseISO(shift.startTime), { addSuffix: false })}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p className="text-gray-500 text-sm text-center">No shifts found for this user.</p>
+                    )}
+                </div>
+                <div className="flex justify-end mt-4">
+                    <button
+                        onClick={() => setViewShiftsModalOpen(false)}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                        Close
+                    </button>
                 </div>
             </Modal>
         </div>
