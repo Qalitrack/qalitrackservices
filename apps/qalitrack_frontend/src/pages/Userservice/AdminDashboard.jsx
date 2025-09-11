@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BarChart3, Users as UsersIcon, Settings, Activity, Clock } from "lucide-react";
+import { Users as UsersIcon, Settings, Activity, Clock } from "lucide-react";
 import { fetchUsers } from "../../helpers/UserService/Users/users.js";
 import { fetchRoles } from "../../helpers/UserService/Roles/Roles.js";
 import { fetchShifts } from "../../helpers/UserService/Shifts/Shifts.js";
@@ -7,161 +7,167 @@ import Users from "./Users.jsx";
 import Chart from "react-apexcharts";
 
 export default function AdminDashboard() {
-    const [stats, setStats] = useState([
-        { label: "Total Users", value: "...", icon: <UsersIcon size={20} className="text-amber-500" />, progress: 70 },
-        { label: "Inactive Users", value: "...", icon: <UsersIcon size={20} className="text-gray-500" />, progress: 30 },
-        { label: "Active Roles", value: "...", icon: <Settings size={20} className="text-amber-500" />, progress: 80 },
-        { label: "Active Shifts", value: "...", icon: <Clock size={20} className="text-amber-500" />, progress: 60 },
-        { label: "Inactive Shifts", value: "...", icon: <Clock size={20} className="text-gray-400" />, progress: 40 },
-        { label: "System Health", value: "98%", icon: <Activity size={20} className="text-amber-500" />, progress: 98 },
-    ]);
-    const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState([
+    { label: "Total Users", value: 0, icon: <UsersIcon size={24} className="text-amber-500" /> },
+    { label: "Inactive Users", value: 0, icon: <UsersIcon size={24} className="text-gray-400" /> },
+    { label: "Active Roles", value: 0, icon: <Settings size={24} className="text-amber-500" /> },
+  ]);
 
-    // Chart data
-    const [monthlyUsers, setMonthlyUsers] = useState([]);
-    const [monthlyShifts, setMonthlyShifts] = useState([]);
+  const [shiftStats, setShiftStats] = useState([
+    { label: "Active Shifts", value: 0, icon: <Clock size={24} className="text-amber-500" /> },
+    { label: "Inactive Shifts", value: 0, icon: <Clock size={24} className="text-gray-400" /> },
+    { label: "System Health", value: "98%", icon: <Activity size={24} className="text-amber-500" /> },
+  ]);
 
-    useEffect(() => {
-        const abortController = new AbortController();
-        const signal = abortController.signal;
+  const [loading, setLoading] = useState(true);
 
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const [usersData, rolesData, shiftsResponse] = await Promise.all([
-                    fetchUsers(1, 100, signal),
-                    fetchRoles(signal),
-                    fetchShifts(1, 100, signal)
-                ]);
+  const [monthlyUsers, setMonthlyUsers] = useState([]);
+  const [monthlyShifts, setMonthlyShifts] = useState([]);
+  const [rolesData, setRolesData] = useState([]);
 
-                const inactiveUsers = usersData.items?.filter(user => user.isDeleted)?.length || 0;
-                const allShifts = shiftsResponse?.items || [];
-                const activeShifts = allShifts.filter(shift => shift.isActive).length;
-                const inactiveShifts = allShifts.filter(shift => !shift.isActive).length;
+  useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
 
-                // Update stats cards
-                setStats(prevStats => [
-                    { ...prevStats[0], value: usersData.totalCount.toString() },
-                    { ...prevStats[1], value: inactiveUsers.toString() },
-                    { ...prevStats[2], value: rolesData.length.toString() },
-                    { ...prevStats[3], value: activeShifts.toString() },
-                    { ...prevStats[4], value: inactiveShifts.toString() },
-                    prevStats[5]
-                ]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-                // Chart data: last 7 days
-                const last7Days = Array.from({ length: 7 }, (_, i) => i + 1);
-                const usersCountByDay = last7Days.map(day => Math.floor(Math.random() * 50 + 50));
-                const shiftsCountByDay = last7Days.map(day => Math.floor(Math.random() * 10 + 5));
+        const [usersData, rolesData, shiftsData] = await Promise.all([
+          fetchUsers(1, 100, signal),
+          fetchRoles(signal),
+          fetchShifts(1, 100, signal),
+        ]);
 
-                setMonthlyUsers(usersCountByDay);
-                setMonthlyShifts(shiftsCountByDay);
+        const inactiveUsers = usersData.items?.filter(u => u.isDeleted)?.length || 0;
+        const allShifts = shiftsData?.items || [];
+        const activeShifts = allShifts.filter(s => s.isActive).length;
+        const inactiveShifts = allShifts.filter(s => !s.isActive).length;
 
-            } catch (error) {
-                if (error.name !== "CanceledError") {
-                    console.error("Failed to fetch dashboard data:", error);
-                    setStats(prevStats => prevStats.map(stat => ({ ...stat, value: "N/A" })));
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
+        setStats([
+          { ...stats[0], value: usersData.totalCount },
+          { ...stats[1], value: inactiveUsers },
+          { ...stats[2], value: rolesData.length },
+        ]);
 
-        fetchData();
-        return () => abortController.abort();
-    }, []);
+        setShiftStats([
+          { ...shiftStats[0], value: activeShifts },
+          { ...shiftStats[1], value: inactiveShifts },
+          shiftStats[2], // System health remains same
+        ]);
 
-    // Chart options
-    const userChartOptions = {
-        chart: { type: "area", height: 250, toolbar: { show: false }, foreColor: "#000000" },
-        dataLabels: { enabled: false },
-        stroke: { curve: "smooth" },
-        colors: ["#f59e0b"], // amber-500
-        grid: { borderColor: "#00000033", strokeDashArray: 4 },
-        xaxis: {
-            categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-            axisBorder: { show: true, color: "#000000" },
-            axisTicks: { show: true, color: "#000000" },
-            labels: { style: { colors: "#000000" } }
-        },
-        yaxis: { labels: { style: { colors: "#000000" } } },
-        tooltip: { theme: "dark", x: { show: true }, y: { formatter: val => `${val} users` } }
+        setRolesData(rolesData.map((role, i) => ({ name: role.name, value: Math.floor(Math.random() * 10 + 5) })));
+
+        // Example: last 7 days data
+        const last7Days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        setMonthlyUsers(last7Days.map(() => Math.floor(Math.random() * 50 + 50)));
+        setMonthlyShifts(last7Days.map(() => Math.floor(Math.random() * 10 + 5)));
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const shiftChartOptions = {
-        chart: { type: "bar", height: 250, toolbar: { show: false }, foreColor: "#000000" },
-        plotOptions: { bar: { horizontal: false, columnWidth: "25%", borderRadius: 5 } },
-        colors: ["#f59e0b"], // amber-500
-        grid: { borderColor: "#00000033", strokeDashArray: 4 },
-        xaxis: {
-            categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-            axisBorder: { show: true, color: "#000000" },
-            axisTicks: { show: true, color: "#000000" },
-            labels: { style: { colors: "#000000" } }
-        },
-        yaxis: { labels: { style: { colors: "#000000" } } },
-        tooltip: { theme: "dark", x: { show: true }, y: { formatter: val => `${val} shifts` } }
-    };
+    fetchData();
+    return () => abortController.abort();
+  }, []);
 
-    const greeting = "Welcome to the Admin Dashboard";
+  const chartCommonOptions = {
+    chart: { toolbar: { show: false }, foreColor: "#000000" },
+    dataLabels: { enabled: false },
+    grid: { borderColor: "#00000033", strokeDashArray: 4 },
+    tooltip: { theme: "dark" },
+  };
 
-    return (
-        <div className="p-4 max-w-7xl mx-auto">
-            {/* Welcome Section */}
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-800">{greeting}</h1>
-                <p className="text-gray-500 mt-1">Here's what's happening in your admin panel today</p>
-            </div>
+  const userChartOptions = {
+    ...chartCommonOptions,
+    xaxis: { categories: ["Total Users", "Inactive Users", "Active Roles"], labels: { style: { colors: "#000000" } } },
+    yaxis: { labels: { style: { colors: "#000000" } } },
+    colors: ["#f59e0b"], // amber-500
+  };
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {stats.map((stat, index) => (
-                    <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col justify-between">
-                        <div className="flex justify-between items-center mb-4">
-                            <div>
-                                <p className="text-sm text-gray-500">{stat.label}</p>
-                                <p className="text-2xl font-semibold mt-1">{loading ? '...' : stat.value}</p>
-                            </div>
-                            <div className="bg-gray-50 p-3 rounded-full">{stat.icon}</div>
-                        </div>
-                        {/* Progress Bar */}
-                        <div className="w-full h-1 bg-gray-200 rounded-full">
-                            <div
-                                className="h-1 rounded-full"
-                                style={{ width: `${stat.progress}%`, backgroundColor: "#f59e0b" }}
-                            ></div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+  const shiftChartOptions = {
+    ...chartCommonOptions,
+    xaxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], labels: { style: { colors: "#000000" } } },
+    yaxis: { labels: { style: { colors: "#000000" } } },
+    colors: ["#f59e0b"], // amber-500
+    stroke: { curve: "smooth" },
+  };
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="font-bold mb-4">User Activity (Last 7 Days)</h3>
-                    <Chart
-                        options={userChartOptions}
-                        series={[{ name: "Users", data: monthlyUsers }]}
-                        type="area"
-                        height={250}
-                    />
-                </div>
+  const rolesChartOptions = {
+    ...chartCommonOptions,
+    xaxis: { categories: rolesData.map(r => r.name), labels: { style: { colors: "#000000" } } },
+    yaxis: { labels: { style: { colors: "#000000" } } },
+    colors: ["#f59e0b"], // amber-500
+  };
 
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="font-bold mb-4">Shifts Activity (Last 7 Days)</h3>
-                    <Chart
-                        options={shiftChartOptions}
-                        series={[{ name: "Shifts", data: monthlyShifts }]}
-                        type="bar"
-                        height={250}
-                    />
-                </div>
-            </div>
+  const systemHealthOptions = {
+    chart: { type: "radialBar", sparkline: { enabled: true } },
+    plotOptions: {
+      radialBar: {
+        hollow: { margin: 0, size: "50%" },
+        dataLabels: { show: true, name: { show: false }, value: { fontSize: "20px", color: "#000" } },
+      },
+    },
+    colors: ["#f59e0b"],
+  };
 
-            {/* Users List */}
-            <div className="mt-8 w-full max-w-12xl">
-                <Users />
-            </div>
+  return (
+    <div className="p-4 max-w-7xl mx-auto">
+      {/* Welcome */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-800">Welcome to the Admin Dashboard</h1>
+        <p className="text-gray-500 mt-1">Here's an overview of your system status</p>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
+          <h3 className="font-bold mb-4">User Activity (Last 7 Days)</h3>
+          <Chart options={userChartOptions} series={[{ name: "Users", data: stats.map(s => s.value) }]} type="bar" height={250} />
         </div>
-    );
+
+        <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
+          <h3 className="font-bold mb-4">Shift Activity (Last 7 Days)</h3>
+          <Chart options={shiftChartOptions} series={[{ name: "Shifts", data: monthlyShifts }]} type="area" height={250} />
+        </div>
+
+        <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
+          <h3 className="font-bold mb-4">Roles Distribution</h3>
+          <Chart options={rolesChartOptions} series={[{ name: "Roles", data: rolesData.map(r => r.value) }]} type="bar" height={250} />
+        </div>
+
+        <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 flex items-center justify-center">
+          <div className="text-center">
+            <h3 className="font-bold mb-4">System Health</h3>
+            <Chart options={systemHealthOptions} series={[98]} type="radialBar" height={200} />
+          </div>
+        </div>
+      </div>
+
+      {/* Shift & System Cards Below Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {shiftStats.map((stat, idx) => (
+          <div
+            key={idx}
+            className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm text-gray-500">{stat.label}</p>
+                <p className="text-2xl font-semibold mt-1">{loading ? "..." : stat.value}</p>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-full">{stat.icon}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Users List */}
+      <div className="mt-8 w-full max-w-12xl">
+        <Users />
+      </div>
+    </div>
+  );
 }
