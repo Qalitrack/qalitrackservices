@@ -3,7 +3,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 // --- Configuration ---
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+console.log({API_BASE_URL})
 
 // Utility function to shuffle an array
 const shuffleArray = (array) => {
