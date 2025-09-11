@@ -361,13 +361,13 @@ const ShiftAssignment = () => {
                   <button
                     onClick={() => handleViewRolesClick(shift)}
                     className={`flex items-center ${
-                      (shift.assignedRolesCount || 0) > 0
+                      (shift.assignedRolesCount ) 
                         ? "text-blue-600 font-semibold"
                         : "text-gray-500"
                     } hover:underline`}
                   >
                     <Tag size={18} className="mr-1" />
-                    {shift.assignedRolesCount || 0}
+                    {shift.assignedRolesCount }
                   </button>
                 </td>
               </tr>

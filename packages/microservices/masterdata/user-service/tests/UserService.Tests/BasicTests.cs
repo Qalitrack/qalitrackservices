@@ -128,8 +128,6 @@ public class UserServiceTests
             LastName = "Smith",
             Email = "jane.smith@example.com",
             MobileNumber = "9876543210",
-            Password = "SecurePass123!",
-            ConfirmPassword = "SecurePass123!"
         };
 
         var createdUser = new User
