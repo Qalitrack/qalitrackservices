@@ -61,29 +61,17 @@ const slides = [
 function HeroCarousel() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [openVideo, setOpenVideo] = useState(false);
-  const [loadedImages, setLoadedImages] = useState({});
   const videoRef = useRef(null);
 
   const currentSlide = slides[currentSlideIndex];
 
-  // Cycle slides automatically
+  // Auto cycle slides
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlideIndex((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(interval);
-  }, [currentSlideIndex]);
-
-  // Preload next image
-  useEffect(() => {
-    const nextIndex = (currentSlideIndex + 1) % slides.length;
-    const nextImg = new Image();
-    nextImg.src = slides[nextIndex].imageUrl;
-  }, [currentSlideIndex]);
-
-  const handleImageLoad = (url) => {
-    setLoadedImages((prev) => ({ ...prev, [url]: true }));
-  };
+  }, []);
 
   const handleCloseVideo = () => {
     if (videoRef.current) {
@@ -106,25 +94,27 @@ function HeroCarousel() {
   return (
     <>
       <section className="relative h-[100vh] flex items-center justify-center overflow-hidden my-10">
-        {/* Background images */}
+        {/* Background images with smooth fade */}
         <div className="absolute inset-0">
-          {/* Placeholder (blurred, loads instantly) */}
+          {/* Placeholder blurred background */}
           <img
             src={currentSlide.placeholderUrl}
             alt="blurred background"
             className="absolute inset-0 w-full h-full object-cover blur-xl scale-105"
           />
-          {/* Full image crossfades when loaded */}
+
+          {/* Full image crossfade */}
           <motion.img
             key={currentSlide.imageUrl}
             src={currentSlide.imageUrl}
             alt={currentSlide.heading}
             className="absolute inset-0 w-full h-full object-cover"
             initial={{ opacity: 0 }}
-            animate={{ opacity: loadedImages[currentSlide.imageUrl] ? 1 : 0 }}
-            transition={{ duration: 1 }}
-            onLoad={() => handleImageLoad(currentSlide.imageUrl)}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
           />
+
+          {/* Overlay tint */}
           <div className="absolute inset-0 bg-black/50" />
         </div>
 
@@ -148,55 +138,65 @@ function HeroCarousel() {
           <ChevronRight size={24} />
         </button>
 
-        {/* Slide content */}
+        {/* Slide content with fade-in/out */}
         <div className="relative z-10 max-w-4xl text-center px-4 text-white">
-          {currentSlide.subheading && (
-            <h3 className="text-amber-400 font-semibold mb-2 text-3xl">
-              {currentSlide.subheading}
-            </h3>
-          )}
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            {currentSlide.heading}
-          </h1>
-          {currentSlide.paragraph && (
-            <p className="text-gray-200 mb-6">{currentSlide.paragraph}</p>
-          )}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlideIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            >
+              {currentSlide.subheading && (
+                <h3 className="text-amber-400 font-semibold mb-2 text-3xl">
+                  {currentSlide.subheading}
+                </h3>
+              )}
+              <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                {currentSlide.heading}
+              </h1>
+              {currentSlide.paragraph && (
+                <p className="text-gray-200 mb-6">{currentSlide.paragraph}</p>
+              )}
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
-            <button
-              onClick={() => setOpenVideo(true)}
-              className="flex items-center gap-2 bg-white text-black font-medium px-6 py-3 rounded-full hover:bg-gray-200 transition"
-            >
-              <PlayCircle className="text-amber-400" size={18} /> Watch Video
-            </button>
+              <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+                <button
+                  onClick={() => setOpenVideo(true)}
+                  className="flex items-center gap-2 bg-white text-black font-medium px-6 py-3 rounded-full hover:bg-gray-200 transition"
+                >
+                  <PlayCircle className="text-amber-400" size={18} /> Watch Video
+                </button>
 
-            <Link
-              to="/services"
-              className="bg-amber-400 text-black px-6 py-3 rounded-full font-medium hover:opacity-90 transition"
-            >
-              Learn More
-            </Link>
-          </div>
+                <Link
+                  to="/services"
+                  className="bg-amber-400 text-black px-6 py-3 rounded-full font-medium hover:opacity-90 transition"
+                >
+                  Learn More
+                </Link>
+              </div>
 
-          <div className="text-sm font-semibold">Follow Us:</div>
-          <div className="flex justify-center gap-4 mt-2 text-lg">
-            <a
-              href="https://www.facebook.com/profile.php?id=61573224881488"
-              target="_blank"
-              rel="noreferrer"
-              className="p-2 bg-white text-black rounded-full hover:bg-gray-100"
-            >
-              <Facebook size={18} />
-            </a>
-            <a
-              href="https://www.linkedin.com/company/qalibrated-systems-limited"
-              target="_blank"
-              rel="noreferrer"
-              className="p-2 bg-white text-black rounded-full hover:bg-gray-100"
-            >
-              <Linkedin size={18} />
-            </a>
-          </div>
+              <div className="text-sm font-semibold">Follow Us:</div>
+              <div className="flex justify-center gap-4 mt-2 text-lg">
+                <a
+                  href="https://www.facebook.com/profile.php?id=61573224881488"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 bg-white text-black rounded-full hover:bg-gray-100"
+                >
+                  <Facebook size={18} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/qalibrated-systems-limited"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 bg-white text-black rounded-full hover:bg-gray-100"
+                >
+                  <Linkedin size={18} />
+                </a>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 
