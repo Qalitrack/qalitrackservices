@@ -23,7 +23,7 @@ export default function UserServiceSidebar() {
     };
 
     const linkClasses = ({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-200 ${
+        `flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors duration-200 ${
             isActive
                 ? "bg-amber-100 text-amber-700 font-semibold border-l-4 border-amber-500"
                 : "text-gray-600 hover:bg-gray-100"
@@ -77,7 +77,7 @@ export default function UserServiceSidebar() {
     return (
         <>
             <button
-                className="md:hidden fixed top-4 left-4 z-50 p-2 bg-amber-500 text-white rounded-md"
+                className="md:hidden fixed top-4 left-4 z-50 px-4 bg-amber-500 text-white rounded-md"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,7 +92,7 @@ export default function UserServiceSidebar() {
                     <span className="md:hidden">AP</span>
                 </div>
 
-                <nav className="flex-1 px-2 space-y-2 overflow-y-auto">
+                <nav className="flex-1 space-y-2 overflow-y-auto px-4">
                     {menuItems.map((item) => (
                         <NavLink
                             key={item.key}
@@ -109,10 +109,10 @@ export default function UserServiceSidebar() {
                     ))}
                 </nav>
 
-                <div className="mt-auto">
+                <div className="mt-auto px-4">
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
                     >
                         <span className="p-1 rounded-md bg-amber-500 text-white">
                             <LogOut size={18} />
