@@ -1,32 +1,30 @@
 import { Link, useLocation } from "react-router-dom";
-import { Bell, Search, User, LogOut } from "lucide-react";
+import { Bell, Search, User, LogOut, Menu } from "lucide-react";
 import useAuth from "../helpers/auth";
 import { useState, useRef, useEffect } from "react";
 
-export default function Topbar() {
+export default function Topbar({ onToggleSidebar }) {
     const location = useLocation();
     const { getCurrentUser, logout } = useAuth();
     const user = getCurrentUser();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    // Better role extraction with fallback
+    // Extract role safely
     const getUserRole = () => {
         if (!user || !user.userRoles) return "Guest";
-
-        // Handle both array of strings and array of objects
         const role = user.userRoles[0];
-        if (typeof role === "string") {
-            return role;
-        } else if (typeof role === "object" && role !== null) {
+        if (typeof role === "string") return role;
+        if (typeof role === "object" && role !== null) {
             return role.name || role.role || role.type || "User";
         }
-
         return "User";
     };
 
     const userRole = getUserRole();
-    const userName = user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email || "User";
+    const userName = user?.firstName
+        ? `${user.firstName} ${user.lastName}`
+        : user?.email || "User";
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -36,9 +34,7 @@ export default function Topbar() {
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // Breadcrumb
@@ -53,27 +49,41 @@ export default function Topbar() {
 
     return (
         <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-2 md:px-4">
-            {/* Breadcrumb */}
-            <div className="hidden md:flex font-medium text-gray-700 items-center gap-1 text-sm">
-                <Link to="/" className="hover:underline text-gray-500">
-                    Home
-                </Link>
-                {pathSegments.map((segment, idx) => {
-                    const path = "/" + pathSegments.slice(0, idx + 1).join("/");
-                    const isLast = idx === pathSegments.length - 1;
-                    return (
-                        <span key={path} className="flex items-center gap-1">
-                            <span>/</span>
-                            {isLast ? (
-                                <span className="text-gray-700">{formatLabel(segment)}</span>
-                            ) : (
-                                <Link to={path} className="hover:underline text-gray-500">
-                                    {formatLabel(segment)}
-                                </Link>
-                            )}
-                        </span>
-                    );
-                })}
+            {/* Left Section */}
+            <div className="flex items-center gap-2">
+                {/* Sidebar Toggle (Mobile) */}
+                <button
+                    onClick={onToggleSidebar}
+                    className="md:hidden h-9 w-9 flex items-center justify-center rounded hover:bg-gray-50"
+                >
+                    <Menu size={20} className="text-gray-700" />
+                </button>
+
+                {/* Breadcrumb */}
+                <div className="hidden md:flex font-medium text-gray-700 items-center gap-1 text-sm">
+                    <Link to="/" className="hover:underline text-gray-500">
+                        Home
+                    </Link>
+                    {pathSegments.map((segment, idx) => {
+                        const path = "/" + pathSegments.slice(0, idx + 1).join("/");
+                        const isLast = idx === pathSegments.length - 1;
+                        return (
+                            <span key={path} className="flex items-center gap-1">
+                                <span>/</span>
+                                {isLast ? (
+                                    <span className="text-gray-700">{formatLabel(segment)}</span>
+                                ) : (
+                                    <Link
+                                        to={path}
+                                        className="hover:underline text-gray-500"
+                                    >
+                                        {formatLabel(segment)}
+                                    </Link>
+                                )}
+                            </span>
+                        );
+                    })}
+                </div>
             </div>
 
             {/* Right Section */}
@@ -106,7 +116,9 @@ export default function Topbar() {
                         className="h-9 px-2 md:px-3 border rounded flex items-center gap-2 hover:bg-gray-50"
                     >
                         <User size={18} className="text-gray-600" />
-                        <span className="hidden sm:inline text-sm text-gray-700">{userName}</span>
+                        <span className="hidden sm:inline text-sm text-gray-700">
+                            {userName}
+                        </span>
                     </button>
 
                     {dropdownOpen && (
@@ -116,7 +128,9 @@ export default function Topbar() {
                                 <p className="text-xs text-gray-500">{user?.email}</p>
                                 <div className="mt-1 flex items-center">
                                     <span className="h-2 w-2 rounded-full bg-green-500 mr-1.5"></span>
-                                    <p className="text-xs font-medium text-amber-600 capitalize">{userRole}</p>
+                                    <p className="text-xs font-medium text-amber-600 capitalize">
+                                        {userRole}
+                                    </p>
                                 </div>
                             </div>
                             <div className="p-2">
