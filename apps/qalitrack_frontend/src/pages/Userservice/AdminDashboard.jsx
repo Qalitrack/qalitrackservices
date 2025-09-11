@@ -74,7 +74,7 @@ export default function AdminDashboard() {
     const greeting = "Welcome to the Admin Dashboard";
 
     return (
-        <div className="p-6 max-w-7xl mx-auto mr-60">
+        <div className="p-4 max-w-7xl mx-auto mx-auto">
             {/* Welcome Section */}
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-800">{greeting}</h1>
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Users List */}
-            <div className="mt-8 w-full max-w-11xl">
+            <div className="mt-8 w-full max-w-12xl ">
                 <Users />
             </div>
         </div>
