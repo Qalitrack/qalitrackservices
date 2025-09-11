@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-// --- Configuration ---
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-console.log({API_BASE_URL})
+import { API_BASE_URL } from '../utils/config';
 
 // Utility function to shuffle an array
 const shuffleArray = (array) => {
