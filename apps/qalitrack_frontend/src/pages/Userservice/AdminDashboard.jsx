@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Users as UsersIcon, Settings, Activity, Clock } from "lucide-react";
+import CountUp from "react-countup";
 import { fetchUsers } from "../../helpers/UserService/Users/users.js";
 import { fetchRoles } from "../../helpers/UserService/Roles/Roles.js";
 import { fetchShifts } from "../../helpers/UserService/Shifts/Shifts.js";
@@ -16,11 +17,10 @@ export default function AdminDashboard() {
   const [shiftStats, setShiftStats] = useState([
     { label: "Active Shifts", value: 0, icon: <Clock size={24} className="text-amber-500" /> },
     { label: "Inactive Shifts", value: 0, icon: <Clock size={24} className="text-gray-400" /> },
-    { label: "System Health", value: "98%", icon: <Activity size={24} className="text-amber-500" /> },
+    { label: "System Health", value: 98, icon: <Activity size={24} className="text-amber-500" /> },
   ]);
 
   const [loading, setLoading] = useState(true);
-
   const [monthlyUsers, setMonthlyUsers] = useState([]);
   const [monthlyShifts, setMonthlyShifts] = useState([]);
   const [rolesData, setRolesData] = useState([]);
@@ -32,7 +32,6 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         setLoading(true);
-
         const [usersData, rolesData, shiftsData] = await Promise.all([
           fetchUsers(1, 100, signal),
           fetchRoles(signal),
@@ -53,12 +52,11 @@ export default function AdminDashboard() {
         setShiftStats([
           { ...shiftStats[0], value: activeShifts },
           { ...shiftStats[1], value: inactiveShifts },
-          shiftStats[2], // System health remains same
+          shiftStats[2],
         ]);
 
-        setRolesData(rolesData.map((role, i) => ({ name: role.name, value: Math.floor(Math.random() * 10 + 5) })));
+        setRolesData(rolesData.map(role => ({ name: role.name, value: Math.floor(Math.random() * 10 + 5) })));
 
-        // Example: last 7 days data
         const last7Days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
         setMonthlyUsers(last7Days.map(() => Math.floor(Math.random() * 50 + 50)));
         setMonthlyShifts(last7Days.map(() => Math.floor(Math.random() * 10 + 5)));
@@ -74,62 +72,78 @@ export default function AdminDashboard() {
   }, []);
 
   const chartCommonOptions = {
-    chart: { toolbar: { show: false }, foreColor: "#000000" },
+    chart: { toolbar: { show: false }, foreColor: "#000", zoom: { enabled: false } },
     dataLabels: { enabled: false },
     grid: { borderColor: "#00000033", strokeDashArray: 4 },
     tooltip: { theme: "dark" },
+    animations: {
+      enabled: true,
+      easing: "easeout",
+      speed: 1000,
+      animateGradually: { enabled: true, delay: 150 },
+      dynamicAnimation: { enabled: true, speed: 800 },
+    },
+    responsive: [
+      { breakpoint: 1024, options: { chart: { height: 220 }, plotOptions: { bar: { columnWidth: "60%" } } } },
+      { breakpoint: 640, options: { chart: { height: 200 }, plotOptions: { bar: { columnWidth: "70%" } } } },
+    ],
   };
 
   const userChartOptions = {
     ...chartCommonOptions,
-    xaxis: { categories: ["Total Users", "Inactive Users", "Active Roles"], labels: { style: { colors: "#000000" } } },
-    yaxis: { labels: { style: { colors: "#000000" } } },
-    colors: ["#f59e0b"], // amber-500
+    xaxis: { categories: ["Total Users", "Inactive Users", "Active Roles"], labels: { style: { colors: "#000" } } },
+    yaxis: { labels: { style: { colors: "#000" } } },
+    colors: ["#f59e0b"],
+    fill: {
+      type: "gradient",
+      gradient: { shade: "light", type: "vertical", shadeIntensity: 0.5, gradientToColors: ["#fbbf24"], opacityFrom: 0.9, opacityTo: 0.9 },
+    },
   };
 
   const shiftChartOptions = {
     ...chartCommonOptions,
-    xaxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], labels: { style: { colors: "#000000" } } },
-    yaxis: { labels: { style: { colors: "#000000" } } },
-    colors: ["#f59e0b"], // amber-500
-    stroke: { curve: "smooth" },
+    xaxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], labels: { style: { colors: "#000" } } },
+    yaxis: { labels: { style: { colors: "#000" } } },
+    colors: ["#f59e0b"],
+    fill: {
+      type: "gradient",
+      gradient: { shade: "light", type: "vertical", gradientToColors: ["#fbbf24"], opacityFrom: 0.8, opacityTo: 0.3 },
+    },
+    stroke: { curve: "smooth", width: 2 },
   };
 
   const rolesChartOptions = {
     ...chartCommonOptions,
-    xaxis: { categories: rolesData.map(r => r.name), labels: { style: { colors: "#000000" } } },
-    yaxis: { labels: { style: { colors: "#000000" } } },
-    colors: ["#f59e0b"], // amber-500
+    xaxis: { categories: rolesData.map(r => r.name), labels: { style: { colors: "#000" } } },
+    yaxis: { labels: { style: { colors: "#000" } } },
+    colors: ["#f59e0b"],
+    fill: { type: "gradient", gradient: { shade: "light", type: "vertical", gradientToColors: ["#fbbf24"], opacityFrom: 0.9, opacityTo: 0.6 } },
   };
 
   const systemHealthOptions = {
-    chart: { type: "radialBar", sparkline: { enabled: true } },
+    chart: { type: "radialBar", sparkline: { enabled: true }, animations: { enabled: true, easing: "easeout", speed: 1200 } },
     plotOptions: {
-      radialBar: {
-        hollow: { margin: 0, size: "50%" },
-        dataLabels: { show: true, name: { show: false }, value: { fontSize: "20px", color: "#000" } },
-      },
+      radialBar: { hollow: { size: "50%" }, dataLabels: { show: true, name: { show: false }, value: { fontSize: "20px", color: "#000" } } },
     },
     colors: ["#f59e0b"],
   };
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* Welcome */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-800">Welcome to the Admin Dashboard</h1>
-        <p className="text-gray-500 mt-1">Here's an overview of your system status</p>
+        <p className="text-gray-500 mt-1">Overview of your system stats and activity</p>
       </div>
 
-      {/* Charts Section */}
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
-          <h3 className="font-bold mb-4">User Activity (Last 7 Days)</h3>
+          <h3 className="font-bold mb-4">User Activity</h3>
           <Chart options={userChartOptions} series={[{ name: "Users", data: stats.map(s => s.value) }]} type="bar" height={250} />
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
-          <h3 className="font-bold mb-4">Shift Activity (Last 7 Days)</h3>
+          <h3 className="font-bold mb-4">Shift Activity</h3>
           <Chart options={shiftChartOptions} series={[{ name: "Shifts", data: monthlyShifts }]} type="area" height={250} />
         </div>
 
@@ -146,17 +160,16 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Shift & System Cards Below Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {/* Shift & System Cards with Animated Counters */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
         {shiftStats.map((stat, idx) => (
-          <div
-            key={idx}
-            className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
-          >
+          <div key={idx} className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-gray-500">{stat.label}</p>
-                <p className="text-2xl font-semibold mt-1">{loading ? "..." : stat.value}</p>
+                <p className="text-2xl font-semibold mt-1">
+                  {loading ? "..." : <CountUp end={stat.value} duration={1.5} separator="," />}
+                </p>
               </div>
               <div className="bg-gray-50 p-3 rounded-full">{stat.icon}</div>
             </div>
