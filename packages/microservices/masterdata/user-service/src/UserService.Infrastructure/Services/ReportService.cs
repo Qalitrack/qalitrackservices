@@ -62,6 +62,7 @@ namespace UserService.Infrastructure.Services
                     EndTime = s.EndTime,
                     Mode = s.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected interpretation
                     IsActive = s.IsActive,
+                    CreatedAt =s.CreatedAt, 
                     CreatedBy = s.CreatedBy,
                     UpdatedBy = s.UpdatedBy,
                     AssignedUsersCount = s.UserShifts?.Count(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted) ?? 0,
