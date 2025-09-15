@@ -1,32 +1,30 @@
 services:
   mongodb:
     image: mongo:7
-    container_name: qs-mongodb
+    container_name: qs-mongodb-dev
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: products_dashboard_db
     volumes:
-      - mongodb_data:/data/db
+      - mongodb_data_dev:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
-      - qs-network
+      - website_dev_qs_network
 
   backend:
     image: ghcr.io/qalitrack/qalitrackservices/qs-website-backend:main
     container_name: qs-backend-dev
     restart: unless-stopped
     env_file:
-      - .env
+      - .env.dev
     environment:
       - NODE_ENV=development
-      - MONGODB_URI=${MONGODB_URI}
-      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - mongodb
     networks:
-      - qs-network
+      - website_dev_qs_network
 
   frontend:
     image: ghcr.io/qalitrack/qalitrackservices/qs-website-frontend:main
@@ -35,18 +33,19 @@ services:
    # ports:
    #   - "3002:80"
     env_file:
-      - .env
+      - .env.dev
     environment:
       - VITE_API_BASE_URL=https://dev.qalibrated.co.ke/api
       - VITE_ALLOWED_HOSTS=localhost,dev.qalibrated.co.ke
     depends_on:
       - backend
     networks:
-      - qs-network
+      - website_dev_qs_network
 
 volumes:
-  mongodb_data:
+  mongodb_data_dev:
 
 networks:
-  qs-network:
+  website_dev_qs_network:
     driver: bridge
+    name: website_dev_qs_network

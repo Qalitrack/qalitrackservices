@@ -14,7 +14,8 @@ services:
       - ./certbot-webroot:/var/www/certbot
     networks:
       - proxy-network
-      - website_qs-network  # Connect to app networks directly
+      - website_prod_qs_network  # Connect to production app network
+      - website_dev_qs_network   # Connect to development app network
 
   certbot:
     image: certbot/certbot:latest
@@ -31,5 +32,7 @@ networks:
   proxy-network:
     driver: bridge
     name: proxy-network
-  website_qs-network:
+  website_prod_qs_network:
     external: true  # Use existing network from website services
+  website_dev_qs_network:
+    external: true  # Use existing network from dev website services
