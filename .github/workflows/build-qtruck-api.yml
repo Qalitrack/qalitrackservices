@@ -4,18 +4,18 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'packages/qtruck_api/**'
+      - 'apps/qtruck/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'packages/qtruck_api/**'
+      - 'apps/qtruck/**'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
   SERVICE_NAME: qtruck-api
-  SERVICE_PATH: packages/qtruck_api
+  SERVICE_PATH: apps/qtruck
 
 jobs:
   build:
