@@ -16,7 +16,7 @@ env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
   SERVICE_NAME: qtruck-api
-  SERVICE_PATH: apps/qtruck
+  SERVICE_PATH: apps/qtruck/qtruck_api
 
 jobs:
   build:
@@ -30,19 +30,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          dotnet-version: '8.0.x'
+          python-version: '3.11'
 
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.SERVICE_PATH }}/QTruck.API.sln
+      - name: Install dependencies
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Build application
-        run: dotnet build ${{ env.SERVICE_PATH }}/QTruck.API.sln --configuration Release --no-restore
+      - name: Run Django checks
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          python manage.py check
 
       - name: Run tests
-        run: dotnet test ${{ env.SERVICE_PATH }}/QTruck.API.sln --configuration Release --no-build --verbosity normal
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          python manage.py test
         continue-on-error: true
 
       - name: Log in to Container Registry
