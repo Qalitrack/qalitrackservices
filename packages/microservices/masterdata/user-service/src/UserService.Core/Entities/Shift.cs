@@ -1,35 +1,96 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using UserService.Core.DTOs;
+using UserService.Core.Enums;
 
 namespace UserService.Core.Entities
 {
-    public class Shift : BaseEntity
+      public class Shift : BaseEntity
     {
         [Required]
-        public string Name { get; set; } = string.Empty; // e.g., "Morning", "Evening"
+        public string Name { get; set; } = string.Empty;
+        
         [Required]
         public string Description { get; set; } = string.Empty;
-        [Required]
-        public TimeSpan StartTime { get; set; } // e.g., 08:00:00
-        [Required]
-        public TimeSpan EndTime { get; set; } // e.g., 16:00:00
-        [Required]
-        public ShiftMode Mode { get; set; } // Can be "Strict" or "Open"
         
-        // Auto-repeat functionality
-        public bool AutoRepeatDaily { get; set; } = false; // Whether this shift repeats daily
+        [Required]
+        public TimeSpan StartTime { get; set; }
         
-        // Duration in minutes (optional - can be used instead of EndTime)
-        public int? DurationMinutes { get; set; }
-
-        // Real-time computed property, not persisted in the database
+        [Required]
+        public TimeSpan EndTime { get; set; }
+        
+        [Required]
+        public ShiftMode Mode { get; set; }
+        
+        
+        // New enhanced scheduling properties
+        private DateTime _startDate = DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Utc);
+        public DateTime StartDate
+        {
+            get => _startDate;
+            set => _startDate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+        
+        private DateTime? _endDate;
+        public DateTime? EndDate
+        {
+            get => _endDate;
+            set => _endDate = value.HasValue ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc) : null;
+        }
+        public ShiftStatus Status { get; set; } = ShiftStatus.Draft;
+        public ShiftType Type { get; set; } = ShiftType.Recurring;
+        public int RequiredStaffCount { get; set; } = 1;
+        
+        // Enhanced recurrence properties
+        public RecurrenceType RecurrenceType { get; set; } = RecurrenceType.None;
+        public int RecurrenceInterval { get; set; } = 1; // Every X days/weeks/months
+        
+        // JSON serialized arrays for flexible scheduling
+        public string? CustomDaysJson { get; set; }
+        public string? ExceptionDatesJson { get; set; }
+        
+        // Non-mapped computed properties
+        [NotMapped]
+        public DayOfWeek[] CustomDays
+        {
+            get => string.IsNullOrEmpty(CustomDaysJson) 
+                ? Array.Empty<DayOfWeek>() 
+                : JsonSerializer.Deserialize<DayOfWeek[]>(CustomDaysJson) ?? Array.Empty<DayOfWeek>();
+            set => CustomDaysJson = JsonSerializer.Serialize(value);
+        }
+        
+        [NotMapped]
+        public DateTime[] ExceptionDates
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ExceptionDatesJson))
+                    return Array.Empty<DateTime>();
+                
+                var dates = JsonSerializer.Deserialize<DateTime[]>(ExceptionDatesJson) ?? Array.Empty<DateTime>();
+                return Array.ConvertAll(dates, d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+            }
+            set
+            {
+                if (value != null)
+                {
+                    var utcDates = Array.ConvertAll(value, d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+                    ExceptionDatesJson = JsonSerializer.Serialize(utcDates);
+                }
+                else
+                {
+                    ExceptionDatesJson = null;
+                }
+            }
+        }
+        
         [NotMapped]
         public bool IsActive
         {
             get
             {
                 var now = DateTime.UtcNow.TimeOfDay;
-                // Handle shifts that cross midnight (e.g., 16:00:00 to 00:00:00)
                 if (StartTime < EndTime)
                 {
                     return now >= StartTime && now <= EndTime;
@@ -39,17 +100,11 @@ namespace UserService.Core.Entities
                     return now >= StartTime || now <= EndTime;
                 }
             }
-            // Add private setter for EF
             private set { }
         }
-
+        
         // Navigation properties
         public virtual ICollection<UserShift> UserShifts { get; set; } = new List<UserShift>();
-    }
-
-    public enum ShiftMode
-    {
-        Strict = 1, // Only allowed users can log in
-        Open = 0 // Anyone can log in
+        public virtual ICollection<ShiftInstance> ShiftInstances { get; set; } = new List<ShiftInstance>();
     }
 }

@@ -29,4 +29,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="DTOs\Shift\ShiftInstanceResponse.cs">
+      <DependentUpon>ShiftResponse.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

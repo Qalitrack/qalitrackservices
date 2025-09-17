@@ -1,22 +1,82 @@
 import { apiClient } from '../../apiClients.js';
+import shifts from "../../../pages/Userservice/Shifts.jsx";
+
+// Helper functions
+const formatTime = (dateString) => {
+    if (!dateString) return '00:00:00';
+    const date = new Date(dateString);
+    // Format as HH:mm:ss
+    return date.toTimeString().substring(0, 8);
+};
+
+const formatDate = (dateString) => {
+    if (!dateString) return null;
+    return new Date(dateString).toISOString();
+};
+
+const prepareShiftPayload = (shiftData) => {
+    // Calculate duration in minutes if not provided
+    const durationMinutes = shiftData.durationMinutes || 
+        (shiftData.startTime && shiftData.endTime 
+            ? Math.round((new Date(shiftData.endTime) - new Date(shiftData.startTime)) / (1000 * 60))
+            : 60);
+
+    // Format times as HH:mm:ss
+    const startTime = formatTime(shiftData.startTime || new Date());
+    const endTime = formatTime(shiftData.endTime || new Date(Date.now() + 3600000));
+    
+    return {
+        name: shiftData.name?.trim() || '',
+        description: shiftData.description?.trim() || '',
+        startTime: startTime,
+        endTime: endTime,
+        mode: parseInt(shiftData.mode, 10) || 0,
+        startDate: formatDate(shiftData.startDate || new Date()),
+        endDate: shiftData.endDate ? formatDate(shiftData.endDate) : null,
+        type: parseInt(shiftData.type, 10) || 1,
+        requiredStaffCount: parseInt(shiftData.requiredStaffCount, 10) || 1,
+        recurrenceType: parseInt(shiftData.recurrenceType, 10) || 0,
+        recurrenceInterval: parseInt(shiftData.recurrenceInterval, 10) || 1,
+        customDays: Array.isArray(shiftData.customDays) ? shiftData.customDays : [],
+        exceptionDates: Array.isArray(shiftData.exceptionDates) 
+            ? shiftData.exceptionDates.map(date => formatDate(date)).filter(Boolean)
+            : [],
+        autoRepeatDaily: Boolean(shiftData.autoRepeatDaily),
+        durationMinutes: durationMinutes
+    };
+};
 
 /**
- * Fetches a paginated list of shifts from the server.
- * @param {number} page - The page number to fetch.
- * @param {number} pageSize - The number of shifts per page.
- * @param {AbortSignal} signal - An optional AbortSignal to cancel the request.
- * @returns {Promise<object>} A promise that resolves to the paginated shift data object.
+ * Fetches all shifts from the server with pagination support.
+ * @param {number} [page=1] - The page number to fetch (1-based).
+ * @param {number} [pageSize=10] - The number of items per page.
+ * @param {AbortSignal} [signal] - An optional AbortSignal to cancel the request.
+ * @returns {Promise<Object>} A promise that resolves to an object containing items and pagination info.
  */
 export const fetchShifts = async (page = 1, pageSize = 10, signal) => {
     try {
-        const response = await apiClient.get('/Reports/shifts', {
-            params: {
-                page,
-                pageSize,
-            },
-            signal,
+        const response = await apiClient.get('/shift', {
+            params: { page, pageSize },
+            signal
         });
-        return response.data;
+
+        const responseData = response.data.data || {};
+        // Extract items and pagination data from the response
+        const items = Array.isArray(responseData.items) ? responseData.items : [];
+        const paginationData = {
+            page: parseInt(responseData.page) || page,
+            pageSize: parseInt(responseData.pageSize) || pageSize,
+            totalCount: parseInt(responseData.totalCount) || 0,
+            totalPages: parseInt(responseData.totalPages) || 0,
+            hasNextPage: Boolean(responseData.hasNextPage),
+            hasPreviousPage: Boolean(responseData.hasPreviousPage)
+        };
+
+        // Return a flat object to match loadData expectations
+        return {
+            items,
+            ...paginationData
+        };
     } catch (err) {
         if (err.name !== 'CanceledError') {
             console.error('Fetch shifts error:', err);
@@ -35,10 +95,7 @@ export const fetchShifts = async (page = 1, pageSize = 10, signal) => {
 export const fetchDeletedShifts = async (page = 1, pageSize = 10, signal) => {
     try {
         const response = await apiClient.get('/shift/deleted', {
-            params: {
-                page,
-                pageSize,
-            },
+            params: { page, pageSize },
             signal,
         });
         return response.data.data;
@@ -51,26 +108,37 @@ export const fetchDeletedShifts = async (page = 1, pageSize = 10, signal) => {
 };
 
 /**
+ * Gets a shift by ID.
+ * @param {string} shiftId - The ID of the shift to retrieve.
+ * @returns {Promise<object>} A promise that resolves to the shift data.
+ */
+export const getShiftById = async (shiftId) => {
+    try {
+        const response = await apiClient.get(`/shift/${shiftId}`);
+        return response.data;
+    } catch (err) {
+        console.error('Get shift by ID error:', err);
+        throw err;
+    }
+};
+
+/**
  * Updates a shift by ID.
  * @param {string} shiftId - The ID of the shift to update.
- * @param {object} shiftData - The shift data to update.
+ * @param {object} shiftData - The shift data to update (should be pre-formatted).
  * @returns {Promise<any>} A promise that resolves when the shift is updated.
  */
 export const updateShift = async (shiftId, shiftData) => {
     try {
-        const payload = {
-            name: shiftData.name,
-            description: shiftData.description,
-            startTime: shiftData.startTime,
-            durationMinutes: shiftData.durationMinutes,
-            mode: shiftData.mode,
-            autoRepeatDaily: shiftData.autoRepeatDaily,
-        };
-
-
-        return await apiClient.put(`/Shift/${shiftId}`, payload);
+        // Use the data as-is since it's already formatted in the component
+        const response = await apiClient.put(`/shift/${shiftId}`, shiftData);
+        return response.data;
     } catch (err) {
-        console.error(`Update shift ${shiftId} error:`, err);
+        console.error('Update shift error:', {
+            message: err.message,
+            response: err.response?.data,
+            status: err.response?.status
+        });
         throw err;
     }
 };
@@ -82,9 +150,10 @@ export const updateShift = async (shiftId, shiftData) => {
  */
 export const deleteShift = async (shiftId) => {
     try {
-        return await apiClient.delete(`/Shift/${shiftId}`);
+        const response = await apiClient.delete(`/shift/${shiftId}`);
+        return response.data;
     } catch (err) {
-        console.error(`Delete shift ${shiftId} error:`, err);
+        console.error('Delete shift error:', err);
         throw err;
     }
 };
@@ -96,22 +165,29 @@ export const deleteShift = async (shiftId) => {
  */
 export const createShift = async (shiftData) => {
     try {
-        // Ensure payload matches required format
-        const payload = {
-            name: shiftData.name,
-            description: shiftData.description,
-            startTime: shiftData.startTime,
-            durationMinutes: shiftData.durationMinutes,
-            mode: shiftData.mode,
-            autoRepeatDaily: shiftData.autoRepeatDaily,
-        };
-        return await apiClient.post('/Shift', payload);
+        const payload = prepareShiftPayload(shiftData);
+
+        // Validate required fields
+        if (!payload.name) {
+            throw new Error('Shift name is required');
+        }
+
+        if (!payload.startTime || !payload.endTime) {
+            throw new Error('Start time and end time are required');
+        }
+
+        const response = await apiClient.post('/shift', payload);
+        return response.data;
     } catch (err) {
-        console.error('Create shift error:', err);
+        console.error('Create shift error:', {
+            message: err.message,
+            response: err.response?.data,
+            status: err.response?.status
+        });
         throw err;
     }
 };
-// javascript
+
 /**
  * Fetches users assigned to a specific shift.
  * @param {string} shiftId - The ID of the shift.
@@ -137,6 +213,7 @@ export const fetchShiftUsers = async (shiftId, signal) => {
         throw err;
     }
 };
+
 /**
  * Assigns a shift to a role.
  * @param {string} roleId - The ID of the role.
@@ -145,12 +222,10 @@ export const fetchShiftUsers = async (shiftId, signal) => {
  */
 export const assignShiftToRole = async (roleId, shiftId) => {
     try {
-        if (!roleId || !shiftId) {
-            throw new Error('Role ID and Shift ID are required.');
-        }
-        return await apiClient.post(`/UserShift/role/${roleId}/shift/${shiftId}`);
+        const response = await apiClient.post(`/shift/${shiftId}/assign/role/${roleId}`);
+        return response.data;
     } catch (err) {
-        console.error(`Assign shift ${shiftId} to role ${roleId} error:`, err);
+        console.error('Assign shift to role error:', err);
         throw err;
     }
 };
@@ -163,29 +238,27 @@ export const assignShiftToRole = async (roleId, shiftId) => {
  */
 export const removeShiftFromRole = async (roleId, shiftId) => {
     try {
-        if (!roleId || !shiftId) {
-            throw new Error('Role ID and Shift ID are required.');
-        }
-        return await apiClient.delete(`/UserShift/role/${roleId}/shift/${shiftId}`);
+        const response = await apiClient.delete(`/shift/${shiftId}/unassign/role/${roleId}`);
+        return response.data;
     } catch (err) {
-        console.error(`Remove shift ${shiftId} from role ${roleId} error:`, err);
+        console.error('Remove shift from role error:', err);
         throw err;
     }
 };
+
 /**
  * Assigns a shift to a user.
  * @param {string} userId - The ID of the user.
  * @param {string} shiftId - The ID of the shift.
+ * @param {object} [data] - Additional assignment data.
  * @returns {Promise<any>} A promise that resolves when the shift is assigned to the user.
  */
-export const assignShiftToUser = async (userId, shiftId) => {
+export const assignShiftToUser = async (userId, shiftId, data = {}) => {
     try {
-        if (!userId || !shiftId) {
-            throw new Error('User ID and Shift ID are required.');
-        }
-        return await apiClient.post(`/UserShift/${userId}/shift/${shiftId}`);
+        const response = await apiClient.post(`/shift/${shiftId}/assign/user/${userId}`, data);
+        return response.data;
     } catch (err) {
-        console.error(`Assign shift ${shiftId} to user ${userId} error:`, err);
+        console.error('Assign shift to user error:', err);
         throw err;
     }
 };
@@ -198,12 +271,73 @@ export const assignShiftToUser = async (userId, shiftId) => {
  */
 export const removeShiftFromUser = async (userId, shiftId) => {
     try {
-        if (!userId || !shiftId) {
-            throw new Error('User ID and Shift ID are required.');
-        }
-        return await apiClient.delete(`/UserShift/${userId}/shift/${shiftId}`);
+        const response = await apiClient.delete(`/shift/${shiftId}/unassign/user/${userId}`);
+        return response.data;
     } catch (err) {
-        console.error(`Remove shift ${shiftId} from user ${userId} error:`, err);
+        console.error('Remove shift from user error:', err);
+        throw err;
+    }
+};
+
+/**
+ * Fetches shift instances for a specific shift ID
+ * @param {string} shiftId - The ID of the shift to fetch instances for
+ * @param {Object} [params] - Optional query parameters
+ * @param {AbortSignal} [signal] - Optional AbortSignal to cancel the request
+ * @returns {Promise<Array>} A promise that resolves to an array of shift instances
+ */
+export const fetchShiftInstances = async (shiftId, params = {}, signal) => {
+    try {
+        const response = await apiClient.get(`ShiftInstance/by-shift/${shiftId}`, {
+            params,
+            signal
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (err) {
+        if (err.name !== 'CanceledError') {
+            console.error('Fetch shift instances error:', err);
+        }
+        throw err;
+    }
+};
+
+/**
+ * Gets shifts assigned to a specific user.
+ * @param {string} userId - The ID of the user.
+ * @param {Object} [params] - Optional query parameters.
+ * @param {AbortSignal} [signal] - Optional AbortSignal to cancel the request.
+ * @returns {Promise<Array>} A promise that resolves to an array of shifts.
+ */
+export const getUserShifts = async (userId, params = {}, signal) => {
+    try {
+        const response = await apiClient.get(`/user/${userId}/shifts`, {
+            params,
+            signal
+        });
+        return response.data;
+    } catch (err) {
+        if (err.name !== 'CanceledError') {
+            console.error('Get user shifts error:', err);
+        }
+        throw err;
+    }
+};
+
+export const fetchShiftst = async (page = 1, pageSize = 10, signal) => {
+    try {
+        const response = await apiClient.get('/Reports/shifts', {
+            params: {
+                page,
+                pageSize,
+            },
+            signal,
+        });
+        return response.data;
+    } catch (err) {
+        if (err.name !== 'CanceledError') {
+            console.error('Fetch shifts error:', err);
+        }
         throw err;
     }
 };
