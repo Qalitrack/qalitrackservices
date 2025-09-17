@@ -8,6 +8,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Entities;
+using UserService.Core.Enums;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 
@@ -49,48 +50,69 @@ namespace UserService.Infrastructure.Services
     }
 
     private async Task MonitorStrictShiftsAsync(IShiftService shiftService)
+{
+    var currentTime = DateTime.UtcNow;
+    
+    // Create a scope to resolve services
+    using var scope = _serviceScopeFactory.CreateScope();
+    var shiftInstanceService = scope.ServiceProvider.GetRequiredService<IShiftInstanceService>();
+    
+    try
     {
-        // Use the existing method to get all active shifts
-        var activeShifts = await shiftService.GetAllAsync();
-
-        var currentTime = DateTime.UtcNow.TimeOfDay;
-        // Filter for shifts in strict mode and whose end time has passed
-        var strictShifts = activeShifts
-            .Where(s => s.Mode == ShiftMode.Strict)
-            .Where(s => 
-            {
-                var shiftEndTime = s.EndTime.TimeOfDay;
-                
-                // For overnight shifts (EndTime < StartTime), check if current time is past midnight and before end time
-                // OR if current time is after start time (yesterday)
-                if (shiftEndTime < s.StartTime.TimeOfDay)
-                {
-                    // Overnight shift: ends next day
-                    return currentTime <= shiftEndTime; // We're in the "next day" portion and past end time
-                }
-                else
-                {
-                    // Regular shift: ends same day
-                    return currentTime >= shiftEndTime; // Current time is past the end time
-                }
-            })
+        // Get all instances that were supposed to end in the last hour
+        // This handles any instances we might have missed in previous runs
+        var recentEndTime = currentTime;
+        var startTime = currentTime.AddHours(-1);
+        
+        var recentInstances = await shiftInstanceService.GetInstancesByDateRangeAsync(startTime, recentEndTime);
+        
+        // Filter for active, strict shift instances that have passed their end time
+        var endedInstances = recentInstances
+            .Where(instance => 
+                instance.Status == ShiftInstanceStatus.InProgress &&
+                instance.ScheduledEndTime <= currentTime)
             .ToList();
 
+        _logger.LogInformation("Found {Count} strict shift instances that have ended", endedInstances.Count);
 
-        foreach (ShiftDto shift in strictShifts)
+        foreach (var instance in endedInstances)
         {
-            // Create a new scope for logging out users
-            using var logoutScope = _serviceScopeFactory.CreateScope();
-            var userShiftRepository = logoutScope.ServiceProvider.GetRequiredService<IUserShiftRepository>();
-            var tokenService = logoutScope.ServiceProvider.GetRequiredService<ITokenService>();
-        
-            // Log out users associated with this shift
-            await LogoutUsersForShift(shift, userShiftRepository, tokenService, _logger);
+            _logger.LogInformation("Processing ended strict shift instance {InstanceId} for shift {ShiftId}", 
+                instance.Id, instance.ShiftId);
+
+            try
+            {
+                // Get the shift details
+                var shift = await shiftService.GetByIdAsync(instance.ShiftId);
+                if (shift == null || shift.Mode != ShiftMode.Strict)
+                {
+                    _logger.LogWarning("Skipping instance {InstanceId} - shift not found or not in strict mode", instance.Id);
+                    continue;
+                }
+
+                // Create a new scope for logging out users
+                using var logoutScope = _serviceScopeFactory.CreateScope();
+                var userShiftRepository = logoutScope.ServiceProvider.GetRequiredService<IUserShiftRepository>();
+                var tokenService = logoutScope.ServiceProvider.GetRequiredService<ITokenService>();
+                
+                // Log out users associated with this shift instance
+                await LogoutUsersForShift(shift, userShiftRepository, tokenService, _logger);
+                
+                _logger.LogInformation("Successfully processed shift instance {InstanceId}", instance.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing shift instance {InstanceId}", instance.Id);
+            }
         }
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error in MonitorStrictShiftsAsync");
+    }    }
 
     private static async Task LogoutUsersForShift(
-        ShiftDto shift,
+        ShiftResponse shift,
         IUserShiftRepository userShiftRepository,
         ITokenService tokenService,
         ILogger<ShiftMonitorService> logger)
