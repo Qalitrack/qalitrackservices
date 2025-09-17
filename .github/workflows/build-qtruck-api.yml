@@ -1,4 +1,5 @@
 name: Build QTruck API
+# Workflow for building and publishing QTruck API Docker images
 
 on:
   push:
