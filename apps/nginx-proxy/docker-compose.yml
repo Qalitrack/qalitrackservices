@@ -16,6 +16,7 @@ services:
       - proxy-network
       - website_prod_qs_network  # Connect to production app network
       - website_dev_qs_network   # Connect to development app network
+      - qtruck_dev_qs_network    # Connect to QTruck development network
 
   certbot:
     image: certbot/certbot:latest
@@ -36,3 +37,5 @@ networks:
     external: true  # Use existing network from website services
   website_dev_qs_network:
     external: true  # Use existing network from dev website services
+  qtruck_dev_qs_network:
+    external: true  # Use existing network from QTruck dev services
