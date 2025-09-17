@@ -1,0 +1,22 @@
+{
+  "name": "qtruck-api-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for QTruck API",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:setup": "node tests/e2e/setup-test-db.js",
+    "test:restore": "node tests/e2e/setup-test-db.js cleanup",
+    "test:clean": "npm run test:setup && npm run test && npm run test:restore",
+    "test:safe": "npm run test:setup && npm run test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "keywords": ["api", "testing", "qtruck", "playwright"],
+  "author": "",
+  "license": "ISC"
+}
