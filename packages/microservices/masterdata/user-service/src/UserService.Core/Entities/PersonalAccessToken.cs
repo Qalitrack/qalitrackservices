@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using UserService.Core.DTOs;
+using UserService.Core.Enums;
 
 namespace UserService.Core.Entities;
 
@@ -11,7 +13,7 @@ public class PersonalAccessToken : BaseEntity
     public User User { get; set; }
 
     [Required]
-    [StringLength(255)]
+    [StringLength(1024)]
     public string Token { get; set; }
     
     public DateTime? LastUsedAt { get; set; }
@@ -21,5 +23,5 @@ public class PersonalAccessToken : BaseEntity
     
     public string Jti { set; get; }
         
-    public Entities.ShiftMode ShiftMode { get; set; }  
+    public ShiftMode ShiftMode { get; set; }  
 }

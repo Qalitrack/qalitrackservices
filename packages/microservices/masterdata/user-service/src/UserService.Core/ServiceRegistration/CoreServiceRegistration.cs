@@ -28,7 +28,11 @@ public static class CoreServiceRegistration
         services.AddScoped<ITwoFactorService, TwoFactorService>();
         services.AddScoped<PasswordPolicyService>();
         services.AddScoped<IJwtConfigurationService, JwtConfigurationService>();
-
+        services.AddScoped<IShiftNotificationService,ShiftNotificationService>();
+        services.AddScoped<ShiftInstanceBackgroundService>();
+        services.AddHostedService<ShiftInstanceBackgroundService>();
+        services.AddScoped<IShiftInstanceService,ShiftInstanceService>();
+        services.AddScoped<IShiftAttendanceService,ShiftAttendanceService>();
         return services;
     }
 }

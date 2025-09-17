@@ -1,23 +1,37 @@
-// In ShiftDto.cs
-
-using UserService.Core.Entities;
+using UserService.Core.Enums;
 
 namespace UserService.Core.DTOs.Shift;
 
+/// <summary>
+/// Data transfer object for Shift operations
+/// </summary>
 public class ShiftDto
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public DateTime StartTime { get; set; }  // Using DateTime
-    public DateTime EndTime { get; set; }    // Using DateTime
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
     public ShiftMode Mode { get; set; }
     public bool IsActive { get; set; }
-    public bool AutoRepeatDaily { get; set; }
-    public int? DurationMinutes { get; set; }
-    public string?CreatedAt { get; set; }
-    public string?CreatedBy { get; set; }
-    public string?UpdatedAt { get; set; }
-    public string?UpdatedBy { get; set; }
-    public string?IsDeleted { get; set; }
+        
+    public DateTime StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public ShiftStatus Status { get; set; }
+    public ShiftType Type { get; set; }
+    public int RequiredStaffCount { get; set; }
+    public RecurrenceType RecurrenceType { get; set; }
+    public int RecurrenceInterval { get; set; }
+    public DayOfWeek[]? CustomDays { get; set; }
+    public DateTime[]? ExceptionDates { get; set; }
+        
+    // Audit fields
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public string? CreatedBy { get; set; }
+    public string? UpdatedBy { get; set; }
+        
+    // Statistics (can be populated when needed)
+    public int TotalInstances { get; set; } = 0;
+    public int AssignedUsers { get; set; } = 0;
 }
