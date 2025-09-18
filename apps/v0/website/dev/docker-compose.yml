@@ -25,6 +25,20 @@ services:
       - mongodb
     networks:
       - website_dev_qs_network
+      - proxy-network
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for API subdomain
+      - "traefik.http.routers.qs-backend-dev.rule=Host(`dev.qalibrated.co.ke`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.qs-backend-dev.entrypoints=websecure"
+      - "traefik.http.routers.qs-backend-dev.tls=true"
+      - "traefik.http.routers.qs-backend-dev.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qs-backend-dev.service=qs-backend-dev"
+      - "traefik.http.services.qs-backend-dev.loadbalancer.server.port=5000"
+      # HTTP router (redirects to HTTPS)
+      - "traefik.http.routers.qs-backend-dev-http.rule=Host(`dev.qalibrated.co.ke`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.qs-backend-dev-http.entrypoints=web"
+      - "traefik.http.routers.qs-backend-dev-http.middlewares=redirect-to-https"
 
   frontend:
     image: ghcr.io/qalitrack/qalitrackservices/qs-website-frontend:main
@@ -41,6 +55,23 @@ services:
       - backend
     networks:
       - website_dev_qs_network
+      - proxy-network
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for dev subdomain
+      - "traefik.http.routers.qs-frontend-dev.rule=Host(`dev.qalibrated.co.ke`)"
+      - "traefik.http.routers.qs-frontend-dev.entrypoints=websecure"
+      - "traefik.http.routers.qs-frontend-dev.tls=true"
+      - "traefik.http.routers.qs-frontend-dev.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qs-frontend-dev.service=qs-frontend-dev"
+      - "traefik.http.services.qs-frontend-dev.loadbalancer.server.port=80"
+      # HTTP router (redirects to HTTPS)
+      - "traefik.http.routers.qs-frontend-dev-http.rule=Host(`dev.qalibrated.co.ke`)"
+      - "traefik.http.routers.qs-frontend-dev-http.entrypoints=web"
+      - "traefik.http.routers.qs-frontend-dev-http.middlewares=redirect-to-https"
+      # Redirect middleware
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
 
 volumes:
   mongodb_data_dev:
@@ -49,3 +80,6 @@ networks:
   website_dev_qs_network:
     driver: bridge
     name: website_dev_qs_network
+  proxy-network:
+    driver: bridge
+    external: true
