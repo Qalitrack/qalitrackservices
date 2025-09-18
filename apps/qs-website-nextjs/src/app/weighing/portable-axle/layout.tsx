@@ -7,18 +7,6 @@ export const metadata = createMetadata({
   path: '/weighing/portable-axle',
   image: '/og-image.svg',
 });
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-};
 
 export default function PortableAxleLayout({
   children,
