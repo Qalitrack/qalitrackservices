@@ -38,6 +38,57 @@ namespace UserService.Core.Services
             _logger = logger;
         }
 
+        public async Task<PagedResult<ShiftAttendanceResponse>> GetShiftInstanceAttendanceAsync(
+            Guid instanceId, 
+            int pageNumber = 1, 
+            int pageSize = 50, 
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _logger.LogInformation("Retrieving attendance for shift instance {InstanceId} (Page: {PageNumber}, Size: {PageSize})", 
+                    instanceId, pageNumber, pageSize);
+
+                // Get the shift instance
+                var shiftInstance = await _shiftInstanceRepository.GetByIdAsync(instanceId.ToString());
+                if (shiftInstance == null)
+                {
+                    _logger.LogWarning("Shift instance {InstanceId} not found", instanceId);
+                    return new PagedResult<ShiftAttendanceResponse>
+                    {
+                        Items = new List<ShiftAttendanceResponse>(),
+                        Page = pageNumber,
+                        PageSize = pageSize,
+                        TotalCount = 0
+                    };
+                }
+
+                // Get paginated attendances
+                var attendances = await _shiftAttendanceRepository.GetByInstanceIdAsync(
+                    instanceId.ToString(), 
+                    pageNumber, 
+                    pageSize, 
+                    cancellationToken);
+
+                // Map to response DTO
+                var response = new PagedResult<ShiftAttendanceResponse>
+                {
+                    Page = attendances.Page,
+                    PageSize = attendances.PageSize,
+                    TotalCount = attendances.TotalCount,
+                    Items = _mapper.Map<IEnumerable<ShiftAttendanceResponse>>(attendances.Items)
+                };
+
+                _logger.LogInformation("Retrieved {Count} attendance records for shift instance {InstanceId}", 
+                    response.Items.Count(), instanceId);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving attendance for shift instance {InstanceId}", instanceId);
+                throw;
+            }
+        }
         public async Task<IEnumerable<ShiftAttendanceResponse>> GetAllAsync(int pageNumber = 1, int pageSize = 20)
         {
             try
@@ -61,6 +112,50 @@ namespace UserService.Core.Services
             }
         }
 
+        public async Task<PaginatedShiftInstancesResponse> GetPaginatedShiftInstancesWithAttendanceAsync(
+            int pageNumber = 1, 
+            int pageSize = 10, 
+            DateTime? startDate = null, 
+            DateTime? endDate = null)
+        {
+            try
+            {
+                // Validate pagination parameters
+                pageNumber = Math.Max(1, pageNumber);
+                pageSize = Math.Clamp(pageSize, 1, 100);
+
+                _logger.LogInformation("Retrieving paginated shift instances with attendance - Page {PageNumber}, Size {PageSize}, StartDate {StartDate}, EndDate {EndDate}", 
+                    pageNumber, pageSize, startDate, endDate);
+
+                // Try cache first
+                var cacheKey = $"paginated_shift_instances:{pageNumber}:{pageSize}:{startDate:yyyyMMdd}:{endDate:yyyyMMdd}";
+                var cachedResponse = await _cacheService.GetAsync<PaginatedShiftInstancesResponse>(cacheKey);
+                if (cachedResponse != null)
+                {
+                    _logger.LogDebug("Retrieved paginated shift instances from cache");
+                    return cachedResponse;
+                }
+
+                // Get from repository
+                var response = await _shiftAttendanceRepository.GetPaginatedShiftInstancesWithAttendanceAsync(
+                    pageNumber, pageSize, startDate, endDate);
+
+                // Cache for 10 minutes
+                await _cacheService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
+
+                _logger.LogInformation("Retrieved {Count} shift instances (page {Page}/{TotalPages}) with attendance summaries", 
+                    response.ShiftInstances.Count, response.PageNumber, response.TotalPages);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving paginated shift instances with attendance");
+                throw;
+            }
+        }
+        
+
         public async Task<ShiftAttendance?> GetByIdAsync(string id)
         {
             try
@@ -73,6 +168,15 @@ namespace UserService.Core.Services
 
                 _logger.LogInformation("Retrieving attendance with id {AttendanceId}", id);
 
+                // Try cache first
+                var cacheKey = $"shift_attendance_entity:{id}";
+                var cachedAttendance = await _cacheService.GetAsync<ShiftAttendance>(cacheKey);
+                if (cachedAttendance != null)
+                {
+                    _logger.LogDebug("Retrieved attendance entity from cache for id {AttendanceId}", id);
+                    return cachedAttendance;
+                }
+
                 // Get the entity directly from the repository
                 var attendance = await _shiftAttendanceRepository.GetByIdAsync(id);
                 if (attendance == null || attendance.IsDeleted)
@@ -81,12 +185,132 @@ namespace UserService.Core.Services
                     return null;
                 }
 
+                // Cache for 30 minutes
+                await _cacheService.SetAsync(cacheKey, attendance, TimeSpan.FromMinutes(30));
+
                 _logger.LogInformation("Retrieved shift attendance {AttendanceId}", id);
                 return attendance;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving shift attendance {AttendanceId}", id);
+                throw;
+            }
+        }
+
+        public async Task<ShiftAttendanceResponse?> GetAttendanceDetailsAsync(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    _logger.LogWarning("GetAttendanceDetailsAsync called with null or empty id");
+                    return null;
+                }
+
+                _logger.LogInformation("Retrieving attendance details for id {AttendanceId}", id);
+
+                // Try cache first
+                var cacheKey = $"shift_attendance_details:{id}";
+                var cachedResponse = await _cacheService.GetAsync<ShiftAttendanceResponse>(cacheKey);
+                if (cachedResponse != null)
+                {
+                    _logger.LogDebug("Retrieved attendance details from cache for id {AttendanceId}", id);
+                    return cachedResponse;
+                }
+
+                // Get from repository
+                var response = await _shiftAttendanceRepository.GetAttendanceDetailsAsync(id);
+                if (response == null)
+                {
+                    _logger.LogWarning("Attendance details not found for id {AttendanceId}", id);
+                    return null;
+                }
+
+                // Cache for 30 minutes
+                await _cacheService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(30));
+
+                _logger.LogInformation("Retrieved attendance details for id {AttendanceId}", id);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving attendance details for id {AttendanceId}", id);
+                throw;
+            }
+        }
+
+        public async Task<ShiftAttendance> CreateAsync(ShiftAttendance attendance)
+        {
+            try
+            {
+                if (attendance == null)
+                {
+                    throw new ArgumentNullException(nameof(attendance));
+                }
+
+                _logger.LogInformation("Creating attendance record for employee {EmployeeId} in shift instance {ShiftInstanceId}",
+                    attendance.EmployeeId, attendance.ShiftInstanceId);
+
+                // Validate shift instance exists
+                var shiftInstance = await _shiftInstanceRepository.GetByIdAsync(attendance.ShiftInstanceId);
+                if (shiftInstance == null)
+                {
+                    throw new InvalidOperationException($"Shift instance {attendance.ShiftInstanceId} not found");
+                }
+
+                // Validate employee exists
+                var employee = await _userRepository.GetByIdAsync(attendance.EmployeeId, true);
+                if (employee == null)
+                {
+                    throw new InvalidOperationException($"Employee {attendance.EmployeeId} not found");
+                }
+
+                // Create the attendance record
+                var result = await _shiftAttendanceRepository.CreateAsync(attendance);
+
+                // Invalidate relevant caches
+                await InvalidateAttendanceCaches(attendance.ShiftInstanceId, attendance.EmployeeId);
+
+                _logger.LogInformation("Created attendance record {AttendanceId} for employee {EmployeeId}",
+                    result.Id, attendance.EmployeeId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating attendance record for employee {EmployeeId}", attendance?.EmployeeId);
+                throw;
+            }
+        }
+
+        public async Task<ShiftAttendance?> UpdateAsync(ShiftAttendance attendance)
+        {
+            try
+            {
+                if (attendance == null)
+                {
+                    throw new ArgumentNullException(nameof(attendance));
+                }
+
+                _logger.LogInformation("Updating attendance record {AttendanceId}", attendance.Id);
+
+                var result = await _shiftAttendanceRepository.UpdateAsync(attendance);
+                if (result == null)
+                {
+                    _logger.LogWarning("Attendance record {AttendanceId} not found for update", attendance.Id);
+                    return null;
+                }
+
+                // Invalidate relevant caches
+                await InvalidateAttendanceCaches(attendance.ShiftInstanceId, attendance.EmployeeId);
+
+                _logger.LogInformation("Updated attendance record {AttendanceId}", attendance.Id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating attendance record {AttendanceId}", attendance?.Id);
                 throw;
             }
         }
@@ -102,15 +326,23 @@ namespace UserService.Core.Services
                 }
 
                 _logger.LogInformation("Deleting shift attendance {AttendanceId}", id);
+
+                // Get the attendance record first to get the IDs for cache invalidation
+                var attendance = await _shiftAttendanceRepository.GetByIdAsync(id);
+                if (attendance == null)
+                {
+                    _logger.LogWarning("Attendance record {AttendanceId} not found for deletion", id);
+                    return false;
+                }
                 
                 var success = await _shiftAttendanceRepository.DeleteAsync(id);
                 
                 if (success)
                 {
-                    // Invalidate cache
-                    await _cacheService.RemoveAsync($"shift_attendance:{id}");
-                    await _cacheService.RemovePatternAsync("shift_attendances:*");
-                    await _cacheService.SetAsync("shift_attendances:recent_change", DateTime.UtcNow, TimeSpan.FromMinutes(15));
+                    // Invalidate caches
+                    await InvalidateAttendanceCaches(attendance.ShiftInstanceId, attendance.EmployeeId);
+                    await _cacheService.RemoveAsync($"shift_attendance_entity:{id}");
+                    await _cacheService.RemoveAsync($"shift_attendance_details:{id}");
                     
                     _logger.LogInformation("Successfully deleted shift attendance {AttendanceId}", id);
                 }
@@ -175,50 +407,24 @@ namespace UserService.Core.Services
                     return null;
                 }
 
-                // Check if employee is already clocked in for this shift
-                var existingAttendance = await _shiftAttendanceRepository.GetByShiftInstanceAndEmployeeAsync(shiftInstanceId, employeeId);
-                if (existingAttendance != null && existingAttendance.ClockInTime.HasValue && !existingAttendance.ClockOutTime.HasValue)
+                // Use the repository's clock in method
+                var result = await _shiftAttendanceRepository.ClockInAsync(shiftInstanceId, employeeId, clockInTime, notes);
+                
+                if (result != null)
                 {
-                    _logger.LogWarning("Employee {EmployeeId} is already clocked in for shift instance {ShiftInstanceId}", employeeId, shiftInstanceId);
-                    return existingAttendance;
+                    // Update shift instance status if needed
+                    if (shiftInstance.Status == ShiftInstanceStatus.Scheduled)
+                    {
+                        shiftInstance.Status = ShiftInstanceStatus.InProgress;
+                        await _shiftInstanceRepository.UpdateAsync(shiftInstance);
+                    }
+
+                    // Invalidate relevant caches
+                    await InvalidateAttendanceCaches(shiftInstanceId, employeeId);
+
+                    _logger.LogInformation("Employee {EmployeeId} successfully clocked in for shift instance {ShiftInstanceId} at {ClockInTime}", 
+                        employeeId, shiftInstanceId, clockInTime);
                 }
-
-                // Create or update attendance record
-                var attendance = existingAttendance ?? new ShiftAttendance
-                {
-                    ShiftInstanceId = shiftInstanceId,
-                    EmployeeId = employeeId
-                };
-
-                attendance.ClockInTime = clockInTime;
-                attendance.Status = AttendanceStatus.Present;
-                if (!string.IsNullOrWhiteSpace(notes))
-                {
-                    attendance.Notes = string.IsNullOrEmpty(attendance.Notes) ? notes : $"{attendance.Notes}; {notes}";
-                }
-
-                ShiftAttendance result;
-                if (existingAttendance == null)
-                {
-                    result = await _shiftAttendanceRepository.CreateAsync(attendance);
-                }
-                else
-                {
-                    result = await _shiftAttendanceRepository.UpdateAsync(attendance) ?? attendance;
-                }
-
-                // Update shift instance status if needed
-                if (shiftInstance.Status == ShiftInstanceStatus.Scheduled)
-                {
-                    shiftInstance.Status = ShiftInstanceStatus.InProgress;
-                    await _shiftInstanceRepository.UpdateAsync(shiftInstance);
-                }
-
-                // Invalidate relevant caches
-                await InvalidateAttendanceCaches(shiftInstanceId, employeeId);
-
-                _logger.LogInformation("Employee {EmployeeId} successfully clocked in for shift instance {ShiftInstanceId} at {ClockInTime}", 
-                    employeeId, shiftInstanceId, clockInTime);
 
                 return result;
             }
@@ -247,67 +453,34 @@ namespace UserService.Core.Services
 
                 _logger.LogInformation("Employee {EmployeeId} clocking out for shift instance {ShiftInstanceId}", employeeId, shiftInstanceId);
 
-                // Get existing attendance record
-                var attendance = await _shiftAttendanceRepository.GetByShiftInstanceAndEmployeeAsync(shiftInstanceId, employeeId);
-                if (attendance == null)
+                // Use the repository's clock out method
+                var result = await _shiftAttendanceRepository.ClockOutAsync(shiftInstanceId, employeeId, clockOutTime, notes);
+                
+                if (result != null)
                 {
-                    _logger.LogWarning("No attendance record found for employee {EmployeeId} and shift instance {ShiftInstanceId}", employeeId, shiftInstanceId);
-                    return null;
-                }
-
-                // Check if employee is already clocked out
-                if (attendance.ClockOutTime.HasValue)
-                {
-                    _logger.LogWarning("Employee {EmployeeId} is already clocked out for shift instance {ShiftInstanceId}", employeeId, shiftInstanceId);
-                    return attendance;
-                }
-
-                // Check if employee is clocked in
-                if (!attendance.ClockInTime.HasValue)
-                {
-                    _logger.LogWarning("Cannot clock out employee {EmployeeId} who has not clocked in for shift instance {ShiftInstanceId}", employeeId, shiftInstanceId);
-                    return null;
-                }
-
-                // Validate clock out time is after clock in time
-                if (clockOutTime < attendance.ClockInTime.Value)
-                {
-                    _logger.LogWarning("Clock out time {ClockOutTime} is before clock in time {ClockInTime} for employee {EmployeeId}", 
-                        clockOutTime, attendance.ClockInTime.Value, employeeId);
-                    return null;
-                }
-
-                // Update attendance record
-                attendance.ClockOutTime = clockOutTime;
-                attendance.ActualHoursWorked = (clockOutTime - attendance.ClockInTime.Value);
-                if (!string.IsNullOrWhiteSpace(notes))
-                {
-                    attendance.Notes = string.IsNullOrEmpty(attendance.Notes) ? notes : $"{attendance.Notes}; {notes}";
-                }
-
-                var result = await _shiftAttendanceRepository.UpdateAsync(attendance);
-
-                // Check if all employees have clocked out and update shift instance status
-                var shiftInstance = await _shiftInstanceRepository.GetByIdAsync(shiftInstanceId);
-                if (shiftInstance != null && shiftInstance.Status == ShiftInstanceStatus.InProgress)
-                {
-                    var allAttendances = await _shiftAttendanceRepository.GetByShiftInstanceAsync(shiftInstanceId);
-                    var allClockedOut = allAttendances.All(a => a.ClockOutTime.HasValue || a.Status == AttendanceStatus.Absent);
-                    
-                    if (allClockedOut)
+                    // Check if all employees have clocked out and update shift instance status
+                    var shiftInstance = await _shiftInstanceRepository.GetByIdAsync(shiftInstanceId);
+                    if (shiftInstance != null && shiftInstance.Status == ShiftInstanceStatus.InProgress)
                     {
-                        shiftInstance.Status = ShiftInstanceStatus.Completed;
-                        await _shiftInstanceRepository.UpdateAsync(shiftInstance);
+                        // Get all attendances for the shift instance
+                        var allAttendances = await _shiftAttendanceRepository.GetByInstanceIdAsync(shiftInstanceId, 1, int.MaxValue);
+                        var allClockedOut = allAttendances.Items.All(a => a.ClockOutTime.HasValue || a.Status == AttendanceStatus.Absent);
+                        
+                        if (allClockedOut)
+                        {
+                            shiftInstance.Status = ShiftInstanceStatus.Completed;
+                            await _shiftInstanceRepository.UpdateAsync(shiftInstance);
+                        }
                     }
+
+                    // Invalidate relevant caches
+                    await InvalidateAttendanceCaches(shiftInstanceId, employeeId);
+
+                    _logger.LogInformation("Employee {EmployeeId} successfully clocked out for shift instance {ShiftInstanceId} at {ClockOutTime}", 
+                        employeeId, shiftInstanceId, clockOutTime);
                 }
 
-                // Invalidate relevant caches
-                await InvalidateAttendanceCaches(shiftInstanceId, employeeId);
-
-                _logger.LogInformation("Employee {EmployeeId} successfully clocked out for shift instance {ShiftInstanceId} at {ClockOutTime}. Hours worked: {HoursWorked:F2}", 
-                    employeeId, shiftInstanceId, clockOutTime, attendance.ActualHoursWorked);
-
-                return result ?? attendance;
+                return result;
             }
             catch (Exception ex)
             {
@@ -448,7 +621,52 @@ namespace UserService.Core.Services
             {
                 _logger.LogError(ex, "Error retrieving attendance for user {UserId} and shift instance {ShiftInstanceId}", 
                     userId, shiftInstanceId);
-                throw; // Re-throw to be handled by the caller
+                throw;
+            }
+        }
+
+        public async Task<ShiftAttendance?> GetByShiftInstanceAndEmployeeAsync(string shiftInstanceId, string employeeId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(shiftInstanceId) || string.IsNullOrWhiteSpace(employeeId))
+                {
+                    _logger.LogWarning("GetByShiftInstanceAndEmployeeAsync called with null or empty parameters. ShiftInstanceId: {ShiftInstanceId}, EmployeeId: {EmployeeId}", 
+                        shiftInstanceId, employeeId);
+                    return null;
+                }
+
+                _logger.LogDebug("Retrieving attendance for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
+                    shiftInstanceId, employeeId);
+
+                // Try cache first
+                var cacheKey = $"shift_employee_attendance:{shiftInstanceId}:{employeeId}";
+                var cachedAttendance = await _cacheService.GetAsync<ShiftAttendance>(cacheKey);
+                if (cachedAttendance != null)
+                {
+                    _logger.LogDebug("Retrieved attendance from cache for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
+                        shiftInstanceId, employeeId);
+                    return cachedAttendance;
+                }
+
+                // Get from repository
+                var attendance = await _shiftAttendanceRepository.GetByShiftInstanceAndEmployeeAsync(shiftInstanceId, employeeId);
+                
+                if (attendance != null)
+                {
+                    // Cache the result for 30 minutes
+                    await _cacheService.SetAsync(cacheKey, attendance, TimeSpan.FromMinutes(30));
+                    _logger.LogDebug("Cached attendance for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
+                        shiftInstanceId, employeeId);
+                }
+
+                return attendance;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving attendance for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
+                    shiftInstanceId, employeeId);
+                throw;
             }
         }
 
@@ -459,9 +677,13 @@ namespace UserService.Core.Services
                 // Invalidate specific caches
                 await _cacheService.RemoveAsync($"shift_instance_attendance:{shiftInstanceId}");
                 await _cacheService.RemoveAsync($"employee_attendance:{employeeId}");
+                await _cacheService.RemoveAsync($"user_attendance:{employeeId}:{shiftInstanceId}");
+                await _cacheService.RemoveAsync($"shift_employee_attendance:{shiftInstanceId}:{employeeId}");
                 
                 // Invalidate pattern-based caches
                 await _cacheService.RemovePatternAsync("shift_attendances:*");
+                await _cacheService.RemovePatternAsync("paginated_shift_instances:*");
+                await _cacheService.RemovePatternAsync("shifts_with_instances:*");
                 
                 // Set recent change flag
                 await _cacheService.SetAsync("shift_attendances:recent_change", DateTime.UtcNow, TimeSpan.FromMinutes(15));

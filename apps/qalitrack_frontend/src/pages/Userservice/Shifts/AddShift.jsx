@@ -46,10 +46,36 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
 
     const validateForm = (data) => {
         const newErrors = {};
+        const now = new Date();
+        const startDate = new Date(data.startDate);
+        const endDate = new Date(data.endDate);
+        const startTime = new Date(data.startTime);
+        const endTime = new Date(data.endTime);
+
+        // Basic validations
         if (!data.name.trim()) newErrors.name = 'Name is required';
         if (!data.startTime) newErrors.startTime = 'Start time is required';
         if (!data.endTime) newErrors.endTime = 'End time is required';
         if (data.requiredStaffCount < 1) newErrors.requiredStaffCount = 'At least 1 staff member is required';
+
+        // Date validations
+        if (startDate < now.setHours(0, 0, 0, 0)) {
+            newErrors.startDate = 'Start date cannot be in the past';
+        }
+
+        if (endDate < startDate) {
+            newErrors.endDate = 'End date must be after start date';
+        }
+
+        // Time validations for the same day
+        if (data.startTime && data.endTime) {
+            const start = new Date(`1970-01-01T${data.startTime.split('T')[1] || data.startTime}`);
+            const end = new Date(`1970-01-01T${data.endTime.split('T')[1] || data.endTime}`);
+
+            if (startDate.toDateString() === endDate.toDateString() && end <= start) {
+                newErrors.endTime = 'End time must be after start time';
+            }
+        }
 
         // Additional validation for recurring shifts
         if (parseInt(data.type, 10) === ShiftType.Recurring) {
@@ -100,6 +126,14 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
         const [hours, minutes] = value.split(':');
         date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
 
+        // Clear any previous time-related errors
+        setErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors[`${timeField}Invalid`];
+            delete newErrors[`${field}Time`];
+            return newErrors;
+        });
+
         setFormData(prev => ({
             ...prev,
             [timeField]: date.toISOString(),
@@ -107,7 +141,7 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
                 durationMinutes: Math.round((new Date(prev.endTime || date.toISOString()).getTime() - date.getTime()) / (1000 * 60))
             }),
             ...(field === 'end' && {
-                durationMinutes: Math.round((new Date(value).getTime() - new Date(prev.startTime || date.toISOString()).getTime()) / (1000 * 60))
+                durationMinutes: Math.round((date.getTime() - new Date(prev.startTime || date.toISOString()).getTime()) / (1000 * 60))
             })
         }));
     };
@@ -115,13 +149,23 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
     const handleDateChange = (e, field) => {
         const { value } = e.target;
         const dateField = field === 'start' ? 'startDate' : 'endDate';
-        const date = formData[dateField] ? new Date(formData[dateField]) : new Date();
-        const [year, month, day] = value.split('-');
-        date.setFullYear(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+        const date = new Date(value);
+
+        // Clear any previous date-related errors
+        setErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors[`${dateField}Invalid`];
+            delete newErrors[`${field}Date`];
+            return newErrors;
+        });
 
         setFormData(prev => ({
             ...prev,
-            [dateField]: date.toISOString()
+            [dateField]: date.toISOString(),
+            // If changing start date and end date is before new start date, update end date
+            ...(field === 'start' && {
+                endDate: new Date(prev.endDate) < date ? date.toISOString() : prev.endDate
+            })
         }));
     };
 
@@ -301,7 +345,7 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
 
             // Show success message
             setSuccess('Shift created successfully!');
-            
+
             // Pass the created shift data back to the parent
             onShiftAdded(createdShift);
 
@@ -435,11 +479,14 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
                                 onChange={(e) => handleDateChange(e, 'start')}
                                 min={formatDateForInput(new Date())}
                                 className={`mt-1 block w-full border ${
-                                    errors.startDate ? 'border-red-500' : 'border-gray-300'
+                                    errors.startDate || errors.startDateInvalid ? 'border-red-500' : 'border-gray-300'
                                 } rounded-md p-2`}
                                 required
                                 disabled={isLoading}
                             />
+                            {(errors.startDate || errors.startDateInvalid) && (
+                                <p className="mt-1 text-sm text-red-600">{errors.startDate || errors.startDateInvalid}</p>
+                            )}
                         </div>
 
                         {/* End Date */}
@@ -450,9 +497,14 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
                                 value={formatDateForInput(formData.endDate)}
                                 onChange={(e) => handleDateChange(e, 'end')}
                                 min={formatDateForInput(formData.startDate || new Date())}
-                                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                                className={`mt-1 block w-full border ${
+                                    errors.endDate || errors.endDateInvalid ? 'border-red-500' : 'border-gray-300'
+                                } rounded-md p-2`}
                                 disabled={isLoading}
                             />
+                            {(errors.endDate || errors.endDateInvalid) && (
+                                <p className="mt-1 text-sm text-red-600">{errors.endDate || errors.endDateInvalid}</p>
+                            )}
                         </div>
 
                         {/* Start Time */}

@@ -2,13 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Auth;
-using UserService.Core.Interfaces;
-using UserService.Core.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Serilog;
 using UserService.Core.DTOs.User;
-using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
@@ -68,7 +64,7 @@ namespace UserService.Api.Controllers
                     return Unauthorized(new { message = "Account has been deleted" });
                 }
 
-                // Check shift-based login restrictions
+                // ONLY check shift-based login restrictions (NO ATTENDANCE YET)
                 var (canLogin, restrictionReason) = await _shiftLoginRestrictionService.CanUserLoginAsync(user.Id.ToString());
                 
                 if (!canLogin)
@@ -152,7 +148,6 @@ namespace UserService.Api.Controllers
                 });
             }
         }
-            
 
         [HttpPost("verify-2fa")]
         public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorRequestDto request)
@@ -207,11 +202,9 @@ namespace UserService.Api.Controllers
                 // Update user active status
                 await _userService.UpdateUserActiveStatusAsync(userId, true);
 
-                // *** ATTENDANCE INTEGRATION: The attendance handling is already done in CanUserLoginAsync ***
-                // The ShiftLoginRestrictionService.CanUserLoginAsync method calls HandleLoginAttendanceAsync
-                // which automatically clocks in users for their assigned shifts.
-                // No additional attendance logic needed here since it's already handled during login validation.
-
+                // NOW handle attendance after successful login completion
+                var attendanceHandled = await _shiftLoginRestrictionService.HandleLoginAttendanceAsync(userId);
+                
                 var response = new LoginResponseDto
                 {
                     Token = token.Token,
@@ -222,9 +215,19 @@ namespace UserService.Api.Controllers
                     UserRoles = user.Roles?.ToList() ?? new List<string>()
                 };
 
-                _logger.LogInformation("User {UserId} successfully completed 2FA verification and logged in", userId);
+                var loginMessage = attendanceHandled 
+                    ? "Successfully logged in and auto clocked-in to assigned shift" 
+                    : "Successfully logged in";
 
-                return Ok(response);
+                _logger.LogInformation("User {UserId} successfully completed 2FA verification and logged in. Attendance handled: {AttendanceHandled}", 
+                    userId, attendanceHandled);
+
+                return Ok(new 
+                {
+                    data = response,
+                    message = loginMessage,
+                    attendanceHandled = attendanceHandled
+                });
             }
             catch (Exception ex)
             {
@@ -238,8 +241,7 @@ namespace UserService.Api.Controllers
             }
         }
 
-
-       [HttpPut("update-password/{userId}")]
+        [HttpPut("update-password/{userId}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdatePassword(string userId, [FromBody] UpdatePasswordDto dto)
         {
@@ -258,7 +260,7 @@ namespace UserService.Api.Controllers
                 // Update user's online status
                 await _userService.UpdateUserActiveStatusAsync(userId, true);
 
-                // Check shift restrictions and handle attendance for first-time login after password update
+                // Check shift restrictions (NO ATTENDANCE YET)
                 var (canLogin, restrictionReason) = await _shiftLoginRestrictionService.CanUserLoginAsync(userId);
                 
                 if (!canLogin)
@@ -271,6 +273,9 @@ namespace UserService.Api.Controllers
                     });
                 }
 
+                // NOW handle attendance after successful password update and login
+                var attendanceHandled = await _shiftLoginRestrictionService.HandleLoginAttendanceAsync(userId);
+
                 var response = new LoginResponseDto
                 {
                     Token = token.Token,
@@ -281,9 +286,14 @@ namespace UserService.Api.Controllers
                     UserRoles = user.Roles?.ToList() ?? new List<string>(),
                 };
 
+                var message = attendanceHandled 
+                    ? "Password updated successfully and auto clocked-in to assigned shift" 
+                    : "Password updated successfully";
+
                 return Ok(new {
-                    message = "Password updated successfully",
-                    data = response
+                    message = message,
+                    data = response,
+                    attendanceHandled = attendanceHandled
                 });
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
@@ -369,7 +379,7 @@ namespace UserService.Api.Controllers
                 }
                 
                 // Handle logout attendance (auto clock-out for strict shifts)
-                await _shiftLoginRestrictionService.HandleUserLogoutAsync(userId.Value.ToString());
+                await _shiftLoginRestrictionService.HandleUserLogoutAsync(userId.Value.ToString(), DateTime.UtcNow);
                 
                 // Update user offline status
                 await _userService.UpdateUserActiveStatusAsync(userId.Value.ToString(), false);

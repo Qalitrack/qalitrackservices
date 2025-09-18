@@ -260,17 +260,24 @@ public class ShiftInstanceService : IShiftInstanceService
     
     private async Task CreateAndAddInstance(ShiftInstanceGenerateRequest request, List<ShiftInstance> instances, DateTime currentDate)
     {
-        // Combine date with time components
-        var startDateTime = currentDate.Date.Add(request.StartTime);
-        var endDateTime = currentDate.Date.Add(request.EndTime);
+        // Get Nairobi timezone
+        var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+        
+        // Create local date time in Nairobi timezone
+        var localStartDateTime = DateTime.SpecifyKind(currentDate.Date.Add(request.StartTime), DateTimeKind.Unspecified);
+        var localEndDateTime = DateTime.SpecifyKind(currentDate.Date.Add(request.EndTime), DateTimeKind.Unspecified);
         
         // Handle overnight shifts (where end time is on the next day)
         if (request.EndTime < request.StartTime)
         {
-            endDateTime = endDateTime.AddDays(1);
+            localEndDateTime = localEndDateTime.AddDays(1);
         }
 
-        // Create shift instance
+        // Convert local Nairobi time to UTC for storage
+        var startDateTime = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(localStartDateTime, DateTimeKind.Unspecified), nairobiTimeZone);
+        var endDateTime = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(localEndDateTime, DateTimeKind.Unspecified), nairobiTimeZone);
+
+        // Create shift instance with UTC times
         var instance = new ShiftInstance
         {
             Id = Guid.NewGuid().ToString(),
@@ -284,6 +291,13 @@ public class ShiftInstanceService : IShiftInstanceService
             CreatedBy = request.CreatedBy ?? AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User) ?? "System",
             UpdatedBy = request.UpdatedBy ?? AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User) ?? "System"
         };
+        
+        _logger.LogDebug("Created instance for {Date} from {LocalStartTime} to {LocalEndTime} (UTC: {UtcStartTime} to {UtcEndTime})", 
+            currentDate.Date, 
+            localStartDateTime, 
+            localEndDateTime,
+            startDateTime,
+            endDateTime);
         
         instances.Add(instance);
         _logger.LogDebug("Created instance for {Date} from {StartTime} to {EndTime}", 

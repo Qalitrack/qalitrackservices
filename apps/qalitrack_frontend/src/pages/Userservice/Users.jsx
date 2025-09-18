@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, fetchUserById, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../helpers/UserService/Users/users.js';
 import { fetchRoles } from '../../helpers/UserService/Roles/Roles.js';
-import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock } from 'lucide-react';
+import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock, ChevronDoubleLeft, ChevronDoubleRight } from 'lucide-react';
 import { format, parseISO, formatDistanceToNow } from 'date-fns';
 
 const Modal = ({ children, isOpen, onClose, size = "md" }) => {
@@ -501,8 +501,7 @@ const Users = () => {
                         <span className="inline md:hidden">Add</span>
                     </button>
                 </div>
-            </div> password: '',
-            confirmPassword: ''
+            </div> 
 
             {feedbackMessage.text && (
                 <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>

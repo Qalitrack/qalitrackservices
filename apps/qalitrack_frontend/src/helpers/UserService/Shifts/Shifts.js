@@ -188,96 +188,6 @@ export const createShift = async (shiftData) => {
     }
 };
 
-/**
- * Fetches users assigned to a specific shift.
- * @param {string} shiftId - The ID of the shift.
- * @param {AbortSignal} [signal] - Optional AbortSignal to cancel the request.
- * @returns {Promise<Array>} Resolves to an array of user objects.
- */
-export const fetchShiftUsers = async (shiftId, signal) => {
-    try {
-        if (!shiftId) {
-            throw new Error('Shift ID is required to fetch users.');
-        }
-
-        const response = await apiClient.get(`/UserShift/shift/${shiftId}/users`, {
-            signal,
-        });
-
-        // Unwrap nested data if API returns { data: { items: [...] } } else return response.data
-        return response.data?.data?.items ?? response.data;
-    } catch (err) {
-        if (err.name !== 'CanceledError') {
-            console.error(`Fetch users for shift ${shiftId} error:`, err);
-        }
-        throw err;
-    }
-};
-
-/**
- * Assigns a shift to a role.
- * @param {string} roleId - The ID of the role.
- * @param {string} shiftId - The ID of the shift.
- * @returns {Promise<any>} A promise that resolves when the shift is assigned to the role.
- */
-export const assignShiftToRole = async (roleId, shiftId) => {
-    try {
-        const response = await apiClient.post(`/shift/${shiftId}/assign/role/${roleId}`);
-        return response.data;
-    } catch (err) {
-        console.error('Assign shift to role error:', err);
-        throw err;
-    }
-};
-
-/**
- * Removes a shift assignment from a role.
- * @param {string} roleId - The ID of the role.
- * @param {string} shiftId - The ID of the shift.
- * @returns {Promise<any>} A promise that resolves when the shift assignment is removed.
- */
-export const removeShiftFromRole = async (roleId, shiftId) => {
-    try {
-        const response = await apiClient.delete(`/shift/${shiftId}/unassign/role/${roleId}`);
-        return response.data;
-    } catch (err) {
-        console.error('Remove shift from role error:', err);
-        throw err;
-    }
-};
-
-/**
- * Assigns a shift to a user.
- * @param {string} userId - The ID of the user.
- * @param {string} shiftId - The ID of the shift.
- * @param {object} [data] - Additional assignment data.
- * @returns {Promise<any>} A promise that resolves when the shift is assigned to the user.
- */
-export const assignShiftToUser = async (userId, shiftId, data = {}) => {
-    try {
-        const response = await apiClient.post(`/shift/${shiftId}/assign/user/${userId}`, data);
-        return response.data;
-    } catch (err) {
-        console.error('Assign shift to user error:', err);
-        throw err;
-    }
-};
-
-/**
- * Removes a shift assignment from a user.
- * @param {string} userId - The ID of the user.
- * @param {string} shiftId - The ID of the shift.
- * @returns {Promise<any>} A promise that resolves when the shift assignment is removed.
- */
-export const removeShiftFromUser = async (userId, shiftId) => {
-    try {
-        const response = await apiClient.delete(`/shift/${shiftId}/unassign/user/${userId}`);
-        return response.data;
-    } catch (err) {
-        console.error('Remove shift from user error:', err);
-        throw err;
-    }
-};
 
 /**
  * Fetches shift instances for a specific shift ID
@@ -292,7 +202,6 @@ export const fetchShiftInstances = async (shiftId, params = {}, signal) => {
             params,
             signal
         });
-        console.log(response.data);
         return response.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
@@ -302,42 +211,3 @@ export const fetchShiftInstances = async (shiftId, params = {}, signal) => {
     }
 };
 
-/**
- * Gets shifts assigned to a specific user.
- * @param {string} userId - The ID of the user.
- * @param {Object} [params] - Optional query parameters.
- * @param {AbortSignal} [signal] - Optional AbortSignal to cancel the request.
- * @returns {Promise<Array>} A promise that resolves to an array of shifts.
- */
-export const getUserShifts = async (userId, params = {}, signal) => {
-    try {
-        const response = await apiClient.get(`/user/${userId}/shifts`, {
-            params,
-            signal
-        });
-        return response.data;
-    } catch (err) {
-        if (err.name !== 'CanceledError') {
-            console.error('Get user shifts error:', err);
-        }
-        throw err;
-    }
-};
-
-export const fetchShiftst = async (page = 1, pageSize = 10, signal) => {
-    try {
-        const response = await apiClient.get('/Reports/shifts', {
-            params: {
-                page,
-                pageSize,
-            },
-            signal,
-        });
-        return response.data;
-    } catch (err) {
-        if (err.name !== 'CanceledError') {
-            console.error('Fetch shifts error:', err);
-        }
-        throw err;
-    }
-};

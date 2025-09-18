@@ -41,18 +41,43 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    // Format time from ISO string to HH:MM format for input fields
+    const formatTimeForInput = (timeString) => {
+        if (!timeString) return '';
+        try {
+            // If it's already in HH:MM format, return as is
+            if (typeof timeString === 'string' && timeString.match(/^\d{2}:\d{2}$/)) {
+                return timeString;
+            }
+            // If it's a full ISO date string, extract the time part
+            const date = new Date(timeString);
+            if (isNaN(date.getTime())) return ''; // Invalid date
+            
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        } catch (e) {
+            console.error('Error formatting time:', e);
+            return '';
+        }
+    };
+
     useEffect(() => {
         if (shift) {
             // Parse the shift data to match our form structure
             const startDate = shift.startDate ? new Date(shift.startDate).toISOString().split('T')[0] : '';
             const endDate = shift.endDate ? new Date(shift.endDate).toISOString().split('T')[0] : '';
+            
+            // Format times for the input fields
+            const formattedStartTime = formatTimeForInput(shift.startTime);
+            const formattedEndTime = formatTimeForInput(shift.endTime);
 
             setFormData({
                 id: shift.id || '',
                 name: shift.name || '',
                 description: shift.description || '',
-                startTime: shift.startTime || '',
-                endTime: shift.endTime || '',
+                startTime: formattedStartTime,
+                endTime: formattedEndTime,
                 mode: shift.mode ?? ShiftMode.Open,
                 startDate: startDate || new Date().toISOString().split('T')[0],
                 endDate: endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -70,6 +95,8 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
 
     const validateForm = (data) => {
         const newErrors = {};
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // Set to start of day for date comparison
 
         // Required fields
         if (!data.name?.trim()) newErrors.name = 'Shift name is required';
@@ -86,16 +113,18 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
         // Date validations
         const startDate = new Date(data.startDate);
         const endDate = new Date(data.endDate);
+        const today = new Date(now);
+        today.setHours(0, 0, 0, 0);
 
         if (startDate.toString() === 'Invalid Date') {
             newErrors.startDate = 'Invalid start date';
+        } else if (startDate < today) {
+            newErrors.startDate = 'Start date cannot be in the past';
         }
 
         if (endDate.toString() === 'Invalid Date') {
             newErrors.endDate = 'Invalid end date';
-        }
-
-        if (startDate && endDate && endDate < startDate) {
+        } else if (endDate < startDate) {
             newErrors.endDate = 'End date must be after start date';
         }
 
@@ -104,17 +133,25 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
             const [startHours, startMinutes] = data.startTime.split(':').map(Number);
             const [endHours, endMinutes] = data.endTime.split(':').map(Number);
 
-            if (startHours > 23 || startMinutes > 59) {
+            if (startHours > 23 || startMinutes > 59 || isNaN(startHours) || isNaN(startMinutes)) {
                 newErrors.startTime = 'Invalid start time';
             }
 
-            if (endHours > 23 || endMinutes > 59) {
+            if (endHours > 23 || endMinutes > 59 || isNaN(endHours) || isNaN(endMinutes)) {
                 newErrors.endTime = 'Invalid end time';
             }
 
-            if (startDate.toDateString() === endDate.toDateString() &&
-                (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes))) {
-                newErrors.endTime = 'End time must be after start time';
+            // Only validate time order if dates are the day
+            if (startDate.toDateString() === endDate.toDateString() && !newErrors.startTime && !newErrors.endTime) {
+                const startTime = new Date(startDate);
+                startTime.setHours(startHours, startMinutes);
+                
+                const endTime = new Date(endDate);
+                endTime.setHours(endHours, endMinutes);
+                
+                if (endTime <= startTime) {
+                    newErrors.endTime = 'End time must be after start time';
+                }
             }
         }
 
@@ -136,6 +173,24 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
+        // Clear any previous errors for this field
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: undefined
+            }));
+        }
+
+        // Clear related errors for date/time fields
+        if (name === 'startDate' || name === 'endDate') {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[`${name}Invalid`];
+                delete newErrors[`${name === 'startDate' ? 'endDate' : 'startDate'}`];
+                return newErrors;
+            });
+        }
+
         setFormData(prev => {
             // Handle different input types
             let newValue;
@@ -150,10 +205,49 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                 case 'date':
                     // Store date in YYYY-MM-DD format
                     newValue = value;
+                    
+                    // If changing start date and end date is before new start date, update end date
+                    if (name === 'startDate' && prev.endDate) {
+                        const newStartDate = new Date(value);
+                        const currentEndDate = new Date(prev.endDate);
+                        
+                        if (currentEndDate < newStartDate) {
+                            // Set end date to be the same as start date if it's before
+                            return {
+                                ...prev,
+                                [name]: value,
+                                endDate: value
+                            };
+                        }
+                    }
                     break;
                 case 'time':
                     // Ensure time is in HH:MM format
                     newValue = value;
+                    
+                    // If changing start time and end time is before new start time, update end time
+                    if (name === 'startTime' && value && prev.endTime) {
+                        const [startHours, startMins] = value.split(':').map(Number);
+                        const [endHours, endMins] = prev.endTime.split(':');
+                        
+                        const startTotal = startHours * 60 + startMins;
+                        const endTotal = parseInt(endHours, 10) * 60 + parseInt(endMins, 10);
+                        
+                        if (endTotal <= startTotal) {
+                            // Set end time to be 1 hour after start time
+                            const newEndTime = new Date();
+                            newEndTime.setHours(startHours + 1, startMins);
+                            
+                            // Update end time in the form
+                            const newEndTimeStr = `${String(newEndTime.getHours()).padStart(2, '0')}:${String(newEndTime.getMinutes()).padStart(2, '0')}`;
+                            
+                            return {
+                                ...prev,
+                                [name]: value,
+                                endTime: localToUTC(newEndTime)
+                            };
+                        }
+                    }
                     break;
                 default:
                     newValue = value;
@@ -167,17 +261,10 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
             // Update form data
             return {
                 ...prev,
-                [name]: newValue
+                [name]: newValue !== undefined ? newValue : value
             };
         });
-
-        // Clear error for this field when user starts typing
-        if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: undefined
-            }));
-        }
+    
     };
 
     const handleCustomDayChange = (day) => {
@@ -224,25 +311,37 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
         const { value } = e.target;
         const timeField = field === 'start' ? 'startTime' : 'endTime';
         
+        // Clear any previous time-related errors
+        setErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors[`${timeField}Invalid`];
+            delete newErrors[`${field}Time`];
+            return newErrors;
+        });
+
         // Create a date object with the current date and the new time
         const date = new Date();
         const [hours, minutes] = value.split(':'); 
-        date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
         
-        // Convert to ISO string to maintain timezone information
-        const timeString = localToUTC(date);
-        
-        setFormData(prev => ({
-            ...prev,
-            [timeField]: timeString,
-            // Update duration if both times are set
-            ...(field === 'start' && prev.endTime && {
-                durationMinutes: Math.round((new Date(prev.endTime).getTime() - date.getTime()) / (1000 * 60))
-            }),
-            ...(field === 'end' && prev.startTime && {
-                durationMinutes: Math.round((date.getTime() - new Date(prev.startTime).getTime()) / (1000 * 60))
-            })
-        }));
+        // Only update if we have valid hours and minutes
+        if (hours !== undefined && minutes !== undefined) {
+            date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+            
+            // Convert to ISO string to maintain timezone information
+            const timeString = localToUTC(date);
+            
+            setFormData(prev => ({
+                ...prev,
+                [timeField]: timeString,
+                // Update duration if both times are set
+                ...(field === 'start' && prev.endTime && {
+                    durationMinutes: Math.round((new Date(prev.endTime).getTime() - date.getTime()) / (1000 * 60))
+                }),
+                ...(field === 'end' && prev.startTime && {
+                    durationMinutes: Math.round((date.getTime() - new Date(prev.startTime).getTime()) / (1000 * 60))
+                })
+            }));
+        }
     };
 
     // Convert local time to ISO string without timezone conversion
@@ -287,25 +386,6 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
         if (!dateString) return null;
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
-    };
-
-    // Format time for display in input fields (HH:MM)
-    const formatTimeForInput = (timeString) => {
-        if (!timeString) return '';
-        // If it's already in HH:MM format, return as is
-        if (timeString.match(/^\d{2}:\d{2}$/)) {
-            return timeString;
-        }
-        // If it's in HH:MM:SS format, trim the seconds
-        if (timeString.match(/^\d{2}:\d{2}:\d{2}$/)) {
-            return timeString.substring(0, 5);
-        }
-        // For Date objects, format as HH:MM
-        if (timeString instanceof Date) {
-            return timeString.toTimeString().substring(0, 5);
-        }
-        // For any other case, return empty string
-        return '';
     };
 
     // Format date for display in input fields (YYYY-MM-DD)
