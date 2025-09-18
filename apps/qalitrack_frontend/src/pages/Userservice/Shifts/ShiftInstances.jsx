@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import { fetchShiftInstances } from '../../../helpers/UserService/Shifts/Shifts';
+import { EyeIcon } from '@heroicons/react/24/outline';
 
 const ShiftInstances = ({ shiftId }) => {
+    const navigate = useNavigate();
     const [instances, setInstances] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -119,6 +122,9 @@ const ShiftInstances = ({ shiftId }) => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Status
                             </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
 
                         </tr>
                         </thead>
@@ -136,9 +142,27 @@ const ShiftInstances = ({ shiftId }) => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(instance.status)}`}>
-                  {getStatusText(instance.status)}
-                </span>
+                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(instance.status)}`}>
+                                        {getStatusText(instance.status)}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button
+                                        onClick={() => {
+                                            // Navigate to the attendance page with instance data
+                                            navigate('/Admin/attendance', { 
+                                                state: { 
+                                                    instanceData: instance,
+                                                    instanceId: instance.id
+                                                } 
+                                            });
+                                        }}
+                                        className="text-amber-600 hover:text-amber-900 flex items-center space-x-1"
+                                        title="View Attendance"
+                                    >
+                                        <EyeIcon className="h-4 w-4" />
+                                        <span>Attendance</span>
+                                    </button>
                                 </td>
                             </tr>
                         ))}

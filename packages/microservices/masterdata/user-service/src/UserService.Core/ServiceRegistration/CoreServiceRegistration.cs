@@ -33,6 +33,7 @@ public static class CoreServiceRegistration
         services.AddHostedService<ShiftInstanceBackgroundService>();
         services.AddScoped<IShiftInstanceService,ShiftInstanceService>();
         services.AddScoped<IShiftAttendanceService,ShiftAttendanceService>();
+        services.AddScoped<IShiftAttendanceHandlerService, ShiftAttendanceHandlerService>();
         return services;
     }
 }

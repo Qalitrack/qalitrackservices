@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using UserService.Core.DTOs.Common;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Entities;
 using UserService.Core.Enums;
@@ -38,7 +39,7 @@ namespace UserService.Infrastructure.Repositories
         }
 
         // Implementation of IShiftAttendanceRepository method with pagination
-        public async Task<IEnumerable<ShiftAttendance>> GetAllAsync(int pageNumber = 1, int pageSize = 20)
+        public async Task<IEnumerable<ShiftAttendance>> GetAllAsync(int pageNumber = 1, int pageSize = 10)
         {
             return await _context.ShiftAttendances
                 .Include(sa => sa.ShiftInstance)
@@ -50,6 +51,73 @@ namespace UserService.Infrastructure.Repositories
                 .Take(pageSize)
                 .ToListAsync();
         }
+
+       
+
+
+        public async Task<PagedResult<ShiftAttendance>> GetByInstanceIdAsync(
+        string instanceId, 
+        int pageNumber = 1, 
+        int pageSize = 50, 
+        CancellationToken cancellationToken = default)
+       {
+        try
+        {
+            _logger.LogInformation("Retrieving attendance records for shift instance {InstanceId} (Page: {PageNumber}, Size: {PageSize})", 
+                instanceId, pageNumber, pageSize);
+
+            // Validate pagination
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100); // Cap page size at 100 for performance
+
+            var query = _context.ShiftAttendances
+                .AsNoTracking() // Improves read performance
+                .Where(sa => sa.ShiftInstanceId == instanceId && !sa.IsDeleted);
+
+            // Get total count first
+            var totalCount = await query.CountAsync(cancellationToken);
+            
+            // Get paginated results with only the required properties
+            var items = await query
+                .OrderBy(sa => sa.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(sa => new ShiftAttendance
+                {
+                    Id = sa.Id,
+                    EmployeeId = sa.EmployeeId,
+                    Employee = new User // Only include necessary employee details
+                    {
+                        Id = sa.Employee.Id,
+                        FirstName = sa.Employee.FirstName,
+                        LastName = sa.Employee.LastName,
+                        Email = sa.Employee.Email,
+                    },
+                    ClockInTime = sa.ClockInTime,
+                    ClockOutTime = sa.ClockOutTime,
+                    Status = sa.Status,
+                    IsLate = sa.IsLate,
+                    IsEarlyDeparture = sa.IsEarlyDeparture,
+                    Notes = sa.Notes,
+                    CreatedAt = sa.CreatedAt
+                })
+                .ToListAsync(cancellationToken);
+
+            return new PagedResult<ShiftAttendance>
+            {
+                Items = items,
+                Page = pageNumber,
+                PageSize = pageSize,
+                TotalCount = totalCount
+                // HasPreviousPage and HasNextPage are calculated properties
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving attendance records for shift instance {InstanceId}", instanceId);
+            throw;
+        }
+    }
 
         public Task<ShiftAttendance?> GetByIdAsync(string id, bool b)
         {
@@ -378,7 +446,6 @@ namespace UserService.Infrastructure.Repositories
                 .Select(x => new ShiftAttendanceResponse
                 {
                     Id = x.attendance.Id,
-                    ShiftInstanceId = x.attendance.ShiftInstanceId,
                     EmployeeId = x.attendance.EmployeeId,
                     EmployeeName = $"{x.user.FirstName} {x.user.LastName}",
                     EmployeeEmail = x.user.Email,
@@ -387,8 +454,6 @@ namespace UserService.Infrastructure.Repositories
                     Status = x.attendance.Status,
                     Notes = x.attendance.Notes,
                     IsLate = x.attendance.IsLate,
-                    IsEarlyDeparture = x.attendance.IsEarlyDeparture,
-                    ActualHoursWorked = x.attendance.ActualHoursWorked,
                     CreatedAt = x.attendance.CreatedAt,
                     UpdatedAt = x.attendance.UpdatedAt
                 })
@@ -406,17 +471,13 @@ namespace UserService.Infrastructure.Repositories
                 .Select(x => new ShiftAttendanceResponse
                 {
                     Id = x.attendance.Id,
-                    ShiftInstanceId = x.attendance.ShiftInstanceId,
                     EmployeeId = x.attendance.EmployeeId,
                     EmployeeName = $"{x.user.FirstName} {x.user.LastName}",
                     EmployeeEmail = x.user.Email,
                     ClockInTime = x.attendance.ClockInTime,
                     ClockOutTime = x.attendance.ClockOutTime,
                     Status = x.attendance.Status,
-                    Notes = x.attendance.Notes,
                     IsLate = x.attendance.IsLate,
-                    IsEarlyDeparture = x.attendance.IsEarlyDeparture,
-                    ActualHoursWorked = x.attendance.ActualHoursWorked,
                     CreatedAt = x.attendance.CreatedAt,
                     UpdatedAt = x.attendance.UpdatedAt
                 })
@@ -432,17 +493,13 @@ namespace UserService.Infrastructure.Repositories
                         select new ShiftAttendanceResponse
                         {
                             Id = attendance.Id,
-                            ShiftInstanceId = attendance.ShiftInstanceId,
                             EmployeeId = attendance.EmployeeId,
                             EmployeeName = $"{user.FirstName} {user.LastName}",
                             EmployeeEmail = user.Email,
                             ClockInTime = attendance.ClockInTime,
                             ClockOutTime = attendance.ClockOutTime,
                             Status = attendance.Status,
-                            Notes = attendance.Notes,
                             IsLate = attendance.IsLate,
-                            IsEarlyDeparture = attendance.IsEarlyDeparture,
-                            ActualHoursWorked = attendance.ActualHoursWorked,
                             CreatedAt = attendance.CreatedAt,
                             UpdatedAt = attendance.UpdatedAt
                         };
@@ -478,5 +535,121 @@ namespace UserService.Infrastructure.Repositories
             }
         }
         
+
+       
+        public async Task<PaginatedShiftInstancesResponse> GetPaginatedShiftInstancesWithAttendanceAsync(
+            int pageNumber = 1, 
+            int pageSize = 10, 
+            DateTime? startDate = null, 
+            DateTime? endDate = null)
+        {
+            try
+            {
+                // If no date range is provided, default to the current month
+                var start = startDate ?? new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                var end = endDate ?? start.AddMonths(1).AddDays(-1).Date.AddDays(1).AddTicks(-1);
+
+                _logger.LogInformation("Fetching paginated shift instances with attendance from {StartDate} to {EndDate}, Page: {Page}, Size: {Size}", 
+                    start, end, pageNumber, pageSize);
+
+                // First get the total count
+                var totalCount = await _context.ShiftInstances
+                    .Where<ShiftInstance>(si => !si.IsDeleted && 
+                               si.ScheduledDate >= start.Date && 
+                               si.ScheduledDate <= end.Date)
+                    .CountAsync<ShiftInstance>();
+
+                // Get paginated shift instances
+                var shiftInstances = await _context.ShiftInstances
+                    .AsNoTracking()
+                    .Include(si => si.Shift)
+                    .Include(si => si.Attendances)
+                        .ThenInclude(a => a.Employee)
+                    .Where(si => !si.IsDeleted && 
+                               si.ScheduledDate >= start.Date && 
+                               si.ScheduledDate <= end.Date)
+                    .OrderByDescending(si => si.ScheduledDate)
+                        .ThenBy(si => si.Shift.StartTime)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                // Transform to response DTOs
+                var instanceResponses = new List<ShiftInstanceWithAttendanceSummary>();
+
+                foreach (var instance in shiftInstances)
+                {
+                    var attendances = instance.Attendances.Where(a => !a.IsDeleted).ToList();
+                    
+                    // Calculate attendance statistics
+                    var presentCount = attendances.Count(a => a.Status == AttendanceStatus.Present);
+                    var absentCount = attendances.Count(a => a.Status == AttendanceStatus.Absent);
+                    var lateCount = attendances.Count(a => a.IsLate);
+                    var earlyDepartureCount = attendances.Count(a => a.IsEarlyDeparture);
+                    var totalScheduled = attendances.Count; // This might need adjustment based on your business logic
+
+                    var instanceResponse = new ShiftInstanceWithAttendanceSummary
+                    {
+                        InstanceId = instance.Id,
+                        ShiftId = instance.ShiftId,
+                        ShiftName = instance.Shift?.Name ?? "Unknown Shift",
+                        Date = instance.ScheduledDate,
+                        ScheduledStartTime = instance.ScheduledDate.Date.Add(instance.Shift?.StartTime ?? TimeSpan.Zero),
+                        ScheduledEndTime = instance.ScheduledDate.Date.Add(instance.Shift?.EndTime ?? TimeSpan.Zero),
+                        IsCancelled = instance.Status == ShiftInstanceStatus.Cancelled,
+                        AttendanceSummary = new AttendanceSummary
+                        {
+                            TotalScheduled = totalScheduled,
+                            PresentCount = presentCount,
+                            AbsentCount = absentCount,
+                            LateCount = lateCount,
+                            EarlyDepartureCount = earlyDepartureCount,
+                            AttendanceRate = totalScheduled > 0 ? Math.Round((double)presentCount / totalScheduled * 100, 2) : 0
+                        },
+                        AttendanceRecords = attendances
+                            .Select(a => new ShiftAttendanceResponse
+                            {
+                                Id = a.Id,
+                                EmployeeId = a.EmployeeId,
+                                EmployeeName = $"{a.Employee?.FirstName} {a.Employee?.LastName}".Trim(),
+                                EmployeeEmail = a.Employee?.Email ?? string.Empty,
+                                ClockInTime = a.ClockInTime,
+                                ClockOutTime = a.ClockOutTime,
+                                Status = a.Status,
+                                IsLate = a.IsLate,
+                                CreatedAt = a.CreatedAt,
+                                UpdatedAt = a.UpdatedAt
+                            })
+                            .OrderBy(a => a.EmployeeName, StringComparer.Ordinal)
+                            .ToList()
+                    };
+
+                    instanceResponses.Add(instanceResponse);
+                }
+
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                var result = new PaginatedShiftInstancesResponse
+                {
+                    ShiftInstances = instanceResponses,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages,
+                    HasPreviousPage = pageNumber > 1,
+                    HasNextPage = pageNumber < totalPages
+                };
+
+                _logger.LogInformation("Successfully retrieved {Count} shift instances (page {Page}/{TotalPages})", 
+                    instanceResponses.Count, pageNumber, totalPages);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetPaginatedShiftInstancesWithAttendanceAsync");
+                throw;
+            }
+        }
     }
 }
