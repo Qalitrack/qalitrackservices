@@ -1,9 +1,9 @@
 import config from './config';
 
-// Get the proper URL for Open Graph images
+// Get the proper URL for Open Graph images (runtime replaceable)
 export const getOGImageUrl = (imagePath = '/og-image.svg') => {
-  // Use ASSETS_URL from config (which can be overridden by Docker volumes)
-  const baseUrl = config.ASSETS_URL || config.SITE_URL;
+  // Use placeholder that will be replaced at runtime via entrypoint
+  const baseUrl = '__NEXT_PUBLIC_ASSETS_URL__';
   
   // Ensure we have a properly formatted URL
   if (imagePath.startsWith('http')) {
@@ -13,15 +13,13 @@ export const getOGImageUrl = (imagePath = '/og-image.svg') => {
   // Remove leading slash if present to avoid double slashes
   const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
   
-  // Ensure baseUrl doesn't end with slash
-  const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-  
-  return `${cleanBaseUrl}/${cleanPath}`;
+  return `${baseUrl}/${cleanPath}`;
 };
 
-// Get the proper site URL
+// Get the proper site URL (runtime replaceable)
 export const getSiteUrl = (path = '') => {
-  const baseUrl = config.SITE_URL;
+  // Use placeholder that will be replaced at runtime via entrypoint
+  const baseUrl = '__NEXT_PUBLIC_SITE_URL__';
   
   if (path.startsWith('http')) {
     return path; // Already a full URL
@@ -30,10 +28,7 @@ export const getSiteUrl = (path = '') => {
   // Remove leading slash if present to avoid double slashes
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
-  // Ensure baseUrl doesn't end with slash
-  const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-  
-  return cleanPath ? `${cleanBaseUrl}/${cleanPath}` : cleanBaseUrl;
+  return cleanPath ? `${baseUrl}/${cleanPath}` : baseUrl;
 };
 
 // Create consistent metadata object
