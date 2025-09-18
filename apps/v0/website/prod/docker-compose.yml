@@ -13,19 +13,6 @@ services:
     networks:
       - website_prod_qs_network
 
-  backend:
-    image: ghcr.io/qalitrack/qalitrackservices/qs-website-backend:main
-    container_name: qs-backend-prod
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      - NODE_ENV=production
-    depends_on:
-      - mongodb
-    networks:
-      - website_prod_qs_network
-
   frontend:
     image: ghcr.io/qalitrack/qalitrackservices/qs-website-frontend:main
     container_name: qs-frontend-prod
@@ -41,6 +28,50 @@ services:
       - backend
     networks:
       - website_prod_qs_network
+      - proxy-network
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for main domain
+      - "traefik.http.routers.qs-frontend-prod.rule=Host(`qalibrated.co.ke`)"
+      - "traefik.http.routers.qs-frontend-prod.entrypoints=websecure"
+      - "traefik.http.routers.qs-frontend-prod.tls=true"
+      - "traefik.http.routers.qs-frontend-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qs-frontend-prod.service=qs-frontend-prod"
+      - "traefik.http.services.qs-frontend-prod.loadbalancer.server.port=80"
+      # HTTP router (redirects to HTTPS)
+      - "traefik.http.routers.qs-frontend-prod-http.rule=Host(`qalibrated.co.ke`)"
+      - "traefik.http.routers.qs-frontend-prod-http.entrypoints=web"
+      - "traefik.http.routers.qs-frontend-prod-http.middlewares=redirect-to-https"
+      # Redirect middleware
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+
+  backend:
+    image: ghcr.io/qalitrack/qalitrackservices/qs-website-backend:main
+    container_name: qs-backend-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    networks:
+      - website_prod_qs_network
+      - proxy-network
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for API subdomain
+      - "traefik.http.routers.qs-backend-prod.rule=Host(`qalibrated.co.ke`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.qs-backend-prod.entrypoints=websecure"
+      - "traefik.http.routers.qs-backend-prod.tls=true"
+      - "traefik.http.routers.qs-backend-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qs-backend-prod.service=qs-backend-prod"
+      - "traefik.http.services.qs-backend-prod.loadbalancer.server.port=5000"
+      # HTTP router (redirects to HTTPS)
+      - "traefik.http.routers.qs-backend-prod-http.rule=Host(`qalibrated.co.ke`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.qs-backend-prod-http.entrypoints=web"
+      - "traefik.http.routers.qs-backend-prod-http.middlewares=redirect-to-https"
 
 volumes:
   mongodb_data_prod:
@@ -49,3 +80,6 @@ networks:
   website_prod_qs_network:
     driver: bridge
     name: website_prod_qs_network
+  proxy-network:
+    driver: bridge
+    external: true
