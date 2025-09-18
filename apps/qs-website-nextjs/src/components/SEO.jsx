@@ -1,17 +1,18 @@
 import Head from 'next/head';
+import { getSiteUrl, getOGImageUrl } from '@/utils/seo';
 
 const SEO = ({
   title = "Qalibrated Systems Limited - Professional Weighing & Automation Solutions",
   description = "Leading provider of innovative weighing, calibration, and automation systems in Kenya. Professional solutions for commercial weighing, building management, and intelligent transport systems.",
   keywords = "weighing systems, calibration services, automation solutions, weighbridges, industrial scales, building management, transport systems, Kenya, Nairobi",
   image = "/logo-social.png",
-  url = "https://qalibrated.co.ke",
+  url = "",
   type = "website",
   siteName = "Qalibrated Systems Limited"
 }) => {
   const fullTitle = title.includes('Qalibrated') ? title : `${title} | Qalibrated Systems Limited`;
-  const fullUrl = url.startsWith('http') ? url : `https://qalibrated.co.ke${url}`;
-  const fullImageUrl = image.startsWith('http') ? image : `https://qalibrated.co.ke${image}`;
+  const fullUrl = url.startsWith('http') ? url : getSiteUrl(url);
+  const fullImageUrl = image.startsWith('http') ? image : getOGImageUrl(image);
 
   return (
     <Head>
@@ -70,9 +71,9 @@ const SEO = ({
             "@type": "Organization",
             "name": "Qalibrated Systems Limited",
             "description": description,
-            "url": "https://qalibrated.co.ke",
-            "logo": "https://qalibrated.co.ke/logo-social.png",
-            "image": "https://qalibrated.co.ke/logo-social.png",
+            "url": getSiteUrl(),
+            "logo": getOGImageUrl("/logo-social.png"),
+            "image": getOGImageUrl("/logo-social.png"),
             "address": {
               "@type": "PostalAddress",
               "streetAddress": "QSL centre 1st Floor",

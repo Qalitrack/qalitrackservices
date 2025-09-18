@@ -9,46 +9,15 @@ import Partners from '@/components/CertificationsLogos';
 import Newsletter from '@/components/ContactCallToAction';
 import ProductCards from '@/components/ProductsGrid';
 import Footer from '@/components/Footer';
+import { createMetadata } from '@/utils/seo';
 
-export const metadata = {
+export const metadata = createMetadata({
   title: 'Qalibrated Systems Limited - Professional Weighing & Automation Solutions in Kenya',
   description: 'Leading provider of innovative weighing, calibration, and automation systems in Kenya. Professional solutions for commercial weighing, building management, and intelligent transport systems.',
   keywords: 'weighing systems, calibration services, automation solutions, weighbridges, industrial scales, building management, transport systems, Kenya, Nairobi',
-  openGraph: {
-    title: 'Qalibrated Systems Limited - Professional Weighing & Automation Solutions in Kenya',
-    description: 'Leading provider of innovative weighing, calibration, and automation systems in Kenya. Professional solutions for commercial weighing, building management, and intelligent transport systems.',
-    url: 'https://qalibrated.co.ke',
-    siteName: 'Qalibrated Systems Limited',
-    images: [
-      {
-        url: 'https://qalibrated.co.ke/assets/LOGO-COLORED-CDvfuXKp.svg',
-        width: 1200,
-        height: 630,
-        alt: 'Qalibrated Systems Limited Logo',
-      }
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Qalibrated Systems Limited - Professional Weighing & Automation Solutions in Kenya',
-    description: 'Leading provider of innovative weighing, calibration, and automation systems in Kenya. Professional solutions for commercial weighing, building management, and intelligent transport systems.',
-    images: ['https://qalibrated.co.ke/assets/LOGO-COLORED-CDvfuXKp.svg'],
-    creator: '@qalibrated',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-};
+  path: '/',
+  image: '/og-image.svg',
+});
 
 export default function Home() {
   return (
