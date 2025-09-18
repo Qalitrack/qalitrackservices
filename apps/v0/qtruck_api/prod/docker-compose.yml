@@ -1,0 +1,75 @@
+services:
+  postgresql:
+    image: postgres:15-alpine
+    container_name: qtruck-postgresql-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgresql_data_prod:/var/lib/postgresql/data
+    networks:
+      - qtruck_prod_qs_network
+
+  qtruck_api:
+    image: ghcr.io/qalitrack/qalitrackservices/qtruck-api:main
+    container_name: qtruck-api-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DB_ENGINE=postgresql
+      - DB_HOST=qtruck-postgresql-prod
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke},${API_DOMAIN:-api.qtruck.qalibrated.cseco.co.ke}}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-https://${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}}
+    depends_on:
+      - postgresql
+    networks:
+      - qtruck_prod_qs_network
+      - proxy-network
+    healthcheck:
+      test: ["CMD", "python", "manage.py", "check", "--database", "default"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for QTruck API production subdomain
+      - "traefik.http.routers.qtruck-api-prod-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`)"
+      - "traefik.http.routers.qtruck-api-prod-https.entrypoints=websecure"
+      - "traefik.http.routers.qtruck-api-prod-https.tls=true"
+      - "traefik.http.routers.qtruck-api-prod-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qtruck-api-prod-https.service=qtruck-api-prod"
+      - "traefik.http.services.qtruck-api-prod.loadbalancer.server.port=8000"
+      # HTTP router (accepts HTTP traffic directly)
+      - "traefik.http.routers.qtruck-api-prod-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`)"
+      - "traefik.http.routers.qtruck-api-prod-http.entrypoints=web"
+      - "traefik.http.routers.qtruck-api-prod-http.service=qtruck-api-prod"
+      # Alternative API subdomain HTTPS route
+      - "traefik.http.routers.qtruck-api-alt-prod-https.rule=Host(`${API_DOMAIN:-api.qtruck.qalibrated.cseco.co.ke}`)"
+      - "traefik.http.routers.qtruck-api-alt-prod-https.entrypoints=websecure"
+      - "traefik.http.routers.qtruck-api-alt-prod-https.tls=true"
+      - "traefik.http.routers.qtruck-api-alt-prod-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qtruck-api-alt-prod-https.service=qtruck-api-prod"
+      # Alternative API subdomain HTTP route (accepts HTTP traffic directly)
+      - "traefik.http.routers.qtruck-api-alt-prod-http.rule=Host(`${API_DOMAIN:-api.qtruck.qalibrated.cseco.co.ke}`)"
+      - "traefik.http.routers.qtruck-api-alt-prod-http.entrypoints=web"
+      - "traefik.http.routers.qtruck-api-alt-prod-http.service=qtruck-api-prod"
+
+volumes:
+  postgresql_data_prod:
+    driver: local
+
+networks:
+  qtruck_prod_qs_network:
+    driver: bridge
+    name: qtruck_prod_qs_network
+  proxy-network:
+    driver: bridge
+    external: true
