@@ -2,12 +2,21 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from drf_spectacular.utils import extend_schema
 from .models import CustomUser, SystemSettings
 
 
 class EmailAliasTokenObtainPairSerializer(TokenObtainPairSerializer):
+    email = serializers.EmailField(required=True)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Remove username field and replace with email
+        if 'username' in self.fields:
+            del self.fields['username']
+    
     def validate(self, attrs):
-        email = attrs.get('username')  # DRF uses 'username' field for email
+        email = attrs.get('email')  # Now use 'email' field directly
         password = attrs.get('password')
         
         if not email or not password:
@@ -55,7 +64,7 @@ class EmailAliasTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not user.check_password(password):
             raise serializers.ValidationError('Invalid credentials.')
         
-        # Set the user for token generation
+        # Set the username for parent class validation (SimpleJWT still expects username internally)
         attrs['username'] = user.username
         
         # Call parent validation
@@ -71,3 +80,11 @@ class EmailAliasTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class EmailAliasTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailAliasTokenObtainPairSerializer
+    
+    @extend_schema(
+        tags=['Authentication'],
+        summary="Login with email alias",
+        description="Login using email (with optional role alias like user+driver@domain.com)"
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
