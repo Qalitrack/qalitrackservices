@@ -332,12 +332,30 @@ public class ShiftInstanceBackgroundService : BackgroundService
         try
         {
             _logger.LogInformation("Checking for shift instances that should be completed. Current time: {Now}", now);
-        
-            var endTime = now.AddHours(24);
-            _logger.LogInformation("Looking for InProgress instances with ScheduledEndTime < {EndTime}", endTime);
-        
-            var instancesToCheck = await shiftInstanceRepository.GetIncompleteInstancesBeforeAsync(endTime);
-            _logger.LogInformation("Found {Count} instances to check for completion", instancesToCheck.Count());
+            
+            // Convert current UTC time to Nairobi time
+            var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+            var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
+            
+            _logger.LogInformation("Current Nairobi time: {NairobiNow}", nairobiNow);
+            _logger.LogInformation("Looking for InProgress instances with ScheduledEndTime < {Now} (Nairobi time)", nairobiNow);
+            
+            // Get all incomplete instances
+            var allIncompleteInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress)).ToList();
+            
+            // Filter instances where the scheduled end time has passed in Nairobi time
+            var instancesToCheck = allIncompleteInstances
+                .Where(instance => 
+                {
+                    var scheduledDateUtc = instance.ScheduledDate;
+                    var scheduledTimeUtc = scheduledDateUtc.Date.Add(instance.ScheduledEndTime.TimeOfDay);
+                    var scheduledTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledTimeUtc, nairobiTimeZone);
+                    
+                    return scheduledTimeInNairobi <= nairobiNow;
+                })
+                .ToList();
+                
+            _logger.LogInformation("Found {Count} instances to check for completion", instancesToCheck.Count);
 
             int completedCount = 0;
             int skippedCount = 0;
