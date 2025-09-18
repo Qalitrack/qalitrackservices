@@ -97,7 +97,7 @@ function Navbar() {
         </div>
         <div className="hidden md:flex gap-4 items-center text-sm">
           {/* <Link to="/signup" className="flex items-center gap-1 hover:text-white"><UserPlus size={14} /> Register</Link> */}
-          <Link to="/login" className="flex items-center gap-1 hover:text-white"><LogIn size={14} /> Dashboard</Link>
+          {/* <Link to="/login" className="flex items-center gap-1 hover:text-white"><LogIn size={14} /> Dashboard</Link> */}
           {/* <Link to="/dashboard" className="flex items-center gap-1 hover:text-white"><LayoutDashboard size={14} /> My Dashboard</Link> */}
         </div>
       </div>
@@ -149,7 +149,7 @@ function Navbar() {
               )}
             </div>
           ))}
-          <Link to="/contact" className="ml-4 px-4 py-2 bg-amber-400 text-black rounded-full hover:opacity-90 transition">
+          <Link to="/dashboard" className="ml-4 px-4 py-2 bg-amber-400 text-black rounded-full hover:opacity-90 transition">
             Get Started
           </Link>
         </div>
@@ -202,8 +202,8 @@ function Navbar() {
               </Link>
               {/* Mobile version of the top info bar links */}
               <div className="w-full pt-4 border-t border-gray-200 mt-4">
-                <Link to="/register" className="flex items-center gap-1 hover:text-amber-400 w-full text-left py-2" onClick={() => setIsMobileMenuOpen(false)}><UserPlus size={16} /> Register</Link>
-                <Link to="/login" className="flex items-center gap-1 hover:text-amber-400 w-full text-left py-2" onClick={() => setIsMobileMenuOpen(false)}><LogIn size={16} /> Login</Link>
+                {/* <Link to="/register" className="flex items-center gap-1 hover:text-amber-400 w-full text-left py-2" onClick={() => setIsMobileMenuOpen(false)}><UserPlus size={16} /> Register</Link>
+                <Link to="/login" className="flex items-center gap-1 hover:text-amber-400 w-full text-left py-2" onClick={() => setIsMobileMenuOpen(false)}><LogIn size={16} /> Login</Link> */}
                 <Link to="/dashboard" className="flex items-center gap-1 hover:text-amber-400 w-full text-left py-2" onClick={() => setIsMobileMenuOpen(false)}><LayoutDashboard size={16} /> My Dashboard</Link>
               </div>
             </div>
