@@ -163,7 +163,7 @@ export default function About() {
               private limited company with 100% local shareholding. Established in
               2009 as Resolution Electro-Technique, our company has grown into a
               market leader in advanced weighing systems, calibrations, and
-              industrial automation. Since 2017, we've expanded into construction,
+              industrial automation. Since 2017, we&apos;ve expanded into construction,
               water & sewerage, and mechanical & electrical engineering.
             </p>
             <p className="text-gray-600 mb-8 leading-relaxed">

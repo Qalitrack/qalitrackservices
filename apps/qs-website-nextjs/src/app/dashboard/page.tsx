@@ -19,7 +19,7 @@ export default function Dashboard() {
       case 'users':
         return <UserManagement />;
       case 'profile':
-        return <MyProfile />;
+        return <MyProfile userId="12345" />;
       default:
         return <Analytics />;
     }
