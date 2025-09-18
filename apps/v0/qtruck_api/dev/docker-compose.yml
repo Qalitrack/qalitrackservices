@@ -19,7 +19,6 @@ services:
     env_file:
       - .env
     environment:
-      - DEBUG=True
       - DB_ENGINE=postgresql
       - DB_HOST=qtruck-postgresql-dev
       - DB_PORT=5432
@@ -30,8 +29,20 @@ services:
       - postgresql
     networks:
       - qtruck_dev_qs_network
-    # Django will run on port 8000 inside container
-    # Access via container IP since no host ports are exposed
+      - proxy-network
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for QTruck API dev subdomain
+      - "traefik.http.routers.qtruck-api-dev-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`)"
+      - "traefik.http.routers.qtruck-api-dev-https.entrypoints=websecure"
+      - "traefik.http.routers.qtruck-api-dev-https.tls=true"
+      - "traefik.http.routers.qtruck-api-dev-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qtruck-api-dev-https.service=qtruck-api-dev"
+      - "traefik.http.services.qtruck-api-dev.loadbalancer.server.port=8000"
+      # HTTP router (accepts HTTP traffic directly)
+      - "traefik.http.routers.qtruck-api-dev-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`)"
+      - "traefik.http.routers.qtruck-api-dev-http.entrypoints=web"
+      - "traefik.http.routers.qtruck-api-dev-http.service=qtruck-api-dev"
 
 volumes:
   postgresql_data_dev:
@@ -40,3 +51,6 @@ networks:
   qtruck_dev_qs_network:
     driver: bridge
     name: qtruck_dev_qs_network
+  proxy-network:
+    driver: bridge
+    external: true
