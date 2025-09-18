@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  nextjs-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # These can be overridden by .env file or runtime
+      - NEXT_PUBLIC_API_BASE_URL=https://api.qalibrated.co.ke/api
+      - NEXT_PUBLIC_SITE_URL=https://qalibrated.co.ke
+      - NEXT_PUBLIC_ASSETS_URL=https://qalibrated.co.ke
+      - NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=your-google-verification-code
+    # Optional: Mount config as volume for runtime updates
+    # volumes:
+    #   - ./config/production-config.js:/app/public/config.js
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
