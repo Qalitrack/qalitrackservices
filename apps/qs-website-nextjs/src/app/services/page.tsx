@@ -114,7 +114,7 @@ export default function Services() {
               <Quote className="absolute top-4 left-4 h-10 w-10 text-amber-400 opacity-20" />
               <img src="https://placehold.co/80x80/E0F2F7/2D3748?text=Client+A" alt="Client A" className="rounded-full w-20 h-20 object-cover mb-4 border-2 border-amber-400" />
               <p className="text-gray-700 text-sm mb-4 italic">
-                "Qalibrated Systems provided us with an incredibly accurate weighing solution. Their team was professional and the installation was seamless. Highly recommend!"
+                &quot;Qalibrated Systems provided us with an incredibly accurate weighing solution. Their team was professional and the installation was seamless. Highly recommend!&quot;
               </p>
               <div className="flex justify-center mb-2">
                 {[...Array(5)].map((_, i) => (
@@ -130,7 +130,7 @@ export default function Services() {
               <Quote className="absolute top-4 left-4 h-10 w-10 text-amber-400 opacity-20" />
               <img src="https://placehold.co/80x80/E0F2F7/2D3748?text=Client+B" alt="Client B" className="rounded-full w-20 h-20 object-cover mb-4 border-2 border-amber-400" />
               <p className="text-gray-700 text-sm mb-4 italic">
-                "Their industrial automation expertise transformed our production line. We've seen significant improvements in efficiency and reduced downtime."
+                &quot;Their industrial automation expertise transformed our production line. We&apos;ve seen significant improvements in efficiency and reduced downtime.&quot;
               </p>
               <div className="flex justify-center mb-2">
                 {[...Array(5)].map((_, i) => (
@@ -146,7 +146,7 @@ export default function Services() {
               <Quote className="absolute top-4 left-4 h-10 w-10 text-amber-400 opacity-20" />
               <img src="https://placehold.co/80x80/E0F2F7/2D3748?text=Client+C" alt="Client C" className="rounded-full w-20 h-20 object-cover mb-4 border-2 border-amber-400" />
               <p className="text-gray-700 text-sm mb-4 italic">
-                "The 24/7 support from Qalibrated Systems is unmatched. Any issue, big or small, is addressed promptly and professionally. Truly a reliable partner."
+                &quot;The 24/7 support from Qalibrated Systems is unmatched. Any issue, big or small, is addressed promptly and professionally. Truly a reliable partner.&quot;
               </p>
               <div className="flex justify-center mb-2">
                 {[...Array(5)].map((_, i) => (
