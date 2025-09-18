@@ -1,6 +1,6 @@
-import { createMetadata } from '@/utils/seo';
-
 'use client';
+
+import { createMetadata } from '@/utils/seo';
 
 import React from 'react';
 import {
