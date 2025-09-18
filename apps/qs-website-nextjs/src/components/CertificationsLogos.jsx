@@ -13,8 +13,8 @@ import Giropes from '@/assets/partnerlogo/giropes.jpg';
 import Nairobi from '@/assets/partnerlogo/nairobicountylogo.png';
 import Kajiado from '@/assets/partnerlogo/kajiado_county.jpg';
 import Kilifi from '@/assets/partnerlogo/kilificounty.png';
-import Kisumu from '../assets/partnerlogo/countygovernmntofkisumu.jpg';
-import Sensocar from '../assets/hero/sensocar.svg';
+import Kisumu from '@/assets/partnerlogo/countygovernmntofkisumu.jpg';
+import Sensocar from '@/assets/hero/sensocar.svg';
 
 const CertificationsLogos = () => {
   const logos = [
@@ -40,7 +40,7 @@ const CertificationsLogos = () => {
           {duplicatedLogos.map((logo, index) => (
             <div key={index} className="flex-shrink-0 p-2 mx-4">
               <img 
-                src={logo.imageUrl} 
+                src={typeof logo.imageUrl === 'string' ? logo.imageUrl : logo.imageUrl.src || logo.imageUrl} 
                 alt={logo.name} 
                 className="h-12 object-contain filter hover:grayscale-0 transition-all duration-300" 
                 onError={(e) => { 
