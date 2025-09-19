@@ -35,12 +35,12 @@ const ContactCallToAction = () => {
   >
     Start a live chat
   </a>
-  <a
+  {/* <a
     href="/contact" // Adjust if your route is different
     className="bg-transparent border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-center"
   >
     Or contact us
-  </a>
+  </a> */}
 </div>
 
       </div>
