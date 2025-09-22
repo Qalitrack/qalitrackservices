@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar'; // Using Navbar as per your latest instruction
 import Footer from '../Footer';
-import Scales from '@/assets/scales.jpg';
+// import Scales from '@/assets/scales.jpg';
 
 // Data for the sidebar navigation (consistent across weighing sub-pages)
 const weighingNavItems = [
-  { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
+  // { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
   { name: 'Portable/Axle Weighers', path: '/weighing/portable-axle' },
   { name: 'Weighing Software', path: '/weighing/software' },
   { name: 'Unmanned/Automated Weighbridges', path: '/weighing/unmanned-automated' },
@@ -31,7 +31,7 @@ const WeighingSoftwarePage = () => {
       <section 
         className="relative bg-cover bg-center text-white py-20 md:py-32 pt-32" // pt-32 to account for fixed Navbar
         style={{ 
-          backgroundImage: `url(${Scales})`, // Image from catalogue page 5 (Software)
+          backgroundImage: "url('/weighing.png')", // Image from catalogue page 5 (Software)
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
