@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar'; // Using Navbar as per your latest instruction
 import Footer from '../Footer';
-import Scales from '@/assets/scales.jpg';
+// import Scales from '@/assets/weighing.png';
 
 
 // Data for the sidebar navigation (consistent across weighing sub-pages)
 const weighingNavItems = [
-  { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
+  // { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
   { name: 'Portable/Axle Weighers', path: '/weighing/portable-axle' },
   { name: 'Weighing Software', path: '/weighing/software' },
   { name: 'Unmanned/Automated Weighbridges', path: '/weighing/unmanned-automated' },
@@ -32,7 +32,7 @@ const RetailScalesPage = () => {
       <section 
         className="relative bg-cover bg-center text-white py-20 md:py-32 pt-32" // pt-32 to account for fixed Navbar
         style={{ 
-          backgroundImage: `url(${Scales})`, // Placeholder image for retail scales
+          backgroundImage: "url('/weighing.png')", // Placeholder image for retail scales
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

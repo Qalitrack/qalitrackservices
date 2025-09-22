@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar'; // Using Navbar as per your latest instruction
 import Footer from '../Footer';
-import Scales from '@/assets/team.jpg';
-import IndustrialAutomation from '@/assets/intelligent.png'
+// import Scales from '@/assets/team.jpg';
+// import IndustrialAutomation from '@/assets/intelligent.png'
 
 const automationNavItems = [
   { name: 'Building Management Systems', path: '/automation/building-management' },
@@ -27,7 +27,7 @@ const IntelligentTransportSystemsPage = () => {
       <section 
         className="relative bg-cover bg-center text-white py-20 md:py-32 pt-32" 
         style={{ 
-          backgroundImage: `url(${Scales})`, // Image from PPT Page 10 or 11
+          backgroundImage: "url('/automation.jpeg')", // Image from PPT Page 10 or 11
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
