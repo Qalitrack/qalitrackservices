@@ -592,7 +592,7 @@ const Shifts = () => {
                                   ? 'bg-blue-100 text-amber-500'
                                   : 'bg-gray-100 text-gray-800'
                       }`}>
-                        {shift.status === 3 ? 'Active' : shift.status === 2 ? 'Published' : 'Draft'}
+                        {shift.status === 3 ? 'Active' : shift.status === 1 ? 'completed' : 'Draft'}
                       </span>
                                         {shift.totalInstances > 0 && (
                                             <span className="text-xs text-gray-500">

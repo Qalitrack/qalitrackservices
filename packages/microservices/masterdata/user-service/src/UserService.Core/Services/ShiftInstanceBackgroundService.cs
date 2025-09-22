@@ -206,8 +206,14 @@ public class ShiftInstanceBackgroundService : BackgroundService
             
             // Get shifts starting soon (in the next check interval) in Nairobi time
             var upcomingInstances = allScheduledInstances
+                // In the upcomingInstances filter, add this check at the beginning:
                 .Where(instance => 
                 {
+                    // Add this check first
+                    if (instance.ScheduledDate.Date != DateTime.UtcNow.Date)
+                        return false;
+        
+                    // Rest of the existing conditions...
                     var scheduledTimeUtc = instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay);
                     var scheduledTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledTimeUtc, nairobiTimeZone);
                     return scheduledTimeInNairobi > nairobiNow && 
