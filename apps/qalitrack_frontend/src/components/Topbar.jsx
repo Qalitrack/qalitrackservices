@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Bell, Search, User, LogOut, Menu } from "lucide-react";
 import useAuth from "../helpers/auth";
 import { useState, useRef, useEffect } from "react";
@@ -20,7 +20,7 @@ export default function Topbar({ onToggleSidebar }) {
         }
         return "User";
     };
-
+    const navigate = useNavigate();
     const userRole = getUserRole();
     const userName = user?.firstName
         ? `${user.firstName} ${user.lastName}`
@@ -43,8 +43,8 @@ export default function Topbar({ onToggleSidebar }) {
         segment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
     const handleLogout = () => {
-        logout();
-        window.location.href = "/login";
+            logout();
+            navigate('/');
     };
 
     return (

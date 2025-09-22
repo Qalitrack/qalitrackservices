@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, fetchUserById, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../helpers/UserService/Users/users.js';
 import { fetchRoles } from '../../helpers/UserService/Roles/Roles.js';
 import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock } from 'lucide-react';
+import { ChevronsLeft as ChevronDoubleLeft, ChevronsRight as ChevronDoubleRight } from 'lucide-react';
 import { format, parseISO, formatDistanceToNow } from 'date-fns';
 
 const Modal = ({ children, isOpen, onClose, size = "md" }) => {
@@ -48,9 +49,7 @@ const Users = () => {
         firstName: '',
         lastName: '',
         mobileNumber: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
+        email: ''
     });
     const [isUpdating, setIsUpdating] = useState(false);
     const [modalFeedback, setModalFeedback] = useState({ text: '', type: '' });
@@ -158,35 +157,58 @@ const Users = () => {
             firstName: '',
             lastName: '',
             mobileNumber: '',
-            email: '',
-            password: '',
-            confirmPassword: ''
+            email: ''
         });
         setModalFeedback({ text: '', type: '' });
         setAddModalOpen(true);
     };
 
+    const formatKenyanPhoneNumber = (number) => {
+        if (!number) return '';
+        // Remove all non-digit characters
+        const cleaned = number.replace(/\D/g, '');
+        
+        // Check if the number starts with 0 or 254
+        if (cleaned.startsWith('0')) {
+            return `+254${cleaned.substring(1)}`;
+        } else if (cleaned.startsWith('254')) {
+            return `+${cleaned}`;
+        } else if (cleaned.startsWith('7') || cleaned.startsWith('1')) {
+            return `+254${cleaned}`;
+        }
+        
+        // If it doesn't match any pattern, return as is (will be caught by validation)
+        return number;
+    };
+
+    const validateKenyanPhoneNumber = (number) => {
+        // Check if the number is empty (optional field)
+        if (!number) return true;
+        
+        // Check if the number matches Kenyan phone number patterns
+        // Valid formats: 07XXXXXXXX, 7XXXXXXXX, 2547XXXXXXXX, +2547XXXXXXXX
+        const kenyanPhoneRegex = /^(?:\+?254|0)?(7\d{8})$/;
+        return kenyanPhoneRegex.test(number);
+    };
+
     const handleNewUserInputChange = (e) => {
         const { name, value } = e.target;
-        setNewUser(prev => ({ ...prev, [name]: value }));
+        setNewUser(prev => ({
+            ...prev,
+            [name]: value,
+            // Add error state for mobile number
+            mobileNumberError: name === 'mobileNumber' && value && !validateKenyanPhoneNumber(value)
+                ? 'Please enter a valid Kenyan phone number (e.g., 0712345678)'
+                : ''
+        }));
     };
 
     const handleCreateUser = async (e) => {
         e.preventDefault();
 
         // Validation
-        if (!newUser.firstName || !newUser.lastName || !newUser.email || !newUser.password) {
+        if (!newUser.firstName || !newUser.lastName || !newUser.email) {
             setModalFeedback({ text: 'Please fill in all required fields.', type: 'error' });
-            return;
-        }
-
-        if (newUser.password !== newUser.confirmPassword) {
-            setModalFeedback({ text: 'Passwords do not match.', type: 'error' });
-            return;
-        }
-
-        if (newUser.password.length < 6) {
-            setModalFeedback({ text: 'Password must be at least 6 characters long.', type: 'error' });
             return;
         }
 
@@ -194,6 +216,19 @@ const Users = () => {
         if (!emailRegex.test(newUser.email)) {
             setModalFeedback({ text: 'Please enter a valid email address.', type: 'error' });
             return;
+        }
+
+        // Validate and format mobile number if provided
+        if (newUser.mobileNumber) {
+            if (!validateKenyanPhoneNumber(newUser.mobileNumber)) {
+                setModalFeedback({ 
+                    text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)', 
+                    type: 'error' 
+                });
+                return;
+            }
+            // Format the mobile number before sending
+            newUser.mobileNumber = formatKenyanPhoneNumber(newUser.mobileNumber);
         }
 
         setIsUpdating(true);
@@ -215,7 +250,10 @@ const Users = () => {
     };
 
     const handleEditClick = (user) => {
-        setSelectedUser({ ...user });
+        setSelectedUser({ 
+            ...user,
+            mobileNumberError: ''
+        });
         setModalFeedback({ text: '', type: '' });
         setEditModalOpen(true);
     };
@@ -284,17 +322,49 @@ const Users = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setSelectedUser(prev => ({ ...prev, [name]: value }));
+        setSelectedUser(prev => ({
+            ...prev,
+            [name]: value,
+            // Add error state for mobile number
+            mobileNumberError: name === 'mobileNumber' && value && !validateKenyanPhoneNumber(value)
+                ? 'Please enter a valid Kenyan phone number (e.g., 0712345678)'
+                : ''
+        }));
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
         if (!selectedUser) return;
 
+        // Validation
+        if (!selectedUser.firstName || !selectedUser.lastName || !selectedUser.email) {
+            setModalFeedback({ text: 'Please fill in all required fields.', type: 'error' });
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(selectedUser.email)) {
+            setModalFeedback({ text: 'Please enter a valid email address.', type: 'error' });
+            return;
+        }
+
+        // Validate and format mobile number if provided
+        if (selectedUser.mobileNumber) {
+            if (!validateKenyanPhoneNumber(selectedUser.mobileNumber)) {
+                setModalFeedback({ 
+                    text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)', 
+                    type: 'error' 
+                });
+                return;
+            }
+            // Format the mobile number before sending
+            selectedUser.mobileNumber = formatKenyanPhoneNumber(selectedUser.mobileNumber);
+        }
+
         setIsUpdating(true);
         setModalFeedback({ text: '', type: '' });
         try {
-            const { id, ...userData } = selectedUser;
+            const { id, mobileNumberError, ...userData } = selectedUser;
             await updateUser(id, userData);
             setModalFeedback({ text: 'User updated successfully!', type: 'success' });
             await loadData(pagination.page, showDeleted);
@@ -432,7 +502,7 @@ const Users = () => {
                         <span className="inline md:hidden">Add</span>
                     </button>
                 </div>
-            </div>
+            </div> 
 
             {feedbackMessage.text && (
                 <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -626,41 +696,15 @@ const Users = () => {
                             type="tel"
                             name="mobileNumber"
                             id="mobileNumber"
-                            value={newUser.mobileNumber}
+                            value={newUser.mobileNumber || ''}
                             onChange={handleNewUserInputChange}
-                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
+                            placeholder="e.g., 0712345678 or 712345678"
+                            className={`mt-1 block w-full p-2 border ${newUser.mobileNumberError ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500`}
                         />
+                        {newUser.mobileNumberError && (
+                            <p className="mt-1 text-sm text-red-600">{newUser.mobileNumberError}</p>
+                        )}
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password *</label>
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                value={newUser.password}
-                                onChange={handleNewUserInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                required
-                                minLength="6"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password *</label>
-                            <input
-                                type="password"
-                                name="confirmPassword"
-                                id="confirmPassword"
-                                value={newUser.confirmPassword}
-                                onChange={handleNewUserInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                required
-                                minLength="6"
-                            />
-                        </div>
-                    </div>
-
                     <div className="flex justify-end space-x-3 pt-4">
                         <button
                             type="button"
@@ -731,10 +775,14 @@ const Users = () => {
                                 type="tel"
                                 name="mobileNumber"
                                 id="mobileNumber"
-                                value={selectedUser.mobileNumber}
+                                value={selectedUser.mobileNumber || ''}
                                 onChange={handleInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
+                                placeholder="e.g., 0712345678 or 712345678"
+                                className={`mt-1 block w-full p-2 border ${selectedUser.mobileNumberError ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500`}
                             />
+                            {selectedUser.mobileNumberError && (
+                                <p className="mt-1 text-sm text-red-600">{selectedUser.mobileNumberError}</p>
+                            )}
                         </div>
                         <div className="flex justify-end space-x-3 pt-4">
                             <button

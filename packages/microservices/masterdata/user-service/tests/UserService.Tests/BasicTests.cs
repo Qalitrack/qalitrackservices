@@ -3,16 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Emails;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Mappings;
 using UserService.Core.Services;
-using Xunit;
+
 
 namespace UserService.Tests;
 
@@ -128,8 +126,6 @@ public class UserServiceTests
             LastName = "Smith",
             Email = "jane.smith@example.com",
             MobileNumber = "9876543210",
-            Password = "SecurePass123!",
-            ConfirmPassword = "SecurePass123!"
         };
 
         var createdUser = new User
