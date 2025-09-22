@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar'; // Using Navbar as per your latest instruction
 import Footer from '../Footer';
-import Scales from '@/assets/vehicle1.jpg';
+// import Scales from '/public/calibration.jpg';
 
 
 
@@ -29,7 +29,7 @@ const FlowMetersPressureCalibrationsPage = () => {
       <section 
         className="relative bg-cover bg-center text-white py-20 md:py-32 pt-32" // pt-32 to account for fixed Navbar
         style={{ 
-          backgroundImage:`url(${Scales})`, // Placeholder image
+          backgroundImage: "url('/calibration.jpeg')", // Placeholder image
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
