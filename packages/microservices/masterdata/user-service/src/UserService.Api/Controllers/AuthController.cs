@@ -2,13 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Auth;
-using UserService.Core.Interfaces;
-using UserService.Core.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Serilog;
 using UserService.Core.DTOs.User;
-using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
@@ -24,6 +20,7 @@ namespace UserService.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IUserStatusService _userStatusService;
         private readonly ITwoFactorService _twoFactorService;
+        private readonly IShiftLoginRestrictionService _shiftLoginRestrictionService;
 
         public AuthController(
             ITokenService tokenService, 
@@ -32,7 +29,8 @@ namespace UserService.Api.Controllers
             ILogger<AuthController> logger,
             IMapper mapper,
             IUserStatusService userStatusService,
-            ITwoFactorService twoFactorService)
+            ITwoFactorService twoFactorService,
+            IShiftLoginRestrictionService shiftLoginRestrictionService)
         {
             _tokenService = tokenService;
             _userService = userService;
@@ -41,181 +39,209 @@ namespace UserService.Api.Controllers
             _mapper = mapper;
             _userStatusService = userStatusService;
             _twoFactorService = twoFactorService;
+            _shiftLoginRestrictionService = shiftLoginRestrictionService;
         }
 
         [HttpPost("login")]
-            public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            try
             {
-                try
+                if (!ModelState.IsValid)
                 {
-                    if (!ModelState.IsValid)
-                    {
-                        return BadRequest(ModelState);
-                    }
-
-                    var user = await _userService.ValidateUserCredentials(loginDto.Email, loginDto.Password);
-                    
-                    if (user == null)
-                    {
-                        return Unauthorized(new { message = "Invalid email or password" });
-                    }
-
-                    if (user.IsDeleted)
-                    {
-                        return Unauthorized(new { message = "Account has been deleted" });
-                    }
-
-                    // NEW: Check shift-based login restrictions
-                    var shiftRestrictionService = HttpContext.RequestServices.GetRequiredService<IShiftLoginRestrictionService>();
-                    var (canLogin, restrictionReason) = await shiftRestrictionService.CanUserLoginAsync(user.Id.ToString());
-                    
-                    if (!canLogin)
-                    {
-                        return Unauthorized(new { 
-                            message = restrictionReason,
-                            errorCode = "SHIFT_RESTRICTION"
-                        });
-                    }
-                    
-                    // If it's the first login, redirect to password update
-                    if (user.IsFirstLogin)
-                    {
-                        return Ok(new { 
-                            message = "First login detected",
-                            userId = user.Id,
-                            redirectUrl = $"/api/auth/update-password/{user.Id}"
-                        });
-                    }
-
-                    // 2FA is mandatory for all users - create session and send code
-                    var sessionId = await _twoFactorService.CreateTwoFactorSessionAsync(user.Id.ToString());
-                    var codeResult = await _twoFactorService.GenerateAndSendCodeAsync(user.Id.ToString(), user.Email);
-
-                    if (!codeResult.Success)
-                    {
-                        return BadRequest(new { 
-                            Success = false, 
-                            Message = codeResult.Message, 
-                            Errors = (string[])null, 
-                            StatusCode = 400 
-                        });
-                    }
-
-                    var response = new TwoFactorResponseDto
-                    {
-                        Requires2FA = true,
-                        SessionId = sessionId,
-                        Message = "Verification code sent to your email address. Please enter the code to complete login.",
-                        Email = MaskEmail(user.Email)
-                    };
-
-                    return Ok(response);
+                    return BadRequest(ModelState);
                 }
-                catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+
+                var user = await _userService.ValidateUserCredentials(loginDto.Email, loginDto.Password);
+                
+                if (user == null)
                 {
-                    _logger.LogWarning(ex, "Validation error during login for email: {Email}", loginDto?.Email ?? "unknown");
+                    return Unauthorized(new { message = "Invalid email or password" });
+                }
+
+                if (user.IsDeleted)
+                {
+                    return Unauthorized(new { message = "Account has been deleted" });
+                }
+
+                // ONLY check shift-based login restrictions (NO ATTENDANCE YET)
+                var (canLogin, restrictionReason) = await _shiftLoginRestrictionService.CanUserLoginAsync(user.Id.ToString());
+                
+                if (!canLogin)
+                {
+                    _logger.LogWarning("Login denied for user {UserId} due to shift restrictions: {Reason}", 
+                        user.Id, restrictionReason);
+                    return Unauthorized(new { 
+                        message = restrictionReason,
+                        errorCode = "SHIFT_RESTRICTION"
+                    });
+                }
+                
+                // If it's the first login, redirect to password update
+                if (user.IsFirstLogin)
+                {
+                    return Ok(new { 
+                        message = "First login detected",
+                        userId = user.Id,
+                        redirectUrl = $"/api/auth/update-password/{user.Id}"
+                    });
+                }
+
+                // 2FA is mandatory for all users - create session and send code
+                var sessionId = await _twoFactorService.CreateTwoFactorSessionAsync(user.Id.ToString());
+                var codeResult = await _twoFactorService.GenerateAndSendCodeAsync(user.Id.ToString(), user.Email);
+
+                if (!codeResult.Success)
+                {
                     return BadRequest(new { 
                         Success = false, 
-                        Message = ex.Message, 
+                        Message = codeResult.Message, 
                         Errors = (string[])null, 
                         StatusCode = 400 
                     });
                 }
-                catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
-                {
-                    string errorMessage = pgEx.SqlState switch
-                    {
-                        "23503" => "Referenced record does not exist",
-                        "23514" => "Data validation failed - check constraint violation",
-                        _ => $"Database error: {pgEx.MessageText}"
-                    };
 
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = errorMessage, 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
-                    });
-                }
-                catch (Exception ex)
+                var response = new TwoFactorResponseDto
                 {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = "An error occurred during login", 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
-                    });
-                }
+                    Requires2FA = true,
+                    SessionId = sessionId,
+                    Message = "Verification code sent to your email address. Please enter the code to complete login.",
+                    Email = MaskEmail(user.Email)
+                };
+
+                return Ok(response);
             }
-            
+            catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error during login for email: {Email}", loginDto?.Email ?? "unknown");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during login for user email: {Email}", loginDto?.Email ?? "unknown");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred during login", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+        }
 
         [HttpPost("verify-2fa")]
-            public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorRequestDto request)
+        public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorRequestDto request)
+        {
+            try
             {
-                try
+                if (!ModelState.IsValid)
                 {
-                    if (!ModelState.IsValid)
-                    {
-                        return BadRequest(ModelState);
-                    }
-
-                    // Verify the 2FA code
-                    var verifyResult = await _twoFactorService.VerifyCodeAsync(request.SessionId, request.Code);
-
-                    if (!verifyResult.Success)
-                    {
-                        return BadRequest(new { 
-                            Success = false, 
-                            Message = verifyResult.Message, 
-                            Errors = (string[])null, 
-                            StatusCode = 400 
-                        });
-                    }
-
-                    // Get user from session (the same user object used during login)
-                    var userId = await _twoFactorService.GetUserIdFromSessionAsync(request.SessionId);
-                    if (string.IsNullOrEmpty(userId))
-                    {
-                        return BadRequest(new { 
-                            Success = false, 
-                            Message = "Invalid or expired session", 
-                            Errors = (string[])null, 
-                            StatusCode = 400 
-                        });
-                    }
-
-                    // You already have the `user` data from the login, so there's no need to query the database again
-                    UserReadDto? user = await _userService.GetByIdAsync(userId); // This line can be skipped if you store the user from login in the session
-                    
-                    var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(user);
-
-                    await _userService.UpdateUserActiveStatusAsync(userId, true);
-
-                    var response = new LoginResponseDto
-                    {
-                        Token = token.Token,
-                        Id = user.Id.ToString(),
-                        Email = user.Email,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        UserRoles = user.Roles?.ToList() ?? new List<string>()
-                    };
-
-                    return Ok(response);
+                    return BadRequest(ModelState);
                 }
-                catch (Exception ex)
+
+                // Verify the 2FA code
+                var verifyResult = await _twoFactorService.VerifyCodeAsync(request.SessionId, request.Code);
+
+                if (!verifyResult.Success)
                 {
                     return BadRequest(new { 
                         Success = false, 
-                        Message = "An error occurred during verification", 
+                        Message = verifyResult.Message, 
                         Errors = (string[])null, 
                         StatusCode = 400 
                     });
                 }
+
+                // Get user from session
+                var userId = await _twoFactorService.GetUserIdFromSessionAsync(request.SessionId);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = "Invalid or expired session", 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+
+                // Get user data
+                UserReadDto? user = await _userService.GetByIdAsync(userId);
+                if (user == null)
+                {
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = "User not found", 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+                
+                // Generate token
+                var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(user);
+
+                // Update user active status
+                await _userService.UpdateUserActiveStatusAsync(userId, true);
+
+                // NOW handle attendance after successful login completion
+                var attendanceHandled = await _shiftLoginRestrictionService.HandleLoginAttendanceAsync(userId);
+                _logger.LogInformation("User {UserId} successfully completed 2FA verification and logged in. Attendance handled: {AttendanceHandled}");
+                var response = new LoginResponseDto
+                {
+                    Token = token.Token,
+                    Id = user.Id.ToString(),
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    UserRoles = user.Roles?.ToList() ?? new List<string>()
+                };
+
+                var loginMessage = attendanceHandled 
+                    ? "Successfully logged in and auto clocked-in to assigned shift" 
+                    : "Successfully logged in";
+
+                _logger.LogInformation("User {UserId} successfully completed 2FA verification and logged in. Attendance handled: {AttendanceHandled}", 
+                    userId, attendanceHandled);
+
+                return Ok(new 
+                {
+                    data = response,
+                    message = loginMessage,
+                    attendanceHandled = attendanceHandled
+                });
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during 2FA verification for session: {SessionId}", request?.SessionId);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred during verification", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+        }
 
-
-       [HttpPut("update-password/{userId}")]
+        [HttpPut("update-password/{userId}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdatePassword(string userId, [FromBody] UpdatePasswordDto dto)
         {
@@ -228,11 +254,27 @@ namespace UserService.Api.Controllers
 
                 var user = await _userService.UpdatePassword(userId, dto);
 
-                // Generate new token after password update - using same method as normal login
+                // Generate new token after password update
                 var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(user);
 
-                // Update user's online status using service layer
+                // Update user's online status
                 await _userService.UpdateUserActiveStatusAsync(userId, true);
+
+                // Check shift restrictions (NO ATTENDANCE YET)
+                var (canLogin, restrictionReason) = await _shiftLoginRestrictionService.CanUserLoginAsync(userId);
+                
+                if (!canLogin)
+                {
+                    _logger.LogWarning("Login denied for user {UserId} after password update due to shift restrictions: {Reason}", 
+                        userId, restrictionReason);
+                    return Unauthorized(new { 
+                        message = restrictionReason,
+                        errorCode = "SHIFT_RESTRICTION"
+                    });
+                }
+
+                // NOW handle attendance after successful password update and login
+                var attendanceHandled = await _shiftLoginRestrictionService.HandleLoginAttendanceAsync(userId);
 
                 var response = new LoginResponseDto
                 {
@@ -244,9 +286,14 @@ namespace UserService.Api.Controllers
                     UserRoles = user.Roles?.ToList() ?? new List<string>(),
                 };
 
+                var message = attendanceHandled 
+                    ? "Password updated successfully and auto clocked-in to assigned shift" 
+                    : "Password updated successfully";
+
                 return Ok(new {
-                    message = "Password updated successfully",
-                    data = response
+                    message = message,
+                    data = response,
+                    attendanceHandled = attendanceHandled
                 });
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
@@ -291,7 +338,8 @@ namespace UserService.Api.Controllers
         }
 
         [HttpPost("logout")]
-        public async Task<ActionResult> Logout()
+        [Authorize]
+        public async Task<IActionResult> Logout()
         {
             try
             {
@@ -325,23 +373,32 @@ namespace UserService.Api.Controllers
                     }
                     catch (Exception ex)
                     {
+                        _logger.LogError(ex, "Error parsing token during logout");
                         return BadRequest(new { message = "Invalid token" });
                     }
                 }
                 
+                // Handle logout attendance (auto clock-out for strict shifts)
+                await _shiftLoginRestrictionService.HandleUserLogoutAsync(userId.Value.ToString(), DateTime.UtcNow);
+                
+                // Update user offline status
                 await _userService.UpdateUserActiveStatusAsync(userId.Value.ToString(), false);
                 
+                // Delete user tokens
                 var tokensDeleted = await _tokenService.DeleteAllTokensForUserAsync(userId.Value);
                 
+                // Enqueue status update
                 _userStatusService.EnqueueStatusUpdate(userId.Value.ToString(), false);
+                
+                _logger.LogInformation("User {UserId} successfully logged out", userId.Value);
                 
                 if (tokensDeleted)
                 {
-                    return (ActionResult)Ok(new { message = "Successfully logged out" });
+                    return Ok(new { message = "Successfully logged out" });
                 }
                 else
                 {
-                    return (ActionResult)Ok(new { message = "Successfully logged out (no active sessions found)" });
+                    return Ok(new { message = "Successfully logged out (no active sessions found)" });
                 }
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)

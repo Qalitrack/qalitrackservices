@@ -98,6 +98,9 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IUserStatusRepository, UserStatusRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IPasswordPolicyRepository, PasswordPolicyRepository>();
+        services.AddScoped<IShiftAttendanceRepository,ShiftAttendanceRepository>();
+        services.AddScoped<IShiftInstanceRepository, ShiftInstanceRepository>();   
+        
     }
 
     private static void RegisterBackgroundServices(IServiceCollection services)

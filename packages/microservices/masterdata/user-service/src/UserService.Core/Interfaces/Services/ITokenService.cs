@@ -9,6 +9,7 @@ namespace UserService.Core.Interfaces.Services
         Task<bool> ValidateTokenAsync(string token);
         Task<Guid?> GetUserIdFromTokenAsync(string token);
         Task<bool> RevokeTokenAsync(string token);
-        Task<bool> DeleteAllTokensForUserAsync(Guid userId);
+        Task<bool> DeleteAllTokensForUserAsync(Guid userId);   
+        Task<bool> RevokeTokenAsync1(Guid userId);
     }
 }

@@ -1,12 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Shift;
-using UserService.Core.DTOs;
-using UserService.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.DTOs.Common;
@@ -28,15 +22,33 @@ namespace UserService.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "shifts.view")]  // Permission-based policy check
-        [ProducesResponseType(typeof(IEnumerable<ShiftDto>), StatusCodes.Status200OK)]
+        [Authorize(Policy = "shifts.view")]
+        [ProducesResponseType(typeof(PagedResult<ShiftDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetAll()
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var shifts = await _shiftService.GetAllAsync();
+                if (page < 1 || pageSize < 1)
+                {
+                    return BadRequest("Page and pageSize must be positive integers.");
+                }
+
+                var paginationParameters = new PaginationParameters
+                {
+                    Page = page,
+                    PageSize = pageSize
+                };
+
+                var shifts = await _shiftService.GetAllAsync(paginationParameters);
                 return Ok(shifts);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, "Invalid pagination parameters provided");
+                return BadRequest("Pagination parameters are required");
             }
             catch (Exception ex)
             {
@@ -46,15 +58,15 @@ namespace UserService.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "shifts.view")]  // Permission-based policy check
-        [ProducesResponseType(typeof(ShiftDto), StatusCodes.Status200OK)]
+        [Authorize(Policy = "shifts.view")]
+        [ProducesResponseType(typeof(ShiftResponse), StatusCodes.Status200OK)] // Changed from ShiftDto to ShiftResponse
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetById(string id)
         {
             try
             {
-                var shift = await _shiftService.GetByIdAsync(id);
+                var shift = await _shiftService.GetByIdAsync(id); // This returns ShiftResponse
                 return Ok(shift);
             }
             catch (Exception ex) when (ex.Message == "Shift not found")
@@ -79,14 +91,14 @@ namespace UserService.Api.Controllers
         [ProducesResponseType(typeof(ShiftDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Create([FromBody] CreateShiftDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateShiftRequest dto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var shift = await _shiftService.CreateAsync(dto);
+                var shift = await _shiftService.CreateEnhancedAsync(dto);
                 _logger.LogInformation("User created shift {ShiftId}", shift.Id);
                 return CreatedAtAction(nameof(GetById), new { id = shift.Id }, shift);
             }
@@ -140,13 +152,13 @@ namespace UserService.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateShiftDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateShiftRequest dto)
         {
             try
             {
                 
                 // Just pass the DTO directly - your service handles null checks
-                var shift = await _shiftService.UpdateAsync(id, dto);
+                var shift = await _shiftService.UpdateEnhancedAsync(id, dto);
                 
                 if (shift == null)
                 {
