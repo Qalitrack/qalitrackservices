@@ -7,5 +7,6 @@ namespace UserService.Core.Interfaces.Services
     {
         Task<bool> HandleLoginAttendanceAsync(string userId, Shift shift, DateTime loginTime);
         Task<bool> HandleLogoutAttendanceAsync(string userId, Shift shift, DateTime logoutTime);
+        Task<bool> HandleEarlyArrivalAttendanceAsync(string userId, Shift shift, DateTime arrivalTime, string shiftInstanceId, double minutesEarly);
     }
 }

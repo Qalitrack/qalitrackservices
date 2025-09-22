@@ -15,8 +15,8 @@ public class ShiftConfiguration : IEntityTypeConfiguration<Shift>
         
         // Configure enums with sentinel values
         builder.Property(e => e.Status)
-            .HasDefaultValue(ShiftStatus.Draft)
-            .HasSentinel(ShiftStatus.Draft);
+            .HasDefaultValue(ShiftStatus.Active)
+            .HasSentinel(ShiftStatus.Active);
             
         builder.Property(e => e.Type)
             .HasDefaultValue(ShiftType.Recurring)
