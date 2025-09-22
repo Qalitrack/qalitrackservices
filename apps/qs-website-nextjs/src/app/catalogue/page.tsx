@@ -35,7 +35,7 @@ const advancedTechData = [
 <li>Homogeneous design eliminates weak points found in manual welds.</li>
 <li>Longer service life even under <strong>extreme truck load stress</strong>.</li>
 </ul>`,
-    images: ["/images/cnc-machine.jpg"],
+    images: ["/cnc.webp"],
   },
   {
     icon: SlidersHorizontal,
@@ -50,7 +50,7 @@ const advancedTechData = [
 <li>Thermal expansion tolerance prevents seasonal inaccuracies.</li>
 <li>Cuts service costs nearly to zero while maintaining accuracy.</li>
 </ul>`,
-    images: ["/images/mounting-kit.jpg"],
+    images: ["/loadingkit.webp"],
   },
   {
     icon: Cpu,
@@ -66,7 +66,7 @@ const advancedTechData = [
 <li>Certified to OIML R60 Class C3 for trade use.</li>
 <li>Built-in lightning & surge protection.</li>
 </ul>`,
-    images: ["/images/loadcell.jpg"],
+    images: ["/loadcells.webp"],
   },
   {
     icon: Monitor,
@@ -82,7 +82,7 @@ const advancedTechData = [
 <li>Connects with printers, RFID, remote displays, cameras.</li>
 <li>Preset tare memory for frequent vehicles.</li>
 </ul>`,
-    images: ["/images/software-ui.jpg"],
+    images: ["/load2cell.jpg"],
   },
   {
     icon: Camera,
@@ -98,7 +98,7 @@ const advancedTechData = [
 <li>Message terminals guide drivers visually.</li>
 <li>Explosion-proof (ATEX) versions available.</li>
 </ul>`,
-    images: ["/images/security-options.jpg"],
+    images: ["/automation.jpeg"],
   },
   {
     icon: Cpu,
@@ -113,7 +113,7 @@ const advancedTechData = [
 <li>Mobile dashboard gives managers 24/7 access.</li>
 <li>Reduced downtime → catch issues before failures.</li>
 </ul>`,
-    images: ["/images/iot-dashboard.jpg", "/images/predictive-sensors.jpg"],
+    images: ["/prediction.png"],
   },
 ];
 
