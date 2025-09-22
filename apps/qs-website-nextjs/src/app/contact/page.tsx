@@ -4,14 +4,13 @@ import { createMetadata } from '@/utils/seo';
 
 import React from 'react';
 import {
-  MapPin, Phone, Mail, User, LogIn, LayoutDashboard, ChevronDown, Search, Menu,
-  ArrowUp, Globe, MailOpen, PhoneCall, Link,
+  MapPin, Phone, MailOpen, PhoneCall, Link, ArrowUp,
 } from 'lucide-react';
 import Image from 'next/image';
 
-import Navbar from '@/components/Navbar'; 
+import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import ContactImage from '@/assets/contactbg.jpg'; 
+import ContactImage from '@/assets/contactbg.jpg';
 import placer from '@/assets/logoblack.svg';
 import placer1 from '@/assets/portfolio-6.jpg';
 
@@ -21,20 +20,22 @@ export default function Contact() {
       <Navbar />
 
       {/* Hero Section - Contact Us */}
-      <section 
-        className="relative bg-center text-white py-20 md:py-32" 
-        style={{ 
+      <section
+        className="relative bg-center text-white py-20 md:py-32"
+        style={{
           backgroundImage: `url(${ContactImage.src})`,
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover'
+          backgroundSize: 'cover',
         }}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
-        <div className="container mx-auto px-4 relative z-10 text-center" >
+        <div className="container mx-auto px-4 relative z-10 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-4">Contact Us</h1>
-          <p className="text-lg md:text-xl">Home /  <span className="text-amber-400">Contact</span></p>
+          <p className="text-lg md:text-xl">
+            Home / <span className="text-amber-400">Contact</span>
+          </p>
         </div>
       </section>
 
@@ -45,26 +46,59 @@ export default function Contact() {
           <div className="bg-gray-50 p-8 rounded-lg shadow-md border border-gray-200 h-full">
             <h2 className="text-amber-500 text-lg font-semibold mb-6">Get In Touch</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              {/* Address */}
               <div className="flex flex-col items-center text-center">
                 <MapPin className="h-12 w-12 text-amber-500 mb-3" />
                 <h4 className="font-bold text-xl mb-1">Address</h4>
-                <p className="text-gray-600 text-sm">QSL centre 1st Floor, Nairobi</p>
+                <a
+                  href="https://www.google.com/maps/place/Qalibrated+Systems+Limited/@-1.2832905,36.8197321,17z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 text-sm hover:text-amber-500 transition"
+                >
+                  QSL Centre 1st Floor, Nairobi
+                </a>
               </div>
+
+              {/* Email */}
               <div className="flex flex-col items-center text-center">
                 <MailOpen className="h-12 w-12 text-amber-500 mb-3" />
                 <h4 className="font-bold text-xl mb-1">Mail Us</h4>
-                <p className="text-gray-600 text-sm">info@qalibrated.co.ke</p>
+                <a
+                  href="mailto:info@qalibrated.co.ke"
+                  className="text-gray-600 text-sm hover:text-amber-500 transition"
+                >
+                  info@qalibrated.co.ke
+                </a>
               </div>
+
+              {/* Phone */}
               <div className="flex flex-col items-center text-center">
                 <PhoneCall className="h-12 w-12 text-amber-500 mb-3" />
                 <h4 className="font-bold text-xl mb-1">Telephone</h4>
-                <p className="text-gray-600 text-sm">+254714999996</p>
+                <a
+                  href="tel:+254714999996"
+                  className="text-gray-600 text-sm hover:text-amber-500 transition"
+                >
+                  +254714999996
+                </a>
               </div>
+
+              {/* Website */}
               <div className="flex flex-col items-center text-center">
                 <Link className="h-12 w-12 text-amber-500 mb-3" />
                 <h4 className="font-bold text-xl mb-1">Website</h4>
-                <p className="text-gray-600 text-sm">https://qalibrated.co.ke/</p>
+                <a
+                  href="https://qalibrated.co.ke/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 text-sm hover:text-amber-500 transition"
+                >
+                  https://qalibrated.co.ke/
+                </a>
               </div>
+
+              {/* Images */}
               <div>
                 <Image
                   src={placer}
@@ -85,10 +119,13 @@ export default function Contact() {
           {/* Right Column - Send Your Message Form */}
           <div className="bg-gray-50 p-8 rounded-lg shadow-md border border-gray-200 h-full">
             <h2 className="text-amber-500 text-lg font-semibold mb-2">Send Your Message</h2>
-            <p className="text-gray-600 text-sm mb-6">
-              Talk to us 
-            </p>
-            <form action="mailto:info@qalibrated.co.ke" method="post" encType="text/plain" className="space-y-6">
+            <p className="text-gray-600 text-sm mb-6">Talk to us</p>
+            <form
+              action="mailto:info@qalibrated.co.ke"
+              method="post"
+              encType="text/plain"
+              className="space-y-6"
+            >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <input
@@ -155,18 +192,21 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Map Placeholder - Now below both columns, full width */}
+        {/* Map with exact company location tag */}
         <div className="mt-12">
-          <div className="bg-gray-200 rounded-lg shadow-md overflow-hidden" style={{ height: '300px' }}>
+          <div
+            className="bg-gray-200 rounded-lg shadow-md overflow-hidden"
+            style={{ height: '300px' }}
+          >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.814316886494!2d36.81722341475395!3d-1.2863890999999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172d84d49a7%3A0xf7cf0254b297924c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2sus!4v1678901234567!5m2!1sen!2sus"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1994.3485448345057!2d36.8197321!3d-1.2832905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10f84f2ad1d9%3A0x3f25a74f1ab3f7fd!2sQalibrated%20Systems%20Limited!5e0!3m2!1sen!2ske!4v1695395581234!5m2!1sen!2ske"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Google Map of Kenya"
+              title="Qalibrated Systems Limited Location"
             ></iframe>
           </div>
         </div>
