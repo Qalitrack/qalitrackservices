@@ -222,5 +222,30 @@ namespace UserService.Core.Services
         {
             return await _tokenRepository.DeleteAllTokensForUserAsync(userId);
         }
+        public async Task<bool> RevokeTokenAsync1(Guid userId)
+        {
+            try
+            {
+                var userIdString = userId.ToString();
+                var dbToken = await _tokenRepository.GetTokenByUserIdAsync(userId);
+        
+                if (dbToken != null && !dbToken.IsRevoked)
+                {
+                    dbToken.IsRevoked = true;
+                    dbToken.UpdatedAt = DateTime.UtcNow;
+                    await _tokenRepository.UpdateAsync(dbToken);
+                    Log.Information("Successfully revoked token for user {UserId}", userId);
+                    return true;
+                }
+
+                Log.Warning("No active token found for user {UserId}", userId);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error revoking token for user {UserId}", userId);
+                return false;
+            }
+        }
     }
 }

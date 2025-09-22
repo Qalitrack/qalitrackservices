@@ -9,7 +9,7 @@ namespace UserService.Core.Interfaces.Services
         /// <param name="userId">The user ID to check.</param>
         /// <returns>A tuple indicating if login is allowed and the reason.</returns>
         Task<(bool IsAllowed, string Reason)> CanUserLoginAsync(string userId);
-
+        
         /// <summary>
         /// Handles attendance after successful login completion.
         /// This should be called only after the user has fully completed login (including 2FA).

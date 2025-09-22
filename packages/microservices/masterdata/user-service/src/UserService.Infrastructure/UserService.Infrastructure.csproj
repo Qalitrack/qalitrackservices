@@ -1,44 +1,44 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\UserService.Core\UserService.Core.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\UserService.Core\UserService.Core.csproj" />
+    </ItemGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="MassTransit" Version="8.5.2" />
-    <PackageReference Include="MassTransit.Newtonsoft" Version="8.5.2" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.6" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.8" />
-    <PackageReference Include="StackExchange.Redis" Version="2.9.11" />
-    <PackageReference Include="System.IO.Abstractions" Version="19.2.15" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.4">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="MassTransit" Version="8.5.2" />
+        <PackageReference Include="MassTransit.Newtonsoft" Version="8.5.2" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.6" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.6" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.8" />
+        <PackageReference Include="StackExchange.Redis" Version="2.9.11" />
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.15" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Serilog">
-      <HintPath>..\..\..\..\..\..\..\.nuget\packages\serilog\3.1.1\lib\net7.0\Serilog.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Serilog">
+            <HintPath>..\..\..\..\..\..\..\.nuget\packages\serilog\3.1.1\lib\net7.0\Serilog.dll</HintPath>
+        </Reference>
+    </ItemGroup>
 
 </Project>

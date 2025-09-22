@@ -37,7 +37,9 @@ namespace UserService.Infrastructure.Services
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                // Check if user is an admin first (bypass all restrictions)
+                _logger.LogInformation("=== LOGIN ATTEMPT FOR USER {UserId} ===", userId);
+                
+                // 1. Check if user is an admin first (bypass all restrictions)
                 var isPrivilegedUser = await IsUserAdminAsync(userId);
                 if (isPrivilegedUser)
                 {
@@ -45,67 +47,84 @@ namespace UserService.Infrastructure.Services
                     return (true, "Privileged user - access granted");
                 }
 
-                var currentTime = TimeOnly.FromDateTime(DateTime.UtcNow);
+                // 2. Get currently active instances using shared logic
+                var relevantInstances = await GetCurrentlyActiveInstancesAsync(DateTime.UtcNow);
 
-                // 1. Get all currently running shifts (both Strict and Open)
-                var runningShifts = await GetCurrentlyRunningShifts(currentTime);
+                _logger.LogInformation("Found {Count} active shift instances", relevantInstances.Count);
                 
-                // If no shifts are running, allow login
-                if (!runningShifts.Any())
+                // If no active instances, allow login
+                if (!relevantInstances.Any())
                 {
-                    _logger.LogInformation("No active shifts found, allowing login for user {UserId}", userId);
-                    return (true, "No active shifts - access granted");
+                    _logger.LogInformation("No active shift instances found, allowing login for user {UserId}", userId);
+                    return (true, "No active shift instances - access granted");
                 }
 
-                // 2. Separate Strict shifts
-                var strictShifts = runningShifts.Where(s => s.Mode == ShiftMode.Strict).ToList();
-
-                // 3. Get user assignments
+                // 3. Get shift IDs for the relevant instances
+                var relevantShiftIds = relevantInstances.Select(i => i.ShiftId).ToList();
+                
+                // 4. Get all shifts for the relevant instances in a single query
+                var shifts = await _context.Shifts
+                    .Where(s => relevantShiftIds.Contains(s.Id))
+                    .ToDictionaryAsync(s => s.Id, s => s);
+                
+                // 5. Separate Strict and Open instances
+                var strictInstances = relevantInstances
+                    .Where(i => shifts.TryGetValue(i.ShiftId, out var shift) && shift.Mode == ShiftMode.Strict)
+                    .ToList();
+                
+                // 6. Get user assignments for these instances
                 var userAssignments = await _context.UserShifts
-                    .Include(us => us.Shift)
-                    .Where(us => us.UserId == userId && !us.IsDeleted)
+                    .Where(us => us.UserId == userId && 
+                               !us.IsDeleted && 
+                               relevantShiftIds.Contains(us.ShiftId))
                     .ToListAsync();
                 
-                // 4. Check strict shift rules
-                if (strictShifts.Any())
+                // Materialize the shift data for user assignments
+                var userAssignmentShifts = await _context.Shifts
+                    .Where(s => userAssignments.Select(ua => ua.ShiftId).Contains(s.Id))
+                    .ToDictionaryAsync(s => s.Id, s => s);
+                
+                // Attach shifts to user assignments
+                foreach (var assignment in userAssignments)
                 {
-                    var assignedToStrictShift = userAssignments
-                        .Any(us => strictShifts.Any(s => s.Id == us.ShiftId));
-
-                    if (!assignedToStrictShift)
+                    if (userAssignmentShifts.TryGetValue(assignment.ShiftId, out var shift))
                     {
-                        var shiftNames = string.Join(", ", strictShifts.Select(s => s.Name));
-                        _logger.LogWarning("User {UserId} denied login - not assigned to active strict shift(s): {ShiftNames}", 
-                            userId, shiftNames);
-                        return (false, $"Access denied. Active strict shift(s): {shiftNames}");
+                        assignment.Shift = shift;
                     }
                 }
 
-                // 5. Check if user is assigned to any running shift (NO ATTENDANCE HANDLING HERE)
-                var assignedToAnyRunningShift = userAssignments
-                    .Any(us => runningShifts.Any(s => s.Id == us.ShiftId));
-
-                if (assignedToAnyRunningShift)
+                // 7. Check strict shift rules first (if any strict instances are active)
+                if (strictInstances.Any())
                 {
-                    var assignedShift = userAssignments
-                        .First(us => runningShifts.Any(s => s.Id == us.ShiftId)).Shift;
+                    var strictShiftIds = strictInstances.Select(i => i.ShiftId).ToHashSet();
+                    var assignedToStrictInstance = userAssignments
+                        .Any(us => strictShiftIds.Contains(us.ShiftId));
 
-                    _logger.LogInformation("User {UserId} allowed login - assigned to {ShiftMode} shift: {ShiftName}", 
-                        userId, assignedShift.Mode, assignedShift.Name);
+                    if (!assignedToStrictInstance)
+                    {
+                        var shiftNames = string.Join(", ", strictInstances.Select(i => i.Shift?.Name ?? "Unknown"));
+                        _logger.LogWarning("User {UserId} denied login - not assigned to active strict shift instance(s): {ShiftNames}", 
+                            userId, shiftNames);
+                        return (false, $"Access denied. Active strict shift(s): {shiftNames}");
+                    }
                     
-                    return (true, $"Assigned to {assignedShift.Mode} shift: {assignedShift.Name}");
+                    _logger.LogInformation("User {UserId} is assigned to an active strict shift instance", userId);
+                    return (true, "Access granted - assigned to active strict shift");
                 }
 
-                // 6. If only Open shifts are running (no Strict shifts), allow login
-                if (!strictShifts.Any())
+                // 8. If only Open shifts are active, check if user is assigned to any of them
+                var assignedToAnyInstance = userAssignments.Any();
+                if (assignedToAnyInstance)
                 {
-                    _logger.LogInformation("User {UserId} allowed login - only open shifts are active", userId);
-                    return (true, "Access granted. Only open shifts are active");
+                    var assignedShift = userAssignments.First().Shift;
+                    _logger.LogInformation("User {UserId} allowed login - assigned to open shift: {ShiftName}", 
+                        userId, assignedShift?.Name ?? "Unknown");
+                    return (true, $"Assigned to open shift: {assignedShift?.Name ?? "Unknown"}");
                 }
 
-                // Default deny if we get here
-                _logger.LogWarning("User {UserId} denied login - no valid shift assignment", userId);
-                return (false, "Access denied. No valid shift assignment");
+                // 9. If no strict shifts and user not assigned to any active instances
+                _logger.LogInformation("User {UserId} not assigned to any active shift instances, but no strict shifts active", userId);
+                return (true, "No active strict shifts - access granted");
             }
             catch (Exception ex)
             {
@@ -120,87 +139,195 @@ namespace UserService.Infrastructure.Services
             }
         }
 
-        public async Task<bool> HandleLoginAttendanceAsync(string userId)
+       public async Task<bool> HandleLoginAttendanceAsync(string userId)
+{
+    try
+    {
+        _logger.LogInformation("Handling login attendance for user {UserId}", userId);
+
+        var currentDateTime = DateTime.UtcNow;
+
+        // Get both currently active AND upcoming instances
+        var (activeInstances, upcomingInstances) = await GetActiveAndUpcomingInstancesAsync();
+        
+        if (!activeInstances.Any() && !upcomingInstances.Any())
         {
-            try
+            _logger.LogInformation("No active or upcoming shift instances found for attendance handling");
+            return false;
+        }
+
+        // Combine both lists for user assignment lookup
+        var allRelevantShiftIds = activeInstances.Concat(upcomingInstances)
+            .Select(i => i.ShiftId)
+            .Distinct()
+            .ToList();
+
+        // Get user assignments to relevant shifts
+        var userAssignments = await _context.UserShifts
+            .Where(us => us.UserId == userId && 
+                       !us.IsDeleted && 
+                       allRelevantShiftIds.Contains(us.ShiftId))
+            .Select(us => new { us.Id, us.ShiftId })
+            .ToListAsync();
+
+        if (!userAssignments.Any())
+        {
+            _logger.LogInformation("No user assignments found for active or upcoming shift instances");
+            return false;
+        }
+
+        // Get the full shift data
+        var shiftIds = userAssignments.Select(ua => ua.ShiftId).Distinct().ToList();
+        var shifts = await _context.Shifts
+            .Where(s => shiftIds.Contains(s.Id))
+            .ToDictionaryAsync(s => s.Id);
+
+        bool attendanceHandled = false;
+
+        // Handle active instances first
+        foreach (var assignment in userAssignments)
+        {
+            if (!shifts.TryGetValue(assignment.ShiftId, out var shift))
+                continue;
+
+            // Check if this shift has an active instance
+            var activeInstance = activeInstances.FirstOrDefault(i => i.ShiftId == shift.Id);
+            if (activeInstance != null)
             {
-                _logger.LogInformation("Handling login attendance for user {UserId}", userId);
-
-                var currentTime = TimeOnly.FromDateTime(DateTime.UtcNow);
-                var currentDateTime = DateTime.UtcNow;
-
-                // Get currently running shifts
-                var runningShifts = await GetCurrentlyRunningShifts(currentTime);
+                var handled = await _shiftAttendanceHandlerService.HandleLoginAttendanceAsync(
+                    userId, shift, currentDateTime);
                 
-                // Get user assignments to running shifts
-                var userAssignments = await _context.UserShifts
-                    .Include(us => us.Shift)
-                    .Where(us => us.UserId == userId && !us.IsDeleted)
-                    .Where(us => runningShifts.Any(s => s.Id == us.ShiftId))
-                    .ToListAsync();
-
-                bool attendanceHandled = false;
-
-                foreach (var assignment in userAssignments)
+                if (handled)
                 {
-                    var shift = assignment.Shift;
-                    
-                    // Handle attendance registration for both Strict and Open shifts
-                    var handled = await _shiftAttendanceHandlerService.HandleLoginAttendanceAsync(userId, shift, currentDateTime);
-                    
-                    if (handled)
-                    {
-                        attendanceHandled = true;
-                        _logger.LogInformation("User {UserId} auto clocked-in for {ShiftMode} shift: {ShiftName}", 
-                            userId, shift.Mode, shift.Name);
-                    }
+                    attendanceHandled = true;
+                    _logger.LogInformation("User {UserId} clocked-in for active {ShiftMode} shift: {ShiftName}", 
+                        userId, shift.Mode, shift.Name);
                 }
-
-                return attendanceHandled;
+                continue; // Skip upcoming check for this shift
             }
-            catch (Exception ex)
+
+            // Check if this shift has an upcoming instance (early arrival)
+            var upcomingInstance = upcomingInstances.FirstOrDefault(i => i.ShiftId == shift.Id);
+            if (upcomingInstance != null)
             {
-                _logger.LogError(ex, "Error handling login attendance for user {UserId}", userId);
-                // Don't throw - login should succeed even if attendance fails
-                return false;
+                // Calculate how early they are
+                var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+                var scheduledStartUtc = upcomingInstance.ScheduledDate.Date.Add(upcomingInstance.ScheduledStartTime.TimeOfDay);
+                var scheduledStartNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledStartUtc, nairobiTimeZone);
+                var currentNairobi = TimeZoneInfo.ConvertTimeFromUtc(currentDateTime, nairobiTimeZone);
+                var minutesEarly = (scheduledStartNairobi - currentNairobi).TotalMinutes;
+
+                var handled = await _shiftAttendanceHandlerService.HandleEarlyArrivalAttendanceAsync(
+                    userId, shift, currentDateTime, upcomingInstance.Id, minutesEarly);
+                
+                if (handled)
+                {
+                    attendanceHandled = true;
+                    _logger.LogInformation("User {UserId} recorded early arrival for {ShiftMode} shift: {ShiftName} ({MinutesEarly:F0} minutes early)", 
+                        userId, shift.Mode, shift.Name, minutesEarly);
+                }
             }
         }
 
+        return attendanceHandled;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error handling login attendance for user {UserId}", userId);
+        return false;
+    }
+}
+
+/// <summary>
+/// Gets both currently active instances and upcoming instances (for early arrival tracking)
+/// </summary>
+private async Task<(List<ShiftInstance> ActiveInstances, List<ShiftInstance> UpcomingInstances)> GetActiveAndUpcomingInstancesAsync()
+{
+    var currentTime = DateTime.UtcNow;
+    var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+    var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(currentTime, nairobiTimeZone);
+
+    _logger.LogInformation("Getting active and upcoming instances - UTC: {UtcNow}, Nairobi: {NairobiNow}", 
+        currentTime, nairobiNow);
+
+    // Get instances that could be relevant (InProgress and Scheduled for today)
+    var inProgressInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress);
+    var scheduledInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled);
+    var potentialInstances = inProgressInstances.Concat(scheduledInstances).ToList();
+
+    var todayInstances = potentialInstances
+        .Where(instance => 
+        {
+            var scheduledDateUtc = instance.ScheduledDate.Date;
+            var scheduledDateInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledDateUtc, nairobiTimeZone).Date;
+            return scheduledDateInNairobi == nairobiNow.Date; // Only today's instances
+        })
+        .ToList();
+
+    var activeInstances = new List<ShiftInstance>();
+    var upcomingInstances = new List<ShiftInstance>();
+
+    foreach (var instance in todayInstances)
+    {
+        var scheduledDateUtc = instance.ScheduledDate.Date;
+        var startTimeUtc = scheduledDateUtc.Add(instance.ScheduledStartTime.TimeOfDay);
+        var endTimeUtc = scheduledDateUtc.Add(instance.ScheduledEndTime.TimeOfDay);
+        
+        var startTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(startTimeUtc, nairobiTimeZone);
+        var endTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(endTimeUtc, nairobiTimeZone);
+        
+        // Check if currently active
+        if (nairobiNow >= startTimeNairobi && nairobiNow <= endTimeNairobi)
+        {
+            activeInstances.Add(instance);
+            _logger.LogInformation("Instance {InstanceId} for shift {ShiftId} is active: {StartTime} - {EndTime} (Nairobi)", 
+                instance.Id, instance.ShiftId, startTimeNairobi, endTimeNairobi);
+        }
+        // Check if upcoming (within next 2 hours - configurable)
+        else if (nairobiNow < startTimeNairobi && (startTimeNairobi - nairobiNow).TotalHours <= 2)
+        {
+            upcomingInstances.Add(instance);
+            _logger.LogInformation("Instance {InstanceId} for shift {ShiftId} is upcoming: starts at {StartTime} (Nairobi)", 
+                instance.Id, instance.ShiftId, startTimeNairobi);
+        }
+    }
+
+    _logger.LogInformation("Found {ActiveCount} active and {UpcomingCount} upcoming instances", 
+        activeInstances.Count, upcomingInstances.Count);
+
+    return (activeInstances, upcomingInstances);
+}
         public async Task HandleUserLogoutAsync(string userId, DateTime currentDateTime)
         {
             try
             {
                 _logger.LogInformation("Handling logout for user {UserId} at {LogoutTime}", userId, currentDateTime);
 
-                var currentTime = TimeOnly.FromDateTime(currentDateTime);
-
-                // Get currently running shifts
-                var runningShifts = await GetCurrentlyRunningShifts(currentTime);
+                _logger.LogDebug("Looking for active instances at {CurrentDateTime} (UTC) for user {UserId}", currentDateTime, userId);
                 
-                // Get user assignments to running shifts
+                // Get active instances at the time of logout
+                var activeInstances = await GetCurrentlyActiveInstancesAsync(currentDateTime);
+                var activeShiftIds = activeInstances.Select(i => i.ShiftId).ToList();
+                
+                _logger.LogDebug("Found {Count} active instances for user {UserId} at {CurrentDateTime}", 
+                    activeInstances.Count, userId, currentDateTime);
+                
+                // Get user assignments to active shifts in a single query
                 var userAssignments = await _context.UserShifts
                     .Include(us => us.Shift)
-                    .Where(us => us.UserId == userId && !us.IsDeleted)
-                    .Where(us => runningShifts.Any(s => s.Id == us.ShiftId))
+                    .Where(us => us.UserId == userId && 
+                                !us.IsDeleted && 
+                                activeShiftIds.Contains(us.ShiftId))
                     .ToListAsync();
 
                 foreach (var assignment in userAssignments)
                 {
                     var shift = assignment.Shift;
                     
-                    // Only auto-clock-out for Strict shifts
-                    if (shift.Mode == ShiftMode.Strict)
-                    {
-                        var logoutHandled = await _shiftAttendanceHandlerService.HandleLogoutAttendanceAsync(userId, shift, currentDateTime);
-                        _logger.LogInformation("User {UserId} logout attendance handled for strict shift {ShiftName}: {Handled}", 
-                            userId, shift.Name, logoutHandled);
-                    }
-                    // For Open shifts, we let users manually clock out when they choose
-                    else
-                    {
-                        _logger.LogInformation("User {UserId} logged out from open shift {ShiftName} - manual clock-out required", 
-                            userId, shift.Name);
-                    }
+                    // Process clock-out for all shift types
+                    var logoutHandled = await _shiftAttendanceHandlerService.HandleLogoutAttendanceAsync(userId, shift, currentDateTime);
+                    _logger.LogInformation("User {UserId} logout attendance handled for shift {ShiftName} (Mode: {ShiftMode}): {Handled}", 
+                        userId, shift.Name, shift.Mode, logoutHandled);
                 }
             }
             catch (Exception ex)
@@ -210,70 +337,89 @@ namespace UserService.Infrastructure.Services
             }
         }
 
-        private async Task<List<Shift>> GetCurrentlyRunningShifts(TimeOnly currentTime)
+        /// <summary>
+        /// Gets shift instances that should be considered currently active.
+        /// This includes both InProgress instances and Scheduled instances that fall within their time window.
+        /// </summary>
+        private async Task<List<ShiftInstance>> GetCurrentlyActiveInstancesAsync(DateTime currentTime)
         {
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+            var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(currentTime, nairobiTimeZone);
+
+            _logger.LogInformation("Getting active instances - UTC: {UtcNow}, Nairobi: {NairobiNow}", 
+                currentTime, nairobiNow);
+
+            // Get instances that could be active (both InProgress and Scheduled)
+            // This handles the case where instances haven't been updated to InProgress yet
+            var inProgressInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress);
+            var scheduledInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled);
+            var potentialInstances = inProgressInstances.Concat(scheduledInstances).ToList();
+
+            var activeInstances = potentialInstances
+                .Where(instance => 
+                {
+                    var scheduledDateUtc = instance.ScheduledDate.Date;
+                    var scheduledDateInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledDateUtc, nairobiTimeZone).Date;
+                    
+                    // Only consider instances for today (Nairobi time)
+                    if (scheduledDateInNairobi != nairobiNow.Date)
+                        return false;
+                        
+                    var startTimeUtc = scheduledDateUtc.Add(instance.ScheduledStartTime.TimeOfDay);
+                    var endTimeUtc = scheduledDateUtc.Add(instance.ScheduledEndTime.TimeOfDay);
+                    
+                    var startTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(startTimeUtc, nairobiTimeZone);
+                    var endTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(endTimeUtc, nairobiTimeZone);
+                    
+                    // Check if current Nairobi time is within the shift time window
+                    var isInTimeWindow = nairobiNow >= startTimeNairobi && nairobiNow <= endTimeNairobi;
+                    
+                    if (isInTimeWindow)
+                    {
+                        _logger.LogInformation("Instance {InstanceId} for shift {ShiftId} is active: {StartTime} - {EndTime} (Nairobi)", 
+                            instance.Id, instance.ShiftId, startTimeNairobi, endTimeNairobi);
+                    }
+                    
+                    return isInTimeWindow;
+                })
+                .ToList();
+
+            _logger.LogInformation("Found {ActiveCount} active instances out of {TotalCount} potential instances", 
+                activeInstances.Count, potentialInstances.Count());
+
+            return activeInstances;
+        }
+
+        // This method is kept for backward compatibility but is deprecated
+        private async Task<List<Shift>> GetCurrentlyRunningShifts(TimeOnly currentTime)
+        {
+            _logger.LogWarning("GetCurrentlyRunningShifts is deprecated. Use GetCurrentlyActiveInstancesAsync instead.");
+            
+            var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var utcNow = DateTime.UtcNow;
-            var currentTimeOfDay = currentTime.ToTimeSpan();
             
-            _logger.LogInformation($"[Time Debug] Current UTC time: {utcNow:yyyy-MM-dd HH:mm:ss}");
-            _logger.LogInformation($"[Time Debug] Current Nairobi time: {TimeZoneInfo.ConvertTimeFromUtc(utcNow, nairobiTimeZone):yyyy-MM-dd HH:mm:ss}");
-            
-            // First, get all shifts that are within their date range (using UTC for database query)
+            // Get all shifts that are within their date range
             var shifts = await _context.Shifts
                 .Where(s => !s.IsDeleted &&
                     s.StartDate <= utcNow &&
                     (s.EndDate == null || s.EndDate >= utcNow.Date))
                 .ToListAsync();
                 
-            _logger.LogInformation($"[Time Debug] Found {shifts.Count} shifts within date range");
-            
-            // Then filter in memory for shifts that should be active now in Nairobi time
-            var result = shifts.Where(s => 
+            // Filter for shifts that should be active now in Nairobi time
+            return shifts.Where(s => 
             {
-                // Convert shift times to Nairobi time for comparison
                 var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, nairobiTimeZone);
                 var nairobiTime = nairobiNow.TimeOfDay;
                 
-                _logger.LogInformation(@"
-[Time Debug] Checking shift: {0}
-  - Shift times: {1:hh\:mm} - {2:hh\:mm}
-  - Current Nairobi time: {3:hh\:mm}
-  - Shift dates: {4:yyyy-MM-dd} to {5}",
-                    s.Name,
-                    s.StartTime,
-                    s.EndTime,
-                    nairobiTime,
-                    s.StartDate,
-                    s.EndDate?.ToString("yyyy-MM-dd") ?? "No end date");
-                
-                bool isActive;
-                // Check if current time in Nairobi is within the shift time window
                 if (s.StartTime < s.EndTime)
                 {
                     // Normal shift (not overnight)
-                    isActive = nairobiTime >= s.StartTime && nairobiTime <= s.EndTime;
-                    _logger.LogInformation(@"  - Normal shift check: {0:hh\:mm} between {1:hh\:mm} and {2:hh\:mm} = {3}",
-                        nairobiTime, s.StartTime, s.EndTime, isActive);
-                }
-                else
-                {
-                    // Overnight shift
-                    isActive = nairobiTime >= s.StartTime || nairobiTime <= s.EndTime;
-                    _logger.LogInformation(@"  - Overnight shift check: {0:hh\:mm} >= {1:hh\:mm} OR <= {2:hh\:mm} = {3}",
-                        nairobiTime, s.StartTime, s.EndTime, isActive);
+                    return nairobiTime >= s.StartTime && nairobiTime <= s.EndTime;
                 }
                 
-                if (isActive)
-                {
-                    _logger.LogInformation(@"  - Shift {0} is ACTIVE at current time", s.Name);
-                }
-                
-                return isActive;
+                // Overnight shift
+                return nairobiTime >= s.StartTime || nairobiTime <= s.EndTime;
             }).ToList();
-            
-            _logger.LogInformation($"[Time Debug] Found {result.Count} active shifts");
-            return result;
         }
 
         private async Task<bool> IsUserAdminAsync(string userId)

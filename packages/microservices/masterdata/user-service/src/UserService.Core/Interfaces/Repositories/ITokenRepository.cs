@@ -14,5 +14,7 @@ namespace UserService.Core.Interfaces.Repositories
         Task<bool> DeleteAllTokensForUserAsync(Guid userId);
 
         Task<PersonalAccessToken?> GetTokenByJtiAsync(string jti);
+        
+        Task<PersonalAccessToken?> GetTokenByUserIdAsync(Guid userId);
     }
 }

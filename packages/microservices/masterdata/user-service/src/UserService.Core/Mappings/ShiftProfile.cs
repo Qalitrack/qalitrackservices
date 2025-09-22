@@ -29,7 +29,7 @@ namespace UserService.Core.Mappings
             CreateMap<CreateShiftRequest, Shift>()
                 .ForMember(dest => dest.CustomDays, opt => opt.MapFrom(src => src.CustomDays))
                 .ForMember(dest => dest.ExceptionDates, opt => opt.MapFrom(src => src.ExceptionDates))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => ShiftStatus.Draft))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => ShiftStatus.Active))
                 .ForMember(dest => dest.IsActive, opt => opt.Ignore())
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())

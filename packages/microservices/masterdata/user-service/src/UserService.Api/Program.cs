@@ -79,6 +79,9 @@ static void ConfigureServices(WebApplicationBuilder builder)
             sqlOptions.MigrationsAssembly("UserService.Infrastructure");
             sqlOptions.CommandTimeout(15);
             sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
+            
+            // Enable split queries globally to avoid cartesian explosion in EF Core 9.0
+            sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
         });
     });
     // Configure authorization

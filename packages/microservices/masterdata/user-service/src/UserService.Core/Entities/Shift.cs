@@ -38,7 +38,7 @@ namespace UserService.Core.Entities
             get => _endDate;
             set => _endDate = value.HasValue ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc) : null;
         }
-        public ShiftStatus Status { get; set; } = ShiftStatus.Draft;
+        public ShiftStatus Status { get; set; } = ShiftStatus.Active;
         public ShiftType Type { get; set; } = ShiftType.Recurring;
         public int RequiredStaffCount { get; set; } = 1;
         

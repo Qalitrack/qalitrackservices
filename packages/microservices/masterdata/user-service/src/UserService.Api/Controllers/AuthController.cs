@@ -204,7 +204,7 @@ namespace UserService.Api.Controllers
 
                 // NOW handle attendance after successful login completion
                 var attendanceHandled = await _shiftLoginRestrictionService.HandleLoginAttendanceAsync(userId);
-                
+                _logger.LogInformation("User {UserId} successfully completed 2FA verification and logged in. Attendance handled: {AttendanceHandled}");
                 var response = new LoginResponseDto
                 {
                     Token = token.Token,

@@ -1,5 +1,8 @@
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Query;
 using UserService.Core.Entities;
 using UserService.Core.Enums;
 using UserService.Core.Interfaces;
@@ -30,17 +33,29 @@ public class UserServiceDbContext : DbContext
     {
         base.OnConfiguring(optionsBuilder);
         
-        // Suppress pending model changes warning
+        // Suppress specific warnings
         optionsBuilder.ConfigureWarnings(warnings => 
-            warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+            warnings.Ignore(CoreEventId.MultipleNavigationProperties));
     }
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
+        
+        // Configure query splitting behavior for EF Core 9.0
+        modelBuilder.HasDefaultSchema("public");
+        
         // Apply all configurations from the current assembly
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        
+        // Configure entity types as needed
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            // Clear any query filters if needed
+            entityType.SetQueryFilter(null);
+        }
 
 // Configure common properties for all entities
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

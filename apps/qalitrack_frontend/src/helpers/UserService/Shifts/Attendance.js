@@ -28,9 +28,24 @@ export const getAttendanceByInstanceId = async (instanceId, { pageNumber = 1, pa
             hasNextPage: response.data.hasNextPage
         };
     } catch (err) {
-        if (err.name !== 'CanceledError') {
-            console.error('Error fetching attendance by instance ID:', err);
+        if (err.name === 'CanceledError') {
+            throw err;
         }
+        
+        // If it's a 404, return empty results instead of throwing
+        if (err.response && err.response.status === 404) {
+            return {
+                items: [],
+                page: 1,
+                pageSize: pageSize,
+                totalCount: 0,
+                totalPages: 0,
+                hasPreviousPage: false,
+                hasNextPage: false
+            };
+        }
+        
+        console.error('Error fetching attendance by instance ID:', err);
         throw err;
     }
 };
