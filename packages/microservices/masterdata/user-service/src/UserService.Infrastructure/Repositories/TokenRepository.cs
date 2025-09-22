@@ -93,7 +93,7 @@ namespace UserService.Infrastructure.Repositories
                 .Where(t => t.Id == id)
                 .ExecuteDeleteAsync() > 0;
         }
-
+        
        
         // Delete all tokens for user
         public async Task<bool> DeleteTokenAsync(Guid userId)

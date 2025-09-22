@@ -10,7 +10,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using UserService.Api.Authorization;
 using UserService.Core.Mappings;
-using System.Security.Claims; 
+using System.Security.Claims;
+using UserService.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +67,9 @@ static void ConfigureServices(WebApplicationBuilder builder)
     services.AddInfrastructureServices(builder.Configuration);
     services.AddAutoMapper(typeof(UserProfile));
     services.AddOutputCache();
+    
+    // Register background services
+    services.AddHostedService<ShiftInstanceBackgroundService>();
     // Configure PostgreSQL
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Database connection string is not configured.");
     services.AddDbContext<UserServiceDbContext>(options =>
@@ -75,6 +79,9 @@ static void ConfigureServices(WebApplicationBuilder builder)
             sqlOptions.MigrationsAssembly("UserService.Infrastructure");
             sqlOptions.CommandTimeout(15);
             sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
+            
+            // Enable split queries globally to avoid cartesian explosion in EF Core 9.0
+            sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
         });
     });
     // Configure authorization
