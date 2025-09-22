@@ -16,7 +16,7 @@ import logo from '@/assets/logorange.svg';
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-gray-300 pt-12">
+    <footer className="relative bg-black text-gray-300 pt-12 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* Company Info */}
         <div>
@@ -88,6 +88,13 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      {/* Moving Bee Emoji */}
+      {/* Moving Butterfly Emoji with Trail */}
+      <div className="absolute bottom-4 left-0 animate-butterfly text-2xl">
+       🦋
+      </div>
+
 
       {/* Footer Bottom */}
       <div className="border-t border-gray-700 mt-10 py-4 px-6 text-center text-sm text-gray-400">
