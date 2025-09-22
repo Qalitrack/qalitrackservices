@@ -40,13 +40,14 @@ function Navbar() {
       name: 'Weighing',
       path: '#',
       dropdown: [
-        { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
+        
         { name: 'Portable/Axle Weighers', path: '/weighing/portable-axle' },
         { name: 'Weighing Software', path: '/weighing/software' },
         { name: 'Unmanned/Automated Weighbridges', path: '/weighing/unmanned-automated' },
         { name: 'Retail Scales', path: '/weighing/retail-scales' },
         { name: 'Onboard Weighing', path: '/weighing/onboard-weighing' },
         { name: 'Weighbridge Accessories', path: '/weighing/accessories' },
+        // { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
       ],
       dropdownState: weighingDropdownOpen,
       setDropdownState: setWeighingDropdownOpen,

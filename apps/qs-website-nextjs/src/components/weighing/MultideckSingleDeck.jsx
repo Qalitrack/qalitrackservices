@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import Scales from '@/assets/scales.jpg';
+
 
 // Sidebar navigation items (consistent across weighing sub-pages)
 const weighingNavItems = [
-  { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
+  // { name: 'Multideck/Singledeck Weighbridges', path: '/weighing/multideck-singledeck' },
   { name: 'Portable/Axle Weighers', path: '/weighing/portable-axle' },
   { name: 'Weighing Software', path: '/weighing/software' },
   { name: 'Unmanned/Automated Weighbridges', path: '/weighing/unmanned-automated' },
@@ -31,7 +31,7 @@ const MultideckSingledecksPage = () => {
       <section
         className="relative bg-cover bg-center text-white py-20 md:py-32 pt-32"
         style={{
-          backgroundImage: `url(${Scales})`,
+          backgroundImage: "url('/weighing.png')",
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
