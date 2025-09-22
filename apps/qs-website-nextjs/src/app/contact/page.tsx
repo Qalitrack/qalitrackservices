@@ -10,7 +10,7 @@ import Image from 'next/image';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import ContactImage from '@/assets/contactbg.jpg';
+import ContactImage from '@/assets/axleweighers.png';
 import placer from '@/assets/logoblack.svg';
 import placer1 from '@/assets/portfolio-6.jpg';
 

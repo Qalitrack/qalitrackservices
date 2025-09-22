@@ -19,3 +19,55 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* Wavy fluttering animation for butterfly */
+/* Wavy fluttering butterfly */
+/* Wavy fluttering butterfly */
+@keyframes butterflymove {
+  0%   { transform: translateX(0vw) translateY(0px) rotate(0deg); }
+  10%  { transform: translateX(10vw) translateY(-10px) rotate(15deg); }
+  20%  { transform: translateX(20vw) translateY(8px) rotate(-10deg); }
+  30%  { transform: translateX(30vw) translateY(-12px) rotate(12deg); }
+  40%  { transform: translateX(40vw) translateY(10px) rotate(-8deg); }
+  50%  { transform: translateX(50vw) translateY(-8px) rotate(10deg); }
+  60%  { transform: translateX(60vw) translateY(6px) rotate(-12deg); }
+  70%  { transform: translateX(70vw) translateY(-10px) rotate(8deg); }
+  80%  { transform: translateX(80vw) translateY(8px) rotate(-6deg); }
+  90%  { transform: translateX(90vw) translateY(-6px) rotate(10deg); }
+  100% { transform: translateX(100vw) translateY(0px) rotate(0deg); }
+}
+
+.animate-butterfly {
+  animation: butterflymove 18s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+  position: relative;
+  display: inline-block;
+}
+
+/* Long trailing stars */
+.animate-butterfly::before,
+.animate-butterfly::after,
+.animate-butterfly span {
+  content: "✦";
+  position: absolute;
+  font-size: 1rem;
+  color: #fbbf24;
+  opacity: 0.6;
+}
+
+/* Trail pseudo-elements */
+.animate-butterfly::before { left: -40px; top: -5px; animation: trailfade 18s linear infinite; }
+.animate-butterfly::after { left: -80px; top: 5px; animation: trailfade 18s linear infinite 0.3s; }
+
+/* Extra stars to make the trail longer */
+.animate-butterfly span:nth-child(1) { left: -120px; top: -3px; animation: trailfade 18s linear infinite 0.6s; }
+.animate-butterfly span:nth-child(2) { left: -160px; top: 4px; animation: trailfade 18s linear infinite 0.9s; }
+.animate-butterfly span:nth-child(3) { left: -200px; top: -2px; animation: trailfade 18s linear infinite 1.2s; }
+
+@keyframes trailfade {
+  0% { opacity: 0.8; }
+  80% { opacity: 0; } /* fade out before 100% */
+  100% { opacity: 0; }
+}
+
+
+
+
