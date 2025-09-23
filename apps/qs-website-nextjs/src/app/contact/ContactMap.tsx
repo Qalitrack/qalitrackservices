@@ -42,13 +42,15 @@ interface ContactMapProps {
 }
 
 export default function ContactMap({ isMobile }: ContactMapProps) {
+  const navigateUrl = `https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`;
+  
   return (
     <div className="h-[500px] md:h-[500px] rounded-2xl shadow-lg overflow-hidden border-2 border-amber-400">
       <MapContainer center={position} zoom={17} scrollWheelZoom={!isMobile} zoomControl={false} className="h-full w-full">
         <FixMapSize />
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+          attribution='© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>'
         />
         <Marker position={position} icon={redIcon}>
           <Tooltip permanent direction="top" offset={[0, -10]} opacity={1}>
@@ -65,7 +67,7 @@ export default function ContactMap({ isMobile }: ContactMapProps) {
                 QSL Centre, Mombasa Road, Nairobi
               </p>
               <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`}
+                href={navigateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-1 px-3 rounded shadow transition"
