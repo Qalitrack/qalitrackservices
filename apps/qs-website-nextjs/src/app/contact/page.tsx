@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
-import { MapPin, Phone, MailOpen, PhoneCall, Link, ArrowUp } from 'lucide-react';
+import { MapPin, Phone, MailOpen, PhoneCall, Link, ArrowUp, Navigation } from 'lucide-react';
 import Image from 'next/image';
 
 import Navbar from '@/components/Navbar';
@@ -60,12 +60,21 @@ export default function Contact() {
                 <MapPin className="h-12 w-12 text-amber-500 mb-3" />
                 <h4 className="font-bold text-xl mb-1">Address</h4>
                 <a
-                  href="https://www.google.com/maps/dir/?api=1&destination=-1.359227,36.937984"
+                  href="https://maps.google.com/?cid=9409932413320131801&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 text-sm hover:text-amber-500 transition"
                 >
                   Qalibrated Systems Limited,<br />QSL Centre, Mombasa Road, Nairobi
+                </a>
+                <a
+                  href="https://www.google.com/maps/dir//Qalibrated+Systems+Limited,+QSL+CENTER,+Mombasa+Road,+Nairobi,+Kenya/data=!4m9!4m8!1m0!1m5!1m1!19sChIJeXakEuMRLxgR2XRhiKzLloI!2m2!1d36.9208099!2d-1.3745112!3e0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-500 hover:bg-amber-600 transition"
+                >
+                  <Navigation className="mr-2 h-4 w-4" />
+                  Navigate
                 </a>
               </div>
 
