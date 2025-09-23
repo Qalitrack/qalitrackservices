@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  MapPin, Phone, Mail, User, LogIn, LayoutDashboard, ChevronDown, Search, Menu,
-  Scale, Building, Car, Settings, Factory, FlaskConical, ArrowUp,
+import {ArrowUp,
   Quote, Star, X
 } from 'lucide-react';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 import Hero from '@/assets/portrait-engineers-work-hours-job-site.jpg';
 import Footer from '@/components/Footer';
