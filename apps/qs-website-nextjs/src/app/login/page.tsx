@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import type { AxiosError } from "axios";
 import { authAPI } from "@/utils/apiFactory";
 
 export default function Login() {
@@ -11,6 +12,7 @@ export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -33,14 +35,13 @@ export default function Login() {
       } else {
         setError("Login failed: No token received.");
       }
-    } catch (err: any) {
-      console.error("Login error:", err);
-      if (err.response) {
-        setError(err.response.data?.message || `Error: ${err.response.statusText}`);
-      } else if (err.request) {
-        setError("No response from server. Check if backend is running.");
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
+
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
       } else {
-        setError("Unexpected error: " + err.message);
+        setError("Server error during login.");
       }
     } finally {
       setLoading(false);
@@ -48,29 +49,31 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-400 via-theme-100 to-amber-600 p-4">
-      <div className="w-full max-w-md bg-white/90 backdrop-blur-xl shadow-2xl rounded-2xl p-8 relative">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-400 to-amber-600">
+      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-lg w-full max-w-sm relative">
         {/* Back Button */}
         <button
           onClick={() => router.push("/")}
-          className="absolute top-4 left-4 flex items-center text-theme-500 hover:text-theme-700 transition-colors"
+          className="absolute top-4 left-4 flex items-center text-theme-500 hover:text-theme-600"
         >
-          <ArrowLeft className="w-5 h-5 mr-1" /> Back
+          <ArrowLeft className="w-5 h-5 mr-1" />
+          Back
         </button>
 
-        <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
-          Welcome Back
+        {/* Title */}
+        <h2 className="text-3xl font-bold text-center text-theme-600 mb-6">
+          Login
         </h2>
 
         {error && (
-          <p className="text-red-600 bg-red-100 p-2 rounded mb-4 text-sm">
-            {error}
-          </p>
+          <p className="text-red-500 text-center font-medium mb-4">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -79,41 +82,52 @@ export default function Login() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-theme-500 focus:outline-none"
-              placeholder="you@example.com"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-theme-500 focus:outline-none"
             />
           </div>
 
+          {/* Password with toggle */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-theme-500 focus:outline-none"
-              placeholder="••••••••"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-theme-500 focus:outline-none pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-amber-400 to-amber-600 hover:opacity-90 text-white py-2 px-4 rounded-xl font-semibold shadow-lg transition-all duration-200"
+            className="w-full bg-theme-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-theme-600 transition"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <Link
-            href="/signup"
-            className="text-theme-500 hover:underline font-medium"
-          >
+        {/* Sign Up */}
+        <p className="mt-6 text-center text-sm text-gray-700">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="text-theme-500 hover:underline">
             Sign up
           </Link>
         </p>
