@@ -188,9 +188,9 @@ const ProductGrid = () => {
               <div className="p-5 flex-grow flex flex-col justify-between">
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
-                  <p className="text-gray-600 text-sm">
+                  {/* <p className="text-gray-600 text-sm">
                     {product.description || 'No description available.'}
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>
