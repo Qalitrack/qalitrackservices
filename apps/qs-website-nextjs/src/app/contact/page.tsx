@@ -13,15 +13,12 @@ import ContactImage from '@/assets/axleweighers.png';
 import placer from '@/assets/logoblack.svg';
 import placer1 from '@/assets/portfolio-6.jpg';
 
-// Leaflet imports
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// ✅ QSL Centre, Syokimau coordinates
 const position: [number, number] = [-1.359227, 36.937984];
 
-// ✅ Custom red icon with animation class
 const redIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
@@ -29,10 +26,10 @@ const redIcon = new L.Icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
-  className: 'marker-bounce', // for CSS animation
+  className: 'marker-bounce',
 });
 
-// ✅ Fix map disappearing on zoom
+// Fix map disappearing on zoom
 function FixMapSize() {
   const map = useMap();
   useEffect(() => {
@@ -41,7 +38,7 @@ function FixMapSize() {
   return null;
 }
 
-// ✅ Custom Zoom buttons
+// Custom Zoom buttons
 function ZoomButtons() {
   const map = useMap();
   useEffect(() => {
@@ -52,8 +49,10 @@ function ZoomButtons() {
 
 export default function Contact() {
   const [isMobile, setIsMobile] = useState(false);
+  const [isBrowser, setIsBrowser] = useState(false); // detect client
 
   useEffect(() => {
+    setIsBrowser(true); // safe to use window now
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -208,57 +207,61 @@ export default function Contact() {
 
         {/* Map Section */}
         <div className="mt-12">
-          <div className="rounded-2xl shadow-lg overflow-hidden border-2 border-amber-400 h-[300px] md:h-[500px]">
-            <MapContainer
-              center={position}
-              zoom={17}
-              scrollWheelZoom={!isMobile}
-              zoomControl={false}
-              className="h-full w-full"
-            >
-              <FixMapSize />
-              <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
-              />
-              <Marker position={position} icon={redIcon}>
-                <Tooltip permanent direction="top" offset={[0, -10]} opacity={1}>
-                  <span className="font-semibold text-amber-600">
-                    Qalibrated Systems Limited
-                  </span>
-                </Tooltip>
-                <Popup>
-                  <div className="p-3 rounded-lg shadow-md border border-gray-200 bg-white">
-                    <h3 className="text-amber-500 font-bold mb-1">
-                      📍 Qalibrated Systems Limited
-                    </h3>
-                    <p className="text-gray-700 text-sm mb-3">
-                      QSL Centre, Mombasa Road, Nairobi
-                    </p>
-                    <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-1 px-3 rounded shadow transition"
-                    >
-                      🚗 Navigate
-                    </a>
-                  </div>
-                </Popup>
-              </Marker>
-              <ZoomButtons />
-            </MapContainer>
-          </div>
+          {isBrowser && (
+            <div className="rounded-2xl shadow-lg overflow-hidden border-2 border-amber-400 h-[300px] md:h-[500px]">
+              <MapContainer
+                center={position}
+                zoom={17}
+                scrollWheelZoom={!isMobile}
+                zoomControl={false}
+                className="h-full w-full"
+              >
+                <FixMapSize />
+                <TileLayer
+                  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+                />
+                <Marker position={position} icon={redIcon}>
+                  <Tooltip permanent direction="top" offset={[0, -10]} opacity={1}>
+                    <span className="font-semibold text-amber-600">
+                      Qalibrated Systems Limited
+                    </span>
+                  </Tooltip>
+                  <Popup>
+                    <div className="p-3 rounded-lg shadow-md border border-gray-200 bg-white">
+                      <h3 className="text-amber-500 font-bold mb-1">
+                        📍 Qalibrated Systems Limited
+                      </h3>
+                      <p className="text-gray-700 text-sm mb-3">
+                        QSL Centre, Mombasa Road, Nairobi
+                      </p>
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-1 px-3 rounded shadow transition"
+                      >
+                        🚗 Navigate
+                      </a>
+                    </div>
+                  </Popup>
+                </Marker>
+                <ZoomButtons />
+              </MapContainer>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Scroll to top button */}
-      <button
-        className="fixed bottom-8 right-8 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full shadow-lg transition"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      >
-        <ArrowUp className="w-6 h-6" />
-      </button>
+      {isBrowser && (
+        <button
+          className="fixed bottom-8 right-8 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full shadow-lg transition"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <ArrowUp className="w-6 h-6" />
+        </button>
+      )}
 
       <Footer />
 
