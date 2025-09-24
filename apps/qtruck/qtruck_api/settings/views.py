@@ -8,12 +8,12 @@ from .permissions import IsAdmin
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Settings"]),
+    retrieve=extend_schema(tags=["Settings"]),
+    create=extend_schema(tags=["Settings"]),
+    update=extend_schema(tags=["Settings"]),
+    partial_update=extend_schema(tags=["Settings"]),
+    destroy=extend_schema(tags=["Settings"]),
 )
 class SystemSettingsViewSet(viewsets.ModelViewSet):
     """
@@ -27,12 +27,12 @@ class SystemSettingsViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Settings"]),
+    retrieve=extend_schema(tags=["Settings"]),
+    create=extend_schema(tags=["Settings"]),
+    update=extend_schema(tags=["Settings"]),
+    partial_update=extend_schema(tags=["Settings"]),
+    destroy=extend_schema(tags=["Settings"]),
 )
 class LicenseClassViewSet(viewsets.ModelViewSet):
     """

@@ -27,7 +27,8 @@ from settings.permissions import IsAdmin
                 'error': serializers.CharField(),
             }
         ),
-    }
+    },
+    tags=["Administration"]
 )
 @api_view(['POST'])
 @permission_classes([IsAdmin])

@@ -14,16 +14,18 @@ from settings.permissions import IsAdmin, IsDriverOrTester, IsApproved
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
-    respond=extend_schema(),
-    resolve=extend_schema(),
-    reject=extend_schema(),
-    pending=extend_schema(),
+    list=extend_schema(tags=["Feedback"]),
+    retrieve=extend_schema(tags=["Feedback"]),
+    create=extend_schema(tags=["Feedback"]),
+    update=extend_schema(tags=["Feedback"]),
+    partial_update=extend_schema(tags=["Feedback"]),
+    destroy=extend_schema(tags=["Feedback"]),
+    respond=extend_schema(tags=["Feedback"]),
+    resolve=extend_schema(tags=["Feedback"]),
+    reject=extend_schema(tags=["Feedback"]),
+    pending=extend_schema(tags=["Feedback"]),
+    my_feedback=extend_schema(tags=["Feedback"]),
+    by_status=extend_schema(tags=["Feedback"])
 )
 class FeedbackViewSet(viewsets.ModelViewSet):
     queryset = Feedback.objects.all()

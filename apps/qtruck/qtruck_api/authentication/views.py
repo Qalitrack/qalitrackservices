@@ -12,7 +12,8 @@ class EmailAliasTokenObtainPairView(TokenObtainPairView):
     
     @extend_schema(
         summary="Login with email alias",
-        description="Login using email (with optional role alias like user+driver@domain.com)"
+        description="Login using email (with optional role alias like user+driver@domain.com)",
+        tags=["Authentication"]
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
@@ -23,7 +24,8 @@ class UserRegistrationView(APIView):
     
     @extend_schema(
         request=UserRegistrationSerializer,
-        responses={201: CustomUserSerializer}
+        responses={201: CustomUserSerializer},
+        tags=["Authentication"]
     )
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
