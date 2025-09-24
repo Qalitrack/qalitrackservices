@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/feedback/', include('feedback.urls')),
     path('api/fleet/', include('fleet.urls')),
     path('api/materials/', include(materials_router.urls)),
+    path('api/trips/', include('trips.urls')),
     
     # Settings app (system-wide settings)
     path('api/settings/', include('settings.urls')),

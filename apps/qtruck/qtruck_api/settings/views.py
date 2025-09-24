@@ -4,7 +4,7 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from .models import SystemSettings, LicenseClass
 from .serializers import SystemSettingsSerializer, LicenseClassSerializer
-from .permissions import IsAdmin
+from .permissions import IsAdmin, IsAdminOrReadOnly
 
 
 @extend_schema_view(
@@ -37,9 +37,9 @@ class SystemSettingsViewSet(viewsets.ModelViewSet):
 class LicenseClassViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing license classes.
-    Only admins can modify license classes.
+    Only admins can modify license classes, but all approved users can read them.
     """
     queryset = LicenseClass.objects.all()
     serializer_class = LicenseClassSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdminOrReadOnly]
