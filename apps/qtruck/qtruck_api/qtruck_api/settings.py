@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
@@ -102,13 +103,24 @@ if DB_ENGINE == 'postgresql' and DB_HOST and DB_USER and DB_PASSWORD:
         }
     }
 else:
-    # Default SQLite configuration
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+    # Default SpatiaLite configuration for spatial data support
+    USE_SPATIALITE = config('USE_SPATIALITE', default=True, cast=bool)
+    if USE_SPATIALITE:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
+        # Path to SpatiaLite library
+        SPATIALITE_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 # Password validation

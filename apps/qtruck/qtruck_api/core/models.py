@@ -1,8 +1,12 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.gis.db import models as gis_models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.core.validators import FileExtensionValidator
+from django.utils import timezone
+from datetime import timedelta
 
 
 class BaseModel(models.Model):
@@ -22,20 +26,44 @@ class CustomUser(AbstractUser):
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    base_email = models.EmailField(unique=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='driver')
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    @property
+    def base_email(self):
+        """Extract base email without alias from the email field"""
+        if '@' in self.email and '+' in self.email.split('@')[0]:
+            email_parts = self.email.split('@')
+            local_part = email_parts[0].split('+')[0]
+            return f"{local_part}@{email_parts[1]}"
+        return self.email
 
     def save(self, *args, **kwargs):
-        if not self.base_email:
-            email_parts = self.email.split('@')
-            if '+' in email_parts[0]:
-                base_part = email_parts[0].split('+')[0]
-                self.base_email = f"{base_part}@{email_parts[1]}"
+        # Validate that email contains + alias
+        if not '+' in self.email:
+            from django.core.exceptions import ValidationError
+            raise ValidationError("Email must contain an alias (e.g., user+admin@example.com or user+driver@example.com)")
+        
+        # Extract user type from email alias and set base_email
+        email_parts = self.email.split('@')
+        if '+' in email_parts[0]:
+            local_part = email_parts[0].split('+')
+            base_part = local_part[0]
+            alias_part = local_part[1].lower()
+            
+            
+            # Set user_type based on alias
+            if alias_part == 'admin':
+                self.user_type = 'admin'
+            elif alias_part == 'driver':
+                self.user_type = 'driver'
+            elif alias_part == 'tester':
+                self.user_type = 'tester'
             else:
-                self.base_email = self.email
+                from django.core.exceptions import ValidationError
+                raise ValidationError("Email alias must be 'admin', 'driver', or 'tester' (e.g., user+admin@example.com)")
         
         # First user becomes admin and is auto-approved
         if not CustomUser.objects.exists():
@@ -53,9 +81,32 @@ class UserProfile(BaseModel):
     approved_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_users')
 
 
+class LicenseClass(BaseModel):
+    name = models.CharField(max_length=100, unique=True, help_text="License class name (e.g., Class A CDL, Class B CDL, Regular License)")
+    description = models.TextField(blank=True, help_text="Description of what this license allows")
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = "License Class"
+        verbose_name_plural = "License Classes"
+    
+    def __str__(self):
+        return self.name
+
+
 class SystemSettings(BaseModel):
     tester_registration_enabled = models.BooleanField(default=True)
     tester_login_enabled = models.BooleanField(default=True)
+    
+    # Driver Profile Settings
+    license_expiry_warning_days = models.PositiveIntegerField(
+        default=30,
+        help_text="Number of days before license expiry to show warning"
+    )
+    require_profile_photo = models.BooleanField(default=True)
+    require_license_images = models.BooleanField(default=True)
+    require_id_images = models.BooleanField(default=True)
+    auto_approve_profile_updates = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "System Settings"
@@ -63,7 +114,27 @@ class SystemSettings(BaseModel):
     @classmethod
     def get_settings(cls):
         settings, created = cls.objects.get_or_create(pk=1)
+        if created:
+            # Create default license classes on first setup
+            cls._create_default_license_classes()
         return settings
+    
+    @staticmethod
+    def _create_default_license_classes():
+        """Create default license classes"""
+        default_classes = [
+            ('Class A CDL', 'Heavy trucks, tractor-trailers'),
+            ('Class B CDL', 'Large trucks, buses'),
+            ('Class C License', 'Regular passenger vehicles'),
+            ('Motorcycle License', 'Motorcycles'),
+            ('Regular License', 'Standard passenger vehicles'),
+            ('Commercial License', 'Commercial driving'),
+        ]
+        for name, desc in default_classes:
+            LicenseClass.objects.get_or_create(
+                name=name,
+                defaults={'description': desc}
+            )
 
 
 class Driver(BaseModel):
@@ -74,6 +145,39 @@ class Driver(BaseModel):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def current_profile(self):
+        """Get the current approved driver profile"""
+        return self.profile_versions.filter(is_current=True).first()
+    
+    @property
+    def pending_profile(self):
+        """Get pending profile if any"""
+        return self.profile_versions.filter(status='pending').first()
+    
+    @property
+    def latest_activity(self):
+        """Get the latest activity"""
+        return self.activities.first()
+    
+    def get_activity_stats(self, days=30):
+        """Get activity statistics for the last N days"""
+        return get_driver_activity_stats(self, days)
+    
+    def get_activity_heatmap(self, year=None):
+        """Get activity heatmap data"""
+        return get_driver_activity_heatmap(self, year)
+
+
+# Import driver models from driver_models.py to avoid duplication
+from .driver_models import (
+    DriverActivityType,
+    DriverActivity,
+    DriverProfileStatus, 
+    DriverProfile,
+    DriverProfileChange
+)
 
 
 class Truck(BaseModel):
@@ -97,6 +201,8 @@ class Trip(BaseModel):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='trips')
     start_location = models.CharField(max_length=255, null=True, blank=True)
     end_location = models.CharField(max_length=255, null=True, blank=True)
+    start_location_coords = gis_models.PointField(null=True, blank=True, help_text="Geographic coordinates of start location")
+    end_location_coords = gis_models.PointField(null=True, blank=True, help_text="Geographic coordinates of end location")
     start_mileage = models.FloatField(null=True, blank=True)
     end_mileage = models.FloatField(null=True, blank=True)
     proof_image = models.ImageField(upload_to='trip_images/', null=True, blank=True)
@@ -107,9 +213,8 @@ class Trip(BaseModel):
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def calculate_total_cost(self):
-        material_costs = sum(mc.cost for material in self.materials.all() for mc in material.material_costs.all())
         expense_costs = sum(expense.amount for expense in self.expenses.all())
-        self.total_cost = material_costs + expense_costs
+        self.total_cost = expense_costs
         return self.total_cost
 
     def save(self, *args, **kwargs):
@@ -122,12 +227,21 @@ class Trip(BaseModel):
 
 
 class Material(BaseModel):
-    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='materials', null=True, blank=True)
     name = models.CharField(max_length=255)
-    quantity = models.FloatField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    location = gis_models.PointField(null=True, blank=True, help_text="Geographic location where this material was recorded")
 
     def __str__(self):
-        return f"{self.name} - {self.trip.id if self.trip else 'Base Material'}"
+        return self.name
+
+
+class MaterialPhoto(BaseModel):
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name='photos')
+    photo = models.ImageField(upload_to='material_photos/')
+    caption = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"Photo for {self.material.name}"
 
 
 class MaterialCost(BaseModel):
@@ -223,12 +337,7 @@ class Feedback(BaseModel):
 
 
 # Signals for automatic trip cost calculation
-@receiver([post_save, post_delete], sender=MaterialCost)
-def update_trip_cost_on_material_cost_change(sender, instance, **kwargs):
-    if instance.material and instance.material.trip:
-        trip = instance.material.trip
-        trip.calculate_total_cost()
-        trip.save()
+# Note: MaterialCost signals removed since materials are no longer trip-specific
 
 
 @receiver([post_save, post_delete], sender=Expense)
@@ -244,3 +353,56 @@ def update_trip_cost_on_expense_change(sender, instance, **kwargs):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+
+# Auto-create driver object for driver users
+@receiver(post_save, sender=CustomUser)
+def create_driver_object(sender, instance, created, **kwargs):
+    if created and instance.user_type == 'driver':
+        Driver.objects.create(
+            user=instance,
+            name=f"{instance.first_name} {instance.last_name}".strip() or instance.username,
+            phone='',
+            license_number=''
+        )
+
+
+# Helper functions are now imported from driver_models.py
+from .driver_models import (
+    log_driver_activity,
+    get_driver_activity_heatmap,
+    get_driver_activity_stats
+)
+
+
+# Signal to track profile changes
+@receiver(post_save, sender=DriverProfile)
+def track_profile_changes(sender, instance, created, **kwargs):
+    """Track changes between driver profile versions"""
+    if not created and instance.version_number > 1:
+        # Get previous version
+        previous_profile = DriverProfile.objects.filter(
+            driver=instance.driver,
+            version_number=instance.version_number - 1
+        ).first()
+        
+        if previous_profile:
+            # Compare fields and track changes
+            fields_to_track = [
+                'full_name', 'phone_number', 'id_number', 
+                'license_number', 'license_expiry_date', 'license_class'
+            ]
+            
+            for field in fields_to_track:
+                old_value = getattr(previous_profile, field, None)
+                new_value = getattr(instance, field, None)
+                
+                if old_value != new_value:
+                    DriverProfileChange.objects.create(
+                        old_profile=previous_profile,
+                        new_profile=instance,
+                        field_name=field,
+                        old_value=str(old_value) if old_value else '',
+                        new_value=str(new_value) if new_value else '',
+                        change_type='modified' if old_value else 'added'
+                    )
