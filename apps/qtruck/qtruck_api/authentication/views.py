@@ -1,7 +1,7 @@
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.utils import extend_schema
 from users.serializers import CustomUserSerializer
 from .serializers import EmailAliasTokenObtainPairSerializer, UserRegistrationSerializer
@@ -36,3 +36,13 @@ class UserRegistrationView(APIView):
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    @extend_schema(
+        summary="Refresh JWT token",
+        description="Refresh JWT access token using refresh token",
+        tags=["Authentication"]
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
