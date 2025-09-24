@@ -201,7 +201,7 @@ SIMPLE_JWT = {
 # DRF Spectacular
 SPECTACULAR_SETTINGS = {
     'TITLE': 'QTruck API',
-    'DESCRIPTION': 'API for QTruck fleet management system',
+    'DESCRIPTION': 'API for QTruck fleet management system with domain-based endpoints',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
