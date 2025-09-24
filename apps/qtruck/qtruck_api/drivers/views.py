@@ -95,7 +95,8 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Filter queryset based on user permissions and action"""
         if self.request.user.user_type == 'admin':
-            base_queryset = DriverProfile.objects.all().select_related('driver', 'reviewed_by', 'driver__user')
+            # Admin should only see profiles that have been submitted for approval (not unsubmitted drafts)
+            base_queryset = DriverProfile.objects.exclude(status='draft', submitted_at__isnull=True).select_related('driver', 'reviewed_by', 'driver__user')
         elif self.request.user.user_type == 'driver':
             driver = getattr(self.request.user, 'driver_profile', None)
             if driver:

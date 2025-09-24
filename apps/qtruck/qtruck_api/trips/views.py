@@ -2,7 +2,11 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters_rest
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django.utils import timezone
 
 from .models import Trip, Expense, Receipt, VehicleMileage
 from .serializers import TripSerializer, ExpenseSerializer, ReceiptSerializer, VehicleMileageSerializer
@@ -11,20 +15,34 @@ from settings.permissions import (
 )
 
 
+class TripFilterSet(filters_rest.FilterSet):
+    date_from = filters_rest.DateFilter(field_name="date", lookup_expr='gte')
+    date_to = filters_rest.DateFilter(field_name="date", lookup_expr='lte')
+    
+    class Meta:
+        model = Trip
+        fields = ['status', 'truck', 'driver', 'material', 'material_variant', 'date_from', 'date_to']
+
+
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
-    calculate_cost=extend_schema(),
-    by_status=extend_schema(),
+    list=extend_schema(tags=["Trips"]),
+    retrieve=extend_schema(tags=["Trips"]),
+    create=extend_schema(tags=["Trips"]),
+    update=extend_schema(tags=["Trips"]),
+    partial_update=extend_schema(tags=["Trips"]),
+    destroy=extend_schema(tags=["Trips"]),
+    calculate_cost=extend_schema(tags=["Trips"]),
+    by_status=extend_schema(tags=["Trips"]),
 )
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
     permission_classes = [IsApproved, IsAdminOrDriverOrTester]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = TripFilterSet
+    search_fields = ['start_location', 'end_location', 'truck__license_plate', 'driver__name']
+    ordering_fields = ['date', 'created_at', 'total_cost']
+    ordering = ['-date']
     
     def get_queryset(self):
         if self.request.user.user_type == 'admin':
@@ -109,13 +127,13 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
-    extract_details=extend_schema(),
+    list=extend_schema(tags=["Trips"]),
+    retrieve=extend_schema(tags=["Trips"]),
+    create=extend_schema(tags=["Trips"]),
+    update=extend_schema(tags=["Trips"]),
+    partial_update=extend_schema(tags=["Trips"]),
+    destroy=extend_schema(tags=["Trips"]),
+    extract_details=extend_schema(tags=["Trips"]),
 )
 class ReceiptViewSet(viewsets.ModelViewSet):
     queryset = Receipt.objects.all()
