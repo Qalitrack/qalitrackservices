@@ -3,12 +3,12 @@ from rest_framework.routers import DefaultRouter
 
 from .views import TripViewSet, ExpenseViewSet, ReceiptViewSet, VehicleMileageViewSet
 
-# Create router for trips endpoints (will be nested under /fleet/trips/)
+# Create router for trips endpoints
 router = DefaultRouter()
-router.register(r'', TripViewSet, basename='trips')  # /fleet/trips/
-router.register(r'expenses', ExpenseViewSet)  # /fleet/trips/expenses/
-router.register(r'receipts', ReceiptViewSet)  # /fleet/trips/receipts/
-router.register(r'vehicle-mileage', VehicleMileageViewSet)  # /fleet/trips/vehicle-mileage/
+router.register('trips', TripViewSet, basename='trips')  # /api/trips/trips/
+router.register('expenses', ExpenseViewSet, basename='expenses')  # /api/trips/expenses/
+router.register('receipts', ReceiptViewSet, basename='receipts')  # /api/trips/receipts/
+router.register('vehicle-mileage', VehicleMileageViewSet, basename='vehicle-mileage')  # /api/trips/vehicle-mileage/
 
 urlpatterns = [
     # Trips API endpoints (will be available at /fleet/trips/)
