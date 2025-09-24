@@ -82,7 +82,7 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
             return DriverProfileUpdateSerializer
         elif self.action == 'approve':
             return DriverProfileApprovalSerializer
-        elif self.action in ['activity', 'heatmap', 'list', 'retrieve']:
+        elif self.action in ['activity', 'heatmap']:
             return DriverEnhancedSerializer
         return DriverProfileSerializer
     
