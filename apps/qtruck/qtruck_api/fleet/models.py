@@ -19,12 +19,23 @@ class Truck(BaseModel):
 
 
 class Material(BaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, help_text="Base material name (e.g., Sand, Stone, Cement)")
     description = models.TextField(null=True, blank=True)
-    location = gis_models.PointField(null=True, blank=True, help_text="Geographic location where this material was recorded")
 
     def __str__(self):
         return self.name
+
+
+class MaterialVariant(BaseModel):
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name='variants')
+    name = models.CharField(max_length=255, help_text="Variant name (e.g., Darugo, Kajido, River Sand)")
+    description = models.TextField(null=True, blank=True)
+    
+    class Meta:
+        unique_together = ['material', 'name']
+    
+    def __str__(self):
+        return f"{self.material.name} - {self.name}"
 
 
 class MaterialPhoto(BaseModel):
@@ -34,6 +45,15 @@ class MaterialPhoto(BaseModel):
 
     def __str__(self):
         return f"Photo for {self.material.name}"
+
+
+class MaterialVariantPhoto(BaseModel):
+    material_variant = models.ForeignKey(MaterialVariant, on_delete=models.CASCADE, related_name='photos')
+    photo = models.ImageField(upload_to='material_variant_photos/')
+    caption = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"Photo for {self.material_variant.name}"
 
 
 class MaterialCost(BaseModel):
