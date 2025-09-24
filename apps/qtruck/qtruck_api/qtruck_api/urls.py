@@ -32,7 +32,7 @@ urlpatterns = [
     path('/api/fleet/', include('fleet.urls')),
     
     # Settings app (system-wide settings)
-    path('settings/', include('settings.urls')),
+    path('api/settings/', include('settings.urls')),
     
     # API documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
