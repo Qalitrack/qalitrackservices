@@ -12,12 +12,12 @@ from settings.permissions import (
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Fleet"]),
+    retrieve=extend_schema(tags=["Fleet"]),
+    create=extend_schema(tags=["Fleet"]),
+    update=extend_schema(tags=["Fleet"]),
+    partial_update=extend_schema(tags=["Fleet"]),
+    destroy=extend_schema(tags=["Fleet"])
 )
 class TruckViewSet(viewsets.ModelViewSet):
     queryset = Truck.objects.all()
@@ -35,12 +35,12 @@ class TruckViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Fleet"]),
+    retrieve=extend_schema(tags=["Fleet"]),
+    create=extend_schema(tags=["Fleet"]),
+    update=extend_schema(tags=["Fleet"]),
+    partial_update=extend_schema(tags=["Fleet"]),
+    destroy=extend_schema(tags=["Fleet"])
 )
 class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
@@ -56,12 +56,12 @@ class MaterialViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Fleet"]),
+    retrieve=extend_schema(tags=["Fleet"]),
+    create=extend_schema(tags=["Fleet"]),
+    update=extend_schema(tags=["Fleet"]),
+    partial_update=extend_schema(tags=["Fleet"]),
+    destroy=extend_schema(tags=["Fleet"])
 )
 class MaterialCostViewSet(viewsets.ModelViewSet):
     queryset = MaterialCost.objects.all()

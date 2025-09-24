@@ -36,12 +36,12 @@ from settings.models import SystemSettings
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Drivers"]),
+    retrieve=extend_schema(tags=["Drivers"]),
+    create=extend_schema(tags=["Drivers"]),
+    update=extend_schema(tags=["Drivers"]),
+    partial_update=extend_schema(tags=["Drivers"]),
+    destroy=extend_schema(tags=["Drivers"])
 )
 class DriverViewSet(viewsets.ModelViewSet):
     """Basic driver management viewset"""
@@ -70,16 +70,16 @@ class DriverViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
-    approve=extend_schema(),
-    pending_profiles=extend_schema(),
-    me=extend_schema(),
-    history=extend_schema(),
+    list=extend_schema(tags=["Drivers"]),
+    retrieve=extend_schema(tags=["Drivers"]),
+    create=extend_schema(tags=["Drivers"]),
+    update=extend_schema(tags=["Drivers"]),
+    partial_update=extend_schema(tags=["Drivers"]),
+    destroy=extend_schema(tags=["Drivers"]),
+    approve=extend_schema(tags=["Drivers"]),
+    pending_profiles=extend_schema(tags=["Drivers"]),
+    me=extend_schema(tags=["Drivers"]),
+    history=extend_schema(tags=["Drivers"]),
 )
 class DriverProfileViewSet(viewsets.ModelViewSet):
     """Driver profile management with approval workflow"""
@@ -309,11 +309,11 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    activity=extend_schema(),
-    heatmap=extend_schema(),
-    expiring_licenses=extend_schema(),
+    list=extend_schema(tags=["Drivers"]),
+    retrieve=extend_schema(tags=["Drivers"]),
+    activity=extend_schema(tags=["Drivers"]),
+    heatmap=extend_schema(tags=["Drivers"]),
+    expiring_licenses=extend_schema(tags=["Drivers"]),
 )
 class DriverEnhancedViewSet(viewsets.ReadOnlyModelViewSet):
     """Enhanced driver viewset with profile and activity data"""
@@ -376,10 +376,10 @@ class DriverEnhancedViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    my_activity=extend_schema(),
-    my_heatmap=extend_schema(),
+    list=extend_schema(tags=["Drivers"]),
+    retrieve=extend_schema(tags=["Drivers"]),
+    my_activity=extend_schema(tags=["Drivers"]),
+    my_heatmap=extend_schema(tags=["Drivers"]),
 )
 class DriverActivityViewSet(viewsets.ReadOnlyModelViewSet):
     """Driver activity tracking and analytics"""
