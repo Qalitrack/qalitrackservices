@@ -44,7 +44,18 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'corsheaders',
-    'core',
+    
+    # Domain-based apps
+    'users',  # Must be first to ensure CustomUser is available
+    'authentication',  # Authentication endpoints
+    'drivers',  # Driver profile management
+    'administration',  # System administration
+    'feedback',  # Feedback management
+    'fleet',  # Fleet management
+    'trips',  # Trip operations
+    
+    # Settings app (system-wide settings)
+    'settings',
 ]
 
 MIDDLEWARE = [
@@ -164,8 +175,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom User Model
-AUTH_USER_MODEL = 'core.CustomUser'
+# Custom User Model (moved to users app)
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Django REST Framework
 REST_FRAMEWORK = {
