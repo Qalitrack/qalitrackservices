@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone
-from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, inline_serializer
 
 from .models import CustomUser, UserProfile
 from .serializers import CustomUserSerializer, UserProfileSerializer, UserApprovalSerializer
@@ -19,7 +19,8 @@ class UserApprovalView(APIView):
     
     @extend_schema(
         request=UserApprovalSerializer,
-        responses={200: CustomUserSerializer}
+        responses={200: CustomUserSerializer},
+        tags=["Users"]
     )
     def post(self, request):
         serializer = UserApprovalSerializer(data=request.data)
@@ -61,7 +62,8 @@ class PendingUsersView(APIView):
     permission_classes = [IsAdmin]
     
     @extend_schema(
-        responses={200: CustomUserSerializer(many=True)}
+        responses={200: CustomUserSerializer(many=True)},
+        tags=["Users"]
     )
     def get(self, request):
         pending_users = CustomUser.objects.filter(is_approved=False)
@@ -82,7 +84,8 @@ class UsersByTypeView(APIView):
                 enum=['admin', 'driver', 'tester']
             ),
         ],
-        responses={200: CustomUserSerializer(many=True)}
+        responses={200: CustomUserSerializer(many=True)},
+        tags=["Users"]
     )
     def get(self, request):
         user_type = request.query_params.get('user_type')
@@ -109,7 +112,8 @@ class CreateAdminView(APIView):
                 'last_name': serializers.CharField(required=False),
             }
         ),
-        responses={201: CustomUserSerializer}
+        responses={201: CustomUserSerializer},
+        tags=["Users"]
     )
     def post(self, request):
         data = request.data.copy()
@@ -159,7 +163,8 @@ class UserDeactivateView(APIView):
                 'message': serializers.CharField(),
                 'user': CustomUserSerializer()
             }
-        )}
+        )},
+        tags=["Users"]
     )
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -197,7 +202,8 @@ class UserReactivateView(APIView):
                 'message': serializers.CharField(),
                 'user': CustomUserSerializer()
             }
-        )}
+        )},
+        tags=["Users"]
     )
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -234,7 +240,8 @@ class UserDeleteView(APIView):
             fields={
                 'message': serializers.CharField(),
             }
-        )}
+        )},
+        tags=["Users"]
     )
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -276,6 +283,10 @@ class UserDeleteView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+@extend_schema_view(
+    list=extend_schema(tags=["Users"]),
+    retrieve=extend_schema(tags=["Users"])
+)
 class UserProfileViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer

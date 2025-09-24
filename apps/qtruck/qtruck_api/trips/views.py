@@ -62,12 +62,12 @@ class TripViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Trips"]),
+    retrieve=extend_schema(tags=["Trips"]),
+    create=extend_schema(tags=["Trips"]),
+    update=extend_schema(tags=["Trips"]),
+    partial_update=extend_schema(tags=["Trips"]),
+    destroy=extend_schema(tags=["Trips"])
 )
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
@@ -148,12 +148,12 @@ class ReceiptViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(),
-    retrieve=extend_schema(),
-    create=extend_schema(),
-    update=extend_schema(),
-    partial_update=extend_schema(),
-    destroy=extend_schema(),
+    list=extend_schema(tags=["Trips"]),
+    retrieve=extend_schema(tags=["Trips"]),
+    create=extend_schema(tags=["Trips"]),
+    update=extend_schema(tags=["Trips"]),
+    partial_update=extend_schema(tags=["Trips"]),
+    destroy=extend_schema(tags=["Trips"])
 )
 class VehicleMileageViewSet(viewsets.ModelViewSet):
     queryset = VehicleMileage.objects.all()
