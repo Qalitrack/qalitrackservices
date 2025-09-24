@@ -1,8 +1,9 @@
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Truck, Material, MaterialVariant, MaterialCost, MaterialPhoto, MaterialVariantPhoto
 from .serializers import TruckSerializer, MaterialSerializer, MaterialVariantSerializer, MaterialCostSerializer, MaterialPhotoSerializer, MaterialVariantPhotoSerializer
@@ -43,6 +44,11 @@ class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
     permission_classes = [IsApproved, IsAdminOrReadOnly]  # Admin can modify, others read-only
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'created_at']
+    ordering = ['name']  # Default ordering
+    filterset_fields = ['name']
     
     def get_queryset(self):
         # All approved users can see all materials (read-only for non-admins)
