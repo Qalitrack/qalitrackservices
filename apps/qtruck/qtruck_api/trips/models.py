@@ -4,13 +4,14 @@ from django.contrib.gis.db import models as gis_models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 # Import from users app
 from users.models import BaseModel
 # Import related models from other apps
 from drivers.models import Driver
-from fleet.models import Truck
+from fleet.models import Truck, Material, MaterialVariant
 
 
 class Trip(BaseModel):
@@ -35,15 +36,30 @@ class Trip(BaseModel):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     date = models.DateTimeField()
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    # Material fields
+    material = models.ForeignKey(Material, on_delete=models.SET_NULL, null=True, blank=True, help_text="Type of material transported")
+    material_variant = models.ForeignKey(MaterialVariant, on_delete=models.SET_NULL, null=True, blank=True, help_text="Specific variant of the material")
+    material_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Cost to purchase the material for this trip")
+
+    def clean(self):
+        # Validate that material_variant belongs to the selected material
+        if self.material_variant and self.material:
+            if self.material_variant.material != self.material:
+                raise ValidationError('Material variant must belong to the selected material.')
+        elif self.material_variant and not self.material:
+            raise ValidationError('Material must be selected when specifying a material variant.')
 
     def calculate_total_cost(self):
         expense_costs = sum(expense.amount for expense in self.expenses.all())
-        self.total_cost = expense_costs
+        material_cost = self.material_cost or 0
+        self.total_cost = expense_costs + material_cost
         return self.total_cost
 
     def save(self, *args, **kwargs):
         if self.start_mileage and self.end_mileage:
             self.total_mileage = self.end_mileage - self.start_mileage
+        self.full_clean()  # Run validation before saving
         super().save(*args, **kwargs)
 
     def __str__(self):
