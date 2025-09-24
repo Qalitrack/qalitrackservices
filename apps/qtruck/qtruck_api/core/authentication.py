@@ -22,47 +22,39 @@ class EmailAliasTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not email or not password:
             raise serializers.ValidationError('Email and password are required.')
         
-        # Parse email for role detection
-        user_type = 'admin'  # default when no alias
-        base_email = email
+        # Validate email format (must contain alias)
+        if '@' not in email or '+' not in email.split('@')[0]:
+            raise serializers.ValidationError({'email': 'Email must contain a role alias (e.g., user+admin@example.com, user+driver@example.com, or user+tester@example.com).'})
         
-        if '@' in email:
-            email_parts = email.split('@')
-            if '+' in email_parts[0]:
-                parts = email_parts[0].split('+')
-                base_part = parts[0]
-                role_part = parts[1] if len(parts) > 1 else ''
-                base_email = f"{base_part}@{email_parts[1]}"
-                
-                if role_part == 'admin':
-                    user_type = 'admin'
-                elif role_part == 'driver':
-                    user_type = 'driver'
-                elif role_part == 'tester':
-                    user_type = 'tester'
-                else:
-                    raise serializers.ValidationError(f'Invalid role alias: {role_part}. Use +admin, +driver, or +tester.')
-            # If no alias, user_type remains 'admin'
+        # Extract user type from email alias for permission checks
+        email_parts = email.split('@')
+        parts = email_parts[0].split('+')
+        role_part = parts[1] if len(parts) > 1 else ''
         
-        # Check tester permissions
-        if user_type == 'tester':
+        if role_part == 'tester':
             settings = SystemSettings.get_settings()
             if not settings.tester_login_enabled:
                 raise serializers.ValidationError('Tester login is currently disabled.')
+        elif role_part not in ['admin', 'driver', 'tester']:
+            raise serializers.ValidationError(f'Invalid role alias: {role_part}. Use +admin, +driver, or +tester.')
         
-        # Find user by base_email and user_type
+        # Find user by email (which includes the alias)
         try:
-            user = CustomUser.objects.get(base_email=base_email, user_type=user_type)
+            user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
-            raise serializers.ValidationError('Invalid credentials.')
+            raise serializers.ValidationError({'email': 'Invalid credentials.'})
+        
+        # Check if user is active (not deactivated)
+        if not user.is_active:
+            raise serializers.ValidationError({'email': 'Account has been deactivated. Please contact administrator.'})
         
         # Check if user is approved
         if not user.is_approved:
-            raise serializers.ValidationError('Account pending approval. Please contact administrator.')
+            raise serializers.ValidationError({'email': 'Account pending approval. Please contact administrator.'})
         
         # Verify password
         if not user.check_password(password):
-            raise serializers.ValidationError('Invalid credentials.')
+            raise serializers.ValidationError({'password': 'Invalid credentials.'})
         
         # Set the username for parent class validation (SimpleJWT still expects username internally)
         attrs['username'] = user.username
