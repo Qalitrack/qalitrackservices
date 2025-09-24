@@ -7,7 +7,7 @@ class IsAdmin(BasePermission):
             request.user and 
             request.user.is_authenticated and 
             request.user.user_type == 'admin' and
-            request.user.is_approved
+            request.user.status == 'approved'
         )
 
 
@@ -46,7 +46,11 @@ class IsAdminOrOwner(BasePermission):
         if request.user.user_type == 'admin':
             return True
         
-        # Check if user owns the object
+        # Check if this is the user's own user object
+        if obj == request.user:
+            return True
+            
+        # Check if user owns the object (for other models)
         if hasattr(obj, 'user'):
             return obj.user == request.user
         elif hasattr(obj, 'driver') and hasattr(obj.driver, 'user'):
@@ -60,7 +64,7 @@ class IsApproved(BasePermission):
         return (
             request.user and 
             request.user.is_authenticated and 
-            request.user.is_approved
+            request.user.status == 'approved'
         )
 
 
@@ -69,7 +73,7 @@ class IsAdminOrReadOnly(BasePermission):
     Admin can do everything, others can only read
     """
     def has_permission(self, request, view):
-        if not (request.user and request.user.is_authenticated and request.user.is_approved):
+        if not (request.user and request.user.is_authenticated and request.user.status == 'approved'):
             return False
         
         if request.method in ['GET', 'HEAD', 'OPTIONS']:
@@ -83,7 +87,7 @@ class IsDriverOrTester(BasePermission):
         return (
             request.user and 
             request.user.is_authenticated and 
-            request.user.is_approved and
+            request.user.status == 'approved' and
             request.user.user_type in ['driver', 'tester']
         )
 
@@ -93,6 +97,6 @@ class IsAdminOrDriverOrTester(BasePermission):
         return (
             request.user and 
             request.user.is_authenticated and 
-            request.user.is_approved and
+            request.user.status == 'approved' and
             request.user.user_type in ['admin', 'driver', 'tester']
         )
