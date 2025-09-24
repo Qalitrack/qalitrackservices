@@ -21,8 +21,18 @@ from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('core.urls')),
+    # path('admin/', admin.site.urls),
+    
+    # Domain-based apps
+    path('auth/', include('authentication.urls')),
+    path('/api/users/', include('users.urls')),
+    path('/api/drivers/', include('drivers.urls')),
+    path('/api/api/admin/', include('administration.urls')),
+    path('/api/feedback/', include('feedback.urls')),
+    path('/api/fleet/', include('fleet.urls')),
+    
+    # Settings app (system-wide settings)
+    path('settings/', include('settings.urls')),
     
     # API documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
