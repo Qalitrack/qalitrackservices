@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from fleet.urls import materials_router
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('api/admin/', include('administration.urls')),
     path('api/feedback/', include('feedback.urls')),
     path('api/fleet/', include('fleet.urls')),
+    path('api/materials/', include(materials_router.urls)),
     
     # Settings app (system-wide settings)
     path('api/settings/', include('settings.urls')),
