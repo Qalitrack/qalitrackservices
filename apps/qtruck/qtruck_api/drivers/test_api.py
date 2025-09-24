@@ -6,7 +6,7 @@ comprehensive coverage for the core driver functionality including:
 - Basic CRUD operations with permission checks
 - Query filters (status, license expiring, etc.)  
 - Enhanced data inclusion (stats, activity, heatmap)
-- Individual driver actions (/me/, /activity/, /heatmap/)
+- Individual driver actions (/me/ with include parameters)
 - Admin approval workflow
 - Integration testing
 
@@ -264,7 +264,7 @@ class TestDriverActivityEndpointAPI:
             # Check what fields are available in the response
             profile_id = create_response.data.get('id') or create_response.data.get('uuid') or create_response.data.get('pk')
             if profile_id:
-                response = admin_client.get(f'/api/drivers/profiles/{profile_id}/activity/')
+                response = admin_client.get(f'/api/drivers/profiles/?include=activity')
                 assert response.status_code in [200, 404]  # 200 if works, 404 if not found
             else:
                 # If no ID is available, just test that the endpoint pattern works generically
@@ -286,7 +286,7 @@ class TestDriverActivityEndpointAPI:
             # Check what fields are available in the response
             profile_id = create_response.data.get('id') or create_response.data.get('uuid') or create_response.data.get('pk')
             if profile_id:
-                response = admin_client.get(f'/api/drivers/profiles/{profile_id}/activity/?days=7')
+                response = admin_client.get(f'/api/drivers/profiles/?include=activity&days=7')
                 assert response.status_code in [200, 404]
 
 
@@ -307,7 +307,7 @@ class TestDriverHeatmapEndpointAPI:
         
         if create_response.status_code == 201:
             profile_id = create_response.data.get('id') or create_response.data.get('uuid') or create_response.data.get('pk')
-            response = admin_client.get(f'/api/drivers/profiles/{profile_id}/heatmap/')
+            response = admin_client.get(f'/api/drivers/profiles/?include=heatmap')
             assert response.status_code in [200, 404]  # 200 if works, 404 if not found
 
     def test_heatmap_endpoint_supports_days_parameter(self, admin_client, db):
@@ -323,7 +323,7 @@ class TestDriverHeatmapEndpointAPI:
         
         if create_response.status_code == 201:
             profile_id = create_response.data.get('id') or create_response.data.get('uuid') or create_response.data.get('pk')
-            response = admin_client.get(f'/api/drivers/profiles/{profile_id}/heatmap/?days=30')
+            response = admin_client.get(f'/api/drivers/profiles/?include=heatmap&days=30')
             assert response.status_code in [200, 404]
 
 
@@ -333,15 +333,16 @@ class TestDriverLicenseExpiryAPI:
 
     def test_admin_can_get_expiring_licenses_via_deprecated_endpoint(self, admin_client, db):
         """Test deprecated expiring_licenses endpoint still works"""
-        response = admin_client.get('/api/drivers/profiles/expiring_licenses/?days=60')
+        response = admin_client.get('/api/drivers/profiles/?license_expiring=60')
         
         assert response.status_code in [200, 404]  # Might not exist in this implementation
 
     def test_expiring_licenses_endpoint_admin_only(self, driver_client, db):
-        """Test that expiring_licenses endpoint is admin only"""
-        response = driver_client.get('/api/drivers/profiles/expiring_licenses/')
+        """Test that license_expiring filter is ignored for non-admins"""
+        response = driver_client.get('/api/drivers/profiles/?license_expiring=30')
         
-        assert response.status_code in [403, 404]  # 403 forbidden or 404 not found
+        # Non-admins can access the list endpoint but admin-only filters are ignored
+        assert response.status_code == 200
 
     def test_license_expiring_filter_works(self, admin_client, db):
         """Test that license_expiring filter works correctly"""
