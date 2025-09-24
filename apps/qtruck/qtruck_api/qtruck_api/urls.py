@@ -25,11 +25,11 @@ urlpatterns = [
     
     # Domain-based apps
     path('auth/', include('authentication.urls')),
-    path('/api/users/', include('users.urls')),
-    path('/api/drivers/', include('drivers.urls')),
-    path('/api/api/admin/', include('administration.urls')),
-    path('/api/feedback/', include('feedback.urls')),
-    path('/api/fleet/', include('fleet.urls')),
+    path('api/users/', include('users.urls')),
+    path('api/drivers/', include('drivers.urls')),
+    path('api/admin/', include('administration.urls')),
+    path('api/feedback/', include('feedback.urls')),
+    path('api/fleet/', include('fleet.urls')),
     
     # Settings app (system-wide settings)
     path('api/settings/', include('settings.urls')),

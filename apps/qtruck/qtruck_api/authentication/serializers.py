@@ -48,18 +48,20 @@ class EmailAliasTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         # Check if user is active (not deactivated)
         if not user.is_active:
-            raise serializers.ValidationError({'email': 'Account has been deactivated. Please contact administrator.'})
+            from rest_framework.exceptions import AuthenticationFailed
+            raise AuthenticationFailed('Account has been deactivated. Please contact administrator.')
         
         # Check if user is approved
-        if not user.is_approved:
-            raise serializers.ValidationError({'email': 'Account pending approval. Please contact administrator.'})
+        if user.status != 'approved':
+            from rest_framework.exceptions import AuthenticationFailed
+            raise AuthenticationFailed('Account pending approval. Please contact administrator.')
         
         # Verify password
         if not user.check_password(password):
             raise serializers.ValidationError({'password': 'Invalid credentials.'})
         
         # Set the username for parent class validation (SimpleJWT still expects username internally)
-        attrs['username'] = user.username
+        attrs['username'] = user.email  # Use email as username since we don't have username field
         
         # Call parent validation
         data = super().validate(attrs)
@@ -67,7 +69,7 @@ class EmailAliasTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add custom claims
         data['user_type'] = user.user_type
         data['user_id'] = str(user.id)
-        data['is_approved'] = user.is_approved
+        data['status'] = user.status
         
         return data
 
@@ -136,7 +138,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         
         user = CustomUser.objects.create_user(
-            username=validated_data['email'],  # Use email as username
             email=validated_data['email'],
             password=password,
             first_name=validated_data.get('first_name', ''),
