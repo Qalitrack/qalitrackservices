@@ -117,7 +117,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if user_type == 'admin':
             existing_admins = CustomUser.objects.filter(user_type='admin').count()
             if existing_admins > 0:
-                raise serializers.ValidationError({'email': 'Admin accounts can only be created by existing admins after the first user. Please contact an administrator or use +driver/+tester.'})
+                raise serializers.ValidationError({'email': 'You cannot create an admin account. Please contact an administrator for access.'})
         
         # Check tester registration permissions
         if user_type == 'tester':
