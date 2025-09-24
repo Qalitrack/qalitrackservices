@@ -46,12 +46,8 @@ from settings.models import SystemSettings
     partial_update=extend_schema(tags=["Drivers"]),
     destroy=extend_schema(tags=["Drivers"]),
     approve=extend_schema(tags=["Drivers"]),
-    pending=extend_schema(tags=["Drivers"]),
     me=extend_schema(tags=["Drivers"]),
-    history=extend_schema(tags=["Drivers"]),
-    activity=extend_schema(tags=["Drivers"]),
-    heatmap=extend_schema(tags=["Drivers"]),
-    expiring_licenses=extend_schema(tags=["Drivers"])
+    history=extend_schema(tags=["Drivers"])
 )
 class DriverProfileViewSet(viewsets.ModelViewSet):
     """
@@ -82,17 +78,12 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
             return DriverProfileUpdateSerializer
         elif self.action == 'approve':
             return DriverProfileApprovalSerializer
-        elif self.action in ['activity', 'heatmap']:
-            return DriverEnhancedSerializer
         return DriverProfileSerializer
     
     def get_permissions(self):
         """Apply action-specific permissions following existing patterns"""
-        if self.action in ['approve', 'pending', 'expiring_licenses']:
+        if self.action == 'approve':
             return [IsApproved(), IsAdmin()]
-        elif self.action in ['activity', 'heatmap']:
-            # Admin can see all, drivers/testers see own
-            return [IsApproved()]
         elif self.action == 'me':
             return [IsApproved(), IsDriver()]
         elif self.action in ['update', 'partial_update', 'destroy']:
@@ -138,6 +129,109 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
             request=self.request
         )
     
+    @extend_schema(
+        parameters=[
+            OpenApiParameter('status', OpenApiTypes.STR, description='Filter by status (admin only): pending, approved, draft, rejected'),
+            OpenApiParameter('license_expiring', OpenApiTypes.INT, description='Filter by licenses expiring within N days (admin only)'),
+            OpenApiParameter('license_expires_before', OpenApiTypes.DATE, description='Filter by licenses expiring before date (admin only)'),
+            OpenApiParameter('has_pending_version', OpenApiTypes.BOOL, description='Filter by pending version status'),
+            OpenApiParameter('include', OpenApiTypes.STR, description='Include enhanced data: stats, activity, heatmap (comma-separated)'),
+            OpenApiParameter('days', OpenApiTypes.INT, description='Days for activity/heatmap data (default: 30)'),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """List driver profiles with query filters and enhanced data includes"""
+        queryset = self.get_queryset()
+        
+        # Apply admin-only filters
+        if request.user.user_type == 'admin':
+            # Status filter
+            status = request.query_params.get('status')
+            if status:
+                queryset = queryset.filter(status=status)
+            
+            # License expiring filter
+            license_expiring = request.query_params.get('license_expiring')
+            if license_expiring:
+                try:
+                    days = int(license_expiring)
+                    warning_date = timezone.now().date() + timedelta(days=days)
+                    queryset = queryset.filter(
+                        is_current=True,
+                        license_expiry_date__lte=warning_date
+                    )
+                except ValueError:
+                    pass
+            
+            # License expires before filter
+            license_expires_before = request.query_params.get('license_expires_before')
+            if license_expires_before:
+                try:
+                    from datetime import datetime
+                    expire_date = datetime.strptime(license_expires_before, '%Y-%m-%d').date()
+                    queryset = queryset.filter(
+                        is_current=True,
+                        license_expiry_date__lte=expire_date
+                    )
+                except ValueError:
+                    pass
+        
+        # Has pending version filter (available to all users)
+        has_pending = request.query_params.get('has_pending_version')
+        if has_pending is not None:
+            has_pending_bool = has_pending.lower() in ['true', '1', 'yes']
+            if has_pending_bool:
+                # Get drivers that have pending versions
+                drivers_with_pending = DriverProfile.objects.filter(
+                    status__in=['pending', 'draft']
+                ).values_list('driver', flat=True)
+                queryset = queryset.filter(driver__in=drivers_with_pending)
+            else:
+                # Get drivers that don't have pending versions
+                drivers_with_pending = DriverProfile.objects.filter(
+                    status__in=['pending', 'draft']
+                ).values_list('driver', flat=True)
+                queryset = queryset.exclude(driver__in=drivers_with_pending)
+        
+        # Paginate the queryset
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            response_data = serializer.data
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            response_data = serializer.data
+        
+        # Add enhanced data based on include parameters
+        include_params = request.query_params.get('include', '').split(',')
+        include_params = [param.strip().lower() for param in include_params if param.strip()]
+        days = int(request.query_params.get('days', 30))
+        
+        if include_params:
+            for i, profile_data in enumerate(response_data):
+                profile = page[i] if page else queryset[i]
+                driver = profile.driver
+                
+                if 'stats' in include_params:
+                    profile_data['stats'] = driver.get_activity_stats(days)
+                
+                if 'activity' in include_params:
+                    activities = DriverActivity.objects.filter(driver=driver).order_by('-created_at')[:50]
+                    profile_data['recent_activity'] = {
+                        'activities': DriverActivitySerializer(activities, many=True).data,
+                        'stats': driver.get_activity_stats(days)
+                    }
+                
+                if 'heatmap' in include_params:
+                    year = request.query_params.get('year')
+                    if year:
+                        year = int(year)
+                    profile_data['heatmap_data'] = driver.get_activity_heatmap(year)
+        
+        if page is not None:
+            return self.get_paginated_response(response_data)
+        return Response(response_data)
+    
     @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
     @extend_schema(
         summary="Approve, reject, or request changes for a driver profile",
@@ -175,16 +269,6 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=False, methods=['get'], permission_classes=[IsAdmin])
-    @extend_schema(
-        summary="Get all pending driver profiles for admin approval",
-        responses={200: DriverProfileSerializer(many=True)}
-    )
-    def pending(self, request):
-        """Get all pending driver profiles for admin approval"""
-        pending = DriverProfile.objects.filter(status='pending').select_related('driver', 'driver__user')
-        serializer = self.get_serializer(pending, many=True)
-        return Response(serializer.data)
     
     @action(detail=True, methods=['get'])
     @extend_schema(
@@ -198,78 +282,8 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
         serializer = DriverProfileChangeSerializer(changes, many=True)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['get'], permission_classes=[IsApproved])
-    @extend_schema(
-        summary="Get driver activity data",
-        parameters=[
-            OpenApiParameter('days', OpenApiTypes.INT, description='Number of days to include (default: 30)')
-        ],
-        responses={200: {'description': 'Driver activity data with stats'}}
-    )
-    def activity(self, request, pk=None):
-        """Get driver activity data (from DriverEnhancedViewSet)"""
-        profile = self.get_object()
-        driver = profile.driver
-        days = int(request.query_params.get('days', 30))
-        
-        activities = DriverActivity.objects.filter(driver=driver).order_by('-created_at')[:100]
-        stats = driver.get_activity_stats(days)
-        
-        return Response({
-            'recent_activities': DriverActivitySerializer(activities, many=True).data,
-            'stats': stats
-        })
     
-    @action(detail=True, methods=['get'], permission_classes=[IsApproved])
-    @extend_schema(
-        summary="Get driver activity heatmap data",
-        parameters=[
-            OpenApiParameter('year', OpenApiTypes.INT, description='Year for heatmap (default: current year)')
-        ],
-        responses={200: {'description': 'Heatmap data for calendar visualization'}}
-    )
-    def heatmap(self, request, pk=None):
-        """Get driver activity heatmap data (from DriverEnhancedViewSet)"""
-        profile = self.get_object()
-        driver = profile.driver
-        year = request.query_params.get('year')
-        if year:
-            year = int(year)
-        
-        heatmap_data = driver.get_activity_heatmap(year)
-        return Response(heatmap_data)
     
-    @action(detail=False, methods=['get'], permission_classes=[IsAdmin])
-    @extend_schema(
-        summary="Get drivers with expiring licenses",
-        parameters=[
-            OpenApiParameter('days', OpenApiTypes.INT, description='Days until expiry warning (uses system setting if not provided)')
-        ],
-        responses={200: DriverEnhancedSerializer(many=True)}
-    )
-    def expiring_licenses(self, request):
-        """Get drivers with expiring licenses (from DriverEnhancedViewSet)"""
-        settings = SystemSettings.get_settings()
-        warning_days = int(request.query_params.get('days', settings.license_expiry_warning_days))
-        
-        warning_date = timezone.now().date() + timedelta(days=warning_days)
-        
-        expiring_profiles = DriverProfile.objects.filter(
-            is_current=True,
-            license_expiry_date__lte=warning_date
-        ).select_related('driver')
-        
-        drivers_data = []
-        for profile in expiring_profiles:
-            driver_data = DriverEnhancedSerializer(profile.driver).data
-            driver_data['license_expiry_info'] = {
-                'expiry_date': profile.license_expiry_date,
-                'days_until_expiry': profile.days_until_license_expiry(),
-                'is_expired': profile.is_license_expired
-            }
-            drivers_data.append(driver_data)
-        
-        return Response(drivers_data)
     
     @action(detail=False, methods=['get', 'patch'], permission_classes=[IsApproved, IsDriver])
     @extend_schema(
