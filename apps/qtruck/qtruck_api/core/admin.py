@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import (
     CustomUser, UserProfile, SystemSettings, Driver, Truck, Trip,
-    Material, MaterialCost, Expense, Receipt, VehicleMileage, Feedback
+    Material, MaterialPhoto, MaterialCost, Expense, Receipt, VehicleMileage, Feedback
 )
 
 
@@ -75,9 +75,17 @@ class TripAdmin(admin.ModelAdmin):
 
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
-    list_display = ('name', 'trip', 'quantity', 'created_at')
+    list_display = ('name', 'description', 'created_at')
     list_filter = ('created_at',)
-    search_fields = ('name', 'trip__id')
+    search_fields = ('name', 'description')
+    readonly_fields = ('created_at', 'updated_at')
+
+
+@admin.register(MaterialPhoto)
+class MaterialPhotoAdmin(admin.ModelAdmin):
+    list_display = ('material', 'caption', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('material__name', 'caption')
     readonly_fields = ('created_at', 'updated_at')
 
 
