@@ -37,14 +37,22 @@ class SystemSettings(BaseModel):
     require_license_images = models.BooleanField(default=True)
     require_id_images = models.BooleanField(default=True)
     auto_approve_profile_updates = models.BooleanField(default=False)
+    
+    # Auto-approval settings for user types
+    auto_approve_user_types = models.JSONField(
+        default=list,
+        help_text="List of user types to auto-approve on registration (e.g., ['admin'])"
+    )
 
     class Meta:
         verbose_name_plural = "System Settings"
 
     @classmethod
     def get_settings(cls):
-        settings, created = cls.objects.get_or_create(pk=1)
-        if created:
+        # Get the first settings object or create one if none exist
+        settings = cls.objects.first()
+        if not settings:
+            settings = cls.objects.create()
             # Create default license classes on first setup
             cls._create_default_license_classes()
         return settings

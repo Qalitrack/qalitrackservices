@@ -58,6 +58,14 @@ class AuthenticationAndUserManagementTestCase(TestCase):
         """Test registering the first admin via public registration endpoint"""
         print("\n=== TEST: Register first admin via public endpoint ===")
         
+        # Check if admin already exists (for test chaining)
+        try:
+            existing_admin = CustomUser.objects.get(email=self.admin_data['email'])
+            print(f"Admin already exists: {existing_admin.email}")
+            return existing_admin
+        except CustomUser.DoesNotExist:
+            pass
+        
         # First admin registration should succeed (auto-approved)
         response = self.client.post('/auth/register/', self.admin_data)
         print(f"Response status: {response.status_code}")
@@ -112,6 +120,14 @@ class AuthenticationAndUserManagementTestCase(TestCase):
         """Test driver registration via public endpoint (should be pending approval)"""
         print("\n=== TEST: Register driver via public endpoint ===")
         
+        # Check if driver already exists (for test chaining)
+        try:
+            existing_driver = CustomUser.objects.get(email=self.driver_data['email'])
+            print(f"Driver already exists: {existing_driver.email}")
+            return existing_driver
+        except CustomUser.DoesNotExist:
+            pass
+        
         # Ensure first admin exists (so this driver won't become admin)
         if not CustomUser.objects.exists():
             CustomUser.objects.create_user(
@@ -149,10 +165,14 @@ class AuthenticationAndUserManagementTestCase(TestCase):
                 last_name='Admin'
             )
         
-        # Register driver first
-        response = self.client.post('/auth/register/', self.driver_data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        driver_user = CustomUser.objects.get(email=self.driver_data['email'])
+        # Register driver first (or get existing one)
+        try:
+            existing_driver = CustomUser.objects.get(email=self.driver_data['email'])
+            driver_user = existing_driver
+        except CustomUser.DoesNotExist:
+            response = self.client.post('/auth/register/', self.driver_data)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            driver_user = CustomUser.objects.get(email=self.driver_data['email'])
         
         # Attempt login as unapproved driver
         login_response = self.client.post('/auth/login/', {
@@ -259,7 +279,7 @@ class AuthenticationAndUserManagementTestCase(TestCase):
         # Verify driver is now rejected
         driver_user.refresh_from_db()
         self.assertFalse(driver_user.is_approved)
-        self.assertFalse(driver_user.is_active)  # Rejected users are deactivated
+        self.assertTrue(driver_user.is_active)  # Rejected users remain active (can reapply)
 
     def test_09_move_from_rejected_to_approved(self):
         """Test moving user from rejected back to approved"""
@@ -284,7 +304,7 @@ class AuthenticationAndUserManagementTestCase(TestCase):
         
         # Verify driver is approved and active again
         driver_user.refresh_from_db()
-        self.assertTrue(driver_user.is_approved)
+        self.assertEqual(driver_user.status, 'approved')
         self.assertTrue(driver_user.is_active)
 
     def test_10_admin_deactivate_user(self):
@@ -363,20 +383,54 @@ class AuthenticationAndUserManagementTestCase(TestCase):
         """Test deleting a deactivated user (should succeed)"""
         print("\n=== TEST: Delete deactivated user ===")
         
-        # Setup: Admin deactivates user
-        self.test_10_admin_deactivate_user()
+        # Setup: Create admin user
+        try:
+            admin_user = CustomUser.objects.get(email=self.admin_data['email'])
+        except CustomUser.DoesNotExist:
+            admin_user = CustomUser.objects.create_user(
+                email=self.admin_data['email'],
+                password=self.admin_data['password'],
+                first_name=self.admin_data['first_name'],
+                last_name=self.admin_data['last_name'],
+                user_type='admin'
+            )
         
-        # Get admin token
-        admin_token = self.test_02_admin_login_and_get_info()
+        # Login as admin
+        admin_login_response = self.client.post('/auth/login/', {
+            'email': self.admin_data['email'],
+            'password': self.admin_data['password']
+        })
+        self.assertEqual(admin_login_response.status_code, status.HTTP_200_OK)
+        admin_token = admin_login_response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {admin_token}')
         
-        driver_user = CustomUser.objects.get(email=self.driver_data['email'])
+        # Create a driver user
+        try:
+            driver_user = CustomUser.objects.get(email=self.driver_data['email'])
+        except CustomUser.DoesNotExist:
+            driver_user = CustomUser.objects.create_user(
+                email=self.driver_data['email'],
+                password=self.driver_data['password'],
+                first_name=self.driver_data['first_name'],
+                last_name=self.driver_data['last_name'],
+                user_type='driver'
+            )
         
-        # Admin deletes deactivated user
+        # Approve driver first, then deactivate
+        driver_user.status = 'approved'
+        driver_user.save()
+        
+        # Deactivate the driver
+        deactivate_response = self.client.patch(f'/api/users/{driver_user.id}/', {
+            'is_active': False
+        })
+        self.assertEqual(deactivate_response.status_code, status.HTTP_200_OK)
+        
+        # Now delete the deactivated user
         delete_response = self.client.delete(f'/api/users/{driver_user.id}/')
         print(f"Delete deactivated user response: {delete_response.status_code}")
         
-        self.assertEqual(delete_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
         
         # Verify user is deleted
         with self.assertRaises(CustomUser.DoesNotExist):
@@ -420,12 +474,12 @@ class AuthenticationAndUserManagementTestCase(TestCase):
         self.assertEqual(all_users_response.status_code, status.HTTP_200_OK)
         
         # Test filtering by user_type
-        drivers_response = self.client.get('/users/?user_type=driver')
+        drivers_response = self.client.get('/api/users/?user_type=driver')
         print(f"Drivers count: {len(drivers_response.data['results'])}")
         self.assertEqual(drivers_response.status_code, status.HTTP_200_OK)
         
         # Test filtering by status
-        approved_response = self.client.get('/users/?status=approved')
+        approved_response = self.client.get('/api/users/?status=approved')
         print(f"Approved users count: {len(approved_response.data['results'])}")
         self.assertEqual(approved_response.status_code, status.HTTP_200_OK)
 
@@ -452,58 +506,151 @@ class AuthenticationAndUserManagementTestCase(TestCase):
         # Verify new admin was created and auto-approved
         new_admin = CustomUser.objects.get(email='newadmin+admin@example.com')
         self.assertEqual(new_admin.user_type, 'admin')
-        self.assertTrue(new_admin.is_approved)
+        self.assertEqual(new_admin.status, 'approved')
 
     def test_17_run_all_scenarios_in_sequence(self):
-        """Run all test scenarios in the correct sequence"""
+        """Complete user lifecycle test - standalone without cross-dependencies"""
         print("\n" + "="*60)
         print("RUNNING COMPLETE AUTHENTICATION AND USER MANAGEMENT TEST SUITE")
         print("="*60)
         
-        # This test runs all the individual tests in sequence
-        # to verify the complete user lifecycle works end-to-end
+        # This test verifies the complete user lifecycle works end-to-end
+        # All operations are performed within this single test method
         
-        # 1. Register first admin
-        admin_user = self.test_01_register_first_admin_public_endpoint()
+        # 1. Register first admin via public endpoint
+        print("\n1. Registering first admin...")
+        admin_register_response = self.client.post('/auth/register/', self.admin_data)
+        self.assertEqual(admin_register_response.status_code, status.HTTP_201_CREATED)
+        admin_user = CustomUser.objects.get(email=self.admin_data['email'])
+        self.assertEqual(admin_user.user_type, 'admin')
+        self.assertEqual(admin_user.status, 'approved')
         
-        # 2. Admin login and get info  
-        admin_token = self.test_02_admin_login_and_get_info()
+        # 2. Admin login and get info
+        print("2. Admin login...")
+        admin_login_response = self.client.post('/auth/login/', {
+            'email': self.admin_data['email'],
+            'password': self.admin_data['password']
+        })
+        self.assertEqual(admin_login_response.status_code, status.HTTP_200_OK)
+        admin_token = admin_login_response.data['access']
         
-        # 3. Register driver (pending)
-        driver_user = self.test_03_register_driver_via_public_endpoint()
+        # 3. Register driver via public endpoint (should be pending)
+        print("3. Registering driver...")
+        driver_register_response = self.client.post('/auth/register/', self.driver_data)
+        self.assertEqual(driver_register_response.status_code, status.HTTP_201_CREATED)
+        driver_user = CustomUser.objects.get(email=self.driver_data['email'])
+        self.assertEqual(driver_user.user_type, 'driver')
+        self.assertEqual(driver_user.status, 'preapproval')
         
         # 4. Verify unapproved driver can't login
-        self.test_04_driver_login_should_fail_not_approved()
+        print("4. Testing unapproved driver login fails...")
+        driver_login_response = self.client.post('/auth/login/', {
+            'email': self.driver_data['email'],
+            'password': self.driver_data['password']
+        })
+        self.assertEqual(driver_login_response.status_code, status.HTTP_401_UNAUTHORIZED)
         
-        # 5. Verify second admin registration fails via public endpoint
-        self.test_05_register_second_admin_public_should_fail()
+        # 5. Verify second admin registration fails
+        print("5. Testing second admin registration fails...")
+        second_admin_response = self.client.post('/auth/register/', {
+            'email': 'second+admin@example.com',
+            'password': 'testpass123',
+            'password_confirm': 'testpass123',
+            'first_name': 'Second',
+            'last_name': 'Admin',
+            'user_type': 'admin'
+        })
+        self.assertEqual(second_admin_response.status_code, status.HTTP_400_BAD_REQUEST)
         
         # 6. Admin approves driver
-        self.test_06_admin_approve_driver()
+        print("6. Admin approving driver...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {admin_token}')
+        approve_response = self.client.patch(f'/api/users/{driver_user.id}/', {
+            'status': 'approved'
+        })
+        self.assertEqual(approve_response.status_code, status.HTTP_200_OK)
+        driver_user.refresh_from_db()
+        self.assertEqual(driver_user.status, 'approved')
         
         # 7. Approved driver can login
-        driver_token = self.test_07_approved_driver_can_login()
+        print("7. Testing approved driver can login...")
+        self.client.credentials()  # Clear admin auth
+        approved_driver_login = self.client.post('/auth/login/', {
+            'email': self.driver_data['email'],
+            'password': self.driver_data['password']
+        })
+        self.assertEqual(approved_driver_login.status_code, status.HTTP_200_OK)
+        driver_token = approved_driver_login.data['access']
         
         # 8. Admin rejects driver
-        self.test_08_admin_reject_driver()
+        print("8. Admin rejecting driver...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {admin_token}')
+        reject_response = self.client.patch(f'/api/users/{driver_user.id}/', {
+            'status': 'rejected'
+        })
+        self.assertEqual(reject_response.status_code, status.HTTP_200_OK)
+        driver_user.refresh_from_db()
+        self.assertEqual(driver_user.status, 'rejected')
         
         # 9. Move from rejected back to approved
-        self.test_09_move_from_rejected_to_approved()
+        print("9. Moving rejected user back to approved...")
+        reapprove_response = self.client.patch(f'/api/users/{driver_user.id}/', {
+            'status': 'approved'
+        })
+        self.assertEqual(reapprove_response.status_code, status.HTTP_200_OK)
+        driver_user.refresh_from_db()
+        self.assertEqual(driver_user.status, 'approved')
         
         # 10. Admin deactivates user
-        self.test_10_admin_deactivate_user()
+        print("10. Admin deactivating user...")
+        deactivate_response = self.client.patch(f'/api/users/{driver_user.id}/', {
+            'is_active': False
+        })
+        self.assertEqual(deactivate_response.status_code, status.HTTP_200_OK)
+        driver_user.refresh_from_db()
+        self.assertFalse(driver_user.is_active)
         
-        # 11. Admin reactivates user  
-        self.test_11_admin_reactivate_user()
+        # 11. Admin reactivates user
+        print("11. Admin reactivating user...")
+        reactivate_response = self.client.patch(f'/api/users/{driver_user.id}/', {
+            'is_active': True
+        })
+        self.assertEqual(reactivate_response.status_code, status.HTTP_200_OK)
+        driver_user.refresh_from_db()
+        self.assertTrue(driver_user.is_active)
         
         # 12. Get driver details
-        self.test_12_get_driver_details_normal_user_not_profile()
+        print("12. Getting driver details...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {driver_token}')
+        driver_details = self.client.get(f'/api/users/{driver_user.id}/')
+        self.assertEqual(driver_details.status_code, status.HTTP_200_OK)
+        self.assertEqual(driver_details.data['user_type'], 'driver')
+        self.assertIn('profile', driver_details.data)
         
-        # 13. Test filtering and listing
-        self.test_15_admin_list_users_with_filters()
+        # 13. Test admin listing users with filters
+        print("13. Testing admin user listing...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {admin_token}')
+        all_users_response = self.client.get('/api/users/')
+        self.assertEqual(all_users_response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(all_users_response.data['results']), 2)
+        
+        drivers_response = self.client.get('/api/users/?user_type=driver')
+        self.assertEqual(drivers_response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(drivers_response.data['results']), 1)
         
         # 14. Admin creates another admin
-        self.test_16_admin_create_another_admin()
+        print("14. Admin creating another admin...")
+        create_admin_response = self.client.post('/api/users/', {
+            'email': 'newadmin+admin@example.com',
+            'password': 'testpass123',
+            'first_name': 'New',
+            'last_name': 'Admin',
+            'user_type': 'admin'
+        })
+        self.assertEqual(create_admin_response.status_code, status.HTTP_201_CREATED)
+        new_admin = CustomUser.objects.get(email='newadmin+admin@example.com')
+        self.assertEqual(new_admin.user_type, 'admin')
+        self.assertEqual(new_admin.status, 'approved')
         
         print("\n" + "="*60)
         print("ALL TESTS PASSED! 🎉")

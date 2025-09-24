@@ -438,17 +438,6 @@ def get_driver_activity_stats(driver, days=30):
     }
 
 
-# Auto-create driver object for driver users
-@receiver(post_save, sender=User)
-def create_driver_object(sender, instance, created, **kwargs):
-    if created and instance.user_type == 'driver':
-        Driver.objects.create(
-            user=instance,
-            name=f"{instance.first_name} {instance.last_name}".strip() or instance.username,
-            phone='',
-            license_number=''
-        )
-
 
 # Signal to track profile changes
 @receiver(post_save, sender=DriverProfile)

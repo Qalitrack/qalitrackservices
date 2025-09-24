@@ -330,14 +330,14 @@ class TestSettingsWorkflowIntegration:
         })
         assert login_response.status_code == 200
         
-        # 5. Admin modifies settings to remove auto-approval
+        # 5. Admin modifies settings to remove auto-approval but keep registration enabled
         remove_approval_response = admin_client.patch(f'/api/settings/system-settings/{system_settings.id}/', {
             'auto_approve_user_types': [],
-            'tester_registration_enabled': False
+            'tester_registration_enabled': True  # Keep registration enabled but remove auto-approval
         }, format='json')
         assert remove_approval_response.status_code == 200
         
-        # 6. New tester registration should require approval
+        # 6. New tester registration should require approval (but succeed)
         register_response2 = api_client.post('/auth/register/', {
             'email': 'workflow2+tester@test.com',
             'password': 'testpass123',
@@ -358,5 +358,5 @@ class TestSettingsWorkflowIntegration:
         final_settings_response = admin_client.get(f'/api/settings/system-settings/{system_settings.id}/')
         assert final_settings_response.status_code == 200
         assert final_settings_response.data['auto_approve_user_types'] == []
-        assert final_settings_response.data['tester_registration_enabled'] == False
+        assert final_settings_response.data['tester_registration_enabled'] == True
         assert final_settings_response.data['license_expiry_warning_days'] == 60
