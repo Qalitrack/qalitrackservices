@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         # Handle filtering by status or user_type via query parameters
-        queryset = CustomUser.objects.all()
+        queryset = CustomUser.objects.all().order_by('-created_at')
         
         # For retrieve actions, don't filter queryset - let permissions handle access control
         if not self.request.user.user_type == 'admin' and self.action == 'list':
@@ -73,6 +73,18 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAdminOrOwner]
         return [permission() for permission in permission_classes]
     
+    def create(self, request, *args, **kwargs):
+        """Create a new user with admin approval logic"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Auto-approve admin users created by other admins
+        if serializer.validated_data.get('user_type') == 'admin':
+            serializer.validated_data['status'] = 'approved'
+        
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
     def update(self, request, *args, **kwargs):
         """Handle user updates including activation/deactivation/approval"""
@@ -90,18 +102,22 @@ class UserViewSet(viewsets.ModelViewSet):
             new_status = request.data.get('status')
             current_status = instance.status
             
-            # Validate status transitions
-            valid_transitions = {
-                'preapproval': ['approved', 'rejected'],
-                'approved': ['rejected'],  # Can reject approved users
-                'rejected': ['preapproval']  # Can move rejected back to preapproval
-            }
-            
-            if new_status not in valid_transitions.get(current_status, []):
-                return Response(
-                    {'error': f'Invalid status transition from {current_status} to {new_status}'}, 
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            # Allow setting the same status (no-op)
+            if new_status == current_status:
+                pass  # Allow no-op transitions
+            else:
+                # Validate status transitions
+                valid_transitions = {
+                    'preapproval': ['approved', 'rejected'],
+                    'approved': ['rejected'],  # Can reject approved users
+                    'rejected': ['preapproval', 'approved']  # Can move rejected back to preapproval or directly approve
+                }
+                
+                if new_status not in valid_transitions.get(current_status, []):
+                    return Response(
+                        {'error': f'Invalid status transition from {current_status} to {new_status}'}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
             
             instance.status = new_status
             instance.save()
@@ -171,9 +187,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user_email = instance.email
         self.perform_destroy(instance)
         
-        return Response({
-            'message': f'User {user_email} deleted successfully'
-        })
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
     def me(self, request):

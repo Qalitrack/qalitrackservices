@@ -1,28 +1,21 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    UserApprovalView, PendingUsersView, UsersByTypeView, CreateAdminView,
-    UserDeactivateView, UserReactivateView, UserDeleteView, UserProfileViewSet, user_info
-)
+from .views import UserViewSet
 
 router = DefaultRouter()
-router.register(r'profiles', UserProfileViewSet, basename='user-profiles')
+router.register(r'', UserViewSet, basename='users')
 
 urlpatterns = [
-    # User management URLs: /users/
-    path('me/', user_info, name='user_info'),
-    path('pending/', PendingUsersView.as_view(), name='pending_users'),
-    path('create-admin/', CreateAdminView.as_view(), name='create_admin'),
+    # RESTful endpoints via UserViewSet:
+    # GET    /users/                          - List users (with query filters: ?status=pending&user_type=driver)
+    # POST   /users/                          - Create admin user (admin only)
+    # GET    /users/{id}/                     - Get specific user
+    # PUT    /users/{id}/                     - Update user (full update)
+    # PATCH  /users/{id}/                     - Update user (partial update, includes approve/reject/activate/deactivate)
+    #                                          Use: {"is_approved": true/false} for approve/reject
+    #                                          Use: {"is_active": true/false} for activate/deactivate
+    # DELETE /users/{id}/                     - Delete user (admin only, deactivated/rejected users only)
+    # GET    /users/me/                       - Get current user info
     
-    # User actions - these need to be after 'create-admin' to avoid conflicts
-    path('approve/', UserApprovalView.as_view(), name='approve_user'),  # Changed to use POST data for user_id
-    path('activate/', UserReactivateView.as_view(), name='activate_user'),
-    path('deactivate/', UserDeactivateView.as_view(), name='deactivate_user'), 
-    path('delete/', UserDeleteView.as_view(), name='delete_user'),
-    
-    # Include router URLs
     path('', include(router.urls)),
-    
-    # Users list - this should be last to avoid conflicts
-    path('', UsersByTypeView.as_view(), name='users_by_type'),
 ]
