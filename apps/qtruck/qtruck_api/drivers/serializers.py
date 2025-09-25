@@ -292,6 +292,18 @@ class DriverProfileSerializer(serializers.ModelSerializer):
 class DriverProfileCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating new driver profiles"""
     
+    # Use our custom fields that handle multipart form data (same as update serializer)
+    license_expiry_date = FlexibleDateField()
+    full_name = FlexibleCharField()
+    phone_number = FlexibleCharField()
+    id_number = FlexibleCharField()
+    license_number = FlexibleCharField()
+    license_classes = serializers.PrimaryKeyRelatedField(
+        many=True, 
+        queryset=LicenseClass.objects.all(),
+        required=False
+    )
+    
     class Meta:
         model = DriverProfile
         fields = [
@@ -301,13 +313,134 @@ class DriverProfileCreateSerializer(serializers.ModelSerializer):
             'id_front_image', 'id_back_image'
         ]
     
+    def to_internal_value(self, data):
+        """Handle form data conversion for multipart/form-data requests (same logic as update serializer)"""
+        import io
+        import logging
+        from django.core.files.uploadedfile import InMemoryUploadedFile
+        
+        logger = logging.getLogger(__name__)
+        logger.error(f"DriverProfileCreateSerializer received data: {dict(data) if hasattr(data, 'items') else data}")
+        
+        # Log license_expiry_date specifically
+        if 'license_expiry_date' in data:
+            led_value = data['license_expiry_date']
+            logger.error(f"Raw license_expiry_date value: {repr(led_value)}, type: {type(led_value)}")
+        
+        # Convert QueryDict to regular dict to avoid QueryDict string conversion issues
+        if hasattr(data, 'dict'):
+            # It's a QueryDict, convert to regular dict
+            regular_dict = {}
+            for key, value in data.items():
+                if key.startswith('license_classes'):
+                    # Keep license_classes as-is for now
+                    regular_dict[key] = value
+                elif isinstance(value, list) and len(value) == 1:
+                    # Convert single-item lists to strings (normal form behavior)
+                    regular_dict[key] = value[0]
+                else:
+                    regular_dict[key] = value
+            data = regular_dict
+            logger.error(f"Converted QueryDict to regular dict")
+        else:
+            # Make a mutable copy if it's already a dict
+            data = data.copy()
+        
+        # Handle license_classes from multipart form data (indexed keys like license_classes[0])
+        license_classes_indexed_keys = [key for key in data.keys() if key.startswith('license_classes[') and key.endswith(']')]
+        if license_classes_indexed_keys:
+            logger.error(f"Found indexed license_classes keys: {license_classes_indexed_keys}")
+            
+            # Collect all license class values from indexed keys
+            license_classes_values = []
+            for key in license_classes_indexed_keys:
+                value = data[key]
+                if isinstance(value, list):
+                    license_classes_values.extend(value)
+                else:
+                    license_classes_values.append(value)
+            
+            # Remove the indexed keys and set the proper license_classes key
+            for key in license_classes_indexed_keys:
+                del data[key]
+            
+            data['license_classes'] = license_classes_values
+            logger.error(f"Converted indexed license_classes to: {license_classes_values}")
+        
+        # Regular license_classes handling
+        if 'license_classes' in data:
+            license_classes_data = data.get('license_classes')
+            logger.error(f"Final license_classes data: {repr(license_classes_data)}, type: {type(license_classes_data)}")
+            
+            # Handle case where Django form parsing creates a list from multiple fields with same name
+            if isinstance(license_classes_data, (list, tuple)):
+                # Clean up the list - remove any nested lists or invalid entries
+                cleaned_list = []
+                for item in license_classes_data:
+                    if isinstance(item, str):
+                        # Handle JSON string case (Flutter)
+                        if item.startswith('[') and item.endswith(']'):
+                            try:
+                                import json
+                                parsed_array = json.loads(item)
+                                if isinstance(parsed_array, list):
+                                    cleaned_list.extend(parsed_array)
+                                    logger.error(f"Parsed JSON string to array: {parsed_array}")
+                                else:
+                                    cleaned_list.append(item)
+                            except json.JSONDecodeError:
+                                cleaned_list.append(item)
+                        else:
+                            cleaned_list.append(item)
+                    elif isinstance(item, (list, tuple)):
+                        # Handle nested lists
+                        cleaned_list.extend([str(sub_item) for sub_item in item])
+                    else:
+                        cleaned_list.append(str(item))
+                
+                data['license_classes'] = cleaned_list
+                logger.error(f"Cleaned license_classes to: {cleaned_list}")
+            else:
+                # If it's not a list, make sure it's properly formatted
+                if isinstance(license_classes_data, str):
+                    # Single UUID string
+                    data['license_classes'] = [license_classes_data]
+                    logger.error(f"Converted single string to list: {[license_classes_data]}")
+        
+        # Final debug log before DRF processing
+        if 'license_classes' in data:
+            final_lc_data = data['license_classes']
+            logger.error(f"About to send to DRF PrimaryKeyRelatedField: {repr(final_lc_data)}, type: {type(final_lc_data)}")
+            if isinstance(final_lc_data, list):
+                logger.error(f"List contents: {[f'{repr(item)} ({type(item)})' for item in final_lc_data]}")
+        
+        try:
+            result = super().to_internal_value(data)
+            logger.error(f"DriverProfileCreateSerializer validation SUCCESS: {result}")
+            return result
+        except Exception as e:
+            logger.error(f"DriverProfileCreateSerializer validation ERROR: {e}")
+            logger.error(f"Error type: {type(e)}")
+            if hasattr(e, 'detail'):
+                logger.error(f"Error detail: {e.detail}")
+            raise
+    
     def create(self, validated_data):
-        # Handle many-to-many field
+        """Custom create method to handle license classes"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        # Extract license_classes from validated_data
         license_classes_data = validated_data.pop('license_classes', [])
         
+        # Create the profile
         profile = super().create(validated_data)
+        
+        # Handle license_classes separately after creating
         if license_classes_data:
+            logger.error(f"Setting license_classes on new profile: {[lc.name for lc in license_classes_data]}")
             profile.license_classes.set(license_classes_data)
+        
         return profile
     
     def validate_license_expiry_date(self, value):
@@ -344,6 +477,11 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
     phone_number = FlexibleCharField()
     id_number = FlexibleCharField()
     license_number = FlexibleCharField()
+    license_classes = serializers.PrimaryKeyRelatedField(
+        many=True, 
+        queryset=LicenseClass.objects.all(),
+        required=False
+    )
     
     class Meta:
         model = DriverProfile
@@ -375,57 +513,120 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
             else:
                 logger.error(f"license_expiry_date is string/other: {repr(led_value)}")
         
-        # Make a mutable copy of the data
-        if hasattr(data, '_mutable'):
-            data._mutable = True
+        # Convert QueryDict to regular dict to avoid QueryDict string conversion issues
+        if hasattr(data, 'dict'):
+            # It's a QueryDict, convert to regular dict
+            regular_dict = {}
+            for key, value in data.items():
+                if key.startswith('license_classes'):
+                    # Keep license_classes as-is for now
+                    regular_dict[key] = value
+                elif isinstance(value, list) and len(value) == 1:
+                    # Convert single-item lists to strings (normal form behavior)
+                    regular_dict[key] = value[0]
+                else:
+                    regular_dict[key] = value
+            data = regular_dict
+            logger.error(f"Converted QueryDict to regular dict")
         else:
+            # Make a mutable copy if it's already a dict
             data = data.copy()
         
-        # Handle license_classes conversion (from list of strings to list of LicenseClass objects)
+        # Handle license_classes from multipart form data (indexed keys like license_classes[0])
+        license_classes_indexed_keys = [key for key in data.keys() if key.startswith('license_classes[') and key.endswith(']')]
+        if license_classes_indexed_keys:
+            logger.error(f"Found indexed license_classes keys: {license_classes_indexed_keys}")
+            
+            # Collect all license class values from indexed keys
+            license_classes_values = []
+            for key in license_classes_indexed_keys:
+                value = data[key]
+                if isinstance(value, list):
+                    license_classes_values.extend(value)
+                else:
+                    license_classes_values.append(value)
+            
+            # Remove the indexed keys and set the proper license_classes key
+            for key in license_classes_indexed_keys:
+                del data[key]
+            
+            data['license_classes'] = license_classes_values
+            logger.error(f"Converted indexed license_classes to: {license_classes_values}")
+        
+        # Regular license_classes handling
         if 'license_classes' in data:
             license_classes_data = data.get('license_classes')
-            logger.error(f"Raw license_classes data: {repr(license_classes_data)}, type: {type(license_classes_data)}")
+            logger.error(f"Final license_classes data: {repr(license_classes_data)}, type: {type(license_classes_data)}")
             
+            # Handle case where Django form parsing creates a list from multiple fields with same name
             if isinstance(license_classes_data, (list, tuple)):
-                # Convert string UUIDs to LicenseClass objects
-                license_class_objects = []
-                for lc_id in license_classes_data:
-                    if isinstance(lc_id, str):
-                        try:
-                            lc_obj = LicenseClass.objects.get(id=lc_id)
-                            license_class_objects.append(lc_obj)
-                            logger.error(f"Found LicenseClass: {lc_obj.name} ({lc_obj.id})")
-                        except LicenseClass.DoesNotExist:
-                            logger.error(f"LicenseClass with id {lc_id} not found")
-                    elif hasattr(lc_id, 'id'):
-                        # It's already a LicenseClass object
-                        license_class_objects.append(lc_id)
+                # Clean up the list - remove any nested lists or invalid entries
+                cleaned_list = []
+                for item in license_classes_data:
+                    if isinstance(item, str):
+                        # Handle JSON string case (Flutter)
+                        if item.startswith('[') and item.endswith(']'):
+                            try:
+                                import json
+                                parsed_array = json.loads(item)
+                                if isinstance(parsed_array, list):
+                                    cleaned_list.extend(parsed_array)
+                                    logger.error(f"Parsed JSON string to array: {parsed_array}")
+                                else:
+                                    cleaned_list.append(item)
+                            except json.JSONDecodeError:
+                                cleaned_list.append(item)
+                        else:
+                            cleaned_list.append(item)
+                    elif isinstance(item, (list, tuple)):
+                        # Handle nested lists
+                        cleaned_list.extend([str(sub_item) for sub_item in item])
+                    else:
+                        cleaned_list.append(str(item))
                 
-                # Update the data with the converted objects
-                data['license_classes'] = license_class_objects
-                logger.error(f"Converted license_classes to objects: {[lc.name for lc in license_class_objects]}")
+                data['license_classes'] = cleaned_list
+                logger.error(f"Cleaned license_classes to: {cleaned_list}")
+            else:
+                # If it's not a list, make sure it's properly formatted
+                if isinstance(license_classes_data, str):
+                    # Single UUID string
+                    data['license_classes'] = [license_classes_data]
+                    logger.error(f"Converted single string to list: {[license_classes_data]}")
         
-        return super().to_internal_value(data)
+        # Final debug log before DRF processing
+        if 'license_classes' in data:
+            final_lc_data = data['license_classes']
+            logger.error(f"About to send to DRF PrimaryKeyRelatedField: {repr(final_lc_data)}, type: {type(final_lc_data)}")
+            if isinstance(final_lc_data, list):
+                logger.error(f"List contents: {[f'{repr(item)} ({type(item)})' for item in final_lc_data]}")
+        
+        try:
+            result = super().to_internal_value(data)
+            logger.error(f"DriverProfileUpdateSerializer validation SUCCESS: {result}")
+            return result
+        except Exception as e:
+            logger.error(f"DriverProfileUpdateSerializer validation ERROR: {e}")
+            logger.error(f"Error type: {type(e)}")
+            if hasattr(e, 'detail'):
+                logger.error(f"Error detail: {e.detail}")
+            raise
     
     def update(self, instance, validated_data):
-        """Custom update method to handle license classes"""
+        """Custom update method - simplified since PrimaryKeyRelatedField handles license_classes"""
         import logging
         logger = logging.getLogger(__name__)
         
-        # Extract license_classes from validated_data
-        license_classes_data = validated_data.pop('license_classes', None)
-        
-        # Update other fields
+        # Update all fields (including license_classes which is handled by DRF automatically)
         for field, value in validated_data.items():
-            setattr(instance, field, value)
+            if field == 'license_classes':
+                # Set many-to-many field
+                instance.license_classes.set(value)
+                logger.error(f"Setting license_classes: {[lc.name for lc in value]}")
+            else:
+                setattr(instance, field, value)
         
         # Save the instance
         instance.save()
-        
-        # Handle license_classes separately after saving
-        if license_classes_data is not None:
-            logger.error(f"Setting license_classes: {[lc.name if hasattr(lc, 'name') else str(lc) for lc in license_classes_data]}")
-            instance.license_classes.set(license_classes_data)
         
         return instance
     

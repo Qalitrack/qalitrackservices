@@ -12,7 +12,7 @@ from .serializers import (
     FeedbackSerializer, FeedbackResponseSerializer,
     FeedbackRespondSerializer, FeedbackResolveSerializer, FeedbackRejectSerializer
 )
-from settings.permissions import IsAdmin, IsDriverOrTester, IsApproved
+from settings.permissions import IsAdmin, IsDriverOrTester, IsApproved, IsAdminOrDriverOrTester
 
 
 class FeedbackFilterSet(django_filters.FilterSet):
@@ -93,16 +93,30 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         # Non-admins can only see their own feedback
         if self.request.user.user_type != 'admin':
             queryset = queryset.filter(user=self.request.user)
-            
-            # Remove admin-only filter parameters for non-admins
-            if hasattr(self.request, 'query_params'):
-                admin_only_filters = ['status', 'has_response', 'responded_by']
-                for param in admin_only_filters:
-                    if param in self.request.query_params:
-                        # Silently ignore admin-only filters for non-admins
-                        pass
         
         return queryset
+    
+    def filter_queryset(self, queryset):
+        # Handle admin-only filters for non-admins
+        if self.request.user.user_type != 'admin':
+            # Create a mutable copy of query parameters
+            query_params = self.request.query_params.copy()
+            
+            # Remove admin-only filter parameters for non-admins
+            admin_only_filters = ['status', 'has_response', 'responded_by']
+            for param in admin_only_filters:
+                if param in query_params:
+                    del query_params[param]
+            
+            # Temporarily replace query_params to exclude admin-only filters
+            original_query_params = self.request.query_params
+            self.request._request.GET = query_params
+            queryset = super().filter_queryset(queryset)
+            self.request._request.GET = original_query_params
+            
+            return queryset
+        else:
+            return super().filter_queryset(queryset)
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

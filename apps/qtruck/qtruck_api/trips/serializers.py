@@ -41,7 +41,7 @@ class TripSerializer(serializers.ModelSerializer):
     material_variant = MaterialVariantSerializer(read_only=True)
     expenses = ExpenseSerializer(many=True, read_only=True)
     truck_id = serializers.UUIDField(write_only=True)
-    driver_id = serializers.UUIDField(write_only=True)
+    # driver_id removed - driver is auto-set from authenticated user
     material_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
     material_variant_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
     
@@ -58,7 +58,7 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = '__all__'
-        read_only_fields = ('total_cost', 'total_mileage', 'date')
+        read_only_fields = ('total_cost', 'total_mileage', 'date', 'driver')
     
     def validate(self, data):
         # Validate that material_variant belongs to material if both are provided
@@ -87,7 +87,6 @@ class TripSerializer(serializers.ModelSerializer):
         
         # Get related objects
         truck_id = validated_data.pop('truck_id')
-        driver_id = validated_data.pop('driver_id')
         material_id = validated_data.pop('material_id', None)
         material_variant_id = validated_data.pop('material_variant_id', None)
         
@@ -95,7 +94,11 @@ class TripSerializer(serializers.ModelSerializer):
         from drivers.models import Driver
         
         validated_data['truck'] = Truck.objects.get(id=truck_id)
-        validated_data['driver'] = Driver.objects.get(id=driver_id)
+        
+        # Auto-set driver from authenticated user
+        user = self.context['request'].user
+        driver = Driver.objects.get(user=user)
+        validated_data['driver'] = driver
         if material_id:
             validated_data['material'] = Material.objects.get(id=material_id)
         if material_variant_id:
@@ -131,14 +134,12 @@ class TripSerializer(serializers.ModelSerializer):
         
         # Handle regular field updates
         for attr, value in validated_data.items():
-            if attr in ['truck_id', 'driver_id', 'material_id', 'material_variant_id']:
+            if attr in ['truck_id', 'material_id', 'material_variant_id']:
                 # Handle foreign key updates
                 if attr == 'truck_id' and value:
                     from fleet.models import Truck
                     instance.truck = Truck.objects.get(id=value)
-                elif attr == 'driver_id' and value:
-                    from drivers.models import Driver
-                    instance.driver = Driver.objects.get(id=value)
+                # driver cannot be changed via update - it's tied to the authenticated user
                 elif attr == 'material_id' and value:
                     from fleet.models import Material
                     instance.material = Material.objects.get(id=value)

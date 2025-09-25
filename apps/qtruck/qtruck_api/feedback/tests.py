@@ -61,31 +61,35 @@ class FeedbackAPIConsolidationTest(APITestCase):
         self.client.force_authenticate(user=self.admin_user)
         response = self.client.get('/api/feedback/?status=pending')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['status'], 'pending')
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['status'], 'pending')
         
         # Driver cannot use status filter (silently ignored)
         self.client.force_authenticate(user=self.driver_user)
         response = self.client.get('/api/feedback/?status=pending')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Should return all driver's feedback, ignoring status filter
-        self.assertEqual(len(response.data), 2)
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 2)
     
     def test_feedback_type_filtering(self):
         """Test feedback type filtering for all users"""
         self.client.force_authenticate(user=self.driver_user)
         response = self.client.get('/api/feedback/?feedback_type=bug_report')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['feedback_type'], 'bug_report')
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['feedback_type'], 'bug_report')
     
     def test_search_functionality(self):
         """Test search across subject and description"""
         self.client.force_authenticate(user=self.driver_user)
         response = self.client.get('/api/feedback/?search=login')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertTrue('Login Issue' in response.data[0]['subject'])
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 1)
+        self.assertTrue('Login Issue' in results[0]['subject'])
     
     def test_include_response_details(self):
         """Test include parameter for response details"""
@@ -93,9 +97,10 @@ class FeedbackAPIConsolidationTest(APITestCase):
         response = self.client.get('/api/feedback/?include=response_details')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
         # Find the feedback with response
         responded_feedback = next(
-            (f for f in response.data if f['admin_response']), 
+            (f for f in results if f['admin_response']), 
             None
         )
         self.assertIsNotNone(responded_feedback)
@@ -108,7 +113,8 @@ class FeedbackAPIConsolidationTest(APITestCase):
         response = self.client.get('/api/feedback/?include=user_profile')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        feedback = response.data[0]
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        feedback = results[0]
         self.assertIn('user_profile', feedback)
         self.assertIn('full_name', feedback['user_profile'])
         self.assertEqual(feedback['user_profile']['full_name'], 'Driver User')
@@ -120,14 +126,16 @@ class FeedbackAPIConsolidationTest(APITestCase):
         # Test has_response=true
         response = self.client.get('/api/feedback/?has_response=true')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertIsNotNone(response.data[0]['admin_response'])
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 1)
+        self.assertIsNotNone(results[0]['admin_response'])
         
         # Test has_response=false
         response = self.client.get('/api/feedback/?has_response=false')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertIsNone(response.data[0]['admin_response'])
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 1)
+        self.assertIsNone(results[0]['admin_response'])
     
     def test_combined_filters(self):
         """Test combining multiple filters"""
@@ -136,9 +144,10 @@ class FeedbackAPIConsolidationTest(APITestCase):
             '/api/feedback/?feedback_type=bug_report&search=login&include=response_details'
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 1)
         
-        feedback = response.data[0]
+        feedback = results[0]
         self.assertEqual(feedback['feedback_type'], 'bug_report')
         self.assertTrue('login' in feedback['subject'].lower())
     
@@ -147,10 +156,11 @@ class FeedbackAPIConsolidationTest(APITestCase):
         self.client.force_authenticate(user=self.driver_user)
         response = self.client.get('/api/feedback/my_feedback/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        results = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertEqual(len(results), 2)
         
         # All feedback should belong to authenticated user
-        for feedback in response.data:
+        for feedback in results:
             self.assertEqual(feedback['user']['email'], 'driver+test@example.com')
     
     def test_ordering_functionality(self):
