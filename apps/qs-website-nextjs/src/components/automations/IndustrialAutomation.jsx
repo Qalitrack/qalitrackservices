@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar'; // Using Navbar as per your latest instruction
 import Footer from '../Footer';
-import Scales from '@/assets/team.jpg';
+// import Scales from '@/assets/team.jpg';
 // import IndustrialAutomation from '@/assets/featured/assembling.jpg';
 
 // Data for the sidebar navigation (consistent across automation sub-pages)
@@ -28,7 +28,7 @@ const IndustrialAutomationPage = () => {
       <section 
         className="relative bg-cover bg-center text-white py-20 md:py-32 pt-32" // pt-32 to account for fixed Navbar
         style={{ 
-          backgroundImage: `url(${Scales})`, // Placeholder image for industrial automation
+          backgroundImage: "url('/automation.jpeg')", // Placeholder image for industrial automation
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
