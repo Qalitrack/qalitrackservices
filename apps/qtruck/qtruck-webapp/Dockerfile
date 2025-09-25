@@ -29,6 +29,10 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
+# Copy entrypoint script
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
 # Create directory for runtime config
 RUN mkdir -p /app/public && chown nextjs:nodejs /app/public
 
@@ -48,4 +52,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node healthcheck.js
 
 # Start the application
-CMD ["node", "server.js"]
+CMD ["./entrypoint.sh"]
