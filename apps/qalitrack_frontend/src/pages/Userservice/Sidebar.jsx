@@ -17,10 +17,7 @@ export default function UserServiceSidebar() {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+
 
     const linkClasses = ({ isActive }) =>
         `flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors duration-200 ${
@@ -108,21 +105,6 @@ export default function UserServiceSidebar() {
                         </NavLink>
                     ))}
                 </nav>
-
-                <div className="mt-auto px-4">
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
-                    >
-                        <span className="p-1 rounded-md bg-amber-500 text-white">
-                            <LogOut size={18} />
-                        </span>
-                        <span className={`${isOpen ? 'inline' : 'hidden'} md:inline`}>Logout</span>
-                    </button>
-                    <div className="p-3 text-xs text-gray-500 border-t text-center hidden md:block">
-                        Version 1.0.0
-                    </div>
-                </div>
             </aside>
         </>
     );

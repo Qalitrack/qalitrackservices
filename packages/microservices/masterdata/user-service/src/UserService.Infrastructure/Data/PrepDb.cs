@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
+using UserService.Core.Enums;
 using UserService.Core.Interfaces;
 
 namespace UserService.Infrastructure.Data
@@ -121,23 +123,110 @@ namespace UserService.Infrastructure.Data
                 await context.SaveChangesAsync();
             }
 
-            // Seed Shifts
+            // Seed Shifts and their Instances
             if (!context.Shifts.Any())
             {
-                var shifts = new[]
+                var now = DateTime.UtcNow;
+                var currentDate = DateTime.UtcNow.Date;
+
+                
+                // Create two shifts
+                var morningShift = new Shift
                 {
-                    new Shift
+                    Id = Guid.NewGuid().ToString(),
+                    Name = "Morning Shift",
+                    Description = "Standard morning working hours",
+                    StartTime = new TimeSpan(8, 0, 0),
+                    EndTime = new TimeSpan(16, 0, 0),
+                    Mode = ShiftMode.Open,
+                    StartDate = currentDate,
+                    EndDate = null,
+                    Status = ShiftStatus.Active,
+                    Type = ShiftType.Recurring,
+                    RequiredStaffCount = 5,
+                    RecurrenceType = RecurrenceType.Daily,
+                    RecurrenceInterval = 1,
+                    CustomDaysJson = JsonSerializer.Serialize(new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }),
+                    ExceptionDatesJson = JsonSerializer.Serialize(Array.Empty<DateTime>()),
+                    CreatedAt = now,
+                    UpdatedAt = now
+                };
+
+                var eveningShift = new Shift 
+                { 
+                    Id = Guid.NewGuid().ToString(),
+                    Name = "Evening Shift", 
+                    Description = "Standard evening working hours",
+                    StartTime = new TimeSpan(16, 0, 0), 
+                    EndTime = new TimeSpan(0, 0, 0), // Midnight
+                    Mode = ShiftMode.Open,
+                    StartDate = currentDate,
+                    EndDate = null,
+                    Status = ShiftStatus.Active,
+                    Type = ShiftType.Recurring,
+                    RequiredStaffCount = 5,
+                    RecurrenceType = RecurrenceType.Daily,
+                    RecurrenceInterval = 1,
+                    CustomDaysJson = JsonSerializer.Serialize(new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }),
+                    ExceptionDatesJson = JsonSerializer.Serialize(Array.Empty<DateTime>()),
+                    CreatedAt = now,
+                    UpdatedAt = now
+                };
+
+                // Add shifts to context
+                context.Shifts.AddRange(morningShift, eveningShift);
+                await context.SaveChangesAsync();
+
+                // Create shift instances for the next 7 days
+                var shiftInstances = new List<ShiftInstance>();
+                
+                for (int i = 0; i < 7; i++)
+                {
+                    var date = currentDate.AddDays(i);
+                    var dayOfWeek = date.DayOfWeek;
+                    
+                    // Skip weekends
+                    if (dayOfWeek == DayOfWeek.Saturday || dayOfWeek == DayOfWeek.Sunday)
+                        continue;
+
+                    // Morning shift instance
+                    var morningStart = date.Add(morningShift.StartTime);
+                    var morningEnd = date.Add(morningShift.EndTime);
+                    if (morningShift.EndTime <= morningShift.StartTime) // Handle overnight shifts
+                        morningEnd = morningEnd.AddDays(1);
+
+                    shiftInstances.Add(new ShiftInstance
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Name = "Morning Shift", 
-                        StartTime = new TimeSpan(8, 0, 0), 
-                        EndTime = new TimeSpan(16, 0, 0), 
-                        CreatedAt = DateTime.UtcNow ,
-                        Mode = ShiftMode.Open,
-                    },
-                    new Shift { Id = Guid.NewGuid().ToString(), Name = "Evening Shift", StartTime = new TimeSpan(16, 0, 0), EndTime = new TimeSpan(0, 0, 0), CreatedAt = DateTime.UtcNow }
-                };
-                await context.Shifts.AddRangeAsync(shifts);
+                        ShiftId = morningShift.Id,
+                        ScheduledDate = date,
+                        ScheduledStartTime = morningStart,
+                        ScheduledEndTime = morningEnd,
+                        Status = ShiftInstanceStatus.Scheduled,
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    });
+
+                    // Evening shift instance
+                    var eveningStart = date.Add(eveningShift.StartTime);
+                    var eveningEnd = date.Add(eveningShift.EndTime);
+                    if (eveningShift.EndTime <= eveningShift.StartTime) // Handle overnight shifts
+                        eveningEnd = eveningEnd.AddDays(1);
+
+                    shiftInstances.Add(new ShiftInstance
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ShiftId = eveningShift.Id,
+                        ScheduledDate = date,
+                        ScheduledStartTime = eveningStart,
+                        ScheduledEndTime = eveningEnd,
+                        Status = ShiftInstanceStatus.Scheduled,
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    });
+                }
+
+                await context.ShiftInstances.AddRangeAsync(shiftInstances);
                 await context.SaveChangesAsync();
             }
 
