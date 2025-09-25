@@ -11,7 +11,7 @@ urlpatterns = [
 ]
 
 # URL patterns created by the router:
-# GET    /feedback/                    - List all feedback (filtered by user permissions)
+# GET    /feedback/                    - List all feedback with advanced filtering
 # POST   /feedback/                    - Create new feedback
 # GET    /feedback/{id}/               - Retrieve specific feedback
 # PUT    /feedback/{id}/               - Update feedback (full update)
@@ -20,6 +20,13 @@ urlpatterns = [
 # POST   /feedback/{id}/respond/       - Admin responds to feedback
 # POST   /feedback/{id}/resolve/       - Admin resolves feedback
 # POST   /feedback/{id}/reject/        - Admin rejects feedback
-# GET    /feedback/pending/            - Get all pending feedback (admin only)
-# GET    /feedback/my_feedback/        - Get current user's feedback
-# GET    /feedback/by_status/          - Get feedback filtered by status (admin only)
+# GET    /feedback/my_feedback/        - Get current user's feedback (shortcut)
+#
+# Advanced Filtering Examples:
+# GET    /feedback/?status=pending                     - Filter by status (admin only)
+# GET    /feedback/?feedback_type=bug_report          - Filter by type
+# GET    /feedback/?search=login                       - Search subject/description
+# GET    /feedback/?created_after=2024-01-01          - Date filtering
+# GET    /feedback/?has_response=false                 - Response status (admin only)
+# GET    /feedback/?include=response_details          - Include enhanced data
+# GET    /feedback/?status=pending&feedback_type=bug_report&search=login - Combined filters
