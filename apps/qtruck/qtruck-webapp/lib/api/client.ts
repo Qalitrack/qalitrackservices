@@ -158,7 +158,7 @@ export class ApiClient {
 
     try {
       // Fetch config from our API route
-      const response = await fetch('/api/config')
+      const response = await fetch('/runtime-config')
       const config = await response.json()
       
       if (config.apiUrl) {
