@@ -35,6 +35,8 @@ class TripFilterSet(filters_rest.FilterSet):
     calculate_cost=extend_schema(tags=["Trips"]),
     by_status=extend_schema(tags=["Trips"]),
     upload_photos=extend_schema(tags=["Trips"]),
+    start_trip=extend_schema(tags=["Trips"]),
+    end_trip=extend_schema(tags=["Trips"]),
 )
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
@@ -267,7 +269,9 @@ class TripViewSet(viewsets.ModelViewSet):
     create=extend_schema(tags=["Trips"]),
     update=extend_schema(tags=["Trips"]),
     partial_update=extend_schema(tags=["Trips"]),
-    destroy=extend_schema(tags=["Trips"])
+    destroy=extend_schema(tags=["Trips"]),
+    by_driver=extend_schema(tags=["Trips"]),
+    by_truck=extend_schema(tags=["Trips"])
 )
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
