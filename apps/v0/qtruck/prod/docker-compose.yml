@@ -40,27 +40,59 @@ services:
       start_period: 40s
     labels:
       - "traefik.enable=true"
-      # HTTPS router for QTruck API production subdomain
-      - "traefik.http.routers.qtruck-api-prod-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`)"
+      # HTTPS router for QTruck API production (/api path)
+      - "traefik.http.routers.qtruck-api-prod-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.qtruck-api-prod-https.entrypoints=websecure"
       - "traefik.http.routers.qtruck-api-prod-https.tls=true"
       - "traefik.http.routers.qtruck-api-prod-https.tls.certresolver=letsencrypt"
       - "traefik.http.routers.qtruck-api-prod-https.service=qtruck-api-prod"
       - "traefik.http.services.qtruck-api-prod.loadbalancer.server.port=8000"
-      # HTTP router (accepts HTTP traffic directly)
-      - "traefik.http.routers.qtruck-api-prod-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`)"
+      # HTTP router for API (/api path)
+      - "traefik.http.routers.qtruck-api-prod-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.qtruck-api-prod-http.entrypoints=web"
       - "traefik.http.routers.qtruck-api-prod-http.service=qtruck-api-prod"
-      # Alternative API subdomain HTTPS route
+      # Alternative API subdomain HTTPS route (full API domain)
       - "traefik.http.routers.qtruck-api-alt-prod-https.rule=Host(`${API_DOMAIN:-api.qtruck.qalibrated.cseco.co.ke}`)"
       - "traefik.http.routers.qtruck-api-alt-prod-https.entrypoints=websecure"
       - "traefik.http.routers.qtruck-api-alt-prod-https.tls=true"
       - "traefik.http.routers.qtruck-api-alt-prod-https.tls.certresolver=letsencrypt"
       - "traefik.http.routers.qtruck-api-alt-prod-https.service=qtruck-api-prod"
-      # Alternative API subdomain HTTP route (accepts HTTP traffic directly)
+      # Alternative API subdomain HTTP route (full API domain)
       - "traefik.http.routers.qtruck-api-alt-prod-http.rule=Host(`${API_DOMAIN:-api.qtruck.qalibrated.cseco.co.ke}`)"
       - "traefik.http.routers.qtruck-api-alt-prod-http.entrypoints=web"
       - "traefik.http.routers.qtruck-api-alt-prod-http.service=qtruck-api-prod"
+
+  qtruck_frontend:
+    image: ghcr.io/qalitrack/qalitrackservices/qtruck-frontend:main
+    container_name: qtruck-frontend-prod
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=/api
+      - NEXT_PUBLIC_SITE_URL=https://${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}
+      - NEXT_PUBLIC_APP_NAME=QTruck
+    depends_on:
+      - qtruck_api
+    networks:
+      - proxy-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for QTruck Frontend (root path, excluding /api)
+      - "traefik.http.routers.qtruck-frontend-prod-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.qtruck-frontend-prod-https.entrypoints=websecure"
+      - "traefik.http.routers.qtruck-frontend-prod-https.tls=true"
+      - "traefik.http.routers.qtruck-frontend-prod-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qtruck-frontend-prod-https.service=qtruck-frontend-prod"
+      - "traefik.http.services.qtruck-frontend-prod.loadbalancer.server.port=3000"
+      # HTTP router for Frontend (root path, excluding /api)
+      - "traefik.http.routers.qtruck-frontend-prod-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.qtruck-frontend-prod-http.entrypoints=web"
+      - "traefik.http.routers.qtruck-frontend-prod-http.service=qtruck-frontend-prod"
 
 volumes:
   postgresql_data_prod:
