@@ -100,7 +100,7 @@ export default function ExpensesPage() {
             {Object.entries(getExpensesByCategory()).map(([category, amount]) => (
               <div key={category} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <span className="font-medium text-gray-900">{category}</span>
-                <span className="text-gray-600">KSh {amount.toFixed(2)}</span>
+                <span className="text-gray-600">KSh {(amount as number).toFixed(2)}</span>
               </div>
             ))}
           </div>
