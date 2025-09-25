@@ -9,7 +9,7 @@ public interface IDatabaseBackupService
     /// <summary>
     /// Creates a SQL dump backup (only BackupType.Full supported)
     /// </summary>
-    Task<BackupResult> CreateBackupAsync(BackupType type, string microservice, string saveLocation, string? cronSchedule = null, CancellationToken ct = default);
+    Task<BackupResult> CreateBackupAsync(BackupType type, string microservice, string? cronSchedule = null, CancellationToken ct = default);
     
     /// <summary>
     /// Restores a SQL dump backup from the specified file path

@@ -88,7 +88,7 @@ namespace BackupService.Core.Services
                 Id = GenerateNewChainId(),
                 MicroserviceName = microservice,
                 FullBackupFile = backupResult.FileName,
-                Timestamp = backupResult.CreatedAt,
+                Timestamp = backupResult.Timestamp,
                 Incrementals = new List<string>(),
                 Lsn = backupResult.Lsn,
                 Timeline = backupResult.Timeline,
