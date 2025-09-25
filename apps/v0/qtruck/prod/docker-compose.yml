@@ -40,14 +40,14 @@ services:
       start_period: 40s
     labels:
       - "traefik.enable=true"
-      # HTTPS router for QTruck API production (/api path)
+      # HTTPS router for QTruck API production (/api paths)
       - "traefik.http.routers.qtruck-api-prod-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.qtruck-api-prod-https.entrypoints=websecure"
       - "traefik.http.routers.qtruck-api-prod-https.tls=true"
       - "traefik.http.routers.qtruck-api-prod-https.tls.certresolver=letsencrypt"
       - "traefik.http.routers.qtruck-api-prod-https.service=qtruck-api-prod"
       - "traefik.http.services.qtruck-api-prod.loadbalancer.server.port=8000"
-      # HTTP router for API (/api path)
+      # HTTP router for API (/api paths)
       - "traefik.http.routers.qtruck-api-prod-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.qtruck-api-prod-http.entrypoints=web"
       - "traefik.http.routers.qtruck-api-prod-http.service=qtruck-api-prod"

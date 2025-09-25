@@ -33,6 +33,10 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(','
 # Application definition
 
 INSTALLED_APPS = [
+    # Custom user app MUST come first
+    'users',  # Must be first to ensure CustomUser is available
+    
+    # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,13 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    
+    # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
     'corsheaders',
     
     # Domain-based apps
-    'users',  # Must be first to ensure CustomUser is available
     'authentication',  # Authentication endpoints
     'drivers',  # Driver profile management
     'administration',  # System administration
