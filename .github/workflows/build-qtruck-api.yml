@@ -5,7 +5,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'apps/qtruck/**'
+      - 'apps/qtruck/qtruck_api/**'
   workflow_dispatch:
 
 env:
@@ -30,6 +30,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdal-bin libgdal-dev libspatialite7 libspatialite-dev spatialite-bin
 
       - name: Install dependencies
         run: |
