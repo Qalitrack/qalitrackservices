@@ -32,15 +32,15 @@ services:
       - proxy-network
     labels:
       - "traefik.enable=true"
-      # HTTPS router for QTruck API dev subdomain (/api path)
-      - "traefik.http.routers.qtruck-api-dev-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && PathPrefix(`/api`)"
+      # HTTPS router for QTruck API dev subdomain (/api and /auth paths)
+      - "traefik.http.routers.qtruck-api-dev-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && (PathPrefix(`/api`) || PathPrefix(`/auth`))"
       - "traefik.http.routers.qtruck-api-dev-https.entrypoints=websecure"
       - "traefik.http.routers.qtruck-api-dev-https.tls=true"
       - "traefik.http.routers.qtruck-api-dev-https.tls.certresolver=letsencrypt"
       - "traefik.http.routers.qtruck-api-dev-https.service=qtruck-api-dev"
       - "traefik.http.services.qtruck-api-dev.loadbalancer.server.port=8000"
-      # HTTP router for API (/api path)
-      - "traefik.http.routers.qtruck-api-dev-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && PathPrefix(`/api`)"
+      # HTTP router for API (/api and /auth paths)
+      - "traefik.http.routers.qtruck-api-dev-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && (PathPrefix(`/api`) || PathPrefix(`/auth`))"
       - "traefik.http.routers.qtruck-api-dev-http.entrypoints=web"
       - "traefik.http.routers.qtruck-api-dev-http.service=qtruck-api-dev"
 
@@ -69,15 +69,15 @@ services:
       start_period: 40s
     labels:
       - "traefik.enable=true"
-      # HTTPS router for QTruck Frontend (root path, excluding /api)
-      - "traefik.http.routers.qtruck-frontend-dev-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && !PathPrefix(`/api`)"
+      # HTTPS router for QTruck Frontend (root path, excluding /api and /auth)
+      - "traefik.http.routers.qtruck-frontend-dev-https.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && !PathPrefix(`/api`) && !PathPrefix(`/auth`)"
       - "traefik.http.routers.qtruck-frontend-dev-https.entrypoints=websecure"
       - "traefik.http.routers.qtruck-frontend-dev-https.tls=true"
       - "traefik.http.routers.qtruck-frontend-dev-https.tls.certresolver=letsencrypt"
       - "traefik.http.routers.qtruck-frontend-dev-https.service=qtruck-frontend-dev"
       - "traefik.http.services.qtruck-frontend-dev.loadbalancer.server.port=3000"
-      # HTTP router for Frontend (root path, excluding /api)
-      - "traefik.http.routers.qtruck-frontend-dev-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && !PathPrefix(`/api`)"
+      # HTTP router for Frontend (root path, excluding /api and /auth)
+      - "traefik.http.routers.qtruck-frontend-dev-http.rule=Host(`${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}`) && !PathPrefix(`/api`) && !PathPrefix(`/auth`)"
       - "traefik.http.routers.qtruck-frontend-dev-http.entrypoints=web"
       - "traefik.http.routers.qtruck-frontend-dev-http.service=qtruck-frontend-dev"
 
