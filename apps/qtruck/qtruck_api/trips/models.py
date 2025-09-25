@@ -28,10 +28,10 @@ class Trip(BaseModel):
     end_location = models.CharField(max_length=255, null=True, blank=True)
     start_location_coords = gis_models.PointField(null=True, blank=True, help_text="Geographic coordinates of start location")
     end_location_coords = gis_models.PointField(null=True, blank=True, help_text="Geographic coordinates of end location")
-    start_mileage = models.FloatField(null=True, blank=True)
-    end_mileage = models.FloatField(null=True, blank=True)
-    proof_image = models.ImageField(upload_to='trip_images/', null=True, blank=True)
-    proof_end_image = models.ImageField(upload_to='trip_images/', null=True, blank=True)
+    start_mileage = models.FloatField(null=True, blank=True, help_text="Set when trip is started, not during creation")
+    end_mileage = models.FloatField(null=True, blank=True, help_text="Set when trip is completed")
+    proof_image = models.ImageField(upload_to='trip_images/', null=True, blank=True, help_text="Start mileage photo - uploaded when starting trip")
+    proof_end_image = models.ImageField(upload_to='trip_images/', null=True, blank=True, help_text="End mileage photo - uploaded when ending trip")
     total_mileage = models.FloatField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     date = models.DateTimeField(default=timezone.now)
@@ -75,7 +75,8 @@ class Trip(BaseModel):
 class Expense(BaseModel):
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='expenses')
     description = models.CharField(max_length=255)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount in KSh")
+    receipt_photo = models.ImageField(upload_to='expense_receipts/', null=True, blank=True, help_text="Optional receipt photo")
     user_id = models.CharField(max_length=255, null=True, blank=True)
     synced = models.BooleanField(default=False)
     
@@ -84,7 +85,7 @@ class Expense(BaseModel):
         return self.trip.driver if self.trip else None
 
     def __str__(self):
-        return f"{self.description}: ${self.amount}"
+        return f"{self.description}: KSh {self.amount}"
 
 
 class Receipt(BaseModel):

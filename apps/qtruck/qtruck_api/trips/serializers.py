@@ -14,6 +14,8 @@ class ExpenseSerializer(serializers.ModelSerializer):
     receipts = ReceiptSerializer(many=True, read_only=True)
     trip_id = serializers.UUIDField(write_only=True)
     driver = serializers.SerializerMethodField(read_only=True)
+    receipt_photo_file = serializers.ImageField(write_only=True, required=False, allow_null=True)
+    receipt_photo_url = serializers.SerializerMethodField(read_only=True)
     
     class Meta:
         model = Expense
@@ -27,11 +29,26 @@ class ExpenseSerializer(serializers.ModelSerializer):
             return DriverSerializer(obj.trip.driver).data
         return None
     
+    def get_receipt_photo_url(self, obj):
+        if obj.receipt_photo and hasattr(obj.receipt_photo, 'url'):
+            return obj.receipt_photo.url
+        return None
+    
     def create(self, validated_data):
         trip_id = validated_data.pop('trip_id')
+        receipt_photo_file = validated_data.pop('receipt_photo_file', None)
+        
         trip = Trip.objects.get(id=trip_id)
         validated_data['trip'] = trip
-        return Expense.objects.create(**validated_data)
+        
+        expense = Expense.objects.create(**validated_data)
+        
+        # Handle receipt photo upload
+        if receipt_photo_file:
+            expense.receipt_photo = receipt_photo_file
+            expense.save()
+            
+        return expense
 
 
 class TripSerializer(serializers.ModelSerializer):
@@ -58,7 +75,7 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = '__all__'
-        read_only_fields = ('total_cost', 'total_mileage', 'date', 'driver')
+        read_only_fields = ('total_cost', 'total_mileage', 'date', 'driver', 'start_mileage', 'end_mileage', 'proof_image', 'proof_end_image')
     
     def validate(self, data):
         # Validate that material_variant belongs to material if both are provided

@@ -3,14 +3,15 @@ from rest_framework.routers import DefaultRouter
 
 from .views import TripViewSet, ExpenseViewSet, ReceiptViewSet, VehicleMileageViewSet
 
-# Create router for trips endpoints
+# Use a single router with proper ordering to avoid conflicts
 router = DefaultRouter()
-router.register('', TripViewSet, basename='trips')  # /api/trips/
-router.register('expenses', ExpenseViewSet, basename='expenses')  # /api/trips/expenses/
-router.register('receipts', ReceiptViewSet, basename='receipts')  # /api/trips/receipts/
-router.register('vehicle-mileage', VehicleMileageViewSet, basename='vehicle-mileage')  # /api/trips/vehicle-mileage/
+# Register expenses first to avoid conflicts with the empty string route
+router.register('expenses', ExpenseViewSet, basename='expenses')  
+router.register('receipts', ReceiptViewSet, basename='receipts')
+router.register('vehicle-mileage', VehicleMileageViewSet, basename='vehicle-mileage')
+# Register trips last with empty string
+router.register('', TripViewSet, basename='trips')
 
 urlpatterns = [
-    # Trips API endpoints (will be available at /fleet/trips/)
     path('', include(router.urls)),
 ]
