@@ -42,3 +42,6 @@ The `docfx.json` file contains the configuration for:
 
 - Add Markdown files to the root or `articles/` directory
 - API documentation is automatically generated from XML comments in the code
+## Quartz setup 
+docker exec -i backup-postgres-db psql -U backupservice -d backupservicedb < tables_postgres.sql
+ 
