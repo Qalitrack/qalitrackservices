@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import filters
+from rest_framework.parsers import MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters_rest
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -33,6 +34,7 @@ class TripFilterSet(filters_rest.FilterSet):
     destroy=extend_schema(tags=["Trips"]),
     calculate_cost=extend_schema(tags=["Trips"]),
     by_status=extend_schema(tags=["Trips"]),
+    upload_photos=extend_schema(tags=["Trips"]),
 )
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
@@ -77,6 +79,79 @@ class TripViewSet(viewsets.ModelViewSet):
                     trips_by_status[trip_status] = []
                 trips_by_status[trip_status].append(self.get_serializer(trip).data)
             return Response(trips_by_status)
+    
+    @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser])
+    def upload_photos(self, request, pk=None):
+        """Upload photos for a trip (start mileage, material loading, end mileage)"""
+        trip = self.get_object()
+        
+        # Handle different types of photos
+        photo_type = request.data.get('photo_type')  # 'start_mileage', 'material_loading', 'end_mileage'
+        photo_file = request.FILES.get('photo')
+        
+        if not photo_type or not photo_file:
+            return Response(
+                {'error': 'Both photo_type and photo file are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            if photo_type == 'start_mileage':
+                trip.proof_image = photo_file
+                trip.save()
+                return Response({
+                    'message': 'Start mileage photo uploaded successfully',
+                    'photo_url': trip.proof_image.url if trip.proof_image else None
+                })
+                
+            elif photo_type == 'end_mileage':
+                trip.proof_end_image = photo_file
+                trip.save()
+                return Response({
+                    'message': 'End mileage photo uploaded successfully',
+                    'photo_url': trip.proof_end_image.url if trip.proof_end_image else None
+                })
+                
+            elif photo_type == 'material_loading':
+                # Handle multiple material loading photos
+                current_photos = trip.material_loading_photos or []
+                
+                # Save the file and add URL to the list
+                # In a production environment, you'd save to cloud storage
+                import os
+                from django.conf import settings
+                from django.core.files.storage import default_storage
+                
+                # Create unique filename
+                file_extension = os.path.splitext(photo_file.name)[1]
+                filename = f'material_loading/{trip.id}_{len(current_photos)}{file_extension}'
+                
+                # Save file
+                file_path = default_storage.save(filename, photo_file)
+                photo_url = default_storage.url(file_path)
+                
+                # Add to photos list
+                current_photos.append(photo_url)
+                trip.material_loading_photos = current_photos
+                trip.save()
+                
+                return Response({
+                    'message': 'Material loading photo uploaded successfully',
+                    'photo_url': photo_url,
+                    'total_photos': len(current_photos)
+                })
+                
+            else:
+                return Response(
+                    {'error': 'Invalid photo_type. Must be start_mileage, material_loading, or end_mileage'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to upload photo: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @extend_schema_view(
