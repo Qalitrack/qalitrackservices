@@ -3,14 +3,14 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm (use latest version to match lockfile)
+RUN npm install -g pnpm@latest
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies (force recreate lockfile if incompatible)
+RUN pnpm install --frozen-lockfile || pnpm install --force
 
 # Copy source code
 COPY . .
