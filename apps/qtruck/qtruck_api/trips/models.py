@@ -34,8 +34,14 @@ class Trip(BaseModel):
     proof_end_image = models.ImageField(upload_to='trip_images/', null=True, blank=True)
     total_mileage = models.FloatField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    # Material loading confirmation photos (different from start/end proof images)
+    material_loading_photos = models.JSONField(default=list, blank=True, help_text="URLs to material loading confirmation photos")
+    
+    # Current location when trip starts (for verification)
+    current_location_coords = gis_models.PointField(null=True, blank=True, help_text="Current GPS coordinates when trip starts")
     
     # Material fields
     material = models.ForeignKey(Material, on_delete=models.SET_NULL, null=True, blank=True, help_text="Type of material transported")
