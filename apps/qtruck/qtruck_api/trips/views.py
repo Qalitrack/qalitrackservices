@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import filters
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters_rest
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -80,6 +80,113 @@ class TripViewSet(viewsets.ModelViewSet):
                 trips_by_status[trip_status].append(self.get_serializer(trip).data)
             return Response(trips_by_status)
     
+    @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser])
+    def start_trip(self, request, pk=None):
+        """Start a trip with mileage and photo upload"""
+        trip = self.get_object()
+        
+        if trip.status != 'pending':
+            return Response(
+                {'error': 'Trip must be in pending status to start'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        start_mileage = request.data.get('start_mileage')
+        proof_image = request.FILES.get('proof_image')
+        current_location_coords = request.data.get('current_location_coords')
+        material_loading_photos = request.FILES.getlist('material_loading_photos')
+        
+        if not start_mileage:
+            return Response(
+                {'error': 'start_mileage is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            trip.start_mileage = float(start_mileage)
+            if proof_image:
+                trip.proof_image = proof_image
+            if current_location_coords:
+                # Parse coordinates if provided as string
+                coords = current_location_coords.split(',') if isinstance(current_location_coords, str) else current_location_coords
+                if len(coords) == 2:
+                    from django.contrib.gis.geos import Point
+                    trip.current_location_coords = Point(float(coords[0]), float(coords[1]))
+            
+            # Handle material loading photos
+            if material_loading_photos:
+                photo_urls = []
+                from django.core.files.storage import default_storage
+                import os
+                for i, photo in enumerate(material_loading_photos):
+                    file_extension = os.path.splitext(photo.name)[1]
+                    filename = f'material_loading/{trip.id}_start_{i}{file_extension}'
+                    file_path = default_storage.save(filename, photo)
+                    photo_urls.append(default_storage.url(file_path))
+                trip.material_loading_photos = photo_urls
+            
+            trip.status = 'in_progress'
+            trip.save()
+            
+            return Response({
+                'message': 'Trip started successfully',
+                'trip_id': trip.id,
+                'status': trip.status,
+                'start_mileage': trip.start_mileage
+            })
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to start trip: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser])
+    def end_trip(self, request, pk=None):
+        """End a trip with final mileage and photo upload"""
+        trip = self.get_object()
+        
+        if trip.status != 'in_progress':
+            return Response(
+                {'error': 'Trip must be in progress to end'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        end_mileage = request.data.get('end_mileage')
+        proof_end_image = request.FILES.get('proof_end_image')
+        
+        if not end_mileage:
+            return Response(
+                {'error': 'end_mileage is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            trip.end_mileage = float(end_mileage)
+            if proof_end_image:
+                trip.proof_end_image = proof_end_image
+            
+            # Calculate total mileage
+            if trip.start_mileage:
+                trip.total_mileage = trip.end_mileage - trip.start_mileage
+            
+            trip.status = 'completed'
+            trip.save()
+            
+            return Response({
+                'message': 'Trip completed successfully',
+                'trip_id': trip.id,
+                'status': trip.status,
+                'end_mileage': trip.end_mileage,
+                'total_mileage': trip.total_mileage
+            })
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to end trip: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser])
     def upload_photos(self, request, pk=None):
         """Upload photos for a trip (start mileage, material loading, end mileage)"""
@@ -166,6 +273,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     permission_classes = [IsApproved]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     
     def get_queryset(self):
         if self.request.user.user_type == 'admin':
@@ -177,10 +285,8 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         return Expense.objects.none()
     
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            # Only admins, drivers, and testers can modify expenses
-            return [IsApproved(), IsAdminOrDriverOrTester()]
-        return [IsApproved()]
+        # Simplified permissions for debugging
+        return [IsApproved(), IsAdminOrDriverOrTester()]
     
     @action(detail=False, methods=['get'])
     def by_driver(self, request):
