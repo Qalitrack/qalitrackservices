@@ -16,7 +16,7 @@ interface DriverProfileStats {
   total: number
 }
 
-type TabType = 'pending' | 'approved' | 'rejected' | 'expiring' | 'all'
+type TabType = 'pending' | 'approved' | 'rejected' | 'draft' | 'expiring' | 'all'
 
 export default function DriverProfileManagementPage() {
   const { user: currentUser } = useAuth()

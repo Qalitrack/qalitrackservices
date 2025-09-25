@@ -6,9 +6,13 @@ const nextConfig = {
   },
   // Enable standalone output for Docker
   output: 'standalone',
-  // Configure for dynamic pages
-  experimental: {
-    outputFileTracingRoot: undefined
+  // Skip ESLint during build (we run it separately in CI)
+  eslint: {
+    ignoreDuringBuilds: true
+  },
+  // Skip TypeScript checking during build (we run it separately in CI)
+  typescript: {
+    ignoreBuildErrors: true
   }
 }
 

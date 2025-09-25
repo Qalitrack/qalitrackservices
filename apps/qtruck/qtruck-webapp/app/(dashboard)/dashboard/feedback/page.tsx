@@ -110,9 +110,7 @@ export default function FeedbackManagementPage() {
         filteredResults = filteredResults.filter(f => 
           f.subject?.toLowerCase().includes(searchLower) ||
           f.description?.toLowerCase().includes(searchLower) ||
-          f.user_profile?.first_name?.toLowerCase().includes(searchLower) ||
-          f.user_profile?.last_name?.toLowerCase().includes(searchLower) ||
-          f.user_profile?.email?.toLowerCase().includes(searchLower)
+          f.user_profile?.full_name?.toLowerCase().includes(searchLower)
         )
       }
 
