@@ -35,21 +35,22 @@ jobs:
           cache-dependency-path: ${{ env.SERVICE_PATH }}/pnpm-lock.yaml
 
       - name: Install dependencies
-        working-directory: ${{ env.SERVICE_PATH }}
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --filter=${{ env.SERVICE_PATH }} --no-frozen-lockfile
 
       - name: Run linting
-        working-directory: ${{ env.SERVICE_PATH }}
-        run: pnpm run lint
-        continue-on-error: true
-
-      - name: Build application
-        working-directory: ${{ env.SERVICE_PATH }}
         env:
           NEXT_PUBLIC_API_URL: /api
           NEXT_PUBLIC_SITE_URL: https://example.com
           NEXT_PUBLIC_APP_NAME: QTruck
-        run: pnpm run build
+        run: pnpm run --filter=${{ env.SERVICE_PATH }} lint
+        continue-on-error: true
+
+      - name: Build application
+        env:
+          NEXT_PUBLIC_API_URL: /api
+          NEXT_PUBLIC_SITE_URL: https://example.com
+          NEXT_PUBLIC_APP_NAME: QTruck
+        run: pnpm run --filter=${{ env.SERVICE_PATH }} build
         continue-on-error: false
 
       - name: Log in to Container Registry
