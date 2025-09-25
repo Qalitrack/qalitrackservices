@@ -3,20 +3,17 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Install pnpm (use latest version to match lockfile)
-RUN npm install -g pnpm@latest
-
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json package-lock.json* ./
 
-# Install dependencies (force recreate lockfile if incompatible)
-RUN pnpm install --frozen-lockfile || pnpm install --force
+# Install dependencies
+RUN npm ci || npm install
 
 # Copy source code
 COPY . .
 
 # Build the application with standalone output
-RUN pnpm run build
+RUN npm run build
 
 # Runtime stage
 FROM node:18-alpine AS runner

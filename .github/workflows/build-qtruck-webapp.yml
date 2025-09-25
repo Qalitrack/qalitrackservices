@@ -24,24 +24,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'pnpm'
+          cache: 'npm'
+          cache-dependency-path: ${{ env.SERVICE_PATH }}/package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --filter=qtruck-webapp --no-frozen-lockfile
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          npm ci
 
       - name: Run linting
         env:
           NEXT_PUBLIC_API_URL: /api
           NEXT_PUBLIC_SITE_URL: https://example.com
           NEXT_PUBLIC_APP_NAME: QTruck
-        run: pnpm run --filter=qtruck-webapp lint
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          npm run lint
         continue-on-error: true
 
       - name: Build application
@@ -49,7 +51,9 @@ jobs:
           NEXT_PUBLIC_API_URL: /api
           NEXT_PUBLIC_SITE_URL: https://example.com
           NEXT_PUBLIC_APP_NAME: QTruck
-        run: pnpm run --filter=qtruck-webapp build
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          npm run build
         continue-on-error: false
 
       - name: Log in to Container Registry
