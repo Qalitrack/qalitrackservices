@@ -45,6 +45,7 @@ from settings.models import SystemSettings
     update=extend_schema(tags=["Drivers"]),
     partial_update=extend_schema(tags=["Drivers"]),
     destroy=extend_schema(tags=["Drivers"]),
+    submit=extend_schema(tags=["Drivers"]),
     approve=extend_schema(tags=["Drivers"]),
     me=extend_schema(tags=["Drivers"]),
     history=extend_schema(tags=["Drivers"])
@@ -233,6 +234,50 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(response_data)
         return Response(response_data)
     
+    @action(detail=True, methods=['post'], permission_classes=[IsAdminOrDriverOrTester])
+    @extend_schema(
+        summary="Submit driver profile for approval (drivers only)",
+        responses={200: {'description': 'Profile submitted for approval'}}
+    )
+    def submit(self, request, pk=None):
+        """Submit driver profile for approval (drivers can only submit their own profiles)"""
+        profile = self.get_object()
+        
+        # Ensure drivers can only submit their own profiles
+        if request.user.user_type == 'driver':
+            try:
+                driver = Driver.objects.get(user=request.user)
+                if profile.driver != driver:
+                    return Response(
+                        {'detail': 'You can only submit your own profile for approval'}, 
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except Driver.DoesNotExist:
+                return Response(
+                    {'detail': 'Driver profile not found'}, 
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        
+        # Check if profile can be submitted (draft or changes_requested)
+        if profile.status not in ['draft', 'changes_requested']:
+            return Response(
+                {'detail': 'Only draft or changes_requested profiles can be submitted for approval'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Submit for approval using the model method
+        profile.submit_for_approval()
+        
+        # Log activity
+        log_driver_activity(
+            driver=profile.driver,
+            activity_type='profile_update',
+            activity_data={'action': 'submitted_for_approval', 'version': profile.version_number},
+            request=request
+        )
+        
+        return Response({'message': 'Profile submitted for approval successfully'})
+
     @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
     @extend_schema(
         summary="Approve, reject, or request changes for a driver profile",
@@ -333,30 +378,32 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
             # Get the current approved profile (is_current=True)
             approved_profile = DriverProfile.objects.filter(driver=driver, is_current=True).first()
             
-            # Check if there's a pending version
+            # Check if there's a pending version (including changes_requested)
             pending_profile = DriverProfile.objects.filter(
                 driver=driver, 
-                status__in=[DriverProfileStatus.PENDING, DriverProfileStatus.DRAFT]
+                status__in=[DriverProfileStatus.PENDING, DriverProfileStatus.DRAFT, DriverProfileStatus.CHANGES_REQUESTED]
             ).order_by('-created_at').first()
             
             profile_to_use = approved_profile or pending_profile
             
             if not profile_to_use:
-                # No profile exists - create an empty draft profile for the driver
-                profile_to_use = DriverProfile.objects.create(
-                    driver=driver,
-                    full_name=driver.user.first_name + ' ' + driver.user.last_name if driver.user.first_name else '',
-                    phone_number='',
-                    id_number='',
-                    license_number='',
-                    license_expiry_date=timezone.now().date() + timedelta(days=365),
-                    status=DriverProfileStatus.DRAFT,
-                    is_current=False
-                )
+                # No profile exists - return proper response for frontend to show "Create Profile"
+                return Response({
+                    'detail': 'No driver profile found',
+                    'has_pending_version': False,
+                    'pending_version_id': None,
+                    'pending_status': None,
+                    'is_first_profile': True,
+                    'needs_creation': True
+                }, status=status.HTTP_404_NOT_FOUND)
             
             # Base profile data
             serializer = DriverProfileSerializer(profile_to_use)
             response_data = serializer.data
+            
+            # Remove admin-sensitive information for driver privacy
+            response_data.pop('reviewed_by', None)
+            response_data.pop('reviewed_by_name', None)
             
             # Add profile status metadata
             response_data['has_pending_version'] = bool(pending_profile)
@@ -393,15 +440,21 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
             current_profile = DriverProfile.objects.filter(driver=driver, is_current=True).first()
             pending_profile = DriverProfile.objects.filter(
                 driver=driver,
-                status__in=[DriverProfileStatus.PENDING, DriverProfileStatus.DRAFT]
+                status__in=[DriverProfileStatus.PENDING, DriverProfileStatus.DRAFT, DriverProfileStatus.CHANGES_REQUESTED]
             ).order_by('-created_at').first()
             
             if pending_profile:
+                # Use existing pending profile - DO NOT create new one even if changes_requested
                 profile_to_update = pending_profile
+                
+                # If status is changes_requested, reset it to draft so user can resubmit
+                if pending_profile.status == DriverProfileStatus.CHANGES_REQUESTED:
+                    pending_profile.status = DriverProfileStatus.DRAFT
+                    pending_profile.save()
             else:
-                # Create a new version based on the current profile or create fresh
+                # No pending profile exists - create a new version based on current profile or create fresh
                 if current_profile:
-                    # Create new version based on current
+                    # Create new version based on current approved profile
                     profile_data = {
                         'full_name': current_profile.full_name,
                         'phone_number': current_profile.phone_number,
@@ -419,7 +472,7 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
                     # Copy license classes
                     profile_to_update.license_classes.set(current_profile.license_classes.all())
                 else:
-                    # Create completely new profile
+                    # Create completely new profile (first time)
                     profile_to_update = DriverProfile.objects.create(
                         driver=driver,
                         full_name=driver.user.get_full_name() or '',
@@ -450,6 +503,12 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
                 )
                 
                 response_serializer = DriverProfileSerializer(updated_profile, context={'request': request})
-                return Response(response_serializer.data)
+                response_data = response_serializer.data
+                
+                # Remove admin-sensitive information for driver privacy
+                response_data.pop('reviewed_by', None)
+                response_data.pop('reviewed_by_name', None)
+                
+                return Response(response_data)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
