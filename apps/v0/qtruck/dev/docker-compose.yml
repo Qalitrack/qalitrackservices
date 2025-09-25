@@ -51,8 +51,11 @@ services:
     env_file:
       - .env
     environment:
-      - NEXT_PUBLIC_API_URL=https://${PRIMARY_DOMAIN}/api
-      - NEXT_PUBLIC_SITE_URL=https://${PRIMARY_DOMAIN}
+      - API_URL=https://${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}/api
+      - SITE_URL=https://${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}
+      - APP_NAME=QTruck
+      - NEXT_PUBLIC_API_URL=/api
+      - NEXT_PUBLIC_SITE_URL=https://${PRIMARY_DOMAIN:-qtruck-dev.qalibrated.cseco.co.ke}
       - NEXT_PUBLIC_APP_NAME=QTruck
     depends_on:
       - qtruck_api
