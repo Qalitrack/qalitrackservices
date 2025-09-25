@@ -67,6 +67,9 @@ services:
     container_name: qtruck-frontend-prod
     restart: unless-stopped
     environment:
+      - API_URL=https://${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}/api
+      - SITE_URL=https://${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}
+      - APP_NAME=QTruck
       - NEXT_PUBLIC_API_URL=/api
       - NEXT_PUBLIC_SITE_URL=https://${PRIMARY_DOMAIN:-qtruck.qalibrated.cseco.co.ke}
       - NEXT_PUBLIC_APP_NAME=QTruck
