@@ -139,9 +139,38 @@ export class ApiClient {
     user_id: null
   }
 
-  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') {
-    this.baseUrl = baseUrl.replace(/\/$/, '') // Remove trailing slash
+  constructor(baseUrl?: string) {
+    if (baseUrl) {
+      this.baseUrl = baseUrl.replace(/\/$/, '') // Remove trailing slash
+    } else if (process.env.NEXT_PUBLIC_API_URL && !process.env.NEXT_PUBLIC_API_URL.startsWith('/')) {
+      // Use NEXT_PUBLIC_API_URL only if it's a full URL
+      this.baseUrl = process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '')
+    } else {
+      // Will be set by initializeConfig on first request
+      this.baseUrl = ''
+    }
     this.loadTokensFromStorage()
+  }
+
+  // Initialize configuration from runtime config API
+  private async initializeConfig(): Promise<string> {
+    if (this.baseUrl) return this.baseUrl
+
+    try {
+      // Fetch config from our API route
+      const response = await fetch('/api/config')
+      const config = await response.json()
+      
+      if (config.apiUrl) {
+        this.baseUrl = config.apiUrl.replace(/\/$/, '')
+        return this.baseUrl
+      }
+    } catch (error) {
+      console.warn('Failed to fetch runtime config, falling back to localhost:', error)
+    }
+    
+    this.baseUrl = 'http://localhost:8000'
+    return this.baseUrl
   }
 
   // Token Management
@@ -243,6 +272,7 @@ export class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    await this.initializeConfig()
     await this.refreshTokenIfNeeded()
 
     const url = `${this.baseUrl}${endpoint}`
