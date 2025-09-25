@@ -1,0 +1,21 @@
+{
+  "name": "QTruck - Fleet Management System",
+  "short_name": "QTruck",
+  "description": "Complete fleet management solution for modern logistics companies",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f59e0b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}
