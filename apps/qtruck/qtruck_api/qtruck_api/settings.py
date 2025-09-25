@@ -39,11 +39,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
     'corsheaders',
-    'core',
+    
+    # Domain-based apps
+    'users',  # Must be first to ensure CustomUser is available
+    'authentication',  # Authentication endpoints
+    'drivers',  # Driver profile management
+    'administration',  # System administration
+    'feedback',  # Feedback management
+    'fleet',  # Fleet management
+    'trips',  # Trip operations
+    
+    # Settings app (system-wide settings)
+    'settings',
 ]
 
 MIDDLEWARE = [
@@ -102,13 +114,24 @@ if DB_ENGINE == 'postgresql' and DB_HOST and DB_USER and DB_PASSWORD:
         }
     }
 else:
-    # Default SQLite configuration
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+    # Default SpatiaLite configuration for spatial data support
+    USE_SPATIALITE = config('USE_SPATIALITE', default=True, cast=bool)
+    if USE_SPATIALITE:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
+        # Path to SpatiaLite library
+        SPATIALITE_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 # Password validation
@@ -152,8 +175,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom User Model
-AUTH_USER_MODEL = 'core.CustomUser'
+# Custom User Model (moved to users app)
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Django REST Framework
 REST_FRAMEWORK = {
@@ -164,6 +187,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
@@ -178,7 +203,7 @@ SIMPLE_JWT = {
 # DRF Spectacular
 SPECTACULAR_SETTINGS = {
     'TITLE': 'QTruck API',
-    'DESCRIPTION': 'API for QTruck fleet management system',
+    'DESCRIPTION': 'API for QTruck fleet management system with domain-based endpoints',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
