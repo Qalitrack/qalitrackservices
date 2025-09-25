@@ -74,7 +74,7 @@ class FeedbackFilterSet(django_filters.FilterSet):
     respond=extend_schema(tags=["Feedback"]),
     resolve=extend_schema(tags=["Feedback"]),
     reject=extend_schema(tags=["Feedback"]),
-    my_feedback=extend_schema(tags=["Feedback"])
+    me=extend_schema(tags=["Feedback"])
 )
 class FeedbackViewSet(viewsets.ModelViewSet):
     queryset = Feedback.objects.all().select_related('user', 'responded_by')
@@ -190,9 +190,19 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     
     
     @action(detail=False, methods=['get'], permission_classes=[IsApproved])
-    def my_feedback(self, request):
+    def me(self, request):
         """Get current user's feedback"""
         user_feedback = Feedback.objects.filter(user=request.user)
-        serializer = self.get_serializer(user_feedback, many=True)
+        
+        # Apply filtering, searching, and ordering like the main list view
+        queryset = self.filter_queryset(user_feedback)
+        
+        # Use pagination for consistency with other endpoints
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+            
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
