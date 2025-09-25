@@ -1,0 +1,48 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="url(#gradient)"/>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- QTruck Logo/Icon -->
+  <g transform="translate(100, 150)">
+    <!-- Truck Body -->
+    <rect x="20" y="100" width="180" height="80" rx="10" fill="#f59e0b"/>
+    <!-- Truck Cab -->
+    <rect x="200" y="80" width="60" height="100" rx="8" fill="#d97706"/>
+    <!-- Wheels -->
+    <circle cx="50" cy="200" r="20" fill="#92400e"/>
+    <circle cx="170" cy="200" r="20" fill="#92400e"/>
+    <circle cx="230" cy="200" r="20" fill="#92400e"/>
+    <!-- Wheel Rims -->
+    <circle cx="50" cy="200" r="8" fill="#64748b"/>
+    <circle cx="170" cy="200" r="8" fill="#64748b"/>
+    <circle cx="230" cy="200" r="8" fill="#64748b"/>
+    <!-- Windows -->
+    <rect x="210" y="90" width="20" height="15" rx="2" fill="#e2e8f0"/>
+    <rect x="235" y="90" width="20" height="15" fill="#e2e8f0"/>
+    <!-- Headlight -->
+    <circle cx="270" cy="120" r="8" fill="#fcd34d"/>
+    <!-- Details -->
+    <rect x="30" y="110" width="160" height="5" fill="#92400e"/>
+    <rect x="30" y="125" width="160" height="5" fill="#92400e"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="400" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="80" font-weight="700" fill="#f8fafc">QTruck</text>
+  <text x="400" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="400" fill="#cbd5e1">Fleet Management Made Simple</text>
+  <text x="400" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="300" fill="#94a3b8">Complete solution for modern logistics</text>
+  
+  <!-- Decorative Elements -->
+  <circle cx="950" cy="150" r="3" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="1000" cy="200" r="2" fill="#fbbf24" opacity="0.4"/>
+  <circle cx="1050" cy="120" r="4" fill="#d97706" opacity="0.5"/>
+  <circle cx="1100" cy="180" r="2" fill="#f59e0b" opacity="0.7"/>
+  
+  <circle cx="950" cy="450" r="2" fill="#fbbf24" opacity="0.3"/>
+  <circle cx="1020" cy="400" r="3" fill="#f59e0b" opacity="0.5"/>
+  <circle cx="1080" cy="480" r="2" fill="#d97706" opacity="0.4"/>
+</svg>
