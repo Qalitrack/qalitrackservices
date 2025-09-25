@@ -28,18 +28,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: ${{ env.SERVICE_PATH }}/package-lock.json
+          cache: 'pnpm'
+          cache-dependency-path: ${{ env.SERVICE_PATH }}/pnpm-lock.yaml
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
 
       - name: Install dependencies
         run: |
           cd ${{ env.SERVICE_PATH }}
-          npm ci
+          pnpm install --frozen-lockfile
 
       - name: Run linting
         run: |
           cd ${{ env.SERVICE_PATH }}
-          npm run lint
+          pnpm run lint
         continue-on-error: true
 
       - name: Build application
@@ -49,7 +54,7 @@ jobs:
           export NEXT_PUBLIC_API_URL=/api
           export NEXT_PUBLIC_SITE_URL=https://example.com
           export NEXT_PUBLIC_APP_NAME=QTruck
-          npm run build
+          pnpm run build
         continue-on-error: false
 
       - name: Log in to Container Registry
