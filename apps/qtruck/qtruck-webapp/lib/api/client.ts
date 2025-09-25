@@ -356,7 +356,7 @@ export class ApiClient {
 
   // Authentication Endpoints
   async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const response = await this.post<LoginResponse>('/auth/login/', credentials)
+    const response = await this.post<LoginResponse>('/api/auth/login/', credentials)
     
     // Store tokens
     this.tokenStorage.access_token = response.access
@@ -388,12 +388,12 @@ export class ApiClient {
       email: emailWithAlias
     }
 
-    return this.post<RegisterResponse>('/auth/register/', requestData)
+    return this.post<RegisterResponse>('/api/auth/register/', requestData)
   }
 
   async refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
     // Direct fetch call to avoid authentication loop
-    const response = await fetch(`${this.baseUrl}/auth/refresh/`, {
+    const response = await fetch(`${this.baseUrl}/api/auth/refresh/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -411,7 +411,7 @@ export class ApiClient {
   async logout(): Promise<void> {
     if (this.tokenStorage.refresh_token) {
       try {
-        await this.post('/auth/logout/', { refresh: this.tokenStorage.refresh_token })
+        await this.post('/api/auth/logout/', { refresh: this.tokenStorage.refresh_token })
       } catch {
         // Ignore logout errors - still clear local tokens
       }
