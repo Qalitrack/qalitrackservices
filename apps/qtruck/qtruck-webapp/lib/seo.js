@@ -1,12 +1,19 @@
-// Get the proper URL for Open Graph images (runtime replaceable)
-export const getOGImageUrl = (imagePath = '/og-image.svg') => {
-  // Use placeholder that will be replaced at runtime via entrypoint, fallback to env vars for local dev
-  let baseUrl = '__NEXT_PUBLIC_ASSETS_URL__';
+// Get runtime config directly from server environment (no HTTP request needed)
+const getRuntimeConfig = () => {
+  const apiUrl = process.env.API_URL || '/api';
+  const baseDomain = apiUrl.replace(/\/api$/, '') || '';
   
-  // If placeholder wasn't replaced (local development), use environment variables
-  if (baseUrl === '__NEXT_PUBLIC_ASSETS_URL__') {
-    baseUrl = process.env.NEXT_PUBLIC_ASSETS_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  }
+  return {
+    apiUrl: baseDomain,
+    siteUrl: process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    appName: process.env.APP_NAME || process.env.NEXT_PUBLIC_APP_NAME || 'QTruck'
+  };
+};
+
+// Get the proper URL for Open Graph images (using runtime config)
+export const getOGImageUrl = (imagePath = '/og-image.svg') => {
+  const config = getRuntimeConfig();
+  const baseUrl = config.siteUrl;
   
   // Ensure we have a properly formatted URL
   if (imagePath.startsWith('http')) {
@@ -22,15 +29,10 @@ export const getOGImageUrl = (imagePath = '/og-image.svg') => {
   return `${cleanBaseUrl}/${cleanPath}`;
 };
 
-// Get the proper site URL (runtime replaceable)
+// Get the proper site URL (using runtime config)
 export const getSiteUrl = (path = '') => {
-  // Use placeholder that will be replaced at runtime via entrypoint, fallback to env vars for local dev
-  let baseUrl = '__NEXT_PUBLIC_SITE_URL__';
-  
-  // If placeholder wasn't replaced (local development), use environment variables
-  if (baseUrl === '__NEXT_PUBLIC_SITE_URL__') {
-    baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  }
+  const config = getRuntimeConfig();
+  const baseUrl = config.siteUrl;
   
   if (path.startsWith('http')) {
     return path; // Already a full URL
@@ -45,7 +47,7 @@ export const getSiteUrl = (path = '') => {
   return cleanPath ? `${cleanBaseUrl}/${cleanPath}` : cleanBaseUrl;
 };
 
-// Create consistent metadata object
+// Create consistent metadata object (using runtime environment variables)
 export const createMetadata = ({
   title,
   description,
