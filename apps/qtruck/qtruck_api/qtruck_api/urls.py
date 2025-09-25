@@ -25,7 +25,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     
     # Domain-based apps
-    path('auth/', include('authentication.urls')),
+    path('api/auth/', include('authentication.urls')),
     path('api/users/', include('users.urls')),
     path('api/drivers/', include('drivers.urls')),
     path('api/admin/', include('administration.urls')),
