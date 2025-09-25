@@ -1,0 +1,118 @@
+# Docker Compose configuration for QTruck Development Environment
+# Includes development server, hot reload, and local database
+
+services:
+  # QTruck Next.js Frontend (Development)
+  qtruck-frontend-dev:
+    image: node:18-alpine
+    container_name: qtruck-frontend-dev
+    working_dir: /app
+    restart: unless-stopped
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - WATCHPACK_POLLING=true
+      # Development API endpoint
+      - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT:-5000}/api
+      - NEXT_PUBLIC_SITE_URL=http://localhost:${FRONTEND_PORT:-3000}
+      - NEXT_PUBLIC_APP_NAME=QTruck Dev
+    volumes:
+      - ../../apps/qtruck/qtruck-webapp:/app
+      - qtruck-frontend-node-modules:/app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - qtruck-dev-network
+    depends_on:
+      - qtruck-api-dev
+
+  # QTruck API Backend (Development)
+  qtruck-api-dev:
+    image: python:3.11-alpine
+    container_name: qtruck-api-dev
+    working_dir: /app
+    restart: unless-stopped
+    command: sh -c "pip install -r requirements.txt && python -m flask run --host=0.0.0.0 --port=5000 --debug"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - DATABASE_URL=${DEV_DATABASE_URL:-postgresql://qtruck_user:qtruck_password@postgres-dev:5432/qtruck_db}
+      - JWT_SECRET_KEY=${DEV_JWT_SECRET:-dev-secret-change-in-production}
+      - REDIS_URL=redis://redis-dev:6379/0
+    volumes:
+      - ../../apps/qtruck/qtruck_api:/app
+      - qtruck-api-cache:/root/.cache
+    ports:
+      - "${API_PORT:-5000}:5000"
+    networks:
+      - qtruck-dev-network
+    depends_on:
+      - postgres-dev
+      - redis-dev
+
+  # PostgreSQL Database (Development)
+  postgres-dev:
+    image: postgres:15-alpine
+    container_name: qtruck-postgres-dev
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DEV_POSTGRES_DB:-qtruck_db}
+      - POSTGRES_USER=${DEV_POSTGRES_USER:-qtruck_user}
+      - POSTGRES_PASSWORD=${DEV_POSTGRES_PASSWORD:-qtruck_password}
+    volumes:
+      - qtruck-postgres-dev-data:/var/lib/postgresql/data
+      - ./dev/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - qtruck-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DEV_POSTGRES_USER -d $DEV_POSTGRES_DB"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Redis (Development)
+  redis-dev:
+    image: redis:7-alpine
+    container_name: qtruck-redis-dev
+    restart: unless-stopped
+    volumes:
+      - qtruck-redis-dev-data:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - qtruck-dev-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Adminer for database management (Development)
+  adminer:
+    image: adminer:latest
+    container_name: qtruck-adminer
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    networks:
+      - qtruck-dev-network
+    depends_on:
+      - postgres-dev
+
+networks:
+  qtruck-dev-network:
+    driver: bridge
+
+volumes:
+  qtruck-frontend-node-modules:
+    driver: local
+  qtruck-api-cache:
+    driver: local
+  qtruck-postgres-dev-data:
+    driver: local
+  qtruck-redis-dev-data:
+    driver: local

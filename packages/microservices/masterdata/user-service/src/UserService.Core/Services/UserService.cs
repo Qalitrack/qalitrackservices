@@ -48,13 +48,18 @@ namespace UserService.Core.Services
         public async Task<UserReadDto> CreateAsync(CreateUserDto dto)
         {
             var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
+            
+            // Set default password
+            const string defaultPassword = "ChangeMe123!";
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(defaultPassword);
+            
             var user = new User
             {
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 MobileNumber = dto.MobileNumber,
                 Email = dto.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Password = hashedPassword,
                 IsFirstLogin = true,
                 IsActive = false,
                 CreatedAt = DateTime.UtcNow,
@@ -64,6 +69,34 @@ namespace UserService.Core.Services
             };
 
             await userRepository.CreateAsync(user);
+
+            try
+            {
+                var emailSubject = "Welcome to Qalitrack";
+                var emailBody = $"""
+                    <h2>Welcome {dto.FirstName} {dto.LastName}!</h2>
+                    <p>Your account has been successfully created.</p>
+                    <p>You can log in using the following credentials:</p>
+                    <p><strong>Email:</strong> {dto.Email}</p>
+                    <p><strong>Password:</strong> {defaultPassword}</p>
+                    <p>Please change your password after your first login for security reasons.</p>
+                    <p>Best regards,<br/>The Team</p>
+                    """;
+
+                await _emailQueueService.EnqueueEmailAsync(
+                    dto.Email,
+                    emailSubject,
+                    emailBody
+                );
+
+                _logger.LogInformation("Welcome email sent to {Email}", dto.Email);
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't fail the user creation
+                _logger.LogError(ex, "Failed to send welcome email to {Email}", dto.Email);
+            }
+
             return mapper.Map<UserReadDto>(user);
         }
 
@@ -296,12 +329,7 @@ namespace UserService.Core.Services
                 {
                     throw new KeyNotFoundException("User not found.");
                 }
-
-                // Check if user is active
-                if (!user.IsActive)
-                {
-                    throw new InvalidOperationException("Cannot reset password for an inactive user.");
-                }
+                
 
                 // Reset password using repository method
                 var result = await userRepository.ResetUserPasswordAsync(userId, _emailQueueService);

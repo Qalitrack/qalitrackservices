@@ -132,7 +132,7 @@ export const fetchUserRoles = async (userId) => {
  */
 export const resetPassword = async (userId) => {
     try {
-        return await apiClient.post(`/Users/${userId}/resetpassword`);
+        return await apiClient.post(`/Users/${userId}/reset-password`);
     } catch (err) {
         console.error(`Reset password for user ${userId} error:`, err);
         throw err;

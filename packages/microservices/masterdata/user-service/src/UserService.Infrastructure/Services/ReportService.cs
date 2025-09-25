@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using UserService.Core.DTOs.Report;
 using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
+using UserService.Core.Enums;
 using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Services;
 using UserService.Infrastructure.Data;
@@ -62,6 +63,7 @@ namespace UserService.Infrastructure.Services
                     EndTime = s.EndTime,
                     Mode = s.Mode == ShiftMode.Open ? "Open" : "Strict", // Corrected interpretation
                     IsActive = s.IsActive,
+                    CreatedAt =s.CreatedAt, 
                     CreatedBy = s.CreatedBy,
                     UpdatedBy = s.UpdatedBy,
                     AssignedUsersCount = s.UserShifts?.Count(us => !us.IsDeleted && us.User != null && !us.User.IsDeleted) ?? 0,

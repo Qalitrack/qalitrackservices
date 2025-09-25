@@ -152,22 +152,25 @@ const useAuth = () => {
                 code
             });
 
-            // Adjust for nested data structure in response
+            // The response data is nested under response.data.data
             const responseData = response.data?.data || response.data;
+            
+            // Extract the actual user data from the response
+            const userData = responseData?.data || responseData;
 
             // Store token and user data after successful 2FA
-            if (responseData) {
-                if (!responseData.token) {
+            if (userData) {
+                if (!userData.token) {
                     throw new Error('Token not provided in response');
                 }
-                localStorage.setItem('authToken', responseData.token);
+                localStorage.setItem('authToken', userData.token);
 
                 // Store user info
-                const userData = {
-                    id: responseData.id || '',
-                    email: responseData.email || maskedEmail,
-                    firstName: responseData.firstName || '',
-                    lastName: responseData.lastName || '',
+                const userInfo = {
+                    id: userData.id || '',
+                    email: userData.email || maskedEmail,
+                    firstName: userData.firstName || '',
+                    lastName: userData.lastName || '',
                     userRoles: responseData.userRoles || []
                 };
                 localStorage.setItem('user', JSON.stringify(userData));

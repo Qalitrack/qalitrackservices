@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar'; // Using Navbar as per your latest instruction
 import Footer from '../Footer';
-import Scales from '@/assets/team.jpg';
+// import Scales from '@/assets/team.jpg';
 
 
 // Data for the sidebar navigation (consistent across automation sub-pages)
@@ -28,7 +28,7 @@ const BuildingManagementSystemsPage = () => {
       <section 
         className="relative bg-cover bg-center text-white py-20 md:py-32 pt-32" // pt-32 to account for fixed Navbar
         style={{ 
-          backgroundImage: `url(${Scales})`, // Placeholder image for BMS
+          backgroundImage: "url('/automation.jpeg')", // Placeholder image for BMS
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
