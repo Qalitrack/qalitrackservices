@@ -20,7 +20,7 @@ urlpatterns = [
 # POST   /feedback/{id}/respond/       - Admin responds to feedback
 # POST   /feedback/{id}/resolve/       - Admin resolves feedback
 # POST   /feedback/{id}/reject/        - Admin rejects feedback
-# GET    /feedback/my_feedback/        - Get current user's feedback (shortcut)
+# GET    /feedback/me/                 - Get current user's feedback
 #
 # Advanced Filtering Examples:
 # GET    /feedback/?status=pending                     - Filter by status (admin only)

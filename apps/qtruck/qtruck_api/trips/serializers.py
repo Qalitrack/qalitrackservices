@@ -31,6 +31,9 @@ class ExpenseSerializer(serializers.ModelSerializer):
     
     def get_receipt_photo_url(self, obj):
         if obj.receipt_photo and hasattr(obj.receipt_photo, 'url'):
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.receipt_photo.url)
             return obj.receipt_photo.url
         return None
     
@@ -72,10 +75,30 @@ class TripSerializer(serializers.ModelSerializer):
         allow_empty=True
     )
     
+    # URL fields for photo display
+    proof_image_url = serializers.SerializerMethodField(read_only=True)
+    proof_end_image_url = serializers.SerializerMethodField(read_only=True)
+    
     class Meta:
         model = Trip
         fields = '__all__'
-        read_only_fields = ('total_cost', 'total_mileage', 'date', 'driver', 'start_mileage', 'end_mileage', 'proof_image', 'proof_end_image')
+        read_only_fields = ('total_cost', 'total_mileage', 'date', 'driver', 'proof_image', 'proof_end_image')
+    
+    def get_proof_image_url(self, obj):
+        if obj.proof_image and hasattr(obj.proof_image, 'url'):
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.proof_image.url)
+            return obj.proof_image.url
+        return None
+    
+    def get_proof_end_image_url(self, obj):
+        if obj.proof_end_image and hasattr(obj.proof_end_image, 'url'):
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.proof_end_image.url)
+            return obj.proof_end_image.url
+        return None
     
     def validate(self, data):
         # Validate that material_variant belongs to material if both are provided
