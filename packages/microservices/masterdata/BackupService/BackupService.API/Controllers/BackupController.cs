@@ -15,17 +15,20 @@ namespace BackupService.API.Controllers
         private readonly IMicroService _microserviceService;
         private readonly ILogger<BackupController> _logger;
         private readonly IBackupRestoreService _backupRestoreService;
+        private readonly IConfiguration _configuration;
 
         public BackupController(
             IDatabaseBackupService backupService,
             IBackupRestoreService backupRestoreService,
             IMicroService microserviceService,
-            ILogger<BackupController> logger)
+            ILogger<BackupController> logger,
+            IConfiguration configuration)
         {
             _backupService = backupService;
             _microserviceService = microserviceService;
             _logger = logger;
             _backupRestoreService = backupRestoreService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -41,12 +44,11 @@ namespace BackupService.API.Controllers
             {
                 // Validate microservice exists
                 var microservice = await _microserviceService.GetMicroserviceAsync(request.Microservice, ct);
-                
+        
                 var result = await _backupService.CreateBackupAsync(
-                    request.Type,
+                    (BackupType)request.Type,  // Use the type from the request
                     request.Microservice,
-                    request.SaveLocation,
-                    request.CronSchedule,
+                    request.CronSchedule,      // Pass the cron schedule from the request
                     ct);
 
                 return Ok(result);
@@ -75,101 +77,92 @@ namespace BackupService.API.Controllers
         /// <param name="ct">Cancellation token</param>
         /// <returns>Restore result</returns>
         [HttpPost("restore")]
-public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreBackupRequest request, CancellationToken ct = default)
-{
-    try
-    {
-    
-
-        // Validate microservice exists
-        var microservice = await _microserviceService.GetMicroserviceAsync(request.Microservice, ct);
-        if (microservice == null)
+        public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreBackupRequest request, CancellationToken ct = default)
         {
-            throw new KeyNotFoundException($"Microservice {request.Microservice} not found");
-        }
-
-        // Validate that backup source path is provided
-        if (string.IsNullOrWhiteSpace(request.BackupSourcePath))
-        {
-            throw new ArgumentException("BackupSourcePath is required for restore operation");
-        }
-
-        // Determine the backup file path
-        string backupFilePath;
-        
-        if (System.IO.File.Exists(request.BackupSourcePath))
-        {
-            // BackupSourcePath is already a full file path
-            backupFilePath = request.BackupSourcePath;
-        }
-        else if (System.IO.Directory.Exists(request.BackupSourcePath))
-        {
-            // BackupSourcePath is a directory, treat BackupId as filename
-            backupFilePath = System.IO.Path.Combine(request.BackupSourcePath, request.BackupId);
-            
-            // If BackupId doesn't have extension, try adding common extensions
-            if (!System.IO.File.Exists(backupFilePath))
+            try
             {
-                var extensions = new[] { ".dump", ".sql" };
-                foreach (var ext in extensions)
+                string backupFilePath = _configuration["BackupSettings:StoragePath"] ?? string.Empty;
+
+                // Validate microservice exists
+                var microservice = await _microserviceService.GetMicroserviceAsync(request.Microservice, ct);
+                if (microservice == null)
                 {
-                    var fileWithExt = backupFilePath + ext;
-                    if (System.IO.File.Exists(fileWithExt))
+                    throw new KeyNotFoundException($"Microservice {request.Microservice} not found");
+                }
+
+                // Validate that backup source path is provided
+                if (string.IsNullOrWhiteSpace(request.BackupSourcePath))
+                {
+                    throw new ArgumentException("BackupSourcePath is required for restore operation");
+                }
+
+                // Determine the backup file path
+                
+                if (System.IO.File.Exists(request.BackupSourcePath))
+                {
+                    backupFilePath = request.BackupSourcePath;
+                }
+                else if (System.IO.Directory.Exists(request.BackupSourcePath))
+                {
+                    backupFilePath = System.IO.Path.Combine(request.BackupSourcePath, request.BackupId);
+                    
+                    // If BackupId doesn't have extension, try adding common extensions
+                    if (!System.IO.File.Exists(backupFilePath))
                     {
-                        backupFilePath = fileWithExt;
-                        break;
+                        var extensions = new[] { ".dump", ".sql" };
+                        foreach (var ext in extensions)
+                        {
+                            var fileWithExt = backupFilePath + ext;
+                            if (System.IO.File.Exists(fileWithExt))
+                            {
+                                backupFilePath = fileWithExt;
+                                break;
+                            }
+                        }
                     }
                 }
+                if (string.IsNullOrEmpty(backupFilePath) || !System.IO.File.Exists(backupFilePath))
+                {
+                    throw new FileNotFoundException($"Backup file not found: {backupFilePath}");
+                }
+
+                _logger.LogInformation("Using backup file: {BackupFilePath}", backupFilePath);
+
+                // Call the service method with the backup file path directly
+                var restoreResult = await _backupService.RestoreBackupAsync(
+                    request.Microservice,
+                    backupFilePath,
+                    ct);
+
+                return Ok(restoreResult);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Microservice or backup not found: {Microservice}, {BackupId}", 
+                    request.Microservice, request.BackupId);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid arguments for restore: {Microservice}", request.Microservice);
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Backup directory not found: {BackupSourcePath}", request.BackupSourcePath);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (FileNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Backup file not found: {BackupFilePath}", ex.FileName);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error restoring backup for microservice: {Microservice}", request.Microservice);
+                return StatusCode(500, new { error = "Internal server error while restoring backup" });
             }
         }
-        else
-        {
-            throw new DirectoryNotFoundException($"Backup source path not found: {request.BackupSourcePath}");
-        }
-
-        // Final validation that the backup file exists
-        if (!System.IO.File.Exists(backupFilePath))
-        {
-            throw new FileNotFoundException($"Backup file not found: {backupFilePath}");
-        }
-
-        _logger.LogInformation("Using backup file: {BackupFilePath}", backupFilePath);
-
-        // Call the service method with the backup file path directly
-        var result = await _backupService.RestoreBackupAsync(
-            request.Microservice,
-            backupFilePath,
-            ct);
-
-        return Ok(result);
-    }
-    catch (KeyNotFoundException ex)
-    {
-        _logger.LogWarning(ex, "Microservice or backup not found: {Microservice}, {BackupId}", 
-            request.Microservice, request.BackupId);
-        return NotFound(new { error = ex.Message });
-    }
-    catch (ArgumentException ex)
-    {
-        _logger.LogWarning(ex, "Invalid arguments for restore: {Microservice}", request.Microservice);
-        return BadRequest(new { error = ex.Message });
-    }
-    catch (DirectoryNotFoundException ex)
-    {
-        _logger.LogWarning(ex, "Backup directory not found: {BackupSourcePath}", request.BackupSourcePath);
-        return NotFound(new { error = ex.Message });
-    }
-    catch (FileNotFoundException ex)
-    {
-        _logger.LogWarning(ex, "Backup file not found: {BackupFilePath}", ex.FileName);
-        return NotFound(new { error = ex.Message });
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error restoring backup for microservice: {Microservice}", request.Microservice);
-        return StatusCode(500, new { error = "Internal server error while restoring backup" });
-    }
-}
 
 
 
@@ -213,9 +206,13 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
         {
             try
             {
-
                 var statistics = await _backupService.GetBackupStatisticsAsync(microservice, ct);
                 return Ok(statistics);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "No backups found for microservice: {Microservice}", microservice);
+                return NotFound(new { error = ex.Message });
             }
             catch (Exception ex)
             {
@@ -230,12 +227,16 @@ public async Task<ActionResult<RestoreResult>> RestoreBackup([FromBody] RestoreB
         /// <param name="ct">Cancellation token</param>
         /// <returns>List of scheduled backups</returns>
         [HttpGet("scheduled")]
-        public async Task<ActionResult<List<ScheduledBackup>>> GetScheduledBackups(CancellationToken ct = default)
+        public async Task<ActionResult<List<ScheduledBackup>>> GetScheduledBackups([FromQuery] string? microservice = null, CancellationToken ct = default)
         {
             try
             {
 
                 var scheduledBackups = await _backupService.GetScheduledBackupsAsync(ct);
+                if (!string.IsNullOrEmpty(microservice))
+                {
+                    scheduledBackups = scheduledBackups.Where(b => b.Microservice == microservice).ToList();
+                }
                 return Ok(scheduledBackups);
             }
             catch (Exception ex)
