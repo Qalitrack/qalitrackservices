@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Enums;
@@ -12,6 +13,7 @@ namespace UserService.Core.Services
     {
         private readonly IEmailQueueService _emailQueueService;
         private readonly ILogger<ShiftNotificationService> _logger;
+        private static readonly TimeZoneInfo _nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("East Africa Standard Time");
 
         public ShiftNotificationService(
             IEmailQueueService emailQueueService,
@@ -84,23 +86,32 @@ namespace UserService.Core.Services
 
         private string GetEmailBody(NotificationType type, string fullName, string shiftName, DateTime startTime, DateTime endTime, string? reason, string? changes)
         {
+            var nairobiStartTime = TimeZoneInfo.ConvertTimeFromUtc(startTime, _nairobiTimeZone);
+            var nairobiEndTime = TimeZoneInfo.ConvertTimeFromUtc(endTime, _nairobiTimeZone);
+
+            var formattedDate = nairobiStartTime.ToString("dddd, MMMM d, yyyy");
+            var formattedStartTime = nairobiStartTime.ToString("hh:mm tt");
+            var formattedEndTime = nairobiEndTime.ToString("hh:mm tt");
+
+            var shiftDetails = $"""
+                <strong>Shift Details:</strong><br>
+                Date: {formattedDate}<br>
+                Time: {formattedStartTime} - {formattedEndTime}
+                """;
+
             return type switch
             {
                 NotificationType.ShiftReminder => $"""
                     <p>Dear {fullName},</p>
                     <p>This is a reminder that your shift '{shiftName}' starts in 10 minutes.</p>
-                    <p><strong>Shift Details:</strong><br>
-                    Date: {startTime:dddd, MMMM d, yyyy}<br>
-                    Time: {startTime:hh:mm tt} - {endTime:hh:mm tt}</p>
+                    <p>{shiftDetails}</p>
                     <p>Please be prepared to start your shift on time.</p>
                     <p>Best regards,<br>Your HR Team</p>
                     """,
                 NotificationType.ShiftCancellation => $"""
                     <p>Dear {fullName},</p>
                     <p>We regret to inform you that your shift '{shiftName}' has been cancelled.</p>
-                    <p><strong>Shift Details:</strong><br>
-                    Date: {startTime:dddd, MMMM d, yyyy}<br>
-                    Time: {startTime:hh:mm tt} - {endTime:hh:mm tt}<br>
+                    <p>{shiftDetails}<br>
                     Reason: {reason ?? "No reason provided"}</p>
                     <p>We apologize for any inconvenience this may cause. Please check your schedule for updates.</p>
                     <p>Best regards,<br>Your HR Team</p>
@@ -109,8 +120,7 @@ namespace UserService.Core.Services
                     <p>Dear {fullName},</p>
                     <p>Your shift '{shiftName}' has been modified.</p>
                     <p><strong>Updated Shift Details:</strong><br>
-                    Date: {startTime:dddd, MMMM d, yyyy}<br>
-                    Time: {startTime:hh:mm tt} - {endTime:hh:mm tt}<br>
+                    {shiftDetails}<br>
                     Changes: {(changes ?? "No specific changes provided").Replace("\n", "<br>")}</p>
                     <p>Please make note of these changes to your schedule.</p>
                     <p>Best regards,<br>Your HR Team</p>
@@ -118,9 +128,7 @@ namespace UserService.Core.Services
                 NotificationType.ShiftEndingAlert => $"""
                     <p>Dear {fullName},</p>
                     <p>This is a reminder that your shift '{shiftName}' will end in 10 minutes.</p>
-                    <p><strong>Shift Details:</strong><br>
-                    Date: {startTime:dddd, MMMM d, yyyy}<br>
-                    Time: {startTime:hh:mm tt} - {endTime:hh:mm tt}</p>
+                    <p>{shiftDetails}</p>
                     <p>Please ensure all tasks are completed and prepare to end your shift.</p>
                     <p>Best regards,<br>Your HR Team</p>
                     """,
@@ -140,5 +148,4 @@ namespace UserService.Core.Services
             };
         }
     }
-    
 }
