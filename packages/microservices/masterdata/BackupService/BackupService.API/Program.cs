@@ -22,12 +22,39 @@ using Quartz.Simpl;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Kestrel for larger file uploads
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 1024 * 1024 * 1024; // 1GB
+    serverOptions.Limits.MinRequestBodyDataRate = null;
+    serverOptions.Limits.MinResponseDataRate = null;
+});
+
+// Configure request limits
+builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 1024 * 1024 * 1024; // 1GB
+});
+
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 1024 * 1024 * 1024; // 1GB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+    options.BufferBodyLengthLimit = 1024 * 1024 * 1024; // 1GB
+    options.MemoryBufferThreshold = 1024 * 1024 * 10; // 10MB
+});
+
 // Add Serilog
 builder.Host.UseSerilog((context, configuration) => 
     configuration.ReadFrom.Configuration(context.Configuration));
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
