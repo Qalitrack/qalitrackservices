@@ -78,7 +78,6 @@ class BackupAPI {
                 backupId: restoreData.backupId
             };
 
-            console.log('Restoring backup with payload:', payload);
             const response = await backupApiClient.post(`${this.baseEndpoint}/restore`, payload);
             return response.data;
         } catch (error) {
@@ -100,10 +99,6 @@ class BackupAPI {
                 backupId
             };
 
-            console.log('Restoring backup with ID:', {
-                backupId,
-                microservice
-            });
 
             const response = await backupApiClient.post(
                 `${this.baseEndpoint}/restore`,
