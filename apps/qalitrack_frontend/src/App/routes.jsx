@@ -161,6 +161,10 @@ export const routes = [
                         element: <Shifts />
                     },
                     {
+                        path:"attendance",
+                        element: <Attendance />
+                    },
+                    {
                         path: "shift-assignment",
                         element: <ShiftAssignment />
                     },
