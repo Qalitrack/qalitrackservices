@@ -66,18 +66,51 @@ class BackupAPI {
      * Restore a backup
      * @param {Object} restoreData - The restore configuration
      * @param {string} restoreData.microservice - Name of the microservice to restore to
-     * @param {string} restoreData.backupPath - Path to the backup file
+     * @param {string} restoreData.backupSourcePath - Path to the backup file
+     * @param {string} restoreData.backupId - ID of the backup to restore
      * @returns {Promise<Object>} The restore operation result
      */
     async restoreBackup(restoreData) {
         try {
             const payload = {
                 microservice: restoreData.microservice,
-                backupPath: restoreData.backupPath
+                backupSourcePath: restoreData.backupSourcePath,
+                backupId: restoreData.backupId
             };
 
-            console.log('Restoring backup with payload:', payload);
             const response = await backupApiClient.post(`${this.baseEndpoint}/restore`, payload);
+            return response.data;
+        } catch (error) {
+            console.error('Error restoring backup:', error);
+            throw this._handleError(error);
+        }
+    }
+
+    /**
+     * Restore a backup by ID
+     * @param {string} backupId - The ID of the backup to restore
+     * @param {string} microservice - The microservice to restore to
+     * @returns {Promise<Object>} The restore operation result
+     */
+    async restoreBackupById(backupId, microservice) {
+        try {
+            const payload = {
+                microservice,
+                backupId
+            };
+
+
+            const response = await backupApiClient.post(
+                `${this.baseEndpoint}/restore`,
+                payload,
+                {
+                    headers: {
+                        'accept': 'text/plain',
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
             return response.data;
         } catch (error) {
             console.error('Error restoring backup:', error);

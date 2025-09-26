@@ -107,9 +107,9 @@ const ShiftInstances = ({ shiftId }) => {
     }
 
     return (
-        <div className="w-full max-w-[1800px] mx-auto p-4">
-            <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                <div className="overflow-x-auto">
+        <div className="w-full mx-auto p-4">
+            <div className="bg-white shadow overflow-x-auto sm:rounded-lg">
+                <div className="inline-block min-w-full align-middle">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                         <tr>
