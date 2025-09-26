@@ -49,44 +49,33 @@ public class BackupCreationService : IBackupCreationService
         _connectionTestTimeoutSeconds = configuration.GetValue<int>("Backup:ConnectionTestTimeoutSeconds", 10);
     }
 
-    public async Task<BackupResult> CreateBackupAsync(BackupType backupType, string microservice, 
-        string saveLocation, CancellationToken ct = default)
+    public async Task<BackupResult> CreateBackupAsync(BackupType backupType, string microservice, CancellationToken ct = default)
     {
-        // Check PostgreSQL tool versions
+        // ...existing code...
+        // Use configured storage path internally
+        var saveLocation = "/app/backups"; // Or get from config if needed
         await CheckPostgreSqlToolVersionsAsync(ct);
-
-        // Only support full backups now
         if (backupType != BackupType.Full)
         {
             throw new NotSupportedException("Only full backups are supported. Incremental backups have been removed.");
         }
-
         await _operationLock.WaitAsync(ct);
         try
         {
             ct.ThrowIfCancellationRequested();
             var ms = await ValidateMicroserviceAsync(microservice, ct);
             await EnsureBackupDirectoryAsync(saveLocation, ct);
-
             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
             var backupFileName = $"{microservice}_full_{timestamp}.dump";
             var backupPath = Path.Combine(saveLocation, backupFileName);
-
-            _logger.LogInformation("Creating SQL dump backup for {Microservice}: {BackupFileName}", 
-                microservice, backupFileName);
-
+            _logger.LogInformation("Creating SQL dump backup for {Microservice}: {BackupFileName}", microservice, backupFileName);
             return await ExecuteWithErrorHandlingAsync(async () =>
             {
                 var result = await CreateSqlDumpBackupAsync(backupPath, ms, ct);
-
-                // Update metadata
                 await _backupMetadataService.UpdateMetadataWithFullBackupAsync(result, microservice, ct);
-
-                // Update microservice status
                 ms.LastBackupAt = DateTime.UtcNow;
                 ms.Status = MicroserviceStatus.Active;
                 ms.UpdatedAt = DateTime.UtcNow;
-
                 await _microserviceRepository.UpdateMicroserviceAsync(
                     ms.Name,
                     new MicroserviceRequest
@@ -97,10 +86,7 @@ public class BackupCreationService : IBackupCreationService
                         LastBackupAt = ms.LastBackupAt
                     },
                     ct);
-
-                _logger.LogInformation("SQL dump backup completed successfully for {Microservice}. Size: {SizeBytes} bytes", 
-                    microservice, result.FileSizeBytes);
-
+                _logger.LogInformation("SQL dump backup completed successfully for {Microservice}. Size: {SizeBytes} bytes", microservice, result.FileSizeBytes);
                 return result;
             }, ms, microservice, backupPath, ct);
         }
@@ -270,7 +256,7 @@ public class BackupCreationService : IBackupCreationService
             BackupId = Path.GetFileNameWithoutExtension(Path.GetFileName(backupPath)),
             FileName = Path.GetFileName(backupPath),
             BackupType = BackupType.Full,
-            CreatedAt = DateTime.UtcNow,
+            Timestamp = DateTime.UtcNow,
             FilePath = backupPath,
             FileSizeBytes = fileInfo.Length,
             IsValid = true,
