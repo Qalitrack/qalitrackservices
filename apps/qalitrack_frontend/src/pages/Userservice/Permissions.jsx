@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission, fetchDeletedPermissions, restorePermission } from '../../helpers/UserService/Permissions/permissions.js';
 import { fetchUserById } from '../../helpers/UserService/Users/users.js';
-import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText, RefreshCw } from 'lucide-react';
+import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText, RefreshCw, Download } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // A reusable Modal component
 const Modal = ({ children, isOpen, onClose }) => {
@@ -38,7 +40,6 @@ const Permissions = () => {
     const [modalFeedback, setModalFeedback] = useState({ text: '', type: '' });
     const [userDetails, setUserDetails] = useState({});
 
-
     const showMessage = (text, type) => {
         setFeedbackMessage({ text, type });
         setTimeout(() => {
@@ -63,6 +64,166 @@ const Permissions = () => {
     useEffect(() => {
         loadPermissions(showDeleted);
     }, [showDeleted]);
+
+    const fetchAllPermissions = async () => {
+        try {
+            const data = await fetchPermissions(); // Fetch active permissions for PDF
+            return data;
+        } catch (error) {
+            console.error('Error fetching all permissions:', error);
+            throw error;
+        }
+    };
+
+    const generatePDF = async () => {
+        setLoading(true);
+        try {
+            const allPermissions = await fetchAllPermissions();
+
+            const permissionsWithRoles = await Promise.all(
+                allPermissions.map(async (permission) => {
+                    try {
+                        const roles = await fetchRolesForPermission(permission.id);
+                        const formattedRoles = roles.map(role => role.name || 'Unknown').join('\n');
+                        return {
+                            ...permission,
+                            assignedRolesList: formattedRoles || 'None'
+                        };
+                    } catch (err) {
+                        console.warn(`Failed to fetch roles for permission ${permission.id}:`, err);
+                        return {
+                            ...permission,
+                            assignedRolesList: 'Error fetching roles'
+                        };
+                    }
+                })
+            );
+
+            const doc = new jsPDF({
+                orientation: 'landscape'
+            });
+
+            doc.setFontSize(18);
+            doc.text('Permissions Report', 14, 22);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            doc.text(`Total Permissions: ${permissionsWithRoles.length}`, 14, 38);
+
+            const columns = [
+                { header: 'Name', dataKey: 'name', cellWidth: 'auto' },
+                { header: 'Description', dataKey: 'description', cellWidth: 'wrap' },
+                { header: 'Created At', dataKey: 'createdAt', cellWidth: 'wrap' },
+                { header: 'Last Updated', dataKey: 'updatedAt', cellWidth: 'wrap' },
+                { header: 'Assigned Roles', dataKey: 'assignedRolesList', cellWidth: 'wrap' }
+            ];
+
+            const data = permissionsWithRoles.map(permission => ({
+                name: permission.name || 'N/A',
+                description: permission.description || 'N/A',
+                createdAt: permission.createdAt ? format(parseISO(permission.createdAt), "PPpp") : 'N/A',
+                updatedAt: permission.updatedAt ? format(parseISO(permission.updatedAt), "PPpp") : 'N/A',
+                assignedRolesList: permission.assignedRolesList !== 'None' ? { content: permission.assignedRolesList } : 'None'
+            }));
+
+            const columnStyles = {
+                // Default styles for all columns
+                default: {
+                    cellPadding: 3,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1,
+                    valign: 'top'
+                },
+                // Smaller font size for date columns (index 2 and 3)
+                2: { 
+                    fontSize: 8,
+                    minCellWidth: 40
+                },
+                3: { 
+                    fontSize: 8,
+                    minCellWidth: 40
+                },
+            };
+            
+            // Apply cell width settings
+            columns.forEach((col, index) => {
+                if (!columnStyles[index]) columnStyles[index] = {};
+                columnStyles[index] = {
+                    ...columnStyles[index],
+                    cellWidth: col.cellWidth === 'auto' ? 'auto' : undefined,
+                    minCellWidth: col.cellWidth === 'wrap' ? 50 : columnStyles[index].minCellWidth || 30,
+                };
+                
+                if (col.dataKey === 'assignedRolesList') {
+                    columnStyles[index].cellWidth = 100;
+                }
+            });
+
+            autoTable(doc, {
+                head: [columns.map(col => col.header)],
+                body: data.map(row => columns.map(col => row[col.dataKey])),
+                startY: 40,
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 1,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1,
+                    textColor: [0, 0, 0],
+                    fontStyle: 'normal'
+                },
+                headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    fontSize: 9
+                },
+                columnStyles,
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
+                },
+                margin: {
+                    top: 40,
+                    right: 10,
+                    bottom: 20,
+                    left: 10
+                },
+                tableWidth: 'wrap',
+                showHead: 'everyPage',
+                willDrawPage: function(data) {
+                    const pageSize = doc.internal.pageSize;
+                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                    const pageNumber = data.pageNumber || 1;
+                    const pageCount = data.pageCount || 1;
+                    if (pageNumber && pageCount) {
+                        doc.setFontSize(10);
+                        doc.text(
+                            `Page ${pageNumber} of ${pageCount}`,
+                            data.settings.margin.left,
+                            pageHeight - 10
+                        );
+                    }
+                }
+            });
+
+            doc.save(`permissions-report-${new Date().toISOString().split('T')[0]}.pdf`);
+
+            return true;
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            setError('Failed to generate PDF: ' + (error.message || 'Unknown error'));
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDownloadPDF = async () => {
+        const success = await generatePDF();
+        if (success) {
+            // Optional: Show success message
+        }
+    };
 
     const loadUserDetails = async (userId) => {
         if (!userId || userDetails[userId]) return; // Don't fetch if no ID or already fetched
@@ -223,6 +384,13 @@ const Permissions = () => {
                             className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                         />
                     </div>
+                    <button
+                        onClick={handleDownloadPDF}
+                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                    >
+                        <Download size={18} />
+                        <span>Download PDF</span>
+                    </button>
                     <button
                         onClick={handleAddClick}
                         className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
@@ -468,4 +636,3 @@ const Permissions = () => {
 };
 
 export default Permissions;
-
