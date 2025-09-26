@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, fetchUserById, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../helpers/UserService/Users/users.js';
 import { fetchRoles } from '../../helpers/UserService/Roles/Roles.js';
-import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock } from 'lucide-react';
+import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock, Download } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { ChevronsLeft as ChevronDoubleLeft, ChevronsRight as ChevronDoubleRight } from 'lucide-react';
 import { format, parseISO, formatDistanceToNow } from 'date-fns';
 
@@ -167,7 +169,7 @@ const Users = () => {
         if (!number) return '';
         // Remove all non-digit characters
         const cleaned = number.replace(/\D/g, '');
-        
+
         // Check if the number starts with 0 or 254
         if (cleaned.startsWith('0')) {
             return `+254${cleaned.substring(1)}`;
@@ -176,7 +178,7 @@ const Users = () => {
         } else if (cleaned.startsWith('7') || cleaned.startsWith('1')) {
             return `+254${cleaned}`;
         }
-        
+
         // If it doesn't match any pattern, return as is (will be caught by validation)
         return number;
     };
@@ -184,7 +186,7 @@ const Users = () => {
     const validateKenyanPhoneNumber = (number) => {
         // Check if the number is empty (optional field)
         if (!number) return true;
-        
+
         // Check if the number matches Kenyan phone number patterns
         // Valid formats: 07XXXXXXXX, 7XXXXXXXX, 2547XXXXXXXX, +2547XXXXXXXX
         const kenyanPhoneRegex = /^(?:\+?254|0)?(7\d{8})$/;
@@ -221,9 +223,9 @@ const Users = () => {
         // Validate and format mobile number if provided
         if (newUser.mobileNumber) {
             if (!validateKenyanPhoneNumber(newUser.mobileNumber)) {
-                setModalFeedback({ 
-                    text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)', 
-                    type: 'error' 
+                setModalFeedback({
+                    text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)',
+                    type: 'error'
                 });
                 return;
             }
@@ -250,7 +252,7 @@ const Users = () => {
     };
 
     const handleEditClick = (user) => {
-        setSelectedUser({ 
+        setSelectedUser({
             ...user,
             mobileNumberError: ''
         });
@@ -265,9 +267,24 @@ const Users = () => {
         setLogsModalOpen(true);
     };
 
-    const handleViewRolesClick = (user) => {
-        setSelectedUser(user);
-        setViewRolesModalOpen(true);
+    const handleViewRolesClick = async (user) => {
+        try {
+            setSelectedUser(user);
+            const userRoles = await fetchUserRoles(user.id);
+            setSelectedUser(prev => ({
+                ...prev,
+                roles: userRoles // Update the user with fetched roles
+            }));
+            setViewRolesModalOpen(true);
+        } catch (error) {
+            console.error('Failed to fetch user roles:', error);
+            // Still open the modal but with an error message
+            setSelectedUser(prev => ({
+                ...prev,
+                roles: []
+            }));
+            setViewRolesModalOpen(true);
+        }
     };
 
     const handleResetPasswordClick = (user) => {
@@ -351,9 +368,9 @@ const Users = () => {
         // Validate and format mobile number if provided
         if (selectedUser.mobileNumber) {
             if (!validateKenyanPhoneNumber(selectedUser.mobileNumber)) {
-                setModalFeedback({ 
-                    text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)', 
-                    type: 'error' 
+                setModalFeedback({
+                    text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)',
+                    type: 'error'
                 });
                 return;
             }
@@ -442,6 +459,229 @@ const Users = () => {
         }
     };
 
+    const fetchAllUsers = async (showDeleted = false) => {
+        let allUsers = [];
+        let currentPage = 1;
+        const pageSize = 50; // Larger page size to reduce number of requests
+        let hasMore = true;
+
+        const fetchFunction = showDeleted ? fetchDeletedUsers : fetchUsers;
+
+        try {
+            while (hasMore) {
+                const response = await fetchFunction(currentPage, pageSize);
+                if (response.items && response.items.length > 0) {
+                    allUsers = [...allUsers, ...response.items];
+                    // Check if there are more pages
+                    hasMore = response.hasNextPage === true &&
+                        response.items.length === pageSize;
+                    currentPage++;
+                } else {
+                    hasMore = false;
+                }
+            }
+            return allUsers;
+        } catch (error) {
+            console.error('Error fetching all users:', error);
+            throw error;
+        }
+    };
+
+    const generatePDF = async () => {
+        setLoading(true);
+        try {
+            // Fetch all users with pagination
+            const allUsers = await fetchAllUsers(showDeleted);
+
+            const doc = new jsPDF({
+                orientation: 'landscape'  // Use landscape for better table display
+            });
+
+            // Add title and metadata
+            doc.setFontSize(18);
+            doc.text('Users Report', 14, 22);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            doc.text(`Total Users: ${allUsers.length}`, 14, 38);
+
+            // Define the columns for the table
+            const columns = [
+                { header: 'Name', dataKey: 'name', cellWidth: 'auto' },
+                { header: 'Email', dataKey: 'email', cellWidth: 'wrap' },
+                { header: 'Mobile', dataKey: 'mobile', cellWidth: 'wrap' },
+                { header: 'Status', dataKey: 'status', cellWidth: 'wrap' },
+                { header: 'Roles', dataKey: 'roles', cellWidth: 'wrap' },
+                { header: 'Last Updated', dataKey: 'updated', cellWidth: 'wrap' }
+            ];
+
+            // Prepare the data for the table
+            const data = allUsers.map(user => ({
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email || 'N/A',
+                mobile: user.mobileNumber || 'N/A',
+                status: user.isDeleted ? 'Deleted' : (user.isActive ? 'Active' : 'Inactive'),
+                roles: user.roles ? user.roles.map(r => r.name || r).join(', ') : 'None',
+                updated: format(parseISO(user.updatedAt), 'PPpp')
+            }));
+
+            // Calculate column widths based on content
+            const columnStyles = {};
+            columns.forEach((col, index) => {
+                columnStyles[index] = {
+                    cellWidth: col.cellWidth === 'auto' ? 'auto' : undefined,
+                    minCellWidth: col.cellWidth === 'wrap' ? 40 : undefined,
+                    cellPadding: 3,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1
+                };
+            });
+
+            // Add the table with proper pagination
+            autoTable(doc, {
+                head: [columns.map(col => col.header)],
+                body: data.map(row => columns.map(col => row[col.dataKey])),
+                startY: 40,
+                styles: {
+                    fontSize: 8,  // Slightly smaller font to fit more content
+                    cellPadding: 1,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1,
+                    textColor: [0, 0, 0],
+                    fontStyle: 'normal'
+                },
+                headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    fontSize: 9
+                },
+                columnStyles,
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
+                },
+                margin: {
+                    top: 40,
+                    right: 10,
+                    bottom: 20,
+                    left: 10
+                },
+                tableWidth: 'wrap',
+                showHead: 'everyPage',
+                didDrawPage: function(data) {
+                    // This is where we can add content after the table is drawn
+                },
+                willDrawPage: function(data) {
+                    // Add page number to bottom of each page
+                    const pageSize = doc.internal.pageSize;
+                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                    const pageNumber = data.pageNumber || 1;
+                    const pageCount = data.pageCount || 1;
+
+                    // Only add page numbers if we have valid values
+                    if (pageNumber && pageCount) {
+                        doc.setFontSize(10);
+                        doc.text(
+                            `Page ${pageNumber} of ${pageCount}`,
+                            data.settings.margin.left,
+                            pageHeight - 10
+                        );
+                    }
+                }
+            });
+
+            // Save the PDF with a timestamp in the filename
+            doc.save(`users-report-${new Date().toISOString().split('T')[0]}.pdf`);
+
+            return true;
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            showMessage('Failed to generate PDF: ' + (error.message || 'Unknown error'), 'error');
+            return false;
+        } finally {
+            setLoading(false);
+        }
+
+        // Calculate column widths based on content
+        const columnStyles = {};
+        columns.forEach((col, index) => {
+            columnStyles[index] = {
+                cellWidth: col.cellWidth === 'auto' ? 'auto' : undefined,
+                minCellWidth: col.cellWidth === 'wrap' ? 40 : undefined,
+                cellPadding: 3,
+                overflow: 'linebreak',
+                lineWidth: 0.1
+            };
+        });
+
+        // Add the table with proper pagination
+        autoTable(doc, {
+            head: [columns.map(col => col.header)],
+            body: data.map(row => columns.map(col => row[col.dataKey])),
+            startY: 40,
+            styles: {
+                fontSize: 8,  // Slightly smaller font to fit more content
+                cellPadding: 1,
+                overflow: 'linebreak',
+                lineWidth: 0.1,
+                textColor: [0, 0, 0],
+                fontStyle: 'normal'
+            },
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold',
+                lineWidth: 0.1,
+                fontSize: 9
+            },
+            columnStyles,
+            alternateRowStyles: {
+                fillColor: [245, 245, 245]
+            },
+            margin: {
+                top: 40,
+                right: 10,
+                bottom: 20,
+                left: 10
+            },
+            tableWidth: 'wrap',
+            showHead: 'everyPage',
+            didDrawPage: function(data) {
+                // Add page number to bottom of each page
+                const pageSize = doc.internal.pageSize;
+                const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                doc.setFontSize(10);
+                doc.text(
+                    `Page ${data.pageCount} of ${data.pageCount}`,  // This will be updated after all pages are drawn
+                    data.settings.margin.left,
+                    pageHeight - 10
+                );
+            },
+            willDrawPage: function(data) {
+                // Update page number for each page
+                const pageSize = doc.internal.pageSize;
+                const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                doc.setFontSize(10);
+                doc.text(
+                    `Page ${data.pageNumber} of ${data.pageCount}`,
+                    data.settings.margin.left,
+                    pageHeight - 10
+                );
+            }
+        });
+
+        // Save the PDF with a timestamp in the filename
+        doc.save(`users-report-${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    const handleDownloadPDF = async () => {
+        const success = await generatePDF();
+        if (success) {
+            showMessage('PDF downloaded successfully!', 'success');
+        }
+    };
+
     const loadShiftCounts = async (users) => {
         const shiftCounts = {};
 
@@ -481,9 +721,9 @@ const Users = () => {
     return (
         <div className="bg-white shadow-lg rounded-xl p-5 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 md:gap-0">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800">Users</h2>
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-800">Users</h2>
+                    <div className="flex items-center gap-2 ml-4">
                         <label htmlFor="show-deleted" className="text-sm font-medium text-gray-700">Show Deleted</label>
                         <input
                             type="checkbox"
@@ -493,6 +733,16 @@ const Users = () => {
                             className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                         />
                     </div>
+                </div>
+                <div className="flex items-center gap-4 w-full md:w-auto justify-end mt-2 md:mt-0">
+                    <button
+                        onClick={handleDownloadPDF}
+                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        title="Download Users as PDF"
+                    >
+                        <Download size={18} />
+                        <span className="hidden md:inline">Download PDF</span>
+                    </button>
                     <button
                         onClick={handleAddUserClick}
                         className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
@@ -502,7 +752,7 @@ const Users = () => {
                         <span className="inline md:hidden">Add</span>
                     </button>
                 </div>
-            </div> 
+            </div>
 
             {feedbackMessage.text && (
                 <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -805,43 +1055,45 @@ const Users = () => {
             </Modal>
 
             {/* Logs Modal */}
-            <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)} size="sm">
-                <h3 className="text-lg font-bold mb-4">User Logs</h3>
-                {selectedUser && (
-                    <div className="space-y-4 text-sm text-gray-700">
-                        <div className="flex items-center space-x-2">
-                            <PlusCircle size={18} className="text-gray-500" />
-                            <div>
-                                <p><strong>Created At:</strong> {format(parseISO(selectedUser.createdAt), 'PPpp')}</p>
-                                <p><strong>Created By:</strong> {userDetails[selectedUser.createdBy] || selectedUser.createdBy}</p>
+            <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
+                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 className="text-lg font-bold mb-4">Audit Logs for "{selectedUser?.firstName} {selectedUser?.lastName}"</h3>
+                    {selectedUser && (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Created At:</p>
+                                <p className="text-gray-600">{format(parseISO(selectedUser.createdAt), "PPP p")}</p>
                             </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <Edit size={18} className="text-gray-500" />
-                            <div>
-                                <p><strong>Last Updated At:</strong> {format(parseISO(selectedUser.updatedAt), 'PPpp')}</p>
-                                <p><strong>Last Updated By:</strong> {userDetails[selectedUser.updatedBy] || selectedUser.updatedBy}</p>
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Created By:</p>
+                                <p className="text-gray-600">{userDetails[selectedUser.createdBy] || selectedUser.createdBy || 'N/A'}</p>
                             </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <Trash2 size={18} className="text-gray-500" />
-                            <div>
-                                <p><strong>Deleted:</strong> {selectedUser.isDeleted ? 'Yes' : 'No'}</p>
-                                {selectedUser.isDeleted && (
-                                    <p><strong>Deleted At:</strong> {format(parseISO(selectedUser.deletedAt), 'PPpp')}</p>
-                                )}
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Last Updated At:</p>
+                                <p className="text-gray-600">{format(parseISO(selectedUser.updatedAt), "PPP p")}</p>
                             </div>
+                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                <p className="font-semibold text-gray-700">Updated By:</p>
+                                <p className="text-gray-600">{userDetails[selectedUser.updatedBy] || selectedUser.updatedBy || 'N/A'}</p>
+                            </div>
+                            {selectedUser.isDeleted && (
+                                <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
+                                    <p className="font-semibold text-gray-700">Deleted At:</p>
+                                    <p className="text-gray-600">{format(parseISO(selectedUser.deletedAt), "PPP p")}</p>
+                                </div>
+                            )}
                         </div>
-                        <div className="flex justify-end mt-4">
-                            <button
-                                onClick={() => setLogsModalOpen(false)}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                            >
-                                Close
-                            </button>
-                        </div>
+                    )}
+                    <div className="flex justify-end mt-6">
+                        <button
+                            type="button"
+                            onClick={() => setLogsModalOpen(false)}
+                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-sm font-medium transition-colors duration-200"
+                        >
+                            Close
+                        </button>
                     </div>
-                )}
+                </div>
             </Modal>
 
             {/* Reset Password Modal */}
@@ -897,7 +1149,7 @@ const Users = () => {
                     </button>
                 </div>
             </Modal>
-            
+
             {/* Manage Roles Modal */}
             <Modal isOpen={isManageRolesModalOpen} onClose={() => setManageRolesModalOpen(false)} size="sm">
                 <h3 className="text-lg font-bold mb-4">Manage Roles for {selectedUser?.firstName} {selectedUser?.lastName}</h3>
@@ -949,24 +1201,24 @@ const Users = () => {
                     {selectedUserShifts.length > 0 ? (
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shift Date</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                                </tr>
+                            <tr>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shift Date</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                            </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {selectedUserShifts.map(shift => (
-                                    <tr key={shift.id}>
-                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{format(parseISO(shift.startTime), 'PP')}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.startTime), 'p')}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.endTime), 'p')}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                                            {formatDistanceToNow(parseISO(shift.startTime), { addSuffix: false })}
-                                        </td>
-                                    </tr>
-                                ))}
+                            {selectedUserShifts.map(shift => (
+                                <tr key={shift.id}>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{format(parseISO(shift.startTime), 'PP')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.startTime), 'p')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.endTime), 'p')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                                        {formatDistanceToNow(parseISO(shift.startTime), { addSuffix: false })}
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     ) : (
