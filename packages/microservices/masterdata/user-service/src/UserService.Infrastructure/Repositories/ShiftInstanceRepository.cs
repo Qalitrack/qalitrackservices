@@ -201,8 +201,6 @@ namespace UserService.Infrastructure.Repositories
             DateTime startTime, 
             DateTime endTime)
         {
-            _logger.LogInformation("Querying for instances with status {Status} between {StartTime} and {EndTime}", status, startTime, endTime);
-            
             // First get all instances with the specified status
             var query = _context.ShiftInstances
                 .Include(si => si.Shift)
