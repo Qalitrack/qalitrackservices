@@ -1,0 +1,61 @@
+
+services:
+  claude-wrapper:
+    image: ghcr.io/churnisa/claude-code-openai-wrapper:latest
+    container_name: claude-code-wrapper
+    environment:
+      # Server Configuration  
+      - API_KEY=${API_KEY}
+      - PORT=8000
+      - MAX_TIMEOUT=${MAX_TIMEOUT:-600000}
+      - CORS_ORIGINS=${CORS_ORIGINS:-["*"]}
+      
+      # Claude CLI Configuration
+      - CLAUDE_CLI_PATH=${CLAUDE_CLI_PATH:-claude}
+      - CLAUDE_CWD=${CLAUDE_CWD:-/app}
+      
+      # Debug Configuration
+      - DEBUG_MODE=${DEBUG_MODE:-false}
+      - VERBOSE=${VERBOSE:-false}
+    volumes:
+      # Mount local directory for file access
+      - ./images:/app/images:ro
+      - ./uploads:/app/uploads
+      # Mount .env file if it exists
+      - ./.env:/app/.env:ro
+      # Persist Claude CLI authentication across container restarts
+      - ./claude-auth:/root/.claude
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.claude-wrapper.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.claude-wrapper.entrypoints=websecure"
+      - "traefik.http.routers.claude-wrapper.tls.certresolver=letsencrypt"
+      - "traefik.http.services.claude-wrapper.loadbalancer.server.port=8000"
+      - "traefik.docker.network=proxy-network"
+    networks:
+      - proxy-network
+      - default
+
+  # Optional: Redis for session management (if needed in future)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: claude-wrapper-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+
+
+networks:
+  proxy-network:
+    external: true
+  default:
+    name: claude-wrapper-network

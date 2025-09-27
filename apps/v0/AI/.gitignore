@@ -1,0 +1,8 @@
+uploads/*
+!uploads/.gitkeep
+!uploads/test_*.jpg
+!uploads/test_*.png
+
+# Claude authentication directory - track directory but ignore secrets
+claude-auth/*
+!claude-auth/.gitkeep

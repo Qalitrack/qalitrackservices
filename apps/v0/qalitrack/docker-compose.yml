@@ -1,0 +1,82 @@
+services:
+  qalitrack-traefik:
+    image: traefik:v3.2
+    container_name: qalitrack-traefik
+    restart: unless-stopped
+    ports:
+      # Expose ports so main Traefik can reach this internal Traefik
+      - "9080:9080"  # HTTP - for dev
+      - "9443:9443"  # HTTPS - for prod  
+      - "9081:8080"  # Dashboard/API
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - QALITRACK_DEV_DOMAIN=${QALITRACK_DEV_DOMAIN:-qalitrack.localhost}
+      - QALITRACK_DEV_ALT_DOMAIN=${QALITRACK_DEV_ALT_DOMAIN:-qalitrack-dev.localhost}
+      - QALITRACK_PROD_DOMAIN=${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}
+      - QALITRACK_TRAEFIK_DOMAIN=${QALITRACK_TRAEFIK_DOMAIN:-traefik.qalitrack.cseco.co.ke}
+    networks:
+      - proxy-network    # Connect to main Traefik
+      - qalitrack-proxy  # Connect to internal services
+    command:
+      # API and dashboard
+      - --api.dashboard=true
+      - --api.insecure=true
+      
+      # Docker provider - only process containers with qalitrack scope
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=qalitrack-proxy
+      - --providers.docker.constraints=Label(`traefik.scope`,`qalitrack`)
+      
+      # Entrypoints
+      - --entrypoints.qalitrack-http.address=:9080    # Dev HTTP
+      - --entrypoints.qalitrack-https.address=:9443   # Prod HTTPS
+      
+      # Security
+      - --global.sendAnonymousUsage=false
+    labels:
+      # Enable for main Traefik only (constraint prevents self-processing)
+      - "traefik.enable=true"
+      
+      # Main route for prod environment - route API calls to services (HTTPS)
+      - "traefik.http.routers.qalitrack-prod.rule=Host(`qalitrack.cseco.co.ke`)"
+      - "traefik.http.routers.qalitrack-prod.entrypoints=websecure"
+      - "traefik.http.routers.qalitrack-prod.service=qalitrack-traefik-http"
+      - "traefik.http.routers.qalitrack-prod.tls=true"
+      - "traefik.http.routers.qalitrack-prod.priority=1"
+      
+      # Main route for dev environment - route API calls to services (HTTP)
+      - "traefik.http.routers.qalitrack-dev.rule=Host(`dev.qalitrack.cseco.co.ke`)"
+      - "traefik.http.routers.qalitrack-dev.entrypoints=web"
+      - "traefik.http.routers.qalitrack-dev.service=qalitrack-traefik-http"
+      - "traefik.http.routers.qalitrack-dev.priority=1"
+      
+      # Dashboard access via subdomain (HTTPS) - no path prefix issues!
+      - "traefik.http.routers.qalitrack-dashboard-https.rule=Host(`${QALITRACK_TRAEFIK_DOMAIN:-traefik.qalitrack.cseco.co.ke}`)"
+      - "traefik.http.routers.qalitrack-dashboard-https.entrypoints=websecure"
+      - "traefik.http.routers.qalitrack-dashboard-https.service=qalitrack-traefik-dashboard"
+      - "traefik.http.routers.qalitrack-dashboard-https.tls=true"
+      - "traefik.http.routers.qalitrack-dashboard-https.tls.certresolver=letsencrypt"
+      
+      # Dashboard HTTP redirect to HTTPS (enforce TLS)
+      - "traefik.http.routers.qalitrack-dashboard-http.rule=Host(`${QALITRACK_TRAEFIK_DOMAIN:-traefik.qalitrack.cseco.co.ke}`)"
+      - "traefik.http.routers.qalitrack-dashboard-http.entrypoints=web"
+      - "traefik.http.routers.qalitrack-dashboard-http.service=qalitrack-traefik-dashboard"
+      - "traefik.http.routers.qalitrack-dashboard-http.middlewares=redirect-to-https"
+      
+      # Service definitions
+      - "traefik.http.services.qalitrack-traefik-http.loadbalancer.server.port=9080"
+      - "traefik.http.services.qalitrack-traefik-dashboard.loadbalancer.server.port=8080"
+      
+      # Middleware to handle dashboard API path rewriting
+      - "traefik.http.middlewares.qalitrack-dashboard-stripprefix.stripprefix.prefixes=/traefik"
+      - "traefik.http.middlewares.qalitrack-api-addprefix.addprefix.prefix=/traefik"
+
+networks:
+  proxy-network:
+    external: true
+    name: proxy-network
+  qalitrack-proxy:
+    driver: bridge
+    name: qalitrack-proxy
