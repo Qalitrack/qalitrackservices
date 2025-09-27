@@ -30,6 +30,7 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
       - ./backups:/app/backups
+      - ./metadata:/app/backup-metadata
     depends_on:
       - postgres-db
     networks:

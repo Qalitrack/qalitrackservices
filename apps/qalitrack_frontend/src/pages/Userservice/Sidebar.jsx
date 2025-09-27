@@ -64,10 +64,10 @@ export default function UserServiceSidebar() {
             path: "/admin/security/password-policy",
         },
         {
-            key: "authentication",
-            label: "Authentication",
+            key: "BackupService",
+            label: "BackupService",
             icon: <Shield size={18} />,
-            path: "/admin/security/authentication",
+            path: "/admin/backup/microservice",
         },
     ];
 

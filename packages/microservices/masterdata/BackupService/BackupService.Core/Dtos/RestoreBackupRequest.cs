@@ -2,19 +2,13 @@ namespace BackupService.Core.Dtos;
 
 public class RestoreBackupRequest
 {
+    /// <summary>
+    /// The name of the microservice to restore
+    /// </summary>
     public string Microservice { get; set; } = string.Empty;
 
-    private string _backupSourcePath = string.Empty;
-    public string BackupSourcePath
-    {
-        get => _backupSourcePath;
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value) || System.IO.Path.GetFileName(value) == string.Empty)
-                throw new ArgumentException("BackupSourcePath must be a full path including the file name.");
-            _backupSourcePath = value;
-        }
-    }
-
+    /// <summary>
+    /// The ID of the backup to restore (defaults to 'latest')
+    /// </summary>
     public string BackupId { get; set; } = "latest";
 }
