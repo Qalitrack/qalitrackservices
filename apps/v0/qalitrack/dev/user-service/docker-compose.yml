@@ -1,0 +1,135 @@
+services:
+  user-service-dev:
+    image: ghcr.io/qalitrack/qalitrackservices/user-service:latest
+    container_name: qalitrack-user-service-dev
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - UsePostgreSQL=true
+      - UseRedis=true
+      - ConnectionStrings__DefaultConnection=Host=postgres-userservice-dev;Port=5432;Database=userservicedb;Username=userservice;Password=userservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-cache-dev:6379,password=userservice123
+      - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
+      - JWT_ISSUER=UserService
+      - JWT_AUDIENCE=UserService
+      - RABBITMQ_HOST=rabbitmq-dev
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=admin
+      - RABBITMQ_PASSWORD=securepassword
+      - Backup__Path=/app/Backups
+      - Email__FromEmail=noreply@qalitrack.com
+      - Email__FromName=QaliTrack System
+      - Email__SmtpHost=smtp.gmail.com
+      - Email__SmtpPort=587
+      - Email__SmtpUsername=joshuaiska@gmail.com
+      - Email__SmtpPassword=dgln ffbs ixvg pxuj
+      - Email__EnableSsl=true
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./userservice-backups:/app/Backups
+    depends_on:
+      - postgres-userservice-dev
+      - redis-cache-dev
+      - rabbitmq-dev
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS - only accessible through Traefik
+    labels:
+      # Enable Traefik
+      - "traefik.enable=true"
+      - "traefik.scope=qalitrack"
+      
+      # User API routes (DEV)
+      - "traefik.http.routers.user-api-dev.rule=PathPrefix(`/api/users`)"
+      - "traefik.http.routers.user-api-dev.entrypoints=qalitrack-http"
+      - "traefik.http.routers.user-api-dev.service=user-service-dev"
+      
+      # Auth API routes (DEV)
+      - "traefik.http.routers.auth-api-dev.rule=PathPrefix(`/api/auth`)"
+      - "traefik.http.routers.auth-api-dev.entrypoints=qalitrack-http"
+      - "traefik.http.routers.auth-api-dev.service=user-service-dev"
+      
+      # Service definition
+      - "traefik.http.services.user-service-dev.loadbalancer.server.port=80"
+      
+      # Health check (DEV)
+      - "traefik.http.routers.user-health-dev.rule=PathPrefix(`/health`)"
+      - "traefik.http.routers.user-health-dev.entrypoints=qalitrack-http"
+      - "traefik.http.routers.user-health-dev.service=user-service-dev"
+
+  # User Service Database (DEV)
+  postgres-userservice-dev:
+    image: postgres:15-alpine
+    container_name: qalitrack-postgres-userservice-dev
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=userservicedb
+      - POSTGRES_USER=userservice
+      - POSTGRES_PASSWORD=userservice123
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_userservice_dev_data:/var/lib/postgresql/data
+      - ./userservice-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U userservice -d userservicedb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis for caching (DEV)
+  redis-cache-dev:
+    image: redis:7-alpine
+    container_name: qalitrack-redis-dev
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass userservice123 --maxmemory 1gb --maxmemory-policy allkeys-lru --tcp-keepalive 60 --timeout 300
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # RabbitMQ for messaging (DEV)
+  rabbitmq-dev:
+    image: rabbitmq:3-management-alpine
+    container_name: qalitrack-rabbitmq-dev
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=securepassword
+    volumes:
+      - rabbitmq_dev_data:/var/lib/rabbitmq
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    labels:
+      # Optional: expose RabbitMQ management through Traefik
+      - "traefik.enable=true"
+      - "traefik.scope=qalitrack"
+      - "traefik.http.routers.rabbitmq-mgmt-dev.rule=PathPrefix(`/rabbitmq-dev`)"
+      - "traefik.http.routers.rabbitmq-mgmt-dev.entrypoints=qalitrack-http"
+      - "traefik.http.routers.rabbitmq-mgmt-dev.service=rabbitmq-mgmt-dev"
+      - "traefik.http.services.rabbitmq-mgmt-dev.loadbalancer.server.port=15672"
+
+volumes:
+  postgres_userservice_dev_data:
+  redis_dev_data:
+  rabbitmq_dev_data:
+
+networks:
+  qalitrack-proxy:
+    external: true
+    name: qalitrack-proxy
