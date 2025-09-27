@@ -30,6 +30,7 @@ const Roles = lazy(() => import("../pages/Userservice/Roles.jsx"));
 const Shifts = lazy(() => import("../pages/Userservice/Shifts.jsx"));
 const ShiftAssignment = lazy(() => import("../pages/Userservice/ShiftAssignment.jsx"));
 const Attendance = lazy(() => import("../pages/Userservice/Attendance.jsx"));
+const Microservice = lazy(() => import("../pages/Userservice/Backup/Microservice.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -160,12 +161,16 @@ export const routes = [
                         element: <Shifts />
                     },
                     {
+                        path:"attendance",
+                        element: <Attendance />
+                    },
+                    {
                         path: "shift-assignment",
                         element: <ShiftAssignment />
                     },
                     {
-                        path: "attendance",
-                        element: <Attendance />
+                        path: "backup/microservice",
+                        element: <Microservice />
                     }
                 ]
             }

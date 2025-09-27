@@ -10,5 +10,4 @@ public class ScheduledBackup
     public BackupType BackupType { get; set; }
     public string? CronSchedule { get; set; } = string.Empty;
     public DateTime? NextFireTime { get; set; }
-    public string SaveLocation { get; set; } = string.Empty;
 }

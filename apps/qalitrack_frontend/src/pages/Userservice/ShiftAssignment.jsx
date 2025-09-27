@@ -8,10 +8,12 @@ import {
     removeShiftFromRole,
     assignShiftToRole,
 } from "../../helpers/UserService/Shifts/shiftAssignment.js";
-import { ChevronLeft, ChevronRight, Users, Tag } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users, Tag, Download } from "lucide-react";
 import { fetchUsers } from "../../helpers/UserService/Users/users.js";
 import { fetchRoles } from "../../helpers/UserService/Roles/Roles.js";
 import { format, parseISO } from "date-fns";
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 function isValidDateString(dateString) {
     if (!dateString) return false;
@@ -274,6 +276,220 @@ const ShiftAssignment = () => {
         }
     };
 
+    const fetchAllShifts = async () => {
+        let allShifts = [];
+        let currentPage = 1;
+        const pageSize = 50; // Larger page size to reduce number of requests
+        let hasMore = true;
+
+        try {
+            while (hasMore) {
+                const response = await fetchShifts(currentPage, pageSize);
+                if (response.items && response.items.length > 0) {
+                    allShifts = [...allShifts, ...response.items];
+                    // Check if there are more pages
+                    hasMore = response.hasNextPage === true &&
+                        response.items.length === pageSize;
+                    currentPage++;
+                } else {
+                    hasMore = false;
+                }
+            }
+            return allShifts;
+        } catch (error) {
+            console.error('Error fetching all shifts:', error);
+            throw error;
+        }
+    };
+
+    const generatePDF = async () => {
+        setLoading(true);
+        try {
+            // Fetch all shifts with pagination
+            const allShifts = await fetchAllShifts();
+
+            // Fetch assigned users for each shift
+            const shiftsWithUsers = await Promise.all(
+                allShifts.map(async (shift) => {
+                    try {
+                        const shiftUsers = await fetchShiftUsers(shift.id);
+                        const normalizedShiftUsers = Array.isArray(shiftUsers)
+                            ? shiftUsers
+                            : shiftUsers?.users || [];
+                        
+                        // Format users as "name: email" with line breaks
+                        const formattedUsers = normalizedShiftUsers.map(user => {
+                            const name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown';
+                            const email = user.email || 'no-email';
+                            return `${name}: ${email}`;
+                        });
+
+                        return {
+                            ...shift,
+                            assignedUsersList: formattedUsers,
+                            assignedUsersCount: formattedUsers.length
+                        };
+                    } catch (err) {
+                        console.warn(`Failed to fetch users for shift ${shift.id}:`, err);
+                        return {
+                            ...shift,
+                            assignedUsersList: ['Error fetching users'],
+                            assignedUsersCount: 0
+                        };
+                    }
+                })
+            );
+
+            const doc = new jsPDF({
+                orientation: 'landscape'  // Use landscape for better table display
+            });
+
+            // Add title and metadata
+            doc.setFontSize(18);
+            doc.text('Shift Assignments Report', 14, 22);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            doc.text(`Total Shifts: ${shiftsWithUsers.length}`, 14, 38);
+
+            // Define the columns with increased widths for better readability
+            const columns = [
+                { header: 'Name', dataKey: 'name', cellWidth: 'auto' },
+                { header: 'Start', dataKey: 'startTime', cellWidth: 40 },    // Increased width
+                { header: 'End', dataKey: 'endTime', cellWidth: 40 },        // Increased width
+                { header: 'Mode', dataKey: 'mode', cellWidth: 30 },          // Increased width
+                { header: 'Assigned Users', dataKey: 'assignedUsersList', cellWidth: 'wrap' },  // Full header
+                { header: 'Created At', dataKey: 'createdAt', cellWidth: 45 }   // Increased width and full header
+            ];
+
+            // Prepare the data for the table
+            const data = shiftsWithUsers.map(shift => {
+                // Format assigned users with line breaks
+                const assignedUsers = Array.isArray(shift.assignedUsersList) && shift.assignedUsersList.length > 0
+                    ? { content: shift.assignedUsersList.join('\n') }
+                    : 'None';
+
+                // Convert mode to a readable format
+                let modeText = 'N/A';
+                if (shift.mode !== undefined && shift.mode !== null) {
+                    modeText = shift.mode === 0 ? 'Open' : 'Closed';
+                }
+
+                return {
+                    name: shift.name || 'N/A',
+                    startTime: isValidDateString(shift.startTime) ? format(parseISO(shift.startTime), 'PPpp') : formatTimeOnlyString(shift.startTime) || 'N/A',
+                    endTime: isValidDateString(shift.endTime) ? format(parseISO(shift.endTime), 'PPpp') : formatTimeOnlyString(shift.endTime) || 'N/A',
+                    mode: modeText,
+                    assignedUsersList: assignedUsers,
+                    assignedRoles: shift.assignedRolesCount || 0,
+                    createdAt: format(parseISO(shift.createdAt), 'PPpp')
+                };
+            });
+
+            // Set up column styles with explicit widths
+            const columnStyles = {};
+            columns.forEach((col, index) => {
+                const style = {
+                    cellPadding: 3,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1,
+                    minCellWidth: 20, // Minimum width for all columns
+                    cellWidth: 'wrap' // Default to wrap
+                };
+
+                // Apply specific widths where defined
+                if (col.cellWidth && col.cellWidth !== 'auto' && col.cellWidth !== 'wrap') {
+                    style.cellWidth = col.cellWidth;
+                }
+
+                // Special handling for assigned users
+                if (col.dataKey === 'assignedUsersList') {
+                    style.cellWidth = 100; // Wider to accommodate the table
+                    style.valign = 'top';
+                    style.styles = { 
+                        fontSize: 9, // Slightly larger font
+                        lineHeight: 1.4,
+                        font: 'monospace' // Monospace for better alignment
+                    };
+                }
+
+                columnStyles[index] = style;
+            });
+
+            // Add the table with proper pagination
+            autoTable(doc, {
+                head: [columns.map(col => col.header)],
+                body: data.map(row => columns.map(col => row[col.dataKey])),
+                startY: 40,
+                styles: {
+                    fontSize: 8,  // Slightly smaller font to fit more content
+                    cellPadding: 1,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1,
+                    textColor: [0, 0, 0],
+                    fontStyle: 'normal'
+                },
+                headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    fontSize: 9
+                },
+                columnStyles,
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
+                },
+                margin: {
+                    top: 40,
+                    right: 10,
+                    bottom: 20,
+                    left: 10
+                },
+                tableWidth: 'wrap',
+                showHead: 'everyPage',
+                didDrawPage: function(data) {
+                    // This is where we can add content after the table is drawn
+                },
+                willDrawPage: function(data) {
+                    // Add page number to bottom of each page
+                    const pageSize = doc.internal.pageSize;
+                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                    const pageNumber = data.pageNumber || 1;
+                    const pageCount = data.pageCount || 1;
+
+                    // Only add page numbers if we have valid values
+                    if (pageNumber && pageCount) {
+                        doc.setFontSize(10);
+                        doc.text(
+                            `Page ${pageNumber} of ${pageCount}`,
+                            data.settings.margin.left,
+                            pageHeight - 10
+                        );
+                    }
+                }
+            });
+
+            // Save the PDF with a timestamp in the filename
+            doc.save(`shift-assignments-report-${new Date().toISOString().split('T')[0]}.pdf`);
+
+            return true;
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            setError('Failed to generate PDF: ' + (error.message || 'Unknown error'));
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDownloadPDF = async () => {
+        const success = await generatePDF();
+        if (success) {
+            // Optional: Show success message if you have a feedback system
+        }
+    };
+
     // Loading / Error states
     if (loading) {
         return (
@@ -299,6 +515,14 @@ const ShiftAssignment = () => {
                 <h2 className="text-xl md:text-2xl font-bold text-gray-800">
                     Shift Assignment
                 </h2>
+                <button
+                    onClick={handleDownloadPDF}
+                    className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
+                    title="Download Shift Assignments as PDF"
+                >
+                    <Download size={18} />
+                    <span className="hidden md:inline">Download PDF</span>
+                </button>
             </div>
 
             <div className="overflow-x-auto">
