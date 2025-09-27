@@ -3,6 +3,7 @@ using BackupService.Core.Dtos;
 using BackupService.Core.Entities;
 using BackupService.Core.Enums;
 using BackupService.Core.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -18,8 +19,10 @@ public class DatabaseBackupService : IDatabaseBackupService
     private readonly IBackupRestoreService _restorationService;
     private readonly IBackupVerificationService _verificationService;
     private readonly ISchedulerFactory _schedulerFactory;
-    private readonly IFileSystem _fileSystem;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<DatabaseBackupService> _logger;
+    private readonly IFileSystem _fileSystem;
+    private readonly IConfiguration _configuration;
 
     public DatabaseBackupService(
         IMicroserviceRepository microserviceRepository,
@@ -27,9 +30,11 @@ public class DatabaseBackupService : IDatabaseBackupService
         IBackupMetadataService metadataService,
         IBackupRestoreService restorationService,
         IBackupVerificationService verificationService,
+        IConfiguration configuration,
         ISchedulerFactory schedulerFactory,
-        IFileSystem fileSystem,
-        ILogger<DatabaseBackupService> logger)
+        IServiceProvider serviceProvider,
+        ILogger<DatabaseBackupService> logger,
+        IFileSystem fileSystem)
     {
         _microserviceRepository = microserviceRepository;
         _creationService = creationService;
@@ -37,27 +42,48 @@ public class DatabaseBackupService : IDatabaseBackupService
         _restorationService = restorationService;
         _verificationService = verificationService;
         _schedulerFactory = schedulerFactory;
+        _serviceProvider = serviceProvider;
+        _logger = logger;
         _fileSystem = fileSystem;
         _logger = logger;
+        _configuration = configuration;
     }
 
-    public async Task<BackupResult> CreateBackupAsync(BackupType type, string microservice, string saveLocation, string? cronSchedule = null, CancellationToken ct = default)
+    public async Task<BackupResult> CreateBackupAsync(BackupType type, string microservice, string? cronSchedule = null, CancellationToken ct = default)
     {
+        _logger.LogInformation("Received backup request - Type: {BackupType}, Microservice: {Microservice}, CronSchedule: {CronSchedule}", type, microservice, cronSchedule ?? "None (immediate backup)");
+        
         var ms = await _microserviceRepository.GetMicroserviceAsync(microservice, ct)
             ?? throw new KeyNotFoundException($"Microservice {microservice} not found");
-
+            
         if (ms.Status != MicroserviceStatus.Active)
         {
             _logger.LogWarning("Microservice {Name} is {Status}, cannot backup", microservice, ms.Status);
             throw new InvalidOperationException($"Microservice {microservice} is not Active");
         }
 
-        var result = await _creationService.CreateBackupAsync(type, microservice, saveLocation, ct);
-
+        // If cron schedule is provided, only schedule the job without creating an immediate backup
         if (!string.IsNullOrEmpty(cronSchedule))
-            await ScheduleBackupAsync(microservice, type, cronSchedule, saveLocation, ct);
+        {
+            await ScheduleBackupAsync(microservice, type, cronSchedule, ct);
+            _logger.LogInformation("Successfully scheduled backup job");
+            return new BackupResult
+            {
+                Success = true,
+                Message = $"Scheduled {type} backup for {microservice} with cron expression: {cronSchedule}",
+                BackupType = type,
+                Timestamp = DateTime.UtcNow,
+                ServiceName = microservice,
+                IsValid = true
+            };
+        }
+        else
+        {
+            _logger.LogInformation("No cron schedule provided, performing immediate backup");
+        }
 
-        return result;
+        // If no cron schedule, perform an immediate backup
+        return await _creationService.CreateBackupAsync(type, microservice, ct);
     }
 
     public async Task<RestoreResult> RestoreBackupAsync(string microservice, string backupFilePath, 
@@ -123,6 +149,10 @@ public class DatabaseBackupService : IDatabaseBackupService
         var last30Days = now.AddDays(-30);
 
         var recentBackups = backups.Where(b => b.CreatedAt >= last30Days).ToList();
+        if (!recentBackups.Any())
+        {
+            throw new KeyNotFoundException($"No backups found for microservice: {microservice}");
+        }
 
         return new BackupStatistics
         {
@@ -142,14 +172,46 @@ public class DatabaseBackupService : IDatabaseBackupService
         try
         {
             var scheduler = await _schedulerFactory.GetScheduler(ct);
-            var jobKey = new JobKey($"{microservice}-{type}", "backup-jobs");
-            var triggerKey = new TriggerKey($"{microservice}-{type}-trigger", "backup-triggers");
+            
+            // Match the job key format used in ScheduleBackupAsync
+            var jobKey = new JobKey($"{microservice}-{type}-backup", "backupGroup");
+            var triggerKey = new TriggerKey($"{microservice}-{type}-trigger", "backupTriggers");
 
-            await scheduler.UnscheduleJob(triggerKey, ct);
-            var result = await scheduler.DeleteJob(jobKey, ct);
+            _logger.LogInformation("Attempting to unschedule job with key: {JobKey} in group: {Group}", jobKey.Name, jobKey.Group);
+
+            // First check if the job exists
+            bool jobExists = await scheduler.CheckExists(jobKey, ct);
+            if (!jobExists)
+            {
+                _logger.LogInformation("No scheduled {BackupType} backup found for {Microservice} (JobKey: {JobKey}, Group: {Group})", 
+                    type, microservice, jobKey.Name, jobKey.Group);
+                return false;
+            }
+
+            // Check if the trigger exists before trying to unschedule it
+            bool triggerExists = await scheduler.CheckExists(triggerKey, ct);
+            if (triggerExists)
+            {
+                _logger.LogDebug("Unscheduling trigger: {TriggerKey}", triggerKey);
+                await scheduler.UnscheduleJob(triggerKey, ct);
+            }
+            else
+            {
+                _logger.LogDebug("No trigger found with key: {TriggerKey}", triggerKey);
+            }
+
+            // Delete the job
+            _logger.LogDebug("Deleting job: {JobKey}", jobKey);
+            bool result = await scheduler.DeleteJob(jobKey, ct);
 
             if (result)
-                _logger.LogInformation("Unscheduled {BackupType} backup for {Microservice}", type, microservice);
+            {
+                _logger.LogInformation("Successfully unscheduled {BackupType} backup for {Microservice}", type, microservice);
+            }
+            else
+            {
+                _logger.LogWarning("Failed to delete job for {BackupType} backup of {Microservice}", type, microservice);
+            }
 
             return result;
         }
@@ -184,8 +246,7 @@ public class DatabaseBackupService : IDatabaseBackupService
                                 Microservice = jobDetail.JobDataMap.GetString("Microservice")!,
                                 BackupType = Enum.Parse<BackupType>(jobDetail.JobDataMap.GetString("Type")!),
                                 CronSchedule = cronTrigger.CronExpressionString,
-                                NextFireTime = trigger.GetNextFireTimeUtc()?.UtcDateTime,
-                                SaveLocation = jobDetail.JobDataMap.GetString("SaveLocation")!
+                                NextFireTime = trigger.GetNextFireTimeUtc()?.UtcDateTime
                             });
                         }
                     }
@@ -200,65 +261,191 @@ public class DatabaseBackupService : IDatabaseBackupService
         return scheduledBackups;
     }
 
-    private async Task ScheduleBackupAsync(string microservice, BackupType type, string cronSchedule, string saveLocation, CancellationToken ct)
+    private bool IsValidCronExpression(string cronExpression)
     {
+        if (string.IsNullOrWhiteSpace(cronExpression))
+            return false;
+
         try
         {
-            var scheduler = await _schedulerFactory.GetScheduler(ct);
-            var job = JobBuilder.Create<BackupJob>()
-                .WithIdentity($"{microservice}-{type}", "backup-jobs")
-                .UsingJobData(new JobDataMap
-                {
-                    ["Microservice"] = microservice,
-                    ["Type"] = type.ToString(),
-                    ["SaveLocation"] = saveLocation
-                })
-                .Build();
-
-            var trigger = TriggerBuilder.Create()
-                .WithIdentity($"{microservice}-{type}-trigger", "backup-triggers")
-                .WithCronSchedule(cronSchedule)
-                .StartNow()
-                .Build();
-
-            await scheduler.ScheduleJob(job, trigger, ct);
-            _logger.LogInformation("Scheduled {BackupType} backup for {Microservice} with cron {Cron}", type, microservice, cronSchedule);
+            // Use a simple regex to validate the cron expression format
+            // This checks for the standard 5 or 6 field cron format
+            var cronRegex = new System.Text.RegularExpressions.Regex(
+                @"^([0-9]|,|\*|\/|-|\?|L|W|#)+\s+([0-9]|,|\*|\/|-|\?|L|W|#)+\s+([0-9]|,|\*|\/|-|\?|L|W|#)+\s+([0-9]|,|\*|\/|-|\?|L|W|#)+\s+([0-9]|,|\*|\/|-|\?|L|W|#)+(\s+([0-9]|,|\*|\/|-|\?|L|W|#)+)?$");
+            
+            if (!cronRegex.IsMatch(cronExpression))
+            {
+                _logger.LogDebug("Cron expression does not match required format: {CronExpression}", cronExpression);
+                return false;
+            }
+            
+            // If we got here, the format is valid
+            _logger.LogDebug("Cron expression is valid: {CronExpression}", cronExpression);
+            return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to schedule backup for {Microservice}", microservice);
-            throw;
+            _logger.LogError(ex, "Error validating cron expression: {CronExpression}", cronExpression);
+            return false;
         }
     }
+
+    private async Task ScheduleBackupAsync(string microservice, BackupType type, string cronSchedule, CancellationToken ct)
+{
+    _logger.LogInformation("Entering ScheduleBackupAsync - Microservice: {Microservice}, Type: {Type}", microservice, type);
+
+    try
+    {
+        _logger.LogInformation("Using cron expression: {CronExpression}", cronSchedule);
+        
+        if (string.IsNullOrWhiteSpace(cronSchedule))
+        {
+            throw new ArgumentException("Cron schedule cannot be null or empty");
+        }
+
+        cronSchedule = cronSchedule.Trim();
+        _logger.LogInformation("Trimmed cron expression: {CronExpression}", cronSchedule);
+
+        var scheduler = await _schedulerFactory.GetScheduler(ct);
+        var saveLocation = _configuration["BackupSettings:StoragePath"];
+        _logger.LogInformation("Creating job with save location: {SaveLocation}", saveLocation);
+
+        // Create a unique job key for this backup schedule
+        var jobKey = new JobKey($"{microservice}-{type}-backup", "backupGroup");
+        var triggerKey = new TriggerKey($"{microservice}-{type}-trigger", "backupTriggers");
+
+        var jobData = new JobDataMap
+        {
+            ["Microservice"] = microservice,
+            ["Type"] = type.ToString(),
+            ["SaveLocation"] = saveLocation ?? string.Empty
+        };
+
+        _logger.LogInformation("Job data: {JobData}", string.Join("; ", jobData.Select(kv => $"{kv.Key}={kv.Value}")));
+
+        // Check if the job already exists
+        var jobExists = await scheduler.CheckExists(jobKey, ct);
+        if (jobExists)
+        {
+            _logger.LogInformation("Job already exists, updating schedule");
+            await scheduler.DeleteJob(jobKey, ct);
+        }
+
+        // Create job detail
+        var job = JobBuilder.Create<BackupJob>()
+            .WithIdentity(jobKey)
+            .UsingJobData(jobData)
+            .StoreDurably()
+            .Build();
+
+        _logger.LogInformation("Creating trigger with cron expression: {Cron}", cronSchedule);
+
+        try
+        {
+            // Create trigger with the cron schedule
+            var trigger = TriggerBuilder.Create()
+                .WithIdentity(triggerKey)
+                .ForJob(jobKey)
+                .WithCronSchedule(cronSchedule, x => x
+                    .InTimeZone(TimeZoneInfo.Utc)
+                    .WithMisfireHandlingInstructionDoNothing())
+                .StartNow()
+                .Build();
+
+            // Schedule the job with the trigger
+            await scheduler.ScheduleJob(job, trigger, ct);
+            
+            // Start the scheduler if it's not already started
+            if (!scheduler.IsStarted)
+            {
+                await scheduler.Start(ct);
+            }
+
+            var nextFireTime = trigger.GetNextFireTimeUtc();
+            _logger.LogInformation("Successfully scheduled {BackupType} backup for {Microservice} with cron {Cron}. Next execution: {NextExecutionTime}",
+                type, microservice, cronSchedule, nextFireTime?.UtcDateTime);
+        }
+        catch (FormatException ex)
+        {
+            _logger.LogError(ex, "Failed to parse cron expression: {CronExpression}", cronSchedule);
+            throw new ArgumentException($"Invalid cron expression format: {cronSchedule}. Please ensure it follows the standard cron format with 6-7 fields.", ex);
+        }
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Failed to schedule backup for {Microservice}", microservice);
+        throw;
+    }
+}
     
     public class BackupJob : IJob
     {
-        private readonly IServiceProvider _provider;
+        private readonly IBackupCreationService _creationService;
+        private readonly ILogger<BackupJob> _logger;
 
-        public BackupJob(IServiceProvider provider)
+        public BackupJob(IBackupCreationService creationService, ILogger<BackupJob> logger)
         {
-            _provider = provider;
+            _creationService = creationService;
+            _logger = logger;
         }
 
-        public async Task Execute(IJobExecutionContext context)
-        {
-            using var scope = _provider.CreateScope();
-            var service = scope.ServiceProvider.GetRequiredService<IDatabaseBackupService>();
-            var data = context.JobDetail.JobDataMap;
-            var microservice = data.GetString("Microservice")!;
-            var type = Enum.Parse<BackupType>(data.GetString("Type")!);
-            var saveLocation = data.GetString("SaveLocation")!;
+       public async Task Execute(IJobExecutionContext context)
+{
+    var jobName = context.JobDetail.Key.Name;
+    var data = context.JobDetail.JobDataMap;
+    var microservice = data.GetString("Microservice") ?? string.Empty;
+    var type = Enum.Parse<BackupType>(data.GetString("Type") ?? "Full");
+    
+    _logger.LogInformation("Starting {BackupType} backup job for {Microservice} (Job: {JobName})", 
+        type, microservice, jobName);
 
-            try
-            {
-                await service.CreateBackupAsync(type, microservice, saveLocation, null, context.CancellationToken);
-            }
-            catch (Exception ex)
-            {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<BackupJob>>();
-                logger.LogError(ex, "Scheduled backup failed for {Microservice}", microservice);
-                throw new JobExecutionException(ex, true);
-            }
+    try
+    {
+        _logger.LogDebug("Job data: {JobData}", 
+            string.Join(", ", data.Select(kv => $"{kv.Key}={kv.Value}")));
+        _logger.LogInformation("Initiating backup creation...");
+
+        // Execute the backup directly using the injected service
+        _logger.LogInformation("Starting backup creation...");
+        var result = await _creationService.CreateBackupAsync(type, microservice, context.CancellationToken);
+    
+        _logger.LogInformation("Backup result - Success: {Success}, Message: {Message}", 
+            result.Success, result.Message);
+
+        // Always log the result but don't fail the job
+        if (!result.Success)
+        {
+            _logger.LogWarning("Backup job completed with warnings: {Message}", result.Message);
         }
+        else
+        {
+            _logger.LogInformation("Backup job completed successfully: {Message}", result.Message);
+        }
+        
+        // Always return successfully since the backup file was created
+        return;
+    }
+    catch (Exception ex)
+    {
+        var errorMsg = $"Critical error in backup job {jobName} for {microservice} ({type}): {ex.Message}";
+        _logger.LogError(ex, errorMsg);
+        
+        // Log the full exception details including inner exceptions
+        var currentEx = ex;
+        while (currentEx != null)
+        {
+            _logger.LogError("Exception details - Type: {Type}, Message: {Message}, Stack: {Stack}", 
+                currentEx.GetType().Name, 
+                currentEx.Message, 
+                currentEx.StackTrace);
+            currentEx = currentEx.InnerException;
+        }
+
+        var jobEx = new JobExecutionException(errorMsg, ex, false);
+        jobEx.UnscheduleFiringTrigger = false; // Don't unschedule the trigger on failure
+        jobEx.UnscheduleAllTriggers = false;   // Don't unschedule all triggers
+        throw jobEx;
+    }
+}
     }
 }

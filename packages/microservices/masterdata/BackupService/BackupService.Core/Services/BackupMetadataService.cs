@@ -19,12 +19,21 @@ namespace BackupService.Core.Services
         public JsonBackupMetadataService(
             IFileSystem fileSystem,
             ILogger<JsonBackupMetadataService> logger,
-            string metadataDirectory)
+            string metadataDirectory = "/app/backup-metadata")
         {
             _fileSystem = fileSystem;
             _logger = logger;
+            
+            // Ensure the directory exists
+            if (!_fileSystem.Directory.Exists(metadataDirectory))
+            {
+                _fileSystem.Directory.CreateDirectory(metadataDirectory);
+            }
+            
             _metadataFilePath = Path.Combine(metadataDirectory, "backup_metadata.json");
             _metadata = new BackupMetadata { Chains = new List<BackupChain>() };
+            
+            _logger.LogInformation("Using metadata file at: {MetadataPath}", _metadataFilePath);
         }
 
         public async Task LoadMetadataAsync(CancellationToken ct = default)
@@ -88,7 +97,7 @@ namespace BackupService.Core.Services
                 Id = GenerateNewChainId(),
                 MicroserviceName = microservice,
                 FullBackupFile = backupResult.FileName,
-                Timestamp = backupResult.CreatedAt,
+                Timestamp = backupResult.Timestamp,
                 Incrementals = new List<string>(),
                 Lsn = backupResult.Lsn,
                 Timeline = backupResult.Timeline,
@@ -119,12 +128,15 @@ namespace BackupService.Core.Services
 
             var result = new List<BackupFileInfo>();
             
+            var backupRoot = "/app/backups"; // Should match the path used in BackupCreationService
+            
             foreach (var chain in chains)
             {
+                var fullBackupPath = Path.Combine(backupRoot, chain.FullBackupFile);
                 result.Add(new BackupFileInfo
                 {
                     BackupId = chain.Id.ToString(),
-                    FileName = chain.FullBackupFile,
+                    FileName = fullBackupPath, // Store full path instead of just filename
                     BackupType = BackupType.Full,
                     CreatedAt = chain.Timestamp,
                     ChainId = chain.ChainId ?? chain.Id.ToString(),
@@ -134,10 +146,11 @@ namespace BackupService.Core.Services
 
                 foreach (var inc in chain.Incrementals)
                 {
+                    var fullIncPath = Path.Combine(backupRoot, inc);
                     result.Add(new BackupFileInfo
                     {
                         BackupId = Path.GetFileNameWithoutExtension(inc),
-                        FileName = inc,
+                        FileName = fullIncPath,
                         CreatedAt = chain.Timestamp, // Use chain timestamp as approximation
                         ChainId = chain.ChainId ?? chain.Id.ToString(),
                         IsLatest = IsLatestChain(chain),

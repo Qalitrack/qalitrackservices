@@ -16,8 +16,11 @@ import {
     FileText,
     Lock,
     Unlock,
+    Download,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import ShiftInstances from './Shifts/ShiftInstances';
 import AddShift from './Shifts/AddShift';
 import ShiftEdit from './Shifts/ShiftEdit';
@@ -418,6 +421,168 @@ const Shifts = () => {
         }
     };
 
+    const fetchAllShifts = async (showDeleted = false) => {
+        let allShifts = [];
+        let currentPage = 1;
+        const pageSize = 50; // Larger page size to reduce number of requests
+        let hasMore = true;
+
+        const fetchFunction = showDeleted ? fetchDeletedShifts : fetchShifts;
+
+        try {
+            while (hasMore) {
+                const response = await fetchFunction(currentPage, pageSize);
+                if (response.items && response.items.length > 0) {
+                    allShifts = [...allShifts, ...response.items];
+                    // Check if there are more pages
+                    hasMore = response.hasNextPage === true &&
+                        response.items.length === pageSize;
+                    currentPage++;
+                } else {
+                    hasMore = false;
+                }
+            }
+            return allShifts;
+        } catch (error) {
+            console.error('Error fetching all shifts:', error);
+            throw error;
+        }
+    };
+
+    const generatePDF = async () => {
+        setLoading(true);
+        try {
+            // Fetch all shifts with pagination
+            const allShifts = await fetchAllShifts(showDeleted);
+
+            const doc = new jsPDF({
+                orientation: 'landscape'  // Use landscape for better table display
+            });
+
+            // Add title and metadata
+            doc.setFontSize(18);
+            doc.text('Shifts Report', 14, 22);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            doc.text(`Total Shifts: ${allShifts.length}`, 14, 38);
+
+            // Define the columns for the table
+            const columns = [
+                { header: 'Name', dataKey: 'name', width: 20 },
+                { header: 'Description', dataKey: 'description', width: 45 },
+                { header: 'Start Time', dataKey: 'startTime', width: 20 },
+                { header: 'End Time', dataKey: 'endTime', width: 20 },
+                { header: 'Type', dataKey: 'type', width: 15 },
+                { header: 'Status', dataKey: 'status', width: 20 },
+                { header: 'Req Staff', dataKey: 'requiredStaff', width: 10 },
+                { header: 'Assigned', dataKey: 'assignedUsers', width: 10 },
+                { header: 'Created', dataKey: 'createdAt', width: 30 }
+            ];
+
+            // Prepare the data for the table
+            const data = allShifts.map(shift => ({
+                name: shift.name || 'N/A',
+                description: shift.description || 'N/A',
+                startTime: formatTimeOnlyString(shift.startTime) || 'N/A',
+                endTime: formatTimeOnlyString(shift.endTime) || 'N/A',
+                type: shift.recurrenceType === 1 ? 'Daily' : shift.recurrenceType === 2 ? 'Weekly' : shift.recurrenceType === 3 ? 'Monthly' : 'Single',
+                status: shift.status === 3 ? 'Active' : shift.status === 2 ? 'Published' : shift.status === 1 ? 'Completed' : 'Draft',
+                requiredStaff: shift.requiredStaffCount || 0,
+                assignedUsers: shift.assignedUsers || 0,
+                createdAt: format(parseISO(shift.createdAt), 'PPpp')
+            }));
+            const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
+            const pageWidth = doc.internal.pageSize.getWidth() - 30;
+            const columnStyles = {};
+            // Calculate column widths based on content
+            columns.forEach((col, index) => {
+                columnStyles[index] = {
+                    cellWidth: (col.width / totalWidth) * pageWidth,
+                    cellPadding: 2,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1,
+                    fontSize: 7,
+                    fontStyle: 'normal',
+                    halign: 'left',
+                    valign: 'middle'
+                };
+            });
+
+            // Add the table with proper pagination
+            autoTable(doc, {
+                head: [columns.map(col => col.header)],
+                body: data.map(row => columns.map(col => row[col.dataKey])),
+                startY: 40,
+                styles: {
+                    fontSize: 8,  // Slightly smaller font to fit more content
+                    cellPadding: 1,
+                    overflow: 'linebreak',
+                    lineWidth: 0.1,
+                    textColor: [0, 0, 0],
+                    fontStyle: 'normal'
+                },
+                headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    fontSize: 9
+                },
+                columnStyles,
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
+                },
+                margin: {
+                    top: 40,
+                    right: 10,
+                    bottom: 20,
+                    left: 10
+                },
+                tableWidth: 'wrap',
+                showHead: 'everyPage',
+                didDrawPage: function(data) {
+                    // This is where we can add content after the table is drawn
+                },
+                willDrawPage: function(data) {
+                    // Add page number to bottom of each page
+                    const pageSize = doc.internal.pageSize;
+                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                    const pageNumber = data.pageNumber || 1;
+                    const pageCount = data.pageCount || 1;
+
+                    // Only add page numbers if we have valid values
+                    if (pageNumber && pageCount) {
+                        doc.setFontSize(10);
+                        doc.text(
+                            `Page ${pageNumber} of ${pageCount}`,
+                            data.settings.margin.left,
+                            pageHeight - 10
+                        );
+                    }
+                }
+            });
+
+            // Save the PDF with a timestamp in the filename
+            doc.save(`shifts-report-${new Date().toISOString().split('T')[0]}.pdf`);
+
+            return true;
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            showMessage('Failed to generate PDF: ' + (error.message || 'Unknown error'), 'error');
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDownloadPDF = async () => {
+        const success = await generatePDF();
+        if (success) {
+            showMessage('PDF downloaded successfully!', 'success');
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-32">
@@ -441,13 +606,23 @@ const Shifts = () => {
         <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-800">Shifts</h2>
-                <button
-                    className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
-                    onClick={() => setAddModalOpen(true)}
-                >
-                    <PlusCircle size={18} />
-                    <span>Add Shift</span>
-                </button>
+                <div className="flex items-center gap-4 w-full sm:w-auto justify-end mt-2 sm:mt-0">
+                    <button
+                        onClick={handleDownloadPDF}
+                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        title="Download Shifts as PDF"
+                    >
+                        <Download size={18} />
+                        <span className="hidden md:inline">Download PDF</span>
+                    </button>
+                    <button
+                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        onClick={() => setAddModalOpen(true)}
+                    >
+                        <PlusCircle size={18} />
+                        <span>Add Shift</span>
+                    </button>
+                </div>
             </div>
 
             {feedbackMessage.text && (
@@ -652,9 +827,9 @@ const Shifts = () => {
                                                 <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                                             </svg>
                                         </button>
-                                        <button 
-                                            className="text-gray-600 hover:text-gray-900 transition-colors" 
-                                            title="Logs" 
+                                        <button
+                                            className="text-gray-600 hover:text-gray-900 transition-colors"
+                                            title="Logs"
                                             onClick={() => handleLogsClick(shift)}
                                         >
                                             <FileText size={18} />
@@ -854,13 +1029,13 @@ const Shifts = () => {
 
                     // Add the new shift to the beginning of the list
                     setShifts(prevShifts => [formattedShift, ...prevShifts]);
-                    
+
                     // Update the total count
                     setPagination(prev => ({
                         ...prev,
                         totalCount: prev.totalCount + 1
                     }));
-                    
+
                     // Show success message
                     setFeedbackMessage({
                         text: 'Shift created successfully!',
