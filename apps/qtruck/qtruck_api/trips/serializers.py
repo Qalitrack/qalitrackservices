@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.gis.geos import Point
 from .models import Trip, Expense, Receipt, VehicleMileage
 from fleet.serializers import TruckSerializer, MaterialSerializer, MaterialVariantSerializer
 from drivers.serializers import DriverSerializer
@@ -119,6 +120,12 @@ class TripSerializer(serializers.ModelSerializer):
         
         return data
     
+    def _convert_coords_to_point(self, coords):
+        """Convert coordinate array [lng, lat] to Point object"""
+        if coords and isinstance(coords, list) and len(coords) == 2:
+            return Point(coords[0], coords[1])
+        return coords
+    
     def create(self, validated_data):
         # Extract photo files
         proof_image_file = validated_data.pop('proof_image_file', None)
@@ -143,6 +150,14 @@ class TripSerializer(serializers.ModelSerializer):
             validated_data['material'] = Material.objects.get(id=material_id)
         if material_variant_id:
             validated_data['material_variant'] = MaterialVariant.objects.get(id=material_variant_id)
+        
+        # Convert coordinate arrays to Point objects
+        if 'start_location_coords' in validated_data:
+            validated_data['start_location_coords'] = self._convert_coords_to_point(validated_data['start_location_coords'])
+        if 'end_location_coords' in validated_data:
+            validated_data['end_location_coords'] = self._convert_coords_to_point(validated_data['end_location_coords'])
+        if 'current_location_coords' in validated_data:
+            validated_data['current_location_coords'] = self._convert_coords_to_point(validated_data['current_location_coords'])
         
         # Create trip instance
         trip = Trip.objects.create(**validated_data)
