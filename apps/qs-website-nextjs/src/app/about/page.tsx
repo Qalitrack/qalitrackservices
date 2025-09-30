@@ -15,9 +15,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
+import Newsletter from '@/components/ContactCallToAction';
+import Partners from '@/components/CertificationsLogos';
 import about1 from '@/assets/about.jpg';
 import HeroAbout from '@/assets/hero/calibration.jpg';
+
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -296,7 +298,8 @@ export default function About() {
       >
         <ArrowUp className="w-6 h-6" aria-hidden="true" />
       </button>
-
+      <Newsletter/>
+      <Partners/>
       <Footer />
     </div>
   );
