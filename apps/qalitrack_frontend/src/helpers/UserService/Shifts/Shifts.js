@@ -203,6 +203,7 @@ export const fetchShiftInstances = async (shiftId, params = {}, signal) => {
             signal
         });
         return response.data;
+        console.log(response.data);
     } catch (err) {
         if (err.name !== 'CanceledError') {
             console.error('Fetch shift instances error:', err);

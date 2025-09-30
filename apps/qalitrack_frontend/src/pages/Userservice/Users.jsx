@@ -61,10 +61,10 @@ const Users = () => {
     const [isManageRolesModalOpen, setManageRolesModalOpen] = useState(false);
     const [isViewRolesModalOpen, setViewRolesModalOpen] = useState(false);
     const [selectedUserRoles, setSelectedUserRoles] = useState([]);
-    const [initialUserRoleIds, setInitialUserRoleIds] = useState([]);
-    const [availableRoles, setAvailableRoles] = useState([]);
     const [isViewShiftsModalOpen, setViewShiftsModalOpen] = useState(false);
     const [selectedUserShifts, setSelectedUserShifts] = useState([]);
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [pendingAction, setPendingAction] = useState({ type: null, role: null });
     const navigate = useNavigate();
     const [userShiftCounts, setUserShiftCounts] = useState({});
 
@@ -301,7 +301,6 @@ const Users = () => {
             const userRolesData = await fetchUserRoles(user.id);
             const roleIds = userRolesData.map(role => role.id);
             setSelectedUserRoles(roleIds);
-            setInitialUserRoleIds(roleIds); // Store the initial roles
         } catch (err) {
             setModalFeedback({ text: err.message || 'Failed to fetch user roles.', type: 'error' });
         }
@@ -334,6 +333,44 @@ const Users = () => {
             console.error("Failed to reset password:", err);
         } finally {
             setIsUpdating(false);
+        }
+    };
+
+    const handleAddRoleClick = (role) => {
+        setPendingAction({ type: 'add', role });
+        setIsConfirmOpen(true);
+    };
+
+    const handleRemoveRoleClick = (role) => {
+        setPendingAction({ type: 'remove', role });
+        setIsConfirmOpen(true);
+    };
+
+    const handleConfirmAction = async () => {
+        if (!pendingAction.role || !selectedUser) return;
+
+        setIsUpdating(true);
+        setModalFeedback({ text: '', type: '' });
+
+        try {
+            if (pendingAction.type === 'add') {
+                await assignRoleToUser(selectedUser.id, pendingAction.role.id);
+                showMessage(`Role '${pendingAction.role.name}' added successfully!`, 'success');
+            } else if (pendingAction.type === 'remove') {
+                await removeRoleFromUser(selectedUser.id, pendingAction.role.id);
+                showMessage(`Role '${pendingAction.role.name}' removed successfully!`, 'success');
+            }
+
+            // Refetch user roles to update lists
+            const userRolesData = await fetchUserRoles(selectedUser.id);
+            const roleIds = userRolesData.map(role => role.id);
+            setSelectedUserRoles(roleIds);
+        } catch (err) {
+            setModalFeedback({ text: err.message || `Failed to ${pendingAction.type} role.`, type: 'error' });
+        } finally {
+            setIsUpdating(false);
+            setIsConfirmOpen(false);
+            setPendingAction({ type: null, role: null });
         }
     };
 
@@ -420,42 +457,6 @@ const Users = () => {
             loadData(pagination.page, showDeleted);
         } finally {
             setActionLoading(null);
-        }
-    };
-
-    const handleRoleChange = (roleId) => {
-        setSelectedUserRoles(prev =>
-            prev.includes(roleId)
-                ? prev.filter(id => id !== roleId)
-                : [...prev, roleId]
-        );
-    };
-
-    const handleSaveRoles = async () => {
-        if (!selectedUser) return;
-
-        setIsUpdating(true);
-        setModalFeedback({ text: '', type: '' });
-
-        const rolesToAdd = selectedUserRoles.filter(roleId => !initialUserRoleIds.includes(roleId));
-        const rolesToRemove = initialUserRoleIds.filter(roleId => !selectedUserRoles.includes(roleId));
-
-        try {
-            // Using Promise.all to run requests in parallel for efficiency
-            await Promise.all([
-                ...rolesToRemove.map(roleId => removeRoleFromUser(selectedUser.id, roleId)),
-                ...rolesToAdd.map(roleId => assignRoleToUser(selectedUser.id, roleId))
-            ]);
-
-            setModalFeedback({ text: 'Roles updated successfully!', type: 'success' });
-            await loadData(pagination.page, showDeleted);
-            setTimeout(() => {
-                setManageRolesModalOpen(false);
-            }, 2000);
-        } catch (err) {
-            setModalFeedback({ text: err.message || 'Failed to update roles.', type: 'error' });
-        } finally {
-            setIsUpdating(false);
         }
     };
 
@@ -1151,47 +1152,121 @@ const Users = () => {
             </Modal>
 
             {/* Manage Roles Modal */}
-            <Modal isOpen={isManageRolesModalOpen} onClose={() => setManageRolesModalOpen(false)} size="sm">
+            <Modal isOpen={isManageRolesModalOpen} onClose={() => setManageRolesModalOpen(false)} size="md">
                 <h3 className="text-lg font-bold mb-4">Manage Roles for {selectedUser?.firstName} {selectedUser?.lastName}</h3>
                 {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-amber-150 text-black' : 'bg-red-100 text-red-800'}`}>
                         {modalFeedback.text}
                     </div>
                 )}
-                <div className="space-y-2">
-                    {roles.length > 0 ? (
-                        roles.map((role) => (
-                            <label key={role.id} className="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded-md hover:bg-gray-100 transition-colors">
-                                <input
-                                    type="checkbox"
-                                    checked={selectedUserRoles.includes(role.id)}
-                                    onChange={() => handleRoleChange(role.id)}
-                                    className="h-4 w-4 rounded text-green-600 border-gray-300 focus:ring-green-500"
-                                />
-                                <span className="text-sm font-medium text-gray-700">{role.name}</span>
-                            </label>
-                        ))
-                    ) : (
-                        <p className="text-gray-500 text-sm">No roles available.</p>
-                    )}
-                </div>
-                <div className="flex justify-end space-x-3 pt-4">
-                    <button
-                        type="button"
-                        onClick={() => setManageRolesModalOpen(false)}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleSaveRoles}
-                        disabled={isUpdating}
-                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300"
-                    >
-                        {isUpdating ? 'Saving...' : 'Save Roles'}
-                    </button>
-                </div>
+                {selectedUser && (
+                    <>
+                        <div className="space-y-4 mb-6">
+                            <div>
+                                <h4 className="font-semibold text-gray-700 mb-2">Current Roles</h4>
+                                {(() => {
+                                    const currentRoles = selectedUserRoles
+                                        .map(id => roles.find(r => r.id === id))
+                                        .filter(Boolean);
+                                    return currentRoles.length > 0 ? (
+                                        currentRoles.map(role => (
+                                            <div key={role.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-md mb-2">
+                                                <span className="text-sm font-medium text-gray-700">{role.name}</span>
+                                                <button
+                                                    onClick={() => handleRemoveRoleClick(role)}
+                                                    disabled={isUpdating}
+                                                    className="px-3 py-1 text-sm font-medium text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-gray-500 text-sm italic">No roles assigned.</p>
+                                    );
+                                })()}
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-gray-700 mb-2">Available Roles</h4>
+                                {(() => {
+                                    const availableRoles = roles.filter(r => !selectedUserRoles.includes(r.id));
+                                    return availableRoles.length > 0 ? (
+                                        availableRoles.map(role => (
+                                            <div key={role.id} className="flex justify-between items-center p-3 bg-blue-50 rounded-md mb-2">
+                                                <span className="text-sm font-medium text-gray-700">{role.name}</span>
+                                                <button
+                                                    onClick={() => handleAddRoleClick(role)}
+                                                    disabled={isUpdating}
+                                                    className="px-3 py-1 text-sm font-medium text-white hover:text-amber-500 bg-amber-500 hover:bg-amber-600 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-gray-500 text-sm italic">No available roles.</p>
+                                    );
+                                })()}
+                            </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                onClick={() => setManageRolesModalOpen(false)}
+                                disabled={isUpdating}
+                                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </>
+                )}
+            </Modal>
+
+            {/* Role Action Confirmation Modal */}
+            <Modal 
+                isOpen={isConfirmOpen} 
+                onClose={() => {
+                    setIsConfirmOpen(false);
+                    setPendingAction({ type: null, role: null });
+                }} 
+                size="sm"
+            >
+                <h3 className="text-lg font-bold mb-4">
+                    Confirm {pendingAction.type === 'add' ? 'Add' : 'Remove'} Role
+                </h3>
+                {selectedUser && pendingAction.role && (
+                    <div className="text-gray-700">
+                        <p className="mb-4 text-sm">
+                            Are you sure you want to {pendingAction.type} the role &quot;{pendingAction.role.name}&quot; for <strong>{selectedUser.email}</strong>?
+                        </p>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsConfirmOpen(false);
+                                    setPendingAction({ type: null, role: null });
+                                }}
+                                disabled={isUpdating}
+                                className="px-4 py-2 border border-amber-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleConfirmAction}
+                                disabled={isUpdating}
+                                className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:bg-gray-300 ${
+                                    pendingAction.type === 'add' 
+                                        ? 'bg-amber-600 hover:bg-amber-700' 
+                                        : 'bg-red-600 hover:bg-red-700'
+                                }`}
+                            >
+                                {isUpdating ? 'Processing...' : (pendingAction.type === 'add' ? 'Add Role' : 'Remove Role')}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </Modal>
 
             {/* View Shifts Modal */}

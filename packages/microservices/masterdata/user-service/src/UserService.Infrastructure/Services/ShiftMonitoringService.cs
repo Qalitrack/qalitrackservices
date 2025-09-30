@@ -176,7 +176,6 @@ namespace UserService.Infrastructure.Services
                    }
                }
 
-               // Also check for published shifts that should be activated
                await CheckForShiftsToActivate(shiftRepository, currentDate);
            }
            catch (Exception ex)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { apiClient } from './apiClients.js';
 import axios from "axios";
 
@@ -10,6 +10,21 @@ const useAuth = () => {
     const [requires2FA, setRequires2FA] = useState(false);
     const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
     const [userId, setUserId] = useState('');
+
+    const listenerSet = useRef(false);
+
+    useEffect(() => {
+        if (!listenerSet.current) {
+            listenerSet.current = true;
+            const handleBeforeUnload = () => {
+                logout();
+            };
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            return () => {
+                window.removeEventListener('beforeunload', handleBeforeUnload);
+            };
+        }
+    }, []);
 
     const login = async (email, password) => {
         setLoading(true);
@@ -41,6 +56,9 @@ const useAuth = () => {
                 setRequires2FA(true);
                 setSessionId(responseData.sessionId);
                 setMaskedEmail(responseData.email);
+                // Temporarily store session details in sessionStorage for persistence across reloads during 2FA flow
+                sessionStorage.setItem('tempSessionId', responseData.sessionId);
+                sessionStorage.setItem('tempMaskedEmail', responseData.email);
                 return {
                     success: true,
                     requires2FA: true,
@@ -50,7 +68,7 @@ const useAuth = () => {
                 };
             }
 
-            // Normal login success - store token and user data
+            // Normal login success - store token and user data in localStorage
             if (responseData) {
                 if (!responseData.token) {
                     throw new Error('Token not provided in response');
@@ -79,6 +97,7 @@ const useAuth = () => {
             setLoading(false);
         }
     };
+
     const updatePassword = async (currentPassword, newPassword, confirmPassword) => {
         if (!userId) {
             const errorMessage = 'No active session. Please login again.';
@@ -136,11 +155,20 @@ const useAuth = () => {
             setLoading(false);
         }
     };
+
     const verify2FA = async (code) => {
+        // Check for persisted temp session from reload
         if (!sessionId) {
-            const errorMessage = 'No active session. Please login again.';
-            setError(errorMessage);
-            return { success: false, error: errorMessage };
+            const tempSessionId = sessionStorage.getItem('tempSessionId');
+            const tempMaskedEmail = sessionStorage.getItem('tempMaskedEmail');
+            if (tempSessionId) {
+                setSessionId(tempSessionId);
+                setMaskedEmail(tempMaskedEmail || '');
+            } else {
+                const errorMessage = 'No active session. Please login again.';
+                setError(errorMessage);
+                return { success: false, error: errorMessage };
+            }
         }
 
         setLoading(true);
@@ -158,7 +186,7 @@ const useAuth = () => {
             // Extract the actual user data from the response
             const userData = responseData?.data || responseData;
 
-            // Store token and user data after successful 2FA
+            // Store token and user data after successful 2FA in localStorage
             if (userData) {
                 if (!userData.token) {
                     throw new Error('Token not provided in response');
@@ -171,15 +199,17 @@ const useAuth = () => {
                     email: userData.email || maskedEmail,
                     firstName: userData.firstName || '',
                     lastName: userData.lastName || '',
-                    userRoles: responseData.userRoles || []
+                    userRoles: userData.userRoles || []
                 };
-                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('user', JSON.stringify(userInfo));
             }
 
-            // Clear 2FA state
+            // Clear 2FA state and temp storage
             setRequires2FA(false);
             setSessionId('');
             setMaskedEmail('');
+            sessionStorage.removeItem('tempSessionId');
+            sessionStorage.removeItem('tempMaskedEmail');
 
             return { success: true, data: responseData };
 
@@ -223,6 +253,9 @@ const useAuth = () => {
     const logout = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
+        // Also clear any temp 2FA state
+        sessionStorage.removeItem('tempSessionId');
+        sessionStorage.removeItem('tempMaskedEmail');
         setRequires2FA(false);
         setRequiresPasswordChange(false);
         setSessionId('');
@@ -248,6 +281,8 @@ const useAuth = () => {
         setRequires2FA(false);
         setSessionId('');
         setMaskedEmail('');
+        sessionStorage.removeItem('tempSessionId');
+        sessionStorage.removeItem('tempMaskedEmail');
         setError('');
     };
 
