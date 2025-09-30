@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import useAuth from '../../helpers/auth';
 import { useState } from 'react';
-
+import qualitrackLogo from "/src/assets/qualitrack.png";
 export default function UserServiceSidebar() {
     const { logout } = useAuth();
     const navigate = useNavigate();
@@ -82,11 +82,10 @@ export default function UserServiceSidebar() {
                 </svg>
             </button>
 
-            <aside className={`fixed inset-y-0 left-0 bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300
+             <aside className={`fixed inset-y-0 left-0 bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300
                 ${isOpen ? 'w-64' : 'w-20'} md:w-64 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
                 <div className="px-4 py-4 font-bold text-xl md:text-2xl text-center">
-                    <span className="hidden md:inline">Admin Panel</span>
-                    <span className="md:hidden">AP</span>
+                    <img src={qualitrackLogo} alt="QualiTrack Logo" className="mx-auto" />
                 </div>
 
                 <nav className="flex-1 space-y-2 overflow-y-auto px-4">

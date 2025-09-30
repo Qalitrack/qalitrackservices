@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getAttendanceByInstanceId } from '../../helpers/UserService/Shifts/Attendance';
+import { getAttendanceByInstanceId } from '../../helpers/UserService/Shifts/Attendance.js';
 import { format } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
 import jsPDF from 'jspdf';
@@ -110,11 +110,33 @@ const Attendance = () => {
     };
 
     // Download PDF function
-    const downloadPDF = () => {
+    const downloadPDF = async () => {
         if (!attendanceData.items || attendanceData.items.length === 0) {
             alert('No attendance data to download.');
             return;
         }
+
+        try {
+            // Show loading state
+            const button = document.activeElement;
+            const originalText = button.textContent;
+            button.textContent = 'Generating PDF...';
+            button.disabled = true;
+
+            // Fetch all attendance records
+            const allData = await getAttendanceByInstanceId(instanceId, {
+                pageNumber: 1,
+                pageSize: attendanceData.totalCount || 1000
+            });
+
+            const allRecords = allData.items || [];
+
+            if (allRecords.length === 0) {
+                alert('No attendance data to download.');
+                button.textContent = originalText;
+                button.disabled = false;
+                return;
+            }
 
         const doc = new jsPDF('landscape');
         const pageWidth = doc.internal.pageSize.getWidth();
@@ -165,7 +187,7 @@ const Attendance = () => {
         doc.setFont(undefined, 'normal');
 
         // Rows
-        attendanceData.items.forEach((record, rowIndex) => {
+        allRecords.forEach((record, rowIndex) => {
             // Check if we need a new page
             if (yPosition > 180) {
                 doc.addPage('landscape');
@@ -218,6 +240,20 @@ const Attendance = () => {
         // Save the PDF
         const sanitizedShiftName = (shiftName || 'shift').replace(/[^a-z0-9]/gi, '-').toLowerCase();
         doc.save(`attendance-${sanitizedShiftName}.pdf`);
+
+            // Reset button state
+            button.textContent = originalText;
+            button.disabled = false;
+
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Failed to generate PDF. Please try again.');
+            
+            // Reset button state
+            const button = document.activeElement;
+            button.textContent = 'Download PDF';
+            button.disabled = false;
+        }
     };
 
     const PaginationControls = () => (
