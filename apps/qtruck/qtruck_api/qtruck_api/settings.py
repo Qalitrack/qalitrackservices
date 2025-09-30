@@ -110,7 +110,7 @@ if DB_ENGINE == 'postgresql' and DB_HOST and DB_USER and DB_PASSWORD:
     # PostgreSQL configuration using individual credentials
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',
             'NAME': DB_NAME,
             'USER': DB_USER,
             'PASSWORD': DB_PASSWORD,
