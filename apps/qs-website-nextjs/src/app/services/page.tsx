@@ -9,6 +9,8 @@ import {ArrowUp,
 import Hero from '@/assets/portrait-engineers-work-hours-job-site.jpg';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
+import Newsletter from '@/components/ContactCallToAction';
+import Partners from '@/components/CertificationsLogos';
 
 // Data for services, including detailed descriptions
 const servicesData = [
@@ -187,6 +189,10 @@ export default function Services() {
       >
         <ArrowUp className="w-6 h-6" />
       </button>
+
+        <Newsletter/>
+      
+        <Partners />
 
       <Footer/>
     </div>
