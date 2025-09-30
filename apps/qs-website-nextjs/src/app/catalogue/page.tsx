@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CatalogueImage from '@/assets/catalogbg.jpg';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Newsletter from '@/components/ContactCallToAction';
+import Partners from '@/components/CertificationsLogos';
 
 // ---------------- MODELS ----------------
 const models = [
@@ -356,7 +358,14 @@ export default function Catalogue() {
         <ArrowUp className="w-6 h-6" />
       </motion.button>
 
-      <Footer />
+        <Newsletter />
+
+          {/* Partners Section */}
+      
+        <Partners />
+    
+        <Footer />
+      
     </div>
   );
 }
