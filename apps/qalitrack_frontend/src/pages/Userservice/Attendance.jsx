@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getAttendanceByInstanceId } from '../../helpers/UserService/Shifts/Attendance';
 import { format } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
+import jsPDF from 'jspdf';
 
 const Attendance = () => {
     const location = useLocation();
@@ -15,7 +16,7 @@ const Attendance = () => {
         pageSize: 10
     });
 
-    const { instanceData, instanceId } = location.state || {};
+    const { instanceData, instanceId, shiftName } = location.state || {};
 
     useEffect(() => {
         if (!instanceId) {
@@ -106,6 +107,117 @@ const Attendance = () => {
     const formatCreatedAt = (dateString) => {
         if (!dateString || isNaN(new Date(dateString))) return 'N/A';
         return format(new Date(dateString), 'MMM dd, yyyy HH:mm');
+    };
+
+    // Download PDF function
+    const downloadPDF = () => {
+        if (!attendanceData.items || attendanceData.items.length === 0) {
+            alert('No attendance data to download.');
+            return;
+        }
+
+        const doc = new jsPDF('landscape');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 10;
+        const startY = 20;
+        let yPosition = startY;
+        const rowHeight = 8;
+        
+        // Define column widths
+        const colWidths = [40, 50, 30, 30, 25, 20, 35];
+        const totalWidth = colWidths.reduce((a, b) => a + b, 0);
+
+        // Title with shift name
+        doc.setFontSize(18);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(44, 62, 80);
+        doc.text(`Attendance Report - ${shiftName || 'Shift'}`, margin, yPosition);
+        yPosition += 10;
+
+        // Subtitle with date and employee count
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Total Employees: ${attendanceData.totalCount}`, margin, yPosition);
+        yPosition += 15;
+
+        // Table setup
+        const headerY = yPosition;
+
+        // Headers
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(52, 152, 219);
+        doc.rect(margin, headerY, totalWidth, rowHeight + 2, 'F');
+        doc.setTextColor(255, 255, 255);
+
+        let xPos = margin + 2;
+        const headers = ['Employee Name', 'Employee Email', 'Clock In', 'Clock Out', 'Status', 'Late', 'Created At'];
+        headers.forEach((header, idx) => {
+            doc.text(header, xPos, headerY + 6);
+            xPos += colWidths[idx];
+        });
+
+        yPosition += rowHeight + 2;
+
+        // Reset text color for rows
+        doc.setTextColor(44, 62, 80);
+        doc.setFont(undefined, 'normal');
+
+        // Rows
+        attendanceData.items.forEach((record, rowIndex) => {
+            // Check if we need a new page
+            if (yPosition > 180) {
+                doc.addPage('landscape');
+                yPosition = startY;
+            }
+
+            const rowY = yPosition;
+            const isEvenRow = rowIndex % 2 === 0;
+
+            // Row background (alternating)
+            if (isEvenRow) {
+                doc.setFillColor(248, 249, 250);
+                doc.rect(margin, rowY, totalWidth, rowHeight, 'F');
+            }
+
+            doc.setFontSize(9);
+            
+            xPos = margin + 2;
+            const rowData = [
+                record.employeeName || 'Unknown',
+                record.employeeEmail || 'N/A',
+                formatTime(record.clockInTime),
+                formatTime(record.clockOutTime),
+                getStatusText(record.status),
+                formatBoolean(record.isLate),
+                formatCreatedAt(record.createdAt)
+            ];
+
+            rowData.forEach((data, idx) => {
+                // Truncate text if too long
+                const maxWidth = colWidths[idx] - 4;
+                const text = doc.splitTextToSize(data, maxWidth)[0];
+                doc.text(text, xPos, rowY + 6);
+                xPos += colWidths[idx];
+            });
+
+            // Draw row borders
+            doc.setDrawColor(189, 195, 199);
+            doc.setLineWidth(0.2);
+            doc.line(margin, rowY + rowHeight, margin + totalWidth, rowY + rowHeight);
+
+            yPosition += rowHeight;
+        });
+
+        // Draw outer border
+        doc.setDrawColor(44, 62, 80);
+        doc.setLineWidth(0.5);
+        doc.rect(margin, headerY, totalWidth, yPosition - headerY);
+
+        // Save the PDF
+        const sanitizedShiftName = (shiftName || 'shift').replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        doc.save(`attendance-${sanitizedShiftName}.pdf`);
     };
 
     const PaginationControls = () => (
@@ -236,7 +348,6 @@ const Attendance = () => {
     }
 
     if (error) {
-        // Check if this is a "no records" message
         const isNoRecordsMessage = error.includes('No attendance records found');
         
         if (isNoRecordsMessage) {
@@ -258,7 +369,6 @@ const Attendance = () => {
             );
         }
         
-        // For actual errors, show the red error message
         return (
             <div className="p-6">
                 <div className="bg-red-50 border-l-4 border-red-400 p-4">
@@ -313,13 +423,28 @@ const Attendance = () => {
         <div className="p-6">
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Shift Attendance
-                    </h3>
-                    <div className="flex items-center space-x-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {attendanceData.totalCount || 0} {attendanceData.totalCount === 1 ? 'Employee' : 'Employees'}
-                        </span>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                Shift Attendance {shiftName && `- ${shiftName}`}
+                            </h3>
+                            <div className="mt-2 flex items-center space-x-4">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {attendanceData.totalCount || 0} {attendanceData.totalCount === 1 ? 'Employee' : 'Employees'}
+                                </span>
+                            </div>
+                        </div>
+                        <button
+                            onClick={downloadPDF}
+                            disabled={!attendanceData.items || attendanceData.items.length === 0}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                                attendanceData.items && attendanceData.items.length > 0
+                                    ? 'bg-amber-500 hover:bg-amber-600 text-white'
+                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            }`}
+                        >
+                            Download PDF
+                        </button>
                     </div>
                 </div>
                 <div className="overflow-x-auto">
