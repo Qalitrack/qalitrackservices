@@ -51,6 +51,7 @@ const Roles = () => {
     const [isUserListModalOpen, setUserListModalOpen] = useState(false);
     const [isLogsModalOpen, setLogsModalOpen] = useState(false);
     const [isPermissionsModalOpen, setPermissionsModalOpen] = useState(false);
+    const [isConfirmPermissionModalOpen, setConfirmPermissionModalOpen] = useState(false);
 
     const [selectedRole, setSelectedRole] = useState(null);
     const [newRole, setNewRole] = useState({ name: '', description: '', isActive: true });
@@ -63,6 +64,9 @@ const Roles = () => {
     const [allPermissions, setAllPermissions] = useState([]);
     const [rolePermissions, setRolePermissions] = useState([]);
     const [loadingPermissions, setLoadingPermissions] = useState(false);
+
+    // State for permission confirmation
+    const [pendingPermissionAction, setPendingPermissionAction] = useState({ id: null, action: null });
 
     const showMessage = (text, type) => {
         setFeedbackMessage({ text, type });
@@ -335,6 +339,19 @@ const Roles = () => {
         }
     };
 
+    const handleConfirmPermissionAction = () => {
+        const { id, action } = pendingPermissionAction;
+        const isChecked = action === 'add';
+        handlePermissionChange(id, isChecked);
+        setConfirmPermissionModalOpen(false);
+        setPendingPermissionAction({ id: null, action: null });
+    };
+
+    const handlePermissionButtonClick = (permissionId, action) => {
+        setPendingPermissionAction({ id: permissionId, action });
+        setConfirmPermissionModalOpen(true);
+    };
+
     // Handler for form input change in edit modal
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -594,7 +611,7 @@ const Roles = () => {
             <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)}>
                 <h3 className="text-lg font-bold mb-4">Add New Role</h3>
                 {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}`}>
                         {modalFeedback.text}
                     </div>
                 )}
@@ -752,12 +769,21 @@ const Roles = () => {
                                     <p className="font-semibold text-gray-800">{permission.name}</p>
                                     <p className="text-xs text-gray-500">{permission.description}</p>
                                 </div>
-                                <input
-                                    type="checkbox"
-                                    className="h-5 w-5 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-                                    checked={rolePermissions.includes(permission.id)}
-                                    onChange={(e) => handlePermissionChange(permission.id, e.target.checked)}
-                                />
+                                {rolePermissions.includes(permission.id) ? (
+                                    <button
+                                        onClick={() => handlePermissionButtonClick(permission.id, 'remove')}
+                                        className="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-md hover:bg-red-200 transition-colors"
+                                    >
+                                        Remove
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => handlePermissionButtonClick(permission.id, 'add')}
+                                        className="px-3 py-1 bg-amber-500 text-amber-700 text-sm font-medium rounded-md hover:bg-amber-200 transition-colors"
+                                    >
+                                        Add
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -765,6 +791,40 @@ const Roles = () => {
                 <div className="flex justify-end mt-6">
                     <button type="button" onClick={() => setPermissionsModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 transition-colors">
                         Done
+                    </button>
+                </div>
+            </Modal>
+
+            {/* Permission Confirmation Modal */}
+            <Modal isOpen={isConfirmPermissionModalOpen} onClose={() => setConfirmPermissionModalOpen(false)} size="md">
+                <div className="text-center">
+                    <ShieldAlert className={`mx-auto h-12 w-12 ${pendingPermissionAction.action === 'add' ? 'text-green-500' : 'text-red-500'}`} />
+                    <h3 className="mt-2 text-lg font-bold text-gray-800">
+                        Confirm {pendingPermissionAction.action === 'add' ? 'Add' : 'Remove'} Permission
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-600">
+                        Are you sure you want to {pendingPermissionAction.action} the permission "
+                        {allPermissions.find(p => p.id === pendingPermissionAction.id)?.name}" to the role "{selectedRole?.name}"?
+                    </p>
+                </div>
+                <div className="mt-6 flex justify-center space-x-4">
+                    <button
+                        type="button"
+                        onClick={() => setConfirmPermissionModalOpen(false)}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleConfirmPermissionAction}
+                        className={`px-4 py-2 rounded-md text-sm font-medium text-white transition-colors ${
+                            pendingPermissionAction.action === 'add'
+                                ? 'bg-amber-600 hover:bg-amber-700'
+                                : 'bg-red-600 hover:bg-red-700'
+                        }`}
+                    >
+                        {pendingPermissionAction.action === 'add' ? 'Add Permission' : 'Remove Permission'}
                     </button>
                 </div>
             </Modal>

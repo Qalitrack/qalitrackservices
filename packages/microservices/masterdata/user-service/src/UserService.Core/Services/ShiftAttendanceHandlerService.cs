@@ -76,108 +76,91 @@ namespace UserService.Core.Services
             }
         }
 
-        public async Task<bool> HandleLogoutAttendanceAsync(string userId, Shift shift, DateTime logoutTime)
-{
-    if (string.IsNullOrEmpty(userId))
-    {
-        _logger.LogWarning("User ID cannot be null or empty");
-        return false;
-    }
-
-    if (shift == null)
-    {
-        _logger.LogWarning("Shift cannot be null for user {UserId}", userId);
-        return false;
-    }
-
-    try
-    {
-        _logger.LogInformation("Processing logout attendance for user {UserId} and shift {ShiftId} at {LogoutTime}", 
-            userId, shift.Id, logoutTime);
-
-        // Get all instances for this shift
-        var shiftInstances = await _shiftInstanceRepository.GetInstancesByShiftIdAsync(shift.Id);
-        if (shiftInstances == null || !shiftInstances.Any())
+       public async Task<bool> HandleLogoutAttendanceAsync(string userId, Shift shift, DateTime logoutTime)
         {
-            _logger.LogInformation("No shift instances found for shift {ShiftId}", shift.Id);
-            return false;
-        }
-
-        // Find the most relevant instance based on the logout time
-        var currentInstance = shiftInstances
-            .Where(si => si.Status == ShiftInstanceStatus.InProgress || si.Status == ShiftInstanceStatus.Scheduled)
-            .OrderByDescending(si => si.ScheduledDate)
-            .FirstOrDefault();
-
-        if (currentInstance == null)
-        {
-            _logger.LogInformation("No active or scheduled instance found for shift {ShiftId}", shift.Id);
-            return false;
-        }
-
-        _logger.LogInformation("Processing attendance for user {UserId} in instance {InstanceId} (Status: {Status})",
-            userId, currentInstance.Id, currentInstance.Status);
-
-        // Get or create attendance record
-        var attendance = await _shiftAttendanceService.GetAttendanceByUserAndInstanceAsync(userId, currentInstance.Id);
-        
-        if (attendance == null)
-        {
-            _logger.LogInformation("Creating new attendance record for user {UserId} in instance {InstanceId}", 
-                userId, currentInstance.Id);
-            
-            // If no attendance record exists, create one with the logout time as both in and out
-            // This handles cases where user was never properly clocked in
-            var clockInTime = logoutTime.AddMinutes(-5); // Assume they were clocked in 5 minutes before logout
-            attendance = await _shiftAttendanceService.ClockInAsync(
-                currentInstance.Id,
-                userId,
-                clockInTime,
-                $"Auto-created attendance during logout at {logoutTime:yyyy-MM-dd HH:mm:ss}");
-                
-            if (attendance == null)
+            if (string.IsNullOrEmpty(userId))
             {
-                _logger.LogWarning("Failed to create attendance record for user {UserId}", userId);
+                _logger.LogWarning("User ID cannot be null or empty");
                 return false;
             }
-            
-            _logger.LogInformation("Created attendance record {AttendanceId} for user {UserId}", 
-                attendance.Id, userId);
-        }
 
-        // If already clocked out, no need to do anything
-        if (attendance.ClockOutTime.HasValue)
-        {
-            _logger.LogInformation("User {UserId} is already clocked out at {ClockOutTime} for instance {InstanceId}", 
-                userId, attendance.ClockOutTime, currentInstance.Id);
-            return true;
-        }
+            if (shift == null)
+            {
+                _logger.LogWarning("Shift cannot be null for user {UserId}", userId);
+                return false;
+            }
 
-        // Update the attendance record with clock-out time
-        attendance.ClockOutTime = logoutTime;
-        attendance.UpdatedAt = DateTime.UtcNow;
-        attendance.UpdatedBy = "System";
-        
-        var updatedAttendance = await _shiftAttendanceService.UpdateAsync(attendance);
-        var updated = updatedAttendance != null;
-        
-        if (updated)
-        {
-            _logger.LogInformation("Successfully updated attendance for user {UserId} in shift {ShiftId}. Clock out at {ClockOutTime}",
-                userId, shift.Id, logoutTime);
-            return true;
+            try
+            {
+                _logger.LogInformation("Processing logout attendance for user {UserId} and shift {ShiftId} at {LogoutTime}", 
+                    userId, shift.Id, logoutTime);
+
+                // Get all instances for this shift
+                var shiftInstances = await _shiftInstanceRepository.GetInstancesByShiftIdAsync(shift.Id);
+                if (shiftInstances == null || !shiftInstances.Any())
+                {
+                    _logger.LogInformation("No shift instances found for shift {ShiftId}", shift.Id);
+                    return false;
+                }
+
+                // Find the most relevant instance based on the logout time
+                var currentInstance = shiftInstances
+                    .Where(si => si.Status == ShiftInstanceStatus.InProgress || si.Status == ShiftInstanceStatus.Scheduled)
+                    .OrderByDescending(si => si.ScheduledDate)
+                    .FirstOrDefault();
+
+                if (currentInstance == null)
+                {
+                    _logger.LogInformation("No active or scheduled instance found for shift {ShiftId}", shift.Id);
+                    return false;
+                }
+
+                _logger.LogInformation("Processing attendance for user {UserId} in instance {InstanceId} (Status: {Status})",
+                    userId, currentInstance.Id, currentInstance.Status);
+
+                // Get attendance record
+                var attendance = await _shiftAttendanceService.GetAttendanceByUserAndInstanceAsync(userId, currentInstance.Id);
+                
+                if (attendance == null)
+                {
+                    _logger.LogWarning("No attendance record found for user {UserId} in instance {InstanceId}. Skipping logout attendance update (no prior clock-in).", 
+                        userId, currentInstance.Id);
+                    return false;
+                }
+
+                // If already clocked out, no need to do anything
+                if (attendance.ClockOutTime.HasValue)
+                {
+                    _logger.LogInformation("User {UserId} is already clocked out at {ClockOutTime} for instance {InstanceId}", 
+                        userId, attendance.ClockOutTime, currentInstance.Id);
+                    return true;
+                }
+
+                // Update the attendance record with clock-out time
+                attendance.ClockOutTime = logoutTime;
+                attendance.UpdatedAt = DateTime.UtcNow;
+                attendance.UpdatedBy = "System";
+                
+                var updatedAttendance = await _shiftAttendanceService.UpdateAsync(attendance);
+                var updated = updatedAttendance != null;
+                
+                if (updated)
+                {
+                    _logger.LogInformation("Successfully updated attendance for user {UserId} in shift {ShiftId}. Clock out at {ClockOutTime}",
+                        userId, shift.Id, logoutTime);
+                    return true;
+                }
+                
+                _logger.LogWarning("Failed to update attendance record for user {UserId}", userId);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling logout attendance for user {UserId} and shift {ShiftId}", userId, shift?.Id);
+                // Don't throw - logout should proceed even if attendance fails
+                return false;
+            }
         }
-        
-        _logger.LogWarning("Failed to update attendance record for user {UserId}", userId);
-        return false;
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error handling logout attendance for user {UserId} and shift {ShiftId}", userId, shift?.Id);
-        // Don't throw - logout should proceed even if attendance fails
-        return false;
-    }
-}
 
         public async Task<bool> HandleEarlyArrivalAttendanceAsync(string userId, Shift shift, DateTime arrivalTime, string shiftInstanceId,
             double minutesEarly)
@@ -215,9 +198,7 @@ namespace UserService.Core.Services
                         shiftInstanceId, shift.Id);
                     return false;
                 }
-
-                // Check if the instance is in a valid state for early arrival
-                // Allow both Scheduled and InProgress instances for early arrival
+                
                 if (shiftInstance.Status != ShiftInstanceStatus.Scheduled && shiftInstance.Status != ShiftInstanceStatus.InProgress)
                 {
                     _logger.LogInformation("Shift instance {InstanceId} is in status {Status}, not eligible for early arrival. Only Scheduled or InProgress instances are allowed.", 
@@ -225,7 +206,6 @@ namespace UserService.Core.Services
                     return false;
                 }
 
-                // Check if user already has an attendance record for this instance
                 var existingAttendance = await _shiftAttendanceService.GetAttendanceByUserAndInstanceAsync(userId, shiftInstanceId);
                 
                 if (existingAttendance != null)

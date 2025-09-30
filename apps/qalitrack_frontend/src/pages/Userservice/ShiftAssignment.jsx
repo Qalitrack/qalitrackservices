@@ -40,6 +40,40 @@ const Modal = ({ children, isOpen }) => {
     );
 };
 
+const ConfirmationModal = ({ 
+    isOpen, 
+    onClose, 
+    onConfirm, 
+    title, 
+    message,
+    confirmText = "Confirm",
+    cancelText = "Cancel"
+}) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4">
+                <h3 className="text-lg font-bold mb-4">{title}</h3>
+                <p className="text-gray-600 mb-6">{message}</p>
+                <div className="flex justify-end space-x-3">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm bg-gray-50 hover:bg-gray-100"
+                    >
+                        {cancelText}
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-4 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600"
+                    >
+                        {confirmText}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ShiftAssignment = () => {
     const { state } = useLocation();
     const [shifts, setShifts] = useState([]);
@@ -58,6 +92,14 @@ const ShiftAssignment = () => {
     const [isViewUsersModalOpen, setViewUsersModalOpen] = useState(false);
     const [isViewRolesModalOpen, setViewRolesModalOpen] = useState(false);
 
+    // Confirmation modals
+    const [isConfirmUserActionOpen, setConfirmUserActionOpen] = useState(false);
+    const [isConfirmRoleActionOpen, setConfirmRoleActionOpen] = useState(false);
+    const [userActionType, setUserActionType] = useState(''); // 'add' or 'remove'
+    const [selectedUserForAction, setSelectedUserForAction] = useState(null);
+    const [selectedRoleForAction, setSelectedRoleForAction] = useState(null);
+    const [roleActionType, setRoleActionType] = useState(''); // 'add' or 'remove'
+
     // State for selected shift
     const [selectedShift, setSelectedShift] = useState(null);
     const [allUsers, setAllUsers] = useState([]);
@@ -67,7 +109,7 @@ const ShiftAssignment = () => {
     const [modalLoading, setModalLoading] = useState(false);
     const [modalError, setModalError] = useState(null);
 
-    // Checkbox states
+    // Checkbox states (visual only for users)
     const [checkboxStateUsers, setCheckboxStateUsers] = useState({});
     const [checkboxStateRoles, setCheckboxStateRoles] = useState({});
 
@@ -173,25 +215,23 @@ const ShiftAssignment = () => {
         }
     };
 
-    const handleCheckboxChangeUser = async (userId) => {
+    const handleUserActionClick = (userId, action) => {
+        setSelectedUserForAction(userId);
+        setUserActionType(action);
+        setConfirmUserActionOpen(true);
+    };
+
+    const confirmUserAction = async () => {
+        setConfirmUserActionOpen(false);
         setModalLoading(true);
         setModalError(null);
         try {
-            const isChecked = checkboxStateUsers[userId];
-            if (isChecked) {
-                await removeShiftFromUser(userId, selectedShift.id);
-                setCheckboxStateUsers((prev) => ({ ...prev, [userId]: false }));
-                setShifts((prev) =>
-                    prev.map((shift) =>
-                        shift.id === selectedShift.id
-                            ? { ...shift, assignedUsersCount: (shift.assignedUsersCount || 1) - 1 }
-                            : shift
-                    )
-                );
-                setUsersModalMessage({ text: "User removed from shift.", type: "success" });
-            } else {
-                await assignShiftToUser(userId, selectedShift.id);
-                setCheckboxStateUsers((prev) => ({ ...prev, [userId]: true }));
+            const user = allUsers.find(u => u.id === selectedUserForAction);
+            if (!user) throw new Error('User not found');
+
+            if (userActionType === 'add') {
+                await assignShiftToUser(selectedUserForAction, selectedShift.id);
+                setCheckboxStateUsers((prev) => ({ ...prev, [selectedUserForAction]: true }));
                 setShifts((prev) =>
                     prev.map((shift) =>
                         shift.id === selectedShift.id
@@ -200,6 +240,17 @@ const ShiftAssignment = () => {
                     )
                 );
                 setUsersModalMessage({ text: "User assigned to shift.", type: "success" });
+            } else if (userActionType === 'remove') {
+                await removeShiftFromUser(selectedUserForAction, selectedShift.id);
+                setCheckboxStateUsers((prev) => ({ ...prev, [selectedUserForAction]: false }));
+                setShifts((prev) =>
+                    prev.map((shift) =>
+                        shift.id === selectedShift.id
+                            ? { ...shift, assignedUsersCount: (shift.assignedUsersCount || 1) - 1 }
+                            : shift
+                    )
+                );
+                setUsersModalMessage({ text: "User removed from shift.", type: "success" });
             }
         } catch (err) {
             setUsersModalMessage({
@@ -238,25 +289,23 @@ const ShiftAssignment = () => {
         }
     };
 
-    const handleCheckboxChangeRole = async (roleId) => {
+    const handleRoleActionClick = (roleId, action) => {
+        setSelectedRoleForAction(roleId);
+        setRoleActionType(action);
+        setConfirmRoleActionOpen(true);
+    };
+
+    const confirmRoleAction = async () => {
+        setConfirmRoleActionOpen(false);
         setModalLoading(true);
         setModalError(null);
         try {
-            const isChecked = checkboxStateRoles[roleId];
-            if (isChecked) {
-                await removeShiftFromRole(roleId, selectedShift.id);
-                setCheckboxStateRoles((prev) => ({ ...prev, [roleId]: false }));
-                setShifts((prev) =>
-                    prev.map((shift) =>
-                        shift.id === selectedShift.id
-                            ? { ...shift, assignedRolesCount: (shift.assignedRolesCount || 1) - 1 }
-                            : shift
-                    )
-                );
-                setRolesModalMessage({ text: "Role removed from shift.", type: "success" });
-            } else {
-                await assignShiftToRole(roleId, selectedShift.id);
-                setCheckboxStateRoles((prev) => ({ ...prev, [roleId]: true }));
+            const role = allRoles.find(r => r.id === selectedRoleForAction);
+            if (!role) throw new Error('Role not found');
+
+            if (roleActionType === 'add') {
+                await assignShiftToRole(selectedRoleForAction, selectedShift.id);
+                setCheckboxStateRoles((prev) => ({ ...prev, [selectedRoleForAction]: true }));
                 setShifts((prev) =>
                     prev.map((shift) =>
                         shift.id === selectedShift.id
@@ -265,6 +314,17 @@ const ShiftAssignment = () => {
                     )
                 );
                 setRolesModalMessage({ text: "Role assigned to shift.", type: "success" });
+            } else if (roleActionType === 'remove') {
+                await removeShiftFromRole(selectedRoleForAction, selectedShift.id);
+                setCheckboxStateRoles((prev) => ({ ...prev, [selectedRoleForAction]: false }));
+                setShifts((prev) =>
+                    prev.map((shift) =>
+                        shift.id === selectedShift.id
+                            ? { ...shift, assignedRolesCount: (shift.assignedRolesCount || 1) - 1 }
+                            : shift
+                    )
+                );
+                setRolesModalMessage({ text: "Role removed from shift.", type: "success" });
             }
         } catch (err) {
             setRolesModalMessage({
@@ -584,14 +644,10 @@ const ShiftAssignment = () => {
                             <td className="px-6 py-4 text-sm">
                                 <button
                                     onClick={() => handleViewRolesClick(shift)}
-                                    className={`flex items-center ${
-                                        (shift.assignedRolesCount || 0) > 0
-                                            ? "text-blue-600 font-semibold"
-                                            : "text-gray-500"
-                                    } hover:underline`}
+                                    className={`flex items-center hover:underline`}
                                 >
                                     <Tag size={18} className="mr-1" />
-                                    {shift.assignedRolesCount || 0}
+                                    {shift.assignedRolesCount }
                                 </button>
                             </td>
                         </tr>
@@ -677,16 +733,37 @@ const ShiftAssignment = () => {
                                 {allUsers.map((user) => (
                                     <li
                                         key={user.id}
-                                        className="flex items-center bg-gray-100 p-2 rounded-md text-sm"
+                                        className="flex items-center justify-between bg-gray-100 p-3 rounded-md text-sm"
                                     >
-                                        <input
-                                            type="checkbox"
-                                            checked={checkboxStateUsers[user.id] || false}
-                                            onChange={() => handleCheckboxChangeUser(user.id)}
-                                            className="mr-2 h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
-                                            disabled={modalLoading}
-                                        />
-                                        {user.firstName} {user.lastName} ({user.email})
+                                        <div className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={checkboxStateUsers[user.id] || false}
+                                                readOnly
+                                                className="mr-2 h-4 w-4 text-white focus:ring-amber-500 border-gray-300 rounded"
+                                            />
+                                            <span>{user.firstName} {user.lastName} ({user.email})</span>
+                                        </div>
+                                        <div className="space-x-2">
+                                            {!checkboxStateUsers[user.id] && (
+                                                <button
+                                                    onClick={() => handleUserActionClick(user.id, 'add')}
+                                                    className="px-3 py-1 bg-amber-500 text-white text-xs rounded hover:bg-amber-600"
+                                                    disabled={modalLoading}
+                                                >
+                                                    Add
+                                                </button>
+                                            )}
+                                            {checkboxStateUsers[user.id] && (
+                                                <button
+                                                    onClick={() => handleUserActionClick(user.id, 'remove')}
+                                                    className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                                                    disabled={modalLoading}
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -707,6 +784,16 @@ const ShiftAssignment = () => {
                     </button>
                 </div>
             </Modal>
+
+            {/* User Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={isConfirmUserActionOpen}
+                onClose={() => setConfirmUserActionOpen(false)}
+                onConfirm={confirmUserAction}
+                title={userActionType === 'add' ? 'Confirm Add User' : 'Confirm Remove User'}
+                message={`Are you sure you want to ${userActionType} this user from the shift "${selectedShift?.name}"?`}
+                confirmText={userActionType === 'add' ? 'Add User' : 'Remove User'}
+            />
 
             {/* Roles Modal */}
             <Modal isOpen={isViewRolesModalOpen}>
@@ -739,16 +826,25 @@ const ShiftAssignment = () => {
                                 {allRoles.map((role) => (
                                     <li
                                         key={role.id}
-                                        className="flex items-center bg-gray-100 p-2 rounded-md text-sm"
+                                        className="flex items-center justify-between bg-gray-100 p-3 rounded-md text-sm"
                                     >
-                                        <input
-                                            type="checkbox"
-                                            checked={checkboxStateRoles[role.id] || false}
-                                            onChange={() => handleCheckboxChangeRole(role.id)}
-                                            className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
-                                            disabled={modalLoading}
-                                        />
-                                        {role.name}
+                                        <span>{role.name}</span>
+                                        <div className="space-x-2">
+                                            <button
+                                                onClick={() => handleRoleActionClick(role.id, 'add')}
+                                                className="px-3 py-1 bg-amber-500 text-white text-xs rounded hover:bg-amber-600 disabled:opacity-50"
+                                                disabled={modalLoading}
+                                            >
+                                                Add Role
+                                            </button>
+                                            <button
+                                                onClick={() => handleRoleActionClick(role.id, 'remove')}
+                                                className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 disabled:opacity-50"
+                                                disabled={modalLoading}
+                                            >
+                                                Remove Role
+                                            </button>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -769,6 +865,16 @@ const ShiftAssignment = () => {
                     </button>
                 </div>
             </Modal>
+
+            {/* Role Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={isConfirmRoleActionOpen}
+                onClose={() => setConfirmRoleActionOpen(false)}
+                onConfirm={confirmRoleAction}
+                title={roleActionType === 'add' ? 'Confirm Add Role' : 'Confirm Remove Role'}
+                message={`Are you sure you want to ${roleActionType} this role from the shift "${selectedShift?.name}"?`}
+                confirmText={roleActionType === 'add' ? 'Add Role' : 'Remove Role'}
+            />
         </div>
     );
 };
