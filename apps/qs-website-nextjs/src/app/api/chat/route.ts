@@ -1,8 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+interface ChatMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+interface ChatRequestBody {
+  messages: ChatMessage[];
+}
+
+export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json();
+    const body: ChatRequestBody = await req.json();
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -11,19 +20,20 @@ export async function POST(req: Request) {
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini", // lightweight and affordable
-        messages,
+        model: "gpt-4o-mini",
+        messages: body.messages,
         temperature: 0.7,
       }),
     });
 
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Chat API error:", error);
-    return NextResponse.json(
-      { error: "Failed to connect to OpenAI" },
-      { status: 500 }
-    );
+
+    // Optional: safely extract message
+    const message = error instanceof Error ? error.message : "Failed to connect to OpenAI";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
