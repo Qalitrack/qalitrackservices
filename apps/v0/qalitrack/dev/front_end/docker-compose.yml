@@ -2,7 +2,7 @@ services:
   qalitrack-traefik:
     image: traefik:v3.1  # Note: Consider updating to 'traefik:latest' for the most recent version (v3.1 as of this config, but latest is v3.5+)
 
-    container_name: qalitrack-traefik
+    container_name: qalitrack-frontend
     restart: unless-stopped
     ports:
       # Expose ports so main Traefik can reach this internal Traefik (DEV only)
