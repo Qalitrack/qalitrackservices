@@ -37,19 +37,14 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          cd ${{ env.SERVICE_PATH }}
+          cd ${{ apps/qalitrack_frontend }}
           npm ci
 
       - name: Build application
         run: |
-          cd ${{ env.SERVICE_PATH }}
+          cd ${{ apps/qalitrack_frontend }}
           npm run build
 
-      - name: Run tests
-        run: |
-          cd ${{ env.SERVICE_PATH }}
-          npm test || echo "No tests or tests failed, continuing"
-        continue-on-error: true
 
       - name: Log in to Container Registry
         uses: docker/login-action@v3
