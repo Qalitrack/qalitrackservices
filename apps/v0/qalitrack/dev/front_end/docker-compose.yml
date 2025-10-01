@@ -1,6 +1,6 @@
 services:
   qalitrack-traefik:
-    image: traefik:v3.1
+    image: traefik:v3.1  # Note: Consider updating to 'traefik:latest' for the most recent version (v3.1 as of this config, but latest is v3.5+)
 
     container_name: qalitrack-traefik
     restart: unless-stopped
@@ -38,13 +38,13 @@ services:
       - "traefik.enable=true"
       
       # Main route for dev environment - route API calls to services (HTTP)
-      - "traefik.http.routers.qalitrack-dev.rule=Host(`dev.qalitrack.cseco.co.ke`)"
+      - "traefik.http.routers.qalitrack-dev.rule=Host(`${QALITRACK_DEV_DOMAIN}`)"
       - "traefik.http.routers.qalitrack-dev.entrypoints=web"
       - "traefik.http.routers.qalitrack-dev.service=qalitrack-traefik-http"
       - "traefik.http.routers.qalitrack-dev.priority=1"
       
       # Dashboard access via subdomain (HTTP for dev)
-      - "traefik.http.routers.qalitrack-dashboard-dev.rule=Host(`${QALITRACK_TRAEFIK_DOMAIN:-traefik-dev.qalitrack.cseco.co.ke}`)"
+      - "traefik.http.routers.qalitrack-dashboard-dev.rule=Host(`${QALITRACK_TRAEFIK_DOMAIN}`)"
       - "traefik.http.routers.qalitrack-dashboard-dev.entrypoints=web"
       - "traefik.http.routers.qalitrack-dashboard-dev.service=qalitrack-traefik-dashboard"
       
@@ -67,20 +67,20 @@ services:
       - "traefik.enable=true"
       - "traefik.scope=qalitrack"
       
-      # Frontend routes (DEV only) - catch-all for dev domain
-      - "traefik.http.routers.frontend-dev.rule=Host(`dev.qalitrack.cseco.co.ke`)"
+      # Health check (DEV) - assuming /health endpoint (higher priority for specific path)
+      - "traefik.http.routers.frontend-health-dev.rule=Host(`${QALITRACK_DEV_DOMAIN}`) && PathPrefix(`/health`)"
+      - "traefik.http.routers.frontend-health-dev.entrypoints=qalitrack-http"
+      - "traefik.http.routers.frontend-health-dev.service=frontend-dev"
+      - "traefik.http.routers.frontend-health-dev.priority=100"
+      
+      # Frontend routes (DEV only) - catch-all for dev domain (lower priority)
+      - "traefik.http.routers.frontend-dev.rule=Host(`${QALITRACK_DEV_DOMAIN}`)"
       - "traefik.http.routers.frontend-dev.entrypoints=qalitrack-http"
       - "traefik.http.routers.frontend-dev.service=frontend-dev"
       - "traefik.http.routers.frontend-dev.priority=10"
       
       # Service definition
       - "traefik.http.services.frontend-dev.loadbalancer.server.port=80"
-      
-      # Health check (DEV) - assuming /health endpoint
-      - "traefik.http.routers.frontend-health-dev.rule=Host(`dev.qalitrack.cseco.co.ke`) && PathPrefix(`/health`)"
-      - "traefik.http.routers.frontend-health-dev.entrypoints=qalitrack-http"
-      - "traefik.http.routers.frontend-health-dev.service=frontend-dev"
-      - "traefik.http.routers.frontend-health-dev.priority=5"
 
 networks:
   proxy-network:
