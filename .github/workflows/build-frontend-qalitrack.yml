@@ -37,14 +37,13 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          cd ${{ apps/qalitrack_frontend }}
+          cd ${{ env.SERVICE_PATH }}
           npm ci
 
       - name: Build application
         run: |
-          cd ${{ apps/qalitrack_frontend }}
+          cd ${{ env.SERVICE_PATH }}
           npm run build
-
 
       - name: Log in to Container Registry
         uses: docker/login-action@v3
