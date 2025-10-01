@@ -41,23 +41,23 @@ services:
       - "traefik.enable=true"
       - "traefik.scope=qalitrack"
       
-      # User API routes (DEV)
-      - "traefik.http.routers.user-api-dev.rule=PathPrefix(`/api/users`)"
-      - "traefik.http.routers.user-api-dev.entrypoints=qalitrack-http"
-      - "traefik.http.routers.user-api-dev.service=user-service-dev"
-      
-      # Auth API routes (DEV)
-      - "traefik.http.routers.auth-api-dev.rule=PathPrefix(`/api/auth`)"
-      - "traefik.http.routers.auth-api-dev.entrypoints=qalitrack-http"
-      - "traefik.http.routers.auth-api-dev.service=user-service-dev"
+      # User service routes (DEV) - all under /user
+      - "traefik.http.routers.user-service-dev.rule=PathPrefix(`/user`)"
+      - "traefik.http.routers.user-service-dev.entrypoints=qalitrack-http"
+      - "traefik.http.routers.user-service-dev.service=user-service-dev"
+      - "traefik.http.routers.user-service-dev.middlewares=strip-user-prefix"
       
       # Service definition
       - "traefik.http.services.user-service-dev.loadbalancer.server.port=80"
       
-      # Health check (DEV)
-      - "traefik.http.routers.user-health-dev.rule=PathPrefix(`/health`)"
+      # Middleware to strip /user prefix
+      - "traefik.http.middlewares.strip-user-prefix.stripprefix.prefixes=/user"
+      
+      # Health check (DEV) - routed under /user/health
+      - "traefik.http.routers.user-health-dev.rule=PathPrefix(`/user/health`)"
       - "traefik.http.routers.user-health-dev.entrypoints=qalitrack-http"
       - "traefik.http.routers.user-health-dev.service=user-service-dev"
+      - "traefik.http.routers.user-health-dev.middlewares=strip-user-prefix"
 
   # User Service Database (DEV)
   postgres-userservice-dev:
