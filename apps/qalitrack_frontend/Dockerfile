@@ -14,9 +14,8 @@ COPY package*.json ./
 # Install all dependencies (including dev for build)
 RUN npm ci
 
-# Copy source code and .env (bakes in env vars for build-time use)
+# Copy source code
 COPY . .
-COPY .env .
 
 # Build the React app
 RUN npm run build
@@ -38,7 +37,6 @@ RUN npm install -g concurrently
 # Copy built assets, server.js, and .env
 COPY --from=builder /src/dist ./dist
 COPY --from=builder /src/server.js ./
-COPY --from=builder /src/.env .
 
 # Copy source if needed for server.js (e.g., if it serves dynamic content)
 COPY --from=builder /src ./
