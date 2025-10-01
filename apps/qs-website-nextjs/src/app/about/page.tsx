@@ -137,14 +137,14 @@ export default function About() {
           >
             About Us
           </motion.h1>
-          <motion.p
+          {/* <motion.p
             initial="hidden"
             whileInView="visible"
             variants={fadeUp}
             className="text-base md:text-xl"
           >
             Home / <span className="text-amber-400">About</span>
-          </motion.p>
+          </motion.p> */}
         </div>
       </section>
 
@@ -291,13 +291,13 @@ export default function About() {
       </AnimatePresence>
 
       {/* Scroll to Top */}
-      <button
+      {/* <button
         className="fixed bottom-8 right-8 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full shadow-lg transition duration-300"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Scroll to top"
       >
         <ArrowUp className="w-6 h-6" aria-hidden="true" />
-      </button>
+      </button> */}
       <Newsletter/>
       <Partners/>
       <Footer />

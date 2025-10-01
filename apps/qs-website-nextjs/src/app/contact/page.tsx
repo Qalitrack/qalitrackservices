@@ -42,9 +42,9 @@ export default function Contact() {
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-4">Contact Us</h1>
-          <p className="text-lg md:text-xl">
+          {/* <p className="text-lg md:text-xl">
             Home / <span className="text-amber-400">Contact</span>
-          </p>
+          </p> */}
         </div>
       </section>
 
@@ -142,9 +142,9 @@ export default function Contact() {
       </section>
 
       {/* Scroll to top button */}
-      <button className="fixed bottom-8 right-8 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full shadow-lg transition" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+      {/* <button className="fixed bottom-8 right-8 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full shadow-lg transition" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
         <ArrowUp className="w-6 h-6" />
-      </button>
+      </button> */}
 
       <Footer />
     </div>
