@@ -1,6 +1,7 @@
 services:
   qalitrack-traefik:
-    image: traefik:v3.2
+    image: traefik:v3.1
+
     container_name: qalitrack-traefik
     restart: unless-stopped
     ports:
