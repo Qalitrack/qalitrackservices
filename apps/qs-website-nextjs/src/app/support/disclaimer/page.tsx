@@ -1,4 +1,6 @@
-export const Disclaimer = () => (
+import React from 'react';
+export default function Disclaimer () {
+  return (
   <div className="max-w-4xl mx-auto p-6">
     <h1 className="text-3xl font-bold mb-4">Disclaimer</h1>
     <p className="text-gray-700 mb-4">
@@ -12,3 +14,4 @@ export const Disclaimer = () => (
     </ul>
   </div>
 );
+}

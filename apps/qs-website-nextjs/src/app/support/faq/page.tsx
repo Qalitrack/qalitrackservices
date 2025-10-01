@@ -39,15 +39,15 @@ const faqs = [
   },
 ];
 
-export const FAQ = () => {
-  const [openIndex, setOpenIndex] = useState(null);
+export default function FAQ () {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [search, setSearch] = useState("");
 
   const filteredFaqs = faqs.filter((faq) =>
     faq.question.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggle = (index) => {
+  const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
