@@ -2,7 +2,14 @@
 
 import React, { useState } from 'react';
 import {
-  ArrowUp, Download, Factory, SlidersHorizontal, Cpu, Monitor, Camera, X
+  ArrowUp,
+  Download,
+  Factory,
+  SlidersHorizontal,
+  Cpu,
+  Monitor,
+  Camera,
+  X,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CatalogueImage from '@/assets/catalogbg.jpg';
@@ -11,140 +18,159 @@ import Footer from '@/components/Footer';
 import Newsletter from '@/components/ContactCallToAction';
 import Partners from '@/components/CertificationsLogos';
 
-// ---------------- MODELS ----------------
-const models = [
-  { code: "WB-TX-S-3X8-60T.6L", dimension: "3x8", capacity: "60", division: "30" },
-  { code: "WB-TX-S-3X10-60T.6L", dimension: "3x10", capacity: "60", division: "30" },
-  { code: "WB-TX-S-3X12-60T.6L", dimension: "3x12", capacity: "60", division: "30" },
-  { code: "WB-TX-S-3X14-60T.8L", dimension: "3x14", capacity: "60", division: "30" },
-  { code: "WB-TX-M-3X16-80T.8L", dimension: "3x16", capacity: "80", division: "50" },
-  { code: "WB-TX-L-3X18-100T.8L", dimension: "3x18", capacity: "100", division: "50" },
-  { code: "WB-TX-L-3X20-120T.8L", dimension: "3x20", capacity: "120", division: "50" },
+// ---------------- PRODUCT SHOWCASE ----------------
+const productShowcase = [
+  {
+    title: "Truck Scale",
+    desc:
+      "The TX-BRIDGE truck scale is engineered for industries that demand accuracy, durability, and seamless integration. Its modular design allows fast installation, while robotic welding ensures long service life. Ideal for heavy-duty transport hubs, mining, and manufacturing facilities.",
+    img: "/truckscale.jpeg",
+    details: `
+      <p>The TX-BRIDGE truck scale is a flagship solution built for industries that demand strength and reliability. With heavy-duty construction and a modular platform design, these weighbridges are perfect for mines, transport hubs, and manufacturing plants where high traffic and extreme loads are routine.</p>
+      <p>Each scale section is fabricated using CNC-controlled machinery and robotic welding, ensuring structural integrity with minimal human error. This high-precision build results in uniform quality, crack-free joints, and superior weight distribution across the platform.</p>
+      <p>Beyond structural robustness, the TX-BRIDGE system offers compatibility with advanced automation tools. It integrates seamlessly with RFID vehicle recognition, surveillance cameras, and management software, transforming a traditional weighbridge into a fully automated logistics solution.</p>
+    `,
+    images: [
+      "/truckscale1.jpg",
+      "/truckscale2.jpg",
+      "/truckscale3.jpg",
+      "/truckscale4.jpg",
+    ],
+  },
+  {
+    title: "For Light Vehicles",
+    desc:
+      "Designed for vans, pickups, and smaller trucks, these weighbridges provide compact yet reliable weighing. Their portable nature allows flexible deployment, making them ideal for airports, depots, and commercial hubs where precision and speed matter most.",
+    img: "/lightvehicle.jpeg",
+    details: `
+      <p>Our light vehicle weighbridges are engineered to deliver the same accuracy and reliability as their heavy-duty counterparts, but with a compact footprint. Ideal for logistics depots, airports, and commercial hubs, they provide fast and precise weighing without the space demands of a truck-scale system.</p>
+      <p>Designed for vans, pickups, and small trucks, these platforms are made from durable steel but optimized to reduce overall weight, making them easy to install and relocate. The robust design ensures long service life even in environments with constant vehicle throughput.</p>
+      <p>Operators benefit from a streamlined process thanks to intuitive software integration. These weighbridges can be paired with barcode or RFID systems, enabling swift vehicle identification and automated record keeping, ensuring accuracy and efficiency in busy facilities.</p>
+    `,
+    images: ["/light1.jpg", "/light2.jpg", "/light3.jpg", "/light4.jpg"],
+  },
+  {
+    title: "Weighing Containers",
+    desc:
+      "Specially built for shipping and logistics, these scales handle standard container sizes while ensuring compliance with international SOLAS regulations. They guarantee safety, reduce overload risks, and integrate with customs and port management systems.",
+    img: "/container.png",
+    details: `
+      <p>Container weighbridges are specialized systems designed to meet international shipping standards, including the Safety of Life at Sea (SOLAS) regulations. They ensure accurate verification of container weights, preventing overloads and ensuring safe transport by sea, rail, or road.</p>
+      <p>Each system is tailored to handle standard shipping containers, with modular configurations that allow quick installation in ports, freight yards, or inland container depots. The robust steel structure is engineered to endure heavy loading cycles while maintaining consistent accuracy.</p>
+      <p>With full integration capabilities, these container scales can connect to port management software, customs systems, and automation tools. This not only ensures compliance but also streamlines container handling, improving throughput in busy terminals.</p>
+    `,
+    images: [
+      "/container1.jpg",
+      "/container2.jpg",
+      "/container3.jpg",
+      "/container4.jpg",
+    ],
+  },
+  {
+    title: "Axle Weighing",
+    desc:
+      "Axle weighing systems deliver fast, accurate, and reliable axle load data for vehicles on the move. Installed flush on roads or depots, they improve compliance, extend fleet life, and reduce overloading risks in logistics and transport.",
+    img: "/axle.jpeg",
+    details: `
+      <p>Axle weighing systems provide a fast and efficient way to measure vehicle loads by axle, helping prevent overloading and improving road safety. Installed flush with the ground, they allow vehicles to be weighed dynamically without interrupting traffic flow.</p>
+      <p>These systems are built from high-grade steel and incorporate advanced load cell technology that delivers precise readings even in harsh outdoor conditions. Whether installed in highways, industrial plants, or transport depots, they ensure compliance with load regulations and extend vehicle lifespan by promoting proper load distribution.</p>
+      <p>With data logging and integration options, axle weighbridges support traffic enforcement, fleet monitoring, and safety audits. Their rugged design, low maintenance requirements, and high throughput capacity make them indispensable tools for both government authorities and private operators.</p>
+    `,
+    images: ["/axle1.jpg", "/axle2.jpg", "/axle3.jpg", "/axle4.jpg"],
+  },
 ];
 
 // ---------------- ADVANCED TECH ----------------
 const advancedTechData = [
   {
     icon: Factory,
-    title: "CNC Controlled Production",
-    description: "Robotic welding & CNC automation for zero-error manufacturing.",
+    title: "CNC Controlled Production Automation",
+    description: "Robotic welding & CNC machining ensure robust and error-free weighbridge structures.",
     details: `
-<h3>Key Benefits</h3>
-<ul>
-<li>Robotic welding ensures <strong>consistent, crack-free joints</strong>.</li>
-<li>CNC-drilled connection points = <strong>precision fit</strong> and stronger structures.</li>
-<li>Smooth finishing improves <strong>paint adhesion & corrosion resistance</strong>.</li>
-<li>Homogeneous design eliminates weak points found in manual welds.</li>
-<li>Longer service life even under <strong>extreme truck load stress</strong>.</li>
-</ul>`,
-    images: ["/cnc.webp"],
+      <ul>
+        <li>Zero-error welding with automated CNC drilling.</li>
+        <li>Homogeneous, crack-free construction eliminates weak points.</li>
+        <li>Provides excellent paint adhesion and corrosion resistance.</li>
+        <li>Durable V-beam structure ensures extraordinary load durability and long service life.</li>
+      </ul>`,
+    images: ["/cnc.webp", "/cnc2.jpg"],
   },
   {
     icon: SlidersHorizontal,
     title: "LoadGuard Mounting Kits",
-    description: "100% steel kits that guarantee long-term accuracy with zero creep.",
+    description: "100% steel kits designed to eliminate creep, service costs, and weighing errors.",
     details: `
-<h3>Features</h3>
-<ul>
-<li>No rubber parts → won’t deform over time.</li>
-<li>Works with Rocker Column load cells to compensate side loads.</li>
-<li>Eliminates the need for check rods and bumper bolts.</li>
-<li>Thermal expansion tolerance prevents seasonal inaccuracies.</li>
-<li>Cuts service costs nearly to zero while maintaining accuracy.</li>
-</ul>`,
+      <ul>
+        <li>Works with Rocker Column load cells to neutralize side loads.</li>
+        <li>Eliminates the need for check rods and bumper bolts.</li>
+        <li>Thermal expansion tolerance ensures seasonal accuracy.</li>
+        <li>Oscillation control improves weighing precision even with moving vehicles.</li>
+      </ul>`,
     images: ["/loadingkit.webp"],
   },
   {
     icon: Cpu,
-    title: "High Accuracy Load Cells",
-    description: "IP68/IP69K stainless steel load cells with overload & lightning protection.",
+    title: "High Accuracy Stainless Steel Load Cells",
+    description: "Hermetically sealed IP68/IP69K load cells with lightning and overload protection.",
     details: `
-<h3>Features</h3>
-<ul>
-<li>Hermetically sealed stainless steel (IP68/IP69K).</li>
-<li>Withstands immersion & high-pressure washdowns.</li>
-<li>150% safe load, 300% ultimate load protection.</li>
-<li>Rocker Column self-centering ensures stable readings.</li>
-<li>Certified to OIML R60 Class C3 for trade use.</li>
-<li>Built-in lightning & surge protection.</li>
-</ul>`,
+      <ul>
+        <li>Withstands immersion & high-pressure washdowns.</li>
+        <li>150% safe load, 300% ultimate load protection.</li>
+        <li>Self-centering Rocker Column design guarantees stable readings.</li>
+        <li>Certified to OIML R60 Class C3 for trade applications.</li>
+      </ul>`,
     images: ["/loadcells.webp"],
   },
-  {
-    icon: Monitor,
-    title: "Load Line 2 Management System",
-    description: "Smart truck scale management software with detailed reporting.",
-    details: `
-<h3>Features</h3>
-<ul>
-<li>Windows-based WinSCALE software, easy to use.</li>
-<li>Multilingual support (6+ languages).</li>
-<li>Automatic date/time logging & vehicle IDs.</li>
-<li>Detailed daily/monthly reports exportable to Excel.</li>
-<li>Connects with printers, RFID, remote displays, cameras.</li>
-<li>Preset tare memory for frequent vehicles.</li>
-</ul>`,
-    images: ["/load2cell.jpg"],
-  },
-  {
-    icon: Camera,
-    title: "Automation & Security Options",
-    description: "Smart add-ons for safety, automation, and monitoring.",
-    details: `
-<h3>Options</h3>
-<ul>
-<li>Steel side rails protect truck tires, ensure safe entry/exit.</li>
-<li>Barriers with RFID → operator-free weighing.</li>
-<li>IP Cameras → capture numberplates & log images.</li>
-<li>Remote LED displays show weights outside cabins.</li>
-<li>Message terminals guide drivers visually.</li>
-<li>Explosion-proof (ATEX) versions available.</li>
-</ul>`,
-    images: ["/automation.jpeg"],
-  },
-  {
-    icon: Cpu,
-    title: "Smart Diagnostics & Predictive Maintenance",
-    description: "IoT sensors & analytics predict failures before they happen.",
-    details: `
-<h3>Features</h3>
-<ul>
-<li>IoT-enabled load cells send live health data to the cloud.</li>
-<li>Real-time alerts for overloads, cable faults, drift issues.</li>
-<li>Predictive analytics forecasts service intervals.</li>
-<li>Mobile dashboard gives managers 24/7 access.</li>
-<li>Reduced downtime → catch issues before failures.</li>
-</ul>`,
-    images: ["/prediction.png"],
-  },
+  // {
+  //   icon: Monitor,
+  //   title: "Load Line 2 Truck Scale Management System",
+  //   description: "Smart software that simplifies operations with multi-language support & detailed reporting.",
+  //   details: `
+  //     <ul>
+  //       <li>Windows-based WinSCALE software with clear menus.</li>
+  //       <li>Supports 6+ languages.</li>
+  //       <li>Generates detailed daily, monthly, or custom reports.</li>
+  //       <li>Connects seamlessly to printers, RFID, cameras, and automation systems.</li>
+  //     </ul>`,
+  //   images: ["/load2cell.jpg"],
+  // },
+  // {
+  //   icon: Camera,
+  //   title: "Automation & Security Options",
+  //   description: "Advanced add-ons for safety and automation.",
+  //   details: `
+  //     <ul>
+  //       <li>Steel side rails protect trucks and ensure safe entry/exit.</li>
+  //       <li>Automatic barriers with RFID allow operator-free weighing.</li>
+  //       <li>IP Cameras capture number plates and integrate with databases.</li>
+  //       <li>Remote LED displays and message terminals guide drivers visually.</li>
+  //     </ul>`,
+  //   images: ["/automation.jpeg"],
+  // },
 ];
 
 // ---------------- COMPONENT ----------------
 export default function Catalogue() {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedTech, setSelectedTech] = useState<typeof advancedTechData[0] | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<
+    (typeof productShowcase)[0] | null
+  >(null);
+  const [selectedTech, setSelectedTech] = useState<(typeof advancedTechData)[0] | null>(
+    null
+  );
+  const [showTechModal, setShowTechModal] = useState(false);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  // Secure catalogue download
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '' });
+  const [accessGranted, setAccessGranted] = useState(false);
 
-  const filteredModels = models.filter(m =>
-    m.code.toLowerCase().includes(search.toLowerCase()) ||
-    m.dimension.includes(search) ||
-    m.capacity.includes(search)
-  );
-  const totalPages = Math.ceil(filteredModels.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedModels = filteredModels.slice(startIndex, startIndex + itemsPerPage);
-
-  const openTechModal = (tech: typeof advancedTechData[0]) => {
-    setSelectedTech(tech);
-    setShowModal(true);
-  };
-  const closeTechModal = () => {
-    setShowModal(false);
-    setSelectedTech(null);
+  const handleDownloadSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Replace this with actual lead capture logic (API call) if required.
+    console.log('Lead captured:', form);
+    setAccessGranted(true);
+    setShowDownloadModal(false);
   };
 
   return (
@@ -153,117 +179,255 @@ export default function Catalogue() {
 
       {/* Hero */}
       <section
-        className="relative text-white py-20 md:py-32"
-        style={{ backgroundImage: `url(${CatalogueImage.src})`, backgroundSize: 'cover' }}
+        className="relative text-white py-20 md:py-28"
+        style={{
+          backgroundImage: `url(${CatalogueImage.src})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
       >
-        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-black/60" />
         <div className="relative container mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">Product Catalogue</h1>
-          <p className="text-lg md:text-xl">Home / <span className="text-amber-400">Catalogue</span></p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Product Catalogue</h1>
+          {/* <p className="text-md md:text-lg max-w-2xl mx-auto">
+            Explore QSL’s complete line of industrial weighing solutions — from heavy-duty truck
+            scales to container systems and axle weighbridges. Click any product to learn more or
+            download the full catalogue.
+          </p> */}
         </div>
       </section>
 
-      {/* Intro */}
-      <section className="py-16 text-center">
+      {/* Intro + Secured Download */}
+      <section className="py-12 text-center">
         <div className="container mx-auto px-4">
           <h2 className="text-amber-500 text-lg font-semibold mb-2">Our Products</h2>
-          <h3 className="text-4xl font-bold mb-6">Comprehensive Weighing Solutions</h3>
-          <p className="text-gray-600 mb-12 max-w-3xl mx-auto">
-            Explore our full range of weighbridges, load cells, automation, and accessories designed for
-            industrial and commercial use.
+          <h3 className="text-3xl md:text-4xl font-bold mb-4">Comprehensive Weighing Solutions</h3>
+          <p className="text-gray-600 mb-8 max-w-3xl mx-auto">
+            We deliver precision, durability, and automation-ready systems for industrial and
+            commercial use. Get the official QSL catalogue by entering your email below.
           </p>
-          <a
-            href="/files/QslCatalogue.pdf"
-            download="QSL-Catalogue.pdf"
-            className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg inline-flex items-center gap-2"
-          >
-            <Download className="w-5 h-5" /> Download Full Catalogue (PDF)
-          </a>
+
+          {!accessGranted ? (
+            <button
+              onClick={() => setShowDownloadModal(true)}
+              className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg shadow inline-flex items-center gap-2"
+            >
+              <Download className="w-5 h-5" /> Download Full Catalogue
+            </button>
+          ) : (
+            <a
+              href="/files/QSL-Catalogue.pdf"
+              download="QSL-Catalogue.pdf"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow inline-flex items-center gap-2"
+            >
+              <Download className="w-5 h-5" /> Download Now
+            </a>
+          )}
         </div>
       </section>
 
-      {/* Models Table */}
-      <section className="bg-gray-50 py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Weighbridge Models</h2>
-          <div className="mb-6 flex justify-center">
-            <input
-              type="text"
-              placeholder="Search by code, dimension, or capacity..."
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-              className="w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm"
-            />
-          </div>
+      {/* Download Modal */}
+      <AnimatePresence>
+        {showDownloadModal && (
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-white rounded-lg shadow-lg overflow-hidden"
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-amber-500 text-white">
-                  <tr>
-                    <th className="px-6 py-4 text-left">Model Code</th>
-                    <th className="px-6 py-4 text-left">Dimension (m)</th>
-                    <th className="px-6 py-4 text-left">Capacity (T)</th>
-                    <th className="px-6 py-4 text-left">Division (kg)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedModels.map((m, i) => (
-                    <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                      <td className="px-6 py-4 font-mono">{m.code}</td>
-                      <td className="px-6 py-4">{m.dimension}</td>
-                      <td className="px-6 py-4">{m.capacity}</td>
-                      <td className="px-6 py-4">{m.division}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 30, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative"
+            >
+              <button
+                onClick={() => setShowDownloadModal(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <h3 className="text-2xl font-bold mb-2">Unlock the QSL Catalogue</h3>
+              <p className="text-gray-600 mb-4">Enter your name and email to receive the download link.</p>
+
+              <form onSubmit={handleDownloadSubmit} className="space-y-3">
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg"
+                />
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg"
+                >
+                  Submit & Unlock
+                </button>
+              </form>
+            </motion.div>
           </motion.div>
-          {/* Pagination */}
-          <div className="flex justify-center items-center mt-6 gap-2">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        )}
+      </AnimatePresence>
+
+      {/* Product Showcase */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4 space-y-12">
+          {productShowcase.map((p, i) => (
+            <div
+              key={i}
+              className={`grid md:grid-cols-2 gap-8 items-center ${i % 2 === 1 ? 'md:flex-row-reverse' : ''
+                }`}
             >
-              Prev
-            </button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+              <img
+                src={p.img}
+                alt={p.title}
+                className="w-full h-64 md:h-72 object-cover rounded-lg shadow-lg"
+              />
+              <div>
+                <h3 className="text-2xl font-bold italic mb-3">{p.title}</h3>
+                <p className="text-gray-600 mb-4">{p.desc}</p>
+
+                {/* action buttons */}
+                <div className="flex items-center gap-3">
+                  <button
+                    className="bg-black text-white px-5 py-2 rounded hover:bg-gray-800 transition"
+                    onClick={() => setSelectedProduct(p)}
+                  >
+                    Learn More
+                  </button>
+
+                  {/* quick preview / anchor to download */}
+                  <button
+                    className="bg-transparent border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
+                    onClick={() => {
+                      // small convenience: open download modal
+                      setShowDownloadModal(true);
+                    }}
+                  >
+                    Get Catalogue
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
+
+      {/* Product Modal with Sticky Header */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <motion.div
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-lg shadow-xl max-w-4xl w-full relative overflow-hidden flex flex-col max-h-[92vh]"
+            >
+              {/* Sticky Header */}
+              <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center z-20">
+                <div>
+                  <h2 className="text-2xl font-semibold">{selectedProduct.title}</h2>
+                  <p className="text-sm text-gray-500">{selectedProduct.desc}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedProduct(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                  aria-label="Close"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto p-6 space-y-6">
+                <div
+                  className="prose max-w-none text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: selectedProduct.details }}
+                />
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {selectedProduct.images.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`${selectedProduct.title} ${idx + 1}`}
+                      className="rounded-lg shadow hover:opacity-80 cursor-pointer"
+                      onClick={() => setLightboxImg(img)}
+                    />
+                  ))}
+                </div>
+
+                {/* CTA at bottom of modal */}
+                <div className="pt-4 border-t mt-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      Want the full specifications or a quote? Contact our sales team.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <a
+                      href="/contact"
+                      className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded"
+                    >
+                      Contact Sales
+                    </a>
+                    <button
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        setShowDownloadModal(true);
+                      }}
+                      className="bg-transparent border border-gray-300 px-4 py-2 rounded"
+                    >
+                      Request Catalogue
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Advanced Tech Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-6">Advanced Technology</h2>
-          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Click on a card to learn more — explore detailed descriptions and zoomable images.
+          <p className="text-gray-600 text-center mb-10 max-w-2xl mx-auto">
+            Explore manufacturing and measurement innovations that make our systems accurate,
+            durable, and low-maintenance.
           </p>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {advancedTechData.map((tech, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="p-6 bg-gray-50 rounded-lg shadow hover:shadow-xl cursor-pointer"
-                onClick={() => openTechModal(tech)}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                className="p-6 bg-gray-50 rounded-lg shadow hover:shadow-lg cursor-pointer"
+                onClick={() => {
+                  setSelectedTech(tech);
+                  setShowTechModal(true);
+                }}
               >
                 <tech.icon className="w-10 h-10 text-amber-500 mb-4" />
                 <h4 className="font-bold text-lg mb-2">{tech.title}</h4>
@@ -274,9 +438,9 @@ export default function Catalogue() {
         </div>
       </section>
 
-      {/* Modal */}
+      {/* Tech Modal */}
       <AnimatePresence>
-        {showModal && selectedTech && (
+        {showTechModal && selectedTech && (
           <motion.div
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
             initial={{ opacity: 0 }}
@@ -284,36 +448,43 @@ export default function Catalogue() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              initial={{ y: 50, opacity: 0 }}
+              initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 50, opacity: 0 }}
-              transition={{ duration: 0.4 }}
+              exit={{ y: 30, opacity: 0 }}
+              transition={{ duration: 0.25 }}
               className="bg-white rounded-lg shadow-xl max-w-3xl w-full p-6 relative overflow-y-auto max-h-[90vh]"
             >
-              <button onClick={closeTechModal} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => {
+                  setShowTechModal(false);
+                  setSelectedTech(null);
+                }}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
                 <X className="w-6 h-6" />
               </button>
-              <div className="flex items-center mb-4">
-                <selectedTech.icon className="w-10 h-10 text-amber-500 mr-3" />
+
+              <div className="flex items-center gap-4 mb-4">
+                <selectedTech.icon className="w-10 h-10 text-amber-500" />
                 <h3 className="text-2xl font-bold">{selectedTech.title}</h3>
               </div>
+
               <div
-                className="prose max-w-none text-gray-700 mb-6"
+                className="prose max-w-none mb-6 text-gray-700"
                 dangerouslySetInnerHTML={{ __html: selectedTech.details }}
               />
-              {selectedTech.images && (
-                <div className="grid grid-cols-2 gap-4">
-                  {selectedTech.images.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt="tech detail"
-                      className="rounded-lg cursor-pointer hover:opacity-80"
-                      onClick={() => setLightboxImg(img)}
-                    />
-                  ))}
-                </div>
-              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                {selectedTech.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`${selectedTech.title} ${idx + 1}`}
+                    className="rounded-lg shadow hover:opacity-80 cursor-pointer"
+                    onClick={() => setLightboxImg(img)}
+                  />
+                ))}
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -323,49 +494,35 @@ export default function Catalogue() {
       <AnimatePresence>
         {lightboxImg && (
           <motion.div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={() => setLightboxImg(null)}
           >
-            <motion.img
+            <img
               src={lightboxImg}
-              alt="enlarged"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
+              alt="Lightbox"
+              className="max-h-[90vh] max-w-[90vw] rounded shadow-lg"
             />
-            <button
-              onClick={() => setLightboxImg(null)}
-              className="absolute top-6 right-6 text-white hover:text-amber-400"
-            >
-              <X className="w-8 h-8" />
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Scroll To Top */}
-      <motion.button
+      {/* <motion.button
         className="fixed bottom-8 right-8 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full shadow-lg"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        whileHover={{ scale: 1.1 }}
+        whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         aria-label="Scroll to top"
       >
-        <ArrowUp className="w-6 h-6" />
-      </motion.button>
+        <ArrowUp className="w-5 h-5" />
+      </motion.button> */}
 
-        <Newsletter />
-
-          {/* Partners Section */}
-      
-        <Partners />
-    
-        <Footer />
-      
+      <Newsletter />
+      <Partners />
+      <Footer />
     </div>
   );
 }
