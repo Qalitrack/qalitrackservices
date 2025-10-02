@@ -13,6 +13,7 @@ services:
       - VITE_ALLOWED_HOSTS=qalitrack-frontend-prod,localhost,127.0.0.1
     networks:
       - proxy-network
+      - qalitrack-proxy
     # NO EXPOSED PORTS - only accessible through Traefik
     deploy:
       resources:
@@ -46,3 +47,6 @@ networks:
   proxy-network:
     external: true
     name: proxy-network
+  qalitrack-proxy:
+    external: true
+    name: qalitrack-proxy
