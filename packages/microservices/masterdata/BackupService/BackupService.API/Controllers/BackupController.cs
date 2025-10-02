@@ -9,7 +9,7 @@ using System.IO;
 namespace BackupService.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class BackupController : ControllerBase
     {
         private readonly IDatabaseBackupService _backupService;
