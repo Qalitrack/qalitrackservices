@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BackupService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class MicroserviceController : ControllerBase
 {
     private readonly IMicroService _microService;
