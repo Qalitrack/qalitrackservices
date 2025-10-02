@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Use a different environment variable for the backup URL
-const BACKUP_API_BASE_URL = import.meta.env.VITE_BACKUP_API_URL || import.meta.env.VITE_API_URL_BACKUP;
+// Use the same API URL as the main client since all services are behind the same gateway
+const BACKUP_API_BASE_URL = import.meta.env.VITE_API_URL;
 
 class BackupApiClient {
     constructor() {
