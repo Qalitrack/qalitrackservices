@@ -1,0 +1,48 @@
+services:
+  frontend-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/frontend:latest
+    container_name: qalitrack-frontend-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=https://${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}/api
+      - VITE_HOST=0.0.0.0
+      - HOST=0.0.0.0
+      - VITE_ALLOWED_HOSTS=qalitrack-frontend-prod,localhost,127.0.0.1
+    networks:
+      - proxy-network
+    # NO EXPOSED PORTS - only accessible through Traefik
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    labels:
+      # Enable Traefik
+      - "traefik.enable=true"
+      
+      # Health check (PROD) - assuming /health endpoint (higher priority for specific path)
+      - "traefik.http.routers.frontend-health-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/health`)"
+      - "traefik.http.routers.frontend-health-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.frontend-health-prod.service=frontend-prod"
+      - "traefik.http.routers.frontend-health-prod.priority=100"
+      - "traefik.http.routers.frontend-health-prod.tls=true"
+      - "traefik.http.routers.frontend-health-prod.tls.certresolver=letsencrypt"
+      
+      # Frontend routes (PROD) - catch-all for production domain, excluding /api (lower priority)
+      - "traefik.http.routers.frontend-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.frontend-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.frontend-prod.service=frontend-prod"
+      - "traefik.http.routers.frontend-prod.priority=10"
+      - "traefik.http.routers.frontend-prod.tls=true"
+      - "traefik.http.routers.frontend-prod.tls.certresolver=letsencrypt"
+      
+      # Service definition
+      - "traefik.http.services.frontend-prod.loadbalancer.server.port=4000"
+
+networks:
+  proxy-network:
+    external: true
+    name: proxy-network
