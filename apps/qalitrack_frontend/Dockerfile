@@ -31,23 +31,19 @@ WORKDIR /src
 
 # Copy package files from builder
 COPY --from=builder /src/package*.json ./
-# Install only production dependencies
+# Install only production dependencies (express for static serving)
 RUN npm ci --only=production && npm cache clean --force
-RUN npm install -g concurrently
-# Copy built assets, server.js, and .env
+
+# Copy built assets and server.js
 COPY --from=builder /src/dist ./dist
 COPY --from=builder /src/server.js ./
-
-# Copy source if needed for server.js (e.g., if it serves dynamic content)
-COPY --from=builder /src ./
 
 # Change ownership to non-root user
 RUN chown -R nextjs:nodejs /src
 USER nextjs
 
-# Expose ports (adjust as needed)
-EXPOSE 3000 5000
+# Expose port 4000 for the Express server
+EXPOSE 4000
 
-# For dev/prod hybrid: Run both commands concurrently
-# Assumes "concurrently" is in your package.json devDependencies
-CMD ["sh", "-c", "concurrently 'node server.js' 'npm run dev -- --host 0.0.0.0'"]
+# Run only the Express server serving static files
+CMD ["node", "server.js"]

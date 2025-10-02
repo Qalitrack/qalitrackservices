@@ -1,91 +1,38 @@
 services:
-  qalitrack-traefik:
-    image: traefik:v3.1  # Note: Consider updating to 'traefik:latest' for the most recent version (v3.1 as of this config, but latest is v3.5+)
-
-    container_name: qalitrack-frontend
-    restart: unless-stopped
-    ports:
-      # Expose ports so main Traefik can reach this internal Traefik (DEV only)
-      - "9080:9080"  # HTTP - for dev
-      - "9081:8080"  # Dashboard/API
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - QALITRACK_DEV_DOMAIN=${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}
-      - QALITRACK_DEV_ALT_DOMAIN=${QALITRACK_DEV_ALT_DOMAIN:-qalitrack-dev.localhost}
-      - QALITRACK_TRAEFIK_DOMAIN=${QALITRACK_TRAEFIK_DOMAIN:-traefik-dev.qalitrack.cseco.co.ke}
-    networks:
-      - proxy-network    # Connect to main Traefik
-      - qalitrack-proxy  # Connect to internal services
-    command:
-      # API and dashboard
-      - --api.dashboard=true
-      - --api.insecure=true
-      
-      # Docker provider - only process containers with qalitrack scope
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.network=qalitrack-proxy
-      - --providers.docker.constraints=Label(`traefik.scope`,`qalitrack`)
-      
-      # Entrypoints (DEV HTTP only)
-      - --entrypoints.qalitrack-http.address=:9080
-      
-      # Security
-      - --global.sendAnonymousUsage=false
-    labels:
-      # Enable for main Traefik only (constraint prevents self-processing)
-      - "traefik.enable=true"
-      
-      # Main route for dev environment - route API calls to services (HTTP)
-      - "traefik.http.routers.qalitrack-dev.rule=Host(`${QALITRACK_DEV_DOMAIN}`)"
-      - "traefik.http.routers.qalitrack-dev.entrypoints=web"
-      - "traefik.http.routers.qalitrack-dev.service=qalitrack-traefik-http"
-      - "traefik.http.routers.qalitrack-dev.priority=1"
-      
-      # Dashboard access via subdomain (HTTP for dev)
-      - "traefik.http.routers.qalitrack-dashboard-dev.rule=Host(`${QALITRACK_TRAEFIK_DOMAIN}`)"
-      - "traefik.http.routers.qalitrack-dashboard-dev.entrypoints=web"
-      - "traefik.http.routers.qalitrack-dashboard-dev.service=qalitrack-traefik-dashboard"
-      
-      # Service definitions
-      - "traefik.http.services.qalitrack-traefik-http.loadbalancer.server.port=9080"
-      - "traefik.http.services.qalitrack-traefik-dashboard.loadbalancer.server.port=8080"
-
   frontend-dev:
     image: ghcr.io/qalitrack/qalitrackservices/frontend:latest
     container_name: qalitrack-frontend-dev
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://${QALITRACK_DEV_DOMAIN}/user
+      - VITE_API_URL=http://${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}/api
+      - VITE_HOST=0.0.0.0
+      - HOST=0.0.0.0
     networks:
-      - qalitrack-proxy
+      - proxy-network
     # NO EXPOSED PORTS - only accessible through Traefik
     labels:
       # Enable Traefik
       - "traefik.enable=true"
-      - "traefik.scope=qalitrack"
       
       # Health check (DEV) - assuming /health endpoint (higher priority for specific path)
-      - "traefik.http.routers.frontend-health-dev.rule=Host(`${QALITRACK_DEV_DOMAIN}`) && PathPrefix(`/health`)"
-      - "traefik.http.routers.frontend-health-dev.entrypoints=qalitrack-http"
+      - "traefik.http.routers.frontend-health-dev.rule=Host(`${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}`) && PathPrefix(`/health`)"
+      - "traefik.http.routers.frontend-health-dev.entrypoints=web,websecure"
       - "traefik.http.routers.frontend-health-dev.service=frontend-dev"
       - "traefik.http.routers.frontend-health-dev.priority=100"
       
-      # Frontend routes (DEV only) - catch-all for dev domain (lower priority)
-      - "traefik.http.routers.frontend-dev.rule=Host(`${QALITRACK_DEV_DOMAIN}`)"
-      - "traefik.http.routers.frontend-dev.entrypoints=qalitrack-http"
+      # Frontend routes (DEV only) - catch-all for dev domain, excluding /api (lower priority)
+      - "traefik.http.routers.frontend-dev.rule=Host(`${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.frontend-dev.entrypoints=web,websecure"
       - "traefik.http.routers.frontend-dev.service=frontend-dev"
       - "traefik.http.routers.frontend-dev.priority=10"
       
       # Service definition
-      - "traefik.http.services.frontend-dev.loadbalancer.server.port=80"
+      - "traefik.http.services.frontend-dev.loadbalancer.server.port=4000"
 
 networks:
   proxy-network:
     external: true
     name: proxy-network
-  qalitrack-proxy:
-    driver: bridge
-    name: qalitrack-proxy
