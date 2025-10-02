@@ -9,7 +9,7 @@ using UserService.Core.Interfaces.Services;
 namespace UserService.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 [Authorize(Roles = "Admin")]
 public class ShiftInstanceController : ControllerBase
 {

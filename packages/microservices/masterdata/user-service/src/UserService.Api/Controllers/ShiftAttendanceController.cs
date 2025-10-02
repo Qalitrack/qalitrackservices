@@ -14,7 +14,7 @@ using UserService.Core.DTOs.Common;
 namespace UserService.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize]
     public class ShiftAttendanceController : ControllerBase
     {
