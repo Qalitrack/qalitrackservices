@@ -3,6 +3,8 @@ services:
     image: ghcr.io/qalitrack/qalitrackservices/user-service:latest
     container_name: qalitrack-user-service-prod
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
@@ -35,6 +37,7 @@ services:
       - rabbitmq-prod
     networks:
       - qalitrack-proxy
+      - proxy-network
     # NO EXPOSED PORTS - only accessible through Traefik
     deploy:
       resources:
@@ -46,22 +49,26 @@ services:
       - "traefik.enable=true"
       
       # User API routes (PROD)
-      - "traefik.http.routers.user-api-prod.rule=PathPrefix(`/api/users`)"
-      - "traefik.http.routers.user-api-prod.entrypoints=qalitrack-https"
+      - "traefik.http.routers.user-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.user-api-prod.entrypoints=web,websecure"
       - "traefik.http.routers.user-api-prod.service=user-service-prod"
-      
-      # Auth API routes (PROD)
-      - "traefik.http.routers.auth-api-prod.rule=PathPrefix(`/api/auth`)"
-      - "traefik.http.routers.auth-api-prod.entrypoints=qalitrack-https"
-      - "traefik.http.routers.auth-api-prod.service=user-service-prod"
+      - "traefik.http.routers.user-api-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.user-api-prod.tls=true"
+      - "traefik.http.routers.user-api-prod.tls.certresolver=letsencrypt"
       
       # Service definition
       - "traefik.http.services.user-service-prod.loadbalancer.server.port=80"
       
+      # Middleware to strip /api prefix
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
+      
       # Health check (PROD)
-      - "traefik.http.routers.user-health-prod.rule=PathPrefix(`/health`)"
-      - "traefik.http.routers.user-health-prod.entrypoints=qalitrack-https"
+      - "traefik.http.routers.user-health-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/health`)"
+      - "traefik.http.routers.user-health-prod.entrypoints=web,websecure"
       - "traefik.http.routers.user-health-prod.service=user-service-prod"
+      - "traefik.http.routers.user-health-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.user-health-prod.tls=true"
+      - "traefik.http.routers.user-health-prod.tls.certresolver=letsencrypt"
 
   # User Service Database (PROD)
   postgres-userservice-prod:
@@ -139,3 +146,6 @@ networks:
   qalitrack-proxy:
     external: true
     name: qalitrack-proxy
+  proxy-network:
+    external: true
+    name: proxy-network
