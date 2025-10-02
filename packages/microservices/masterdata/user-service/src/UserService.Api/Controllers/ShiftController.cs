@@ -9,7 +9,7 @@ namespace UserService.Api.Controllers
 {
     [Authorize]  // This ensures that the user is authenticated
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ShiftController : BaseController
     {
         private readonly IShiftService _shiftService;

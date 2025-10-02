@@ -9,7 +9,7 @@ namespace UserService.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class PermissionsController : BaseController
     {
         private readonly IPermissionsService _permissionService;
