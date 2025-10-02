@@ -1,0 +1,134 @@
+services:
+  backup-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/backup-service:latest
+    container_name: qalitrack-backup-service-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - UsePostgreSQL=true
+      - UseRedis=true
+      - ConnectionStrings__DefaultConnection=Host=postgres-backupservice-prod;Port=5432;Database=backupservicedb;Username=backupservice;Password=backupservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-backup-prod:6379,password=backupservice123
+      - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
+      - JWT_ISSUER=BackupService
+      - JWT_AUDIENCE=BackupService
+      - RABBITMQ_HOST=rabbitmq-backup-prod
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=admin
+      - RABBITMQ_PASSWORD=securepassword
+      - Backup__Path=/app/Backups
+      - Backup__MetadataPath=/app/metadata
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./backups:/app/Backups
+      - ./metadata:/app/metadata
+    depends_on:
+      - postgres-backupservice-prod
+      - redis-backup-prod
+      - rabbitmq-backup-prod
+    networks:
+      - qalitrack-proxy
+      - proxy-network
+    # NO EXPOSED PORTS - only accessible through Traefik
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+    labels:
+      # Enable Traefik
+      - "traefik.enable=true"
+      
+      # Backup API routes (PROD) - specific backup service endpoints
+      - "traefik.http.routers.backup-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && (PathPrefix(`/api/Backup`) || PathPrefix(`/api/Microservice`))"
+      - "traefik.http.routers.backup-api-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.backup-api-prod.service=backup-service-prod"
+      - "traefik.http.routers.backup-api-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.backup-api-prod.tls=true"
+      - "traefik.http.routers.backup-api-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backup-api-prod.priority=100"
+      
+      # Service definition
+      - "traefik.http.services.backup-service-prod.loadbalancer.server.port=80"
+
+  # Backup Service Database (PROD)
+  postgres-backupservice-prod:
+    image: postgres:15-alpine
+    container_name: qalitrack-postgres-backupservice-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=backupservicedb
+      - POSTGRES_USER=backupservice
+      - POSTGRES_PASSWORD=backupservice123
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_backupservice_prod_data:/var/lib/postgresql/data
+      - ./backup-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+  # Redis for Backup Service (PROD)
+  redis-backup-prod:
+    image: redis:7-alpine
+    container_name: qalitrack-redis-backup-prod
+    restart: unless-stopped
+    command: redis-server --requirepass backupservice123 --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_backup_prod_data:/data
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+  # RabbitMQ for Backup Service (PROD)
+  rabbitmq-backup-prod:
+    image: rabbitmq:3-management-alpine
+    container_name: qalitrack-rabbitmq-backup-prod
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=securepassword
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - rabbitmq_backup_prod_data:/var/lib/rabbitmq
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+volumes:
+  postgres_backupservice_prod_data:
+    external: true
+  redis_backup_prod_data:
+    external: true
+  rabbitmq_backup_prod_data:
+    external: true
+
+networks:
+  qalitrack-proxy:
+    external: true
+    name: qalitrack-proxy
+  proxy-network:
+    external: true
+    name: proxy-network
