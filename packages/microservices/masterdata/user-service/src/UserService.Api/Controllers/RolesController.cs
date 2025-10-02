@@ -11,7 +11,7 @@ namespace UserService.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Produces("application/json")]
     public class RolesController(
         IRoleService roleService,

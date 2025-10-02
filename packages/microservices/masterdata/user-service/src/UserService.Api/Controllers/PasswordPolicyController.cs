@@ -11,7 +11,7 @@ using UserService.Core.DTOs.Auth;
 namespace UserService.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize(Roles = "Admin")]
     public class PasswordPolicyController : ControllerBase
     {

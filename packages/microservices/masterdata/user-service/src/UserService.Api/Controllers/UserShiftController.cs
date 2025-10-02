@@ -10,7 +10,7 @@ using UserService.Core.Interfaces.Services;
 namespace UserService.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class UserShiftController : ControllerBase
     {
         private readonly IShiftService _shiftService;

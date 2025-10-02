@@ -7,7 +7,7 @@ namespace UserService.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class UserRoleController(
         IUserRoleService userRoleService,
         ILogger<UserRoleController> logger)

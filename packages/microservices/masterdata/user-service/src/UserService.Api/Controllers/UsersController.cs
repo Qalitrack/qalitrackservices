@@ -13,7 +13,7 @@ namespace UserService.Api.Controllers
     [Authorize]
     [ApiController]
     [ApiVersion("1.0")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class UsersController(
         IUserService userService,
         IUserRoleService userRoleService,
