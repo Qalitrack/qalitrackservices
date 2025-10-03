@@ -1,0 +1,39 @@
+services:
+  jwt-auth-service:
+    build: .
+    container_name: qalitrack-jwt-auth-service
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
+      - JWT_ISSUER=UserService
+      - JWT_AUDIENCE=UserService
+      - NODE_ENV=production
+    networks:
+      - proxy-network
+    # NO EXPOSED PORTS - only accessible through Traefik and internally
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.2'
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      # Enable Traefik
+      - "traefik.enable=true"
+      
+      # Internal auth service - not exposed externally
+      - "traefik.http.routers.jwt-auth-internal.rule=Host(`jwt-auth-service`)"
+      - "traefik.http.routers.jwt-auth-internal.entrypoints=web"
+      - "traefik.http.routers.jwt-auth-internal.service=jwt-auth-service"
+      - "traefik.http.services.jwt-auth-service.loadbalancer.server.port=3000"
+
+networks:
+  proxy-network:
+    external: true
+    name: proxy-network

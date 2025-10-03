@@ -20,12 +20,12 @@ services:
       - RABBITMQ_USERNAME=admin
       - RABBITMQ_PASSWORD=securepassword
       - Backup__Path=/app/Backups
-      - Backup__MetadataPath=/app/metadata
+      - Backup__MetadataPath=/app/backup-metadata
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
       - ./backups:/app/Backups
-      - ./metadata:/app/metadata
+      - ./metadata:/app/backup-metadata
     depends_on:
       - postgres-backupservice-prod
       - redis-backup-prod
@@ -39,21 +39,39 @@ services:
         limits:
           memory: 1G
           cpus: '1.0'
+    healthcheck:
+      disable: true
     labels:
       # Enable Traefik
       - "traefik.enable=true"
       
-      # Backup API routes (PROD) - specific backup service endpoints
-      - "traefik.http.routers.backup-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && (PathPrefix(`/api/Backup`) || PathPrefix(`/api/Microservice`))"
+      # Backup API routes (PROD) - specific backup service endpoints with JWT auth
+      - "traefik.http.routers.backup-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Backup`)"
       - "traefik.http.routers.backup-api-prod.entrypoints=web,websecure"
       - "traefik.http.routers.backup-api-prod.service=backup-service-prod"
-      - "traefik.http.routers.backup-api-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.backup-api-prod.middlewares=backup-jwt-forwardauth,strip-api-prefix"
       - "traefik.http.routers.backup-api-prod.tls=true"
       - "traefik.http.routers.backup-api-prod.tls.certresolver=letsencrypt"
       - "traefik.http.routers.backup-api-prod.priority=100"
       
+      # Microservice API routes (PROD) - read-only, no JWT required
+      - "traefik.http.routers.backup-microservice-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Microservice`)"
+      - "traefik.http.routers.backup-microservice-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.backup-microservice-prod.service=backup-service-prod"
+      - "traefik.http.routers.backup-microservice-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.backup-microservice-prod.tls=true"
+      - "traefik.http.routers.backup-microservice-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backup-microservice-prod.priority=100"
+      
       # Service definition
       - "traefik.http.services.backup-service-prod.loadbalancer.server.port=80"
+      
+      # JWT ForwardAuth middleware
+      - "traefik.http.middlewares.backup-jwt-forwardauth.forwardauth.address=http://qalitrack-jwt-auth-service:3000/auth"
+      - "traefik.http.middlewares.backup-jwt-forwardauth.forwardauth.authResponseHeaders=X-User-Id,X-User-Email"
+      
+      # Middleware to strip /api prefix (shared across services)
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
 
   # Backup Service Database (PROD)
   postgres-backupservice-prod:
