@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackupService.Core", "Backu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackupService.Infrastructure", "BackupService.Infrastructure\BackupService.Infrastructure.csproj", "{DFF87A5A-AE6F-4883-84AD-D4116E65289A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Contracts", "Messaging.Contracts\Messaging.Contracts.csproj", "{9490BC81-668A-4EBF-8370-116C497662C6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +30,5 @@ Global
 		{DFF87A5A-AE6F-4883-84AD-D4116E65289A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFF87A5A-AE6F-4883-84AD-D4116E65289A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFF87A5A-AE6F-4883-84AD-D4116E65289A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9490BC81-668A-4EBF-8370-116C497662C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9490BC81-668A-4EBF-8370-116C497662C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9490BC81-668A-4EBF-8370-116C497662C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9490BC81-668A-4EBF-8370-116C497662C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
