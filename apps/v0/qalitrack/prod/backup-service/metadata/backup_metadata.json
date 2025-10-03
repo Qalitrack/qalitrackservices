@@ -1,0 +1,45 @@
+{
+  "Chains": [
+    {
+      "Id": 1,
+      "MicroserviceId": 0,
+      "MicroserviceName": "UserService",
+      "FullBackupFile": "UserService_full_20251003_124434.dump",
+      "Timestamp": "2025-10-03T12:44:35.2098102Z",
+      "Incrementals": [],
+      "ChainId": "UserService_20251003124435",
+      "Lsn": null,
+      "Timeline": 0,
+      "lastLsn": null
+    },
+    {
+      "Id": 2,
+      "MicroserviceId": 0,
+      "MicroserviceName": "UserService",
+      "FullBackupFile": "UserService_full_20251003_130559.dump",
+      "Timestamp": "2025-10-03T13:06:00.1259738Z",
+      "Incrementals": [],
+      "ChainId": "UserService_20251003130600",
+      "Lsn": null,
+      "Timeline": 0,
+      "lastLsn": null
+    },
+    {
+      "Id": 3,
+      "MicroserviceId": 0,
+      "MicroserviceName": "UserService",
+      "FullBackupFile": "UserService_full_20251003_133001.dump",
+      "Timestamp": "2025-10-03T13:30:02.1265875Z",
+      "Incrementals": [],
+      "ChainId": "UserService_20251003133002",
+      "Lsn": null,
+      "Timeline": 0,
+      "lastLsn": null
+    }
+  ],
+  "CreatedAt": "0001-01-01T00:00:00",
+  "Lsn": null,
+  "Timeline": null,
+  "BackupId": null,
+  "ChainId": null
+}
