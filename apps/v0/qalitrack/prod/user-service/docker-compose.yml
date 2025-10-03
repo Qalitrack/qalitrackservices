@@ -49,17 +49,18 @@ services:
       - "traefik.enable=true"
       
       # User API routes (PROD)
-      - "traefik.http.routers.user-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.user-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api`) && !PathPrefix(`/api/Backup`) && !PathPrefix(`/api/Microservice`)"
       - "traefik.http.routers.user-api-prod.entrypoints=web,websecure"
       - "traefik.http.routers.user-api-prod.service=user-service-prod"
       - "traefik.http.routers.user-api-prod.middlewares=strip-api-prefix"
       - "traefik.http.routers.user-api-prod.tls=true"
       - "traefik.http.routers.user-api-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.user-api-prod.priority=50"
       
       # Service definition
       - "traefik.http.services.user-service-prod.loadbalancer.server.port=80"
       
-      # Middleware to strip /api prefix
+      # Middleware to strip /api prefix (shared across services)
       - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
       
       # Health check (PROD)
