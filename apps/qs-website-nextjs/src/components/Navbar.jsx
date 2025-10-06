@@ -146,7 +146,7 @@ function Navbar() {
               )}
             </div>
           ))}
-          <Link href="/dashboard" className="ml-4 px-4 py-2 bg-amber-400 text-black rounded-full font-bold hover:opacity-90 transition">
+          <Link href="/login" className="ml-4 px-4 py-2 bg-amber-400 text-black rounded-full font-bold hover:opacity-90 transition">
             Get Started
           </Link>
         </div>
