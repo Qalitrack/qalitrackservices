@@ -14,16 +14,19 @@ services:
       - website_prod_qs_network
 
   frontend:
-    image: ghcr.io/qalitrack/qalitrackservices/qs-website-frontend:main
+    image: ghcr.io/qalitrack/qalitrackservices/qs-website-nextjs:main
     container_name: qs-frontend-prod
     restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c", "sed -i 's|__NEXT_PUBLIC_API_BASE_URL__|'$${NEXT_PUBLIC_API_BASE_URL}'|g' /app/public/config.js && sed -i 's|__NEXT_PUBLIC_SITE_URL__|'$${NEXT_PUBLIC_SITE_URL}'|g' /app/public/config.js && sed -i 's|__NEXT_PUBLIC_ASSETS_URL__|'$${NEXT_PUBLIC_ASSETS_URL}'|g' /app/public/config.js && find /app/.next -name '*.js' -type f -exec sed -i 's|__NEXT_PUBLIC_SITE_URL__|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && find /app/.next -name '*.js' -type f -exec sed -i 's|__NEXT_PUBLIC_ASSETS_URL__|'$${NEXT_PUBLIC_ASSETS_URL}'|g' {} + && find /app/.next -name '*.js' -type f -exec sed -i 's|http://localhost:3001|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && find /app/.next -name '*.js' -type f -exec sed -i 's|http://localhost:5000|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && find /app/.next -name '*.html' -type f -exec sed -i 's|http://localhost:3001|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && node server.js"]
     #ports:
     #  - "3001:80"
     env_file:
       - .env
     environment:
-      - VITE_API_BASE_URL=https://qalibrated.co.ke/api
-      - VITE_ALLOWED_HOSTS=localhost,qalibrated.co.ke
+      - NEXT_PUBLIC_API_BASE_URL=https://dev.qalibrated.co.ke/api
+      - NEXT_PUBLIC_SITE_URL=https://dev.qalibrated.co.ke
+      - NEXT_PUBLIC_ASSETS_URL=https://dev.qalibrated.co.ke
+      - NEXT_PUBLIC_ALLOWED_HOSTS=localhost,dev.qalibrated.co.ke
     depends_on:
       - backend
     networks:
@@ -37,7 +40,7 @@ services:
       - "traefik.http.routers.qs-frontend-prod.tls=true"
       - "traefik.http.routers.qs-frontend-prod.tls.certresolver=letsencrypt"
       - "traefik.http.routers.qs-frontend-prod.service=qs-frontend-prod"
-      - "traefik.http.services.qs-frontend-prod.loadbalancer.server.port=80"
+      - "traefik.http.services.qs-frontend-prod.loadbalancer.server.port=3000"
       # HTTP router (redirects to HTTPS)
       - "traefik.http.routers.qs-frontend-prod-http.rule=Host(`qalibrated.co.ke`)"
       - "traefik.http.routers.qs-frontend-prod-http.entrypoints=web"
