@@ -13,7 +13,7 @@ public class ShiftAttendance : BaseEntity
         
     public DateTime? ClockInTime { get; set; }
     public DateTime? ClockOutTime { get; set; }
-    public AttendanceStatus Status { get; set; } = AttendanceStatus.Scheduled;
+    public AttendanceStatus Status { get; set; } = AttendanceStatus.Present;
     public string? Notes { get; set; }
     public bool IsLate { get; set; } = false;
     public bool IsEarlyDeparture { get; set; } = false;
