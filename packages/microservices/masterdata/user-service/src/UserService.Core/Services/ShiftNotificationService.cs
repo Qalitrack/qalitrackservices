@@ -79,8 +79,7 @@ namespace UserService.Core.Services
                     successCount++;
             }
 
-            _logger.LogInformation("Sent {SuccessCount} {NotificationType} notifications for shift instance {ShiftInstanceId}",
-                successCount, type, shiftInstanceId);
+        
             return successCount > 0;
         }
 

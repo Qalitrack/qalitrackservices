@@ -67,12 +67,6 @@ namespace UserService.Infrastructure.Services
                 // Get Nairobi timezone for proper comparison
                 var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
                 var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(currentTimeUtc, nairobiTimeZone);
-                
-                _logger.LogInformation("=== CHECKING FOR ENDED SHIFT INSTANCES ===");
-                _logger.LogInformation("Current UTC time: {UtcNow:yyyy-MM-dd HH:mm:ss}", currentTimeUtc);
-                _logger.LogInformation("Current Nairobi time: {NairobiNow:yyyy-MM-dd HH:mm:ss}", nairobiNow);
-                
-                // Get all in-progress instances
                 var inProgressInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress)).ToList();
                 
                 // Filter for instances that should have ended by now in Nairobi time
@@ -84,17 +78,14 @@ namespace UserService.Infrastructure.Services
                         return scheduledTimeInNairobi <= nairobiNow;
                     })
                     .ToList();
-
-                _logger.LogInformation("Found {Count} shift instances that have ended", endedInstances.Count);
-
+                
                 foreach (var instance in endedInstances)
                 {
                     var scheduledEndTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(
                         instance.ScheduledDate.Date.Add(instance.ScheduledEndTime.TimeOfDay), 
                         nairobiTimeZone);
                         
-                    _logger.LogInformation("Processing ended shift instance {InstanceId} for shift {ShiftId} - Ended at: {EndTime} (Nairobi)", 
-                        instance.Id, instance.ShiftId, scheduledEndTimeNairobi);
+             
 
                     try
                     {
@@ -110,11 +101,11 @@ namespace UserService.Infrastructure.Services
                         using var logoutScope = _serviceScopeFactory.CreateScope();
                         var userShiftRepository = logoutScope.ServiceProvider.GetRequiredService<IUserShiftRepository>();
                         var tokenService = logoutScope.ServiceProvider.GetRequiredService<ITokenService>();
+                        var userStatusService = logoutScope.ServiceProvider.GetRequiredService<IUserStatusService>();
                         
                         // Log out users associated with this shift instance using the instance's end time
-                        await LogoutUsersForShift(instance, shift, userShiftRepository, tokenService, _logger);
+                        await LogoutUsersForShift(instance, shift, userShiftRepository, tokenService, userStatusService, _logger);
                         
-                        _logger.LogInformation("Successfully processed shift instance {InstanceId}", instance.Id);
                     }
                     catch (Exception ex)
                     {
@@ -134,7 +125,6 @@ namespace UserService.Infrastructure.Services
            
            try
            {
-               _logger.LogInformation("Checking for expired shifts on {CurrentDate}", currentDate);
                
                // Get all active shifts that might need status updates
                var activeShifts = await shiftRepository.GetShiftsByStatusAsync(ShiftStatus.Active);
@@ -142,15 +132,12 @@ namespace UserService.Infrastructure.Services
                var expiredShifts = activeShifts.Where(shift => 
                    IsShiftExpired(shift, currentDate)).ToList();
 
-               _logger.LogInformation("Found {Count} expired shifts to update", expiredShifts.Count);
 
                foreach (var shift in expiredShifts)
                {
                    try
                    {
-                       _logger.LogInformation("Updating expired shift {ShiftId} ({ShiftName}) - EndDate: {EndDate}", 
-                           shift.Id, shift.Name, shift.EndDate?.ToString("yyyy-MM-dd") ?? "None");
-
+                    
                        // Update shift status to Expired
                        shift.Status = ShiftStatus.Completed;
                        shift.UpdatedAt = DateTime.UtcNow;
@@ -160,7 +147,6 @@ namespace UserService.Infrastructure.Services
                        
                        if (updatedShift != null)
                        {
-                           _logger.LogInformation("Successfully updated shift {ShiftId} status to Expired", shift.Id);
                            
                            // Optionally, send notifications to users about shift expiration
                            await NotifyUsersAboutShiftExpiration(shift);
@@ -195,15 +181,11 @@ namespace UserService.Infrastructure.Services
                    shift.StartDate <= currentDate && 
                    (shift.EndDate == null || shift.EndDate >= currentDate)).ToList();
 
-               _logger.LogInformation("Found {Count} published shifts to activate", shiftsToActivate.Count);
 
                foreach (var shift in shiftsToActivate)
                {
                    try
                    {
-                       _logger.LogInformation("Activating shift {ShiftId} ({ShiftName}) - StartDate: {StartDate}", 
-                           shift.Id, shift.Name, shift.StartDate.ToString("yyyy-MM-dd"));
-
                        shift.Status = ShiftStatus.Active;
                        shift.UpdatedAt = DateTime.UtcNow;
                        shift.UpdatedBy = "System";
@@ -212,7 +194,7 @@ namespace UserService.Infrastructure.Services
                        
                        if (updatedShift != null)
                        {
-                           _logger.LogInformation("Successfully activated shift {ShiftId}", shift.Id);
+                           _logger.LogInformation("Successfully activated shift ");
                        }
                    }
                    catch (Exception ex)
@@ -245,8 +227,6 @@ namespace UserService.Infrastructure.Services
                    return true;
                }
                
-               // If no end date, recurring shifts don't expire automatically
-               return false;
            }
            
            return false;
@@ -283,8 +263,6 @@ namespace UserService.Infrastructure.Services
                        reason: "This shift has expired and is no longer active"
                    );
                    
-                   _logger.LogInformation("Sent expiration notifications for shift {ShiftId} to {UserCount} users", 
-                       shift.Id, userShifts.Count());
                }
            }
            catch (Exception ex)
@@ -298,6 +276,7 @@ namespace UserService.Infrastructure.Services
            ShiftResponse shiftResponse,
            IUserShiftRepository userShiftRepository,
            ITokenService tokenService,
+           IUserStatusService userStatusService,
            ILogger<ShiftMonitorService> logger)
        {
            try
@@ -315,9 +294,6 @@ namespace UserService.Infrastructure.Services
 
                // Get all users assigned to this shift
                var usersAssignedToShift = await userShiftRepository.GetUsersAssignedToShiftAsync(shiftResponse.Id);
-
-               logger.LogInformation("Processing logout for {UserCount} users assigned to expired shift {ShiftId} ({ShiftName})", 
-                   usersAssignedToShift.Count(), shiftResponse.Id, shiftResponse.Name);
 
                foreach (var userShift in usersAssignedToShift)
                {
@@ -340,44 +316,41 @@ namespace UserService.Infrastructure.Services
                        // Handle individual user attendance logout with the instance's scheduled end time
                        var attendanceHandled = await shiftAttendanceHandlerService.HandleLogoutAttendanceAsync(userId, actualShift, scheduledEndTime);
                        
-                       logger.LogInformation("Using scheduled end time {ScheduledEndTime} for user {UserId} shift {ShiftId}", 
-                           scheduledEndTime, userId, shiftResponse.Id);
                        
                        if (attendanceHandled)
                        {
-                           logger.LogInformation("Successfully clocked out user {UserId} ({UserName}) from expired strict shift {ShiftId}", 
-                               userId, userName, shiftResponse.Id);
+                           logger.LogInformation("Successfully clocked out from expired strict shift ");
                        }
                        else
                        {
-                           logger.LogWarning("Failed to clock out user {UserId} ({UserName}) from expired strict shift {ShiftId}", 
-                               userId, userName, shiftResponse.Id);
+                           logger.LogWarning("Failed to clock out user from expired strict shift ");
                        }
                        
-                       // Then revoke the user's token to force logout
-                       var success = await tokenService.RevokeTokenAsync1(new Guid(userId));
+                       // Revoke the user's token to force logout
+                       var tokenRevoked = await tokenService.RevokeTokenAsync1(new Guid(userId));
                        
-                       if (success)
+                       if (tokenRevoked)
                        {
-                           logger.LogInformation("Successfully revoked token for user {UserId} ({UserName}) from expired strict shift {ShiftId}", 
-                               userId, userName, shiftResponse.Id);
+                           logger.LogInformation("Successfully revoked token for user from expired strict shift");
                        }
                        else
                        {
-                           logger.LogWarning("Failed to revoke token for user {UserId} ({UserName}) from expired strict shift {ShiftId}", 
-                               userId, userName, shiftResponse.Id);
+                           logger.LogWarning("Failed to revoke token for user from expired strict shift ");
                        }
+
+                       // **NEW: Update user status to offline after logout**
+                       userStatusService.EnqueueStatusUpdate(userId, isActive: false);
                    }
                    catch (Exception ex)
                    {
                        logger.LogError(ex, "Error during logout process for user {UserId} ({UserName}) from shift {ShiftId}", 
                            userId, userName, shiftResponse.Id);
                        
-                       // Still try to revoke token even if attendance fails
                        try
                        {
                            await tokenService.RevokeTokenAsync(userId);
-                           logger.LogInformation("Token revoked for user {UserId} ({UserName}) despite attendance error", userId, userName);
+                           
+                           userStatusService.EnqueueStatusUpdate(userId, isActive: false);
                        }
                        catch (Exception tokenEx)
                        {
