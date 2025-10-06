@@ -1,39 +1,12 @@
 import type { NextConfig } from "next";
+import type { RuleSetRule } from "webpack"; // <-- Add this import
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for Docker
-  output: 'standalone',
-  
-  // Allow images from external domains
-  images: {
-    domains: ['qalibrated.co.ke', 'localhost'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'qalibrated.co.ke',
-        port: '',
-        pathname: '/assets/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3001',
-        pathname: '/**',
-      },
-    ],
-  },
+  // ... (rest of your config unchanged)
 
-  // Environment variables that should be available in the browser
-  env: {
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-    NEXT_PUBLIC_ASSETS_URL: process.env.NEXT_PUBLIC_ASSETS_URL,
-  },
-
-  // Extend webpack to support SVGs as React components
   webpack(config) {
     // Safely find the default file-loader for SVGs
-    const fileLoaderRule = config.module.rules.find((rule: any) => {
+    const fileLoaderRule = config.module.rules.find((rule: RuleSetRule) => {
       return rule.test instanceof RegExp && rule.test.test('.svg');
     });
 
