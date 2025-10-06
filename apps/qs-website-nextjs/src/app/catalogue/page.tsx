@@ -93,7 +93,7 @@ const advancedTechData = [
         <li>Provides excellent paint adhesion and corrosion resistance.</li>
         <li>Durable V-beam structure ensures extraordinary load durability and long service life.</li>
       </ul>`,
-    images: ["/cnc.webp", "/cnc2.jpg"],
+    images: ["/cnc.webp"],
   },
   {
     icon: SlidersHorizontal,
