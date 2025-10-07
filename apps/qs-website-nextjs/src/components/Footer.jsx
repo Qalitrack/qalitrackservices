@@ -270,7 +270,7 @@ const Footer = () => {
           <span className="text-white font-semibold">Qalibrated Systems Limited</span>.
           All rights reserved.
         </p>
-        <p className="mt-2">
+        {/* <p className="mt-2">
           Crafted with <span className="animate-pulse text-amber-400">⚡</span> by{" "}
           <a
             href="https://www.linkedin.com/in/faith-zawadi"
@@ -279,7 +279,7 @@ const Footer = () => {
           >
             MissTechy
           </a>
-        </p>
+        </p> */}
       </div>
     </footer>
   );
