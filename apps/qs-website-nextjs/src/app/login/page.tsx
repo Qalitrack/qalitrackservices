@@ -118,7 +118,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-theme-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-theme-600 transition"
+            className="w-full bg-amber-500 text-black py-2 px-4 rounded-lg shadow-md hover:bg-amber-600 transition"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
