@@ -18,7 +18,6 @@ import Footer from '@/components/Footer';
 import Newsletter from '@/components/ContactCallToAction';
 import Partners from '@/components/CertificationsLogos';
 
-
 // ---------------- PRODUCT SHOWCASE ----------------
 const productShowcase = [
   {
