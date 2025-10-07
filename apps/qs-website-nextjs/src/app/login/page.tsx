@@ -54,7 +54,7 @@ export default function Login() {
         {/* Back Button */}
         <button
           onClick={() => router.push("/")}
-          className="absolute top-4 left-4 flex items-center text-theme-500 hover:text-theme-600"
+          className="absolute top-4 left-4 flex items-center text-theme-600 hover:text-theme-700"
         >
           <ArrowLeft className="w-5 h-5 mr-1" />
           Back
