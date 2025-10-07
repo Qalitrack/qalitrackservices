@@ -28,6 +28,7 @@ services:
       - proxy-network
     labels:
       - "traefik.enable=true"
+      
       # HTTPS router for API subdomain (higher priority)
       - "traefik.http.routers.qs-backend-dev.rule=Host(`dev.qalibrated.co.ke`) && PathPrefix(`/api`)"
       - "traefik.http.routers.qs-backend-dev.entrypoints=websecure"
@@ -36,11 +37,13 @@ services:
       - "traefik.http.routers.qs-backend-dev.service=qs-backend-dev"
       - "traefik.http.routers.qs-backend-dev.priority=100"
       - "traefik.http.services.qs-backend-dev.loadbalancer.server.port=5000"
+
       # HTTP router (redirects to HTTPS, higher priority)
       - "traefik.http.routers.qs-backend-dev-http.rule=Host(`dev.qalibrated.co.ke`) && PathPrefix(`/api`)"
       - "traefik.http.routers.qs-backend-dev-http.entrypoints=web"
-     # - "traefik.http.routers.qs-backend-dev-http.middlewares=redirect-to-https"
+      # - "traefik.http.routers.qs-backend-dev-http.middlewares=redirect-to-https"
       - "traefik.http.routers.qs-backend-dev-http.priority=100"
+
     healthcheck:
       test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:5000/api/products || exit 1"]
       interval: 30s
@@ -52,9 +55,22 @@ services:
     image: ghcr.io/qalitrack/qalitrackservices/qs-website-nextjs:main
     container_name: qs-frontend-dev
     restart: unless-stopped
-    entrypoint: ["/bin/sh", "-c", "sed -i 's|__NEXT_PUBLIC_API_BASE_URL__|'$${NEXT_PUBLIC_API_BASE_URL}'|g' /app/public/config.js && sed -i 's|__NEXT_PUBLIC_SITE_URL__|'$${NEXT_PUBLIC_SITE_URL}'|g' /app/public/config.js && sed -i 's|__NEXT_PUBLIC_ASSETS_URL__|'$${NEXT_PUBLIC_ASSETS_URL}'|g' /app/public/config.js && find /app/.next -name '*.js' -type f -exec sed -i 's|__NEXT_PUBLIC_SITE_URL__|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && find /app/.next -name '*.js' -type f -exec sed -i 's|__NEXT_PUBLIC_ASSETS_URL__|'$${NEXT_PUBLIC_ASSETS_URL}'|g' {} + && find /app/.next -name '*.js' -type f -exec sed -i 's|http://localhost:3001|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && find /app/.next -name '*.js' -type f -exec sed -i 's|http://localhost:5000|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && find /app/.next -name '*.html' -type f -exec sed -i 's|http://localhost:3001|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && node server.js"]
-   # ports:
-   #   - "3002:80"
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "sed -i 's|__NEXT_PUBLIC_API_BASE_URL__|'$${NEXT_PUBLIC_API_BASE_URL}'|g' /app/public/config.js && \
+         sed -i 's|__NEXT_PUBLIC_SITE_URL__|'$${NEXT_PUBLIC_SITE_URL}'|g' /app/public/config.js && \
+         sed -i 's|__NEXT_PUBLIC_ASSETS_URL__|'$${NEXT_PUBLIC_ASSETS_URL}'|g' /app/public/config.js && \
+         find /app/.next -name '*.js' -type f -exec sed -i 's|__NEXT_PUBLIC_SITE_URL__|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && \
+         find /app/.next -name '*.js' -type f -exec sed -i 's|__NEXT_PUBLIC_ASSETS_URL__|'$${NEXT_PUBLIC_ASSETS_URL}'|g' {} + && \
+         find /app/.next -name '*.js' -type f -exec sed -i 's|http://localhost:3001|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && \
+         find /app/.next -name '*.js' -type f -exec sed -i 's|http://localhost:5000|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && \
+         find /app/.next -name '*.html' -type f -exec sed -i 's|http://localhost:3001|'$${NEXT_PUBLIC_SITE_URL}'|g' {} + && \
+         node server.js"
+      ]
+    # ports:
+    #   - "3002:80"
     env_file:
       - .env
     environment:
@@ -69,6 +85,7 @@ services:
       - proxy-network
     labels:
       - "traefik.enable=true"
+      
       # HTTPS router for dev subdomain
       - "traefik.http.routers.qs-frontend-dev.rule=Host(`dev.qalibrated.co.ke`)"
       - "traefik.http.routers.qs-frontend-dev.entrypoints=websecure"
@@ -76,10 +93,12 @@ services:
       - "traefik.http.routers.qs-frontend-dev.tls.certresolver=letsencrypt"
       - "traefik.http.routers.qs-frontend-dev.service=qs-frontend-dev"
       - "traefik.http.services.qs-frontend-dev.loadbalancer.server.port=3000"
+
       # HTTP router (redirects to HTTPS)
       - "traefik.http.routers.qs-frontend-dev-http.rule=Host(`dev.qalibrated.co.ke`)"
       - "traefik.http.routers.qs-frontend-dev-http.entrypoints=web"
       - "traefik.http.routers.qs-frontend-dev-http.middlewares=redirect-to-https"
+
       # Redirect middleware
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
@@ -91,6 +110,7 @@ networks:
   website_dev_qs_network:
     driver: bridge
     name: website_dev_qs_network
+
   proxy-network:
     driver: bridge
     external: true
