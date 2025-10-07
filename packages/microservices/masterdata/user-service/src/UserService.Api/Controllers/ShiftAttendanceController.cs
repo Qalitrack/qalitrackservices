@@ -59,41 +59,6 @@ namespace UserService.Api.Controllers
         }
 
         /// <summary>
-        /// Get paginated shift instances with attendance summaries and detailed records
-        /// </summary>
-        /// <param name="pageNumber">Page number (default: 1)</param>
-        /// <param name="pageSize">Number of items per page (default: 10, max: 100)</param>
-        /// <returns>Paginated shift instances with attendance data</returns>
-        [HttpGet("paginated-instances")]
-        [ProducesResponseType(typeof(PaginatedShiftInstancesResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPaginatedShiftInstances(int pageNumber = 1, int pageSize = 10)
-        {
-            try
-            {
-                // Validate parameters
-                if (pageNumber < 1)
-                {
-                    return BadRequest("Page number must be greater than 0");
-                }
-
-                pageSize = Math.Min(Math.Max(pageSize, 1), 100);
-
-                var result = await _shiftAttendanceService.GetPaginatedShiftInstancesWithAttendanceAsync(
-                    pageNumber, pageSize);
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving paginated shift instances with attendance");
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "An error occurred while retrieving shift instances");
-            }
-        }
-        /// <summary>
         /// Get paginated attendance details for a specific shift instance
         /// </summary>
         /// <param name="instanceId">The ID of the shift instance</param>
@@ -238,7 +203,8 @@ namespace UserService.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during clock out for employee {EmployeeId} and shift instance {ShiftInstanceId}",
+                _logger.LogError(ex,
+                    "Error during clock out for employee {EmployeeId} and shift instance {ShiftInstanceId}",
                     clockOutRequest?.EmployeeId, clockOutRequest?.ShiftInstanceId);
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "An error occurred while clocking out");
@@ -289,71 +255,7 @@ namespace UserService.Api.Controllers
                     "An error occurred while retrieving attendances");
             }
         }
-
-        /// <summary>
-        /// Get attendance for a specific user and shift instance
-        /// </summary>
-        /// <param name="userId">User ID</param>
-        /// <param name="shiftInstanceId">Shift instance ID</param>
-        [HttpGet("user/{userId}/shift-instance/{shiftInstanceId}")]
-        [ProducesResponseType(typeof(ShiftAttendance), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByUserAndInstance(string userId, string shiftInstanceId)
-        {
-            try
-            {
-                var attendance =
-                    await _shiftAttendanceService.GetAttendanceByUserAndInstanceAsync(userId, shiftInstanceId);
-                if (attendance == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(attendance);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,
-                    "Error retrieving attendance for user {UserId} and shift instance {ShiftInstanceId}", userId,
-                    shiftInstanceId);
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "An error occurred while retrieving the attendance");
-            }
-        }
-
-        /// <summary>
-        /// Get attendance by shift instance and employee
-        /// </summary>
-        /// <param name="shiftInstanceId">Shift instance ID</param>
-        /// <param name="employeeId">Employee ID</param>
-        [HttpGet("shift-instance/{shiftInstanceId}/employee/{employeeId}")]
-        [ProducesResponseType(typeof(ShiftAttendance), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByShiftInstanceAndEmployee(string shiftInstanceId, string employeeId)
-        {
-            try
-            {
-                var attendance = await _shiftAttendanceService.GetByShiftInstanceAndEmployeeAsync(shiftInstanceId, employeeId);
-                if (attendance == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(attendance);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,
-                    "Error retrieving attendance for shift instance {ShiftInstanceId} and employee {EmployeeId}",
-                    shiftInstanceId, employeeId);
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "An error occurred while retrieving the attendance");
-            }
-        }
     }
-    
 
     public class ClockOutRequest
     {

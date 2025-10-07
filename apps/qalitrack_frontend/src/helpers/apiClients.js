@@ -11,10 +11,10 @@ class ApiClient {
             },
         });
 
-        // Request interceptor to add auth token
+        // Request interceptor to add auth token from session
         this.client.interceptors.request.use(
             (config) => {
-                const token = localStorage.getItem('authToken');
+                const token = this.getSessionToken();
                 if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
@@ -31,12 +31,20 @@ class ApiClient {
                 return response;
             },
             (error) => {
+                // Handle 401 Unauthorized - clear session and redirect
                 if (error.response?.status === 401) {
+                    console.log('Authentication failed - clearing session');
+                    this.clearSession();
+                    
+                    // Redirect to login if not already there
+                    if (window.location.pathname !== '/login') {
+                        window.location.href = '/login';
+                    }
                 }
 
+                // Extract error message
                 const serverMessage = error.response?.data?.message;
                 const serverErrors = error.response?.data?.errors;
-
                 let errorMessage = error.message;
 
                 if (serverMessage) {
@@ -49,10 +57,56 @@ class ApiClient {
 
                 const customError = new Error(errorMessage);
                 customError.originalError = error;
-
                 return Promise.reject(customError);
             }
         );
+    }
+
+    /**
+     * Get authentication token from session storage
+     * @returns {string|null} JWT token or null
+     */
+    getSessionToken() {
+        try {
+            const sessionData = sessionStorage.getItem('authSession');
+            if (!sessionData) return null;
+
+            const session = JSON.parse(sessionData);
+
+            // Check if session has expired
+            const now = new Date().getTime();
+            if (now > session.expiresAt) {
+                console.log('Session expired');
+                this.clearSession();
+                return null;
+            }
+
+            return session.token;
+        } catch (error) {
+            console.error('Error retrieving session token:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Clear session data
+     */
+    clearSession() {
+        sessionStorage.removeItem('authSession');
+        sessionStorage.removeItem('temp2FASession');
+        
+        // Also clear any old localStorage tokens (migration cleanup)
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+    }
+
+    /**
+     * Check if user is authenticated
+     * @returns {boolean}
+     */
+    isAuthenticated() {
+        const token = this.getSessionToken();
+        return !!token;
     }
 
     get(endpoint, options = {}) {

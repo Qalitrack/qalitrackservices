@@ -6,6 +6,5 @@ public enum ShiftInstanceStatus
     InProgress = 2,
     Completed = 3,
     Cancelled = 4,
-    NoShow = 5
 
 }

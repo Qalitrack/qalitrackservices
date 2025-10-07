@@ -112,46 +112,7 @@ namespace UserService.Core.Services
             }
         }
 
-        public async Task<PaginatedShiftInstancesResponse> GetPaginatedShiftInstancesWithAttendanceAsync(
-            int pageNumber = 1, 
-            int pageSize = 10, 
-            DateTime? startDate = null, 
-            DateTime? endDate = null)
-        {
-            try
-            {
-                // Validate pagination parameters
-                pageNumber = Math.Max(1, pageNumber);
-                pageSize = Math.Clamp(pageSize, 1, 100);
-                
-
-                // Try cache first
-                var cacheKey = $"paginated_shift_instances:{pageNumber}:{pageSize}:{startDate:yyyyMMdd}:{endDate:yyyyMMdd}";
-                var cachedResponse = await _cacheService.GetAsync<PaginatedShiftInstancesResponse>(cacheKey);
-                if (cachedResponse != null)
-                {
-                    _logger.LogDebug("Retrieved paginated shift instances from cache");
-                    return cachedResponse;
-                }
-
-                // Get from repository
-                var response = await _shiftAttendanceRepository.GetPaginatedShiftInstancesWithAttendanceAsync(
-                    pageNumber, pageSize, startDate, endDate);
-
-                // Cache for 10 minutes
-                await _cacheService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
-
-                _logger.LogInformation("Retrieved {Count} shift instances (page {Page}/{TotalPages}) with attendance summaries", 
-                    response.ShiftInstances.Count, response.PageNumber, response.TotalPages);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving paginated shift instances with attendance");
-                throw;
-            }
-        }
+        
         
 
         public async Task<ShiftAttendance?> GetByIdAsync(string id)
@@ -603,48 +564,6 @@ namespace UserService.Core.Services
             }
         }
 
-        public async Task<ShiftAttendance?> GetByShiftInstanceAndEmployeeAsync(string shiftInstanceId, string employeeId)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(shiftInstanceId) || string.IsNullOrWhiteSpace(employeeId))
-                {
-                    _logger.LogWarning("GetByShiftInstanceAndEmployeeAsync called with null or empty parameters. ShiftInstanceId: {ShiftInstanceId}, EmployeeId: {EmployeeId}", 
-                        shiftInstanceId, employeeId);
-                    return null;
-                }
-
-                _logger.LogDebug("Retrieving attendance for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
-                    shiftInstanceId, employeeId);
-
-                // Try cache first
-                var cacheKey = $"shift_employee_attendance:{shiftInstanceId}:{employeeId}";
-                var cachedAttendance = await _cacheService.GetAsync<ShiftAttendance>(cacheKey);
-                if (cachedAttendance != null)
-                {
-                    _logger.LogDebug("Retrieved attendance from cache for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
-                        shiftInstanceId, employeeId);
-                    return cachedAttendance;
-                }
-
-                var attendance = await _shiftAttendanceRepository.GetByShiftInstanceAndEmployeeAsync(shiftInstanceId, employeeId);
-                
-                if (attendance != null)
-                {
-                    await _cacheService.SetAsync(cacheKey, attendance, TimeSpan.FromMinutes(30));
-                    _logger.LogDebug("Cached attendance for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
-                        shiftInstanceId, employeeId);
-                }
-
-                return attendance;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving attendance for shift instance {ShiftInstanceId} and employee {EmployeeId}", 
-                    shiftInstanceId, employeeId);
-                throw;
-            }
-        }
 
         private async Task InvalidateAttendanceCaches(string shiftInstanceId, string employeeId)
         {
