@@ -298,8 +298,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                         instance.Shift?.Name ?? "Unknown Shift",
                         NotificationType.ShiftEndingAlert);
 
-                    _logger.LogInformation("Sent ending alert notifications for shift instance {InstanceId} to {UserCount} users", 
-                        instance.Id, activeUsers.Count);
                 }
             }
             catch (Exception ex)
@@ -313,14 +311,10 @@ public class ShiftInstanceBackgroundService : BackgroundService
     {
         try
         {
-            _logger.LogInformation("Checking for shift instances that should be completed. Current time: {Now}", now);
             
             // Convert current UTC time to Nairobi time
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
-            
-            _logger.LogInformation("Current Nairobi time: {NairobiNow}", nairobiNow);
-            _logger.LogInformation("Looking for InProgress instances with ScheduledEndTime < {Now} (Nairobi time)", nairobiNow);
             
             // Get all incomplete instances
             var allIncompleteInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress)).ToList();
@@ -337,7 +331,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 })
                 .ToList();
                 
-            _logger.LogInformation("Found {Count} instances to check for completion", instancesToCheck.Count);
 
             int completedCount = 0;
             int skippedCount = 0;

@@ -9,12 +9,6 @@ namespace UserService.Core.Interfaces.Repositories
         // Existing entity-returning methods
         new Task<IEnumerable<ShiftAttendance>> GetAllAsync(int pageNumber = 1, int pageSize = 10);
         
-        // New paginated method with attendance summaries
-        Task<PaginatedShiftInstancesResponse> GetPaginatedShiftInstancesWithAttendanceAsync(
-            int pageNumber = 1, 
-            int pageSize = 10, 
-            DateTime? startDate = null, 
-            DateTime? endDate = null);
         
         // Existing method to get shifts with their instances and attendances
         
@@ -24,9 +18,7 @@ namespace UserService.Core.Interfaces.Repositories
         Task<bool> DeleteAsync(string id);
         Task<ShiftAttendance?> ClockInAsync(string shiftInstanceId, string employeeId, DateTime clockInTime, string? notes = null);
         Task<ShiftAttendance?> ClockOutAsync(string shiftInstanceId, string employeeId, DateTime clockOutTime, string? notes = null);
-        Task<ShiftAttendance?> GetByShiftInstanceAndEmployeeAsync(string shiftInstanceId, string employeeId);
         
-        // Entity-returning query methods (keep these for write operations)
         
         Task<PagedResult<ShiftAttendance>> GetByInstanceIdAsync(
             string instanceId, 

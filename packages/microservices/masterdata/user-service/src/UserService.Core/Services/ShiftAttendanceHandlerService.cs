@@ -272,6 +272,7 @@ namespace UserService.Core.Services
                     userId, shift?.Id, shiftInstanceId);
                 return false;
             }
+            
         }
     }
 }
