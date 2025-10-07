@@ -1584,3 +1584,106 @@ docker-build-product-service:
 docker-run-product-service:
 	@echo "Running Docker container for ProductService service..."
 	@docker run -p 5000:80 product-service
+
+build-technician:
+	@echo "Building Technician service..."
+	@cd packages/microservices/masterdata/technician && dotnet build
+
+run-technician:
+	@echo "Running Technician service..."
+	@cd packages/microservices/masterdata/technician && dotnet run --project src/Technician.Api
+
+test-technician:
+	@echo "Testing Technician service..."
+	@cd packages/microservices/masterdata/technician && dotnet test tests/Technician.Tests --verbosity normal
+
+docker-build-technician:
+	@echo "Building Docker image for Technician service..."
+	@cd packages/microservices/masterdata/technician && docker build -t technician .
+
+docker-run-technician:
+	@echo "Running Docker container for Technician service..."
+	@docker run -p 5000:80 technician
+
+build-maintenance:
+	@echo "Building Maintenance service..."
+	@cd packages/microservices/datamanager/maintenance && dotnet build
+
+run-maintenance:
+	@echo "Running Maintenance service..."
+	@cd packages/microservices/datamanager/maintenance && dotnet run --project src/Maintenance.Api
+
+test-maintenance:
+	@echo "Testing Maintenance service..."
+	@cd packages/microservices/datamanager/maintenance && dotnet test tests/Maintenance.Tests --verbosity normal
+
+docker-build-maintenance:
+	@echo "Building Docker image for Maintenance service..."
+	@cd packages/microservices/datamanager/maintenance && docker build -t maintenance .
+
+docker-run-maintenance:
+	@echo "Running Docker container for Maintenance service..."
+	@docker run -p 5000:80 maintenance
+
+build-equipment:
+	@echo "Building Equipment service..."
+	@cd packages/microservices/masterdata/equipment && dotnet build
+
+run-equipment:
+	@echo "Running Equipment service..."
+	@cd packages/microservices/masterdata/equipment && dotnet run --project src/Equipment.Api
+
+test-equipment:
+	@echo "Testing Equipment service..."
+	@cd packages/microservices/masterdata/equipment && dotnet test tests/Equipment.Tests --verbosity normal
+
+docker-build-equipment:
+	@echo "Building Docker image for Equipment service..."
+	@cd packages/microservices/masterdata/equipment && docker build -t equipment .
+
+docker-run-equipment:
+	@echo "Running Docker container for Equipment service..."
+	@docker run -p 5000:80 equipment
+
+build-work-order:
+	@echo "Building WorkOrder service..."
+	@cd packages/microservices/datamanager/work-order && dotnet build
+
+run-work-order:
+	@echo "Running WorkOrder service..."
+	@cd packages/microservices/datamanager/work-order && dotnet run --project src/WorkOrder.Api
+
+test-work-order:
+	@echo "Testing WorkOrder service..."
+	@cd packages/microservices/datamanager/work-order && dotnet test tests/WorkOrder.Tests --verbosity normal
+
+docker-build-work-order:
+	@echo "Building Docker image for WorkOrder service..."
+	@cd packages/microservices/datamanager/work-order && docker build -t work-order .
+
+docker-run-work-order:
+	@echo "Running Docker container for WorkOrder service..."
+	@docker run -p 5000:80 work-order
+
+# TechnicianApi Service Targets (Auto-generated)
+.PHONY: build-technician-api run-technician-api test-technician-api
+
+build-technician-api:
+	@echo "Building TechnicianApi service..."
+	@cd packages/microservices/masterdata/technician-api && dotnet build
+
+run-technician-api:
+	@echo "Running TechnicianApi service..."
+	@cd packages/microservices/masterdata/technician-api && dotnet run --project src/TechnicianApi.Api
+
+test-technician-api:
+	@echo "Testing TechnicianApi service..."
+	@cd packages/microservices/masterdata/technician-api && dotnet test tests/TechnicianApi.Tests --verbosity normal
+
+docker-build-technician-api:
+	@echo "Building Docker image for TechnicianApi service..."
+	@cd packages/microservices/masterdata/technician-api && docker build -t technician-api .
+
+docker-run-technician-api:
+	@echo "Running Docker container for TechnicianApi service..."
+	@docker run -p 5000:80 technician-api
