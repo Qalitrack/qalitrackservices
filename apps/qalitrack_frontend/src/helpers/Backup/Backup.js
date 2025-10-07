@@ -22,7 +22,6 @@ class BackupAPI {
                 cronSchedule: backupData.cronSchedule || ''
             };
 
-            console.log('Creating backup with payload:', payload);
             const response = await backupApiClient.post(`${this.baseEndpoint}/create`, payload);
             return response.data;
         } catch (error) {
@@ -164,19 +163,3 @@ class BackupAPI {
 // Create and export a singleton instance
 const backupAPI = new BackupAPI();
 export { BackupAPI, backupAPI };
-
-// Example usage:
-/*
-// Create a backup
-await backupAPI.createBackup({
-    microservice: 'my-service',
-    saveLocation: '/path/to/backup',
-    cronSchedule: '0 0 * * *' // Optional: daily at midnight
-});
-
-// Restore a backup
-await backupAPI.restoreBackup({
-    microservice: 'my-service',
-    backupPath: '/path/to/backup/backup_20230924.bak'
-});
-*/

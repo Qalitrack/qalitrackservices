@@ -12,19 +12,160 @@ const useAuth = () => {
     const [userId, setUserId] = useState('');
 
     const listenerSet = useRef(false);
+    const sessionCheckInterval = useRef(null);
+    const activityTimeout = useRef(null);
 
+    // Session configuration
+    const SESSION_DURATION = 480 * 60 * 1000; // 480 minutes in milliseconds
+    const ACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes of inactivity
+    const SESSION_CHECK_INTERVAL = 60 * 1000; // Check every minute
+
+    // Initialize session monitoring
     useEffect(() => {
         if (!listenerSet.current) {
             listenerSet.current = true;
+            
+            // Start session monitoring if user is authenticated
+            if (isAuthenticated()) {
+                startSessionMonitoring();
+                setupActivityTracking();
+            }
+
+            // Cleanup on page unload
             const handleBeforeUnload = () => {
                 logout();
             };
             window.addEventListener('beforeunload', handleBeforeUnload);
+            
             return () => {
                 window.removeEventListener('beforeunload', handleBeforeUnload);
+                stopSessionMonitoring();
+                clearActivityTimeout();
             };
         }
     }, []);
+
+    // Session Management Functions
+    const createSession = (token, userData) => {
+        const now = new Date().getTime();
+        const session = {
+            token,
+            userData,
+            createdAt: now,
+            expiresAt: now + SESSION_DURATION,
+            lastActivity: now
+        };
+        
+        sessionStorage.setItem('authSession', JSON.stringify(session));
+        startSessionMonitoring();
+        setupActivityTracking();
+    };
+
+    const getSession = () => {
+        const sessionData = sessionStorage.getItem('authSession');
+        if (!sessionData) return null;
+        
+        try {
+            return JSON.parse(sessionData);
+        } catch (e) {
+            console.error('Failed to parse session data:', e);
+            return null;
+        }
+    };
+
+    const updateSessionActivity = () => {
+        const session = getSession();
+        if (!session) return;
+
+        const now = new Date().getTime();
+        session.lastActivity = now;
+        
+        // Extend session if user is active
+        if (now - session.createdAt < SESSION_DURATION) {
+            session.expiresAt = now + SESSION_DURATION;
+        }
+        
+        sessionStorage.setItem('authSession', JSON.stringify(session));
+    };
+
+    const isSessionValid = () => {
+        const session = getSession();
+        if (!session) return false;
+
+        const now = new Date().getTime();
+        
+        // Check if session has expired
+        if (now > session.expiresAt) {
+            console.log('Session expired');
+            return false;
+        }
+
+        // Check for inactivity timeout
+        if (now - session.lastActivity > ACTIVITY_TIMEOUT) {
+            console.log('Session inactive for too long');
+            return false;
+        }
+
+        return true;
+    };
+
+    const startSessionMonitoring = () => {
+        // Clear any existing interval
+        if (sessionCheckInterval.current) {
+            clearInterval(sessionCheckInterval.current);
+        }
+
+        // Check session validity periodically
+        sessionCheckInterval.current = setInterval(() => {
+            if (!isSessionValid()) {
+                logout();
+            }
+        }, SESSION_CHECK_INTERVAL);
+    };
+
+    const stopSessionMonitoring = () => {
+        if (sessionCheckInterval.current) {
+            clearInterval(sessionCheckInterval.current);
+            sessionCheckInterval.current = null;
+        }
+    };
+
+    // Activity tracking
+    const setupActivityTracking = () => {
+        const resetActivityTimeout = () => {
+            clearActivityTimeout();
+            updateSessionActivity();
+            
+            // Set new timeout
+            activityTimeout.current = setTimeout(() => {
+                console.log('User inactive - logging out');
+                logout();
+            }, ACTIVITY_TIMEOUT);
+        };
+
+        // Track user activity
+        const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+        activityEvents.forEach(event => {
+            window.addEventListener(event, resetActivityTimeout);
+        });
+
+        // Initial activity timeout
+        resetActivityTimeout();
+
+        // Store cleanup function
+        window.addEventListener('beforeunload', () => {
+            activityEvents.forEach(event => {
+                window.removeEventListener(event, resetActivityTimeout);
+            });
+        });
+    };
+
+    const clearActivityTimeout = () => {
+        if (activityTimeout.current) {
+            clearTimeout(activityTimeout.current);
+            activityTimeout.current = null;
+        }
+    };
 
     const login = async (email, password) => {
         setLoading(true);
@@ -56,9 +197,12 @@ const useAuth = () => {
                 setRequires2FA(true);
                 setSessionId(responseData.sessionId);
                 setMaskedEmail(responseData.email);
-                // Temporarily store session details in sessionStorage for persistence across reloads during 2FA flow
-                sessionStorage.setItem('tempSessionId', responseData.sessionId);
-                sessionStorage.setItem('tempMaskedEmail', responseData.email);
+                // Temporarily store session details in sessionStorage for 2FA flow
+                sessionStorage.setItem('temp2FASession', JSON.stringify({
+                    sessionId: responseData.sessionId,
+                    email: responseData.email,
+                    timestamp: new Date().getTime()
+                }));
                 return {
                     success: true,
                     requires2FA: true,
@@ -68,14 +212,12 @@ const useAuth = () => {
                 };
             }
 
-            // Normal login success - store token and user data in localStorage
+            // Normal login success - create session
             if (responseData) {
                 if (!responseData.token) {
                     throw new Error('Token not provided in response');
                 }
-                localStorage.setItem('authToken', responseData.token);
 
-                // Store user info (handle cases where some fields might be missing)
                 const userData = {
                     id: responseData.id || '',
                     email: responseData.email || email,
@@ -83,7 +225,8 @@ const useAuth = () => {
                     lastName: responseData.lastName || '',
                     userRoles: responseData.userRoles || []
                 };
-                localStorage.setItem('user', JSON.stringify(userData));
+
+                createSession(responseData.token, userData);
                 return { success: true, data: responseData };
             }
 
@@ -101,12 +244,12 @@ const useAuth = () => {
     const updatePassword = async (currentPassword, newPassword, confirmPassword) => {
         if (!userId) {
             const errorMessage = 'No active session. Please login again.';
-            console.error('No userId:', errorMessage); // Debug log
+            console.error('No userId:', errorMessage);
             setError(errorMessage);
             return { success: false, error: errorMessage };
         }
 
-        console.log('Sending updatePassword request:', { userId, currentPassword, newPassword, confirmPassword }); // Debug log
+        console.log('Sending updatePassword request:', { userId, currentPassword, newPassword, confirmPassword });
         setLoading(true);
         setError('');
 
@@ -123,14 +266,9 @@ const useAuth = () => {
                 }
             });
 
-
             const responseData = response.data?.data || response.data;
 
             if (responseData) {
-                if (responseData.token) {
-                    localStorage.setItem('authToken', responseData.token);
-                }
-
                 const userData = {
                     id: responseData.id || userId,
                     email: responseData.email || '',
@@ -138,7 +276,10 @@ const useAuth = () => {
                     lastName: responseData.lastName || '',
                     userRoles: responseData.userRoles || []
                 };
-                localStorage.setItem('user', JSON.stringify(userData));
+
+                if (responseData.token) {
+                    createSession(responseData.token, userData);
+                }
             }
 
             setRequiresPasswordChange(false);
@@ -148,7 +289,7 @@ const useAuth = () => {
 
         } catch (err) {
             const errorMessage = extractErrorMessage(err);
-            console.error('Update password error:', err, 'Message:', errorMessage); // Debug log
+            console.error('Update password error:', err, 'Message:', errorMessage);
             setError(errorMessage);
             return { success: false, error: errorMessage };
         } finally {
@@ -159,13 +300,28 @@ const useAuth = () => {
     const verify2FA = async (code) => {
         // Check for persisted temp session from reload
         if (!sessionId) {
-            const tempSessionId = sessionStorage.getItem('tempSessionId');
-            const tempMaskedEmail = sessionStorage.getItem('tempMaskedEmail');
-            if (tempSessionId) {
-                setSessionId(tempSessionId);
-                setMaskedEmail(tempMaskedEmail || '');
+            const temp2FAData = sessionStorage.getItem('temp2FASession');
+            if (temp2FAData) {
+                try {
+                    const { sessionId: tempSessionId, email: tempEmail, timestamp } = JSON.parse(temp2FAData);
+                    
+                    // Check if 2FA session hasn't expired (10 minutes)
+                    if (new Date().getTime() - timestamp < 10 * 60 * 1000) {
+                        setSessionId(tempSessionId);
+                        setMaskedEmail(tempEmail || '');
+                    } else {
+                        sessionStorage.removeItem('temp2FASession');
+                        const errorMessage = '2FA session expired. Please login again.';
+                        setError(errorMessage);
+                        return { success: false, error: errorMessage };
+                    }
+                } catch (e) {
+                    const errorMessage = 'Invalid 2FA session. Please login again.';
+                    setError(errorMessage);
+                    return { success: false, error: errorMessage };
+                }
             } else {
-                const errorMessage = 'No active session. Please login again.';
+                const errorMessage = 'No active 2FA session. Please login again.';
                 setError(errorMessage);
                 return { success: false, error: errorMessage };
             }
@@ -180,20 +336,15 @@ const useAuth = () => {
                 code
             });
 
-            // The response data is nested under response.data.data
             const responseData = response.data?.data || response.data;
-            
-            // Extract the actual user data from the response
             const userData = responseData?.data || responseData;
 
-            // Store token and user data after successful 2FA in localStorage
+            // Create session after successful 2FA
             if (userData) {
                 if (!userData.token) {
                     throw new Error('Token not provided in response');
                 }
-                localStorage.setItem('authToken', userData.token);
 
-                // Store user info
                 const userInfo = {
                     id: userData.id || '',
                     email: userData.email || maskedEmail,
@@ -201,15 +352,15 @@ const useAuth = () => {
                     lastName: userData.lastName || '',
                     userRoles: userData.userRoles || []
                 };
-                localStorage.setItem('user', JSON.stringify(userInfo));
+
+                createSession(userData.token, userInfo);
             }
 
             // Clear 2FA state and temp storage
             setRequires2FA(false);
             setSessionId('');
             setMaskedEmail('');
-            sessionStorage.removeItem('tempSessionId');
-            sessionStorage.removeItem('tempMaskedEmail');
+            sessionStorage.removeItem('temp2FASession');
 
             return { success: true, data: responseData };
 
@@ -224,10 +375,7 @@ const useAuth = () => {
 
     const extractErrorMessage = (err) => {
         if (err.response) {
-            // Server responded with error status
             const { data } = err.response;
-
-            // Handle nested data structure
             const responseData = data?.data || data;
 
             if (responseData?.message) {
@@ -242,20 +390,22 @@ const useAuth = () => {
                 return `Server error: ${err.response.status}`;
             }
         } else if (err.request) {
-            // Request was made but no response received
             return 'Network error. Please check your connection.';
         } else {
-            // Something else happened
             return err.message || 'An unexpected error occurred';
         }
     };
 
     const logout = () => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        // Also clear any temp 2FA state
-        sessionStorage.removeItem('tempSessionId');
-        sessionStorage.removeItem('tempMaskedEmail');
+        // Clear session
+        sessionStorage.removeItem('authSession');
+        sessionStorage.removeItem('temp2FASession');
+        
+        // Stop monitoring
+        stopSessionMonitoring();
+        clearActivityTimeout();
+        
+        // Reset state
         setRequires2FA(false);
         setRequiresPasswordChange(false);
         setSessionId('');
@@ -265,12 +415,30 @@ const useAuth = () => {
     };
 
     const isAuthenticated = () => {
-        return !!localStorage.getItem('authToken');
+        return isSessionValid();
     };
 
     const getCurrentUser = () => {
-        const user = localStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
+        const session = getSession();
+        return session ? session.userData : null;
+    };
+
+    const getAuthToken = () => {
+        const session = getSession();
+        return session ? session.token : null;
+    };
+
+    const getSessionInfo = () => {
+        const session = getSession();
+        if (!session) return null;
+
+        const now = new Date().getTime();
+        return {
+            timeRemaining: Math.max(0, session.expiresAt - now),
+            lastActivity: session.lastActivity,
+            createdAt: session.createdAt,
+            isValid: isSessionValid()
+        };
     };
 
     const clearError = () => {
@@ -281,8 +449,7 @@ const useAuth = () => {
         setRequires2FA(false);
         setSessionId('');
         setMaskedEmail('');
-        sessionStorage.removeItem('tempSessionId');
-        sessionStorage.removeItem('tempMaskedEmail');
+        sessionStorage.removeItem('temp2FASession');
         setError('');
     };
 
@@ -299,6 +466,8 @@ const useAuth = () => {
         logout,
         isAuthenticated,
         getCurrentUser,
+        getAuthToken,
+        getSessionInfo,
         clearError,
         reset2FAState,
         resetPasswordChangeState,
