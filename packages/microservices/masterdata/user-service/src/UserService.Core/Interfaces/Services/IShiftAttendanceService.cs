@@ -17,28 +17,7 @@ namespace UserService.Core.Interfaces.Services
         /// <returns>Paginated list of shift attendance responses</returns>
         Task<IEnumerable<ShiftAttendanceResponse>> GetAllAsync(int pageNumber = 1, int pageSize = 20);
 
-        /// <summary>
-        /// Gets paginated shift instances with attendance summaries and detailed records
-        /// </summary>
-        /// <param name="pageNumber">Page number (1-based)</param>
-        /// <param name="pageSize">Number of items per page (max 100)</param>
-        /// <param name="startDate">Optional start date filter</param>
-        /// <param name="endDate">Optional end date filter</param>
-        /// <returns>Paginated response with shift instances, attendance summaries, and records</returns>
-        Task<PaginatedShiftInstancesResponse> GetPaginatedShiftInstancesWithAttendanceAsync(
-            int pageNumber = 1, 
-            int pageSize = 10, 
-            DateTime? startDate = null, 
-            DateTime? endDate = null);
-
-   
-        /// <summary>
-        /// Gets a shift attendance by ID
-        /// </summary>
-        /// <param name="id">Attendance ID</param>
-        /// <returns>Shift attendance entity or null</returns>
-        Task<ShiftAttendance?> GetByIdAsync(string id);
-
+        
         /// <summary>
         /// Gets detailed attendance information by ID
         /// </summary>
@@ -118,13 +97,6 @@ namespace UserService.Core.Interfaces.Services
         /// <param name="shiftInstanceId">Shift instance ID</param>
         /// <returns>Attendance record or null</returns>
         Task<ShiftAttendance?> GetAttendanceByUserAndInstanceAsync(string userId, string shiftInstanceId);
-
-        /// <summary>
-        /// Gets attendance record by shift instance and employee
-        /// </summary>
-        /// <param name="shiftInstanceId">Shift instance ID</param>
-        /// <param name="employeeId">Employee ID</param>
-        /// <returns>Attendance record or null</returns>
-        Task<ShiftAttendance?> GetByShiftInstanceAndEmployeeAsync(string shiftInstanceId, string employeeId);
+        
     }
 }

@@ -18,17 +18,20 @@ namespace UserService.Infrastructure.Services
         private readonly UserServiceDbContext _context;
         private readonly IShiftAttendanceHandlerService _shiftAttendanceHandlerService;
         private readonly IShiftInstanceRepository _shiftInstanceRepository;
+        private readonly IUserStatusService _userStatusService;
         private readonly ILogger<ShiftLoginRestrictionService> _logger;
 
         public ShiftLoginRestrictionService(
             UserServiceDbContext context,
             IShiftAttendanceHandlerService shiftAttendanceHandlerService,
             IShiftInstanceRepository shiftInstanceRepository,
+            IUserStatusService userStatusService,
             ILogger<ShiftLoginRestrictionService> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _shiftAttendanceHandlerService = shiftAttendanceHandlerService ?? throw new ArgumentNullException(nameof(shiftAttendanceHandlerService));
             _shiftInstanceRepository = shiftInstanceRepository ?? throw new ArgumentNullException(nameof(shiftInstanceRepository));
+            _userStatusService = userStatusService ?? throw new ArgumentNullException(nameof(userStatusService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -139,164 +142,169 @@ namespace UserService.Infrastructure.Services
             }
         }
 
-       public async Task<bool> HandleLoginAttendanceAsync(string userId)
-{
-    try
-    {
-        _logger.LogInformation("Handling login attendance for user {UserId}", userId);
-
-        var currentDateTime = DateTime.UtcNow;
-
-        // Get both currently active AND upcoming instances
-        var (activeInstances, upcomingInstances) = await GetActiveAndUpcomingInstancesAsync();
-        
-        if (!activeInstances.Any() && !upcomingInstances.Any())
+        public async Task<bool> HandleLoginAttendanceAsync(string userId)
         {
-            _logger.LogInformation("No active or upcoming shift instances found for attendance handling");
-            return false;
-        }
-
-        // Combine both lists for user assignment lookup
-        var allRelevantShiftIds = activeInstances.Concat(upcomingInstances)
-            .Select(i => i.ShiftId)
-            .Distinct()
-            .ToList();
-
-        // Get user assignments to relevant shifts
-        var userAssignments = await _context.UserShifts
-            .Where(us => us.UserId == userId && 
-                       !us.IsDeleted && 
-                       allRelevantShiftIds.Contains(us.ShiftId))
-            .Select(us => new { us.Id, us.ShiftId })
-            .ToListAsync();
-
-        if (!userAssignments.Any())
-        {
-            _logger.LogInformation("No user assignments found for active or upcoming shift instances");
-            return false;
-        }
-
-        // Get the full shift data
-        var shiftIds = userAssignments.Select(ua => ua.ShiftId).Distinct().ToList();
-        var shifts = await _context.Shifts
-            .Where(s => shiftIds.Contains(s.Id))
-            .ToDictionaryAsync(s => s.Id);
-
-        bool attendanceHandled = false;
-
-        // Handle active instances first
-        foreach (var assignment in userAssignments)
-        {
-            if (!shifts.TryGetValue(assignment.ShiftId, out var shift))
-                continue;
-
-            // Check if this shift has an active instance
-            var activeInstance = activeInstances.FirstOrDefault(i => i.ShiftId == shift.Id);
-            if (activeInstance != null)
+            try
             {
-                var handled = await _shiftAttendanceHandlerService.HandleLoginAttendanceAsync(
-                    userId, shift, currentDateTime);
+                _logger.LogInformation("Handling login attendance for user {UserId}", userId);
+
+                var currentDateTime = DateTime.UtcNow;
+
+                // Get both currently active AND upcoming instances
+                var (activeInstances, upcomingInstances) = await GetActiveAndUpcomingInstancesAsync();
                 
-                if (handled)
+                if (!activeInstances.Any() && !upcomingInstances.Any())
                 {
-                    attendanceHandled = true;
-                    _logger.LogInformation("User {UserId} clocked-in for active {ShiftMode} shift: {ShiftName}", 
-                        userId, shift.Mode, shift.Name);
+                    _logger.LogInformation("No active or upcoming shift instances found for attendance handling");
+                    return false;
                 }
-                continue; // Skip upcoming check for this shift
+
+                var allRelevantShiftIds = activeInstances.Concat(upcomingInstances)
+                    .Select(i => i.ShiftId)
+                    .Distinct()
+                    .ToList();
+
+                var userAssignments = await _context.UserShifts
+                    .Where(us => us.UserId == userId && 
+                               !us.IsDeleted && 
+                               allRelevantShiftIds.Contains(us.ShiftId))
+                    .Select(us => new { us.Id, us.ShiftId })
+                    .ToListAsync();
+
+                if (!userAssignments.Any())
+                {
+                    _logger.LogInformation("No user assignments found for active or upcoming shift instances");
+                    return false;
+                }
+
+                var shiftIds = userAssignments.Select(ua => ua.ShiftId).Distinct().ToList();
+                var shifts = await _context.Shifts
+                    .Where(s => shiftIds.Contains(s.Id))
+                    .ToDictionaryAsync(s => s.Id);
+
+                bool attendanceHandled = false;
+
+                // Handle active instances first
+                foreach (var assignment in userAssignments)
+                {
+                    if (!shifts.TryGetValue(assignment.ShiftId, out var shift))
+                        continue;
+
+                    // Check if this shift has an active instance
+                    var activeInstance = activeInstances.FirstOrDefault(i => i.ShiftId == shift.Id);
+                    if (activeInstance != null)
+                    {
+                        var handled = await _shiftAttendanceHandlerService.HandleLoginAttendanceAsync(
+                            userId, shift, currentDateTime);
+                        
+                        if (handled)
+                        {
+                            attendanceHandled = true;
+                            _logger.LogInformation("User {UserId} clocked-in for active {ShiftMode} shift: {ShiftName}", 
+                                userId, shift.Mode, shift.Name);
+                        }
+                        continue; // Skip upcoming check for this shift
+                    }
+
+                    // Check if this shift has an upcoming instance (early arrival)
+                    var upcomingInstance = upcomingInstances.FirstOrDefault(i => i.ShiftId == shift.Id);
+                    if (upcomingInstance != null)
+                    {
+                        // Calculate how early they are
+                        var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+                        var scheduledStartUtc = upcomingInstance.ScheduledDate.Date.Add(upcomingInstance.ScheduledStartTime.TimeOfDay);
+                        var scheduledStartNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledStartUtc, nairobiTimeZone);
+                        var currentNairobi = TimeZoneInfo.ConvertTimeFromUtc(currentDateTime, nairobiTimeZone);
+                        var minutesEarly = (scheduledStartNairobi - currentNairobi).TotalMinutes;
+
+                        var handled = await _shiftAttendanceHandlerService.HandleEarlyArrivalAttendanceAsync(
+                            userId, shift, currentDateTime, upcomingInstance.Id, minutesEarly);
+                        
+                        if (handled)
+                        {
+                            attendanceHandled = true;
+                            _logger.LogInformation("User {UserId} recorded early arrival for {ShiftMode} shift: {ShiftName} ({MinutesEarly:F0} minutes early)", 
+                                userId, shift.Mode, shift.Name, minutesEarly);
+                        }
+                    }
+                }
+
+                // **NEW: Update user status to online after successful login attendance**
+                if (attendanceHandled)
+                {
+                    _userStatusService.EnqueueStatusUpdate(userId, isActive: true);
+                    _logger.LogInformation("Enqueued status update to online for user {UserId}", userId);
+                }
+
+                return attendanceHandled;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling login attendance for user {UserId}", userId);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets both currently active instances and upcoming instances (for early arrival tracking)
+        /// </summary>
+        private async Task<(List<ShiftInstance> ActiveInstances, List<ShiftInstance> UpcomingInstances)> GetActiveAndUpcomingInstancesAsync()
+        {
+            var currentTime = DateTime.UtcNow;
+            var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+            var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(currentTime, nairobiTimeZone);
+
+            _logger.LogInformation("Getting active and upcoming instances - UTC: {UtcNow}, Nairobi: {NairobiNow}", 
+                currentTime, nairobiNow);
+
+            // Get instances that could be relevant (InProgress and Scheduled for today)
+            var inProgressInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress);
+            var scheduledInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled);
+            var potentialInstances = inProgressInstances.Concat(scheduledInstances).ToList();
+
+            var todayInstances = potentialInstances
+                .Where(instance => 
+                {
+                    var scheduledDateUtc = instance.ScheduledDate.Date;
+                    var scheduledDateInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledDateUtc, nairobiTimeZone).Date;
+                    return scheduledDateInNairobi == nairobiNow.Date; // Only today's instances
+                })
+                .ToList();
+
+            var activeInstances = new List<ShiftInstance>();
+            var upcomingInstances = new List<ShiftInstance>();
+
+            foreach (var instance in todayInstances)
+            {
+                var scheduledDateUtc = instance.ScheduledDate.Date;
+                var startTimeUtc = scheduledDateUtc.Add(instance.ScheduledStartTime.TimeOfDay);
+                var endTimeUtc = scheduledDateUtc.Add(instance.ScheduledEndTime.TimeOfDay);
+                
+                var startTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(startTimeUtc, nairobiTimeZone);
+                var endTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(endTimeUtc, nairobiTimeZone);
+                
+                // Check if currently active
+                if (nairobiNow >= startTimeNairobi && nairobiNow <= endTimeNairobi)
+                {
+                    activeInstances.Add(instance);
+                    _logger.LogInformation("Instance {InstanceId} for shift {ShiftId} is active: {StartTime} - {EndTime} (Nairobi)", 
+                        instance.Id, instance.ShiftId, startTimeNairobi, endTimeNairobi);
+                }
+                // Check if upcoming (within next 2 hours - configurable)
+                else if (nairobiNow < startTimeNairobi && (startTimeNairobi - nairobiNow).TotalHours <= 2)
+                {
+                    upcomingInstances.Add(instance);
+                    _logger.LogInformation("Instance {InstanceId} for shift {ShiftId} is upcoming: starts at {StartTime} (Nairobi)", 
+                        instance.Id, instance.ShiftId, startTimeNairobi);
+                }
             }
 
-            // Check if this shift has an upcoming instance (early arrival)
-            var upcomingInstance = upcomingInstances.FirstOrDefault(i => i.ShiftId == shift.Id);
-            if (upcomingInstance != null)
-            {
-                // Calculate how early they are
-                var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
-                var scheduledStartUtc = upcomingInstance.ScheduledDate.Date.Add(upcomingInstance.ScheduledStartTime.TimeOfDay);
-                var scheduledStartNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledStartUtc, nairobiTimeZone);
-                var currentNairobi = TimeZoneInfo.ConvertTimeFromUtc(currentDateTime, nairobiTimeZone);
-                var minutesEarly = (scheduledStartNairobi - currentNairobi).TotalMinutes;
+            _logger.LogInformation("Found {ActiveCount} active and {UpcomingCount} upcoming instances", 
+                activeInstances.Count, upcomingInstances.Count);
 
-                var handled = await _shiftAttendanceHandlerService.HandleEarlyArrivalAttendanceAsync(
-                    userId, shift, currentDateTime, upcomingInstance.Id, minutesEarly);
-                
-                if (handled)
-                {
-                    attendanceHandled = true;
-                    _logger.LogInformation("User {UserId} recorded early arrival for {ShiftMode} shift: {ShiftName} ({MinutesEarly:F0} minutes early)", 
-                        userId, shift.Mode, shift.Name, minutesEarly);
-                }
-            }
+            return (activeInstances, upcomingInstances);
         }
 
-        return attendanceHandled;
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error handling login attendance for user {UserId}", userId);
-        return false;
-    }
-}
-
-/// <summary>
-/// Gets both currently active instances and upcoming instances (for early arrival tracking)
-/// </summary>
-private async Task<(List<ShiftInstance> ActiveInstances, List<ShiftInstance> UpcomingInstances)> GetActiveAndUpcomingInstancesAsync()
-{
-    var currentTime = DateTime.UtcNow;
-    var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
-    var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(currentTime, nairobiTimeZone);
-
-    _logger.LogInformation("Getting active and upcoming instances - UTC: {UtcNow}, Nairobi: {NairobiNow}", 
-        currentTime, nairobiNow);
-
-    // Get instances that could be relevant (InProgress and Scheduled for today)
-    var inProgressInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress);
-    var scheduledInstances = await _shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled);
-    var potentialInstances = inProgressInstances.Concat(scheduledInstances).ToList();
-
-    var todayInstances = potentialInstances
-        .Where(instance => 
-        {
-            var scheduledDateUtc = instance.ScheduledDate.Date;
-            var scheduledDateInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledDateUtc, nairobiTimeZone).Date;
-            return scheduledDateInNairobi == nairobiNow.Date; // Only today's instances
-        })
-        .ToList();
-
-    var activeInstances = new List<ShiftInstance>();
-    var upcomingInstances = new List<ShiftInstance>();
-
-    foreach (var instance in todayInstances)
-    {
-        var scheduledDateUtc = instance.ScheduledDate.Date;
-        var startTimeUtc = scheduledDateUtc.Add(instance.ScheduledStartTime.TimeOfDay);
-        var endTimeUtc = scheduledDateUtc.Add(instance.ScheduledEndTime.TimeOfDay);
-        
-        var startTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(startTimeUtc, nairobiTimeZone);
-        var endTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(endTimeUtc, nairobiTimeZone);
-        
-        // Check if currently active
-        if (nairobiNow >= startTimeNairobi && nairobiNow <= endTimeNairobi)
-        {
-            activeInstances.Add(instance);
-            _logger.LogInformation("Instance {InstanceId} for shift {ShiftId} is active: {StartTime} - {EndTime} (Nairobi)", 
-                instance.Id, instance.ShiftId, startTimeNairobi, endTimeNairobi);
-        }
-        // Check if upcoming (within next 2 hours - configurable)
-        else if (nairobiNow < startTimeNairobi && (startTimeNairobi - nairobiNow).TotalHours <= 2)
-        {
-            upcomingInstances.Add(instance);
-            _logger.LogInformation("Instance {InstanceId} for shift {ShiftId} is upcoming: starts at {StartTime} (Nairobi)", 
-                instance.Id, instance.ShiftId, startTimeNairobi);
-        }
-    }
-
-    _logger.LogInformation("Found {ActiveCount} active and {UpcomingCount} upcoming instances", 
-        activeInstances.Count, upcomingInstances.Count);
-
-    return (activeInstances, upcomingInstances);
-}
         public async Task HandleUserLogoutAsync(string userId, DateTime currentDateTime)
         {
             try
@@ -320,19 +328,42 @@ private async Task<(List<ShiftInstance> ActiveInstances, List<ShiftInstance> Upc
                                 activeShiftIds.Contains(us.ShiftId))
                     .ToListAsync();
 
+                bool logoutHandled = false;
+
                 foreach (var assignment in userAssignments)
                 {
                     var shift = assignment.Shift;
                     
                     // Process clock-out for all shift types
-                    var logoutHandled = await _shiftAttendanceHandlerService.HandleLogoutAttendanceAsync(userId, shift, currentDateTime);
+                    var handled = await _shiftAttendanceHandlerService.HandleLogoutAttendanceAsync(userId, shift, currentDateTime);
+                    
+                    if (handled)
+                    {
+                        logoutHandled = true;
+                    }
+                    
                     _logger.LogInformation("User {UserId} logout attendance handled for shift {ShiftName} (Mode: {ShiftMode}): {Handled}", 
-                        userId, shift.Name, shift.Mode, logoutHandled);
+                        userId, shift.Name, shift.Mode, handled);
                 }
+
+                // **NEW: Update user status to offline after logout**
+                _userStatusService.EnqueueStatusUpdate(userId, isActive: false);
+                _logger.LogInformation("Enqueued status update to offline for user {UserId}", userId);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error handling logout for user {UserId}", userId);
+                
+                // **IMPORTANT: Still update user status to offline even if attendance fails**
+                try
+                {
+                    _userStatusService.EnqueueStatusUpdate(userId, isActive: false);
+                    _logger.LogInformation("Status updated to offline for user {UserId} despite logout error", userId);
+                }
+                catch (Exception statusEx)
+                {
+                    _logger.LogError(statusEx, "Failed to update status for user {UserId} after logout error", userId);
+                }
                 // Don't throw - logout should proceed even if attendance fails
             }
         }
