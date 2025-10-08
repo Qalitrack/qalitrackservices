@@ -13,7 +13,6 @@ class MicroserviceAPI {
      */
     async getMicroserviceData() {
         try {
-            console.log('Fetching microservice data...');
 
             const response = await backupApiClient.get(this.endpoint);
             return response.data;
@@ -58,14 +57,12 @@ class MicroserviceAPI {
                 throw new Error('Microservice name is required for update');
             }
             
-            console.log(`Updating microservice: ${name}`, updateData);
             
             const response = await backupApiClient.put(
                 `${this.endpoint}/${encodeURIComponent(name)}`,
                 updateData
             );
             
-            console.log('Microservice updated successfully:', response.data);
             return response.data;
             
         } catch (error) {
@@ -94,14 +91,9 @@ class MicroserviceAPI {
             if (!name) {
                 throw new Error('Microservice name is required for deletion');
             }
-            
-            console.log(`Deleting microservice: ${name}`);
-            
             const response = await backupApiClient.delete(
                 `${this.endpoint}/${encodeURIComponent(name)}`
             );
-            
-            console.log('Microservice deleted successfully');
             return response.data;
             
         } catch (error) {
@@ -133,7 +125,6 @@ class MicroserviceAPI {
             console.log('Creating new microservice...', microserviceData);
             
             const response = await backupApiClient.post(this.endpoint, microserviceData);
-            console.log('Microservice created successfully:', response.data);
             return response.data;
             
         } catch (error) {
@@ -166,11 +157,6 @@ const microserviceAPI = new MicroserviceAPI();
 
 // Export both the class and instance for flexibility
 export { MicroserviceAPI, microserviceAPI };
-
-// If you want to automatically fetch data when the module is imported, uncomment:
-// microserviceAPI.init();
-
-// Example usage functions you can call:
 
 /**
  * Create a new microservice
@@ -227,21 +213,6 @@ export async function fetchMicroserviceData() {
         const data = await microserviceAPI.getMicroserviceData();
         return data;
     } catch (error) {
-        return null;
-    }
-}
-
-/**
- * Function to test the microservice endpoint
- */
-export async function testMicroserviceEndpoint() {
-    console.log('=== Testing Microservice Endpoint ===');
-
-    try {
-        const data = await microserviceAPI.getMicroserviceData();
-        return data;
-    } catch (error) {
-        console.log('❌ Microservice test failed');
         return null;
     }
 }

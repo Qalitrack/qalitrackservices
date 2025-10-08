@@ -32,10 +32,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Shift Instance Background Service is starting with optimized check intervals");
-        _logger.LogInformation("Frequent checks (starts/ending alerts): every {Minutes} minutes", _frequentCheckInterval.TotalMinutes);
-        _logger.LogInformation("Standard checks (completions/reminders): every {Minutes} minutes", _standardCheckInterval.TotalMinutes);
-
         while (!stoppingToken.IsCancellationRequested)
         {
             var now = DateTime.UtcNow;
@@ -52,7 +48,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 // Run time-critical checks more frequently
                 if (runFrequentChecks)
                 {
-                    _logger.LogDebug("Running frequent checks at {Time}", now);
                     
                     // Check for instances that need to start (time-critical)
                     await CheckForShiftStarts(shiftInstanceRepository, now);
@@ -66,7 +61,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 // Run less critical checks less frequently
                 if (runStandardChecks)
                 {
-                    _logger.LogDebug("Running standard checks at {Time}", now);
                     
                     // Check for instances that need reminder notifications (less critical)
                     await CheckForShiftReminders(shiftInstanceRepository, shiftNotificationService, userShiftRepository, now);
@@ -77,7 +71,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                     _lastStandardCheck = now;
                 }
                 
-                // Calculate the time until the next check is needed
                 var nextFrequentCheck = _lastFrequentCheck.Add(_frequentCheckInterval);
                 var nextStandardCheck = _lastStandardCheck.Add(_standardCheckInterval);
                 var nextCheck = new[] { nextFrequentCheck, nextStandardCheck }.Min();
@@ -85,25 +78,21 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 
                 if (delay > TimeSpan.Zero)
                 {
-                    _logger.LogDebug("Next check in {Seconds} seconds", delay.TotalSeconds);
                     await Task.Delay(delay, stoppingToken);
                 }
                 else
                 {
-                    // Small delay to prevent tight loop if something goes wrong with timing
                     await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
                 }
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
-                // Graceful shutdown
                 _logger.LogInformation("Background service is stopping...");
                 break;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing shift instances");
-                // Prevent tight error loops
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
         }
@@ -160,9 +149,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
             
-            _logger.LogInformation("=== CHECKING FOR SHIFTS TO START ===");
-            _logger.LogInformation("Current UTC time: {UtcNow:yyyy-MM-dd HH:mm:ss}", now);
-            _logger.LogInformation("Current Nairobi time: {NairobiNow:yyyy-MM-dd HH:mm:ss}", nairobiNow);
             
             // Get all scheduled shifts that should have started by now (past due in Nairobi time)
             // We need to look back a bit in case we missed any shifts due to service restart or delays
@@ -194,7 +180,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 .ThenBy(instance => instance.ScheduledStartTime)
                 .ToList();
             
-            _logger.LogInformation("Found {Count} scheduled shifts that should have started by now in Nairobi time", pastDueInstances.Count);
             foreach (var instance in pastDueInstances)
             {
                 var scheduledTime = TimeZoneInfo.ConvertTimeFromUtc(
@@ -221,16 +206,12 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 })
                 .OrderBy(instance => instance.ScheduledDate)
                 .ToList();
-                
-            _logger.LogInformation("Found {Count} upcoming shifts in the next {Minutes} minutes (Nairobi time)", 
-                upcomingInstances.Count, _frequentCheckInterval.TotalMinutes);
+            
             foreach (var instance in upcomingInstances)
             {
                 var scheduledTime = TimeZoneInfo.ConvertTimeFromUtc(
                     instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay),
                     nairobiTimeZone);
-                _logger.LogInformation("Upcoming shift - ID: {Id}, Scheduled (Nairobi): {ScheduledTime}, Status: {Status}", 
-                    instance.Id, scheduledTime, instance.Status);
             }
 
             // Combine and deduplicate
@@ -239,9 +220,7 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 .GroupBy(i => i.Id)
                 .Select(g => g.First())
                 .ToList();
-
-            _logger.LogInformation("Total unique shifts to process: {Count}", allInstances.Count);
-
+            
             // Process each instance
             foreach (var instance in allInstances)
             {
@@ -249,8 +228,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 
                 try
                 {
-                    _logger.LogInformation("Processing shift instance {InstanceId} - Scheduled: {ScheduledTime}, Current Status: {CurrentStatus}", 
-                        instance.Id, scheduledTime, instance.Status);
                     
                     // Double-check the status to avoid race conditions
                     if (instance.Status != ShiftInstanceStatus.Scheduled)
@@ -260,7 +237,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                         continue;
                     }
                     
-                    // Update the status
                     instance.Status = ShiftInstanceStatus.InProgress;
                     instance.UpdatedAt = now;
                     instance.UpdatedBy = "System";
@@ -270,16 +246,16 @@ public class ShiftInstanceBackgroundService : BackgroundService
                     
                     if (updatedInstance != null && updatedInstance.Status == ShiftInstanceStatus.InProgress)
                     {
-                        _logger.LogInformation("Successfully started shift instance {InstanceId}", instance.Id);
+                        _logger.LogInformation("Successfully started shift instance ");
                     }
                     else
                     {
-                        _logger.LogError("Failed to update status for shift instance {InstanceId}", instance.Id);
+                        _logger.LogError("Failed to update status for shift instance ");
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing shift instance {InstanceId}", instance.Id);
+                    _logger.LogError(ex, "Error processing shift instance");
                 }
             }
         }
@@ -322,8 +298,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                         instance.Shift?.Name ?? "Unknown Shift",
                         NotificationType.ShiftEndingAlert);
 
-                    _logger.LogInformation("Sent ending alert notifications for shift instance {InstanceId} to {UserCount} users", 
-                        instance.Id, activeUsers.Count);
                 }
             }
             catch (Exception ex)
@@ -337,14 +311,10 @@ public class ShiftInstanceBackgroundService : BackgroundService
     {
         try
         {
-            _logger.LogInformation("Checking for shift instances that should be completed. Current time: {Now}", now);
             
             // Convert current UTC time to Nairobi time
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
-            
-            _logger.LogInformation("Current Nairobi time: {NairobiNow}", nairobiNow);
-            _logger.LogInformation("Looking for InProgress instances with ScheduledEndTime < {Now} (Nairobi time)", nairobiNow);
             
             // Get all incomplete instances
             var allIncompleteInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress)).ToList();
@@ -361,7 +331,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 })
                 .ToList();
                 
-            _logger.LogInformation("Found {Count} instances to check for completion", instancesToCheck.Count);
 
             int completedCount = 0;
             int skippedCount = 0;
@@ -370,24 +339,14 @@ public class ShiftInstanceBackgroundService : BackgroundService
             {
                 try
                 {
-                    // Only mark as completed if it was in progress
                     if (instance.Status == ShiftInstanceStatus.InProgress)
                     {
-                        _logger.LogInformation("Completing shift instance {InstanceId} (was supposed to end at {EndTime})", 
-                            instance.Id, instance.ScheduledEndTime);
-                    
                         instance.Status = ShiftInstanceStatus.Completed;
                         instance.UpdatedAt = now;
                         await shiftInstanceRepository.UpdateAsync(instance);
                         completedCount++;
-                        _logger.LogInformation("Successfully marked shift instance {InstanceId} as completed", instance.Id);
                     }
-                    else
-                    {
-                        _logger.LogDebug("Skipping shift instance {InstanceId} with status {Status}", 
-                            instance.Id, instance.Status);
-                        skippedCount++;
-                    }
+                   
                 }
                 catch (Exception ex)
                 {
@@ -395,8 +354,7 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 }
             }
 
-            _logger.LogInformation("Completed processing: {Completed} shifts marked as completed, {Skipped} shifts skipped (not in progress)", 
-                completedCount, skippedCount);
+         
         }
         catch (Exception ex)
         {
