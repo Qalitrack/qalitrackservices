@@ -13,7 +13,7 @@ namespace UserService.Core.Services
     {
         private readonly IEmailQueueService _emailQueueService;
         private readonly ILogger<ShiftNotificationService> _logger;
-        private static readonly TimeZoneInfo _nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("East Africa Standard Time");
+        private static readonly TimeZoneInfo _nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
 
         public ShiftNotificationService(
             IEmailQueueService emailQueueService,
