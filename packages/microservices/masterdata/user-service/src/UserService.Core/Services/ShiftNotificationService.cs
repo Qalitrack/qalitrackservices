@@ -13,7 +13,30 @@ namespace UserService.Core.Services
     {
         private readonly IEmailQueueService _emailQueueService;
         private readonly ILogger<ShiftNotificationService> _logger;
-        private static readonly TimeZoneInfo _nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+        private static readonly TimeZoneInfo _nairobiTimeZone;
+
+        static ShiftNotificationService()
+        {
+            try
+            {
+                // Try to get the time zone by ID (works on Linux/macOS)
+                _nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                try
+                {
+                    // Fallback for Windows
+                    _nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. Africa Standard Time");
+                }
+                catch (Exception ex)
+                {
+                    // If both fail, use UTC as fallback (shouldn't happen in production)
+                    Console.WriteLine($"Warning: Could not find Nairobi time zone. Using UTC as fallback. Error: {ex.Message}");
+                    _nairobiTimeZone = TimeZoneInfo.Utc;
+                }
+            }
+        }
 
         public ShiftNotificationService(
             IEmailQueueService emailQueueService,
@@ -73,7 +96,9 @@ namespace UserService.Core.Services
                     continue;
                 }
 
-                var body = GetEmailBody(type, user.FullName, shiftName, startTime, endTime, reason, changes);
+                var utcStartTime = startTime.Kind == DateTimeKind.Utc ? startTime : startTime.ToUniversalTime();
+                var utcEndTime = endTime.Kind == DateTimeKind.Utc ? endTime : endTime.ToUniversalTime();
+                var body = GetEmailBody(type, user.FullName, shiftName, utcStartTime, utcEndTime, reason, changes);
                 var success = await SendEmailAsync(user.Email, subject, body);
                 if (success)
                     successCount++;
@@ -85,12 +110,10 @@ namespace UserService.Core.Services
 
         private string GetEmailBody(NotificationType type, string fullName, string shiftName, DateTime startTime, DateTime endTime, string? reason, string? changes)
         {
-            var nairobiStartTime = TimeZoneInfo.ConvertTimeFromUtc(startTime, _nairobiTimeZone);
-            var nairobiEndTime = TimeZoneInfo.ConvertTimeFromUtc(endTime, _nairobiTimeZone);
-
-            var formattedDate = nairobiStartTime.ToString("dddd, MMMM d, yyyy");
-            var formattedStartTime = nairobiStartTime.ToString("hh:mm tt");
-            var formattedEndTime = nairobiEndTime.ToString("hh:mm tt");
+            // Use the times as-is without any time zone conversion
+            var formattedDate = startTime.ToString("dddd, MMMM d, yyyy");
+            var formattedStartTime = startTime.ToString("HH:mm");
+            var formattedEndTime = endTime.ToString("HH:mm");
 
             var shiftDetails = $"""
                 <strong>Shift Details:</strong><br>

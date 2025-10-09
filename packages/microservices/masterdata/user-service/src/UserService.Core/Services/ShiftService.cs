@@ -125,10 +125,10 @@ namespace UserService.Core.Services
                     FullName: $"{us.User.FirstName} {us.User.LastName}"
                 ));
 
-                // For shift modifications, we'll use the shift's start and end times
-                // You might want to get specific instances if needed
-                var startDateTime = DateTime.Today.Add(shift.StartTime);
-                var endDateTime = DateTime.Today.Add(shift.EndTime);
+                // Use today's date in UTC with the shift's time components
+                var todayUtc = DateTime.UtcNow.Date;
+                var startDateTime = todayUtc.Add(shift.StartTime);
+                var endDateTime = todayUtc.Add(shift.EndTime);
 
                 await _shiftNotificationService.SendShiftNotificationsAsync(
                     users,
@@ -248,9 +248,10 @@ namespace UserService.Core.Services
 
                 var users = new[] { (Email: user.Email, FullName: $"{user.FirstName} {user.LastName}") };
                 
-                // For new assignments, we'll use the shift's start and end times
-                var startDateTime = DateTime.Today.Add(shift.StartTime);
-                var endDateTime = DateTime.Today.Add(shift.EndTime);
+                // Use today's date in UTC with the shift's time components
+                var todayUtc = DateTime.UtcNow.Date;
+                var startDateTime = todayUtc.Add(shift.StartTime);
+                var endDateTime = todayUtc.Add(shift.EndTime);
 
                 await _shiftNotificationService.SendShiftNotificationsAsync(
                     users,
@@ -312,9 +313,10 @@ namespace UserService.Core.Services
 
                 var users = new[] { (Email: user.Email, FullName: $"{user.FirstName} {user.LastName}") };
                 
-                // For removals, we'll use the shift's start and end times
-                var startDateTime = DateTime.Today.Add(shift.StartTime);
-                var endDateTime = DateTime.Today.Add(shift.EndTime);
+                // Use today's date in UTC with the shift's time components
+                var todayUtc = DateTime.UtcNow.Date;
+                var startDateTime = todayUtc.Add(shift.StartTime);
+                var endDateTime = todayUtc.Add(shift.EndTime);
 
                 await _shiftNotificationService.SendShiftNotificationsAsync(
                     users,
