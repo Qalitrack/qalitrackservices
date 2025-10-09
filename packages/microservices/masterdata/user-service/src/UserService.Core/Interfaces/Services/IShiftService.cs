@@ -21,5 +21,6 @@ namespace UserService.Core.Interfaces.Services
         Task<PagedResult<ShiftDto>> GetDeletedPagedAsync(PaginationParameters parameters);
         Task<ShiftResponse> CreateEnhancedAsync(CreateShiftRequest request);
         Task<ShiftResponse?> UpdateEnhancedAsync(string id, UpdateShiftRequest request);
+        Task<PagedResult<UserShiftDto>> GetDeletedUserShiftsPagedAsync(PaginationParameters parameters);
     }
 }

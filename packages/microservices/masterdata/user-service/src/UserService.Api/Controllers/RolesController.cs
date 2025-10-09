@@ -5,6 +5,7 @@ using UserService.Core.DTOs.Roles;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.DTOs.Common;
 using UserService.Core.DTOs.Permissions;
+using UserService.Core.DTOs.RolePermission;
 using UserService.Core.Entities;
 
 namespace UserService.Api.Controllers
@@ -454,6 +455,43 @@ namespace UserService.Api.Controllers
             {
                 _logger.LogError(ex, "Error occurred while getting permissions for role {RoleId}", roleId);
                 return StatusCode(500, "An error occurred while retrieving role permissions");
+            }
+        }
+        
+        [HttpGet("permissions/deleted")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(PagedResult<RolePermissionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDeletedRolePermissions(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false)
+        {
+            try
+            {
+                var parameters = new PaginationParameters
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    Search = search,
+                    SortBy = sortBy,
+                    SortDescending = sortDescending
+                };
+
+                var result = await _roleService.GetDeletedRolePermissionsPagedAsync(parameters);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving deleted role permissions");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { Success = false, Message = "An error occurred while retrieving deleted role permissions" });
             }
         }
     }

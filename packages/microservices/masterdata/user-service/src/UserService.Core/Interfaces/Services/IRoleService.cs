@@ -1,5 +1,6 @@
 using UserService.Core.DTOs.Roles;
 using UserService.Core.DTOs.Common;
+using UserService.Core.DTOs.RolePermission;
 using UserService.Core.Entities;
 
 namespace UserService.Core.Interfaces.Services
@@ -15,5 +16,5 @@ namespace UserService.Core.Interfaces.Services
         Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);
         Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId);
         Task<PagedResult<RoleDto>> GetDeletedPagedAsync(PaginationParameters parameters);
-    }
+        Task<PagedResult<RolePermissionDto>> GetDeletedRolePermissionsPagedAsync(PaginationParameters parameters);    }
 }

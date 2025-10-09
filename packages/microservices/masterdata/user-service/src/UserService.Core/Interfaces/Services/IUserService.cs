@@ -1,6 +1,7 @@
 using UserService.Core.DTOs;
 using UserService.Core.DTOs.Auth;
 using UserService.Core.DTOs.Common;
+using UserService.Core.DTOs.Shift;
 using UserService.Core.DTOs.User;
 using UserService.Core.Entities;
 
