@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Shift;
 using UserService.Core.Interfaces;
 using Microsoft.Extensions.Logging;
+using UserService.Core.DTOs.Common;
 using UserService.Core.Interfaces.Services;
 
 namespace UserService.Api.Controllers
@@ -407,6 +408,70 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while getting users assigned to shift", 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+        }
+        [HttpGet("deleted/paged")]
+        [Authorize(Policy = "users.view")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> GetDeletedUserShiftsPaged([FromQuery] PaginationParameters parameters)
+        {
+            try
+            {
+                if (parameters == null)
+                {
+                    return BadRequest(new { 
+                        Success = false, 
+                        Message = "Pagination parameters are required", 
+                        Errors = (string[])null, 
+                        StatusCode = 400 
+                    });
+                }
+
+                var result = await _shiftService. GetDeletedUserShiftsPagedAsync(parameters);
+                
+                return Ok(new { 
+                    success = true,
+                    data = result,
+                    message = $"Retrieved deleted user shifts for page {parameters.Page}" 
+                });
+            }
+            catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error retrieving deleted user shifts");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = ex.Message, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
+            {
+                string errorMessage = pgEx.SqlState switch
+                {
+                    "23503" => "Referenced record does not exist",
+                    "23514" => "Data validation failed - check constraint violation",
+                    _ => $"Database error: {pgEx.MessageText}"
+                };
+
+                _logger.LogWarning(ex, "Database constraint error retrieving deleted user shifts: {ErrorMessage}", errorMessage);
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = errorMessage, 
+                    Errors = (string[])null, 
+                    StatusCode = 400 
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving deleted user shifts");
+                return BadRequest(new { 
+                    Success = false, 
+                    Message = "An error occurred while retrieving deleted user shifts", 
                     Errors = (string[])null, 
                     StatusCode = 400 
                 });

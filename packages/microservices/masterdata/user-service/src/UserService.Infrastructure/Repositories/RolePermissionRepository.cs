@@ -62,51 +62,7 @@ public class RolePermissionRepository(UserServiceDbContext dbContext, ILogger<Ro
         await _context.SaveChangesAsync();
         return true;
     }
-
-    public async Task<string?> GetByRoleAndPermissionAsync(string roleId, string permissionId)
-    {
-        return await _context.RolePermissions
-            .Where(rp => rp.RoleId == roleId && rp.PermissionId == permissionId && !rp.IsDeleted)
-            .Select(rp => rp.Id)
-            .FirstOrDefaultAsync();
-    }
-
-    /// <summary>
-    /// Checks if a role-permission relationship exists (active or deleted) and returns its state
-    /// </summary>
-    public async Task<(bool Exists, bool IsDeleted, RolePermission Entity)> CheckRolePermissionExistsAsync(string roleId, string permissionId)
-    {
-        var entity = await _context.RolePermissions
-            .IgnoreQueryFilters()  // This allows us to see soft-deleted entities
-            .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-        if (entity == null)
-        {
-            return (false, false, null);
-        }
-
-        return (true, entity.IsDeleted, entity);
-    }
-
-    /// <summary>
-    /// Restores a soft-deleted role-permission relationship
-    /// </summary>
-    public async Task<bool> RestoreRolePermissionAsync(RolePermission entity)
-    {
-        if (entity == null)
-        {
-            return false;
-        }
-
-        var currentUserId = GetCurrentUserId();
-        entity.IsDeleted = false;
-        entity.UpdatedAt = DateTime.UtcNow;
-        entity.UpdatedBy = currentUserId;
-        entity.AssignedAt = DateTime.UtcNow;  // Update assignment time
-
-        await _context.SaveChangesAsync();
-        return true;
-    }
+    
 
     public async Task AddAsync(RolePermission rolePermission)
     {
