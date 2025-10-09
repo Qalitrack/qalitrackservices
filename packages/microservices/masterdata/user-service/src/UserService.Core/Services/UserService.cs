@@ -8,6 +8,7 @@ using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
+using UserService.Core.DTOs.Shift;
 using UserService.Core.Interfaces.Emails;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;

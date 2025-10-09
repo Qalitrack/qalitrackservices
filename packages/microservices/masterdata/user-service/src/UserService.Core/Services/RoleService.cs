@@ -5,6 +5,7 @@ using UserService.Core.Entities;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.DTOs.Common;
+using UserService.Core.DTOs.RolePermission;
 using UserBasicInfoDto = UserService.Core.DTOs.Roles.UserBasicInfoDto;
 
 namespace UserService.Core.Services;
@@ -265,6 +266,22 @@ public async Task<PagedResult<RoleDto>> GetDeletedPagedAsync(PaginationParameter
         Page = pagedRoles.Page,
         PageSize = pagedRoles.PageSize,
         TotalCount = pagedRoles.TotalCount
+    };
+}
+public async Task<PagedResult<RolePermissionDto>> GetDeletedRolePermissionsPagedAsync(PaginationParameters parameters)
+{
+    if (parameters == null)
+        throw new ArgumentNullException(nameof(parameters));
+
+    var pagedRolePermissions = await _rolePermissionRepository.GetDeletedPagedAsync(parameters);
+    var mappedRolePermissions = _mapper.Map<IEnumerable<RolePermissionDto>>(pagedRolePermissions.Items);
+
+    return new PagedResult<RolePermissionDto>
+    {
+        Items = mappedRolePermissions,
+        Page = pagedRolePermissions.Page,
+        PageSize = pagedRolePermissions.PageSize,
+        TotalCount = pagedRolePermissions.TotalCount
     };
 }
 }

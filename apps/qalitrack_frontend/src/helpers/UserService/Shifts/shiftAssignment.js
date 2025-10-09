@@ -207,3 +207,48 @@ export const removeShiftFromUser = async (userId, shiftId) => {
         throw err;
     }
 };
+
+
+/**
+ * Fetches a paginated list of deleted shifts from the server.
+ * @param {number} page - The page number to fetch.
+ * @param {number} pageSize - The number of shifts per page.
+ * @param {AbortSignal} signal - An optional AbortSignal to cancel the request.
+ * @returns {Promise<object>} A promise that resolves to the paginated deleted shift data object.
+ */
+export const fetchDeletedUserShifts = async (page = 1, pageSize = 10, signal) => {
+    try {
+        const response = await apiClient.get('/UserShift/deleted/paged', {
+            params: {
+                page,
+                pageSize,
+            },
+            signal,
+        });
+        console.log('Deleted User Shifts response:', response.data);
+        return response.data.data;
+    } catch (err) {
+        if (err.name !== 'CanceledError') {
+            console.error('Fetch deleted shifts error:', err);
+        }
+        throw err;
+    }
+};
+
+/**
+ * Fetches a single shift by ID from the server.
+ * @param {string} shiftId - The ID of the shift to fetch.
+ * @param {AbortSignal} signal - An optional AbortSignal to cancel the request.
+ * @returns {Promise<object>} A promise that resolves to the shift data object.
+ */
+export const fetchShiftById = async (shiftId, signal) => {
+    try {
+        const response = await apiClient.get(`/Shift/${shiftId}`, { signal });
+        return response.data;
+    } catch (err) {
+        if (err.name !== 'CanceledError') {
+            console.error(`Fetch shift ${shiftId} error:`, err);
+        }
+        throw err;
+    }
+};

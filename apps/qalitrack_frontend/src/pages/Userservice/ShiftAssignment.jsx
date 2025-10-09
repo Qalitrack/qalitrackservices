@@ -7,6 +7,8 @@ import {
     removeShiftFromUser,
     removeShiftFromRole,
     assignShiftToRole,
+    fetchDeletedUserShifts,
+    fetchShiftById,
 } from "../../helpers/UserService/Shifts/shiftAssignment.js";
 import { ChevronLeft, ChevronRight, Users, Tag, Download } from "lucide-react";
 import { fetchUsers } from "../../helpers/UserService/Users/users.js";
@@ -87,6 +89,7 @@ const ShiftAssignment = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showDeleted, setShowDeleted] = useState(false);
 
     // Modals
     const [isViewUsersModalOpen, setViewUsersModalOpen] = useState(false);
@@ -149,8 +152,73 @@ const ShiftAssignment = () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchShifts(page, pagination.pageSize);
-            setShifts(data.items || []);
+            let data;
+            if (showDeleted) {
+                data = await fetchDeletedUserShifts(page, pagination.pageSize);
+                // Group by shiftId
+                const grouped = data.items.reduce((acc, item) => {
+                    const shiftKey = item.shiftId;
+                    if (!acc[shiftKey]) {
+                        acc[shiftKey] = {
+                            id: shiftKey,
+                            shiftName: item.shiftName || 'Unknown Shift',
+                            userAssignments: [],
+                            removedCount: 0,
+                        };
+                    }
+                    acc[shiftKey].userAssignments.push({
+                        userId: item.userId,
+                        assignedAt: item.assignedAt,
+                        updatedAt: item.updatedAt,
+                        updatedBy: item.updatedBy,
+                        deletedAt: item.deletedAt || item.assignedAt,
+                    });
+                    acc[shiftKey].removedCount++;
+                    return acc;
+                }, {});
+                let processedShifts = Object.values(grouped).map(group => ({
+                    ...group,
+                    name: `${group.shiftName} (${group.removedCount} removed users)`,
+                    startTime: null,
+                    endTime: null,
+                    mode: 0,
+                    assignedUsersCount: group.removedCount,
+                    assignedRolesCount: 0,
+                    createdAt: group.userAssignments[0]?.deletedAt, // Use first one's deletedAt as representative
+                    userIds: group.userAssignments.map(ua => ua.userId), // For compatibility if needed
+                }));
+                // Fetch shift details if possible
+                try {
+                    const uniqueShiftIds = processedShifts.map(s => s.id);
+                    const shiftPromises = uniqueShiftIds.map(async (id) => {
+                        try {
+                            const shift = await fetchShiftById(id);
+                            return { id, shift };
+                        } catch (err) {
+                            console.warn(`Failed to fetch shift ${id}:`, err);
+                            return { id, shift: null };
+                        }
+                    });
+                    const shiftResults = await Promise.all(shiftPromises);
+                    const shiftMap = shiftResults.reduce((acc, { id, shift }) => {
+                        if (shift) acc[id] = shift;
+                        return acc;
+                    }, {});
+                    processedShifts = processedShifts.map(s => ({
+                        ...s,
+                        name: shiftMap[s.id]?.name ? `${shiftMap[s.id].name} (${s.removedCount} removed users)` : s.name,
+                        startTime: shiftMap[s.id]?.startTime || s.startTime,
+                        endTime: shiftMap[s.id]?.endTime || s.endTime,
+                        mode: shiftMap[s.id]?.mode || s.mode,
+                    }));
+                } catch (err) {
+                    console.error('Error fetching shift details:', err);
+                }
+                setShifts(processedShifts);
+            } else {
+                data = await fetchShifts(page, pagination.pageSize);
+                setShifts(data.items || []);
+            }
             setPagination({
                 page: data.page || 1,
                 pageSize: data.pageSize || 10,
@@ -168,7 +236,7 @@ const ShiftAssignment = () => {
 
     useEffect(() => {
         loadData(pagination.page);
-    }, [pagination.page]);
+    }, [pagination.page, showDeleted]);
 
     // Pagination handlers
     const handlePreviousPage = () => {
@@ -191,22 +259,56 @@ const ShiftAssignment = () => {
         setModalLoading(true);
         setModalError(null);
         try {
-            const usersData = await fetchUsers(1, 1000);
-            const users = usersData.items || [];
-            const shiftUsers = await fetchShiftUsers(shift.id);
-            const normalizedShiftUsers = Array.isArray(shiftUsers)
-                ? shiftUsers
-                : shiftUsers.users || [];
-            const assignedUserIds = new Set(normalizedShiftUsers.map((u) => u.id));
-
-            setAllUsers(users);
-            setCheckboxStateUsers(
-                users.reduce((acc, user) => {
-                    acc[user.id] = assignedUserIds.has(user.id);
+            if (showDeleted) {
+                const removedAssignments = shift.userAssignments || [];
+                const usersData = await fetchUsers(1, 1000);
+                const users = usersData.items || [];
+                const usersMap = users.reduce((acc, u) => {
+                    acc[u.id] = u;
                     return acc;
-                }, {})
-            );
+                }, {});
+                // Collect all relevant user IDs for fetching (removed users + updatedBy)
+                const allRelevantUserIds = [...new Set([
+                    ...removedAssignments.map(ua => ua.userId),
+                    ...removedAssignments.map(ua => ua.updatedBy).filter(Boolean)
+                ])];
+                // If more users needed, but assuming 1000 is sufficient; otherwise, adjust fetchUsers call
+                const removedUsersWithDetails = removedAssignments
+                    .map(ua => {
+                        const user = usersMap[ua.userId];
+                        if (!user) return null;
+                        const updatedByUser = ua.updatedBy ? usersMap[ua.updatedBy] : null;
+                        return {
+                            ...user,
+                            assignment: ua,
+                            updatedByUser: updatedByUser ? `${updatedByUser.firstName || ''} ${updatedByUser.lastName || ''}`.trim() || 'Unknown' : 'Unknown'
+                        };
+                    })
+                    .filter(Boolean);
+                setAllUsers(removedUsersWithDetails);
+                setCheckboxStateUsers(
+                    removedUsersWithDetails.reduce((acc, user) => {
+                        acc[user.id] = true;
+                        return acc;
+                    }, {})
+                );
+            } else {
+                const usersData = await fetchUsers(1, 1000);
+                const users = usersData.items || [];
+                const shiftUsers = await fetchShiftUsers(shift.id);
+                const normalizedShiftUsers = Array.isArray(shiftUsers)
+                    ? shiftUsers
+                    : shiftUsers.users || [];
+                const assignedUserIds = new Set(normalizedShiftUsers.map((u) => u.id));
 
+                setAllUsers(users);
+                setCheckboxStateUsers(
+                    users.reduce((acc, user) => {
+                        acc[user.id] = assignedUserIds.has(user.id);
+                        return acc;
+                    }, {})
+                );
+            }
             setViewUsersModalOpen(true);
         } catch (err) {
             setModalError(err.message || "Failed to fetch users.");
@@ -264,6 +366,7 @@ const ShiftAssignment = () => {
 
     // Handle Roles Modal
     const handleViewRolesClick = async (shift) => {
+        if (showDeleted) return;
         setSelectedShift(shift);
         setModalLoading(true);
         setModalError(null);
@@ -309,7 +412,7 @@ const ShiftAssignment = () => {
                 setShifts((prev) =>
                     prev.map((shift) =>
                         shift.id === selectedShift.id
-                            ? { ...shift, assignedRolesCount: (shift.assignedRolesCount || 0) + 1 }
+                            ? { ...shift, assignedRolesCount: (shift.assignedRolesCount ) }
                             : shift
                     )
                 );
@@ -320,7 +423,7 @@ const ShiftAssignment = () => {
                 setShifts((prev) =>
                     prev.map((shift) =>
                         shift.id === selectedShift.id
-                            ? { ...shift, assignedRolesCount: (shift.assignedRolesCount || 1) - 1 }
+                            ? { ...shift, assignedRolesCount: (shift.assignedRolesCount) }
                             : shift
                     )
                 );
@@ -363,6 +466,11 @@ const ShiftAssignment = () => {
     };
 
     const generatePDF = async () => {
+        if (showDeleted) {
+            setError('PDF generation not available for deleted view.');
+            setLoading(false);
+            return false;
+        }
         setLoading(true);
         try {
             // Fetch all shifts with pagination
@@ -577,12 +685,27 @@ const ShiftAssignment = () => {
                 </h2>
                 <button
                     onClick={handleDownloadPDF}
-                    className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
-                    title="Download Shift Assignments as PDF"
+                    disabled={showDeleted}
+                    className={`flex items-center gap-2 px-4 py-2 border border-amber-500 rounded-lg transition-colors shadow ${showDeleted ? 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed' : 'bg-amber-500 text-white hover:bg-amber-600'}`}
+                    title={showDeleted ? "Download not available for deleted view" : "Download Shift Assignments as PDF"}
                 >
                     <Download size={18} />
                     <span className="hidden md:inline">Download PDF</span>
                 </button>
+            </div>
+            <div className="mb-4">
+                <label className="flex items-center space-x-2">
+                    <input
+                        type="checkbox"
+                        checked={showDeleted}
+                        onChange={(e) => {
+                            setShowDeleted(e.target.checked);
+                            setPagination((p) => ({ ...p, page: 1 }));
+                        }}
+                        className="rounded border-gray-300"
+                    />
+                    <span className="text-sm text-gray-700">Show Deleted</span>
+                </label>
             </div>
 
             <div className="overflow-x-auto">
@@ -592,12 +715,16 @@ const ShiftAssignment = () => {
                         <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
                             Name
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                            Start Time
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                            End Time
-                        </th>
+                        {!showDeleted && (
+                            <>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
+                                    Start Time
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
+                                    End Time
+                                </th>
+                            </>
+                        )}
                         <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
                             Mode
                         </th>
@@ -615,27 +742,31 @@ const ShiftAssignment = () => {
                             <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                 {shift.name}
                             </td>
+                            {!showDeleted && (
+                                <>
+                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                        {isValidDateString(shift.startTime)
+                                            ? format(parseISO(shift.startTime), "PPP p")
+                                            : formatTimeOnlyString(shift.startTime) || '-'}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                        {isValidDateString(shift.endTime)
+                                            ? format(parseISO(shift.endTime), "PPP p")
+                                            : formatTimeOnlyString(shift.endTime) || '-'}
+                                    </td>
+                                </>
+                            )}
                             <td className="px-6 py-4 text-sm text-gray-500">
-                                {isValidDateString(shift.startTime)
-                                    ? format(parseISO(shift.startTime), "PPP p")
-                                    : formatTimeOnlyString(shift.startTime)}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500">
-                                {isValidDateString(shift.endTime)
-                                    ? format(parseISO(shift.endTime), "PPP p")
-                                    : formatTimeOnlyString(shift.endTime)}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500">
-                                {shift.mode}
+                                {shift.mode === 0 ? 'Open' : shift.mode === 1 ? 'Closed' : shift.mode || 'N/A'}
                             </td>
                             <td className="px-6 py-4 text-sm">
                                 <button
                                     onClick={() => handleViewUsersClick(shift)}
-                                    className={`flex items-center ${
+                                    className={`flex items-center hover:underline ${
                                         (shift.assignedUsersCount || 0) > 0
                                             ? "text-green-600 font-semibold"
                                             : "text-amber-500"
-                                    } hover:underline`}
+                                    }`}
                                 >
                                     <Users size={18} className="mr-1" />
                                     {shift.assignedUsersCount || 0}
@@ -644,10 +775,11 @@ const ShiftAssignment = () => {
                             <td className="px-6 py-4 text-sm">
                                 <button
                                     onClick={() => handleViewRolesClick(shift)}
-                                    className={`flex items-center hover:underline`}
+                                    disabled={showDeleted}
+                                    className={`flex items-center ${showDeleted ? 'opacity-50 cursor-not-allowed' : 'hover:underline'}`}
                                 >
                                     <Tag size={18} className="mr-1" />
-                                    {shift.assignedRolesCount }
+                                    {shift.assignedRolesCount}
                                 </button>
                             </td>
                         </tr>
@@ -705,7 +837,7 @@ const ShiftAssignment = () => {
             {/* Users Modal */}
             <Modal isOpen={isViewUsersModalOpen}>
                 <h3 className="text-lg font-bold mb-4">
-                    Manage Users for "{selectedShift?.name}"
+                    {showDeleted ? 'Removed Users for' : 'Manage Users for'} "{selectedShift?.name}"
                 </h3>
                 {usersModalMessage.text && (
                     <div
@@ -733,37 +865,59 @@ const ShiftAssignment = () => {
                                 {allUsers.map((user) => (
                                     <li
                                         key={user.id}
-                                        className="flex items-center justify-between bg-gray-100 p-3 rounded-md text-sm"
+                                        className="flex flex-col bg-gray-100 p-3 rounded-md text-sm"
                                     >
-                                        <div className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={checkboxStateUsers[user.id] || false}
-                                                readOnly
-                                                className="mr-2 h-4 w-4 text-white focus:ring-amber-500 border-gray-300 rounded"
-                                            />
-                                            <span>{user.firstName} {user.lastName} ({user.email})</span>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checkboxStateUsers[user.id] || false}
+                                                    readOnly
+                                                    className="mr-2 h-4 w-4 text-white focus:ring-amber-500 border-gray-300 rounded"
+                                                />
+                                                <span className="font-medium">{user.firstName} {user.lastName} ({user.email})</span>
+                                            </div>
+                                            <div className="space-x-2">
+                                                {!showDeleted && (
+                                                    <>
+                                                        {!checkboxStateUsers[user.id] && (
+                                                            <button
+                                                                onClick={() => handleUserActionClick(user.id, 'add')}
+                                                                className="px-3 py-1 bg-amber-500 text-white text-xs rounded hover:bg-amber-600"
+                                                                disabled={modalLoading}
+                                                            >
+                                                                Add
+                                                            </button>
+                                                        )}
+                                                        {checkboxStateUsers[user.id] && (
+                                                            <button
+                                                                onClick={() => handleUserActionClick(user.id, 'remove')}
+                                                                className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                                                                disabled={modalLoading}
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="space-x-2">
-                                            {!checkboxStateUsers[user.id] && (
-                                                <button
-                                                    onClick={() => handleUserActionClick(user.id, 'add')}
-                                                    className="px-3 py-1 bg-amber-500 text-white text-xs rounded hover:bg-amber-600"
-                                                    disabled={modalLoading}
-                                                >
-                                                    Add
-                                                </button>
-                                            )}
-                                            {checkboxStateUsers[user.id] && (
-                                                <button
-                                                    onClick={() => handleUserActionClick(user.id, 'remove')}
-                                                    className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
-                                                    disabled={modalLoading}
-                                                >
-                                                    Remove
-                                                </button>
-                                            )}
-                                        </div>
+                                        {showDeleted && user.assignment && (
+                                            <div className="text-xs text-gray-600 space-y-1 pl-6">
+                                                <div>
+                                                    <span className="font-semibold">Assigned At:</span>{' '}
+                                                    {format(parseISO(user.assignment.assignedAt), 'PPP p')}
+                                                </div>
+                                                <div>
+                                                    <span className="font-semibold">Updated At:</span>{' '}
+                                                    {format(parseISO(user.assignment.updatedAt), 'PPP p')}
+                                                </div>
+                                                <div>
+                                                    <span className="font-semibold">Updated By:</span>{' '}
+                                                    {user.updatedByUser}
+                                                </div>
+                                            </div>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
