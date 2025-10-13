@@ -65,6 +65,11 @@ jobs:
             sleep 2
           done
       
+      - name: Install EF Core tools
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.0.*
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+      
       - name: Restore dependencies
         run: |
           cd ${{ env.SERVICE_PATH }}
@@ -120,15 +125,37 @@ jobs:
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         run: |
           cd ${{ env.SERVICE_PATH }}
+          
+          # Verify dotnet-ef is available
+          if ! command -v dotnet-ef &> /dev/null; then
+            echo "dotnet-ef not found in PATH, attempting to use from global tools..."
+            export PATH="$PATH:$HOME/.dotnet/tools"
+          fi
+          
           # Check if Entity Framework migrations exist
           if [ -d "src/QaliTrack.MasterData.Infrastructure/Migrations" ]; then
-            echo "Running database migrations..."
+            echo "Migrations folder found. Running database migrations..."
+            
+            # List migrations
+            echo "Available migrations:"
+            dotnet ef migrations list \
+              --project src/QaliTrack.MasterData.Infrastructure/QaliTrack.MasterData.Infrastructure.csproj \
+              --startup-project src/QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj \
+              --no-build || echo "Could not list migrations"
+            
+            # Apply migrations
+            echo "Applying migrations to database..."
             dotnet ef database update \
               --project src/QaliTrack.MasterData.Infrastructure/QaliTrack.MasterData.Infrastructure.csproj \
               --startup-project src/QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj \
-              --verbose
+              --verbose \
+              --no-build
+            
+            echo "✓ Migrations applied successfully"
           else
-            echo "No Entity Framework migrations found, skipping..."
+            echo "No Entity Framework migrations folder found at src/QaliTrack.MasterData.Infrastructure/Migrations"
+            echo "Checking alternative locations..."
+            find . -type d -name "Migrations" || echo "No Migrations folder found anywhere"
           fi
         continue-on-error: true
       
