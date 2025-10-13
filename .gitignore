@@ -185,11 +185,6 @@ mysql-data/
 redis-data/
 mongodb-data/
 
-# Entity Framework / ORM files
-Migrations/
-*.migrations.sql
-*.migration.sql
-*Migration*.sql
 
 # H2 Database (Java)
 *.h2.db
