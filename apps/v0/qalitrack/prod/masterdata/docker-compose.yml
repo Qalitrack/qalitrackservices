@@ -44,42 +44,41 @@ services:
       # Enable Traefik
       - "traefik.enable=true"
       
-      # MasterData API routes (PROD) - specific masterdata endpoints with JWT auth
-      - "traefik.http.routers.masterdata-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData`)"
-      - "traefik.http.routers.masterdata-api-prod.entrypoints=web,websecure"
-      - "traefik.http.routers.masterdata-api-prod.service=masterdata-service-prod"
-      - "traefik.http.routers.masterdata-api-prod.middlewares=masterdata-jwt-forwardauth,strip-api-prefix"
-      - "traefik.http.routers.masterdata-api-prod.tls=true"
-      - "traefik.http.routers.masterdata-api-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.masterdata-api-prod.priority=100"
+      # New shared middleware to strip full /api/MasterData prefix (for Swagger and health)
+      - "traefik.http.middlewares.strip-api-masterdata.stripprefix.prefixes=/api/MasterData"
       
-      # Health check endpoint (PROD) - no JWT required
-      - "traefik.http.routers.masterdata-health-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData/health`)"
-      - "traefik.http.routers.masterdata-health-prod.entrypoints=web,websecure"
-      - "traefik.http.routers.masterdata-health-prod.service=masterdata-service-prod"
-      - "traefik.http.routers.masterdata-health-prod.middlewares=strip-api-prefix"
-      - "traefik.http.routers.masterdata-health-prod.tls=true"
-      - "traefik.http.routers.masterdata-health-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.masterdata-health-prod.priority=110"
-      
-      # Swagger UI (PROD) - no JWT required (public documentation)
-      - "traefik.http.routers.masterdata-swagger-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData/swagger`)"
-      - "traefik.http.routers.masterdata-swagger-prod.entrypoints=web,websecure"
-      - "traefik.http.routers.masterdata-swagger-prod.service=masterdata-service-prod"
-      - "traefik.http.routers.masterdata-swagger-prod.middlewares=strip-api-prefix"
-      - "traefik.http.routers.masterdata-swagger-prod.tls=true"
-      - "traefik.http.routers.masterdata-swagger-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.masterdata-swagger-prod.priority=110"
-      
-      # Service definition
-      - "traefik.http.services.masterdata-service-prod.loadbalancer.server.port=80"
+      # Existing middleware to strip /api prefix (for general API routes)
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
       
       # JWT ForwardAuth middleware
       - "traefik.http.middlewares.masterdata-jwt-forwardauth.forwardauth.address=http://qalitrack-jwt-auth-service:3000/auth"
       - "traefik.http.middlewares.masterdata-jwt-forwardauth.forwardauth.authResponseHeaders=X-User-Id,X-User-Email"
       
-      # Middleware to strip /api prefix (shared across services)
-      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
+      # General MasterData API routes (PROD) - strips only /api, forwards to /MasterData/... (excludes Swagger/health via priorities)
+      - "traefik.http.routers.masterdata-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData`) && !PathPrefix(`/api/MasterData/swagger`) && !PathPrefix(`/api/MasterData/health`)"
+      - "traefik.http.routers.masterdata-api-prod.entrypoints=websecure"
+      - "traefik.http.routers.masterdata-api-prod.service=masterdata-service-prod"
+      - "traefik.http.routers.masterdata-api-prod.middlewares=masterdata-jwt-forwardauth,strip-api-prefix"
+      - "traefik.http.routers.masterdata-api-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.masterdata-api-prod.priority=100"
+      
+      # Health check endpoint (PROD) - strips full /api/MasterData, forwards to /health (no JWT)
+      - "traefik.http.routers.masterdata-health-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData/health`)"
+      - "traefik.http.routers.masterdata-health-prod.entrypoints=websecure"
+      - "traefik.http.routers.masterdata-health-prod.service=masterdata-service-prod"
+      - "traefik.http.routers.masterdata-health-prod.middlewares=strip-api-masterdata"
+      - "traefik.http.routers.masterdata-health-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.masterdata-health-prod.priority=105"
+      
+      # Swagger UI (PROD) - strips /api/MasterData, forwards to / (no JWT)
+      - "traefik.http.routers.masterdata-swagger-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && (PathPrefix(`/api/MasterData/`) || Path(`/api/MasterData`) || Path(`/api/MasterData/swagger/v1/swagger.json`))"
+      - "traefik.http.routers.masterdata-swagger-prod.entrypoints=websecure"
+      - "traefik.http.routers.masterdata-swagger-prod.service=masterdata-service-prod"  
+      - "traefik.http.routers.masterdata-swagger-prod.middlewares=strip-api-masterdata"
+      - "traefik.http.routers.masterdata-swagger-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.masterdata-swagger-prod.priority=110"      
+      # Service definition
+      - "traefik.http.services.masterdata-service-prod.loadbalancer.server.port=80"
 
   # MasterData Database (PROD)
   postgres-masterdata-prod:
