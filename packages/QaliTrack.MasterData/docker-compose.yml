@@ -8,11 +8,11 @@ services:
     ports:
       - "8080:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=production
       - DATABASE_PROVIDER=PostgreSQL
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
-      - POSTGRES_DATABASE=qalitrack_masterdata_test
+      - POSTGRES_DATABASE=qalitrack_masterdata
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=postgres
       # MIGRATION SETTINGS - Changed to enable migrations

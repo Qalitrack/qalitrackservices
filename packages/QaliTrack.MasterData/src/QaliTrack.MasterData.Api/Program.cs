@@ -91,7 +91,10 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "QaliTrack MasterData API v1");
+    var swaggerJsonPath = builder.Environment.IsDevelopment()
+        ? "/swagger/v1/swagger.json"
+        : "/api/MasterData/swagger/v1/swagger.json";
+    c.SwaggerEndpoint(swaggerJsonPath, "QaliTrack MasterData API v1");
     c.RoutePrefix = string.Empty; // Serve Swagger at root
 });
 
