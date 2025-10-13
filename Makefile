@@ -1687,3 +1687,26 @@ docker-build-technician-api:
 docker-run-technician-api:
 	@echo "Running Docker container for TechnicianApi service..."
 	@docker run -p 5000:80 technician-api
+
+# Masterdata Service Targets (Auto-generated)
+.PHONY: build-masterdata run-masterdata test-masterdata
+
+build-masterdata:
+	@echo "Building Masterdata service..."
+	@cd packages/microservices/masterdata/masterdata && dotnet build
+
+run-masterdata:
+	@echo "Running Masterdata service..."
+	@cd packages/microservices/masterdata/masterdata && dotnet run --project src/Masterdata.Api
+
+test-masterdata:
+	@echo "Testing Masterdata service..."
+	@cd packages/microservices/masterdata/masterdata && dotnet test tests/Masterdata.Tests --verbosity normal
+
+docker-build-masterdata:
+	@echo "Building Docker image for Masterdata service..."
+	@cd packages/microservices/masterdata/masterdata && docker build -t masterdata .
+
+docker-run-masterdata:
+	@echo "Running Docker container for Masterdata service..."
+	@docker run -p 5000:80 masterdata
