@@ -10,32 +10,6 @@ using PostgresExceptions = EntityFramework.Exceptions.PostgreSQL.ExceptionProces
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load .env file if it exists
-var envFile = Path.Combine(Directory.GetCurrentDirectory(), ".env");
-if (File.Exists(envFile))
-{
-    Console.WriteLine($"Loading environment variables from: {envFile}");
-    foreach (var line in File.ReadAllLines(envFile))
-    {
-        if (string.IsNullOrWhiteSpace(line) || line.StartsWith('#'))
-            continue;
-
-        var parts = line.Split('=', 2);
-        if (parts.Length == 2)
-        {
-            var key = parts[0].Trim();
-            var value = parts[1].Trim();
-            
-            // Only set from .env if environment variable doesn't already exist
-            // This ensures Docker environment variables take precedence
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(key)))
-            {
-                Environment.SetEnvironmentVariable(key, value);
-            }
-        }
-    }
-}
-
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -113,16 +87,13 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// Enable Swagger in all environments except Production
-if (!app.Environment.IsProduction())
+// Enable Swagger in all environments
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "QaliTrack MasterData API v1");
-        c.RoutePrefix = string.Empty; // Serve Swagger at root
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "QaliTrack MasterData API v1");
+    c.RoutePrefix = string.Empty; // Serve Swagger at root
+});
 
 // Use CORS
 app.UseCors("AllowAll");
