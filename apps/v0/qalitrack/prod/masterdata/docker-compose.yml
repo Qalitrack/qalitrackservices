@@ -115,7 +115,8 @@ services:
 
 volumes:
   postgres_masterdata_prod_data:
-    external: true
+    driver: local
+    name: postgres_masterdata_prod_data
 
 networks:
   qalitrack-proxy:
