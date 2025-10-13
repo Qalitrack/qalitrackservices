@@ -1,0 +1,126 @@
+services:
+  masterdata-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/masterdata-service:latest
+    container_name: qalitrack-masterdata-service-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - DATABASE_PROVIDER=PostgreSQL
+      - POSTGRES_HOST=postgres-masterdata-prod
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=qalitrack_masterdata
+      - POSTGRES_USERNAME=masterdata
+      - POSTGRES_PASSWORD=masterdata123
+      - AUTO_MIGRATE=true
+      - MIGRATION_MAX_RETRIES=15
+      - MIGRATION_RETRY_DELAY=3
+      - FAIL_ON_MIGRATION_ERROR=false
+      - USE_VAULT=false
+      - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
+      - JWT_ISSUER=MasterDataService
+      - JWT_AUDIENCE=MasterDataService
+    volumes:
+      - ./logs:/app/logs
+      - ./docs:/app/wwwroot/docs
+      - ./data:/app/data
+    depends_on:
+      postgres-masterdata-prod:
+        condition: service_healthy
+    networks:
+      - qalitrack-proxy
+      - proxy-network
+    # NO EXPOSED PORTS - only accessible through Traefik
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+    healthcheck:
+      disable: true
+    labels:
+      # Enable Traefik
+      - "traefik.enable=true"
+      
+      # MasterData API routes (PROD) - specific masterdata endpoints with JWT auth
+      - "traefik.http.routers.masterdata-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData`)"
+      - "traefik.http.routers.masterdata-api-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.masterdata-api-prod.service=masterdata-service-prod"
+      - "traefik.http.routers.masterdata-api-prod.middlewares=masterdata-jwt-forwardauth,strip-api-prefix"
+      - "traefik.http.routers.masterdata-api-prod.tls=true"
+      - "traefik.http.routers.masterdata-api-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.masterdata-api-prod.priority=100"
+      
+      # Health check endpoint (PROD) - no JWT required
+      - "traefik.http.routers.masterdata-health-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData/health`)"
+      - "traefik.http.routers.masterdata-health-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.masterdata-health-prod.service=masterdata-service-prod"
+      - "traefik.http.routers.masterdata-health-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.masterdata-health-prod.tls=true"
+      - "traefik.http.routers.masterdata-health-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.masterdata-health-prod.priority=110"
+      
+      # Swagger UI (PROD) - no JWT required (public documentation)
+      - "traefik.http.routers.masterdata-swagger-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData/swagger`)"
+      - "traefik.http.routers.masterdata-swagger-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.masterdata-swagger-prod.service=masterdata-service-prod"
+      - "traefik.http.routers.masterdata-swagger-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.masterdata-swagger-prod.tls=true"
+      - "traefik.http.routers.masterdata-swagger-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.masterdata-swagger-prod.priority=110"
+      
+      # Service definition
+      - "traefik.http.services.masterdata-service-prod.loadbalancer.server.port=80"
+      
+      # JWT ForwardAuth middleware
+      - "traefik.http.middlewares.masterdata-jwt-forwardauth.forwardauth.address=http://qalitrack-jwt-auth-service:3000/auth"
+      - "traefik.http.middlewares.masterdata-jwt-forwardauth.forwardauth.authResponseHeaders=X-User-Id,X-User-Email"
+      
+      # Middleware to strip /api prefix (shared across services)
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
+
+  # MasterData Database (PROD)
+  postgres-masterdata-prod:
+    image: postgres:16
+    container_name: qalitrack-postgres-masterdata-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=qalitrack_masterdata
+      - POSTGRES_USER=masterdata
+      - POSTGRES_PASSWORD=masterdata123
+      - POSTGRES_INITDB_ARGS=-E UTF8 --locale=en_US.utf8
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_masterdata_prod_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U masterdata -d qalitrack_masterdata"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    # NO EXPOSED PORTS
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+volumes:
+  postgres_masterdata_prod_data:
+    external: true
+
+networks:
+  qalitrack-proxy:
+    external: true
+    name: qalitrack-proxy
+  proxy-network:
+    external: true
+    name: proxy-network
