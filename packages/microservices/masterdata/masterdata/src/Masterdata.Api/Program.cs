@@ -229,7 +229,7 @@ else
     // ✅ PROD: Read-Only (blocks POST/PUT/DELETE via Traefik JWT)
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Masterdata API V1");
+        c.SwaggerEndpoint("v1/swagger.json", "Masterdata API V1");
         c.RoutePrefix = "swagger";  // ← FIXED: Serve UI at /swagger
         c.DocumentTitle = "QaliTrack Masterdata API (Read-Only)";
     });
