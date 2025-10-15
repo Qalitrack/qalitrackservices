@@ -15,8 +15,7 @@ env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
   SERVICE_NAME: masterdata-service
-  SERVICE_PATH: packages/QaliTrack.MasterData
-  POSTGRES_USER: masterdata
+  SERVICE_PATH: packages/microservices/masterdata/masterdata  # ✅ FIXED!  POSTGRES_USER: masterdata
   POSTGRES_PASSWORD: masterdata123
   POSTGRES_DB: masterdatadb
 
