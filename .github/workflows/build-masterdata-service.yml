@@ -36,25 +36,17 @@ jobs:
           POSTGRES_WORK_MEM: 2MB
           POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
         ports:
-          - 5635:5632
-        command: ["postgres", "-c", "listen_addresses=*", "-c", "port=5632"]
-        # ✅ FIXED: SIMPLE health-cmd + SEPARATE healthcheck
+          - 5437:5432  #
         options: >-
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=1g
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
           --health-cmd pg_isready
           --health-interval 30s
           --health-timeout 10s
           --health-retries 3
           --health-start-period 30s
-        # ✅ FIXED: Use $VAR (container env) NOT ${{ env.VAR }}
-        healthcheck:
-          test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p 5632"]
-          interval: 30s
-          timeout: 10s
-          retries: 3
-          start-period: 30s
-    
+
     steps:
-      # ... REST OF YOUR STEPS EXACTLY THE SAME ...
       - name: Checkout code
         uses: actions/checkout@v4
       
@@ -72,7 +64,7 @@ jobs:
         run: |
           echo "Waiting for PostgreSQL..."
           for i in {1..30}; do
-            if pg_isready -h localhost -p 5435 -U ${{ env.POSTGRES_USER }}; then  # ✅ CHANGED: 5435
+            if pg_isready -h localhost -p 5435 -U ${{ env.POSTGRES_USER }}; then
               echo "PostgreSQL is ready!"
               break
             fi
@@ -105,7 +97,7 @@ jobs:
       
       - name: Run unit tests
         env:
-          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5435;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300"  # ✅ CHANGED: 5435
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5435;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300"
           UsePostgreSQL: "true"
         run: |
           cd ${{ env.SERVICE_PATH }}
@@ -121,7 +113,7 @@ jobs:
       
       - name: Run database migrations
         env:
-          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5435;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"  # ✅ CHANGED: 5435
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5435;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"
         run: |
           cd ${{ env.SERVICE_PATH }}
           if [ -d "src/QaliTrack.MasterData.Infrastructure/Migrations" ]; then
@@ -140,7 +132,7 @@ jobs:
       - name: Run integration tests
         env:
           ASPNETCORE_ENVIRONMENT: Testing
-          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5435;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"  # ✅ CHANGED: 5435
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5435;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"
           UsePostgreSQL: "true"
         run: |
           cd ${{ env.SERVICE_PATH }}
