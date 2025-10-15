@@ -230,7 +230,7 @@ else
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Masterdata API V1");
-        c.RoutePrefix = string.Empty;
+        c.RoutePrefix = "swagger";  // ← FIXED: Serve UI at /swagger
         c.DocumentTitle = "QaliTrack Masterdata API (Read-Only)";
     });
 }
