@@ -15,6 +15,7 @@ using Masterdata.Infrastructure.Repositories;
 using Masterdata.Core.Entities;
 using Masterdata.Core.Models;
 using Masterdata.Core.Utils;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -196,9 +197,14 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+// ALWAYS generate Swagger JSON (for both DEV + PROD)
+app.UseSwagger();
+
+// ALWAYS generate Swagger JSON
+app.UseSwagger();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Masterdata API V1");
@@ -207,7 +213,7 @@ if (app.Environment.IsDevelopment())
         c.DocumentTitle = "QaliTrack Services - Masterdata & Gateway Discovery";
     });
     
-    // Debug middleware (remove in production)
+    // Debug middleware (KEEP)
     app.Use(async (context, next) =>
     {
         var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
@@ -218,7 +224,16 @@ if (app.Environment.IsDevelopment())
         await next();
     });
 }
-
+else
+{
+    // ✅ PROD: Read-Only (blocks POST/PUT/DELETE via Traefik JWT)
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Masterdata API V1");
+        c.RoutePrefix = string.Empty;
+        c.DocumentTitle = "QaliTrack Masterdata API (Read-Only)";
+    });
+}
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
