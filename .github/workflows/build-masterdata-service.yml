@@ -36,8 +36,7 @@ jobs:
           POSTGRES_WORK_MEM: 2MB
           POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
         ports:
-          - 5635:56
-				32
+          - 5635:5632
         command: ["postgres", "-c", "listen_addresses=*", "-c", "port=5632"]
         # ✅ FIXED: SIMPLE health-cmd + SEPARATE healthcheck
         options: >-
