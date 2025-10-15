@@ -1,49 +1,222 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using Masterdata.Core.Entities;
 using Masterdata.Core.Interfaces;
+using Masterdata.Core.Models;
+using Masterdata.Core.Utils;
 using Masterdata.Infrastructure.Data;
+using System.Reflection;
 
 namespace Masterdata.Infrastructure.Repositories;
 
 public class Repository<T> : IRepository<T> where T : BaseEntity
 {
-    protected readonly MasterdataDbContext _context;
-    protected readonly DbSet<T> _dbSet;
+    protected readonly MasterdataDbContext Context;
+    protected readonly DbSet<T> DbSet;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ITokenExtractionService _tokenExtractionService;
+    private readonly IAuditLogRepository _auditLogRepository;
+    private string? CurrentUserId => _httpContextAccessor.HttpContext != null ? 
+        _tokenExtractionService.GetUserIdFromToken(_httpContextAccessor.HttpContext.User)?.ToString() : null;
 
-    public Repository(MasterdataDbContext context)
+    public Repository(
+        MasterdataDbContext context,
+        IHttpContextAccessor httpContextAccessor,
+        ITokenExtractionService tokenExtractionService,
+        IAuditLogRepository auditLogRepository)
     {
-        _context = context;
-        _dbSet = context.Set<T>();
+        Context = context;
+        DbSet = context.Set<T>();
+        _httpContextAccessor = httpContextAccessor;
+        _tokenExtractionService = tokenExtractionService;
+        _auditLogRepository = auditLogRepository;
     }
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<PagedResult<T>> GetPagedAsync(
+        int pageNumber = 1,
+        int pageSize = 10,
+        string? searchTerm = null,
+        Expression<Func<T, bool>>? searchPredicate = null,
+        string[]? searchProperties = null,
+        string sortBy = "CreatedAt",
+        bool sortDescending = false)
     {
-        return await _dbSet.Where(e => !e.IsDeleted).ToListAsync();
+        if (pageNumber < 1)
+            pageNumber = 1;
+            
+        if (pageSize < 1)
+            pageSize = 10;
+
+        var query = DbSet.Where(e => !e.IsDeleted);
+
+        // Apply search predicate if provided
+        if (searchPredicate != null)
+        {
+            query = query.Where(searchPredicate);
+        }
+        // Apply search term across specified properties or default to Id
+        else if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim().ToLower();
+            if (searchProperties != null && searchProperties.Any())
+            {
+                var parameter = Expression.Parameter(typeof(T), "e");
+                Expression? searchExpression = null;
+
+                var likeMethod = typeof(DbFunctionsExtensions).GetMethod(
+                    nameof(DbFunctionsExtensions.Like),
+                    new[] { typeof(DbFunctions), typeof(string), typeof(string) });
+
+                foreach (var propertyName in searchProperties)
+                {
+                    var property = typeof(T).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                    if (property != null && property.PropertyType == typeof(string))
+                    {
+                        var propertyExpression = Expression.Property(parameter, property);
+                        
+                        // Create the EF.Functions.Like call
+                        var likeCall = Expression.Call(
+                            null,
+                            likeMethod!,
+                            Expression.Property(null, typeof(EF).GetProperty(nameof(EF.Functions))!),
+                            propertyExpression,
+                            Expression.Constant($"%{searchTerm}%"));
+
+                        searchExpression = searchExpression == null
+                            ? likeCall
+                            : Expression.OrElse(searchExpression, likeCall);
+                    }
+                }
+
+                if (searchExpression != null)
+                {
+                    var lambda = Expression.Lambda<Func<T, bool>>(searchExpression, parameter);
+                    query = query.Where(lambda);
+                }
+            }
+            else
+            {
+                // Default to searching by Id
+                query = query.Where(e => EF.Functions.Like(e.Id.ToLower(), $"%{searchTerm}%"));
+            }
+        }
+
+        // Apply sorting
+        var sortProperty = typeof(T).GetProperty(sortBy, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase) 
+            ?? typeof(BaseEntity).GetProperty("CreatedAt"); // Fallback to CreatedAt
+
+        if (sortProperty != null)
+        {
+            var parameter = Expression.Parameter(typeof(T), "e");
+            var propertyExpression = Expression.Property(parameter, sortProperty);
+            var lambda = Expression.Lambda<Func<T, object>>(Expression.Convert(propertyExpression, typeof(object)), parameter);
+
+            query = sortDescending
+                ? query.OrderByDescending(lambda)
+                : query.OrderBy(lambda);
+        }
+
+        // Execute query
+        var totalItems = await query.CountAsync();
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<T>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalItems = totalItems
+        };
     }
 
     public virtual async Task<T?> GetByIdAsync(string id)
     {
-        return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+        return await DbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
     }
 
     public virtual async Task<T> CreateAsync(T entity)
     {
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
+
         entity.Id = Guid.NewGuid().ToString();
         entity.CreatedAt = DateTime.UtcNow;
         entity.UpdatedAt = DateTime.UtcNow;
         
-        _dbSet.Add(entity);
-        await _context.SaveChangesAsync();
-        return entity;
+        if (CurrentUserId != null)
+        {
+            entity.CreatedBy = CurrentUserId;
+            entity.UpdatedBy = CurrentUserId;
+        }
+        
+        using var transaction = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            DbSet.Add(entity);
+            await Context.SaveChangesAsync();
+            
+            await _auditLogRepository.LogCreateAsync(entity);
+            
+            await transaction.CommitAsync();
+            return entity;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public virtual async Task<T?> UpdateAsync(T entity)
     {
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
+
+        var originalEntity = await DbSet.AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == entity.Id && !e.IsDeleted);
+            
+        if (originalEntity == null)
+        {
+            return null;
+        }
+
         entity.UpdatedAt = DateTime.UtcNow;
         
-        _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
-        return entity;
+        if (CurrentUserId != null)
+        {
+            entity.UpdatedBy = CurrentUserId;
+            
+            var existingEntity = await DbSet.AsNoTracking()
+                .Where(e => e.Id == entity.Id)
+                .Select(e => new { e.CreatedBy })
+                .FirstOrDefaultAsync();
+                
+            if (existingEntity != null && entity.CreatedBy == null)
+            {
+                entity.CreatedBy = existingEntity.CreatedBy;
+            }
+        }
+        
+        using var transaction = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            DbSet.Update(entity);
+            await Context.SaveChangesAsync();
+            
+            await _auditLogRepository.LogUpdateAsync(originalEntity, entity);
+            
+            await transaction.CommitAsync();
+            return entity;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public virtual async Task<bool> DeleteAsync(string id)
@@ -57,13 +230,66 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         entity.IsDeleted = true;
         entity.UpdatedAt = DateTime.UtcNow;
         
-        _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
-        return true;
+        if (CurrentUserId != null)
+        {
+            entity.UpdatedBy = CurrentUserId;
+        }
+        
+        using var transaction = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            DbSet.Update(entity);
+            await Context.SaveChangesAsync();
+            
+            await _auditLogRepository.LogDeleteAsync(entity);
+            
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public virtual async Task<PagedResult<T>> GetDeletedPagedAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
+    {
+        if (pageNumber < 1)
+            pageNumber = 1;
+        
+        if (pageSize < 1)
+            pageSize = 10;
+
+        var query = DbSet.Where(e => e.IsDeleted);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim().ToLower();
+            query = query.Where(e => 
+                EF.Functions.Like(e.Id.ToLower(), $"%{searchTerm}%")
+            );
+        }
+
+        var totalItems = await query.CountAsync();
+        var items = await query
+            .OrderByDescending(e => e.UpdatedAt)
+            .ThenByDescending(e => e.CreatedAt)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<T>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalItems = totalItems
+        };
     }
 
     public virtual async Task<bool> ExistsAsync(string id)
     {
-        return await _dbSet.AnyAsync(e => e.Id == id && !e.IsDeleted);
+        return await DbSet.AnyAsync(e => e.Id == id && !e.IsDeleted);
     }
 }
