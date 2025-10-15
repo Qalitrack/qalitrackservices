@@ -3,16 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Security.Claims;
 using FluentValidation;
 using Serilog;
-using Masterdata.Core.Interfaces;
-using Masterdata.Core.Services;
 using Masterdata.Core.DTOs;
-// using Masterdata.Core.Validators;
+using Masterdata.Core.Interfaces;
 using Masterdata.Core.Mappings;
+using Masterdata.Core.Services;
 using Masterdata.Infrastructure.Data;
 using Masterdata.Infrastructure.Repositories;
-// using Masterdata.Infrastructure.Services;
+using Masterdata.Core.Entities;
+using Masterdata.Core.Models;
+using Masterdata.Core.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,29 +39,22 @@ builder.Services.AddSwaggerGen(c =>
     { 
         Title = "Masterdata API", 
         Version = "v1",
-        Description = @"QaliTrack Masterdata - MasterData API
-
-🌐 **Gateway Information:**
-- **Gateway URL**: http://localhost:7000
-- **Gateway Health**: http://localhost:7000/health  
-- **Gateway Service Discovery**: http://localhost:7000/api/gateway/services
-- **Gateway Info**: http://localhost:7000/api/gateway/info
-
-📋 **Available Routes via Gateway:**
-- All Masterdata endpoints are also available via Gateway at http://localhost:7000/api/bases/*
-- Gateway provides centralized routing to 18+ microservices including analytics, compliance, transactions, and more"
+        Description = @"QaliTrack Masterdata - MasterData API"
     });
     
+    // Define the JWT Bearer scheme
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
     
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    // Apply the security requirement globally
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -68,75 +63,122 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
+                }
             },
-            new List<string>()
+            new string[] { }
         }
     });
 });
 
 // Add AutoMapper
-builder.Services.AddAutoMapper(typeof(BaseProfile));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Add FluentValidation
-// builder.Services.AddValidatorsFromAssemblyContaining<BaseRequestValidator>();
-
-// Add Entity Framework
 builder.Services.AddDbContext<MasterdataDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-    "Data Source=masterdata.db"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+    "Host=localhost;Database=masterdatadb;Username=masterdata;Password=masterdata123"));
 
-// TODO: Add authentication if needed for this service
-// For authentication services, uncomment and configure JWT
-/*
-// Add JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
-var key = Encoding.UTF8.GetBytes(secretKey);
+// Configure JWT Authentication
+var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? 
+                builder.Configuration["JwtSettings:SecretKey"] ??
+                throw new InvalidOperationException("JWT Secret Key is not configured.");
 
-builder.Services.AddAuthentication(x =>
+var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ??
+             builder.Configuration["JwtSettings:Issuer"] ??
+             "UserService";
+
+var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ??
+               builder.Configuration["JwtSettings:Audience"] ??
+               "UserService";
+
+// Validate secret key length
+if (secretKey.Length < 32)
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    throw new InvalidOperationException("JWT Secret Key must be at least 32 characters long for security.");
+}
+
+// Ensure proper encoding and key creation
+var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+var key = new SymmetricSecurityKey(keyBytes);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; 
 })
-.AddJwtBearer(x =>
+.AddJwtBearer(options =>
 {
-    x.RequireHttpsMetadata = false;
-    x.SaveToken = true;
-    x.TokenValidationParameters = new TokenValidationParameters
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        IssuerSigningKey = key,
         ValidateIssuer = true,
-        ValidIssuer = jwtSettings["Issuer"],
+        ValidIssuer = issuer,
         ValidateAudience = true,
-        ValidAudience = jwtSettings["Audience"],
+        ValidAudience = audience,
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero, 
+        NameClaimType = ClaimTypes.NameIdentifier,
+        RoleClaimType = ClaimTypes.Role
+    };
+
+    // Add event handling for better debugging
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("Token validated successfully");
+            return Task.CompletedTask;
+        }
     };
 });
 
-builder.Services.AddAuthorization();
-*/
+// Configure Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
-// Add repositories
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IBaseRepository, BaseRepository>();
-// TODO: Add additional repositories as needed
-// builder.Services.AddScoped<IAnotherRepository, AnotherRepository>();
+// Register DbContext
+builder.Services.AddDbContext<MasterdataDbContext>();
 
-// Add services
-builder.Services.AddScoped<IBaseService, Masterdata.Core.Services.BaseService>();
-// TODO: Add additional services as needed
-// builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-// builder.Services.AddScoped<IJwtService, JwtService>();
-// builder.Services.AddScoped<IPasswordService, PasswordService>();
-// builder.Services.AddScoped<IEmailService, EmailService>();
+// Register HTTP context and memory cache first as they're used by other services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddMemoryCache();
 
-// Add CORS
+builder.Services.AddScoped<ITokenExtractionService, TokenExtractionService>();
+
+// Register repositories with their dependencies
+builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+builder.Services.AddScoped<IRepository<Driver>, Repository<Driver>>();
+builder.Services.AddScoped<IRepository<Vehicle>, Repository<Vehicle>>();
+builder.Services.AddScoped<IRepository<Supplier>, Repository<Supplier>>();
+
+// Register specific repositories that have additional dependencies
+builder.Services.AddScoped<IDriverVehicleRepository>(provider => 
+    new DriverVehicleRepository(
+        provider.GetRequiredService<MasterdataDbContext>(),
+        provider.GetRequiredService<IHttpContextAccessor>(),
+        provider.GetRequiredService<ITokenExtractionService>(),
+        provider.GetRequiredService<IAuditLogRepository>()
+    )
+);
+
+// Register services that depend on repositories
+builder.Services.AddScoped<IDriverService, DriverService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+// Note: IDriverVehicleService is not implemented yet
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -161,8 +203,19 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Masterdata API V1");
         c.SwaggerEndpoint("http://localhost:7000/swagger/v1/swagger.json", "API Gateway V1");
-        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+        c.RoutePrefix = string.Empty;
         c.DocumentTitle = "QaliTrack Services - Masterdata & Gateway Discovery";
+    });
+    
+    // Debug middleware (remove in production)
+    app.Use(async (context, next) =>
+    {
+        var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(authHeader))
+        {
+            Console.WriteLine($"Auth Header: {authHeader}");
+        }
+        await next();
     });
 }
 
@@ -172,31 +225,40 @@ app.UseCors("AllowAll");
 // Use Serilog request logging
 app.UseSerilogRequestLogging();
 
-// TODO: Uncomment if authentication is needed
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseRouting();
+
+// Authentication must come before Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
 
-// Ensure database is created and seeded
+// Initialize database
+// Initialize database with proper error handling
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<MasterdataDbContext>();
+    var services = scope.ServiceProvider;
     try
     {
-        dbContext.Database.EnsureCreated();
-        Log.Information("Database ensured created successfully");
+        var context = services.GetRequiredService<MasterdataDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Applying database migrations...");
+        await context.Database.MigrateAsync(); // Use async version
+        logger.LogInformation("Database migrations applied successfully.");
+        
+        logger.LogInformation("Seeding database...");
+        await DatabaseSeeder.SeedAsync(context);
+        logger.LogInformation("Database seeding completed successfully.");
     }
     catch (Exception ex)
     {
-        Log.Error(ex, "Error creating database");
-        throw;
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+        throw; // Re-throw to prevent app from starting with a broken database
     }
 }
 
 Log.Information("Masterdata starting up...");
 app.Run();
-
-// Make Program class accessible for testing
-public partial class Program { }
