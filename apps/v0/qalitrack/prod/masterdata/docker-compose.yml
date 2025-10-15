@@ -19,6 +19,7 @@ services:
       - MIGRATION_RETRY_DELAY=3
       - FAIL_ON_MIGRATION_ERROR=false
       - USE_VAULT=false
+      # JWT - Updated to match your service
       - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
       - JWT_ISSUER=MasterDataService
       - JWT_AUDIENCE=MasterDataService
