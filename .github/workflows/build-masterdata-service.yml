@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'packages/QaliTrack.MasterData/**'
+      - 'packages//microservices/masterdata/masterdata/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'packages/QaliTrack.MasterData/**'
+      - 'packages/microservices/masterdata/masterdata/**'
   workflow_dispatch:
 
 env:
@@ -18,7 +18,8 @@ env:
   SERVICE_PATH: packages/QaliTrack.MasterData
   POSTGRES_USER: masterdata
   POSTGRES_PASSWORD: masterdata123
-  POSTGRES_DB: qalitrack_masterdata_test
+  POSTGRES_DB: masterdatadb
+  POSTGRES_PORT: 5632
 
 jobs:
   test:
@@ -31,13 +32,20 @@ jobs:
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          PGDATA: /var/lib/postgresql/data/pgdata
+          POSTGRES_SHARED_BUFFERS: 512MB
+          POSTGRES_MAX_CONNECTIONS: 600
+          POSTGRES_WORK_MEM: 2MB
+          POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
         ports:
-          - 5432:5432
+          - 5635:5632
+        command: ["postgres", "-c", "listen_addresses=*", "-c", "port=5632"]
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd "pg_isready -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -p 5632"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+          --health-start-period 30s
     
     steps:
       - name: Checkout code
@@ -55,9 +63,9 @@ jobs:
       
       - name: Wait for PostgreSQL to be ready
         run: |
-          echo "Waiting for PostgreSQL..."
+          echo "Waiting for PostgreSQL on port 5632..."
           for i in {1..30}; do
-            if pg_isready -h localhost -p 5432 -U ${{ env.POSTGRES_USER }}; then
+            if pg_isready -h localhost -p 5635 -U ${{ env.POSTGRES_USER }}; then
               echo "PostgreSQL is ready!"
               break
             fi
@@ -83,7 +91,6 @@ jobs:
       - name: Build tests
         run: |
           cd ${{ env.SERVICE_PATH }}
-          # Build all test projects if they exist
           if find . -name "*.Tests.csproj" -o -name "*Test*.csproj" -o -name "*.IntegrationTests.csproj" | grep -q .; then
             find . -name "*.Tests.csproj" -o -name "*Test*.csproj" -o -name "*.IntegrationTests.csproj" | while IFS= read -r testproject; do
               echo "Building test project: $testproject"
@@ -96,15 +103,10 @@ jobs:
       
       - name: Run unit tests
         env:
-          DATABASE_PROVIDER: PostgreSQL
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_DATABASE: ${{ env.POSTGRES_DB }}
-          POSTGRES_USERNAME: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          UsePostgreSQL: true
+          ConnectionStrings__DefaultConnection: Host=localhost;Port=5635;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};Pooling=true;MinPoolSize=5;MaxPoolSize=100;IncludeErrorDetail=true;CommandTimeout=60
         run: |
           cd ${{ env.SERVICE_PATH }}
-          # Find and run all test projects
           if find . -name "*.Tests.csproj" -o -name "*Test*.csproj" | grep -q .; then
             find . -name "*.Tests.csproj" -o -name "*Test*.csproj" | while IFS= read -r testproject; do
               echo "Running tests for: $testproject"
@@ -117,61 +119,30 @@ jobs:
       
       - name: Run database migrations
         env:
-          DATABASE_PROVIDER: PostgreSQL
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_DATABASE: ${{ env.POSTGRES_DB }}
-          POSTGRES_USERNAME: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          UsePostgreSQL: true
+          ConnectionStrings__DefaultConnection: Host=localhost;Port=5635;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};Pooling=true;MinPoolSize=5;MaxPoolSize=100;IncludeErrorDetail=true;CommandTimeout=60
         run: |
           cd ${{ env.SERVICE_PATH }}
-          
-          # Verify dotnet-ef is available
-          if ! command -v dotnet-ef &> /dev/null; then
-            echo "dotnet-ef not found in PATH, attempting to use from global tools..."
-            export PATH="$PATH:$HOME/.dotnet/tools"
-          fi
-          
-          # Check if Entity Framework migrations exist
           if [ -d "src/QaliTrack.MasterData.Infrastructure/Migrations" ]; then
-            echo "Migrations folder found. Running database migrations..."
-            
-            # List migrations
-            echo "Available migrations:"
-            dotnet ef migrations list \
-              --project src/QaliTrack.MasterData.Infrastructure/QaliTrack.MasterData.Infrastructure.csproj \
-              --startup-project src/QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj \
-              --no-build || echo "Could not list migrations"
-            
-            # Apply migrations
-            echo "Applying migrations to database..."
+            echo "Running database migrations..."
             dotnet ef database update \
               --project src/QaliTrack.MasterData.Infrastructure/QaliTrack.MasterData.Infrastructure.csproj \
               --startup-project src/QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj \
               --verbose \
               --no-build
-            
             echo "✓ Migrations applied successfully"
           else
-            echo "No Entity Framework migrations folder found at src/QaliTrack.MasterData.Infrastructure/Migrations"
-            echo "Checking alternative locations..."
-            find . -type d -name "Migrations" || echo "No Migrations folder found anywhere"
+            echo "No migrations folder found"
           fi
         continue-on-error: true
       
       - name: Run integration tests
         env:
           ASPNETCORE_ENVIRONMENT: Testing
-          DATABASE_PROVIDER: PostgreSQL
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_DATABASE: ${{ env.POSTGRES_DB }}
-          POSTGRES_USERNAME: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-          AUTO_MIGRATE: false
+          UsePostgreSQL: true
+          ConnectionStrings__DefaultConnection: Host=localhost;Port=5635;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};Pooling=true;MinPoolSize=5;MaxPoolSize=100;IncludeErrorDetail=true;CommandTimeout=60
         run: |
           cd ${{ env.SERVICE_PATH }}
-          # Run integration tests if they exist
           if find . -name "*.IntegrationTests.csproj" | grep -q .; then
             find . -name "*.IntegrationTests.csproj" | while IFS= read -r testproject; do
               echo "Running integration tests for: $testproject"
@@ -188,7 +159,7 @@ jobs:
         with:
           name: test-results
           path: ${{ env.SERVICE_PATH }}/TestResults/
-  
+
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
@@ -224,7 +195,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
           labels: |
             org.opencontainers.image.title=MasterData Service
-            org.opencontainers.image.description=QaliTrack MasterData API - Master data management for weighbridge system
+            org.opencontainers.image.description=QaliTrack MasterData API
             org.opencontainers.image.vendor=QaliTrack
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
       
@@ -242,127 +213,17 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             BUILDKIT_INLINE_CACHE=1
-
-  deploy-compose:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
       
-      - name: Create deployment artifact
+      - name: Print deployment instructions
         run: |
-          mkdir -p deployment
-          IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:main-${{ github.sha }}"
-          
-          cat > deployment/docker-compose.yml << 'EOF'
-          version: '3.8'
-
-          services:
-            api:
-              image: IMAGE_TAG_PLACEHOLDER
-              container_name: masterdata-api
-              restart: unless-stopped
-              ports:
-                - "8080:80"
-              environment:
-                - ASPNETCORE_ENVIRONMENT=Production
-                - DATABASE_PROVIDER=PostgreSQL
-                - POSTGRES_HOST=db
-                - POSTGRES_PORT=5432
-                - POSTGRES_DATABASE=qalitrack_masterdata
-                - POSTGRES_USERNAME=masterdata
-                - POSTGRES_PASSWORD=masterdata_prod_pass
-                - AUTO_MIGRATE=true
-                - MIGRATION_MAX_RETRIES=15
-                - MIGRATION_RETRY_DELAY=3
-                - FAIL_ON_MIGRATION_ERROR=true
-                - USE_VAULT=false
-              depends_on:
-                db:
-                  condition: service_healthy
-              volumes:
-                - ./logs:/app/logs
-                - ./docs:/app/wwwroot/docs
-              healthcheck:
-                test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
-                interval: 30s
-                timeout: 10s
-                retries: 3
-                start_period: 60s
-              networks:
-                - qalitrack-net
-
-            db:
-              image: postgres:16
-              container_name: masterdata-postgres
-              restart: unless-stopped
-              environment:
-                POSTGRES_DB: qalitrack_masterdata
-                POSTGRES_USER: masterdata
-                POSTGRES_PASSWORD: masterdata_prod_pass
-                POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.utf8"
-              ports:
-                - "5432:5432"
-              volumes:
-                - postgres_data:/var/lib/postgresql/data
-              healthcheck:
-                test: ["CMD-SHELL", "pg_isready -U masterdata -d qalitrack_masterdata"]
-                interval: 5s
-                timeout: 5s
-                retries: 10
-                start_period: 10s
-              networks:
-                - qalitrack-net
-
-          volumes:
-            postgres_data:
-              driver: local
-
-          networks:
-            qalitrack-net:
-              driver: bridge
-          EOF
-          
-          # Replace the placeholder with actual image tag
-          sed -i "s|IMAGE_TAG_PLACEHOLDER|$IMAGE_TAG|g" deployment/docker-compose.yml
-      
-      - name: Upload deployment files
-        uses: actions/upload-artifact@v4
-        with:
-          name: deployment-files
-          path: deployment/
-      
-      - name: Validate Docker Compose
-        run: |
-          cd deployment
-          docker compose config
-      
-      - name: Create deployment summary
-        run: |
-          cat >> $GITHUB_STEP_SUMMARY << EOF
-          ## MasterData Service Deployment
-
-          ### Docker Image
-          \`\`\`
-          ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:main-${{ github.sha }}
-          \`\`\`
-
-          ### Deployment Files
-          - docker-compose.yml generated
-          - Ready for deployment
-
-          ### Services
-          - **API**: Port 8080 (HTTP)
-          - **PostgreSQL**: Port 5432
-          - **Swagger UI**: http://localhost:8080/
-          - **Health Check**: http://localhost:8080/health
-
-          ### Next Steps
-          1. Download the deployment artifact
-          2. Configure production passwords in docker-compose.yml
-          3. Run: \`docker-compose up -d\`
-          4. Monitor migrations: \`docker-compose logs -f api\`
-          EOF
+          echo ""
+          echo "🎉 BUILD SUCCESSFUL!"
+          echo ""
+          echo "📦 IMAGE PUSHED:"
+          echo "   ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:latest"
+          echo ""
+          echo "🚀 TO DEPLOY - Update your docker-compose.yml:"
+          echo "   image: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:latest"
+          echo ""
+          echo "✅ Then run: docker compose up -d"
+          echo ""
