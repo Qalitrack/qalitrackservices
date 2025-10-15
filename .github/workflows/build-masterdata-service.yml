@@ -36,7 +36,7 @@ jobs:
           POSTGRES_WORK_MEM: 2MB
           POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
         ports:
-          - 5437:5432  #
+          - 5435:5432  # ✅ Host 5435 -> Container 5432
         options: >-
           --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=1g
           --tmpfs /tmp:rw,noexec,nosuid,size=100m
@@ -75,12 +75,12 @@ jobs:
       - name: Restore dependencies
         run: |
           cd ${{ env.SERVICE_PATH }}
-          dotnet restore src/QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj --verbosity normal
+          dotnet restore src/Masterdata.Api/Masterdata.Api.csproj --verbosity normal
       
       - name: Build application
         run: |
           cd ${{ env.SERVICE_PATH }}
-          dotnet build src/QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj --no-restore -c Release --verbosity normal
+          dotnet build src/Masterdata.Api/Masterdata.Api.csproj --no-restore -c Release --verbosity normal
       
       - name: Build tests
         run: |
@@ -116,11 +116,11 @@ jobs:
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5435;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"
         run: |
           cd ${{ env.SERVICE_PATH }}
-          if [ -d "src/QaliTrack.MasterData.Infrastructure/Migrations" ]; then
+          if [ -d "src/Masterdata.Infrastructure/Migrations" ]; then
             echo "Running database migrations..."
             dotnet ef database update \
-              --project src/QaliTrack.MasterData.Infrastructure/QaliTrack.MasterData.Infrastructure.csproj \
-              --startup-project src/QaliTrack.MasterData.Api/QaliTrack.MasterData.Api.csproj \
+              --project src/Masterdata.Infrastructure/Masterdata.Infrastructure.csproj \
+              --startup-project src/Masterdata.Api/Masterdata.Api.csproj \
               --verbose \
               --no-build
             echo "✓ Migrations applied successfully"
