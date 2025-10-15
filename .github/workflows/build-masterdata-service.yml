@@ -40,14 +40,23 @@ jobs:
         ports:
           - 5635:5632
         command: ["postgres", "-c", "listen_addresses=*", "-c", "port=5632"]
+        # ✅ FIXED: SIMPLE health-cmd + SEPARATE healthcheck
         options: >-
-          --health-cmd "pg_isready -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -p 5632"
+          --health-cmd pg_isready
           --health-interval 30s
           --health-timeout 10s
           --health-retries 3
           --health-start-period 30s
+        # ✅ FIXED: Use $VAR (container env) NOT ${{ env.VAR }}
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p 5632"]
+          interval: 30s
+          timeout: 10s
+          retries: 3
+          start-period: 30s
     
     steps:
+      # ... REST OF YOUR STEPS EXACTLY THE SAME ...
       - name: Checkout code
         uses: actions/checkout@v4
       
