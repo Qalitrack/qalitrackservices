@@ -16,8 +16,6 @@ public interface IVehicleService
     
     // Vehicle-specific operations
     Task<bool> IsRegistrationNumberAvailableAsync(string registrationNumber, string? excludeVehicleId = null);
-    Task<bool> AssignDriverAsync(string vehicleId, string? driverId);
-    Task<bool> RemoveDriverAsync(string vehicleId, string driverId);
     Task<IEnumerable<string>> GetAssignedDriversAsync(string vehicleId);
     
     // Status management
@@ -27,4 +25,6 @@ public interface IVehicleService
     Task<bool> AssignToSupplierAsync(string vehicleId, string? supplierId);
     Task<bool> AssignToTransporterAsync(string vehicleId, string? transporterId);
     Task<bool> AssignToOwnerAsync(string vehicleId, string? ownerId);
+    Task<IEnumerable<VehicleReadDto>> GetVehiclesBySupplierIdAsync(string supplierId);
+
 }
