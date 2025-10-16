@@ -41,8 +41,11 @@ namespace Masterdata.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Configuration = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    AxleCount = table.Column<int>(type: "integer", nullable: true),
+                    MaxLoadCapacity = table.Column<decimal>(type: "numeric", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
@@ -269,12 +272,13 @@ namespace Masterdata.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     FullName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     LicenseNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LicenseExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true, defaultValue: "active"),
                     TransporterId = table.Column<string>(type: "text", nullable: true),
                     SupplierId = table.Column<string>(type: "text", nullable: true),
-                    VehicleId = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
@@ -305,14 +309,12 @@ namespace Masterdata.Infrastructure.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     RegistrationNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Color = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Model = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true, defaultValue: "active"),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "active"),
                     SupplierId = table.Column<string>(type: "text", nullable: true),
                     TransporterId = table.Column<string>(type: "text", nullable: true),
-                    DriverId = table.Column<string>(type: "text", nullable: true),
-                    AxleConfigurationId = table.Column<string>(type: "text", nullable: true),
-                    OwnerId = table.Column<string>(type: "text", nullable: true),
+                    AxleConfigurationId = table.Column<string>(type: "text", nullable: false),
+                    OwnerId = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
@@ -326,12 +328,6 @@ namespace Masterdata.Infrastructure.Migrations
                         name: "FK_Vehicles_AxleConfigurations_AxleConfigurationId",
                         column: x => x.AxleConfigurationId,
                         principalTable: "AxleConfigurations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Vehicles_Drivers_DriverId",
-                        column: x => x.DriverId,
-                        principalTable: "Drivers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -350,6 +346,39 @@ namespace Masterdata.Infrastructure.Migrations
                         name: "FK_Vehicles_Transporters_TransporterId",
                         column: x => x.TransporterId,
                         principalTable: "Transporters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DriverVehicles",
+                columns: table => new
+                {
+                    DriverId = table.Column<string>(type: "text", maxLength: 50, nullable: false),
+                    VehicleId = table.Column<string>(type: "text", maxLength: 50, nullable: false),
+                    AssignedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UnassignedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true, defaultValue: "active"),
+                    Id = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DriverVehicles", x => new { x.DriverId, x.VehicleId });
+                    table.ForeignKey(
+                        name: "FK_DriverVehicles_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DriverVehicles_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -385,9 +414,9 @@ namespace Masterdata.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AxleConfigurations_Configuration",
+                name: "IX_AxleConfigurations_Code",
                 table: "AxleConfigurations",
-                column: "Configuration",
+                column: "Code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -413,8 +442,8 @@ namespace Masterdata.Infrastructure.Migrations
                 column: "TransporterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Drivers_VehicleId",
-                table: "Drivers",
+                name: "IX_DriverVehicles_VehicleId",
+                table: "DriverVehicles",
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
@@ -465,11 +494,6 @@ namespace Masterdata.Infrastructure.Migrations
                 column: "AxleConfigurationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_DriverId",
-                table: "Vehicles",
-                column: "DriverId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_OwnerId",
                 table: "Vehicles",
                 column: "OwnerId");
@@ -495,38 +519,11 @@ namespace Masterdata.Infrastructure.Migrations
                 table: "Weighbridges",
                 column: "Location",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Drivers_Vehicles_VehicleId",
-                table: "Drivers",
-                column: "VehicleId",
-                principalTable: "Vehicles",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Drivers_Suppliers_SupplierId",
-                table: "Drivers");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Vehicles_Suppliers_SupplierId",
-                table: "Vehicles");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Drivers_Transporters_TransporterId",
-                table: "Drivers");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Vehicles_Transporters_TransporterId",
-                table: "Vehicles");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Drivers_Vehicles_VehicleId",
-                table: "Drivers");
-
             migrationBuilder.DropTable(
                 name: "Affiliations");
 
@@ -535,6 +532,9 @@ namespace Masterdata.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "DriverVehicles");
 
             migrationBuilder.DropTable(
                 name: "Products");
@@ -552,10 +552,7 @@ namespace Masterdata.Infrastructure.Migrations
                 name: "Saccos");
 
             migrationBuilder.DropTable(
-                name: "Suppliers");
-
-            migrationBuilder.DropTable(
-                name: "Transporters");
+                name: "Drivers");
 
             migrationBuilder.DropTable(
                 name: "Vehicles");
@@ -564,10 +561,13 @@ namespace Masterdata.Infrastructure.Migrations
                 name: "AxleConfigurations");
 
             migrationBuilder.DropTable(
-                name: "Drivers");
+                name: "Owners");
 
             migrationBuilder.DropTable(
-                name: "Owners");
+                name: "Suppliers");
+
+            migrationBuilder.DropTable(
+                name: "Transporters");
         }
     }
 }
