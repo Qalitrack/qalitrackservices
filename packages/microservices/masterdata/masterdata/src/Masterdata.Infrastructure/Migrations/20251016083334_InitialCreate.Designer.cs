@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Masterdata.Infrastructure.Migrations
 {
     [DbContext(typeof(MasterdataDbContext))]
-    [Migration("20251015074629_InitialCreate")]
+    [Migration("20251016083334_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Masterdata.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -143,7 +143,10 @@ namespace Masterdata.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("Configuration")
+                    b.Property<int?>("AxleCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -158,8 +161,14 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<decimal?>("MaxLoadCapacity")
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -169,7 +178,7 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Configuration")
+                    b.HasIndex("Code")
                         .IsUnique();
 
                     b.ToTable("AxleConfigurations");
@@ -232,6 +241,11 @@ namespace Masterdata.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -247,6 +261,11 @@ namespace Masterdata.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Status")
                         .ValueGeneratedOnAdd()
@@ -266,9 +285,6 @@ namespace Masterdata.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
 
-                    b.Property<string>("VehicleId")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("LicenseNumber")
@@ -278,9 +294,54 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.HasIndex("TransporterId");
 
+                    b.ToTable("Drivers");
+                });
+
+            modelBuilder.Entity("Masterdata.Core.Entities.DriverVehicle", b =>
+                {
+                    b.Property<string>("DriverId")
+                        .HasMaxLength(50)
+                        .HasColumnType("text");
+
+                    b.Property<string>("VehicleId")
+                        .HasMaxLength(50)
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("AssignedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("active");
+
+                    b.Property<DateTime?>("UnassignedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("DriverId", "VehicleId");
+
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Drivers");
+                    b.ToTable("DriverVehicles");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Organisation", b =>
@@ -601,19 +662,13 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("AxleConfigurationId")
+                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("Color")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DriverId")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
@@ -624,6 +679,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RegistrationNumber")
@@ -632,6 +688,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
@@ -657,8 +714,6 @@ namespace Masterdata.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AxleConfigurationId");
-
-                    b.HasIndex("DriverId");
 
                     b.HasIndex("OwnerId");
 
@@ -744,31 +799,43 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasForeignKey("TransporterId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Masterdata.Core.Entities.Vehicle", null)
-                        .WithMany("AssignedDrivers")
-                        .HasForeignKey("VehicleId");
-
                     b.Navigation("Supplier");
 
                     b.Navigation("Transporter");
                 });
 
+            modelBuilder.Entity("Masterdata.Core.Entities.DriverVehicle", b =>
+                {
+                    b.HasOne("Masterdata.Core.Entities.Driver", "Driver")
+                        .WithMany("DriverVehicles")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Masterdata.Core.Entities.Vehicle", "Vehicle")
+                        .WithMany("DriverVehicles")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("Masterdata.Core.Entities.Vehicle", b =>
                 {
                     b.HasOne("Masterdata.Core.Entities.AxleConfiguration", "AxleConfiguration")
-                        .WithMany()
+                        .WithMany("Vehicles")
                         .HasForeignKey("AxleConfigurationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Masterdata.Core.Entities.Driver", "Driver")
-                        .WithMany("AssignedVehicles")
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Masterdata.Core.Entities.Owner", "Owner")
                         .WithMany("Vehicles")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Masterdata.Core.Entities.Supplier", "Supplier")
                         .WithMany("Vehicles")
@@ -782,8 +849,6 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Navigation("AxleConfiguration");
 
-                    b.Navigation("Driver");
-
                     b.Navigation("Owner");
 
                     b.Navigation("Supplier");
@@ -791,9 +856,14 @@ namespace Masterdata.Infrastructure.Migrations
                     b.Navigation("Transporter");
                 });
 
+            modelBuilder.Entity("Masterdata.Core.Entities.AxleConfiguration", b =>
+                {
+                    b.Navigation("Vehicles");
+                });
+
             modelBuilder.Entity("Masterdata.Core.Entities.Driver", b =>
                 {
-                    b.Navigation("AssignedVehicles");
+                    b.Navigation("DriverVehicles");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Organisation", b =>
@@ -827,7 +897,7 @@ namespace Masterdata.Infrastructure.Migrations
 
             modelBuilder.Entity("Masterdata.Core.Entities.Vehicle", b =>
                 {
-                    b.Navigation("AssignedDrivers");
+                    b.Navigation("DriverVehicles");
                 });
 #pragma warning restore 612, 618
         }
