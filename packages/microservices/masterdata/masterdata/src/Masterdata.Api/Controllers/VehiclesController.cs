@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Masterdata.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize(Roles = "Admin")]
     public class VehiclesController : BaseController
     {
