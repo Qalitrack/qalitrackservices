@@ -1,46 +1,53 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Masterdata.Core.Entities;
-
-public class Vehicle : BaseEntity
+namespace Masterdata.Core.Entities
 {
-    [Required]
-    public string RegistrationNumber { get; set; } = null!;
+    public class Vehicle : BaseEntity
+    {
+        [Required]
+        [MaxLength(20)]
+        public string RegistrationNumber { get; set; } = null!;
 
-    [Required]
-    public string Type { get; set; } = null!;
+        [Required]
+        [MaxLength(50)]
+        public string Type { get; set; } = null!;
 
-    public string? Color { get; set; }
+        [MaxLength(50)]
+        public string? Model { get; set; }
 
-    public string? Model { get; set; }
+        [MaxLength(20)]
+        public string Status { get; set; } = "active";
 
-    public string? Status { get; set; } = "active";
+        // Supplier relationship
+        public string? SupplierId { get; set; }
 
-    public string? SupplierId { get; set; }
+        [ForeignKey(nameof(SupplierId))]
+        public virtual Supplier? Supplier { get; set; }
 
-    [ForeignKey(nameof(SupplierId))]
-    public virtual Supplier? Supplier { get; set; }
+        // Transporter relationship
+        public string? TransporterId { get; set; }
 
-    public string? TransporterId { get; set; }
+        [ForeignKey(nameof(TransporterId))]
+        public virtual Transporter? Transporter { get; set; }
 
-    [ForeignKey(nameof(TransporterId))]
-    public virtual Transporter? Transporter { get; set; }
+        // AxleConfiguration relationship
+        [Required]
+        public string AxleConfigurationId { get; set; } = null!;
 
-    public string? DriverId { get; set; }
+        [ForeignKey(nameof(AxleConfigurationId))]
+        public virtual AxleConfiguration AxleConfiguration { get; set; } = null!;
 
-    [ForeignKey(nameof(DriverId))]
-    public virtual Driver? Driver { get; set; }
+        // Owner relationship
+        [Required]
+        public string OwnerId { get; set; } = null!;
 
-    public string? AxleConfigurationId { get; set; }
+        [ForeignKey(nameof(OwnerId))]
+        public virtual Owner Owner { get; set; } = null!;
 
-    [ForeignKey(nameof(AxleConfigurationId))]
-    public virtual AxleConfiguration? AxleConfiguration { get; set; }
-
-    public string? OwnerId { get; set; }
-
-    [ForeignKey(nameof(OwnerId))]
-    public virtual Owner? Owner { get; set; }
-
-    public virtual ICollection<Driver> AssignedDrivers { get; set; } = new List<Driver>();
+        /// <summary>
+        /// Navigation property for the join table representing driver assignments
+        /// </summary>
+        public virtual ICollection<DriverVehicle> DriverVehicles { get; set; } = new List<DriverVehicle>();
+    }
 }

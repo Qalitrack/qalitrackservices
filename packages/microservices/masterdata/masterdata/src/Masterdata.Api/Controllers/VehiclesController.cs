@@ -150,52 +150,7 @@ namespace Masterdata.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the vehicle");
             }
         }
-
-        [HttpPost("{vehicleId}/drivers/{driverId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AssignDriver(string vehicleId, string driverId)
-        {
-            try
-            {
-                var success = await _vehicleService.AssignDriverAsync(vehicleId, driverId);
-                if (!success)
-                {
-                    return BadRequest("Unable to assign driver to vehicle");
-                }
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error assigning driver {driverId} to vehicle {vehicleId}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while assigning the driver");
-            }
-        }
-
-        [HttpDelete("{vehicleId}/drivers/{driverId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveDriver(string vehicleId, string driverId)
-        {
-            try
-            {
-                var success = await _vehicleService.RemoveDriverAsync(vehicleId, driverId);
-                if (!success)
-                {
-                    return BadRequest("Unable to remove driver from vehicle");
-                }
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error removing driver {driverId} from vehicle {vehicleId}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while removing the driver");
-            }
-        }
+        
 
         [HttpGet("{id}/drivers")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]

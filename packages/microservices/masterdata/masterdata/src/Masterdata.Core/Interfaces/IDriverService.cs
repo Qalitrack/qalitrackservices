@@ -16,11 +16,13 @@ public interface IDriverService
     Task<bool> IsLicenseNumberAvailableAsync(string licenseNumber);
     Task AssignVehicleAsync(string driverId, string vehicleId);
     
-    /// <summary>
-    /// Removes a vehicle from a driver's assigned vehicles
-    /// </summary>
-    /// <param name="driverId">The ID of the driver</param>
-    /// <param name="vehicleId">The ID of the vehicle to remove</param>
-    /// <returns>True if the operation was successful, false otherwise</returns>
+
     Task<bool> RemoveVehicleAsync(string driverId, string vehicleId);
+   
+
+    Task<bool> AssignToSupplierAsync(string driverId, string supplierId);
+    
+    Task<bool> RemoveFromSupplierAsync(string driverId, string supplierId);
+    Task<bool> AssignToTransporterAsync(string driverId, string transporterId);
+    Task<bool> RemoveFromTransporterAsync(string driverId, string transporterId);
 }

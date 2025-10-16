@@ -164,20 +164,17 @@ builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IRepository<Driver>, Repository<Driver>>();
 builder.Services.AddScoped<IRepository<Vehicle>, Repository<Vehicle>>();
 builder.Services.AddScoped<IRepository<Supplier>, Repository<Supplier>>();
+builder.Services.AddScoped<IRepository<Transporter>, Repository<Transporter>>();
+builder.Services.AddScoped<IRepository<DriverVehicle>, Repository<DriverVehicle>>();
 
-// Register specific repositories that have additional dependencies
-builder.Services.AddScoped<IDriverVehicleRepository>(provider => 
-    new DriverVehicleRepository(
-        provider.GetRequiredService<MasterdataDbContext>(),
-        provider.GetRequiredService<IHttpContextAccessor>(),
-        provider.GetRequiredService<ITokenExtractionService>(),
-        provider.GetRequiredService<IAuditLogRepository>()
-    )
-);
+
+// 
 
 // Register services that depend on repositories
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<ITransporterService, TransporterService>();
 // Note: IDriverVehicleService is not implemented yet
 
 builder.Services.AddCors(options =>
