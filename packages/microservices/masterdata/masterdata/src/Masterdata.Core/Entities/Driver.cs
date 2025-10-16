@@ -1,29 +1,40 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Masterdata.Core.Entities;
-
-public class Driver : BaseEntity
+namespace Masterdata.Core.Entities
 {
-    [Required]
-    public string FullName { get; set; } = null!;
+    public class Driver : BaseEntity
+    {
+        [Required, MaxLength(100)]
+        public string FullName { get; set; } = null!;
 
-    [Required]
-    public string LicenseNumber { get; set; } = null!;
+        [Required, EmailAddress, MaxLength(100)]
+        public string Email { get; set; } = null!;
 
-    public DateTime? LicenseExpiryDate { get; set; }
+        [Required, Phone, MaxLength(20)]
+        public string Phone { get; set; } = null!;
 
-    public string? Status { get; set; } = "active";
+        [Required, MaxLength(50)]
+        public string LicenseNumber { get; set; } = null!;
 
-    public string? TransporterId { get; set; }
+        public DateTime? LicenseExpiryDate { get; set; }
 
-    [ForeignKey(nameof(TransporterId))]
-    public virtual Transporter? Transporter { get; set; }
+        [MaxLength(20)]
+        public string? Status { get; set; } = "active";
 
-    public string? SupplierId { get; set; }
+        public string? TransporterId { get; set; }
 
-    [ForeignKey(nameof(SupplierId))]
-    public virtual Supplier? Supplier { get; set; }
+        [ForeignKey(nameof(TransporterId))]
+        public virtual Transporter? Transporter { get; set; }
 
-    public virtual ICollection<Vehicle> AssignedVehicles { get; set; } = new List<Vehicle>();
+        public string? SupplierId { get; set; }
+
+        [ForeignKey(nameof(SupplierId))]
+        public virtual Supplier? Supplier { get; set; }
+
+        /// <summary>
+        /// Navigation property for the join table representing vehicle assignments
+        /// </summary>
+        public virtual ICollection<DriverVehicle> DriverVehicles { get; set; } = new List<DriverVehicle>();
+    }
 }
