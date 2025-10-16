@@ -1,51 +1,49 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
-namespace Masterdata.Core.DTOs.Drivers;
-
-public class CreateDriverDto
+namespace Masterdata.Core.DTOs.Drivers
 {
-    [Required(ErrorMessage = "Full name is required")]
-    [StringLength(200, ErrorMessage = "Full name cannot be longer than 200 characters")]
-    public string FullName { get; set; } = null!;
-
-    [Required(ErrorMessage = "License number is required")]
-    [StringLength(50, ErrorMessage = "License number cannot be longer than 50 characters")]
-    public string LicenseNumber { get; set; } = null!;
-
-    private DateTime? _licenseExpiryDate;
-    
-    /// <summary>
-    /// The date when the driver's license expires. Must be in UTC format.
-    /// Example: 2025-10-15T00:00:00Z
-    /// </summary>
-    [DataType(DataType.Date)]
-    public DateTime? LicenseExpiryDate
+    public class CreateDriverDto
     {
-        get => _licenseExpiryDate;
-        set => _licenseExpiryDate = value?.ToUniversalTime();
+        [Required(ErrorMessage = "Full name is required")]
+        [StringLength(200, ErrorMessage = "Full name cannot be longer than 200 characters")]
+        public string FullName { get; set; } = null!;
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [StringLength(100, ErrorMessage = "Email cannot be longer than 100 characters")]
+        public string Email { get; set; } = null!;
+
+        [Required(ErrorMessage = "Phone number is required")]
+        [StringLength(20, ErrorMessage = "Phone number cannot be longer than 20 characters")]
+        [RegularExpression(@"^\+?[0-9]{7,15}$", ErrorMessage = "Invalid phone number format (must be digits and may start with +)")]
+        public string Phone { get; set; } = null!;
+
+        [Required(ErrorMessage = "License number is required")]
+        [StringLength(50, ErrorMessage = "License number cannot be longer than 50 characters")]
+        public string LicenseNumber { get; set; } = null!;
+
+        private DateTime? _licenseExpiryDate;
+
+        /// <summary>
+        /// The date when the driver's license expires. Must be in UTC format.
+        /// Example: 2025-10-15T00:00:00Z
+        /// </summary>
+        [DataType(DataType.Date, ErrorMessage = "Invalid date format")]
+        public DateTime? LicenseExpiryDate
+        {
+            get => _licenseExpiryDate;
+            set
+            {
+                if (value.HasValue && value.Value < DateTime.UtcNow)
+                    throw new ValidationException("License expiry date cannot be in the past.");
+
+                _licenseExpiryDate = value?.ToUniversalTime();
+            }
+        }
+
+        [StringLength(20, ErrorMessage = "Status cannot be longer than 20 characters")]
+        public string? Status { get; set; } = "active";
     }
-
-    [StringLength(20, ErrorMessage = "Status cannot be longer than 20 characters")]
-    public string? Status { get; set; } = "active";
-
-    private string? _transporterId;
-    private string? _supplierId;
-
-    [StringLength(50, ErrorMessage = "Transporter ID cannot be longer than 50 characters")]
-    public string? TransporterId 
-    { 
-        get => _transporterId;
-        set => _transporterId = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-    }
-
-    [StringLength(50, ErrorMessage = "Supplier ID cannot be longer than 50 characters")]
-    public string? SupplierId 
-    { 
-        get => _supplierId;
-        set => _supplierId = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-    }
-
-    // Removed AssignedVehicleIds as per requirement to assign vehicles after creation
 }

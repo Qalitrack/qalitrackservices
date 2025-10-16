@@ -1,5 +1,6 @@
 using AutoMapper;
 using Masterdata.Core.DTOs.Drivers;
+using Masterdata.Core.DTOs.Supplier;
 using Masterdata.Core.DTOs.Transporters;
 using Masterdata.Core.DTOs.Vehicles;
 using Masterdata.Core.Entities;
@@ -24,6 +25,11 @@ public class MappingProfile : Profile
         CreateMap<CreateVehicleDto, Vehicle>();
         CreateMap<UpdateVehicleDto, Vehicle>();
         CreateMap<Vehicle, VehicleReadDto>();
+        
+        // Supplier mappings
+        CreateMap<CreateSupplierDto, Supplier>();
+        CreateMap<UpdateSupplierDto, Supplier>();
+        CreateMap<Supplier, SupplierReadDto>();
         
         // Add other mappings as needed
     }
