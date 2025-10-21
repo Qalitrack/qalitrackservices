@@ -15,7 +15,7 @@ namespace Masterdata.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [Produces("application/json")]
     public class TransportersController : ControllerBase
     {
