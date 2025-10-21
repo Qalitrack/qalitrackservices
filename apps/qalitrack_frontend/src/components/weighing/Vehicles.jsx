@@ -1,169 +1,199 @@
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { addVehicle, updateVehicle, deleteVehicle } from "../../store/Vehicleslice";
-import { Pencil, Trash2, PlusCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Pencil, Trash2, Truck, Plus } from "lucide-react";
+import {
+  getVehicles,
+  createVehicle,
+  updateVehicle,
+  deleteVehicle,
+} from "../../api/MasterData/Vehicle";
 
-export default function VehiclePortal() {
-  const vehicles = useSelector((state) => state.vehicles);
-  const dispatch = useDispatch();
-
-  const [editingIndex, setEditingIndex] = useState(null);
+export default function Vehicles() {
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    plate: "",
-    vehicleType: "Truck",
+    registrationNumber: "",
+    type: "",
+    color: "",
     model: "",
-    fromAnotherPlant: false,
-    otherPlantName: "",
+    status: "Active",
+    supplierId: "",
+    transporterId: "",
+    ownerId: "",
+    axleConfigurationId: "",
   });
+  const [editingVehicle, setEditingVehicle] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+  // ✅ Fetch vehicles
+  const fetchVehicles = async () => {
+    try {
+      setLoading(true);
+      const data = await getVehicles(pageNumber, 10, searchTerm);
+      setVehicles(data.items || []);
+    } catch (error) {
+      console.error("Failed to load vehicles:", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    fetchVehicles();
+  }, [pageNumber, searchTerm]);
+
+  // ✅ Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ Create / Update vehicle
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!form.plate) return alert("Registration number is required");
-
-    if (editingIndex !== null) {
-      dispatch(updateVehicle({ index: editingIndex, vehicle: form }));
-      setEditingIndex(null);
-    } else {
-      dispatch(addVehicle(form));
+    try {
+      setLoading(true);
+      if (editingVehicle) {
+        await updateVehicle(editingVehicle.id, form);
+      } else {
+        await createVehicle(form);
+      }
+      await fetchVehicles();
+      resetForm();
+    } catch (error) {
+      alert("Error saving vehicle: " + error.message);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  // ✅ Edit existing vehicle
+  const handleEdit = (vehicle) => {
+    setEditingVehicle(vehicle);
     setForm({
-      plate: "",
-      vehicleType: "Truck",
-      model: "",
-      fromAnotherPlant: false,
-      otherPlantName: "",
+      registrationNumber: vehicle.registrationNumber,
+      type: vehicle.type,
+      color: vehicle.color,
+      model: vehicle.model,
+      status: vehicle.status,
+      supplierId: vehicle.supplierId,
+      transporterId: vehicle.transporterId,
+      ownerId: vehicle.ownerId,
+      axleConfigurationId: vehicle.axleConfigurationId,
     });
   };
 
-  const handleEdit = (index) => {
-    setForm(vehicles[index]);
-    setEditingIndex(index);
-  };
-
-  const handleDelete = (index) => {
-    if (confirm("Are you sure you want to delete this vehicle?")) {
-      dispatch(deleteVehicle(index));
+  // ✅ Delete vehicle
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this vehicle?")) return;
+    try {
+      await deleteVehicle(id);
+      await fetchVehicles();
+    } catch (error) {
+      console.error("Delete failed:", error.message);
     }
   };
 
+  const resetForm = () => {
+    setForm({
+      registrationNumber: "",
+      type: "",
+      color: "",
+      model: "",
+      status: "Active",
+      supplierId: "",
+      transporterId: "",
+      ownerId: "",
+      axleConfigurationId: "",
+    });
+    setEditingVehicle(null);
+  };
+
   return (
-    <div className="bg-white shadow rounded-lg p-4 border">
+    <div className="bg-white p-5 shadow rounded-lg border">
       <h2 className="text-xl font-bold text-amber-600 mb-4 flex items-center gap-2">
-        <PlusCircle className="w-5 h-5" /> Vehicle Management
+        <Truck className="w-5 h-5" /> Vehicle Management
       </h2>
 
-      {/* Vehicle Form */}
-      <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label>Registration Number</label>
-            <input
-              name="plate"
-              value={form.plate}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-              required
-            />
-          </div>
-          <div>
-            <label>Vehicle Type</label>
-            <select
-              name="vehicleType"
-              value={form.vehicleType}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            >
-              <option>Truck</option>
-              <option>Trailer</option>
-            </select>
-          </div>
-          <div>
-            <label>Model</label>
-            <input
-              name="model"
-              value={form.model}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="fromAnotherPlant"
-              checked={form.fromAnotherPlant}
-              onChange={handleChange}
-            />
-            <label>Vehicle from another plant</label>
-          </div>
-          {form.fromAnotherPlant && (
-            <div className="col-span-2">
-              <label>Other Plant Name</label>
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 mb-6">
+        {Object.keys(form).map((key) => (
+          key !== "status" && (
+            <div key={key}>
+              <label className="block text-sm font-medium capitalize">{key}</label>
               <input
-                name="otherPlantName"
-                value={form.otherPlantName}
+                name={key}
+                value={form[key]}
                 onChange={handleChange}
                 className="w-full border rounded px-2 py-1"
+                required={["registrationNumber", "type"].includes(key)}
               />
             </div>
-          )}
+          )
+        ))}
+
+        <div>
+          <label className="block text-sm font-medium">Status</label>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            className="w-full border rounded px-2 py-1"
+          >
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
+
         <button
           type="submit"
-          className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded font-semibold"
+          disabled={loading}
+          className="col-span-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 font-semibold"
         >
-          {editingIndex !== null ? "Update Vehicle" : "Add Vehicle"}
+          <Plus className="w-4 h-4" />
+          {editingVehicle ? "Update Vehicle" : "Add Vehicle"}
         </button>
       </form>
 
-      {/* Vehicle List */}
-      <h3 className="text-lg font-semibold text-gray-700 mb-2">Registered Vehicles</h3>
-      {vehicles.length === 0 ? (
-        <p className="text-gray-500 text-sm">No vehicles added yet.</p>
+      {/* Search Bar */}
+      <input
+        type="text"
+        placeholder="Search vehicles..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="border rounded px-3 py-1 mb-4 w-1/2"
+      />
+
+      {/* Vehicle Table */}
+      {loading ? (
+        <p>Loading vehicles...</p>
+      ) : vehicles.length === 0 ? (
+        <p className="text-gray-500 text-sm">No vehicles found.</p>
       ) : (
         <table className="w-full text-sm border">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border px-2 py-1">Plate</th>
+              <th className="border px-2 py-1">Reg. No</th>
               <th className="border px-2 py-1">Type</th>
               <th className="border px-2 py-1">Model</th>
-              <th className="border px-2 py-1">From Plant?</th>
-              <th className="border px-2 py-1">Other Plant</th>
+              <th className="border px-2 py-1">Color</th>
+              <th className="border px-2 py-1">Status</th>
               <th className="border px-2 py-1">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((v, i) => (
-              <tr key={i}>
-                <td className="border px-2 py-1">{v.plate}</td>
-                <td className="border px-2 py-1">{v.vehicleType}</td>
-                <td className="border px-2 py-1">{v.model}</td>
-                <td className="border px-2 py-1">{v.fromAnotherPlant ? "Yes" : "No"}</td>
-                <td className="border px-2 py-1">
-                  {v.fromAnotherPlant ? v.otherPlantName : "-"}
-                </td>
+            {vehicles.map((vehicle) => (
+              <tr key={vehicle.id}>
+                <td className="border px-2 py-1">{vehicle.registrationNumber}</td>
+                <td className="border px-2 py-1">{vehicle.type}</td>
+                <td className="border px-2 py-1">{vehicle.model}</td>
+                <td className="border px-2 py-1">{vehicle.color}</td>
+                <td className="border px-2 py-1">{vehicle.status}</td>
                 <td className="border px-2 py-1 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(i)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
+                  <button onClick={() => handleEdit(vehicle)} className="text-blue-600 hover:text-blue-800">
                     <Pencil className="w-4 h-4" />
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(i)}
-                    className="text-red-600 hover:text-red-800"
-                  >
+                  <button onClick={() => handleDelete(vehicle.id)} className="text-red-600 hover:text-red-800">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
