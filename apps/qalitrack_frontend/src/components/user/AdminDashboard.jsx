@@ -7,7 +7,7 @@ import {
   BarChart3,
   LogOut,
 } from "lucide-react";
-import { useAuth } from "../../helpers/auth.js";
+import { useAuth } from "../../api/helpers/auth";
 
 export default function AdminDashboard() {
   const { logout, user } = useAuth();
