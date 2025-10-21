@@ -8,7 +8,7 @@ namespace Masterdata.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class VehiclesController : BaseController
     {
         private readonly IVehicleService _vehicleService;
