@@ -65,40 +65,14 @@ public class AuditLogsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get a specific audit log by ID
-    /// </summary>
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(AuditLogReadDto), 200)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetAuditLogById(string id)
-    {
-        try
-        {
-            _logger.LogInformation("Getting audit log with ID: {Id}", id);
-            
-            var result = await _auditLogService.GetAuditLogByIdAsync(id);
-            if (result == null)
-            {
-                _logger.LogWarning("Audit log with ID {Id} not found", id);
-                return NotFound();
-            }
-
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting audit log with ID: {Id}", id);
-            return StatusCode(500, new { message = $"An error occurred while retrieving audit log with ID: {id}", error = ex.Message });
-        }
-    }
 
     /// <summary>
     /// Get audit logs for a specific entity
     /// </summary>
     [HttpGet("entity/{entityName}/{entityId}")]
-    [ProducesResponseType(typeof(PagedResult<AuditLogReadDto>), 200)]
-    public async Task<IActionResult> GetAuditLogsForEntity(
+    [ProducesResponseType(typeof(PagedResult<AuditLogDto>), 200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<PagedResult<AuditLogDto>>> GetAuditLogsForEntity(
         string entityName, 
         string entityId, 
         [FromQuery] int pageNumber = 1, 
@@ -108,9 +82,13 @@ public class AuditLogsController : ControllerBase
         {
             _logger.LogInformation("Getting audit logs for entity {EntityName} with ID: {EntityId}", entityName, entityId);
             
+            // Ensure page size is reasonable
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            pageNumber = Math.Max(1, pageNumber);
+            
             var result = await _auditLogService.GetAuditLogsAsync(
-                entityName,
-                entityId,
+                entityName: entityName,
+                entityId: entityId,
                 pageNumber: pageNumber,
                 pageSize: pageSize);
 
