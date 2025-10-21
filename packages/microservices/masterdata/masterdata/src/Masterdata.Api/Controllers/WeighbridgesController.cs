@@ -13,7 +13,7 @@ namespace Masterdata.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize]
 [Produces("application/json")]
 public class WeighbridgesController : ControllerBase
 {
