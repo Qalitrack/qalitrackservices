@@ -180,4 +180,10 @@ public class AuditLogRepository : IAuditLogRepository
     {
         return _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
     }
+    
+    /// <inheritdoc />
+    public IQueryable<AuditLog> GetAll()
+    {
+        return _context.AuditLogs.AsQueryable();
+    }
 }
