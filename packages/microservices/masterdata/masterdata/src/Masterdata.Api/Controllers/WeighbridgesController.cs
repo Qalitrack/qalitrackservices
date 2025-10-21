@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Masterdata.Core.DTOs;
 using Masterdata.Core.DTOs.Weighbridge;
 using Masterdata.Core.Interfaces;
-using Masterdata.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +12,7 @@ namespace Masterdata.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Produces("application/json")]
 public class WeighbridgesController : ControllerBase
 {
