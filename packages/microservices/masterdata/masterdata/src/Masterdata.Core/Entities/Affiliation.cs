@@ -18,4 +18,7 @@ public class Affiliation : BaseEntity
     public string? Type { get; set; }
 
     public string? Details { get; set; }
+
+    [StringLength(50)]
+    public string Status { get; set; } = "Active";
 }

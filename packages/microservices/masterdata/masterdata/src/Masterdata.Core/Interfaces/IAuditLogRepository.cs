@@ -2,6 +2,7 @@ using Masterdata.Core.Entities;
 using Masterdata.Core.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Masterdata.Core.Interfaces;
 
@@ -14,4 +15,9 @@ public interface IAuditLogRepository
     Task<List<AuditLog>> GetByEntityAsync(string entityName, string entityId);
     Task<List<AuditLog>> GetByActionAsync(string action);
     Task<AuditLog?> GetByIdAsync(string id);
+    
+    /// <summary>
+    /// Gets a queryable collection of audit logs for advanced querying
+    /// </summary>
+    IQueryable<AuditLog> GetAll();
 }
