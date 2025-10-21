@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Masterdata.Core.DTOs.Drivers;
 using Masterdata.Core.DTOs.Supplier;
-using Masterdata.Core.DTOs.Vehicles;
 using Masterdata.Core.Interfaces;
 using Masterdata.Core.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Masterdata.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
     [Produces("application/json")]
     public class SuppliersController : ControllerBase
@@ -156,60 +154,6 @@ namespace Masterdata.API.Controllers
             {
                 _logger.LogError(ex, "Error deleting supplier with ID: {SupplierId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the supplier");
-            }
-        }
-
-        /// <summary>
-        /// Get all drivers associated with a supplier
-        /// </summary>
-        /// <param name="id">The supplier ID</param>
-        [HttpGet("{id}/drivers")]
-        [ProducesResponseType(typeof(IEnumerable<DriverReadDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<DriverReadDto>>> GetSupplierDrivers(string id)
-        {
-            try
-            {
-                var exists = await _supplierService.ExistsAsync(id);
-                if (!exists)
-                {
-                    return NotFound();
-                }
-
-                var drivers = await _supplierService.GetDriversBySupplierIdAsync(id);
-                return Ok(drivers);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving drivers for supplier with ID: {SupplierId}", id);
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the supplier's drivers");
-            }
-        }
-
-        /// <summary>
-        /// Get all vehicles associated with a supplier
-        /// </summary>
-        /// <param name="id">The supplier ID</param>
-        [HttpGet("{id}/vehicles")]
-        [ProducesResponseType(typeof(IEnumerable<VehicleReadDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<VehicleReadDto>>> GetSupplierVehicles(string id)
-        {
-            try
-            {
-                var exists = await _supplierService.ExistsAsync(id);
-                if (!exists)
-                {
-                    return NotFound();
-                }
-
-                var vehicles = await _supplierService.GetVehiclesBySupplierIdAsync(id);
-                return Ok(vehicles);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving vehicles for supplier with ID: {SupplierId}", id);
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the supplier's vehicles");
             }
         }
     }

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Masterdata.Core.DTOs.Drivers;
-using Masterdata.Core.DTOs.Transporters;
-using Masterdata.Core.DTOs.Vehicles;
+using Masterdata.Core.DTOs.Transporter;
 using Masterdata.Core.Interfaces;
 using Masterdata.Core.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Masterdata.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
     [Produces("application/json")]
     public class TransportersController : ControllerBase
@@ -156,47 +154,6 @@ namespace Masterdata.API.Controllers
             {
                 _logger.LogError(ex, "Error deleting transporter with ID: {TransporterId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the transporter");
-            }
-        }
-        // Add these methods to TransportersController
-
-        /// <summary>
-        /// Get all vehicles associated with a specific transporter
-        /// </summary>
-        [HttpGet("{id}/vehicles")]
-        [ProducesResponseType(typeof(IEnumerable<VehicleReadDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<VehicleReadDto>>> GetTransporterVehicles(string id)
-        {
-            try
-            {
-                var vehicles = await _transporterService.GetTransporterVehiclesAsync(id);
-                return Ok(vehicles);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving vehicles for transporter with ID: {TransporterId}", id);
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the transporter's vehicles");
-            }
-        }
-
-        /// <summary>
-        /// Get all drivers associated with a specific transporter
-        /// </summary>
-        [HttpGet("{id}/drivers")]
-        [ProducesResponseType(typeof(IEnumerable<DriverReadDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<DriverReadDto>>> GetTransporterDrivers(string id)
-        {
-            try
-            {
-                var drivers = await _transporterService.GetTransporterDriversAsync(id);
-                return Ok(drivers);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving drivers for transporter with ID: {TransporterId}", id);
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the transporter's drivers");
             }
         }
     }
