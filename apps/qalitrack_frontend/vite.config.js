@@ -4,21 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          // [
-          //   "babel-plugin-react-router",
-          //   {
-          //     future: {
-          //       v7_startTransition: true,   // ✅ Opt-in to React Router v7 transition behavior
-          //       v7_relativeSplatPath: true, // ✅ Opt-in to new relative splat path behavior
-          //     },
-          //   },
-          // ],
-        ],
-      },
-    }),
+    react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'logo192.png', 'logo512.png'],
@@ -33,8 +19,8 @@ export default defineConfig({
         start_url: '/',
         icons: [
           { src: 'logo192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'logo512.png', sizes: '512x512', type: 'image/png' }
-        ]
+          { src: 'logo512.png', sizes: '512x512', type: 'image/png' },
+        ],
       },
       workbox: {
         runtimeCaching: [
@@ -54,4 +40,16 @@ export default defineConfig({
       },
     }),
   ],
+
+  // ✅ Proxy to bypass CORS during local dev
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://qalitrack.cseco.co.ke',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+    },
+  },
 });

@@ -1,4 +1,4 @@
-import { backupApiClient } from '../../helpers/BackupApiclient.js';
+import { backupApiClient } from '../BackupApiclient.js';
 
 class BackupAPI {
     constructor() {

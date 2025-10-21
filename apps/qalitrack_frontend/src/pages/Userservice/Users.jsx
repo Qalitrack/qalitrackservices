@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, fetchUserById, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../helpers/UserService/Users/users.js';
-import { fetchRoles } from '../../helpers/UserService/Roles/Roles.js';
+import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, fetchUserById, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../api/helpers/UserService/Users/users.js';
+import { fetchRoles } from '../../api/helpers/UserService/Roles/Roles.js';
 import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock, Download } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
