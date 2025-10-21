@@ -12,7 +12,7 @@ namespace Masterdata.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "Admin")]
     [Produces("application/json")]
     public class ProductsController : ControllerBase
     {
