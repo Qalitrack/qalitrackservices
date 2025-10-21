@@ -155,36 +155,56 @@ builder.Services.AddDbContext<MasterdataDbContext>();
 
 // Register HTTP context and memory cache first as they're used by other services
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddMemoryCache();
-
 builder.Services.AddScoped<ITokenExtractionService, TokenExtractionService>();
 
-// Register repositories with their dependencies
+// Base repositories
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+
+// Entity repositories (alphabetical order for better maintainability)
+builder.Services.AddScoped<IRepository<Affiliation>, Repository<Affiliation>>();
+builder.Services.AddScoped<IRepository<AxleConfiguration>, Repository<AxleConfiguration>>();
+builder.Services.AddScoped<IRepository<Customer>, Repository<Customer>>();
 builder.Services.AddScoped<IRepository<Driver>, Repository<Driver>>();
-builder.Services.AddScoped<IRepository<Vehicle>, Repository<Vehicle>>();
+builder.Services.AddScoped<IRepository<DriverVehicle>, Repository<DriverVehicle>>();
+builder.Services.AddScoped<IRepository<Organisation>, Repository<Organisation>>();
+builder.Services.AddScoped<IRepository<Owner>, Repository<Owner>>();
+builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
+builder.Services.AddScoped<IRepository<Masterdata.Core.Entities.Route>, Repository<Masterdata.Core.Entities.Route>>();
+builder.Services.AddScoped<IRepository<Sacco>, Repository<Sacco>>();
 builder.Services.AddScoped<IRepository<Supplier>, Repository<Supplier>>();
 builder.Services.AddScoped<IRepository<Transporter>, Repository<Transporter>>();
-builder.Services.AddScoped<IRepository<DriverVehicle>, Repository<DriverVehicle>>();
+builder.Services.AddScoped<IRepository<Vehicle>, Repository<Vehicle>>();
+builder.Services.AddScoped<IRepository<Weighbridge>, Repository<Weighbridge>>();
+
+// Note: BaseEntity is an abstract class and should not be registered as a repository
+// Note: MainEntity.Base is likely a base class and should not be registered directly
 
 
-// 
-
-// Register services that depend on repositories
+// Register services (alphabetical order for better maintainability)
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IDriverService, DriverService>();
-builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IOrganisationService, OrganisationService>();
+builder.Services.AddScoped<IOwnerService, OwnerService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IRouteService, RouteService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ITransporterService, TransporterService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IWeighbridgeService, WeighbridgeService>();
+builder.Services.AddScoped<IAxleConfigurationService, AxleConfigurationService>();
 // Note: IDriverVehicleService is not implemented yet
 
+// Add CORS with more permissive settings for development
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .SetIsOriginAllowed(origin => true) // Allow any origin
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials(); // Important for cookies, authorization headers with HTTPS
     });
 });
 
@@ -193,11 +213,11 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+// Enable CORS before other middleware
+app.UseCors("AllowAll");
+
 // Configure the HTTP request pipeline
 // ALWAYS generate Swagger JSON (for both DEV + PROD)
-app.UseSwagger();
-
-// ALWAYS generate Swagger JSON
 app.UseSwagger();
 
 if (app.Environment.IsDevelopment())
@@ -232,12 +252,13 @@ else
     });
 }
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
-
 // Use Serilog request logging
 app.UseSerilogRequestLogging();
 
 app.UseRouting();
+
+// CORS must be after UseRouting() but before UseAuthentication() and UseAuthorization()
+app.UseCors("AllowAll");
 
 // Authentication must come before Authorization
 app.UseAuthentication();

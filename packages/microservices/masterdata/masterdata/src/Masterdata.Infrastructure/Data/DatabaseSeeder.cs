@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Masterdata.Core.Entities;
+using Masterdata.Core.Enums;
 using Masterdata.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -90,32 +91,69 @@ public static class DatabaseSeeder
 
     private static async Task SeedOwnersAsync(MasterdataDbContext context)
     {
-        var existingOwner = await context.Owners
-            .FirstOrDefaultAsync(o => o.Name == "John Smith Logistics");
-            
-        if (existingOwner == null)
+        if (await context.Owners.AnyAsync())
+            return;
+
+        var owners = new List<Owner>
         {
-            var owners = new List<Owner>
+            // Company Owner
+            new Owner
             {
-                new Owner
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "John Smith Logistics",
-                    ContactInfo = JsonSerializer.Serialize(new { Email = "john.smith@logistics.com", Phone = "+254123456789" }),
-                    Type = "Company"
-                },
-                new Owner
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Jane Doe",
-                    ContactInfo = JsonSerializer.Serialize(new { Email = "jane.doe@gmail.com", Phone = "+254987654321" }),
-                    Type = "Individual"
-                }
-            };
+                Id = Guid.NewGuid().ToString(),
+                Name = "John Smith Logistics",
+                Email = "john.smith@logistics.com",
+                PhoneNumber = "+254123456789",
+                Address = "Nairobi, Kenya",
+                Type = OwnerType.Company,
+                BusinessRegistrationNumber = "CPT/2023/123456",
+                TaxIdentificationNumber = "A123456789X",
+                ContactInfo = JsonSerializer.Serialize(new { 
+                    Website = "https://johnsmithlogistics.com",
+                    ContactPerson = "John Smith",
+                    PostalAddress = "P.O. Box 12345-00100, Nairobi"
+                })
+            },
             
-            await context.Owners.AddRangeAsync(owners);
-            await context.SaveChangesAsync();
-        }
+            // Individual Owner
+            new Owner
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Jane Wanjiku",
+                Email = "jane.wanjiku@example.com",
+                PhoneNumber = "+254987654321",
+                Address = "Mombasa, Kenya",
+                Type = OwnerType.Individual,
+                NationalId = "12345678",
+                DateOfBirth = new DateTime(1985, 5, 15),
+                Gender = "Female",
+                ContactInfo = JsonSerializer.Serialize(new { 
+                    EmergencyContact = "+254712345678",
+                    PostalAddress = "P.O. Box 54321-80100, Mombasa"
+                })
+            },
+            
+            // Sacco Owner
+            new Owner
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Stima Sacco Society",
+                Email = "info@stimasacco.co.ke",
+                PhoneNumber = "+25420445566",
+                Address = "Nairobi, Kenya",
+                Type = OwnerType.Sacco,
+                RegistrationNumber = "CS/12345",
+                RegistrationDate = new DateTime(1974, 1, 1),
+                ContactPerson = "John Kamau",
+                ContactInfo = JsonSerializer.Serialize(new { 
+                    Website = "https://www.stimasacco.com",
+                    BranchOffices = "Nairobi, Mombasa, Kisumu, Nakuru",
+                    Services = "Savings, Loans, Investments"
+                })
+            }
+        };
+        
+        await context.Owners.AddRangeAsync(owners);
+        await context.SaveChangesAsync();
     }
 
     private static async Task SeedSuppliersAsync(MasterdataDbContext context)
