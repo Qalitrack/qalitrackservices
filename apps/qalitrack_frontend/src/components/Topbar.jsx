@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Bell, Search, User, LogOut, Menu } from "lucide-react";
-import useAuth from "../api/helpers/auth";
+import useAuth from "../helpers/auth";
 import { useState, useRef, useEffect } from "react";
 
 export default function Topbar({ onToggleSidebar }) {

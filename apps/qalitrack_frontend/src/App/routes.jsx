@@ -3,7 +3,7 @@ import React from 'react';
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes.jsx";
-import useAuth from "../api/helpers/auth.js";
+import useAuth from '../helpers/auth.js';
 
 // Layout
 const MainLayout = lazy(() => import("../layouts/MainLayout.jsx"));

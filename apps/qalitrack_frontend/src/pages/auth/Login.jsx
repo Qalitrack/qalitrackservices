@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../api/helpers/auth'; // Adjust path as needed
+import useAuth from '../../helpers/auth.js'; // Adjust path as needed
 
 export default function Login() {
     const [email, setEmail] = useState('');
