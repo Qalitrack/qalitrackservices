@@ -88,7 +88,6 @@ public static class DatabaseSeeder
         await context.SaveChangesAsync();
     }
 
-
     private static async Task SeedOwnersAsync(MasterdataDbContext context)
     {
         if (await context.Owners.AnyAsync())
@@ -124,7 +123,7 @@ public static class DatabaseSeeder
                 Address = "Mombasa, Kenya",
                 Type = OwnerType.Individual,
                 NationalId = "12345678",
-                DateOfBirth = new DateTime(1985, 5, 15),
+                DateOfBirth = DateTime.SpecifyKind(new DateTime(1985, 5, 15), DateTimeKind.Utc), // Fixed: Specify UTC Kind
                 Gender = "Female",
                 ContactInfo = JsonSerializer.Serialize(new { 
                     EmergencyContact = "+254712345678",
@@ -142,7 +141,7 @@ public static class DatabaseSeeder
                 Address = "Nairobi, Kenya",
                 Type = OwnerType.Sacco,
                 RegistrationNumber = "CS/12345",
-                RegistrationDate = new DateTime(1974, 1, 1),
+                RegistrationDate = DateTime.SpecifyKind(new DateTime(1974, 1, 1), DateTimeKind.Utc), // Fixed: Specify UTC Kind
                 ContactPerson = "John Kamau",
                 ContactInfo = JsonSerializer.Serialize(new { 
                     Website = "https://www.stimasacco.com",
@@ -575,8 +574,9 @@ public static class DatabaseSeeder
                 UserId = "system",
                 UserName = "System",
                 IpAddress = "127.0.0.1",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "system"
+                UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                CreatedBy = "system",
             };
             
             await context.AuditLogs.AddAsync(auditLog);
