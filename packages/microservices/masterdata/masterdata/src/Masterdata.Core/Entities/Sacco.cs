@@ -14,5 +14,8 @@ public class Sacco : BaseEntity
     [Column(TypeName = "jsonb")]
     public string? OtherDetails { get; set; }
 
+    [StringLength(50)]
+    public string Status { get; set; } = "Active";
+
     public virtual ICollection<Affiliation> Affiliations { get; set; } = new List<Affiliation>();
 }
