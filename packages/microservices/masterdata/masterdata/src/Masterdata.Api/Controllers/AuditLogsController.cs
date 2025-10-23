@@ -1,11 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Masterdata.Core.DTOs.AuditLog;
 using Masterdata.Core.Interfaces;
 using Masterdata.Core.Models;
+using Masterdata.Core.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Masterdata.Api.Controllers;
 
@@ -40,56 +41,60 @@ public class AuditLogsController(
             filter.PageSize = Math.Clamp(filter.PageSize, 1, 100);
             filter.PageNumber = Math.Max(1, filter.PageNumber);
 
-        public AuditLogsController(
-            IAuditLogService auditLogService,
-            ILogger<AuditLogsController> logger)
-        {
-            _auditLogService = auditLogService ?? throw new ArgumentNullException(nameof(auditLogService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            var result = await _auditLogService.GetAuditLogsAsync(
+                filter.EntityName,
+                filter.EntityId,
+                filter.Action,
+                filter.UserId,
+                filter.StartDate,
+                filter.EndDate,
+                filter.PageNumber,
+                filter.PageSize);
+
+            return Ok(result);
         }
-
-        /// <summary>
-        /// Get a paginated list of audit logs
-        /// </summary>
-        [HttpGet]
-        [ProducesResponseType(typeof(PagedResult<AuditLogDto>), 200)]
-        [ProducesResponseType(500)]
-        public async Task<ActionResult<PagedResult<AuditLogDto>>> GetAuditLogs(
-            [FromQuery] string? entityName = null,
-            [FromQuery] string? entityId = null,
-            [FromQuery] string? action = null,
-            [FromQuery] string? userId = null,
-            [FromQuery] DateTime? startDate = null,
-            [FromQuery] DateTime? endDate = null,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 50)
+        catch (Exception ex)
         {
-            try
-            {
-                // Ensure page size is reasonable
-                pageSize = Math.Clamp(pageSize, 1, 100);
-                pageNumber = Math.Max(1, pageNumber);
-
-                var result = await _auditLogService.GetAuditLogsAsync(
-                    entityName,
-                    entityId,
-                    action,
-                    userId,
-                    startDate,
-                    endDate,
-                    pageNumber,
-                    pageSize
-                );
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving audit logs");
-                return StatusCode(500, "An error occurred while retrieving audit logs");
-            }
+            _logger.LogError(ex, "Error getting audit logs");
+            return StatusCode(500, new { message = "An error occurred while retrieving audit logs", error = ex.Message });
         }
+    }
 
+
+    /// <summary>
+    /// Get audit logs for a specific entity
+    /// </summary>
+    [HttpGet("entity/{entityName}/{entityId}")]
+    [ProducesResponseType(typeof(PagedResult<AuditLogDto>), 200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<PagedResult<AuditLogDto>>> GetAuditLogsForEntity(
+        string entityName, 
+        string entityId, 
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 10)
+    {
+        try
+        {
+            _logger.LogInformation("Getting audit logs for entity {EntityName} with ID: {EntityId}", entityName, entityId);
+            
+            // Ensure page size is reasonable
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            pageNumber = Math.Max(1, pageNumber);
+            
+            var result = await _auditLogService.GetAuditLogsAsync(
+                entityName: entityName,
+                entityId: entityId,
+                pageNumber: pageNumber,
+                pageSize: pageSize);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting audit logs for entity {EntityName} with ID: {EntityId}", entityName, entityId);
+            return StatusCode(500, new { message = $"An error occurred while retrieving audit logs for {entityName} with ID: {entityId}", error = ex.Message });
+        }
+    }
         /// <summary>
         /// Get audit log by ID
         /// </summary>
@@ -115,4 +120,4 @@ public class AuditLogsController(
             }
         }
     }
-}
+

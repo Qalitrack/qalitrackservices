@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Masterdata.Core.DTOs.Transporter;
+using Masterdata.Core.DTOs.Transporters;
 using Masterdata.Core.Interfaces;
 using Masterdata.Core.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +12,8 @@ using Microsoft.Extensions.Logging;
 namespace Masterdata.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Route("[controller]")]
+    [Authorize]
     [Produces("application/json")]
     public class TransportersController : ControllerBase
     {
