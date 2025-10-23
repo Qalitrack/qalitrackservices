@@ -7,16 +7,38 @@ using Masterdata.Core.DTOs.AuditLog;
 using Masterdata.Core.Interfaces;
 using Masterdata.Core.Models;
 
-namespace Masterdata.API.Controllers
+namespace Masterdata.Api.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+[Authorize]
+public class AuditLogsController(
+    IAuditLogService auditLogService,
+    ILogger<AuditLogsController> logger)
+    : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")] // Only admins can access audit logs
-    [Produces("application/json")]
-    public class AuditLogsController : ControllerBase
+    private readonly IAuditLogService _auditLogService = auditLogService ?? throw new ArgumentNullException(nameof(auditLogService));
+    private readonly ILogger<AuditLogsController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+    /// <summary>
+    /// Get a paginated list of audit logs with filtering options
+    /// </summary>
+    /// <param name="filter">Filter criteria for audit logs</param>
+    /// <returns>A paginated list of audit logs</returns>
+    /// <response code="200">Returns the paginated list of audit logs</response>
+    /// <response code="500">If there was an error retrieving the audit logs</response>
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResult<AuditLogDto>), 200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<PagedResult<AuditLogDto>>> GetAuditLogs([FromQuery] AuditLogFilterDto filter)
     {
-        private readonly IAuditLogService _auditLogService;
-        private readonly ILogger<AuditLogsController> _logger;
+        try
+        {
+            _logger.LogInformation("Getting audit logs with filter: {Filter}", filter);
+            
+            // Ensure page size is reasonable
+            filter.PageSize = Math.Clamp(filter.PageSize, 1, 100);
+            filter.PageNumber = Math.Max(1, filter.PageNumber);
 
         public AuditLogsController(
             IAuditLogService auditLogService,

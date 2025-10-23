@@ -45,8 +45,8 @@ public class SupplierService : ISupplierService
             pageSize,
             searchTerm,
             searchTerm != null 
-                ? s => s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                       s.ContactInfo != null && s.ContactInfo.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                ? s => (s.Name != null && s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+                       (s.ContactInfo != null && s.ContactInfo.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 : null,
             new[] { nameof(Supplier.Name), nameof(Supplier.ContactInfo) }
         );
@@ -71,6 +71,12 @@ public class SupplierService : ISupplierService
     {
         var supplier = _mapper.Map<Supplier>(dto);
         var created = await _repository.CreateAsync(supplier);
+        
+        if (created == null)
+        {
+            throw new InvalidOperationException("Failed to create supplier");
+        }
+        
         return _mapper.Map<SupplierReadDto>(created);
     }
 
