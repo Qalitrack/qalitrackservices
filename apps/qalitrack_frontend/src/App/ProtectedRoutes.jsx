@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import useAuth from '../helpers/auth'; // Adjust path as needed
+import useAuth from '../api/helpers/auth'; // Adjust path as needed
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
     const { isAuthenticated, getCurrentUser } = useAuth();
