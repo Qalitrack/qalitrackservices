@@ -4,13 +4,14 @@ import { apiClient } from "../helpers/apiClients";
 // ✅ Get all drivers
 export const getDrivers = async () => {
   const response = await apiClient.get("/MasterData/Drivers");
-  return response.data;
+  // Ensure we only return an array
+  return response.data?.data || response.data || [];
 };
 
 // ✅ Get driver by ID
 export const getDriverById = async (id) => {
   const response = await apiClient.get(`/MasterData/Drivers/${id}`);
-  return response.data;
+  return response.data?.data || response.data;
 };
 
 // ✅ Create a new driver
