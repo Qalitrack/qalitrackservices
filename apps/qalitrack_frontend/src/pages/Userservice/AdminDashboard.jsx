@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Users as UsersIcon, Settings, Activity, UserCheck, UserX } from "lucide-react";
 import CountUp from "react-countup";
-import { fetchUsers } from "../../helpers/UserService/Users/users.js";
-import { fetchRoles } from "../../helpers/UserService/Roles/Roles.js";
+import { fetchUsers } from "../../api/helpers/UserService/Users/users.js";
+import { fetchRoles } from "../../api/helpers/UserService/Roles/Roles.js";
 import Users from "./Users.jsx";
 import Chart from "react-apexcharts";
 
