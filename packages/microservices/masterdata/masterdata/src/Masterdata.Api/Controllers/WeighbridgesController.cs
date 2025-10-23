@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Masterdata.Core.DTOs;
 using Masterdata.Core.DTOs.Weighbridge;
 using Masterdata.Core.Interfaces;
+using Masterdata.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
