@@ -9,7 +9,7 @@ import {
     Shield,
     LogOut
 } from "lucide-react";
-import useAuth from '../../helpers/auth';
+import useAuth from '../../api/helpers/auth';
 import { useState } from 'react';
 import qualitrackLogo from "/src/assets/qualitrack.png";
 export default function UserServiceSidebar() {

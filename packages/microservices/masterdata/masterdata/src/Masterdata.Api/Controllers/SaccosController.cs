@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Masterdata.Core.DTOs.Sacco;
 using Masterdata.Core.DTOs.Affiliation;
 using Masterdata.Core.Interfaces;
-using Masterdata.Core.Models;
 
 namespace Masterdata.API.Controllers
 {
@@ -30,33 +29,21 @@ namespace Masterdata.API.Controllers
         /// <summary>
         /// Get a paginated list of saccos
         /// </summary>
-        /// <param name="pageNumber">Page number (default: 1)</param>
-        /// <param name="pageSize">Number of items per page (default: 10, max: 100)</param>
-        /// <param name="searchTerm">Optional search term to filter saccos</param>
-        /// <returns>A paginated list of saccos</returns>
-        /// <response code="200">Returns the paginated list of saccos</response>
-        /// <response code="500">If there was an error retrieving the saccos</response>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<PagedResult<SaccoDto>>> GetSaccos(
+        public async Task<IActionResult> GetSaccos(
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string? searchTerm = null)
         {
             try
             {
-                // Ensure page size is reasonable
-                pageSize = Math.Min(Math.Max(1, pageSize), 100);
-                pageNumber = Math.Max(1, pageNumber);
-
                 var result = await _saccoService.GetPagedSaccosAsync(pageNumber, pageSize, searchTerm);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving saccos. Page: {PageNumber}, PageSize: {PageSize}", pageNumber, pageSize);
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving saccos");
+                _logger.LogError(ex, "Error retrieving saccos");
+                return StatusCode(500, "An error occurred while retrieving saccos");
             }
         }
 
