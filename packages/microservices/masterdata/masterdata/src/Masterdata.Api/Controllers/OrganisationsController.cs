@@ -11,7 +11,7 @@ using Masterdata.Core.Models;
 namespace Masterdata.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize(Roles = "Admin")]
     [Produces("application/json")]
     public class OrganisationsController : ControllerBase

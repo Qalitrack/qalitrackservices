@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Masterdata.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize(Roles = "Admin,Operator")]
     [Produces("application/json")]
     public class CustomersController : ControllerBase

@@ -13,7 +13,7 @@ namespace Masterdata.Api.Controllers
     /// API controller for managing axle configurations
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize]
     public class AxleConfigurationsController : BaseController
     {
