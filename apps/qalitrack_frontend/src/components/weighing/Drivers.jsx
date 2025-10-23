@@ -49,6 +49,7 @@ export default function DriverPortal() {
     }
   };
 
+  // ✅ Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -200,20 +201,25 @@ export default function DriverPortal() {
         <p className="text-gray-500">Loading...</p>
       ) : error ? (
         <p className="text-red-500">Error: {error}</p>
-      ) : !Array.isArray(drivers) || drivers.length === 0 ? (
+      ) : drivers.length === 0 ? (
         <p className="text-gray-500 text-sm">No drivers found.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm border border-gray-200 rounded-lg">
             <thead className="bg-gray-50 text-left">
               <tr>
-                {["Name", "Phone", "License", "Expiry", "Status", "Actions"].map(
-                  (col) => (
-                    <th key={col} className="border px-3 py-2 font-medium">
-                      {col}
-                    </th>
-                  )
-                )}
+                {[
+                  "Name",
+                  "Phone",
+                  "License",
+                  "Expiry",
+                  "Status",
+                  "Actions",
+                ].map((col) => (
+                  <th key={col} className="border px-3 py-2 font-medium">
+                    {col}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
