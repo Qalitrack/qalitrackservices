@@ -32,7 +32,15 @@ export default function DriverPortal() {
       setLoading(true);
       setError(null);
       const data = await getDrivers();
-      setDrivers(data || []);
+      console.log("🚀 Drivers API Response:", data);
+
+      // Ensure drivers is always an array
+      const driverList = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+        ? data.data
+        : [];
+      setDrivers(driverList);
     } catch (error) {
       console.error("Failed to load drivers:", error.message);
       setError(error.message);
@@ -47,7 +55,6 @@ export default function DriverPortal() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Submit (Create or Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -58,7 +65,6 @@ export default function DriverPortal() {
       } else {
         await createDriver(form);
       }
-
       await fetchDrivers();
       resetForm();
     } catch (error) {
