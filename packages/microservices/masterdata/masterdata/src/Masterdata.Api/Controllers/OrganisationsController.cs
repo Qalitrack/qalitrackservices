@@ -5,8 +5,8 @@ using System;
 using System.Threading.Tasks;
 using Masterdata.Core.DTOs.Organisation;
 using Masterdata.Core.DTOs.Affiliation;
+using Masterdata.Core.DTOs.Shared;
 using Masterdata.Core.Interfaces;
-using Masterdata.Core.Models;
 
 namespace Masterdata.API.Controllers
 {
