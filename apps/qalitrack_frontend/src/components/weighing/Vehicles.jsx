@@ -22,17 +22,18 @@ export default function Vehicles() {
     axleConfigurationId: "",
   });
   const [editingVehicle, setEditingVehicle] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [pageNumber] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
   // ✅ Fetch vehicles
   const fetchVehicles = async () => {
     try {
       setLoading(true);
-      const data = await getVehicles(pageNumber, 10, searchTerm);
-      setVehicles(data.items || []);
+      const data = await getVehicles(pageNumber, 50, searchTerm);
+      console.log("🚗 Vehicles fetched:", data);
+      setVehicles(data.data?.items || data.items || data || []);
     } catch (error) {
-      console.error("Failed to load vehicles:", error.message);
+      console.error("❌ Failed to fetch vehicles:", error.message);
     } finally {
       setLoading(false);
     }
@@ -40,15 +41,15 @@ export default function Vehicles() {
 
   useEffect(() => {
     fetchVehicles();
-  }, [pageNumber, searchTerm]);
+  }, [searchTerm]);
 
-  // ✅ Handle input change
+  // ✅ Input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Create / Update vehicle
+  // ✅ Submit (Add/Edit)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -58,8 +59,8 @@ export default function Vehicles() {
       } else {
         await createVehicle(form);
       }
-      await fetchVehicles();
       resetForm();
+      await fetchVehicles();
     } catch (error) {
       alert("Error saving vehicle: " + error.message);
     } finally {
@@ -67,33 +68,34 @@ export default function Vehicles() {
     }
   };
 
-  // ✅ Edit existing vehicle
+  // ✅ Edit
   const handleEdit = (vehicle) => {
     setEditingVehicle(vehicle);
     setForm({
-      registrationNumber: vehicle.registrationNumber,
-      type: vehicle.type,
-      color: vehicle.color,
-      model: vehicle.model,
-      status: vehicle.status,
-      supplierId: vehicle.supplierId,
-      transporterId: vehicle.transporterId,
-      ownerId: vehicle.ownerId,
-      axleConfigurationId: vehicle.axleConfigurationId,
+      registrationNumber: vehicle.registrationNumber || "",
+      type: vehicle.type || "",
+      color: vehicle.color || "",
+      model: vehicle.model || "",
+      status: vehicle.status || "Active",
+      supplierId: vehicle.supplierId || "",
+      transporterId: vehicle.transporterId || "",
+      ownerId: vehicle.ownerId || "",
+      axleConfigurationId: vehicle.axleConfigurationId || "",
     });
   };
 
-  // ✅ Delete vehicle
+  // ✅ Delete
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this vehicle?")) return;
     try {
       await deleteVehicle(id);
       await fetchVehicles();
     } catch (error) {
-      console.error("Delete failed:", error.message);
+      console.error("❌ Delete failed:", error.message);
     }
   };
 
+  // ✅ Reset form
   const resetForm = () => {
     setForm({
       registrationNumber: "",
@@ -112,25 +114,28 @@ export default function Vehicles() {
   return (
     <div className="bg-white p-5 shadow rounded-lg border">
       <h2 className="text-xl font-bold text-amber-600 mb-4 flex items-center gap-2">
-        <Truck className="w-5 h-5" /> Vehicle Management
+        <Truck className="w-5 h-5" /> Registered Vehicles
       </h2>
 
-      {/* Form */}
+      {/* Add/Edit Form */}
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 mb-6">
-        {Object.keys(form).map((key) => (
-          key !== "status" && (
-            <div key={key}>
-              <label className="block text-sm font-medium capitalize">{key}</label>
-              <input
-                name={key}
-                value={form[key]}
-                onChange={handleChange}
-                className="w-full border rounded px-2 py-1"
-                required={["registrationNumber", "type"].includes(key)}
-              />
-            </div>
-          )
-        ))}
+        {Object.keys(form).map(
+          (key) =>
+            key !== "status" && (
+              <div key={key}>
+                <label className="block text-sm font-medium capitalize">
+                  {key}
+                </label>
+                <input
+                  name={key}
+                  value={form[key]}
+                  onChange={handleChange}
+                  className="w-full border rounded px-2 py-1"
+                  required={["registrationNumber", "type"].includes(key)}
+                />
+              </div>
+            )
+        )}
 
         <div>
           <label className="block text-sm font-medium">Status</label>
@@ -155,7 +160,7 @@ export default function Vehicles() {
         </button>
       </form>
 
-      {/* Search Bar */}
+      {/* Search */}
       <input
         type="text"
         placeholder="Search vehicles..."
@@ -182,18 +187,34 @@ export default function Vehicles() {
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((vehicle) => (
-              <tr key={vehicle.id}>
-                <td className="border px-2 py-1">{vehicle.registrationNumber}</td>
-                <td className="border px-2 py-1">{vehicle.type}</td>
-                <td className="border px-2 py-1">{vehicle.model}</td>
-                <td className="border px-2 py-1">{vehicle.color}</td>
-                <td className="border px-2 py-1">{vehicle.status}</td>
-                <td className="border px-2 py-1 flex gap-2">
-                  <button onClick={() => handleEdit(vehicle)} className="text-blue-600 hover:text-blue-800">
+            {vehicles.map((v) => (
+              <tr key={v.id}>
+                <td className="border px-2 py-1">{v.registrationNumber}</td>
+                <td className="border px-2 py-1">{v.type}</td>
+                <td className="border px-2 py-1">{v.model}</td>
+                <td className="border px-2 py-1">{v.color}</td>
+                <td className="border px-2 py-1">
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-medium ${
+                      v.status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {v.status}
+                  </span>
+                </td>
+                <td className="border px-2 py-1 flex gap-2 justify-center">
+                  <button
+                    onClick={() => handleEdit(v)}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
                     <Pencil className="w-4 h-4" />
                   </button>
-                  <button onClick={() => handleDelete(vehicle.id)} className="text-red-600 hover:text-red-800">
+                  <button
+                    onClick={() => handleDelete(v.id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </td>

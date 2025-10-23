@@ -1,45 +1,48 @@
-import apiClient from "../helpers/apiClients"; // uses your axios instance
+import apiClient from "../helpers/apiClients";
 
-// ✅ Fetch paginated vehicles
-export const getVehicles = async (pageNumber = 1, pageSize = 10, searchTerm = "") => {
-  const response = await apiClient.get("/MasterData/Vehicles", {
-    params: { pageNumber, pageSize, searchTerm },
-  });
-  return response.data;
+// 🔹 Unified error handler
+const handleRequest = async (promise) => {
+  try {
+    const response = await promise;
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.message ||
+      (typeof error.response?.data === "string"
+        ? error.response.data
+        : error.message);
+    throw new Error(message);
+  }
 };
+
+// ✅ Get all (paginated) vehicles
+export const getVehicles = (pageNumber = 1, pageSize = 50, searchTerm = "") =>
+  handleRequest(
+    apiClient.get("/MasterData/Vehicles", {
+      params: { pageNumber, pageSize, searchTerm },
+    })
+  );
 
 // ✅ Create new vehicle
-export const createVehicle = async (vehicleData) => {
-  const response = await apiClient.post("/MasterData/Vehicles", vehicleData);
-  return response.data;
-};
+export const createVehicle = (vehicleData) =>
+  handleRequest(apiClient.post("/MasterData/Vehicles", vehicleData));
 
 // ✅ Get vehicle by ID
-export const getVehicleById = async (id) => {
-  const response = await apiClient.get(`/MasterData/Vehicles/${id}`);
-  return response.data;
-};
+export const getVehicleById = (id) =>
+  handleRequest(apiClient.get(`/MasterData/Vehicles/${id}`));
 
 // ✅ Update existing vehicle
-export const updateVehicle = async (id, vehicleData) => {
-  const response = await apiClient.put(`/MasterData/Vehicles/${id}`, vehicleData);
-  return response.data;
-};
+export const updateVehicle = (id, vehicleData) =>
+  handleRequest(apiClient.put(`/MasterData/Vehicles/${id}`, vehicleData));
 
-// ✅ Delete a vehicle
-export const deleteVehicle = async (id) => {
-  const response = await apiClient.delete(`/MasterData/Vehicles/${id}`);
-  return response.data;
-};
+// ✅ Delete vehicle
+export const deleteVehicle = (id) =>
+  handleRequest(apiClient.delete(`/MasterData/Vehicles/${id}`));
 
 // ✅ Update vehicle status
-export const updateVehicleStatus = async (id, status) => {
-  const response = await apiClient.post(`/MasterData/Vehicles/${id}/status`, { status });
-  return response.data;
-};
+export const updateVehicleStatus = (id, status) =>
+  handleRequest(apiClient.post(`/MasterData/Vehicles/${id}/status`, { status }));
 
 // ✅ Get assigned drivers for a vehicle
-export const getVehicleDrivers = async (id) => {
-  const response = await apiClient.get(`/MasterData/Vehicles/${id}/drivers`);
-  return response.data;
-};
+export const getVehicleDrivers = (id) =>
+  handleRequest(apiClient.get(`/MasterData/Vehicles/${id}/drivers`));
