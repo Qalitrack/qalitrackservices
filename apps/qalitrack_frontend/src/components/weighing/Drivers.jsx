@@ -32,7 +32,15 @@ export default function DriverPortal() {
       setLoading(true);
       setError(null);
       const data = await getDrivers();
-      setDrivers(data || []);
+      console.log("🚀 Drivers API Response:", data);
+
+      // Ensure drivers is always an array
+      const driverList = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+        ? data.data
+        : [];
+      setDrivers(driverList);
     } catch (error) {
       console.error("Failed to load drivers:", error.message);
       setError(error.message);
@@ -41,13 +49,11 @@ export default function DriverPortal() {
     }
   };
 
-  // ✅ Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Submit (Create or Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -58,7 +64,6 @@ export default function DriverPortal() {
       } else {
         await createDriver(form);
       }
-
       await fetchDrivers();
       resetForm();
     } catch (error) {
@@ -195,25 +200,20 @@ export default function DriverPortal() {
         <p className="text-gray-500">Loading...</p>
       ) : error ? (
         <p className="text-red-500">Error: {error}</p>
-      ) : drivers.length === 0 ? (
+      ) : !Array.isArray(drivers) || drivers.length === 0 ? (
         <p className="text-gray-500 text-sm">No drivers found.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm border border-gray-200 rounded-lg">
             <thead className="bg-gray-50 text-left">
               <tr>
-                {[
-                  "Name",
-                  "Phone",
-                  "License",
-                  "Expiry",
-                  "Status",
-                  "Actions",
-                ].map((col) => (
-                  <th key={col} className="border px-3 py-2 font-medium">
-                    {col}
-                  </th>
-                ))}
+                {["Name", "Phone", "License", "Expiry", "Status", "Actions"].map(
+                  (col) => (
+                    <th key={col} className="border px-3 py-2 font-medium">
+                      {col}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
