@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Security.Claims;
 using FluentValidation;
+using Masterdata.Api.Extensions;
 using Serilog;
 using Masterdata.Core.DTOs;
 using Masterdata.Core.Interfaces;
@@ -259,6 +260,9 @@ app.UseRouting();
 
 // CORS must be after UseRouting() but before UseAuthentication() and UseAuthorization()
 app.UseCors("AllowAll");
+
+// Add global exception handler
+app.UseGlobalExceptionHandler();
 
 // Authentication must come before Authorization
 app.UseAuthentication();
