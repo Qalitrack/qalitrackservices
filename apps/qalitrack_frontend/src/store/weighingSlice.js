@@ -1,210 +1,162 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getVehicles } from "../api/MasterData/Vehicles";
-import { getDrivers } from "../api/MasterData/Drivers";
-import { getProducts } from "../api/MasterData/Products";
-import { getSupplierById } from "../api/MasterData/Suppliers";
-import { getSaccoById } from "../api/MasterData/Saccos";
-import { getProductById } from "../api/MasterData/Products";
-import { getRoutes } from "../api/MasterData/Routes";
-import { getTransporterById} from "../api/MasterData/Transporters"; 
-// ✅ Async Thunks (fetch from backend)
-export const fetchVehicles = createAsyncThunk("weighing/fetchVehicles", async () => {
-  const res = await getVehicles();
-  return res;
-});
+import axios from "axios";
 
-export const fetchDrivers = createAsyncThunk("weighing/fetchDrivers", async () => {
-  const res = await getDrivers();
-  return res;
-});
+// ----------------------
+// Async Thunks
+// ----------------------
 
-export const fetchProducts = createAsyncThunk("weighing/fetchProducts", async () => {
-  const res = await getProducts(); // <-- updated
-  return res;
-});
-export const fetchSupplierById = createAsyncThunk("weighing/fetchSupplierById", async (id) => {
-  const res = await getSupplierById(id);
-  return res;
-});
-export const fetchSaccoById = createAsyncThunk("weighing/fetchSaccoById", async (id) => {
-  const res = await getSaccoById(id);
-  return res;
-});
-export const fetchProductById = createAsyncThunk("weighing/fetchProductById", async (id) => {
-  const res = await getProductById(id);
-  return res;
-});
-export const fetchRoutes = createAsyncThunk("weighing/fetchRoutes", async () => {
-  const res = await getRoutes();
-  return res;
-});
-export const fetchTransporterById = createAsyncThunk("weighing/fetchTransporterById", async (id) => {
-  const res = await getTransporterById(id);
-  return res;
-});
+// Vehicles
+export const fetchVehicles = createAsyncThunk(
+  "weighing/fetchVehicles",
+  async () => {
+    const response = await axios.get("/api/vehicles");
+    // Adjust path based on actual API response
+    return Array.isArray(response.data?.vehicles)
+      ? response.data.vehicles
+      : [];
+  }
+);
+
+// Drivers
+export const fetchDrivers = createAsyncThunk(
+  "weighing/fetchDrivers",
+  async () => {
+    const response = await axios.get("/api/drivers");
+    return Array.isArray(response.data?.drivers)
+      ? response.data.drivers
+      : [];
+  }
+);
+
+// Products
+export const fetchProducts = createAsyncThunk(
+  "weighing/fetchProducts",
+  async () => {
+    const response = await axios.get("/api/products");
+    return Array.isArray(response.data?.products)
+      ? response.data.products
+      : [];
+  }
+);
+
+// Routes
+export const fetchRoutes = createAsyncThunk(
+  "weighing/fetchRoutes",
+  async () => {
+    const response = await axios.get("/api/routes");
+    return Array.isArray(response.data?.routes)
+      ? response.data.routes
+      : [];
+  }
+);
+
+// Suppliers
+export const fetchSupplierById = createAsyncThunk(
+  "weighing/fetchSupplierById",
+  async (id) => {
+    const response = await axios.get(`/api/suppliers/${id}`);
+    return Array.isArray(response.data?.suppliers)
+      ? response.data.suppliers
+      : [];
+  }
+);
+
+// Saccos
+export const fetchSaccoById = createAsyncThunk(
+  "weighing/fetchSaccoById",
+  async (id) => {
+    const response = await axios.get(`/api/saccos/${id}`);
+    return Array.isArray(response.data?.saccos)
+      ? response.data.saccos
+      : [];
+  }
+);
+
+// Transporters
+export const fetchTransporterById = createAsyncThunk(
+  "weighing/fetchTransporterById",
+  async (id) => {
+    const response = await axios.get(`/api/transporters/${id}`);
+    return Array.isArray(response.data?.transporters)
+      ? response.data.transporters
+      : [];
+  }
+);
+
+// ----------------------
+// Slice
+// ----------------------
+const initialState = {
+  vehicles: [],
+  drivers: [],
+  products: [],
+  routes: [],
+  suppliers: [],
+  saccos: [],
+  transporters: [],
+  transactions: [],
+  loading: false,
+  error: null,
+};
 
 const weighingSlice = createSlice({
   name: "weighing",
-  initialState: {
-    transactions: [],
-    vehicles: [],
-    drivers: [],
-    products: [], // <-- changed from materials
-    suppliers: null,
-    saccos: null,
-    routes: [],
-    transporters: null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     addTransaction: (state, action) => {
-      state.transactions.push({
-        ...action.payload,
-        id: Date.now().toString(),
-        date: new Date().toISOString(),
-        w2: null,
-        netWeight: null,
-        ttat: null,
-        deactivated: false,
-      });
+      state.transactions.push(action.payload);
     },
     completeWeighing: (state, action) => {
-      const { id, w2 } = action.payload;
-      const tx = state.transactions.find((t) => t.id === id);
-
-      if (tx) {
-        // Business rules
-        if (tx.operation === "Inbound Product Receipt" && w2 >= tx.w1) {
-          throw new Error("Inbound transaction invalid: W2 must be less than W1.");
-        }
-        if (tx.operation === "Outbound Product Dispatch" && w2 <= tx.w1) {
-          throw new Error("Outbound transaction invalid: W2 must be greater than W1.");
-        }
-
-        // Valid transaction → update
-        tx.w2 = w2;
-        tx.ttat = Math.floor((Date.now() - new Date(tx.date)) / 1000);
-
-        // Auto calculate net
-        if (tx.operation === "Inbound Product Receipt") {
-          tx.netWeight = tx.w1 - w2;
-        } else if (tx.operation === "Outbound Product Dispatch") {
-          tx.netWeight = w2 - tx.w1;
-        }
-      }
+      const { transactionId } = action.payload;
+      const transaction = state.transactions.find(t => t.id === transactionId);
+      if (transaction) transaction.completed = true;
     },
     deactivateTransaction: (state, action) => {
-      const tx = state.transactions.find((t) => t.id === action.payload);
-      if (tx) {
-        tx.deactivated = true;
-      }
+      const { transactionId } = action.payload;
+      const transaction = state.transactions.find(t => t.id === transactionId);
+      if (transaction) transaction.active = false;
+      // Optional: remove instead
+      // state.transactions = state.transactions.filter(t => t.id !== transactionId);
     },
   },
   extraReducers: (builder) => {
+    const handlePending = (state) => { state.loading = true; state.error = null; };
+    const handleRejected = (state, action) => { state.loading = false; state.error = action.error.message; };
+
+    // Vehicles
     builder
-      // ✅ Fetch Vehicles
-      .addCase(fetchVehicles.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchVehicles.fulfilled, (state, action) => {
-        state.loading = false;
-        state.vehicles = action.payload;
-      })
-      .addCase(fetchVehicles.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+      .addCase(fetchVehicles.pending, handlePending)
+      .addCase(fetchVehicles.fulfilled, (state, action) => { state.vehicles = action.payload; state.loading = false; })
+      .addCase(fetchVehicles.rejected, handleRejected);
 
-      // ✅ Fetch Drivers
-      .addCase(fetchDrivers.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchDrivers.fulfilled, (state, action) => {
-        state.loading = false;
-        state.drivers = action.payload;
-      })
-      .addCase(fetchDrivers.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+    // Drivers
+    builder
+      .addCase(fetchDrivers.pending, handlePending)
+      .addCase(fetchDrivers.fulfilled, (state, action) => { state.drivers = action.payload; state.loading = false; })
+      .addCase(fetchDrivers.rejected, handleRejected);
 
-      // ✅ Fetch Products
-      .addCase(fetchProducts.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products = action.payload; // <-- changed from materials
-      })
-      .addCase(fetchProducts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+    // Products
+    builder
+      .addCase(fetchProducts.pending, handlePending)
+      .addCase(fetchProducts.fulfilled, (state, action) => { state.products = action.payload; state.loading = false; })
+      .addCase(fetchProducts.rejected, handleRejected);
 
-      .addCase(fetchSupplierById.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchSupplierById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.suppliers = action.payload;
-      })
-      .addCase(fetchSupplierById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+    // Routes
+    builder
+      .addCase(fetchRoutes.pending, handlePending)
+      .addCase(fetchRoutes.fulfilled, (state, action) => { state.routes = action.payload; state.loading = false; })
+      .addCase(fetchRoutes.rejected, handleRejected);
 
-      .addCase(fetchSaccoById.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchSaccoById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.saccos = action.payload;
-      })
-      .addCase(fetchSaccoById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+    // Suppliers
+    builder.addCase(fetchSupplierById.fulfilled, (state, action) => { state.suppliers = action.payload; });
 
-      .addCase(fetchProductById.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchProductById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products = action.payload;
-      })
-      .addCase(fetchProductById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+    // Saccos
+    builder.addCase(fetchSaccoById.fulfilled, (state, action) => { state.saccos = action.payload; });
 
-      .addCase(fetchRoutes.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchRoutes.fulfilled, (state, action) => {
-        state.loading = false;
-        state.routes = action.payload;
-      })
-      .addCase(fetchRoutes.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-
-      .addCase(fetchTransporterById.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchTransporterById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.transporters = action.payload;
-      })
-      .addCase(fetchTransporterById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
+    // Transporters
+    builder.addCase(fetchTransporterById.fulfilled, (state, action) => { state.transporters = action.payload; });
   },
 });
 
-export const { addTransaction, completeWeighing, deactivateTransaction } =
-  weighingSlice.actions;
-
+export const { addTransaction, completeWeighing, deactivateTransaction } = weighingSlice.actions;
 export default weighingSlice.reducer;

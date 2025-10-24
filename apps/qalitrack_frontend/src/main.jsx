@@ -6,6 +6,8 @@ import App from "./App";
 import { AuthProvider } from "./components/Context/authContext.jsx"; // adjust path
 import { store, persistor } from "./store"; // adjust path
 import "./index.css";
+import "antd/dist/reset.css";
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
