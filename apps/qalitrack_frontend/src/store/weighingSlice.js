@@ -1,8 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getVehicles } from "../api/MasterData/Vehicles";
 import { getDrivers } from "../api/MasterData/Drivers";
-import { getProducts } from "../api/MasterData/Products"; // <-- updated
-
+import { getProducts } from "../api/MasterData/Products";
+import { getSupplierById } from "../api/MasterData/Suppliers";
+import { getSaccoById } from "../api/MasterData/Saccos";
+import { getProductById } from "../api/MasterData/Products";
+import { getRoutes } from "../api/MasterData/Routes";
+import { getTransporterById} from "../api/MasterData/Transporters"; 
 // ✅ Async Thunks (fetch from backend)
 export const fetchVehicles = createAsyncThunk("weighing/fetchVehicles", async () => {
   const res = await getVehicles();
@@ -18,6 +22,26 @@ export const fetchProducts = createAsyncThunk("weighing/fetchProducts", async ()
   const res = await getProducts(); // <-- updated
   return res;
 });
+export const fetchSupplierById = createAsyncThunk("weighing/fetchSupplierById", async (id) => {
+  const res = await getSupplierById(id);
+  return res;
+});
+export const fetchSaccoById = createAsyncThunk("weighing/fetchSaccoById", async (id) => {
+  const res = await getSaccoById(id);
+  return res;
+});
+export const fetchProductById = createAsyncThunk("weighing/fetchProductById", async (id) => {
+  const res = await getProductById(id);
+  return res;
+});
+export const fetchRoutes = createAsyncThunk("weighing/fetchRoutes", async () => {
+  const res = await getRoutes();
+  return res;
+});
+export const fetchTransporterById = createAsyncThunk("weighing/fetchTransporterById", async (id) => {
+  const res = await getTransporterById(id);
+  return res;
+});
 
 const weighingSlice = createSlice({
   name: "weighing",
@@ -26,6 +50,10 @@ const weighingSlice = createSlice({
     vehicles: [],
     drivers: [],
     products: [], // <-- changed from materials
+    suppliers: null,
+    saccos: null,
+    routes: [],
+    transporters: null,
     loading: false,
     error: null,
   },
@@ -110,6 +138,66 @@ const weighingSlice = createSlice({
         state.products = action.payload; // <-- changed from materials
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      .addCase(fetchSupplierById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchSupplierById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.suppliers = action.payload;
+      })
+      .addCase(fetchSupplierById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      .addCase(fetchSaccoById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchSaccoById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.saccos = action.payload;
+      })
+      .addCase(fetchSaccoById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      .addCase(fetchRoutes.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchRoutes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.routes = action.payload;
+      })
+      .addCase(fetchRoutes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      .addCase(fetchTransporterById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTransporterById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.transporters = action.payload;
+      })
+      .addCase(fetchTransporterById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

@@ -1,228 +1,444 @@
-import { useEffect, useState } from "react";
-import { Pencil, Trash2, Truck, Plus } from "lucide-react";
-import {
-  getVehicles,
-  createVehicle,
-  updateVehicle,
-  deleteVehicle,
-} from "../../api/MasterData/Vehicles";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addTransaction, fetchVehicles, fetchDrivers, fetchProducts, fetchSuppliers, fetchTransporters } from "../store/weighingSlice";
+import { ClipboardList } from "lucide-react";
+import toast from "react-hot-toast";
 
-export default function Vehicles() {
-  const [vehicles, setVehicles] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    registrationNumber: "",
-    type: "",
-    color: "",
-    model: "",
-    status: "Active",
-    supplierId: "",
-    transporterId: "",
-    ownerId: "",
-    axleConfigurationId: "",
-  });
-  const [editingVehicle, setEditingVehicle] = useState(null);
-  const [pageNumber] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // ✅ Fetch vehicles
-  const fetchVehicles = async () => {
-    try {
-      setLoading(true);
-      const data = await getVehicles(pageNumber, 50, searchTerm);
-      console.log("🚗 Vehicles fetched:", data);
-      setVehicles(data.data?.items || data.items || data || []);
-    } catch (error) {
-      console.error("❌ Failed to fetch vehicles:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchVehicles();
-  }, [searchTerm]);
-
-  // ✅ Input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // ✅ Submit (Add/Edit)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      if (editingVehicle) {
-        await updateVehicle(editingVehicle.id, form);
-      } else {
-        await createVehicle(form);
-      }
-      resetForm();
-      await fetchVehicles();
-    } catch (error) {
-      alert("Error saving vehicle: " + error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ✅ Edit
-  const handleEdit = (vehicle) => {
-    setEditingVehicle(vehicle);
-    setForm({
-      registrationNumber: vehicle.registrationNumber || "",
-      type: vehicle.type || "",
-      color: vehicle.color || "",
-      model: vehicle.model || "",
-      status: vehicle.status || "Active",
-      supplierId: vehicle.supplierId || "",
-      transporterId: vehicle.transporterId || "",
-      ownerId: vehicle.ownerId || "",
-      axleConfigurationId: vehicle.axleConfigurationId || "",
-    });
-  };
-
-  // ✅ Delete
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this vehicle?")) return;
-    try {
-      await deleteVehicle(id);
-      await fetchVehicles();
-    } catch (error) {
-      console.error("❌ Delete failed:", error.message);
-    }
-  };
-
-  // ✅ Reset form
-  const resetForm = () => {
-    setForm({
-      registrationNumber: "",
-      type: "",
-      color: "",
-      model: "",
-      status: "Active",
-      supplierId: "",
-      transporterId: "",
-      ownerId: "",
-      axleConfigurationId: "",
-    });
-    setEditingVehicle(null);
+// Mock Weighing Panel
+function WeighingPanel({ onCapture }) {
+  const simulateCapture = () => {
+    const weight = Math.floor(Math.random() * 30000) + 5000;
+    toast.success("Weight Captured");
+    onCapture(weight);
   };
 
   return (
-    <div className="bg-white p-5 shadow rounded-lg border">
-      <h2 className="text-xl font-bold text-amber-600 mb-4 flex items-center gap-2">
-        <Truck className="w-5 h-5" /> Registered Vehicles
+    <div className="border rounded p-3 bg-gray-50">
+      <h4 className="font-medium text-gray-700 mb-2">Weighing Panel</h4>
+      <button type="button" onClick={simulateCapture} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+        Capture Weight
+      </button>
+    </div>
+  );
+}
+
+export default function WeighingForm() {
+  const dispatch = useDispatch();
+  const { vehicles, drivers, products, suppliers, transporters, loading, error } = useSelector((state) => state.weighing);
+  const [form, setForm] = useState({
+    vehicleId: "",
+    driverId: "",
+    productId: "",
+    supplierId: "",
+    transporterId: "",
+    operation: "Outbound Product Dispatch",
+    w1: "",
+    w2: "",
+    netWeight: "",
+    isManualVehicle: false,
+    isManualDriver: false,
+    isManualProduct: false,
+    isManualSupplier: false,
+    isManualTransporter: false,
+    manualVehicle: { registrationNumber: "", type: "" },
+    manualDriver: { name: "" },
+    manualProduct: { name: "" },
+    manualSupplier: { name: "" },
+    manualTransporter: { name: "" },
+  });
+
+  useEffect(() => {
+    fetchData();
+  }, [dispatch]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      await Promise.all([
+        dispatch(fetchVehicles()),
+        dispatch(fetchDrivers()),
+        dispatch(fetchProducts()),
+        dispatch(fetchSuppliers()),
+        dispatch(fetchTransporters()),
+      ]);
+    } catch (error) {
+      console.error("❌ Failed to fetch data:", error.message);
+      toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (name.startsWith("isManual")) {
+      setForm((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+        ...(checked && {
+          [`manual${name.slice(8)}`]: { ...(prev[`manual${name.slice(8)}`] || {}) },
+        }),
+      }));
+    } else if (name.startsWith("manual")) {
+      const field = name.replace("manual", "");
+      setForm((prev) => ({
+        ...prev,
+        [name]: { ...prev[name], [field.toLowerCase()]: value },
+      }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleWeightCapture = (weight) => {
+    setForm((prev) => {
+      if (!prev.w1) {
+        return { ...prev, w1: weight };
+      } else if (!prev.w2) {
+        const net = prev.w1 ? (prev.operation === "Inbound Product Receipt" ? prev.w1 - weight : weight - prev.w1) : null;
+        return { ...prev, w2: weight, netWeight: net };
+      } else {
+        toast.error("Both weights already captured");
+        return prev;
+      }
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const finalForm = {
+      vehicleId: form.isManualVehicle ? form.manualVehicle.registrationNumber : form.vehicleId,
+      driverId: form.isManualDriver ? form.manualDriver.name : form.driverId,
+      productId: form.isManualProduct ? form.manualProduct.name : form.productId,
+      supplierId: form.isManualSupplier ? form.manualSupplier.name : form.supplierId,
+      transporterId: form.isManualTransporter ? form.manualTransporter.name : form.transporterId,
+      operation: form.operation,
+      w1: form.w1,
+      w2: form.w2,
+      netWeight: form.netWeight,
+    };
+
+    if (!finalForm.vehicleId || !finalForm.driverId || !finalForm.productId || !finalForm.supplierId || !finalForm.transporterId || !finalForm.w1) {
+      toast.error("Please fill required fields");
+      return;
+    }
+
+    const net = finalForm.w1 && finalForm.w2 ? (finalForm.operation === "Inbound Product Receipt" ? parseFloat(finalForm.w1) - parseFloat(finalForm.w2) : parseFloat(finalForm.w2) - parseFloat(finalForm.w1)) : null;
+
+    dispatch(
+      addTransaction({
+        ...finalForm,
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        w1: finalForm.w1 ? parseFloat(finalForm.w1) : null,
+        w2: finalForm.w2 ? parseFloat(finalForm.w2) : null,
+        netWeight: net,
+        deactivated: false,
+      })
+    );
+
+    toast.success("Transaction saved");
+    setForm({
+      vehicleId: "",
+      driverId: "",
+      productId: "",
+      supplierId: "",
+      transporterId: "",
+      operation: "Outbound Product Dispatch",
+      w1: "",
+      w2: "",
+      netWeight: "",
+      isManualVehicle: false,
+      isManualDriver: false,
+      isManualProduct: false,
+      isManualSupplier: false,
+      isManualTransporter: false,
+      manualVehicle: { registrationNumber: "", type: "" },
+      manualDriver: { name: "" },
+      manualProduct: { name: "" },
+      manualSupplier: { name: "" },
+      manualTransporter: { name: "" },
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-4 border space-y-6">
+      <h2 className="text-xl font-bold text-amber-600 flex items-center gap-2">
+        <ClipboardList className="w-5 h-5" /> Vehicle Weighing Transaction
       </h2>
 
-      {/* Add/Edit Form */}
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 mb-6">
-        {Object.keys(form).map(
-          (key) =>
-            key !== "status" && (
-              <div key={key}>
-                <label className="block text-sm font-medium capitalize">
-                  {key}
-                </label>
+      <section>
+        <h3 className="font-semibold text-gray-700 mb-2">Transaction Details</h3>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Vehicle */}
+          <div className="col-span-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isManualVehicle"
+                checked={form.isManualVehicle}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              Manual Vehicle Entry
+            </label>
+            {!form.isManualVehicle ? (
+              <select
+                name="vehicleId"
+                value={form.vehicleId}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+                disabled={loading}
+              >
+                <option value="">-- Select Vehicle --</option>
+                {vehicles && Array.isArray(vehicles) ? vehicles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.registrationNumber || v.id} ({v.type})
+                  </option>
+                )) : <option disabled>Loading vehicles...</option>}
+              </select>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
                 <input
-                  name={key}
-                  value={form[key]}
+                  name="manualVehicle.registrationNumber"
+                  value={form.manualVehicle.registrationNumber}
                   onChange={handleChange}
+                  placeholder="Registration Number"
                   className="w-full border rounded px-2 py-1"
-                  required={["registrationNumber", "type"].includes(key)}
+                  required
+                />
+                <input
+                  name="manualVehicle.type"
+                  value={form.manualVehicle.type}
+                  onChange={handleChange}
+                  placeholder="Type"
+                  className="w-full border rounded px-2 py-1"
+                  required
                 />
               </div>
-            )
-        )}
+            )}
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium">Status</label>
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-            className="w-full border rounded px-2 py-1"
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+          {/* Driver */}
+          <div className="col-span-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isManualDriver"
+                checked={form.isManualDriver}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              Manual Driver Entry
+            </label>
+            {!form.isManualDriver ? (
+              <select
+                name="driverId"
+                value={form.driverId}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+                disabled={loading}
+              >
+                <option value="">-- Select Driver --</option>
+                {drivers && Array.isArray(drivers) ? drivers.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name || d.id}
+                  </option>
+                )) : <option disabled>Loading drivers...</option>}
+              </select>
+            ) : (
+              <input
+                name="manualDriver.name"
+                value={form.manualDriver.name}
+                onChange={handleChange}
+                placeholder="Driver Name"
+                className="w-full border rounded px-2 py-1"
+                required
+              />
+            )}
+          </div>
+
+          {/* Product */}
+          <div>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isManualProduct"
+                checked={form.isManualProduct}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              Manual Product Entry
+            </label>
+            {!form.isManualProduct ? (
+              <select
+                name="productId"
+                value={form.productId}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+                disabled={loading}
+              >
+                <option value="">-- Select Product --</option>
+                {products && Array.isArray(products) ? products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name || p.id}
+                  </option>
+                )) : <option disabled>Loading products...</option>}
+              </select>
+            ) : (
+              <input
+                name="manualProduct.name"
+                value={form.manualProduct.name}
+                onChange={handleChange}
+                placeholder="Product Name"
+                className="w-full border rounded px-2 py-1"
+                required
+              />
+            )}
+          </div>
+
+          {/* Supplier */}
+          <div>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isManualSupplier"
+                checked={form.isManualSupplier}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              Manual Supplier Entry
+            </label>
+            {!form.isManualSupplier ? (
+              <select
+                name="supplierId"
+                value={form.supplierId}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+                disabled={loading}
+              >
+                <option value="">-- Select Supplier --</option>
+                {suppliers && Array.isArray(suppliers) ? suppliers.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name || s.id}
+                  </option>
+                )) : <option disabled>Loading suppliers...</option>}
+              </select>
+            ) : (
+              <input
+                name="manualSupplier.name"
+                value={form.manualSupplier.name}
+                onChange={handleChange}
+                placeholder="Supplier Name"
+                className="w-full border rounded px-2 py-1"
+                required
+              />
+            )}
+          </div>
+
+          {/* Transporter */}
+          <div>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isManualTransporter"
+                checked={form.isManualTransporter}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              Manual Transporter Entry
+            </label>
+            {!form.isManualTransporter ? (
+              <select
+                name="transporterId"
+                value={form.transporterId}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+                disabled={loading}
+              >
+                <option value="">-- Select Transporter --</option>
+                {transporters && Array.isArray(transporters) ? transporters.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name || t.id}
+                  </option>
+                )) : <option disabled>Loading transporters...</option>}
+              </select>
+            ) : (
+              <input
+                name="manualTransporter.name"
+                value={form.manualTransporter.name}
+                onChange={handleChange}
+                placeholder="Transporter Name"
+                className="w-full border rounded px-2 py-1"
+                required
+              />
+            )}
+          </div>
+
+          <div className="col-span-2">
+            <label>Operation</label>
+            <select
+              name="operation"
+              value={form.operation}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+              disabled={loading}
+            >
+              <option value="Outbound Product Dispatch">Outbound Product Dispatch</option>
+              <option value="Inbound Product Receipt">Inbound Product Receipt</option>
+            </select>
+          </div>
         </div>
+      </section>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="col-span-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 font-semibold"
-        >
-          <Plus className="w-4 h-4" />
-          {editingVehicle ? "Update Vehicle" : "Add Vehicle"}
-        </button>
-      </form>
+      <section>
+        <h3 className="font-semibold text-gray-700 mb-2">Weight Management</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label>First Weight (kg)</label>
+            <input
+              type="number"
+              name="w1"
+              value={form.w1}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label>Second Weight (kg)</label>
+            <input
+              type="number"
+              name="w2"
+              value={form.w2}
+              onChange={handleChange}
+              className="w-full border rounded px-2 py-1"
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label>Net Weight (kg)</label>
+            <input
+              type="number"
+              name="netWeight"
+              value={form.netWeight || ""}
+              readOnly
+              className="w-full border rounded px-2 py-1 bg-gray-100"
+            />
+          </div>
+        </div>
+        <WeighingPanel onCapture={handleWeightCapture} />
+      </section>
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="Search vehicles..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="border rounded px-3 py-1 mb-4 w-1/2"
-      />
-
-      {/* Vehicle Table */}
-      {loading ? (
-        <p>Loading vehicles...</p>
-      ) : vehicles.length === 0 ? (
-        <p className="text-gray-500 text-sm">No vehicles found.</p>
-      ) : (
-        <table className="w-full text-sm border">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-2 py-1">Reg. No</th>
-              <th className="border px-2 py-1">Type</th>
-              <th className="border px-2 py-1">Model</th>
-              <th className="border px-2 py-1">Color</th>
-              <th className="border px-2 py-1">Status</th>
-              <th className="border px-2 py-1">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {vehicles.map((v) => (
-              <tr key={v.id}>
-                <td className="border px-2 py-1">{v.registrationNumber}</td>
-                <td className="border px-2 py-1">{v.type}</td>
-                <td className="border px-2 py-1">{v.model}</td>
-                <td className="border px-2 py-1">{v.color}</td>
-                <td className="border px-2 py-1">
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      v.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {v.status}
-                  </span>
-                </td>
-                <td className="border px-2 py-1 flex gap-2 justify-center">
-                  <button
-                    onClick={() => handleEdit(v)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(v.id)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+      <button
+        type="submit"
+        className="w-full bg-amber-500 hover:bg-amber-600 text-white py-2 rounded font-semibold"
+        disabled={loading}
+      >
+        Save Transaction
+      </button>
+    </form>
   );
 }

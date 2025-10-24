@@ -2,7 +2,7 @@ import { apiClient } from "../helpers/apiClients";
 
 // ✅ Fetch saccos
 export const getSaccos = async (pageNumber = 1, pageSize = 10, searchTerm = "") => {
-  const response = await apiClient.get("/Saccos", {
+  const response = await apiClient.get("/MasterData/Saccos", {
     params: { pageNumber, pageSize, searchTerm },
   });
   return response.data.items || response.data;
@@ -10,24 +10,24 @@ export const getSaccos = async (pageNumber = 1, pageSize = 10, searchTerm = "") 
 
 // ✅ Create sacco
 export const createSacco = async (data) => {
-  const response = await apiClient.post("/Saccos", data);
+  const response = await apiClient.post("/MasterData/Saccos", data);
   return response.data;
 };
 
 // ✅ Get sacco by ID
 export const getSaccoById = async (id) => {
-  const response = await apiClient.get(`/Saccos/${id}`);
+  const response = await apiClient.get(`/MasterData/Saccos/${id}`);
   return response.data;
 };
 
 // ✅ Update sacco
 export const updateSacco = async (id, data) => {
-  const response = await apiClient.put(`/Saccos/${id}`, data);
+  const response = await apiClient.put(`/MasterData/Saccos/${id}`, data);
   return response.data;
 };
 
 // ✅ Delete sacco
 export const deleteSacco = async (id) => {
-  const response = await apiClient.delete(`/Saccos/${id}`);
+  const response = await apiClient.delete(`/MasterData/Saccos/${id}`);
   return response.data;
 };
