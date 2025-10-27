@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchVehicles,
-  fetchVehiclesByName,
+  fetchVehiclesByRegNumber,
   fetchDrivers,
   fetchDriversByName,
   fetchProducts,
@@ -22,12 +22,19 @@ import { debounce } from "lodash"; // Ensure lodash is installed: npm install lo
 
 const WeighingForm = () => {
   const dispatch = useDispatch();
-  const { vehicles, drivers, products, routes, suppliers, saccos, transporters, loading, error } =
+  const { vehicles, drivers, products, routes, suppliers, saccos, transporters, capturedWeight, loading, error } =
     useSelector((state) => state.weighing);
 
-  console.log("State:", { vehicles, drivers, products, routes, suppliers, saccos, transporters }); // Debug log
+  console.log("State:", { vehicles, drivers, products, routes, suppliers, saccos, transporters, capturedWeight }); // Debug log
 
   const [form] = Form.useForm();
+
+  // Set initial weight from capturedWeight
+  useEffect(() => {
+    if (capturedWeight !== null && capturedWeight !== undefined) {
+      form.setFieldsValue({ w1: capturedWeight });
+    }
+  }, [capturedWeight, form]);
 
   // Fetch master data on mount
   useEffect(() => {
@@ -62,7 +69,7 @@ const WeighingForm = () => {
 
   // Debounced search handlers
   const debouncedSearch = {
-    vehicles: debounce((name) => dispatch(fetchVehiclesByName(name)), 500),
+    vehicles: debounce((name) => dispatch(fetchVehiclesByRegNumber(name)), 500),
     drivers: debounce((name) => dispatch(fetchDriversByName(name)), 500),
     products: debounce((name) => dispatch(fetchProductsByName(name)), 500),
     routes: debounce((name) => dispatch(fetchRoutesByName(name)), 500),
@@ -83,11 +90,9 @@ const WeighingForm = () => {
 
   const handleManualInput = (value) => value;
 
-  // Consistent filter for Select components
   const filterOption = (input, option) =>
     option?.children?.toLowerCase().includes(input.toLowerCase());
 
-  // Filter out items with null/undefined values and customize display/value
   const getValidOptions = (items, valueField, displayField) =>
     Array.isArray(items)
       ? items
@@ -113,7 +118,35 @@ const WeighingForm = () => {
           form={form}
           onFinish={handleSubmit}
           className="grid grid-cols-2 gap-4"
+          initialValues={{ w1: capturedWeight || undefined }} // Set initial w1
         >
+          {/* DELIVERY NOTE */}
+          <Form.Item
+            label="Delivery Note"
+            name="deliveryNote"
+            rules={[{ required: true, message: "Enter delivery note" }]}
+          >
+            <Input placeholder="Enter delivery note" />
+          </Form.Item>
+
+          {/* REFERENCE NUMBER */}
+          <Form.Item
+            label="Reference Number"
+            name="referenceNumber"
+            rules={[{ required: true, message: "Enter reference number" }]}
+          >
+            <Input placeholder="Enter reference number" />
+          </Form.Item>
+
+          {/* BATCH NUMBER */}
+          <Form.Item
+            label="Batch Number"
+            name="batchNumber"
+            rules={[{ required: true, message: "Enter batch number" }]}
+          >
+            <Input placeholder="Enter batch number" />
+          </Form.Item>
+
           {/* VEHICLE */}
           <Form.Item
             label="Vehicle"
@@ -192,7 +225,7 @@ const WeighingForm = () => {
             </Select>
           </Form.Item>
 
-          {/* PRODUCT - Assumed pattern */}
+          {/* PRODUCT */}
           <Form.Item
             label="Product"
             name="productId"
@@ -212,7 +245,7 @@ const WeighingForm = () => {
             </Select>
           </Form.Item>
 
-          {/* SUPPLIER - Assumed pattern */}
+          {/* SUPPLIER */}
           <Form.Item
             label="Supplier"
             name="supplierId"
@@ -231,7 +264,7 @@ const WeighingForm = () => {
             </Select>
           </Form.Item>
 
-          {/* TRANSPORTER - Assumed pattern */}
+          {/* TRANSPORTER */}
           <Form.Item
             label="Transporter"
             name="transporterId"
@@ -256,7 +289,7 @@ const WeighingForm = () => {
             name="w1"
             rules={[{ required: true, message: "Enter weight 1" }]}
           >
-            <Input type="number" placeholder="Enter W1" />
+            <Input type="number" placeholder="Enter W1" value={capturedWeight || undefined} />
           </Form.Item>
 
           {/* OPERATION */}
@@ -266,12 +299,8 @@ const WeighingForm = () => {
             rules={[{ required: true, message: "Select operation type" }]}
           >
             <Select placeholder="Select operation">
-              <Select.Option value="Inbound Product Receipt">
-                Inbound Product Receipt
-              </Select.Option>
-              <Select.Option value="Outbound Product Dispatch">
-                Outbound Product Dispatch
-              </Select.Option>
+              <Select.Option value="Inbound Product Receipt">Inbound Product Receipt</Select.Option>
+              <Select.Option value="Outbound Product Dispatch">Outbound Product Dispatch</Select.Option>
             </Select>
           </Form.Item>
 
