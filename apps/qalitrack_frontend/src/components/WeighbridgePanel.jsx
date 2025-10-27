@@ -1,110 +1,111 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSimulatedWeight, setDetectedPlate, setCapturedWeight } from "../store/weighingSlice";
+import { Button, Spin, message } from "antd";
 
-/**
- * WeighbridgePanel component
- * ----------------------------------------
- * This panel simulates the behavior of a physical weighbridge.
- * It continuously updates the current weight (mocked values)
- * and provides buttons to capture the weight as either the
- * first weight (gross/tare depending on operation) or the
- * second weight. These captured values can then be passed
- * back to the parent component (e.g., a weighing form) for
- * storage and transaction management.
- *
- * Props:
- * - id: numeric identifier for the weighbridge (default 1)
- * - name: display name for the weighbridge (default "Weighbridge #1")
- * - onCaptureFirst: callback fired when "Capture First" is clicked
- * - onCaptureSecond: callback fired when "Capture Second" is clicked
- *
- * Usage example:
- * <WeighbridgePanel
- *    id={1}
- *    name="Main Gate Weighbridge"
- *    onCaptureFirst={(id, weight) => console.log("First:", id, weight)}
- *    onCaptureSecond={(id, weight) => console.log("Second:", id, weight)}
- * />
- */
-export default function WeighbridgePanel({
-  id = 1,
-  name = `Weighbridge #1`,
-  onCaptureFirst,
-  onCaptureSecond,
-}) {
-  const [currentWeight, setCurrentWeight] = useState(0);
+const WeighingPanel = () => {
+  const dispatch = useDispatch();
+  const { currentWeight, vehiclePosition, detectedPlate, loading, error } = useSelector(
+    (state) => state.weighing
+  );
 
-  // Simulate real-time weight updates from the weighbridge hardware
+  // Memoize camera feeds to prevent unnecessary re-renders
+  const cameraFeeds = useMemo(
+    () => [
+      { id: 1, src: "https://via.placeholder.com/150?text=Camera+1" },
+      { id: 2, src: "https://via.placeholder.com/150?text=Camera+2" },
+      { id: 3, src: "https://via.placeholder.com/150?text=Camera+3" },
+      { id: 4, src: "https://via.placeholder.com/150?text=Camera+4" },
+    ],
+    []
+  );
+
   useEffect(() => {
     const interval = setInterval(() => {
-      // Weight fluctuates between 10–12 tons (10,000–12,000 kg)
-      setCurrentWeight(10000 + Math.floor(Math.random() * 2000));
-    }, 1500);
+      dispatch(fetchSimulatedWeight());
+    }, 2000);
 
-    // Cleanup interval on unmount
-    return () => clearInterval(interval);
-  }, []);
+    const detectionInterval = setInterval(() => {
+      const mockPlate = `ABC${Math.floor(Math.random() * 1000)}`;
+      dispatch(setDetectedPlate(mockPlate));
+      console.log("📷 Detected plate:", mockPlate);
+    }, 3000);
 
-  // Handle first weight capture
-  const handleFirstCapture = () => {
-    if (onCaptureFirst) {
-      onCaptureFirst(id, currentWeight);
-    }
-  };
+    return () => {
+      clearInterval(interval);
+      clearInterval(detectionInterval);
+    };
+  }, [dispatch]);
 
-  // Handle second weight capture
-  const handleSecondCapture = () => {
-    if (onCaptureSecond) {
-      onCaptureSecond(id, currentWeight);
+  const handleCapture = () => {
+    if (vehiclePosition === "Fully On" && detectedPlate) {
+      dispatch(setCapturedWeight(currentWeight)); // Set captured weight for form
+      message.success(`Captured weight: ${currentWeight} kg, Plate: ${detectedPlate}`);
+      console.log("🚀 Auto-populating form with weight:", currentWeight);
+    } else {
+      message.warning("Vehicle must be fully on the bridge and a plate detected to capture.");
     }
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 border w-full max-w-sm">
-      {/* Panel Header */}
-      <h2 className="text-lg font-semibold text-amber-600">
-        {name || `Weighbridge #${id}`}
-      </h2>
+    <div className="p-6 bg-white rounded-2xl shadow-md max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">Smart Weighing Panel</h2>
+      {loading ? (
+        <div className="flex justify-center items-center p-8">
+          <Spin size="large" />
+        </div>
+      ) : error ? (
+        <div className="text-red-500 text-center">Error: {error}</div>
+      ) : (
+        <>
+          <div className="mb-6 p-4 bg-gray-100 rounded-lg text-center animate-pulse">
+            <h3 className="text-lg font-semibold text-gray-700">Current Weight</h3>
+            <p className="text-4xl font-bold text-blue-600">{currentWeight || 0} kg</p>
+          </div>
 
-      {/* Real-time weight display */}
-      <div className="mt-4 text-gray-700">
-        <p className="text-sm font-medium">Current Reading</p>
-        <p className="text-2xl font-bold text-green-600">
-          {currentWeight.toLocaleString()} kg
-        </p>
-        <p className="text-xs text-gray-500 mt-1">
-          Updated every 1.5 seconds (simulated live data)
-        </p>
-      </div>
+          <div className="mb-6 p-4 bg-gray-100 rounded-lg text-center">
+            <h3 className="text-lg font-semibold text-gray-700">Vehicle Position</h3>
+            <p className="text-xl font-medium text-green-600">
+              {vehiclePosition || "Not Detected"}
+            </p>
+            <div className="mt-2 h-4 bg-gray-300 rounded-full">
+              <div
+                className={`h-full rounded-full ${
+                  vehiclePosition === "Fully On" ? "bg-green-500" : "bg-yellow-500"
+                }`}
+                style={{ width: vehiclePosition === "Fully On" ? "100%" : "50%" }}
+              ></div>
+            </div>
+          </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-between mt-6 gap-2">
-        <button
-          onClick={handleFirstCapture}
-          className="flex-1 px-3 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition"
-        >
-          Capture First Weight
-        </button>
-        <button
-          onClick={handleSecondCapture}
-          className="flex-1 px-3 py-2 rounded bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium transition"
-        >
-          Capture Second Weight
-        </button>
-      </div>
+          <div className="mb-6 grid grid-cols-2 gap-4">
+            <h3 className="col-span-2 text-lg font-semibold text-gray-700">Camera Feeds</h3>
+            {cameraFeeds.map((feed) => (
+              <div key={feed.id} className="bg-gray-200 p-2 rounded-lg text-center">
+                <img src={feed.src} alt={`Camera ${feed.id}`} className="w-full h-auto rounded" />
+                {detectedPlate && (
+                  <p className="mt-2 text-sm font-medium text-blue-600">
+                    Detected Plate: {detectedPlate}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
 
-      {/* Info/Instructions */}
-      <div className="mt-4 text-xs text-gray-500">
-        <p>
-          Use <span className="font-semibold">Capture First</span> when the
-          vehicle enters the weighbridge. After loading/unloading, return and
-          click <span className="font-semibold">Capture Second</span> to record
-          the second weight.
-        </p>
-        <p className="mt-1">
-          Net weight will be automatically calculated by subtracting the second
-          captured value from the first.
-        </p>
-      </div>
+          <div className="text-center">
+            <Button
+              type="primary"
+              onClick={handleCapture}
+              disabled={vehiclePosition !== "Fully On" || !detectedPlate}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg"
+            >
+              Capture Weight
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
-}
+};
+
+export default WeighingPanel;
