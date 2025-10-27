@@ -5,7 +5,6 @@ using Masterdata.Core.DTOs;
 using Masterdata.Core.DTOs.Owner;
 using Masterdata.Core.DTOs.Vehicles;
 using Masterdata.Core.Interfaces;
-using Masterdata.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +13,8 @@ using Microsoft.Extensions.Logging;
 namespace Masterdata.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-[Authorize]
+[Route("api/[controller]")]
+[Authorize(Roles = "Admin")]
 [Produces("application/json")]
 public class OwnersController : ControllerBase
 {

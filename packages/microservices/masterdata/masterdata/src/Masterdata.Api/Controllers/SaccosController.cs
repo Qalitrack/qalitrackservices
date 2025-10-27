@@ -10,8 +10,8 @@ using Masterdata.Core.Interfaces;
 namespace Masterdata.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    [Authorize]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     [Produces("application/json")]
     public class SaccosController : ControllerBase
     {
