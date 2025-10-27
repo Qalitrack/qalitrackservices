@@ -5,14 +5,14 @@ using System;
 using System.Threading.Tasks;
 using Masterdata.Core.DTOs.Organisation;
 using Masterdata.Core.DTOs.Affiliation;
-using Masterdata.Core.DTOs.Shared;
 using Masterdata.Core.Interfaces;
+using Masterdata.Core.Models;
 
 namespace Masterdata.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Route("[controller]")]
+    [Authorize]
     [Produces("application/json")]
     public class OrganisationsController : ControllerBase
     {
