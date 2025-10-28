@@ -51,16 +51,19 @@ builder.Services.AddSwaggerGen(c =>
 - Gateway provides centralized routing to 18+ microservices including analytics, compliance, transactions, and more"
     });
     
+    // Define the JWT Bearer scheme
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
-    
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+
+    // Apply the security requirement globally
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -69,12 +72,9 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
+                }
             },
-            new List<string>()
+            new string[] { }
         }
     });
 });
@@ -158,15 +158,29 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-// Enable Swagger in all environments (development and production)
+// ALWAYS generate Swagger JSON (for both DEV + PROD)
 app.UseSwagger();
-app.UseSwaggerUI(c =>
+
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transaction API V1");
-    c.SwaggerEndpoint("http://localhost:7000/swagger/v1/swagger.json", "API Gateway V1");
-    c.RoutePrefix = "swagger"; // Serve Swagger UI at /swagger
-    c.DocumentTitle = "QaliTrack Services - Transaction & Gateway Discovery";
-});
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transaction API V1");
+        c.SwaggerEndpoint("http://localhost:7000/swagger/v1/swagger.json", "API Gateway V1");
+        c.RoutePrefix = string.Empty;
+        c.DocumentTitle = "QaliTrack Services - Transaction & Gateway Discovery";
+    });
+}
+else
+{
+    // PROD: Serve UI at /swagger
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("v1/swagger.json", "Transaction API V1");
+        c.RoutePrefix = "swagger";
+        c.DocumentTitle = "QaliTrack Transaction API";
+    });
+}
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
