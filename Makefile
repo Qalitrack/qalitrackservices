@@ -1710,3 +1710,26 @@ docker-build-masterdata:
 docker-run-masterdata:
 	@echo "Running Docker container for Masterdata service..."
 	@docker run -p 5000:80 masterdata
+
+# Transaction Service Targets (Auto-generated)
+.PHONY: build-transaction run-transaction test-transaction
+
+build-transaction:
+	@echo "Building Transaction service..."
+	@cd packages/microservices/masterdata/transaction && dotnet build
+
+run-transaction:
+	@echo "Running Transaction service..."
+	@cd packages/microservices/masterdata/transaction && dotnet run --project src/Transaction.Api
+
+test-transaction:
+	@echo "Testing Transaction service..."
+	@cd packages/microservices/masterdata/transaction && dotnet test tests/Transaction.Tests --verbosity normal
+
+docker-build-transaction:
+	@echo "Building Docker image for Transaction service..."
+	@cd packages/microservices/masterdata/transaction && docker build -t transaction .
+
+docker-run-transaction:
+	@echo "Running Docker container for Transaction service..."
+	@docker run -p 5000:80 transaction
