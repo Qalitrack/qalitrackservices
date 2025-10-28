@@ -1,0 +1,150 @@
+services:
+  transaction-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/transaction-service:latest
+    container_name: qalitrack-transaction-service-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - UsePostgreSQL=true
+      - UseRedis=true
+      - ConnectionStrings__DefaultConnection=Host=postgres-transaction-prod;Port=5432;Database=transactiondb;Username=transaction;Password=transaction123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-transaction-prod:6379,password=transaction123
+      - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
+      - JWT_ISSUER=TransactionService
+      - JWT_AUDIENCE=TransactionService
+      - RABBITMQ_HOST=rabbitmq-transaction-prod
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=admin
+      - RABBITMQ_PASSWORD=securepassword
+      - Transaction__MetadataPath=/app/transaction-metadata
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./metadata:/app/transaction-metadata
+    depends_on:
+      - postgres-transaction-prod
+      - redis-transaction-prod
+      - rabbitmq-transaction-prod
+    networks:
+      - qalitrack-proxy
+      - proxy-network
+    # NO EXPOSED PORTS - only accessible through Traefik
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+    healthcheck:
+      disable: true
+    labels:
+      # Enable Traefik
+      - "traefik.enable=true"
+
+      # Transaction API routes (PROD) - specific transaction service endpoints with JWT auth
+      - "traefik.http.routers.transaction-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Transaction`)"
+      - "traefik.http.routers.transaction-api-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.transaction-api-prod.service=transaction-service-prod"
+      - "traefik.http.routers.transaction-api-prod.middlewares=transaction-jwt-forwardauth,strip-api-prefix"
+      - "traefik.http.routers.transaction-api-prod.tls=true"
+      - "traefik.http.routers.transaction-api-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.transaction-api-prod.priority=100"
+
+      # Microservice API routes (PROD) - read-only, no JWT required
+      - "traefik.http.routers.transaction-microservice-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Microservice`)"
+      - "traefik.http.routers.transaction-microservice-prod.entrypoints=web,websecure"
+      - "traefik.http.routers.transaction-microservice-prod.service=transaction-service-prod"
+      - "traefik.http.routers.transaction-microservice-prod.middlewares=strip-api-prefix"
+      - "traefik.http.routers.transaction-microservice-prod.tls=true"
+      - "traefik.http.routers.transaction-microservice-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.transaction-microservice-prod.priority=100"
+
+      # Service definition
+      - "traefik.http.services.transaction-service-prod.loadbalancer.server.port=80"
+
+      # JWT ForwardAuth middleware
+      - "traefik.http.middlewares.transaction-jwt-forwardauth.forwardauth.address=http://qalitrack-jwt-auth-service:3000/auth"
+      - "traefik.http.middlewares.transaction-jwt-forwardauth.forwardauth.authResponseHeaders=X-User-Id,X-User-Email"
+
+      # Middleware to strip /api prefix (shared across services)
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
+
+  # Transaction Service Database (PROD)
+  postgres-transaction-prod:
+    image: postgres:15-alpine
+    container_name: qalitrack-postgres-transaction-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=transactiondb
+      - POSTGRES_USER=transaction
+      - POSTGRES_PASSWORD=transaction123
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_transaction_prod_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+  # Redis for Transaction Service (PROD)
+  redis-transaction-prod:
+    image: redis:7-alpine
+    container_name: qalitrack-redis-transaction-prod
+    restart: unless-stopped
+    command: redis-server --requirepass transaction123 --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_transaction_prod_data:/data
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+  # RabbitMQ for Transaction Service (PROD)
+  rabbitmq-transaction-prod:
+    image: rabbitmq:3-management-alpine
+    container_name: qalitrack-rabbitmq-transaction-prod
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=securepassword
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - rabbitmq_transaction_prod_data:/var/lib/rabbitmq
+    networks:
+      - qalitrack-proxy
+    # NO EXPOSED PORTS
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+volumes:
+  postgres_transaction_prod_data:
+    external: true
+  redis_transaction_prod_data:
+    external: true
+  rabbitmq_transaction_prod_data:
+    external: true
+
+networks:
+  qalitrack-proxy:
+    external: true
+    name: qalitrack-proxy
+  proxy-network:
+    external: true
+    name: proxy-network
