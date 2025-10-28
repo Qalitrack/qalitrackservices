@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: qalitrack_transactions_db
+    environment:
+      POSTGRES_DB: qalitrack_transactions
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - qalitrack_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  transaction_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qalitrack_transaction_api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=qalitrack_transactions;Username=postgres;Password=postgres
+    ports:
+      - "5112:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - qalitrack_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  qalitrack_network:
+    driver: bridge
