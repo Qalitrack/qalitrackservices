@@ -43,33 +43,41 @@ services:
       # Enable Traefik
       - "traefik.enable=true"
 
-      # Transaction API routes (PROD) - specific transaction service endpoints with JWT auth
-      - "traefik.http.routers.transaction-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Transaction`)"
-      - "traefik.http.routers.transaction-api-prod.entrypoints=web,websecure"
-      - "traefik.http.routers.transaction-api-prod.service=transaction-service-prod"
-      - "traefik.http.routers.transaction-api-prod.middlewares=transaction-jwt-forwardauth,strip-api-prefix"
-      - "traefik.http.routers.transaction-api-prod.tls=true"
-      - "traefik.http.routers.transaction-api-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.transaction-api-prod.priority=100"
+      # Middleware to strip full /api/Transaction prefix (for Swagger and health)
+      - "traefik.http.middlewares.strip-api-transaction.stripprefix.prefixes=/api/Transaction"
 
-      # Microservice API routes (PROD) - read-only, no JWT required
-      - "traefik.http.routers.transaction-microservice-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Microservice`)"
-      - "traefik.http.routers.transaction-microservice-prod.entrypoints=web,websecure"
-      - "traefik.http.routers.transaction-microservice-prod.service=transaction-service-prod"
-      - "traefik.http.routers.transaction-microservice-prod.middlewares=strip-api-prefix"
-      - "traefik.http.routers.transaction-microservice-prod.tls=true"
-      - "traefik.http.routers.transaction-microservice-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.transaction-microservice-prod.priority=100"
-
-      # Service definition
-      - "traefik.http.services.transaction-service-prod.loadbalancer.server.port=80"
+      # Middleware to strip /api prefix (for general API routes)
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
 
       # JWT ForwardAuth middleware
       - "traefik.http.middlewares.transaction-jwt-forwardauth.forwardauth.address=http://qalitrack-jwt-auth-service:3000/auth"
       - "traefik.http.middlewares.transaction-jwt-forwardauth.forwardauth.authResponseHeaders=X-User-Id,X-User-Email"
 
-      # Middleware to strip /api prefix (shared across services)
-      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
+      # General Transaction API routes (PROD) - strips only /api, forwards to /Transaction/... (excludes Swagger/health via priorities)
+      - "traefik.http.routers.transaction-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Transaction`) && !PathPrefix(`/api/Transaction/swagger`) && !PathPrefix(`/api/Transaction/health`)"
+      - "traefik.http.routers.transaction-api-prod.entrypoints=websecure"
+      - "traefik.http.routers.transaction-api-prod.service=transaction-service-prod"
+      - "traefik.http.routers.transaction-api-prod.middlewares=transaction-jwt-forwardauth,strip-api-prefix"
+      - "traefik.http.routers.transaction-api-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.transaction-api-prod.priority=100"
+
+      # Health check endpoint (PROD) - strips full /api/Transaction, forwards to /health (no JWT)
+      - "traefik.http.routers.transaction-health-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/Transaction/health`)"
+      - "traefik.http.routers.transaction-health-prod.entrypoints=websecure"
+      - "traefik.http.routers.transaction-health-prod.service=transaction-service-prod"
+      - "traefik.http.routers.transaction-health-prod.middlewares=strip-api-transaction"
+      - "traefik.http.routers.transaction-health-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.transaction-health-prod.priority=105"
+
+      # Swagger UI (PROD) - strips /api/Transaction, forwards to / (no JWT)
+      - "traefik.http.routers.transaction-swagger-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && (PathPrefix(`/api/Transaction/`) || Path(`/api/Transaction`) || Path(`/api/Transaction/swagger/v1/swagger.json`))"
+      - "traefik.http.routers.transaction-swagger-prod.entrypoints=websecure"
+      - "traefik.http.routers.transaction-swagger-prod.service=transaction-service-prod"
+      - "traefik.http.routers.transaction-swagger-prod.middlewares=strip-api-transaction"
+      - "traefik.http.routers.transaction-swagger-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.transaction-swagger-prod.priority=110"
+      # Service definition
+      - "traefik.http.services.transaction-service-prod.loadbalancer.server.port=80"
 
   # Transaction Service Database (PROD)
   postgres-transaction-prod:
