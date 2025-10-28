@@ -100,7 +100,7 @@ public class AuditLogsControllerTests
         // Assert
         var statusCodeResult = result.Result as ObjectResult;
         statusCodeResult.Should().NotBeNull();
-        statusCodeResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        statusCodeResult!.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
     }
 
     [Fact]
@@ -182,10 +182,10 @@ public class AuditLogsControllerTests
     {
         // Arrange
         var nonExistentId = Guid.NewGuid().ToString();
-        
+
         _mockAuditLogService
             .Setup(x => x.GetAuditLogByIdAsync(nonExistentId))
-            .ReturnsAsync((AuditLogDto)null);
+            .ReturnsAsync((AuditLogDto?)null);
 
         // Act
         var result = await _controller.GetAuditLog(nonExistentId);
@@ -210,7 +210,7 @@ public class AuditLogsControllerTests
         // Assert
         var statusCodeResult = result.Result as ObjectResult;
         statusCodeResult.Should().NotBeNull();
-        statusCodeResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        statusCodeResult!.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
     }
 
     [Theory]
