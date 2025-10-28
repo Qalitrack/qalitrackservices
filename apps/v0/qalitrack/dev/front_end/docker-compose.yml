@@ -19,13 +19,13 @@ services:
       
       # Health check (DEV) - assuming /health endpoint (higher priority for specific path)
       - "traefik.http.routers.frontend-health-dev.rule=Host(`${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}`) && PathPrefix(`/health`)"
-      - "traefik.http.routers.frontend-health-dev.entrypoints=web,websecure"
+      - "traefik.http.routers.frontend-health-dev.entrypoints=web"
       - "traefik.http.routers.frontend-health-dev.service=frontend-dev"
       - "traefik.http.routers.frontend-health-dev.priority=100"
       
       # Frontend routes (DEV only) - catch-all for dev domain, excluding /api (lower priority)
       - "traefik.http.routers.frontend-dev.rule=Host(`${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}`) && !PathPrefix(`/api`)"
-      - "traefik.http.routers.frontend-dev.entrypoints=web,websecure"
+      - "traefik.http.routers.frontend-dev.entrypoints=web"
       - "traefik.http.routers.frontend-dev.service=frontend-dev"
       - "traefik.http.routers.frontend-dev.priority=10"
       

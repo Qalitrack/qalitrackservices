@@ -8,28 +8,19 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
-      - DATABASE_PROVIDER=PostgreSQL
-      - POSTGRES_HOST=postgres-masterdata-prod
-      - POSTGRES_PORT=5432
-      - POSTGRES_DATABASE=qalitrack_masterdata
-      - POSTGRES_USERNAME=masterdata
-      - POSTGRES_PASSWORD=masterdata123
-      - AUTO_MIGRATE=true
-      - MIGRATION_MAX_RETRIES=15
-      - MIGRATION_RETRY_DELAY=3
-      - FAIL_ON_MIGRATION_ERROR=false
-      - USE_VAULT=false
-      # JWT - Updated to match your service
+      # ✅ FIXED: DIRECT connection string (like User Service)
+      - ConnectionStrings__DefaultConnection=Host=postgres-masterdata-prod;Port=5432;Database=qalitrack_masterdata;Username=masterdata;Password=masterdata123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      # ✅ REMOVED: All POSTGRES_* & AUTO_MIGRATE vars
       - JWT_SECRET_KEY=mqtNGlrJcW/j+7u73scKbGYVkfAM1qUsfRET77ss5yStSusjT7zAw62WGUZff6Rh
-      - JWT_ISSUER=MasterDataService
-      - JWT_AUDIENCE=MasterDataService
+      - JWT_ISSUER=UserService
+      - JWT_AUDIENCE=UserService
     volumes:
       - ./logs:/app/logs
       - ./docs:/app/wwwroot/docs
       - ./data:/app/data
+    # ✅ FIXED: Simple depends_on (like User Service)
     depends_on:
-      postgres-masterdata-prod:
-        condition: service_healthy
+      - postgres-masterdata-prod
     networks:
       - qalitrack-proxy
       - proxy-network
@@ -45,6 +36,14 @@ services:
       # Enable Traefik
       - "traefik.enable=true"
       
+        # ✅ CORS Middleware - MUST BE FIRST
+      - "traefik.http.middlewares.masterdata-cors.headers.accesscontrolalloworiginlist=http://localhost:5173,http://localhost:3000,https://qalitrack.cseco.co.ke"
+      - "traefik.http.middlewares.masterdata-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS,PATCH"
+      - "traefik.http.middlewares.masterdata-cors.headers.accesscontrolallowheaders=Content-Type,Authorization,X-Requested-With"
+      - "traefik.http.middlewares.masterdata-cors.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.middlewares.masterdata-cors.headers.accesscontrolmaxage=105"
+      - "traefik.http.middlewares.masterdata-cors.headers.addvaryheader=true"
+      
       # New shared middleware to strip full /api/MasterData prefix (for Swagger and health)
       - "traefik.http.middlewares.strip-api-masterdata.stripprefix.prefixes=/api/MasterData"
       
@@ -55,32 +54,33 @@ services:
       - "traefik.http.middlewares.masterdata-jwt-forwardauth.forwardauth.address=http://qalitrack-jwt-auth-service:3000/auth"
       - "traefik.http.middlewares.masterdata-jwt-forwardauth.forwardauth.authResponseHeaders=X-User-Id,X-User-Email"
       
-      # General MasterData API routes (PROD) - strips only /api, forwards to /MasterData/... (excludes Swagger/health via priorities)
+      # General MasterData API routes (PROD) - strips only /api, forwards to /MasterData/... (excludes Swagger/health via priorities
+# General MasterData API routes (PROD) - strips /api/MasterData, forwards to /Drivers/...
       - "traefik.http.routers.masterdata-api-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData`) && !PathPrefix(`/api/MasterData/swagger`) && !PathPrefix(`/api/MasterData/health`)"
       - "traefik.http.routers.masterdata-api-prod.entrypoints=websecure"
       - "traefik.http.routers.masterdata-api-prod.service=masterdata-service-prod"
-      - "traefik.http.routers.masterdata-api-prod.middlewares=masterdata-jwt-forwardauth,strip-api-prefix"
+      - "traefik.http.routers.masterdata-api-prod.middlewares=masterdata-cors,masterdata-jwt-forwardauth,strip-api-masterdata"
       - "traefik.http.routers.masterdata-api-prod.tls.certresolver=letsencrypt"
       - "traefik.http.routers.masterdata-api-prod.priority=100"
-      
       # Health check endpoint (PROD) - strips full /api/MasterData, forwards to /health (no JWT)
       - "traefik.http.routers.masterdata-health-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData/health`)"
       - "traefik.http.routers.masterdata-health-prod.entrypoints=websecure"
       - "traefik.http.routers.masterdata-health-prod.service=masterdata-service-prod"
-      - "traefik.http.routers.masterdata-health-prod.middlewares=strip-api-masterdata"
+      - "traefik.http.routers.masterdata-health-prod.middlewares=masterdata-cors,strip-api-masterdata"
       - "traefik.http.routers.masterdata-health-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.masterdata-health-prod.priority=105"
+      - "traefik.http.routers.masterdata-health-prod.priority=110"
       
-      # Swagger UI (PROD) - strips /api/MasterData, forwards to / (no JWT)
-      - "traefik.http.routers.masterdata-swagger-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && (PathPrefix(`/api/MasterData/`) || Path(`/api/MasterData`) || Path(`/api/MasterData/swagger/v1/swagger.json`))"
+         # Swagger UI (PROD) - strips /api/MasterData, forwards to / (no JWT)
+      - "traefik.http.routers.masterdata-swagger-prod.rule=Host(`${QALITRACK_PROD_DOMAIN:-qalitrack.cseco.co.ke}`) && PathPrefix(`/api/MasterData/swagger`)"
       - "traefik.http.routers.masterdata-swagger-prod.entrypoints=websecure"
       - "traefik.http.routers.masterdata-swagger-prod.service=masterdata-service-prod"  
       - "traefik.http.routers.masterdata-swagger-prod.middlewares=strip-api-masterdata"
       - "traefik.http.routers.masterdata-swagger-prod.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.masterdata-swagger-prod.priority=110"      
+      - "traefik.http.routers.masterdata-swagger-prod.priority=110"
+            
       # Service definition
-      - "traefik.http.services.masterdata-service-prod.loadbalancer.server.port=80"
-
+      - "traefik.http.services.masterdata-service-prod.loadbalancer.server.port=80" 
+     
   # MasterData Database (PROD)
   postgres-masterdata-prod:
     image: postgres:16

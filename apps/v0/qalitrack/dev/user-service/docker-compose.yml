@@ -45,7 +45,7 @@ services:
       
       # User service routes (DEV) - all under /api
       - "traefik.http.routers.user-service-dev.rule=Host(`${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.user-service-dev.entrypoints=web,websecure"
+      - "traefik.http.routers.user-service-dev.entrypoints=web"
       - "traefik.http.routers.user-service-dev.service=user-service-dev"
       - "traefik.http.routers.user-service-dev.middlewares=strip-api-prefix"
       
@@ -57,7 +57,7 @@ services:
       
       # Health check (DEV) - routed under /api/health
       - "traefik.http.routers.user-health-dev.rule=Host(`${QALITRACK_DEV_DOMAIN:-dev.qalitrack.cseco.co.ke}`) && PathPrefix(`/api/health`)"
-      - "traefik.http.routers.user-health-dev.entrypoints=web,websecure"
+      - "traefik.http.routers.user-health-dev.entrypoints=web"
       - "traefik.http.routers.user-health-dev.service=user-service-dev"
       - "traefik.http.routers.user-health-dev.middlewares=strip-api-prefix"
 
@@ -120,7 +120,6 @@ services:
     labels:
       # Optional: expose RabbitMQ management through Traefik
       - "traefik.enable=true"
-      - "traefik.scope=qalitrack"
       - "traefik.http.routers.rabbitmq-mgmt-dev.rule=PathPrefix(`/rabbitmq-dev`)"
       - "traefik.http.routers.rabbitmq-mgmt-dev.entrypoints=qalitrack-http"
       - "traefik.http.routers.rabbitmq-mgmt-dev.service=rabbitmq-mgmt-dev"
