@@ -33,6 +33,11 @@ services:
       - --entrypoints.qalitrack-http.address=:9080    # Dev HTTP
       - --entrypoints.qalitrack-https.address=:9443   # Prod HTTPS
       
+      
+      # JWT Plugin configuration
+      - --experimental.plugins.jwt-middleware.modulename=github.com/23deg/jwt-middleware
+      - --experimental.plugins.jwt-middleware.version=v0.1.3
+      
       # Security
       - --global.sendAnonymousUsage=false
     labels:
