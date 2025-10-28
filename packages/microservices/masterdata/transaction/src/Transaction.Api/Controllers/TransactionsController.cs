@@ -4,7 +4,7 @@ using Transaction.Core.Interfaces;
 
 namespace Transaction.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("Transaction")]
 public class TransactionsController : BaseController
 {
     private readonly ITransactionService _transactionService;
