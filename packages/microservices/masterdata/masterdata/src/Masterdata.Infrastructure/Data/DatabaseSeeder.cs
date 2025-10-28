@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Masterdata.Core.Entities;
+using Masterdata.Core.Enums;
 using Masterdata.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,61 +40,119 @@ public static class DatabaseSeeder
 
     private static async Task SeedAxleConfigurationsAsync(MasterdataDbContext context)
     {
-        // Use Find or direct check instead of complex LINQ
-        var existingConfig = await context.AxleConfigurations
-            .FirstOrDefaultAsync(a => a.Configuration == "4x2");
-            
-        if (existingConfig == null)
+        // Check if data already exists
+        if (await context.AxleConfigurations.AnyAsync())
+            return;
+
+        var configurations = new List<AxleConfiguration>
         {
-            var configurations = new List<AxleConfiguration>
+            new AxleConfiguration
             {
-                new AxleConfiguration
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Configuration = "4x2",
-                    Description = "Standard two-axle configuration with four wheels"
-                },
-                new AxleConfiguration
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Configuration = "6x4",
-                    Description = "Three-axle configuration with six wheels"
-                }
-            };
-            
-            await context.AxleConfigurations.AddRangeAsync(configurations);
-            await context.SaveChangesAsync();
-        }
+                Id = Guid.NewGuid().ToString(),
+                Code = "4x2",
+                Description = "Two axles, one driven — common for medium-duty trucks.",
+                AxleCount = 2,
+                MaxLoadCapacity = 18.0m, // tons
+                IsActive = true
+            },
+            new AxleConfiguration
+            {
+                Id = Guid.NewGuid().ToString(),
+                Code = "6x4",
+                Description = "Three axles, two driven — typical for heavy-duty trucks.",
+                AxleCount = 3,
+                MaxLoadCapacity = 26.0m,
+                IsActive = true
+            },
+            new AxleConfiguration
+            {
+                Id = Guid.NewGuid().ToString(),
+                Code = "8x4",
+                Description = "Four axles, two driven — used for heavy haulage.",
+                AxleCount = 4,
+                MaxLoadCapacity = 32.0m,
+                IsActive = true
+            },
+            new AxleConfiguration
+            {
+                Id = Guid.NewGuid().ToString(),
+                Code = "6x2",
+                Description = "Three axles, one driven — for balance between efficiency and payload.",
+                AxleCount = 3,
+                MaxLoadCapacity = 24.0m,
+                IsActive = true
+            }
+        };
+
+        await context.AxleConfigurations.AddRangeAsync(configurations);
+        await context.SaveChangesAsync();
     }
 
     private static async Task SeedOwnersAsync(MasterdataDbContext context)
     {
-        var existingOwner = await context.Owners
-            .FirstOrDefaultAsync(o => o.Name == "John Smith Logistics");
-            
-        if (existingOwner == null)
+        if (await context.Owners.AnyAsync())
+            return;
+
+        var owners = new List<Owner>
         {
-            var owners = new List<Owner>
+            // Company Owner
+            new Owner
             {
-                new Owner
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "John Smith Logistics",
-                    ContactInfo = JsonSerializer.Serialize(new { Email = "john.smith@logistics.com", Phone = "+254123456789" }),
-                    Type = "Company"
-                },
-                new Owner
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Jane Doe",
-                    ContactInfo = JsonSerializer.Serialize(new { Email = "jane.doe@gmail.com", Phone = "+254987654321" }),
-                    Type = "Individual"
-                }
-            };
+                Id = Guid.NewGuid().ToString(),
+                Name = "John Smith Logistics",
+                Email = "john.smith@logistics.com",
+                PhoneNumber = "+254123456789",
+                Address = "Nairobi, Kenya",
+                Type = OwnerType.Company,
+                BusinessRegistrationNumber = "CPT/2023/123456",
+                TaxIdentificationNumber = "A123456789X",
+                ContactInfo = JsonSerializer.Serialize(new { 
+                    Website = "https://johnsmithlogistics.com",
+                    ContactPerson = "John Smith",
+                    PostalAddress = "P.O. Box 12345-00100, Nairobi"
+                })
+            },
             
-            await context.Owners.AddRangeAsync(owners);
-            await context.SaveChangesAsync();
-        }
+            // Individual Owner
+            new Owner
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Jane Wanjiku",
+                Email = "jane.wanjiku@example.com",
+                PhoneNumber = "+254987654321",
+                Address = "Mombasa, Kenya",
+                Type = OwnerType.Individual,
+                NationalId = "12345678",
+                DateOfBirth = DateTime.SpecifyKind(new DateTime(1985, 5, 15), DateTimeKind.Utc), // Fixed: Specify UTC Kind
+                Gender = "Female",
+                ContactInfo = JsonSerializer.Serialize(new { 
+                    EmergencyContact = "+254712345678",
+                    PostalAddress = "P.O. Box 54321-80100, Mombasa"
+                })
+            },
+            
+            // Sacco Owner
+            new Owner
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Stima Sacco Society",
+                Email = "info@stimasacco.co.ke",
+                PhoneNumber = "+25420445566",
+                Address = "Nairobi, Kenya",
+                Type = OwnerType.Sacco,
+                RegistrationNumber = "CS/12345",
+                RegistrationDate = DateTime.SpecifyKind(new DateTime(1974, 1, 1), DateTimeKind.Utc), // Fixed: Specify UTC Kind
+                ContactPerson = "John Kamau",
+                ContactInfo = JsonSerializer.Serialize(new { 
+                    Website = "https://www.stimasacco.com",
+                    BranchOffices = "Nairobi, Mombasa, Kisumu, Nakuru",
+                    Services = "Savings, Loans, Investments"
+                })
+            }
+        };
+        
+        await context.Owners.AddRangeAsync(owners);
+        await context.SaveChangesAsync();
     }
 
     private static async Task SeedSuppliersAsync(MasterdataDbContext context)
@@ -218,20 +277,27 @@ public static class DatabaseSeeder
                     {
                         Id = Guid.NewGuid().ToString(),
                         FullName = "Michael Otieno",
+                        Email = "michael.otieno@example.com",
+                        Phone = "+254712345678",
                         LicenseNumber = "DL123456",
                         LicenseExpiryDate = DateTime.UtcNow.AddYears(2),
                         Status = "active",
                         TransporterId = transporter.Id,
-                        SupplierId = supplier?.Id
+                        SupplierId = supplier?.Id,
+                        
                     },
                     new Driver
                     {
                         Id = Guid.NewGuid().ToString(),
                         FullName = "Sarah Wanjiku",
+                        Email = "sarah.wanjiku@example.com",
+                        Phone = "+254723456789",
                         LicenseNumber = "DL789012",
                         LicenseExpiryDate = DateTime.UtcNow.AddYears(3),
                         Status = "active",
-                        TransporterId = transporter.Id
+                        TransporterId = transporter.Id,
+                        SupplierId = supplier?.Id,
+                       
                     }
                 };
                 
@@ -251,9 +317,26 @@ public static class DatabaseSeeder
             var owner = await context.Owners.FirstOrDefaultAsync();
             var supplier = await context.Suppliers.FirstOrDefaultAsync();
             var transporter = await context.Transporters.FirstOrDefaultAsync();
+            
+            // Ensure we have an AxleConfiguration
             var axleConfig = await context.AxleConfigurations.FirstOrDefaultAsync();
+            if (axleConfig == null)
+            {
+                // Create a default AxleConfiguration if none exists
+                axleConfig = new AxleConfiguration
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Code = "4x2",
+                    Description = "Two axles, one driven — common for medium-duty trucks.",
+                    AxleCount = 2,
+                    MaxLoadCapacity = 18.0m, // tons
+                    IsActive = true
+                };
+                await context.AxleConfigurations.AddAsync(axleConfig);
+                await context.SaveChangesAsync();
+            }
 
-            if (owner != null && axleConfig != null)
+            if (owner != null)
             {
                 var vehicles = new List<Vehicle>
                 {
@@ -263,7 +346,6 @@ public static class DatabaseSeeder
                         RegistrationNumber = "KBC 123A",
                         Type = "Truck",
                         Model = "Mercedes Actros 2020",
-                        Color = "White",
                         Status = "active",
                         OwnerId = owner.Id,
                         SupplierId = supplier?.Id,
@@ -276,7 +358,6 @@ public static class DatabaseSeeder
                         RegistrationNumber = "KBC 456B",
                         Type = "Truck",
                         Model = "Scania R500 2021",
-                        Color = "Red",
                         Status = "active",
                         OwnerId = owner.Id,
                         SupplierId = supplier?.Id,
@@ -493,8 +574,9 @@ public static class DatabaseSeeder
                 UserId = "system",
                 UserName = "System",
                 IpAddress = "127.0.0.1",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "system"
+                UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                CreatedBy = "system",
             };
             
             await context.AuditLogs.AddAsync(auditLog);

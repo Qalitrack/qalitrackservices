@@ -7,6 +7,7 @@ using Masterdata.Core.Models;
 using Masterdata.Core.Utils;
 using Masterdata.Infrastructure.Data;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Masterdata.Infrastructure.Repositories;
 
@@ -133,9 +134,15 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         };
     }
 
-    public virtual async Task<T?> GetByIdAsync(string id)
+    public Task<T?> GetByIdAsync(string id)
     {
-        return await DbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+        throw new NotImplementedException();
+    }
+
+    public virtual async Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<string> ids)
+    {
+        var idSet = new HashSet<string>(ids);
+        return await DbSet.Where(e => idSet.Contains(e.Id) && !e.IsDeleted).ToListAsync();
     }
 
     public virtual async Task<T> CreateAsync(T entity)
@@ -157,9 +164,16 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         try
         {
             DbSet.Add(entity);
+            
+            // Detect and track related entities before save
+            await TrackRelatedEntitiesAsync(entity, isCreate: true);
+            
             await Context.SaveChangesAsync();
             
             await _auditLogRepository.LogCreateAsync(entity);
+            
+            // Log related entity changes
+            await LogRelatedEntityChangesAsync();
             
             await transaction.CommitAsync();
             return entity;
@@ -205,9 +219,16 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         try
         {
             DbSet.Update(entity);
+            
+            // Detect and track related entities before save
+            await TrackRelatedEntitiesAsync(entity, isCreate: false);
+            
             await Context.SaveChangesAsync();
             
             await _auditLogRepository.LogUpdateAsync(originalEntity, entity);
+            
+            // Log related entity changes
+            await LogRelatedEntityChangesAsync();
             
             await transaction.CommitAsync();
             return entity;
@@ -221,7 +242,8 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<bool> DeleteAsync(string id)
     {
-        var entity = await GetByIdAsync(id);
+        var entities = await GetByIdsAsync(new[] { id });
+        var entity = entities.FirstOrDefault();
         if (entity == null)
         {
             return false;
@@ -239,9 +261,16 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         try
         {
             DbSet.Update(entity);
+            
+            // Detect and track related entities before save
+            await TrackRelatedEntitiesAsync(entity, isCreate: false);
+            
             await Context.SaveChangesAsync();
             
             await _auditLogRepository.LogDeleteAsync(entity);
+            
+            // Log related entity changes
+            await LogRelatedEntityChangesAsync();
             
             await transaction.CommitAsync();
             return true;
@@ -291,5 +320,106 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<bool> ExistsAsync(string id)
     {
         return await DbSet.AnyAsync(e => e.Id == id && !e.IsDeleted);
+    }
+
+    public virtual async Task<IReadOnlyList<T>> QueryAsync(
+        Expression<Func<T, bool>>? predicate = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        bool asNoTracking = true)
+    {
+        IQueryable<T> query = DbSet;
+
+        // Apply no-tracking if needed
+        if (asNoTracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        // Apply filter
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        // Include related data
+        if (include != null)
+        {
+            query = include(query);
+        }
+
+        // Apply ordering
+        if (orderBy != null)
+        {
+            query = orderBy(query);
+        }
+
+        return await query.ToListAsync();
+    }
+
+    public virtual async Task<T?> FirstOrDefaultAsync(
+        Expression<Func<T, bool>> predicate,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        bool asNoTracking = true)
+    {
+        IQueryable<T> query = DbSet;
+
+        // Apply no-tracking if needed
+        if (asNoTracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        // Include related data
+        if (include != null)
+        {
+            query = include(query);
+        }
+
+        return await query.FirstOrDefaultAsync(predicate);
+    }
+
+    /// <summary>
+    /// Tracks related entities that will be modified as a result of the current operation
+    /// </summary>
+    private async Task TrackRelatedEntitiesAsync(T entity, bool isCreate)
+    {
+        // This will be overridden in specific repositories if needed
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Logs audit entries for all related entities that were modified
+    /// </summary>
+    private async Task LogRelatedEntityChangesAsync()
+    {
+        var changeTracker = Context.ChangeTracker;
+        var entries = changeTracker.Entries()
+            .Where(e => e.Entity is BaseEntity && e.Entity.GetType() != typeof(T))
+            .ToList();
+
+        foreach (var entry in entries)
+        {
+            var baseEntity = (BaseEntity)entry.Entity;
+            
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    await _auditLogRepository.LogCreateAsync(baseEntity);
+                    break;
+                    
+                case EntityState.Modified:
+                    var originalValues = entry.OriginalValues.ToObject();
+                    if (originalValues is BaseEntity originalEntity)
+                    {
+                        await _auditLogRepository.LogUpdateAsync(originalEntity, baseEntity);
+                    }
+                    break;
+                    
+                case EntityState.Deleted:
+                    await _auditLogRepository.LogDeleteAsync(baseEntity);
+                    break;
+            }
+        }
     }
 }

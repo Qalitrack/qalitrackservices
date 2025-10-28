@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Masterdata.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Route("[controller]")]
+    [Authorize]
     public class DriversController : BaseController
     {
         private readonly IDriverService _driverService;
@@ -182,6 +182,122 @@ namespace Masterdata.Api.Controllers
             {
                 _logger.LogError(ex, $"Error removing vehicle {vehicleId} from driver {driverId}");
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while removing the vehicle");
+            }
+        }
+
+        /// <summary>
+        /// Assigns a driver to a supplier
+        /// </summary>
+        /// <param name="driverId">ID of the driver</param>
+        /// <param name="supplierId">ID of the supplier</param>
+        /// <returns>No content if successful</returns>
+        [HttpPost("{driverId}/suppliers/{supplierId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> AssignToSupplier(string driverId, string supplierId)
+        {
+            try
+            {
+                var result = await _driverService.AssignToSupplierAsync(driverId, supplierId);
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to assign driver {DriverId} to supplier {SupplierId}", driverId, supplierId);
+                    return NotFound("Driver or supplier not found or deleted");
+                }
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Conflict assigning driver {DriverId} to supplier {SupplierId}", driverId, supplierId);
+                return Conflict(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Removes a driver from a supplier
+        /// </summary>
+        /// <param name="driverId">ID of the driver</param>
+        /// <param name="supplierId">ID of the supplier</param>
+        /// <returns>No content if successful</returns>
+        [HttpDelete("{driverId}/suppliers/{supplierId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RemoveFromSupplier(string driverId, string supplierId)
+        {
+            var result = await _driverService.RemoveFromSupplierAsync(driverId, supplierId);
+            if (!result)
+            {
+                _logger.LogWarning("Failed to remove driver {DriverId} from supplier {SupplierId}", driverId, supplierId);
+                return NotFound("Driver or supplier not found or deleted");
+            }
+            return NoContent();
+        }
+        
+        // Add these endpoints to your DriversController class
+        /// <summary>
+        /// Assigns a driver to a transporter
+        /// </summary>
+        /// <param name="driverId">ID of the driver</param>
+        /// <param name="transporterId">ID of the transporter</param>
+        /// <returns>No content if successful</returns>
+        [HttpPost("{driverId}/transporters/{transporterId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> AssignToTransporter(string driverId, string transporterId)
+        {
+            try
+            {
+                var result = await _driverService.AssignToTransporterAsync(driverId, transporterId);
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to assign driver {DriverId} to transporter {TransporterId}", driverId, transporterId);
+                    return NotFound("Driver or transporter not found or deleted");
+                }
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Conflict assigning driver {DriverId} to transporter {TransporterId}", driverId, transporterId);
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error assigning driver {DriverId} to transporter {TransporterId}", driverId, transporterId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while assigning the driver to transporter");
+            }
+        }
+
+        /// <summary>
+        /// Removes a driver from a transporter
+        /// </summary>
+        /// <param name="driverId">ID of the driver</param>
+        /// <param name="transporterId">ID of the transporter</param>
+        /// <returns>No content if successful</returns>
+        [HttpDelete("{driverId}/transporters/{transporterId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RemoveFromTransporter(string driverId, string transporterId)
+        {
+            try
+            {
+                var result = await _driverService.RemoveFromTransporterAsync(driverId, transporterId);
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to remove driver {DriverId} from transporter {TransporterId}", driverId, transporterId);
+                    return NotFound("Driver or transporter not found or deleted");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing driver {DriverId} from transporter {TransporterId}", driverId, transporterId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while removing the driver from transporter");
             }
         }
     }

@@ -14,13 +14,13 @@ public class VehicleService : IVehicleService
 {
     private readonly IRepository<Vehicle> _vehicleRepository;
     private readonly IRepository<Driver> _driverRepository;
-    private readonly IDriverVehicleRepository _driverVehicleRepository;
+    private readonly IRepository<DriverVehicle> _driverVehicleRepository;
     private readonly IMapper _mapper;
 
     public VehicleService(
         IRepository<Vehicle> vehicleRepository,
         IRepository<Driver> driverRepository,
-        IDriverVehicleRepository driverVehicleRepository,
+        IRepository<DriverVehicle> driverVehicleRepository,
         IMapper mapper)
     {
         _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
@@ -31,13 +31,19 @@ public class VehicleService : IVehicleService
 
     public async Task<VehicleReadDto?> GetByIdAsync(string id)
     {
-        var vehicle = await _vehicleRepository.GetByIdAsync(id);
+        // Get the vehicle using GetByIdsAsync for consistency
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { id });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted) return null;
 
         var dto = _mapper.Map<VehicleReadDto>(vehicle);
         
-        // Get assigned drivers
-        dto.AssignedDriverIds = (await _driverVehicleRepository.GetVehicleDriversAsync(id)).ToList();
+        // Get assigned drivers using GetByIdsAsync
+        var driverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { id });
+        dto.AssignedDriverIds = driverVehicles
+            .Where(dv => dv.VehicleId == id && !dv.IsDeleted)
+            .Select(dv => dv.DriverId)
+            .ToList();
         
         return dto;
     }
@@ -54,12 +60,24 @@ public class VehicleService : IVehicleService
             searchProperties: new[] { nameof(Vehicle.RegistrationNumber), nameof(Vehicle.Model) }
         );
 
-        var vehicleDtos = _mapper.Map<IEnumerable<VehicleReadDto>>(pagedResult.Items);
+        var vehicleDtos = _mapper.Map<IEnumerable<VehicleReadDto>>(pagedResult.Items).ToList();
 
-        // Get assigned drivers for all vehicles
+        // Get assigned drivers for all vehicles efficiently using GetByIdsAsync
+        var vehicleIds = vehicleDtos.Select(v => v.Id).ToList();
+        var allDriverVehicles = await _driverVehicleRepository.GetByIdsAsync(vehicleIds);
+        
+        // Group by vehicle ID and filter out deleted assignments
+        var assignedDriversLookup = allDriverVehicles
+            .Where(dv => !dv.IsDeleted)
+            .GroupBy(dv => dv.VehicleId)
+            .ToDictionary(g => g.Key, g => g.Select(dv => dv.DriverId).ToList());
+            
+        // Assign driver IDs to each vehicle DTO
         foreach (var dto in vehicleDtos)
         {
-            dto.AssignedDriverIds = (await _driverVehicleRepository.GetVehicleDriversAsync(dto.Id)).ToList();
+            dto.AssignedDriverIds = assignedDriversLookup.TryGetValue(dto.Id, out var driverIds) 
+                ? driverIds 
+                : new List<string>();
         }
 
         return new PagedResult<VehicleReadDto>
@@ -88,7 +106,9 @@ public class VehicleService : IVehicleService
 
     public async Task<VehicleReadDto?> UpdateAsync(string id, UpdateVehicleDto dto)
     {
-        var vehicle = await _vehicleRepository.GetByIdAsync(id);
+        // Get the vehicle using GetByIdsAsync for consistency
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { id });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted)
         {
             return null;
@@ -101,35 +121,36 @@ public class VehicleService : IVehicleService
         }
 
         _mapper.Map(dto, vehicle);
-        vehicle.UpdatedAt = DateTime.UtcNow;
-
+        
+        // Repository will handle UpdatedAt and audit logging automatically
         var updatedVehicle = await _vehicleRepository.UpdateAsync(vehicle);
         return updatedVehicle == null ? null : await GetByIdAsync(id);
     }
 
     public async Task<bool> DeleteAsync(string id)
     {
-        var vehicle = await _vehicleRepository.GetByIdAsync(id);
+        // Get the vehicle using GetByIdsAsync for consistency
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { id });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted)
         {
             return false;
         }
 
-        // Mark as deleted
-        vehicle.IsDeleted = true;
-        vehicle.UpdatedAt = DateTime.UtcNow;
+        // Get all driver assignments for this vehicle using GetByIdsAsync
+        var driverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { id });
+        var assignments = driverVehicles
+            .Where(dv => dv.VehicleId == id && !dv.IsDeleted)
+            .ToList();
 
-        // Clear all driver assignments
-        await _driverVehicleRepository.RemoveAllDriverAssignmentsAsync(id);
-        
-        // Clear primary driver reference
-        if (vehicle.DriverId != null)
+        // Delete all driver assignments - these will be automatically audited
+        foreach (var assignment in assignments)
         {
-            vehicle.DriverId = null;
+            await _driverVehicleRepository.DeleteAsync(assignment.Id);
         }
 
-        var result = await _vehicleRepository.UpdateAsync(vehicle);
-        return result != null;
+        // Delete the vehicle - this will be automatically audited
+        return await _vehicleRepository.DeleteAsync(id);
     }
 
     public async Task<bool> IsRegistrationNumberAvailableAsync(string registrationNumber, string? excludeVehicleId = null)
@@ -139,91 +160,13 @@ public class VehicleService : IVehicleService
             pageSize: 1,
             searchPredicate: v => 
                 v.RegistrationNumber == registrationNumber && 
-                !v.IsDeleted &&
                 (excludeVehicleId == null || v.Id != excludeVehicleId),
             searchProperties: new[] { nameof(Vehicle.RegistrationNumber) }
         );
         
         return !result.Items.Any();
     }
-
-    public async Task<bool> AssignDriverAsync(string vehicleId, string? driverId)
-    {
-        var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
-        if (vehicle == null || vehicle.IsDeleted)
-        {
-            return false;
-        }
-
-        // If driverId is null, just clear the primary driver
-        if (string.IsNullOrEmpty(driverId))
-        {
-            vehicle.DriverId = null;
-            vehicle.UpdatedAt = DateTime.UtcNow;
-            
-            var result = await _vehicleRepository.UpdateAsync(vehicle);
-            return result != null;
-        }
-
-        // Verify the driver exists and is not deleted
-        var driver = await _driverRepository.GetByIdAsync(driverId);
-        if (driver == null || driver.IsDeleted)
-        {
-            return false;
-        }
-
-        // Check if the driver is already assigned to the vehicle
-        var isAssigned = await _driverVehicleRepository.IsVehicleAssignedToDriverAsync(driverId, vehicleId);
-        if (!isAssigned)
-        {
-            // If not assigned, assign the vehicle to the driver
-            await _driverVehicleRepository.AssignVehicleToDriverAsync(driverId, vehicleId);
-        }
-
-        // Update the primary driver reference
-        vehicle.DriverId = driverId;
-        vehicle.UpdatedAt = DateTime.UtcNow;
-        
-        var updateResult = await _vehicleRepository.UpdateAsync(vehicle);
-        return updateResult != null;
-    }
-
-    public async Task<bool> RemoveDriverAsync(string vehicleId, string driverId)
-    {
-        if (string.IsNullOrEmpty(vehicleId) || string.IsNullOrEmpty(driverId))
-        {
-            return false;
-        }
-
-        // Check if the vehicle exists and is not deleted
-        var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
-        if (vehicle == null || vehicle.IsDeleted)
-        {
-            return false;
-        }
-
-        // Check if the driver is actually assigned to the vehicle
-        var isAssigned = await _driverVehicleRepository.IsVehicleAssignedToDriverAsync(driverId, vehicleId);
-        if (!isAssigned)
-        {
-            // If not assigned, consider it a success (idempotent operation)
-            return true;
-        }
-
-        // Remove the driver assignment
-        var success = await _driverVehicleRepository.RemoveVehicleFromDriverAsync(driverId, vehicleId);
-        
-        // Clear primary driver reference if this driver was set as primary
-        if (success && vehicle.DriverId == driverId)
-        {
-            vehicle.DriverId = null;
-            vehicle.UpdatedAt = DateTime.UtcNow;
-            await _vehicleRepository.UpdateAsync(vehicle);
-        }
-
-        return success;
-    }
-
+    
     public async Task<IEnumerable<string>> GetAssignedDriversAsync(string vehicleId)
     {
         if (string.IsNullOrEmpty(vehicleId))
@@ -231,74 +174,142 @@ public class VehicleService : IVehicleService
             return Enumerable.Empty<string>();
         }
 
-        // Check if the vehicle exists and is not deleted
-        var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
+        // Check if the vehicle exists and is not deleted using GetByIdsAsync
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { vehicleId });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted)
         {
             return Enumerable.Empty<string>();
         }
 
-        // Get all driver IDs assigned to this vehicle
-        return await _driverVehicleRepository.GetVehicleDriversAsync(vehicleId);
+        try
+        {
+            // Get all driver-vehicle assignments for this vehicle using GetByIdsAsync
+            var allDriverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { vehicleId });
+            var assignments = allDriverVehicles
+                .Where(dv => dv.VehicleId == vehicleId && !dv.IsDeleted)
+                .ToList();
+            
+            return assignments
+                .Where(a => !string.IsNullOrEmpty(a.DriverId))
+                .Select(a => a.DriverId)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            // Log the exception if needed
+            Console.WriteLine($"Error in GetAssignedDriversAsync: {ex.Message}");
+            return Enumerable.Empty<string>();
+        }
     }
 
     public async Task<bool> UpdateStatusAsync(string vehicleId, string status)
     {
-        var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
+        // Get the vehicle using GetByIdsAsync for consistency
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { vehicleId });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted)
         {
             return false;
         }
 
         vehicle.Status = status;
-        vehicle.UpdatedAt = DateTime.UtcNow;
         
+        // Repository will handle UpdatedAt and audit logging automatically
         var result = await _vehicleRepository.UpdateAsync(vehicle);
         return result != null;
     }
 
     public async Task<bool> AssignToSupplierAsync(string vehicleId, string? supplierId)
     {
-        var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
+        // Get the vehicle using GetByIdsAsync for consistency
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { vehicleId });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted)
         {
             return false;
         }
 
         vehicle.SupplierId = supplierId;
-        vehicle.UpdatedAt = DateTime.UtcNow;
         
+        // Repository will handle UpdatedAt and audit logging automatically
         var result = await _vehicleRepository.UpdateAsync(vehicle);
         return result != null;
     }
 
     public async Task<bool> AssignToTransporterAsync(string vehicleId, string? transporterId)
     {
-        var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
+        // Get the vehicle using GetByIdsAsync for consistency
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { vehicleId });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted)
         {
             return false;
         }
 
         vehicle.TransporterId = transporterId;
-        vehicle.UpdatedAt = DateTime.UtcNow;
         
+        // Repository will handle UpdatedAt and audit logging automatically
         var result = await _vehicleRepository.UpdateAsync(vehicle);
         return result != null;
     }
 
     public async Task<bool> AssignToOwnerAsync(string vehicleId, string? ownerId)
     {
-        var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
+        // Get the vehicle using GetByIdsAsync for consistency
+        var vehicles = await _vehicleRepository.GetByIdsAsync(new[] { vehicleId });
+        var vehicle = vehicles.FirstOrDefault();
         if (vehicle == null || vehicle.IsDeleted)
         {
             return false;
         }
 
         vehicle.OwnerId = ownerId;
-        vehicle.UpdatedAt = DateTime.UtcNow;
         
+        // Repository will handle UpdatedAt and audit logging automatically
         var result = await _vehicleRepository.UpdateAsync(vehicle);
         return result != null;
+    }
+    
+    public async Task<IEnumerable<VehicleReadDto>> GetVehiclesBySupplierIdAsync(string supplierId)
+    {
+        // Get all vehicles by supplier ID using GetPagedAsync with a large page size
+        var pagedResult = await _vehicleRepository.GetPagedAsync(
+            pageNumber: 1,
+            pageSize: int.MaxValue, // Get all vehicles for this supplier
+            searchPredicate: v => v.SupplierId == supplierId && !v.IsDeleted
+        );
+
+        var vehicles = pagedResult.Items.ToList();
+        if (!vehicles.Any())
+        {
+            return Enumerable.Empty<VehicleReadDto>();
+        }
+
+        // Map to DTOs
+        var vehicleDtos = _mapper.Map<IEnumerable<VehicleReadDto>>(vehicles).ToList();
+    
+        // Get all driver-vehicle relationships for these vehicles
+        var vehicleIds = vehicleDtos.Select(v => v.Id).ToList();
+        var driverVehiclesPaged = await _driverVehicleRepository.GetPagedAsync(
+            pageNumber: 1,
+            pageSize: int.MaxValue, // Get all driver-vehicle relationships
+            searchPredicate: dv => vehicleIds.Contains(dv.VehicleId) && !dv.IsDeleted
+        );
+    
+        // Group by vehicle ID
+        var driverVehiclesLookup = driverVehiclesPaged.Items
+            .GroupBy(dv => dv.VehicleId)
+            .ToDictionary(g => g.Key, g => g.Select(dv => dv.DriverId).ToList());
+    
+        // Assign driver IDs to each vehicle DTO
+        foreach (var dto in vehicleDtos)
+        {
+            dto.AssignedDriverIds = driverVehiclesLookup.TryGetValue(dto.Id, out var driverIds) 
+                ? driverIds 
+                : new List<string>();
+        }
+
+        return vehicleDtos;
     }
 }

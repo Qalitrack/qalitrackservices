@@ -1,46 +1,98 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Masterdata.Core.Enums;
 
-namespace Masterdata.Core.Entities;
-
-public class Vehicle : BaseEntity
+namespace Masterdata.Core.Entities
 {
-    [Required]
-    public string RegistrationNumber { get; set; } = null!;
+    public class Vehicle : BaseEntity
+    {
+        // Basic Information
+        [Required]
+        [MaxLength(20)]
+        public string RegistrationNumber { get; set; } = null!;
 
-    [Required]
-    public string Type { get; set; } = null!;
+        [Required]
+        [MaxLength(50)]
+        public string Type { get; set; } = null!;
 
-    public string? Color { get; set; }
+        [MaxLength(50)]
+        public string? Make { get; set; }
 
-    public string? Model { get; set; }
+        [MaxLength(50)]
+        public string? Model { get; set; }
 
-    public string? Status { get; set; } = "active";
+        public int? YearOfManufacture { get; set; }
 
-    public string? SupplierId { get; set; }
+        [MaxLength(50)]
+        public string? Color { get; set; }
 
-    [ForeignKey(nameof(SupplierId))]
-    public virtual Supplier? Supplier { get; set; }
+        [MaxLength(50)]
+        public string? ChassisNumber { get; set; }
 
-    public string? TransporterId { get; set; }
+        [MaxLength(50)]
+        public string? EngineNumber { get; set; }
 
-    [ForeignKey(nameof(TransporterId))]
-    public virtual Transporter? Transporter { get; set; }
+        // Status and Classification
+        [MaxLength(20)]
+        public string Status { get; set; } = "Active";
 
-    public string? DriverId { get; set; }
+        [MaxLength(50)]
+        public string? VehicleClass { get; set; }
 
-    [ForeignKey(nameof(DriverId))]
-    public virtual Driver? Driver { get; set; }
+        [MaxLength(50)]
+        public string? BodyType { get; set; }
 
-    public string? AxleConfigurationId { get; set; }
+        // Ownership
+        [Required]
+        public string OwnerId { get; set; } = null!;
 
-    [ForeignKey(nameof(AxleConfigurationId))]
-    public virtual AxleConfiguration? AxleConfiguration { get; set; }
+        [ForeignKey(nameof(OwnerId))]
+        public virtual Owner Owner { get; set; } = null!;
 
-    public string? OwnerId { get; set; }
+        [NotMapped]
+        public OwnerType OwnerType => Owner?.Type ?? OwnerType.Individual;
 
-    [ForeignKey(nameof(OwnerId))]
-    public virtual Owner? Owner { get; set; }
+        // Relationships
+        public string? SupplierId { get; set; }
 
-    public virtual ICollection<Driver> AssignedDrivers { get; set; } = new List<Driver>();
+        [ForeignKey(nameof(SupplierId))]
+        public virtual Supplier? Supplier { get; set; }
+
+        public string? TransporterId { get; set; }
+
+        [ForeignKey(nameof(TransporterId))]
+        public virtual Transporter? Transporter { get; set; }
+
+        [Required]
+        public string AxleConfigurationId { get; set; } = null!;
+
+        [ForeignKey(nameof(AxleConfigurationId))]
+        public virtual AxleConfiguration AxleConfiguration { get; set; } = null!;
+
+        // Technical Specifications
+        public decimal? GrossWeight { get; set; } // in kg
+        public decimal? TareWeight { get; set; } // in kg
+        public decimal? NetWeightCapacity { get; set; } // in kg
+        public int? SeatingCapacity { get; set; }
+        public decimal? FuelTankCapacity { get; set; } // in liters
+
+        // Insurance and Registration
+        [MaxLength(50)]
+        public string? InsurancePolicyNumber { get; set; }
+        
+        public DateTime? InsuranceExpiryDate { get; set; }
+        
+        [MaxLength(50)]
+        public string? RoadWorthinessNumber { get; set; }
+        
+        public DateTime? RoadWorthinessExpiryDate { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<DriverVehicle> DriverVehicles { get; set; } = new List<DriverVehicle>();
+
+        // Helper methods
+        public bool IsOwnedBySacco() => OwnerType == OwnerType.Sacco;
+        public bool IsOwnedByCompany() => OwnerType == OwnerType.Company;
+        public bool IsOwnedByIndividual() => OwnerType == OwnerType.Individual;
+    }
 }
