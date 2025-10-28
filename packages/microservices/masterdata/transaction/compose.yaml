@@ -1,0 +1,24 @@
+﻿version: '3.8'
+
+services:
+  usermodule:
+    build:
+      context: .
+      dockerfile: UserModule/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+    volumes:
+      - ./UserModule/appsettings.json:/app/config/appsettings.json
+      - ./UserModule/appsettings.Development.json:/app/config/appsettings.Development.json:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
