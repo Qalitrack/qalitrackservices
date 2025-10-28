@@ -47,7 +47,7 @@ public class DriverServiceTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new DriverService(null, _mockDriverVehicleRepository.Object, _mockSupplierRepository.Object,
+            new DriverService(null!, _mockDriverVehicleRepository.Object, _mockSupplierRepository.Object,
                 _mockTransporterRepository.Object, _mockMapper.Object));
         exception.ParamName.Should().Be("driverRepository");
     }
@@ -57,7 +57,7 @@ public class DriverServiceTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new DriverService(_mockDriverRepository.Object, null, _mockSupplierRepository.Object,
+            new DriverService(_mockDriverRepository.Object, null!, _mockSupplierRepository.Object,
                 _mockTransporterRepository.Object, _mockMapper.Object));
         exception.ParamName.Should().Be("driverVehicleRepository");
     }
@@ -67,7 +67,7 @@ public class DriverServiceTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new DriverService(_mockDriverRepository.Object, _mockDriverVehicleRepository.Object, null,
+            new DriverService(_mockDriverRepository.Object, _mockDriverVehicleRepository.Object, null!,
                 _mockTransporterRepository.Object, _mockMapper.Object));
         exception.ParamName.Should().Be("supplierRepository");
     }
@@ -78,7 +78,7 @@ public class DriverServiceTests
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
             new DriverService(_mockDriverRepository.Object, _mockDriverVehicleRepository.Object, _mockSupplierRepository.Object,
-                null, _mockMapper.Object));
+                null!, _mockMapper.Object));
         exception.ParamName.Should().Be("transporterRepository");
     }
 
@@ -88,7 +88,7 @@ public class DriverServiceTests
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
             new DriverService(_mockDriverRepository.Object, _mockDriverVehicleRepository.Object,
-                _mockSupplierRepository.Object, _mockTransporterRepository.Object, null));
+                _mockSupplierRepository.Object, _mockTransporterRepository.Object, null!));
         exception.ParamName.Should().Be("mapper");
     }
 
@@ -362,7 +362,7 @@ public class DriverServiceTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be(driverId);
+        result!.Id.Should().Be(driverId);
         result.FullName.Should().Be("John Doe");
         result.AssignedVehicleIds.Should().HaveCount(1);
         result.AssignedVehicleIds.Should().Contain("V1");
@@ -516,9 +516,11 @@ public class DriverServiceTests
 
         _mockMapper.Setup(x => x.Map<Driver>(createDto)).Returns(driver);
 
+#pragma warning disable CS8620
         _mockDriverRepository
             .Setup(x => x.CreateAsync(It.IsAny<Driver>()))
-            .ReturnsAsync((Driver)null);
+            .ReturnsAsync((Driver?)null);
+#pragma warning restore CS8620
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -594,7 +596,7 @@ public class DriverServiceTests
 
         // Assert
         result.Should().NotBeNull();
-        result.FullName.Should().Be("John Updated");
+        result!.FullName.Should().Be("John Updated");
         _mockDriverRepository.Verify(x => x.UpdateAsync(It.IsAny<Driver>()), Times.Once);
     }
 

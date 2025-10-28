@@ -40,8 +40,8 @@ public class SupplierServiceTests
             It.IsAny<LogLevel>(),
             It.IsAny<EventId>(),
             It.IsAny<It.IsAnyType>(),
-            It.IsAny<Exception>(),
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()));
+            It.IsAny<Exception?>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
 
         _service = new SupplierService(
             _mockRepository.Object,
@@ -58,7 +58,7 @@ public class SupplierServiceTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new SupplierService(null, _mockDriverRepository.Object, _mockVehicleRepository.Object,
+            new SupplierService(null!, _mockDriverRepository.Object, _mockVehicleRepository.Object,
                 _mockMapper.Object, _mockLogger.Object));
         exception.ParamName.Should().Be("repository");
     }
@@ -68,7 +68,7 @@ public class SupplierServiceTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new SupplierService(_mockRepository.Object, null, _mockVehicleRepository.Object,
+            new SupplierService(_mockRepository.Object, null!, _mockVehicleRepository.Object,
                 _mockMapper.Object, _mockLogger.Object));
         exception.ParamName.Should().Be("driverRepository");
     }
@@ -78,7 +78,7 @@ public class SupplierServiceTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new SupplierService(_mockRepository.Object, _mockDriverRepository.Object, null,
+            new SupplierService(_mockRepository.Object, _mockDriverRepository.Object, null!,
                 _mockMapper.Object, _mockLogger.Object));
         exception.ParamName.Should().Be("vehicleRepository");
     }
@@ -89,7 +89,7 @@ public class SupplierServiceTests
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
             new SupplierService(_mockRepository.Object, _mockDriverRepository.Object,
-                _mockVehicleRepository.Object, null, _mockLogger.Object));
+                _mockVehicleRepository.Object, null!, _mockLogger.Object));
         exception.ParamName.Should().Be("mapper");
     }
 
@@ -99,7 +99,7 @@ public class SupplierServiceTests
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
             new SupplierService(_mockRepository.Object, _mockDriverRepository.Object,
-                _mockVehicleRepository.Object, _mockMapper.Object, null));
+                _mockVehicleRepository.Object, _mockMapper.Object, null!));
         exception.ParamName.Should().Be("logger");
     }
 
@@ -304,7 +304,7 @@ public class SupplierServiceTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be(supplierId);
+        result!.Id.Should().Be(supplierId);
         result.Name.Should().Be("Test Supplier");
         result.Email.Should().Be("test@info.com");
         result.Phone.Should().Be("1234567890");
@@ -419,9 +419,11 @@ public async Task CreateSupplierAsync_WhenCreateFails_ThrowsInvalidOperationExce
 
     _mockMapper.Setup(x => x.Map<Supplier>(createDto)).Returns(supplier);
 
+#pragma warning disable CS8620
     _mockRepository
         .Setup(x => x.CreateAsync(It.IsAny<Supplier>()))
-        .ReturnsAsync((Supplier)null);
+        .ReturnsAsync((Supplier?)null);
+#pragma warning restore CS8620
 
     // Act & Assert
     var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -538,7 +540,7 @@ public async Task UpdateSupplierAsync_WithValidDto_UpdatesSuccessfully()
 
         _mockRepository
             .Setup(x => x.UpdateAsync(It.IsAny<Supplier>()))
-            .ReturnsAsync((Supplier)null);
+            .ReturnsAsync((Supplier?)null);
 
         // Act
         var result = await _service.UpdateSupplierAsync(supplierId, updateDto);
