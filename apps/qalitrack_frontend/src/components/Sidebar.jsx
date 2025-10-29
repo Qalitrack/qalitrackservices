@@ -12,6 +12,9 @@ import {
     Factory,
     Truck,
     User,
+    Tractor,
+    Satellite,
+    
 } from "lucide-react";
 
 const currentUserRole = "operator"; // or "admin"
@@ -68,6 +71,18 @@ export default function Sidebar() {
                     label: "Drivers",
                     icon: <User size={16} />,
                     path: "weighing/drivers",
+                },
+                {
+                    key: "weighing-transporters",
+                    label: "Transporters",
+                    icon: <Tractor size={16} />,
+                    path: "transporters",
+                },
+                 {
+                    key: "suppliers",
+                    label: "Suppliers",
+                    icon: <Satellite size={16} />,
+                    path: "suppliers",
                 },
             ],
         },

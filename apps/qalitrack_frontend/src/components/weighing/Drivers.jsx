@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, UserPlus } from "lucide-react";
+import { Pencil, Trash2, UserPlus, Search } from "lucide-react";
 import {
   getDrivers,
   createDriver,
@@ -13,6 +13,12 @@ export default function DriverPortal() {
   const [editingDriver, setEditingDriver] = useState(null);
   const [error, setError] = useState(null);
 
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [search, setSearch] = useState("");
+
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -22,43 +28,48 @@ export default function DriverPortal() {
     status: "Active",
   });
 
-  // ✅ Fetch all drivers
+  // ✅ Fetch all drivers when component loads or dependencies change
   useEffect(() => {
     fetchDrivers();
-  }, []);
+  }, [page, search]);
 
   const fetchDrivers = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getDrivers();
+      console.log("📡 Fetching drivers... page:", page, "search:", search);
+
+      // ✅ Pass pagination and search params to API
+      const data = await getDrivers({ pageNumber: page, pageSize, search });
+
       console.log("🚀 Drivers API Response:", data);
 
-      // Ensure drivers is always an array
-      const driverList = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.data)
-        ? data.data
+      const driverList = Array.isArray(data?.data?.items)
+        ? data.data.items
         : [];
+      const totalItems = data?.data?.totalItems || driverList.length;
+      const pages = Math.ceil(totalItems / pageSize);
+
       setDrivers(driverList);
+      setTotalPages(pages);
     } catch (error) {
-      console.error("Failed to load drivers:", error.message);
+      console.error("❌ Failed to load drivers:", error.message);
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Handle input change
+  // ✅ Handle text input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ Submit form (Create or Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       if (editingDriver) {
         await updateDriver(editingDriver.id, form);
@@ -90,7 +101,6 @@ export default function DriverPortal() {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this driver?")) return;
     setLoading(true);
-
     try {
       await deleteDriver(id);
       await fetchDrivers();
@@ -113,11 +123,38 @@ export default function DriverPortal() {
     setEditingDriver(null);
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    fetchDrivers();
+  };
+
   return (
     <div className="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
       <h2 className="text-2xl font-semibold text-amber-600 mb-6 flex items-center gap-2">
         <UserPlus className="w-6 h-6" /> Driver Management
       </h2>
+
+      {/* ✅ Search Bar */}
+      <form
+        onSubmit={handleSearch}
+        className="flex items-center gap-3 mb-6 border border-gray-200 rounded-lg px-3 py-2"
+      >
+        <Search className="w-5 h-5 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search drivers by name, phone or license..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 focus:outline-none bg-transparent text-gray-700"
+        />
+        <button
+          type="submit"
+          className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-1 rounded-lg font-medium"
+        >
+          Search
+        </button>
+      </form>
 
       {/* ✅ Driver Form */}
       <form
@@ -204,58 +241,81 @@ export default function DriverPortal() {
       ) : drivers.length === 0 ? (
         <p className="text-gray-500 text-sm">No drivers found.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border border-gray-200 rounded-lg">
-            <thead className="bg-gray-50 text-left">
-              <tr>
-                {[
-                  "Name",
-                  "Phone",
-                  "License",
-                  "Expiry",
-                  "Status",
-                  "Actions",
-                ].map((col) => (
-                  <th key={col} className="border px-3 py-2 font-medium">
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {drivers.map((driver) => (
-                <tr
-                  key={driver.id}
-                  className="border-t hover:bg-gray-50 transition"
-                >
-                  <td className="px-3 py-2">{driver.fullName}</td>
-                  <td className="px-3 py-2">{driver.phone}</td>
-                  <td className="px-3 py-2">{driver.licenseNumber}</td>
-                  <td className="px-3 py-2">
-                    {driver.licenseExpiryDate?.split("T")[0] || "-"}
-                  </td>
-                  <td className="px-3 py-2">{driver.status}</td>
-                  <td className="px-3 py-2 flex gap-2">
-                    <button
-                      onClick={() => handleEdit(driver)}
-                      className="text-blue-600 hover:text-blue-800"
-                      title="Edit Driver"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(driver.id)}
-                      className="text-red-600 hover:text-red-800"
-                      title="Delete Driver"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border border-gray-200 rounded-lg">
+              <thead className="bg-gray-50 text-left">
+                <tr>
+                  {[
+                    "Name",
+                    "Phone",
+                    "License",
+                    "Expiry",
+                    "Status",
+                    "Actions",
+                  ].map((col) => (
+                    <th key={col} className="border px-3 py-2 font-medium">
+                      {col}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {drivers.map((driver) => (
+                  <tr
+                    key={driver.id}
+                    className="border-t hover:bg-gray-50 transition"
+                  >
+                    <td className="px-3 py-2">{driver.fullName}</td>
+                    <td className="px-3 py-2">{driver.phone}</td>
+                    <td className="px-3 py-2">{driver.licenseNumber}</td>
+                    <td className="px-3 py-2">
+                      {driver.licenseExpiryDate?.split("T")[0] || "-"}
+                    </td>
+                    <td className="px-3 py-2">{driver.status}</td>
+                    <td className="px-3 py-2 flex gap-2">
+                      <button
+                        onClick={() => handleEdit(driver)}
+                        className="text-blue-600 hover:text-blue-800"
+                        title="Edit Driver"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(driver.id)}
+                        className="text-red-600 hover:text-red-800"
+                        title="Delete Driver"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ✅ Pagination Controls */}
+          <div className="flex justify-between items-center mt-4">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-3 py-1 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-40"
+            >
+              Previous
+            </button>
+            <p className="text-sm text-gray-600">
+              Page {page} of {totalPages}
+            </p>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="px-3 py-1 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
