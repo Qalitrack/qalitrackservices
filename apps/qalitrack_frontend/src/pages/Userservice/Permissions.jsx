@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission, fetchDeletedPermissions, restorePermission } from '../../helpers/UserService/Permissions/permissions.js';
-import { fetchUserById } from '../../helpers/UserService/Users/users.js';
+import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission, fetchDeletedPermissions, restorePermission } from '../../api/helpers/UserService/Permissions/permissions.js';
+import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
 import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText, RefreshCw, Download } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';

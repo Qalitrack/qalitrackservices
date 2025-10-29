@@ -7,9 +7,9 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import toast from "react-hot-toast";
 
-export default function WeighingTable() {
+export default function WeighingTable({ className }) {
   const dispatch = useDispatch();
-  const transactions = useSelector((state) => state.weighing.transactions);
+  const { transactions } = useSelector((state) => state.weighing);
 
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,8 +25,8 @@ export default function WeighingTable() {
 
       const matchesSearch =
         !searchQuery ||
-        tx.plate?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tx.orderId?.toLowerCase().includes(searchQuery.toLowerCase());
+        tx.vehicleId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tx.driverId?.toLowerCase().includes(searchQuery.toLowerCase());
 
       return matchesStatus && matchesSearch;
     });
@@ -39,11 +39,11 @@ export default function WeighingTable() {
       return;
     }
 
-    if (tx.type === "inbound" && w2 >= tx.w1) {
+    if (tx.operation === "Inbound Product Receipt" && w2 >= tx.w1) {
       toast.error("Inbound: Weight 2 must be less than Weight 1");
       return;
     }
-    if (tx.type === "outbound" && w2 <= tx.w1) {
+    if (tx.operation === "Outbound Product Dispatch" && w2 <= tx.w1) {
       toast.error("Outbound: Weight 2 must be greater than Weight 1");
       return;
     }
@@ -57,13 +57,13 @@ export default function WeighingTable() {
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(
       filteredTransactions.map((tx) => ({
-        Plate: tx.plate,
-        OrderID: tx.orderId,
-        Type: tx.type,
-        Batch: tx.batch,
+        VehicleID: tx.vehicleId,
+        DriverID: tx.driverId,
+        ProductID: tx.productId,
+        Operation: tx.operation,
         Weight1: tx.w1,
         Weight2: tx.w2 ?? "",
-        NetWeight: tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "",
+        NetWeight: tx.w1 && tx.w2 ? (tx.operation === "Inbound Product Receipt" ? tx.w1 - tx.w2 : tx.w2 - tx.w1) : "",
         TTAT: tx.ttat ? formatSeconds(tx.ttat) : "",
         Status: tx.deactivated
           ? "Deactivated"
@@ -82,15 +82,15 @@ export default function WeighingTable() {
     const doc = new jsPDF();
     doc.text("Weighing Transactions Report", 14, 10);
     doc.autoTable({
-      head: [["Plate", "Order ID", "Type", "Batch", "W1", "W2", "Net", "TTAT", "Status", "Date"]],
+      head: [["Vehicle ID", "Driver ID", "Product ID", "Operation", "W1", "W2", "Net", "TTAT", "Status", "Date"]],
       body: filteredTransactions.map((tx) => [
-        tx.plate,
-        tx.orderId,
-        tx.type,
-        tx.batch || "-",
+        tx.vehicleId,
+        tx.driverId,
+        tx.productId,
+        tx.operation,
         tx.w1,
         tx.w2 ?? "-",
-        tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "-",
+        tx.w1 && tx.w2 ? (tx.operation === "Inbound Product Receipt" ? tx.w1 - tx.w2 : tx.w2 - tx.w1) : "-",
         tx.ttat ? formatSeconds(tx.ttat) : "-",
         tx.deactivated
           ? "Deactivated"
@@ -125,14 +125,13 @@ export default function WeighingTable() {
       startY: 50,
       head: [["Field", "Value"]],
       body: [
-        ["Plate Number", tx.plate],
-        ["Driver", tx.driver || "-"],
-        ["Order ID", tx.orderId],
-        ["Transaction Type", tx.type],
-        ["Batch Info", tx.batch || "-"],
+        ["Vehicle ID", tx.vehicleId],
+        ["Driver ID", tx.driverId],
+        ["Product ID", tx.productId],
+        ["Operation", tx.operation],
         ["Weight 1 (T)", tx.w1],
         ["Weight 2 (T)", tx.w2 ?? "-"],
-        ["Net Weight (T)", tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "-"],
+        ["Net Weight (T)", tx.w1 && tx.w2 ? (tx.operation === "Inbound Product Receipt" ? tx.w1 - tx.w2 : tx.w2 - tx.w1) : "-"],
         ["TTAT", tx.ttat ? formatSeconds(tx.ttat) : "-"],
         [
           "Status",
@@ -149,16 +148,16 @@ export default function WeighingTable() {
     doc.setFontSize(10);
     doc.text("Thank you for using Qalibrated Systems Weighbridge", 105, finalY + 20, { align: "center" });
 
-    doc.save(`ticket_${tx.plate}_${tx.orderId}.pdf`);
+    doc.save(`ticket_${tx.vehicleId}_${tx.id}.pdf`);
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 border">
+    <div className={`bg-white shadow rounded-lg p-4 border ${className}`}>
       {/* Filters & Export */}
       <div className="flex flex-wrap gap-3 mb-4 items-center">
         <input
           type="text"
-          placeholder="Search by Plate or Order ID"
+          placeholder="Search by Vehicle or Driver ID"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border rounded px-3 py-2"
@@ -192,10 +191,10 @@ export default function WeighingTable() {
         <table className="min-w-full bg-white border">
           <thead>
             <tr className="bg-gray-100 text-left">
-              <th className="px-4 py-2 border">Plate</th>
-              <th className="px-4 py-2 border">Order ID</th>
-              <th className="px-4 py-2 border">Type</th>
-              <th className="px-4 py-2 border">Batch Info</th>
+              <th className="px-4 py-2 border">Vehicle ID</th>
+              <th className="px-4 py-2 border">Driver ID</th>
+              <th className="px-4 py-2 border">Product ID</th>
+              <th className="px-4 py-2 border">Operation</th>
               <th className="px-4 py-2 border">Weight 1</th>
               <th className="px-4 py-2 border">Weight 2</th>
               <th className="px-4 py-2 border">Net</th>
@@ -208,10 +207,10 @@ export default function WeighingTable() {
           <tbody>
             {filteredTransactions.map((tx) => (
               <tr key={tx.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{tx.plate}</td>
-                <td className="px-4 py-2 border">{tx.orderId}</td>
-                <td className="px-4 py-2 border">{tx.type}</td>
-                <td className="px-4 py-2 border">{tx.batch || "-"}</td>
+                <td className="px-4 py-2 border">{tx.vehicleId}</td>
+                <td className="px-4 py-2 border">{tx.driverId}</td>
+                <td className="px-4 py-2 border">{tx.productId}</td>
+                <td className="px-4 py-2 border">{tx.operation}</td>
                 <td className="px-4 py-2 border">{tx.w1 ?? "-"}</td>
                 <td className="px-4 py-2 border">
                   {tx.w2 ?? (
@@ -230,7 +229,7 @@ export default function WeighingTable() {
                   )}
                 </td>
                 <td className="px-4 py-2 border">
-                  {tx.w1 && tx.w2 ? tx.w1 - tx.w2 : "-"}
+                  {tx.w1 && tx.w2 ? (tx.operation === "Inbound Product Receipt" ? tx.w1 - tx.w2 : tx.w2 - tx.w1) : "-"}
                 </td>
                 <td className="px-4 py-2 border">
                   {tx.ttat ? formatSeconds(tx.ttat) : "-"}

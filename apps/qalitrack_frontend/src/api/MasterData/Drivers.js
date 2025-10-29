@@ -3,31 +3,56 @@ import { apiClient } from "../helpers/apiClients";
 
 // ✅ Get all drivers
 export const getDrivers = async () => {
-  const response = await apiClient.get("/MasterData/Drivers");
-  // Ensure we only return an array
-  return response.data?.data || response.data || [];
+  try {
+    console.log("📡 Fetching drivers from API...");
+    const response = await apiClient.get("/MasterData/Drivers?pageNumber=1&pageSize=50");
+    console.log("✅ Drivers fetched successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error fetching drivers:", error.message);
+    if (error.response) {
+      console.error("🔢 Status:", error.response.status);
+      console.error("📦 Response data:", error.response.data);
+    }
+    throw error;
+  }
 };
 
-// ✅ Get driver by ID
-export const getDriverById = async (id) => {
-  const response = await apiClient.get(`/MasterData/Drivers/${id}`);
-  return response.data?.data || response.data;
+// ✅ Create driver
+export const createDriver = async (data) => {
+  try {
+    console.log("📝 Creating driver:", data);
+    const response = await apiClient.post("/MasterData/Drivers", data);
+    console.log("✅ Driver created successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error creating driver:", error.message);
+    throw error;
+  }
 };
 
-// ✅ Create a new driver
-export const createDriver = async (payload) => {
-  const response = await apiClient.post("/MasterData/Drivers", payload);
-  return response.data;
+// ✅ Update driver
+export const updateDriver = async (id, data) => {
+  try {
+    console.log(`✏️ Updating driver ${id}:`, data);
+    const response = await apiClient.put(`/MasterData/Drivers/${id}`, data);
+    console.log("✅ Driver updated successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error updating driver:", error.message);
+    throw error;
+  }
 };
 
-// ✅ Update an existing driver
-export const updateDriver = async (id, payload) => {
-  const response = await apiClient.put(`/MasterData/Drivers/${id}`, payload);
-  return response.data;
-};
-
-// ✅ Delete a driver
+// ✅ Delete driver
 export const deleteDriver = async (id) => {
-  const response = await apiClient.delete(`/MasterData/Drivers/${id}`);
-  return response.data;
+  try {
+    console.log(`🗑️ Deleting driver ID: ${id}`);
+    const response = await apiClient.delete(`/MasterData/Drivers/${id}`);
+    console.log("✅ Driver deleted successfully");
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error deleting driver:", error.message);
+    throw error;
+  }
 };

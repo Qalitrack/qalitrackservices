@@ -1,435 +1,322 @@
-import { useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addTransaction } from "../store/weighingSlice";
-import { ClipboardList } from "lucide-react";
-import toast from "react-hot-toast";
+import {
+  fetchVehicles,
+  fetchVehiclesByRegNumber,
+  fetchDrivers,
+  fetchDriversByName,
+  fetchProducts,
+  fetchProductsByName,
+  fetchRoutes,
+  fetchRoutesByName,
+  fetchSaccosByName,
+  fetchSaccoById,
+  fetchSupplierById,
+  fetchSuppliersByName,
+  fetchTransporterById,
+  fetchTransportersByName,
+  addTransaction,
+} from "../store/weighingSlice";
+import { Input, Select, Button, Form, Spin, message } from "antd";
+import { debounce } from "lodash"; // Ensure lodash is installed: npm install lodash
 
-// Mock Weighing Panel (replace with real hardware integration later)
-function WeighingPanel({ onCapture }) {
-  const simulateCapture = () => {
-    const weight = Math.floor(Math.random() * 30000) + 5000; // mock random weight
-    toast.success("Weight Captured");
-    onCapture(weight);
+const WeighingForm = () => {
+  const dispatch = useDispatch();
+  const { vehicles, drivers, products, routes, suppliers, saccos, transporters, capturedWeight, loading, error } =
+    useSelector((state) => state.weighing);
+
+  console.log("State:", { vehicles, drivers, products, routes, suppliers, saccos, transporters, capturedWeight }); // Debug log
+
+  const [form] = Form.useForm();
+
+  // Set initial weight from capturedWeight
+  useEffect(() => {
+    if (capturedWeight !== null && capturedWeight !== undefined) {
+      form.setFieldsValue({ w1: capturedWeight });
+    }
+  }, [capturedWeight, form]);
+
+  // Fetch master data on mount
+  useEffect(() => {
+    dispatch(fetchVehicles());
+    dispatch(fetchDrivers());
+    dispatch(fetchProducts());
+    dispatch(fetchRoutes());
+    dispatch(fetchSaccosByName("")); // Initial fetch for saccos
+  }, [dispatch]);
+
+  // Fetch linked entities by ID when selected
+  useEffect(() => {
+    const supplierId = form.getFieldValue("supplierId");
+    const saccoId = form.getFieldValue("saccoId");
+    const transporterId = form.getFieldValue("transporterId");
+    const vehicleId = form.getFieldValue("vehicleId");
+    const driverId = form.getFieldValue("driverId");
+
+    if (supplierId) dispatch(fetchSupplierById(supplierId));
+    if (saccoId) dispatch(fetchSaccoById(saccoId));
+    if (transporterId) dispatch(fetchTransporterById(transporterId));
+    if (vehicleId) dispatch(fetchVehicleById(vehicleId));
+    if (driverId) dispatch(fetchDriverById(driverId));
+  }, [dispatch, form]);
+
+  // Display error messages
+  useEffect(() => {
+    if (error) {
+      message.error(`Error: ${error}`);
+    }
+  }, [error]);
+
+  // Debounced search handlers
+  const debouncedSearch = {
+    vehicles: debounce((name) => dispatch(fetchVehiclesByRegNumber(name)), 500),
+    drivers: debounce((name) => dispatch(fetchDriversByName(name)), 500),
+    products: debounce((name) => dispatch(fetchProductsByName(name)), 500),
+    routes: debounce((name) => dispatch(fetchRoutesByName(name)), 500),
+    suppliers: debounce((name) => dispatch(fetchSuppliersByName(name)), 500),
+    saccos: debounce((name) => dispatch(fetchSaccosByName(name)), 500),
+    transporters: debounce((name) => dispatch(fetchTransportersByName(name)), 500),
   };
 
+  const handleSubmit = (values) => {
+    try {
+      dispatch(addTransaction({ id: Date.now().toString(), ...values }));
+      message.success("Weighing transaction added successfully!");
+      form.resetFields();
+    } catch (err) {
+      message.error("Error adding transaction");
+    }
+  };
+
+  const handleManualInput = (value) => value;
+
+  const filterOption = (input, option) =>
+    option?.children?.toLowerCase().includes(input.toLowerCase());
+
+  const getValidOptions = (items, valueField, displayField) =>
+    Array.isArray(items)
+      ? items
+          .filter((item) => item?.[valueField] && item[valueField] !== null && item[valueField] !== undefined)
+          .map((item) => (
+            <Select.Option key={item[valueField]} value={item[valueField]}>
+              {item[displayField] || item[valueField]}
+            </Select.Option>
+          ))
+      : [];
+
   return (
-    <div className="border rounded p-3 bg-gray-50">
-      <h4 className="font-medium text-gray-700 mb-2">Weighing Panel</h4>
-      <button
-        type="button"
-        onClick={simulateCapture}
-        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-      >
-        Capture Weight
-      </button>
-      {/* 
-        Integration point: Replace simulateCapture() with 
-        actual hardware API (e.g., from Masterdom/ERP).
-      */}
+    <div className="p-6 bg-white rounded-2xl shadow-md max-w-4xl mx-auto">
+      <h2 className="text-xl font-semibold mb-4">Weighing Transaction Form</h2>
+
+      {loading ? (
+        <div className="flex justify-center items-center p-6">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          className="grid grid-cols-2 gap-4"
+          initialValues={{ w1: capturedWeight || undefined }} // Set initial w1
+        >
+          {/* DELIVERY NOTE */}
+          <Form.Item
+            label="Delivery Note"
+            name="deliveryNote"
+            rules={[{ required: true, message: "Enter delivery note" }]}
+          >
+            <Input placeholder="Enter delivery note" />
+          </Form.Item>
+
+          {/* REFERENCE NUMBER */}
+          <Form.Item
+            label="Reference Number"
+            name="referenceNumber"
+            rules={[{ required: true, message: "Enter reference number" }]}
+          >
+            <Input placeholder="Enter reference number" />
+          </Form.Item>
+
+          {/* BATCH NUMBER */}
+          <Form.Item
+            label="Batch Number"
+            name="batchNumber"
+            rules={[{ required: true, message: "Enter batch number" }]}
+          >
+            <Input placeholder="Enter batch number" />
+          </Form.Item>
+
+          {/* VEHICLE */}
+          <Form.Item
+            label="Vehicle"
+            name="vehicleId"
+            rules={[{ required: true, message: "Please select or type vehicle ID" }]}
+          >
+            <Select
+              showSearch
+              mode="combobox"
+              placeholder="Search or type vehicle ID"
+              onChange={handleManualInput}
+              onSearch={(value) => debouncedSearch.vehicles(value)}
+              filterOption={filterOption}
+              notFoundContent={error ? <span>Error loading vehicles</span> : null}
+            >
+              {getValidOptions(vehicles, "id", "id")}
+              {!vehicles?.length && !error && <Select.Option disabled>No vehicles available</Select.Option>}
+            </Select>
+          </Form.Item>
+
+          {/* DRIVER */}
+          <Form.Item
+            label="Driver"
+            name="driverId"
+            rules={[{ required: true, message: "Please select or type driver" }]}
+          >
+            <Select
+              showSearch
+              mode="combobox"
+              placeholder="Search or type driver name"
+              onChange={handleManualInput}
+              onSearch={(value) => debouncedSearch.drivers(value)}
+              filterOption={filterOption}
+              notFoundContent={error ? <span>Error loading drivers</span> : null}
+            >
+              {getValidOptions(drivers, "fullName", "fullName")}
+              {!drivers?.length && !error && <Select.Option disabled>No drivers available</Select.Option>}
+            </Select>
+          </Form.Item>
+
+          {/* SACCO */}
+          <Form.Item
+            label="Sacco"
+            name="saccoId"
+          >
+            <Select
+              showSearch
+              mode="combobox"
+              placeholder="Search or type sacco"
+              onChange={handleManualInput}
+              onSearch={(value) => debouncedSearch.saccos(value)}
+              filterOption={filterOption}
+              notFoundContent={error ? <span>Error loading saccos</span> : null}
+            >
+              {getValidOptions(saccos, "name", "name")}
+              {!saccos?.length && !error && <Select.Option disabled>No saccos available</Select.Option>}
+            </Select>
+          </Form.Item>
+
+          {/* ROUTE */}
+          <Form.Item
+            label="Route"
+            name="routeId"
+          >
+            <Select
+              showSearch
+              mode="combobox"
+              placeholder="Search or type route"
+              onChange={handleManualInput}
+              onSearch={(value) => debouncedSearch.routes(value)}
+              filterOption={filterOption}
+              notFoundContent={error ? <span>Error loading routes</span> : null}
+            >
+              {getValidOptions(routes, "name", "name")}
+              {!routes?.length && !error && <Select.Option disabled>No routes available</Select.Option>}
+            </Select>
+          </Form.Item>
+
+          {/* PRODUCT */}
+          <Form.Item
+            label="Product"
+            name="productId"
+            rules={[{ required: true, message: "Please select or type product" }]}
+          >
+            <Select
+              showSearch
+              mode="combobox"
+              placeholder="Search or type product name"
+              onChange={handleManualInput}
+              onSearch={(value) => debouncedSearch.products(value)}
+              filterOption={filterOption}
+              notFoundContent={error ? <span>Error loading products</span> : null}
+            >
+              {getValidOptions(products, "name", "name")}
+              {!products?.length && !error && <Select.Option disabled>No products available</Select.Option>}
+            </Select>
+          </Form.Item>
+
+          {/* SUPPLIER */}
+          <Form.Item
+            label="Supplier"
+            name="supplierId"
+          >
+            <Select
+              showSearch
+              mode="combobox"
+              placeholder="Search or type supplier"
+              onChange={handleManualInput}
+              onSearch={(value) => debouncedSearch.suppliers(value)}
+              filterOption={filterOption}
+              notFoundContent={error ? <span>Error loading suppliers</span> : null}
+            >
+              {getValidOptions(suppliers, "name", "name")}
+              {!suppliers?.length && !error && <Select.Option disabled>No suppliers available</Select.Option>}
+            </Select>
+          </Form.Item>
+
+          {/* TRANSPORTER */}
+          <Form.Item
+            label="Transporter"
+            name="transporterId"
+          >
+            <Select
+              showSearch
+              mode="combobox"
+              placeholder="Search or type transporter"
+              onChange={handleManualInput}
+              onSearch={(value) => debouncedSearch.transporters(value)}
+              filterOption={filterOption}
+              notFoundContent={error ? <span>Error loading transporters</span> : null}
+            >
+              {getValidOptions(transporters, "name", "name")}
+              {!transporters?.length && !error && <Select.Option disabled>No transporters available</Select.Option>}
+            </Select>
+          </Form.Item>
+
+          {/* WEIGHT 1 */}
+          <Form.Item
+            label="Weight 1 (W1)"
+            name="w1"
+            rules={[{ required: true, message: "Enter weight 1" }]}
+          >
+            <Input type="number" placeholder="Enter W1" value={capturedWeight || undefined} />
+          </Form.Item>
+
+          {/* OPERATION */}
+          <Form.Item
+            label="Operation"
+            name="operation"
+            rules={[{ required: true, message: "Select operation type" }]}
+          >
+            <Select placeholder="Select operation">
+              <Select.Option value="Inbound Product Receipt">Inbound Product Receipt</Select.Option>
+              <Select.Option value="Outbound Product Dispatch">Outbound Product Dispatch</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <div className="col-span-2 flex justify-end">
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="bg-amber-500 hover:bg-amber-600"
+            >
+              Save Transaction
+            </Button>
+          </div>
+        </Form>
+      )}
     </div>
   );
-}
+};
 
-export default function WeighingForm() {
-  const dispatch = useDispatch();
-  const vehicles = useSelector((state) => state.vehicles);
-
-  const defaultForm = {
-    documentType: "Delivery Note",
-    deliveryNoteNo: "",
-    referenceNo: "",
-    batch: "",
-    sourcePlant: "",
-    destination: "",
-    operation: "Outbound Product Dispatch",
-    plate: "",
-    vehicleType: "",
-    model: "",
-    fromAnotherPlant: false,
-    otherPlantName: "",
-    material: "",
-    supplier: "",
-    cementType: "",
-    bagSize: "",
-    w1: "",
-    w2: "",
-    netWeight: "",
-  };
-
-  const [form, setForm] = useState(defaultForm);
-  const [manualEntry, setManualEntry] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleWeightCapture = (weight) => {
-    setForm((prev) => {
-      if (!prev.w1) {
-        return { ...prev, w1: weight };
-      } else if (!prev.w2) {
-        const net = prev.w1 ? prev.w1 - weight : null;
-        return { ...prev, w2: weight, netWeight: net };
-      } else {
-        toast.error("Both weights already captured");
-        return prev;
-      }
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!form.plate || !form.deliveryNoteNo || !form.w1) {
-      toast.error("Please fill required fields");
-      return;
-    }
-
-    const net =
-      form.w1 && form.w2 ? parseFloat(form.w1) - parseFloat(form.w2) : null;
-
-    dispatch(
-      addTransaction({
-        ...form,
-        id: Date.now().toString(),
-        date: new Date().toISOString(),
-        w1: form.w1 ? parseFloat(form.w1) : null,
-        w2: form.w2 ? parseFloat(form.w2) : null,
-        netWeight: net,
-        deactivated: false,
-      })
-    );
-
-    toast.success("Transaction saved");
-    setForm(defaultForm);
-    setManualEntry(false);
-  };
-
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white shadow-md rounded-lg p-4 border space-y-6"
-    >
-      <h2 className="text-xl font-bold text-amber-600 flex items-center gap-2">
-        <ClipboardList className="w-5 h-5" /> Vehicle Weighing Transaction
-      </h2>
-
-      {/* Document Information */}
-      <section>
-        <h3 className="font-semibold text-gray-700 mb-2">
-          Document Information
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label>Document Type</label>
-            <select
-              name="documentType"
-              value={form.documentType}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            >
-              <option value="Delivery Note">Delivery Note</option>
-              <option value="Invoice">Invoice</option>
-            </select>
-          </div>
-          <div>
-            <label>Delivery Note No</label>
-            <input
-              name="deliveryNoteNo"
-              value={form.deliveryNoteNo}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-              required
-            />
-          </div>
-          <div>
-            <label>Reference No</label>
-            <input
-              name="referenceNo"
-              value={form.referenceNo}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Batch</label>
-            <input
-              name="batch"
-              value={form.batch}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Source Plant</label>
-            <input
-              name="sourcePlant"
-              value={form.sourcePlant}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Destination</label>
-            <input
-              name="destination"
-              value={form.destination}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div className="col-span-2">
-            <label>Operation</label>
-            <select
-              name="operation"
-              value={form.operation}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            >
-              <option>Outbound Product Dispatch</option>
-              <option>Inbound Material Receipt</option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-      {/* Vehicle Information */}
-      <section>
-        <h3 className="font-semibold text-gray-700 mb-2">
-          Vehicle Information
-        </h3>
-
-        {!manualEntry ? (
-          <div className="grid grid-cols-2 gap-3">
-            <div className="col-span-2">
-              <label>Select Vehicle</label>
-              <select
-                value={form.plate}
-                onChange={(e) => {
-                  const plate = e.target.value;
-                  if (plate === "manual") {
-                    setManualEntry(true);
-                    setForm((prev) => ({
-                      ...prev,
-                      plate: "",
-                      vehicleType: "",
-                      model: "",
-                      fromAnotherPlant: false,
-                      otherPlantName: "",
-                    }));
-                    return;
-                  }
-                  const selectedVehicle = vehicles.find(
-                    (v) => v.plate === plate
-                  );
-                  if (selectedVehicle) {
-                    setForm((prev) => ({
-                      ...prev,
-                      plate: selectedVehicle.plate,
-                      vehicleType: selectedVehicle.vehicleType,
-                      model: selectedVehicle.model,
-                      fromAnotherPlant: selectedVehicle.fromAnotherPlant,
-                      otherPlantName: selectedVehicle.otherPlantName,
-                    }));
-                  }
-                }}
-                className="w-full border rounded px-2 py-1"
-              >
-                <option value="">-- Select Vehicle --</option>
-                {vehicles.map((v, i) => (
-                  <option key={i} value={v.plate}>
-                    {v.plate} ({v.vehicleType})
-                  </option>
-                ))}
-                <option value="manual">+ Manual Entry</option>
-              </select>
-            </div>
-            {form.plate && (
-              <>
-                <div>
-                  <label>Vehicle Type</label>
-                  <input
-                    value={form.vehicleType}
-                    readOnly
-                    className="w-full border rounded px-2 py-1 bg-gray-100"
-                  />
-                </div>
-                <div>
-                  <label>Model</label>
-                  <input
-                    value={form.model}
-                    readOnly
-                    className="w-full border rounded px-2 py-1 bg-gray-100"
-                  />
-                </div>
-                {form.fromAnotherPlant && (
-                  <div className="col-span-2">
-                    <label>Other Plant Name</label>
-                    <input
-                      value={form.otherPlantName}
-                      readOnly
-                      className="w-full border rounded px-2 py-1 bg-gray-100"
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label>Registration Number</label>
-              <input
-                name="plate"
-                value={form.plate}
-                onChange={handleChange}
-                className="w-full border rounded px-2 py-1"
-                required
-              />
-            </div>
-            <div>
-              <label>Vehicle Type</label>
-              <select
-                name="vehicleType"
-                value={form.vehicleType}
-                onChange={handleChange}
-                className="w-full border rounded px-2 py-1"
-              >
-                <option>Truck</option>
-                <option>Trailer</option>
-              </select>
-            </div>
-            <div>
-              <label>Model</label>
-              <input
-                name="model"
-                value={form.model}
-                onChange={handleChange}
-                className="w-full border rounded px-2 py-1"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="fromAnotherPlant"
-                checked={form.fromAnotherPlant}
-                onChange={handleChange}
-              />
-              <label>Vehicle from another plant</label>
-            </div>
-            {form.fromAnotherPlant && (
-              <div className="col-span-2">
-                <label>Other Plant Name</label>
-                <input
-                  name="otherPlantName"
-                  value={form.otherPlantName}
-                  onChange={handleChange}
-                  className="w-full border rounded px-2 py-1"
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </section>
-
-      {/* Material Information */}
-      <section>
-        <h3 className="font-semibold text-gray-700 mb-2">
-          Material Information
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label>Material</label>
-            <input
-              name="material"
-              value={form.material}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Supplier</label>
-            <input
-              name="supplier"
-              value={form.supplier}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Type</label>
-            <input
-              name="cementType"
-              value={form.cementType}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Bag Size</label>
-            <input
-              name="bagSize"
-              value={form.bagSize}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Weight Management */}
-      <section>
-        <h3 className="font-semibold text-gray-700 mb-2">
-          Weight Management
-        </h3>
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <label>First Weight (kg)</label>
-            <input
-              type="number"
-              name="w1"
-              value={form.w1}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Second Weight (kg)</label>
-            <input
-              type="number"
-              name="w2"
-              value={form.w2}
-              onChange={handleChange}
-              className="w-full border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <label>Net Weight (kg)</label>
-            <input
-              type="number"
-              name="netWeight"
-              value={form.netWeight || ""}
-              readOnly
-              className="w-full border rounded px-2 py-1 bg-gray-100"
-            />
-          </div>
-        </div>
-
-        {/* Weighing Panel */}
-        <WeighingPanel onCapture={handleWeightCapture} />
-      </section>
-
-      {/* Submit */}
-      <button
-        type="submit"
-        className="w-full bg-amber-500 hover:bg-amber-600 text-white py-2 rounded font-semibold"
-      >
-        Save Transaction
-      </button>
-    </form>
-  );
-}
+export default WeighingForm;

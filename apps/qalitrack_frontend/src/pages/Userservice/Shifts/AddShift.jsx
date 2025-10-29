@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createShift } from '../../../helpers/UserService/Shifts/Shifts';
+import { createShift } from '../../../api/helpers/UserService/Shifts/Shifts';
 
 // Enums from the server
 const ShiftMode = {
