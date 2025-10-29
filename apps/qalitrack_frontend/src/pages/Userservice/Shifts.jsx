@@ -5,8 +5,8 @@ import {
     updateShift,
     deleteShift,
     createShift,
-} from '../../helpers/UserService/Shifts/Shifts.js';
-import { fetchUserById } from '../../helpers/UserService/Users/users.js';
+} from '../../api/helpers/UserService/Shifts/Shifts.js';
+import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
 import {
     ChevronLeft,
     ChevronRight,

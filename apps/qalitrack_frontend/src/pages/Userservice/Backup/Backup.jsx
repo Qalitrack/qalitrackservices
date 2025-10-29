@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { backupAPI } from '../../../helpers/Backup/Backup';
-import { fetchMicroserviceData } from '../../../helpers/Backup/Microservice';
+import { backupAPI } from '../../../api/helpers/Backup/Backup';
+import { fetchMicroserviceData } from '../../../api/helpers/Backup/Microservice';
 import { Save, X, FolderOpen } from 'lucide-react';
 
 const Backup = () => {
