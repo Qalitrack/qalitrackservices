@@ -1,33 +1,34 @@
 // src/helpers/apiClients.js
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+// 🔗 Base URL (from .env file or default fallback)
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://qalitrack.cseco.co.ke/api";
 
 class ApiClient {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     });
 
-    // ✅ Attach token before each request
+    // ✅ Add token to every request
     this.client.interceptors.request.use(
       (config) => {
         const token = this.getSessionToken();
-        if (token) config.headers.Authorization = `Bearer ${token}`;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
         return config;
       },
       (error) => Promise.reject(error)
     );
 
-    // ✅ Handle responses globally
+    // ✅ Handle errors globally
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          console.warn("Authentication failed — clearing session");
+          console.warn("⚠️ Authentication failed — clearing session");
           this.clearSession();
           if (window.location.pathname !== "/login") {
             window.location.href = "/login";
@@ -53,13 +54,23 @@ class ApiClient {
     );
   }
 
+  // ✅ Store token + expiry in sessionStorage
+  setSession(token, expiresIn = 3600) {
+    const session = {
+      token,
+      expiresAt: Date.now() + expiresIn * 1000, // default 1 hour
+    };
+    sessionStorage.setItem("authSession", JSON.stringify(session));
+  }
+
+  // ✅ Retrieve valid token
   getSessionToken() {
     try {
       const sessionData = sessionStorage.getItem("authSession");
       if (!sessionData) return null;
 
       const session = JSON.parse(sessionData);
-      const now = new Date().getTime();
+      const now = Date.now();
       if (now > session.expiresAt) {
         this.clearSession();
         return null;
@@ -67,11 +78,12 @@ class ApiClient {
 
       return session.token;
     } catch (err) {
-      console.error("Error retrieving session token:", err);
+      console.error("❌ Error retrieving session token:", err);
       return null;
     }
   }
 
+  // ✅ Remove session (used on logout or 401)
   clearSession() {
     sessionStorage.removeItem("authSession");
     sessionStorage.removeItem("temp2FASession");
@@ -79,10 +91,12 @@ class ApiClient {
     localStorage.removeItem("user");
   }
 
+  // ✅ Check if user is authenticated
   isAuthenticated() {
     return !!this.getSessionToken();
   }
 
+  // ✅ REST methods
   get(endpoint, options = {}) {
     return this.client.get(endpoint, options);
   }
@@ -104,6 +118,6 @@ class ApiClient {
   }
 }
 
-// ✅ Export both named and default
+// ✅ Create and export global instance
 export const apiClient = new ApiClient();
 export default apiClient;
