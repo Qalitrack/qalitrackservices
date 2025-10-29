@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import { fetchShiftInstances } from '../../../helpers/UserService/Shifts/Shifts';
+import { fetchShiftInstances } from '../../../api/helpers/UserService/Shifts/Shifts';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import jsPDF from 'jspdf';
 

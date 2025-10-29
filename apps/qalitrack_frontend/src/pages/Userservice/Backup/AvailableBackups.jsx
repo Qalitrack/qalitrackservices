@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { backupAPI } from '../../../helpers/Backup/Backup';
+import { backupAPI } from '../../../api/helpers/Backup/Backup';
 import { RefreshCw, Clock, AlertCircle, CheckCircle, Download, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import {backupApiClient} from "../../../helpers/BackupApiclient.js";
+import {backupApiClient} from "../../../api/helpers/BackupApiclient.js";
 
 const RestoreConfirmation = ({ backup, onConfirm, onCancel, isRestoring }) => {
     if (!backup) return null;
