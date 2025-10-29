@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
-import { fetchPasswordPolicy, updatePasswordPolicy } from '../../helpers/UserService/PasswordPolicy/passwordpolicy.js';
+import { fetchPasswordPolicy, updatePasswordPolicy } from '../../api/helpers/UserService/PasswordPolicy/passwordpolicy';
 
 const PasswordPolicy = () => {
     const [policy, setPolicy] = useState(null);

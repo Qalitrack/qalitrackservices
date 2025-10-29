@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getAttendanceByInstanceId } from '../../helpers/UserService/Shifts/Attendance.js';
+import { getAttendanceByInstanceId } from '../../api/helpers/UserService/Shifts/Attendance.js';
 import { format } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
 import jsPDF from 'jspdf';
