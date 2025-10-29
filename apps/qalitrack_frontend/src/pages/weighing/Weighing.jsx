@@ -1,4 +1,5 @@
-import { Suspense, lazy } from "react";
+
+ import { Suspense, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Loader2 } from "lucide-react";
 import { deactivateTransaction, completeWeighing } from "/src/store/weighingSlice";
@@ -40,9 +41,9 @@ export default function Weighing() {
             <form/>
           </Suspense>
           <div>
-            {/* <Suspense fallback={<SectionLoader title="Loading form..." />}>
+            <Suspense fallback={<SectionLoader title="Loading form..." />}>
             <WeighbridgePanel />
-            </Suspense> */}
+            </Suspense>
           </div>
 
           <div>
