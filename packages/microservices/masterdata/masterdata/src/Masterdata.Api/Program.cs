@@ -189,6 +189,7 @@ builder.Services.AddScoped<IOrganisationService, OrganisationService>();
 builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IRouteService, RouteService>();
+builder.Services.AddScoped<ISaccoService, SaccoService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ITransporterService, TransporterService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();

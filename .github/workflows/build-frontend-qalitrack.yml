@@ -66,12 +66,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+           images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}
+           tags: |
+              type=ref,event=branch
+              type=ref,event=pr
+              type=sha,prefix=sha-
+              type=raw,value=latest,enable={{is_default_branch}}
+
 
       - name: Build and push Docker image
         id: build
