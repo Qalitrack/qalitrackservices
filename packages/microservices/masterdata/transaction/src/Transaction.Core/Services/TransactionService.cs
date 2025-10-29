@@ -116,8 +116,8 @@ public class TransactionService : ITransactionService
         if (dto.NoPlate != null) existingTransaction.NoPlate = dto.NoPlate;
         if (dto.DriverName != null) existingTransaction.DriverName = dto.DriverName;
         if (dto.VehicleId.HasValue) existingTransaction.VehicleId = dto.VehicleId;
-        if (dto.CommodityId.HasValue) existingTransaction.CommodityId = dto.CommodityId;
-        if (dto.CommodityName != null) existingTransaction.CommodityName = dto.CommodityName;
+        if (dto.ProductId.HasValue) existingTransaction.CommodityId = dto.ProductId;
+        if (dto.ProductName != null) existingTransaction.CommodityName = dto.ProductName;
         if (dto.SupplierId.HasValue) existingTransaction.SupplierId = dto.SupplierId;
         if (dto.SupplierName != null) existingTransaction.SupplierName = dto.SupplierName;
         if (dto.CustomerId.HasValue) existingTransaction.CustomerId = dto.CustomerId;
