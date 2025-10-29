@@ -9,9 +9,9 @@ import {
     removePermissionFromRole,
     fetchDeletedRoles,
     restoreRole
-} from '../../helpers/UserService/Roles/Roles.js';
-import { fetchPermissions } from '../../helpers/UserService/Permissions/permissions.js';
-import { fetchUserById } from '../../helpers/UserService/Users/users.js';
+} from '../../api/helpers/UserService/Roles/Roles.js';
+import { fetchPermissions } from '../../api/helpers/UserService/Permissions/permissions.js';
+import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
 import { Edit, Trash2, PlusCircle, Users, FileText, ShieldCheck, ShieldAlert, RefreshCw, Download } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';

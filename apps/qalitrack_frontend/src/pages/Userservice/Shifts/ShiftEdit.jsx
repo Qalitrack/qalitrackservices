@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { updateShift } from '../../../helpers/UserService/Shifts/Shifts';
+import { updateShift } from '../../../api/helpers/UserService/Shifts/Shifts';
 import { format, parseISO } from 'date-fns';
 import { X, Clock, Calendar, Users, Check, Plus, Loader2 } from 'lucide-react';
 

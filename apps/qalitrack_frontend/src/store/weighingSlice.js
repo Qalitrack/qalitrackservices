@@ -1,39 +1,43 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { apiClient } from "../api/helpers/apiClients"; // Ensure this matches your project structure
 
-// Weighing Panel Simulation
+// ─────────────────────────────────────────────────────────────────────────────
+// SIMULATED WEIGHT
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchSimulatedWeight = createAsyncThunk(
   "weighing/fetchSimulatedWeight",
   async (_, { rejectWithValue }) => {
     try {
       const weight = Math.floor(Math.random() * 50000);
       const position = Math.random() < 0.7 ? "Fully On" : "Partially On";
-      console.log("📡 Simulated weight:", weight, "kg, Position:", position);
+      console.log("Simulated weight:", weight, "kg, Position:", position);
       return { weight, position };
     } catch (error) {
-      console.error("❌ Error simulating weight:", error.message);
+      console.error("Error simulating weight:", error.message);
       return rejectWithValue(error.message || "Simulation error");
     }
   }
 );
 
-// Vehicles
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER DATA: VEHICLES
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchVehicles = createAsyncThunk(
   "weighing/fetchVehicles",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("📡 Fetching vehicles from API...");
+      console.log("Fetching vehicles from API...");
       const response = await apiClient.get("/MasterData/Vehicles", {
         params: { pageNumber: 1, pageSize: 50 },
       });
-      console.log("✅ Vehicles fetched successfully:", response.data);
+      console.log("Vehicles fetched successfully:", response.data);
       const data = response.data;
       return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
     } catch (error) {
-      console.error("❌ Error fetching vehicles:", error.message, error.response?.data);
+      console.error("Error fetching vehicles:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -44,18 +48,18 @@ export const fetchVehiclesByName = createAsyncThunk(
   "weighing/fetchVehiclesByName",
   async (name, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching vehicles by name: ${name}...`);
+      console.log(`Fetching vehicles by name: ${name}...`);
       const response = await apiClient.get("/MasterData/Vehicles", {
         params: { pageNumber: 1, pageSize: 50, searchTerm: name },
       });
-      console.log("✅ Vehicles fetched successfully:", response.data);
+      console.log("Vehicles fetched successfully:", response.data);
       const data = response.data;
       return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
     } catch (error) {
-      console.error("❌ Error fetching vehicles by name:", error.message, error.response?.data);
+      console.error("Error fetching vehicles by name:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -66,16 +70,16 @@ export const fetchVehicleById = createAsyncThunk(
   "weighing/fetchVehicleById",
   async (id, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching vehicle ID: ${id}...`);
+      console.log(`Fetching vehicle ID: ${id}...`);
       const response = await apiClient.get(`/MasterData/Vehicles/${id}`);
-      console.log("✅ Vehicle fetched successfully:", response.data);
+      console.log("Vehicle fetched successfully:", response.data);
       const data = response.data?.data?.vehicle || response.data?.vehicle || response.data;
       return data ? [data] : rejectWithValue("Invalid vehicle response");
     } catch (error) {
-      console.error("❌ Error fetching vehicle:", error.message, error.response?.data);
+      console.error("Error fetching vehicle:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -86,41 +90,43 @@ export const fetchVehiclesByRegNumber = createAsyncThunk(
   "weighing/fetchVehiclesByRegNumber",
   async (regNumber, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching vehicles by registration number: ${regNumber}...`);
+      console.log(`Fetching vehicles by registration number: ${regNumber}...`);
       const response = await apiClient.get("/MasterData/Vehicles", {
         params: { pageNumber: 1, pageSize: 50, regNumber },
       });
-      console.log("✅ Vehicles fetched successfully:", response.data);
+      console.log("Vehicles fetched successfully:", response.data);
       const data = response.data;
       return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
     } catch (error) {
-      console.error("❌ Error fetching vehicles by reg number:", error.message, error.response?.data);
+      console.error("Error fetching vehicles by reg number:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
-// Drivers
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER DATA: DRIVERS
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchDrivers = createAsyncThunk(
   "weighing/fetchDrivers",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("📡 Fetching drivers from API...");
+      console.log("Fetching drivers from API...");
       const response = await apiClient.get("/MasterData/Drivers", {
         params: { pageNumber: 1, pageSize: 50 },
       });
-      console.log("✅ Drivers fetched successfully:", response.data);
+      console.log("Drivers fetched successfully:", response.data);
       const data = response.data;
       return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
     } catch (error) {
-      console.error("❌ Error fetching drivers:", error.message, error.response?.data);
+      console.error("Error fetching drivers:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -131,18 +137,18 @@ export const fetchDriversByName = createAsyncThunk(
   "weighing/fetchDriversByName",
   async (name, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching drivers by name: ${name}...`);
+      console.log(`Fetching drivers by name: ${name}...`);
       const response = await apiClient.get("/MasterData/Drivers", {
         params: { pageNumber: 1, pageSize: 50, searchTerm: name },
       });
-      console.log("✅ Drivers fetched successfully:", response.data);
+      console.log("Drivers fetched successfully:", response.data);
       const data = response.data;
       return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
     } catch (error) {
-      console.error("❌ Error fetching drivers by name:", error.message, error.response?.data);
+      console.error("Error fetching drivers by name:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -153,39 +159,41 @@ export const fetchDriverById = createAsyncThunk(
   "weighing/fetchDriverById",
   async (id, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching driver ID: ${id}...`);
+      console.log(`Fetching driver ID: ${id}...`);
       const response = await apiClient.get(`/MasterData/Drivers/${id}`);
-      console.log("✅ Driver fetched successfully:", response.data);
+      console.log("Driver fetched successfully:", response.data);
       const data = response.data?.data?.driver || response.data?.driver || response.data;
       return data ? [data] : rejectWithValue("Invalid driver response");
     } catch (error) {
-      console.error("❌ Error fetching driver:", error.message, error.response?.data);
+      console.error("Error fetching driver:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
-// Products
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER DATA: PRODUCTS
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchProducts = createAsyncThunk(
   "weighing/fetchProducts",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("📡 Fetching products from API...");
+      console.log("Fetching products from API...");
       const response = await apiClient.get("/MasterData/Products", {
         params: { pageNumber: 1, pageSize: 50 },
       });
-      console.log("✅ Products fetched successfully:", response.data);
+      console.log("Products fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching products:", error.message, error.response?.data);
+      console.error("Error fetching products:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -196,41 +204,43 @@ export const fetchProductsByName = createAsyncThunk(
   "weighing/fetchProductsByName",
   async (name, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching products by name: ${name}...`);
+      console.log(`Fetching products by name: ${name}...`);
       const response = await apiClient.get("/MasterData/Products", {
         params: { pageNumber: 1, pageSize: 50, searchTerm: name },
       });
-      console.log("✅ Products fetched successfully:", response.data);
+      console.log("Products fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching products by name:", error.message, error.response?.data);
+      console.error("Error fetching products by name:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
-// Routes
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER DATA: ROUTES
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchRoutes = createAsyncThunk(
   "weighing/fetchRoutes",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("📡 Fetching routes from API...");
+      console.log("Fetching routes from API...");
       const response = await apiClient.get("/MasterData/Routes", {
         params: { pageNumber: 1, pageSize: 50 },
       });
-      console.log("✅ Routes fetched successfully:", response.data);
+      console.log("Routes fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching routes:", error.message, error.response?.data);
+      console.error("Error fetching routes:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -241,41 +251,43 @@ export const fetchRoutesByName = createAsyncThunk(
   "weighing/fetchRoutesByName",
   async (name, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching routes by name: ${name}...`);
+      console.log(`Fetching routes by name: ${name}...`);
       const response = await apiClient.get("/MasterData/Routes", {
         params: { pageNumber: 1, pageSize: 50, searchTerm: name },
       });
-      console.log("✅ Routes fetched successfully:", response.data);
+      console.log("Routes fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching routes by name:", error.message, error.response?.data);
+      console.error("Error fetching routes by name:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
-// Saccos
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER DATA: SACCOS
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchSaccosByName = createAsyncThunk(
   "weighing/fetchSaccosByName",
   async (name, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching saccos by name: ${name}...`);
+      console.log(`Fetching saccos by name: ${name}...`);
       const response = await apiClient.get("/MasterData/Saccos", {
         params: { pageNumber: 1, pageSize: 50, searchTerm: name },
       });
-      console.log("✅ Saccos fetched successfully:", response.data);
+      console.log("Saccos fetched successfully:", response.data);
       const data = response.data;
       return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
     } catch (error) {
-      console.error("❌ Error fetching saccos by name:", error.message, error.response?.data);
+      console.error("Error fetching saccos by name:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -286,39 +298,41 @@ export const fetchSaccoById = createAsyncThunk(
   "weighing/fetchSaccoById",
   async (id, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching sacco ID: ${id}...`);
+      console.log(`Fetching sacco ID: ${id}...`);
       const response = await apiClient.get(`/MasterData/Saccos/${id}`);
-      console.log("✅ Sacco fetched successfully:", response.data);
+      console.log("Sacco fetched successfully:", response.data);
       const data = response.data?.data?.sacco || response.data?.sacco || response.data;
       return data ? [data] : rejectWithValue("Invalid sacco response");
     } catch (error) {
-      console.error("❌ Error fetching sacco:", error.message, error.response?.data);
+      console.error("Error fetching sacco:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
-// Suppliers
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER DATA: SUPPLIERS
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchSuppliers = createAsyncThunk(
   "weighing/fetchSuppliers",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("📡 Fetching suppliers from API...");
+      console.log("Fetching suppliers from API...");
       const response = await apiClient.get("/MasterData/Suppliers", {
         params: { pageNumber: 1, pageSize: 50 },
       });
-      console.log("✅ Suppliers fetched successfully:", response.data);
+      console.log("Suppliers fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching suppliers:", error.message, error.response?.data);
+      console.error("Error fetching suppliers:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -329,18 +343,18 @@ export const fetchSuppliersByName = createAsyncThunk(
   "weighing/fetchSuppliersByName",
   async (name, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching suppliers by name: ${name}...`);
+      console.log(`Fetching suppliers by name: ${name}...`);
       const response = await apiClient.get("/MasterData/Suppliers", {
         params: { pageNumber: 1, pageSize: 50, searchTerm: name },
       });
-      console.log("✅ Suppliers fetched successfully:", response.data);
+      console.log("Suppliers fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching suppliers by name:", error.message, error.response?.data);
+      console.error("Error fetching suppliers by name:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -351,39 +365,41 @@ export const fetchSupplierById = createAsyncThunk(
   "weighing/fetchSupplierById",
   async (id, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching supplier ID: ${id}...`);
+      console.log(`Fetching supplier ID: ${id}...`);
       const response = await apiClient.get(`/MasterData/Suppliers/${id}`);
-      console.log("✅ Supplier fetched successfully:", response.data);
+      console.log("Supplier fetched successfully:", response.data);
       const data = response.data?.supplier || response.data;
       return data ? [data] : rejectWithValue("Invalid supplier response");
     } catch (error) {
-      console.error("❌ Error fetching supplier:", error.message, error.response?.data);
+      console.error("Error fetching supplier:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
-// Transporters
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER DATA: TRANSPORTERS
+// ─────────────────────────────────────────────────────────────────────────────
 export const fetchTransporters = createAsyncThunk(
   "weighing/fetchTransporters",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("📡 Fetching transporters from API...");
+      console.log("Fetching transporters from API...");
       const response = await apiClient.get("/MasterData/Transporters", {
         params: { pageNumber: 1, pageSize: 50 },
       });
-      console.log("✅ Transporters fetched successfully:", response.data);
+      console.log("Transporters fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching transporters:", error.message, error.response?.data);
+      console.error("Error fetching transporters:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -394,18 +410,18 @@ export const fetchTransportersByName = createAsyncThunk(
   "weighing/fetchTransportersByName",
   async (name, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching transporters by name: ${name}...`);
+      console.log(`Fetching transporters by name: ${name}...`);
       const response = await apiClient.get("/MasterData/Transporters", {
         params: { pageNumber: 1, pageSize: 50, searchTerm: name },
       });
-      console.log("✅ Transporters fetched successfully:", response.data);
+      console.log("Transporters fetched successfully:", response.data);
       const data = response.data;
       return data?.items || (Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("❌ Error fetching transporters by name:", error.message, error.response?.data);
+      console.error("Error fetching transporters by name:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
@@ -416,45 +432,88 @@ export const fetchTransporterById = createAsyncThunk(
   "weighing/fetchTransporterById",
   async (id, { rejectWithValue }) => {
     try {
-      console.log(`📡 Fetching transporter ID: ${id}...`);
+      console.log(`Fetching transporter ID: ${id}...`);
       const response = await apiClient.get(`/MasterData/Transporters/${id}`);
-      console.log("✅ Transporter fetched successfully:", response.data);
+      console.log("Transporter fetched successfully:", response.data);
       const data = response.data?.transporter || response.data;
       return data ? [data] : rejectWithValue("Invalid transporter response");
     } catch (error) {
-      console.error("❌ Error fetching transporter:", error.message, error.response?.data);
+      console.error("Error fetching transporter:", error.message, error.response?.data);
       if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Response data:", error.response.data);
       }
       return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
-// Transactions (Placeholder)
-export const fetchTransactions = createAsyncThunk(
-  "weighing/fetchTransactions",
-  async (_, { rejectWithValue }) => {
+// ─────────────────────────────────────────────────────────────────────────────
+// TRANSACTION API (REAL – FROM SWAGGER)
+// ─────────────────────────────────────────────────────────────────────────────
+export const fetchTransactionsList = createAsyncThunk(
+  "weighing/fetchTransactionsList",
+  async (filters = {}, { rejectWithValue }) => {
     try {
-      console.log("📡 Fetching transactions from API...");
-      const response = await apiClient.get("/MasterData/Transactions", {
-        params: { pageNumber: 1, pageSize: 50 },
-      });
-      console.log("✅ Transactions fetched successfully:", response.data);
-      return response.data?.items || [];
+      console.log("Fetching transactions list with filters:", filters);
+      const response = await apiClient.get("/api/transactions", { params: filters });
+      console.log("Transactions fetched:", response.data);
+      return response.data.items || [];
     } catch (error) {
-      console.error("❌ Error fetching transactions:", error.message, error.response?.data);
-      if (error.response) {
-        console.error("🔢 Status:", error.response.status);
-        console.error("📦 Response data:", error.response.data);
-      }
-      return rejectWithValue(error.message || "Network error");
+      console.error("Error fetching transactions:", error.message);
+      return rejectWithValue(error.message || "Failed to fetch transactions");
     }
   }
 );
 
-// Slice
+export const addWeighing = createAsyncThunk(
+  "weighing/addWeighing",
+  async (payload, { rejectWithValue }) => {
+    try {
+      console.log("Adding weighing:", payload);
+      const response = await apiClient.post("/api/transactions/add-weighing", payload);
+      console.log("Weighing added:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error adding weighing:", error.message);
+      return rejectWithValue(error.message || "Failed to add weighing");
+    }
+  }
+);
+
+export const completeTransaction = createAsyncThunk(
+  "weighing/completeTransaction",
+  async (payload, { rejectWithValue }) => {
+    try {
+      console.log("Completing transaction:", payload);
+      const response = await apiClient.post("/api/transactions/complete", payload);
+      console.log("Transaction completed:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error completing transaction:", error.message);
+      return rejectWithValue(error.message || "Failed to complete");
+    }
+  }
+);
+
+export const deactivateTransactionApi = createAsyncThunk(
+  "weighing/deactivateTransactionApi",
+  async (transactionId, { rejectWithValue }) => {
+    try {
+      console.log("Deactivating transaction:", transactionId);
+      const response = await apiClient.delete(`/api/transactions/${transactionId}`);
+      console.log("Transaction deactivated:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error deactivating transaction:", error.message);
+      return rejectWithValue(error.message || "Failed to deactivate");
+    }
+  }
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SLICE STATE
+// ─────────────────────────────────────────────────────────────────────────────
 const initialState = {
   vehicles: [],
   drivers: [],
@@ -464,10 +523,10 @@ const initialState = {
   saccos: [],
   transporters: [],
   transactions: [],
-  currentWeight: null, // For real-time weight
-  vehiclePosition: null, // For positioning status
-  detectedPlate: null, // For camera-detected number plate
-  capturedWeight: null, // For captured weight to prefill form
+  currentWeight: null,
+  vehiclePosition: null,
+  detectedPlate: null,
+  capturedWeight: null,
   loading: false,
   error: null,
 };
@@ -515,7 +574,7 @@ const weighingSlice = createSlice({
     };
 
     builder
-      // Weighing Panel Simulation
+      // Simulated Weight
       .addCase(fetchSimulatedWeight.pending, handlePending)
       .addCase(fetchSimulatedWeight.fulfilled, (state, action) => {
         state.currentWeight = action.payload.weight;
@@ -653,15 +712,39 @@ const weighingSlice = createSlice({
       .addCase(fetchTransporterById.rejected, handleRejected)
 
       // Transactions
-      .addCase(fetchTransactions.pending, handlePending)
-      .addCase(fetchTransactions.fulfilled, (state, action) => {
+      .addCase(fetchTransactionsList.pending, handlePending)
+      .addCase(fetchTransactionsList.fulfilled, (state, action) => {
         state.transactions = action.payload || [];
         state.loading = false;
       })
-      .addCase(fetchTransactions.rejected, handleRejected);
+      .addCase(fetchTransactionsList.rejected, handleRejected)
+
+      .addCase(addWeighing.pending, handlePending)
+      .addCase(addWeighing.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(addWeighing.rejected, handleRejected)
+
+      .addCase(completeTransaction.pending, handlePending)
+      .addCase(completeTransaction.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(completeTransaction.rejected, handleRejected)
+
+      .addCase(deactivateTransactionApi.pending, handlePending)
+      .addCase(deactivateTransactionApi.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(deactivateTransactionApi.rejected, handleRejected);
   },
 });
 
-export const { setDetectedPlate, addTransaction, completeWeighing, deactivateTransaction, setCapturedWeight } =
-  weighingSlice.actions;
+export const {
+  setDetectedPlate,
+  addTransaction,
+  completeWeighing,
+  deactivateTransaction,
+  setCapturedWeight,
+} = weighingSlice.actions;
+
 export default weighingSlice.reducer;

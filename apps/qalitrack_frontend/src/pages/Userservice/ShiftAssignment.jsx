@@ -9,10 +9,10 @@ import {
     assignShiftToRole,
     fetchDeletedUserShifts,
     fetchShiftById,
-} from "../../helpers/UserService/Shifts/shiftAssignment.js";
+} from "../../api/helpers/UserService/Shifts/shiftAssignment.js";
 import { ChevronLeft, ChevronRight, Users, Tag, Download } from "lucide-react";
-import { fetchUsers } from "../../helpers/UserService/Users/users.js";
-import { fetchRoles } from "../../helpers/UserService/Roles/Roles.js";
+import { fetchUsers } from "../../api/helpers/UserService/Users/users.js";
+import { fetchRoles } from "../../api/helpers/UserService/Roles/Roles.js";
 import { format, parseISO } from "date-fns";
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
