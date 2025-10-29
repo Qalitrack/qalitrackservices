@@ -130,8 +130,8 @@ public class UpdateTransactionDto
     public int? VehicleId { get; set; }
     
     // Commodity Information
-    public int? CommodityId { get; set; }
-    public string? CommodityName { get; set; }
+    public int? ProductId { get; set; }
+    public string? ProductName { get; set; }
     
     // Supplier Information
     public int? SupplierId { get; set; }

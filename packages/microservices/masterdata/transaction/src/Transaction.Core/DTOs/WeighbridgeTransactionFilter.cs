@@ -9,7 +9,7 @@ public class WeighbridgeTransactionFilter
     public string? NoPlate { get; set; }
     public string? DriverName { get; set; }
     public int? VehicleId { get; set; }
-    public int? CommodityId { get; set; }
+    public int? ProductId { get; set; }
     public int? SupplierId { get; set; }
     public int? CustomerId { get; set; }
     public int? TransporterId { get; set; }
