@@ -48,9 +48,9 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             query = query.Where(t => t.VehicleId == filter.VehicleId.Value);
         }
 
-        if (filter.CommodityId.HasValue)
+        if (filter.ProductId.HasValue)
         {
-            query = query.Where(t => t.CommodityId == filter.CommodityId.Value);
+            query = query.Where(t => t.CommodityId == filter.ProductId.Value);
         }
 
         if (filter.SupplierId.HasValue)
