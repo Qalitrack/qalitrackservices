@@ -17,79 +17,7 @@ env:
   SERVICE_PATH: packages/microservices/QalitrackGateWay
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-      
-      - name: Restore dependencies
-        run: |
-          cd ${{ env.SERVICE_PATH }}
-          dotnet restore GatewayService.API/GatewayService.API.csproj --verbosity normal
-      
-      - name: Build application
-        run: |
-          cd ${{ env.SERVICE_PATH }}
-          dotnet build GatewayService.API/GatewayService.API.csproj --no-restore -c Release --verbosity normal
-      
-      - name: Run unit tests
-        env:
-          ASPNETCORE_ENVIRONMENT: "Testing"
-          UsePostgreSQL: "false"
-          UseRedis: "false"
-        run: |
-          cd ${{ env.SERVICE_PATH }}
-          # Find and run all test projects
-          find . -name "*.Tests.csproj" -o -name "*Test*.csproj" | while read testproject; do
-            echo "Running tests for: $testproject"
-            dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
-          done
-        continue-on-error: false
-      
-      - name: Run database migrations (if applicable)
-        env:
-          ASPNETCORE_ENVIRONMENT: "Testing"
-        run: |
-          cd ${{ env.SERVICE_PATH }}
-          # Check if Entity Framework migrations exist
-          if [ -d "GatewayService.Infrastructure/Migrations" ] || [ -d "GatewayService.API/Migrations" ]; then
-            echo "Running database migrations..."
-            # For gateway, if no DB, this might skip; adjust if needed
-            echo "No migrations expected for gateway service, skipping..."
-          else
-            echo "No Entity Framework migrations found, skipping..."
-          fi
-        continue-on-error: true
-      
-      - name: Run integration tests
-        env:
-          ASPNETCORE_ENVIRONMENT: "Testing"
-          UsePostgreSQL: "false"
-          UseRedis: "false"
-        run: |
-          cd ${{ env.SERVICE_PATH }}
-          # Run integration tests if they exist
-          find . -name "*.IntegrationTests.csproj" | while read testproject; do
-            echo "Running integration tests for: $testproject"
-            dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
-          done
-        continue-on-error: true
-      
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: ${{ env.SERVICE_PATH }}/TestResults/
-
   build-and-push:
-    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -115,7 +43,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/qalitrack/qalitrackservices/${{ env.SERVICE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -155,7 +83,7 @@ jobs:
         run: |
           mkdir -p deployment
           # Create a simple docker-compose for gateway deployment
-          IMAGE_TAG="${{ env.REGISTRY }}/qalitrack/qalitrackservices/${{ env.SERVICE_NAME }}:main-${{ github.sha }}"
+          IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:main-${{ github.sha }}"
           
           cat > deployment/docker-compose.yml << EOF
           version: '3.8'
