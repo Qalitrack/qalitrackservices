@@ -15,6 +15,9 @@ public class TransactionReadDto
     public decimal? NetWeight { get; set; }
     public DateTime? NetWeightCalculatedTimestamp { get; set; }
     
+    // All weighings in sequence
+    public List<WeighingRecordDto> WeighingRecords { get; set; } = new();
+    
     // Vehicle Information
     public int? VehicleId { get; set; }
     public string NoPlate { get; set; } = string.Empty;
@@ -122,7 +125,6 @@ public class CreateTransactionDto
 
 public class UpdateTransactionDto
 {
-    // Only fields that can be updated before completion
     
     // Vehicle Information
     public string? NoPlate { get; set; }

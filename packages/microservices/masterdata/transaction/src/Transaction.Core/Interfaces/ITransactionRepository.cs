@@ -13,7 +13,7 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
     
     // Get incomplete transactions for a vehicle (to allow continuation)
     Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleAsync(string noPlate);
-    Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId);
+    Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId);
     
     // Get transactions by status
     Task<List<WeighbridgeTransaction>> GetTransactionsByStatusAsync(WeighbridgeTransactionStatus status, int limit = 100);
@@ -21,4 +21,7 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
     // Get with related entities
     Task<WeighbridgeTransaction?> GetWithWeighingRecordsAsync(string id);
     Task<WeighbridgeTransaction?> GetWithAuditLogsAsync(string id);
+    
+    // Mark entity as modified for change tracking
+    void MarkAsModified(WeighbridgeTransaction entity);
 }
