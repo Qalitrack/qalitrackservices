@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Transaction.Core.DTOs;
 using Transaction.Core.Entities;
 using Transaction.Core.Interfaces;
+using Transaction.Core.Mappings;
 using Transaction.Core.Services;
 using Transaction.Infrastructure.Data;
 using Transaction.Infrastructure.Repositories;
@@ -34,12 +35,11 @@ public class WeighbridgeWorkflowTests : IDisposable
                   .EnableSensitiveDataLogging()
                   .ConfigureWarnings(x => x.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning)));
 
-        // Setup AutoMapper
+        // Setup AutoMapper with the TransactionProfile
         var mapperConfig = new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<WeighbridgeTransaction, TransactionReadDto>();
-            cfg.CreateMap<CreateTransactionDto, WeighbridgeTransaction>();
-            cfg.CreateMap<ReweighRecord, ReweighRecordDto>();
+            // Add the TransactionProfile which contains all the mappings
+            cfg.AddProfile<TransactionProfile>();
         });
         var mapper = mapperConfig.CreateMapper();
         services.AddSingleton(mapper);
