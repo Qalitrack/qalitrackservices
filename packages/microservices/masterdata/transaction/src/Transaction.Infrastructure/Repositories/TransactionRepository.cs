@@ -150,10 +150,21 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .ToListAsync();
     }
 
-    public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId)
+    public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId)
     {
+        // First try to parse as int for backward compatibility
+        if (int.TryParse(vehicleId, out int vehicleIdInt))
+        {
+            return await _dbSet
+                .Where(t => t.VehicleId == vehicleIdInt && !t.IsCompleted && !t.IsDeleted)
+                .OrderByDescending(t => t.CreatedAt)
+                .ToListAsync();
+        }
+        
+        // If not a valid int, try to find by string ID (if the ID is stored as string somewhere)
+        // This part depends on your data model - adjust as needed
         return await _dbSet
-            .Where(t => t.VehicleId == vehicleId && !t.IsCompleted && !t.IsDeleted)
+            .Where(t => t.Id == vehicleId && !t.IsCompleted && !t.IsDeleted)
             .OrderByDescending(t => t.CreatedAt)
             .ToListAsync();
     }
@@ -169,10 +180,69 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
 
     public async Task<WeighbridgeTransaction?> GetWithWeighingRecordsAsync(string id)
     {
-        return await _dbSet
+        var transaction = await _dbSet
             .Include(t => t.WeighingRecords)
             .Include(t => t.ReweighRecords)
             .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+            
+        if (transaction?.WeighingRecords != null)
+        {
+            // Order the weighing records by sequence
+            transaction.WeighingRecords = transaction.WeighingRecords
+                .OrderBy(w => w.WeighingSequence)
+                .ToList();
+                
+            // Ensure CompletedWeighings is in sync with the actual number of weighings
+            if (transaction.WeighingRecords.Any())
+            {
+                var maxSequence = transaction.WeighingRecords.Max(w => w.WeighingSequence);
+                if (maxSequence != transaction.CompletedWeighings)
+                {
+                    // Update the CompletedWeighings
+                    transaction.CompletedWeighings = maxSequence;
+                    transaction.UpdatedAt = DateTime.UtcNow;
+                    
+                    // Explicitly mark the entity as modified
+                    _context.Entry(transaction).Property(x => x.CompletedWeighings).IsModified = true;
+                    _context.Entry(transaction).Property(x => x.UpdatedAt).IsModified = true;
+                    
+                    // Save changes
+                    await _context.SaveChangesAsync();
+                    
+                    // Detach the entity to avoid tracking issues
+                    _context.Entry(transaction).State = EntityState.Detached;
+                    
+                    // Reload the transaction with includes
+                    transaction = await _dbSet
+                        .Include(t => t.WeighingRecords)
+                        .Include(t => t.ReweighRecords)
+                        .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+                }
+            }
+            else
+            {
+                // If no weighing records, ensure CompletedWeighings is 0
+                if (transaction.CompletedWeighings != 0)
+                {
+                    transaction.CompletedWeighings = 0;
+                    transaction.UpdatedAt = DateTime.UtcNow;
+                    
+                    _context.Entry(transaction).Property(x => x.CompletedWeighings).IsModified = true;
+                    _context.Entry(transaction).Property(x => x.UpdatedAt).IsModified = true;
+                    
+                    await _context.SaveChangesAsync();
+                    
+                    _context.Entry(transaction).State = EntityState.Detached;
+                    
+                    transaction = await _dbSet
+                        .Include(t => t.WeighingRecords)
+                        .Include(t => t.ReweighRecords)
+                        .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+                }
+            }
+        }
+        
+        return transaction;
     }
 
     public async Task<WeighbridgeTransaction?> GetWithAuditLogsAsync(string id)
@@ -180,5 +250,34 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
         return await _dbSet
             .Include(t => t.AuditLogs)
             .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+    }
+    
+    public void MarkAsModified(WeighbridgeTransaction entity)
+    {
+        _context.Entry(entity).State = EntityState.Modified;
+    }
+    
+    public override async Task<WeighbridgeTransaction?> UpdateAsync(WeighbridgeTransaction entity)
+    {
+        var existingEntity = await _dbSet.FindAsync(entity.Id);
+        if (existingEntity == null)
+        {
+            return null;
+        }
+
+        // Update all properties from the incoming entity to the existing entity
+        _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+        
+        // Explicitly set the UpdatedAt timestamp
+        existingEntity.UpdatedAt = DateTime.UtcNow;
+        
+        // Explicitly mark the CompletedWeighings as modified to ensure it's updated
+        _context.Entry(existingEntity).Property(x => x.CompletedWeighings).IsModified = true;
+        
+        // Mark the entity as modified to ensure all changes are saved
+        _context.Entry(existingEntity).State = EntityState.Modified;
+        
+        await _context.SaveChangesAsync();
+        return existingEntity;
     }
 }
