@@ -856,21 +856,23 @@ public class TransactionRepositoryTests : IDisposable
     public async Task GetIncompleteTransactionsByVehicleIdAsync_ShouldReturnIncompleteTransactions()
     {
         // Arrange
-        var vehicleId = 1000;
+        var vehicleId = "1000";
         await _repository.CreateAsync(new WeighbridgeTransaction
         {
+            Id = Guid.NewGuid().ToString(),
             ReceiptNo = "TRX-1200",
             NoPlate = "KAA 1200A",
-            VehicleId = vehicleId,
+            VehicleId = int.Parse(vehicleId), // Parse the string to int for the entity
             ExpectedWeighings = 2,
             Status = WeighbridgeTransactionStatus.Pending,
             IsCompleted = false
         });
         await _repository.CreateAsync(new WeighbridgeTransaction
         {
+            Id = Guid.NewGuid().ToString(),
             ReceiptNo = "TRX-1201",
             NoPlate = "KAA 1201A",
-            VehicleId = vehicleId,
+            VehicleId = int.Parse(vehicleId), // Parse the string to int for the entity
             ExpectedWeighings = 2,
             Status = WeighbridgeTransactionStatus.Completed,
             IsCompleted = true

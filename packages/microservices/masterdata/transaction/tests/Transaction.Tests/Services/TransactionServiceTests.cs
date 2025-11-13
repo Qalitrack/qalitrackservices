@@ -30,13 +30,14 @@ public class TransactionServiceTests : IDisposable
     {
         _mockRepo = new Mock<ITransactionRepository>();
 
-        // Setup AutoMapper
+        // Setup AutoMapper with the TransactionProfile
         var configuration = new MapperConfiguration(cfg =>
         {
-            cfg.AddMaps(typeof(TransactionProfile).Assembly);
-            // Add mapping for ReweighRecord -> ReweighRecordDto if not already configured
-            cfg.CreateMap<ReweighRecord, ReweighRecordDto>();
+            // Add the TransactionProfile which contains all the mappings
+            cfg.AddProfile<TransactionProfile>();
         });
+        
+        // Create the mapper instance
         _mapper = configuration.CreateMapper();
 
         // Setup in-memory database (unused for mocked repo, but kept for potential real DbContext tests)
@@ -121,32 +122,33 @@ public class TransactionServiceTests : IDisposable
     public async Task GetByIdAsync_WithExistingId_ShouldReturnDto()
     {
         // Arrange
-        var id = 1;
+        var id = "1";
         var transaction = new WeighbridgeTransaction { Id = "1", ReceiptNo = "TRX-001" };
-        _mockRepo.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(transaction);
+        _mockRepo.Setup(r => r.GetWithWeighingRecordsAsync(id)).ReturnsAsync(transaction);
 
         // Act
         var result = await _service.GetByIdAsync(id);
 
         // Assert
         result.Should().NotBeNull();
+        result.Id.Should().Be("1");
         result.ReceiptNo.Should().Be("TRX-001");
-        _mockRepo.Verify(r => r.GetByIdAsync("1"), Times.Once);
+        _mockRepo.Verify(r => r.GetWithWeighingRecordsAsync(id), Times.Once);
     }
 
     [Fact]
     public async Task GetByIdAsync_WithNonExistingId_ShouldReturnNull()
     {
         // Arrange
-        var id = 999;
-        _mockRepo.Setup(r => r.GetByIdAsync("999")).ReturnsAsync((WeighbridgeTransaction)null);
+        var id = "non-existing";
+        _mockRepo.Setup(r => r.GetWithWeighingRecordsAsync(id)).ReturnsAsync((WeighbridgeTransaction)null);
 
         // Act
         var result = await _service.GetByIdAsync(id);
 
         // Assert
         result.Should().BeNull();
-        _mockRepo.Verify(r => r.GetByIdAsync("999"), Times.Once);
+        _mockRepo.Verify(r => r.GetWithWeighingRecordsAsync(id), Times.Once);
     }
 
     #endregion
@@ -311,7 +313,7 @@ public class TransactionServiceTests : IDisposable
     public async Task UpdateAsync_WithValidDataAndModifiableTransaction_ShouldUpdateFields()
     {
         // Arrange
-        var id = 1;
+        var id = "1";
         var existingTransaction = new WeighbridgeTransaction
         {
             Id = "1",
@@ -321,7 +323,7 @@ public class TransactionServiceTests : IDisposable
             Status = WeighbridgeTransactionStatus.InProgress,
             IsCompleted = false
         };
-        _mockRepo.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(existingTransaction);
+        _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(existingTransaction);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>())).ReturnsAsync(existingTransaction);
 
         var dto = new UpdateTransactionDto
@@ -341,19 +343,18 @@ public class TransactionServiceTests : IDisposable
         existingTransaction.AuditLogs.Should().HaveCount(1); // Audit log added
         _mockRepo.Verify(r => r.UpdateAsync(It.Is<WeighbridgeTransaction>(t => t.NoPlate == "NEW-PLATE")), Times.Once);
     }
-
     [Fact]
     public async Task UpdateAsync_WithCompletedTransaction_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        var id = 1;
+        var id = "1";
         var existingTransaction = new WeighbridgeTransaction
         {
             Id = "1",
             Status = WeighbridgeTransactionStatus.Completed,
             IsCompleted = true
         };
-        _mockRepo.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(existingTransaction);
+        _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(existingTransaction);
 
         var dto = new UpdateTransactionDto { NoPlate = "NEW-PLATE" };
 
@@ -367,8 +368,8 @@ public class TransactionServiceTests : IDisposable
     public async Task UpdateAsync_WithNonExistingId_ShouldReturnNull()
     {
         // Arrange
-        var id = 999;
-        _mockRepo.Setup(r => r.GetByIdAsync("999")).ReturnsAsync((WeighbridgeTransaction)null);
+        var id = "non-existing";
+        _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((WeighbridgeTransaction)null);
 
         var dto = new UpdateTransactionDto { NoPlate = "NEW-PLATE" };
 
@@ -377,7 +378,7 @@ public class TransactionServiceTests : IDisposable
 
         // Assert
         result.Should().BeNull();
-        _mockRepo.Verify(r => r.GetByIdAsync("999"), Times.Once);
+        _mockRepo.Verify(r => r.GetByIdAsync(id), Times.Once);
         _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>()), Times.Never);
     }
 
@@ -387,7 +388,7 @@ public class TransactionServiceTests : IDisposable
     public async Task UpdateAsync_WithPartialData_ShouldOnlyUpdateProvidedFields(string? noPlate, string? driverName, int? vehicleId)
     {
         // Arrange
-        var id = 1;
+        var id = "1";
         var existingTransaction = new WeighbridgeTransaction
         {
             Id = "1",
@@ -395,7 +396,7 @@ public class TransactionServiceTests : IDisposable
             DriverName = "Old Driver",
             VehicleId = 0
         };
-        _mockRepo.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(existingTransaction);
+        _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(existingTransaction);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>())).ReturnsAsync(existingTransaction);
 
         var dto = new UpdateTransactionDto
@@ -417,44 +418,42 @@ public class TransactionServiceTests : IDisposable
     #endregion
 
     #region DeleteAsync Tests
-
     [Fact]
     public async Task DeleteAsync_WithExistingModifiableTransaction_ShouldReturnTrue()
     {
         // Arrange
-        var id = 1;
-        var transaction = new WeighbridgeTransaction { Id = "1", IsCompleted = false };
-        _mockRepo.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(transaction);
-        _mockRepo.Setup(r => r.DeleteAsync("1")).ReturnsAsync(true);
+        var id = "1";
+        var transaction = new WeighbridgeTransaction { Id = id, IsCompleted = false };
+        _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(transaction);
+        _mockRepo.Setup(r => r.DeleteAsync(id)).ReturnsAsync(true);
 
         // Act
         var result = await _service.DeleteAsync(id);
 
         // Assert
         result.Should().BeTrue();
-        _mockRepo.Verify(r => r.DeleteAsync("1"), Times.Once);
+        _mockRepo.Verify(r => r.DeleteAsync(id), Times.Once);
     }
 
     [Fact]
     public async Task DeleteAsync_WithCompletedTransaction_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        var id = 1;
-        var transaction = new WeighbridgeTransaction { Id = "1", IsCompleted = true };
-        _mockRepo.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(transaction);
+        var id = "1";
+        var transaction = new WeighbridgeTransaction { Id = id, IsCompleted = true };
+        _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(transaction);
 
         // Act & Assert
         var act = () => _service.DeleteAsync(id);
         await act.Should().ThrowExactlyAsync<InvalidOperationException>().WithMessage("Cannot delete a completed transaction.");
         _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<string>()), Times.Never);
     }
-
     [Fact]
     public async Task DeleteAsync_WithNonExistingId_ShouldReturnFalse()
     {
         // Arrange
-        var id = 999;
-        _mockRepo.Setup(r => r.GetByIdAsync("999")).ReturnsAsync((WeighbridgeTransaction)null);
+        var id = "non-existing";
+        _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((WeighbridgeTransaction)null);
 
         // Act
         var result = await _service.DeleteAsync(id);
@@ -566,7 +565,8 @@ public class TransactionServiceTests : IDisposable
             transaction.Status.Should().Be(WeighbridgeTransactionStatus.InProgress);
         }
         transaction.AuditLogs.Should().HaveCount(1); // Audit log added
-        _mockRepo.Verify(r => r.UpdateAsync(It.Is<WeighbridgeTransaction>(t => t.CompletedWeighings == sequenceNumber)), Times.Once);
+        // Verify UpdateAsync is called twice: once for the transaction update and once for the audit log
+        _mockRepo.Verify(r => r.UpdateAsync(It.Is<WeighbridgeTransaction>(t => t.CompletedWeighings == sequenceNumber)), Times.Exactly(2));
     }
 
     [Fact]
@@ -580,10 +580,21 @@ public class TransactionServiceTests : IDisposable
             Id = $"{transactionId}",
             ExpectedWeighings = expectedWeighings,
             CompletedWeighings = 1,
-            Status = WeighbridgeTransactionStatus.InProgress
+            Status = WeighbridgeTransactionStatus.InProgress,
+            WeighingRecords = new List<WeighingRecord>
+            {
+                new WeighingRecord
+                {
+                    Id = "1",
+                    WeighingSequence = 1,
+                    Weight = 1000,
+                    WeighingDate = _testTime.AddMinutes(-10)
+                }
+            }
         };
         _mockRepo.Setup(r => r.GetWithWeighingRecordsAsync($"{transactionId}")).ReturnsAsync(transaction);
-        _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>())).ReturnsAsync(transaction);
+        _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>()))
+            .Returns<WeighbridgeTransaction>(t => Task.FromResult(t));
 
         var dto = new AddWeighingDto { TransactionId = transactionId, Weight = 2000 };
 
@@ -594,6 +605,8 @@ public class TransactionServiceTests : IDisposable
         transaction.CompletedWeighings.Should().Be(2);
         transaction.Status.Should().Be(WeighbridgeTransactionStatus.Completed);
         transaction.IsCompleted.Should().BeTrue();
+        transaction.AuditLogs.Should().HaveCount(1); // Audit log added
+        _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>()), Times.Exactly(2));
     }
 
     [Fact]
@@ -1139,10 +1152,10 @@ public class TransactionServiceTests : IDisposable
     public async Task GetIncompleteTransactionsByVehicleIdAsync_WithMatchingVehicleId_ShouldReturnTransactions()
     {
         // Arrange
-        var vehicleId = 1;
+        var vehicleId = "1";
         var transactions = new List<WeighbridgeTransaction>
         {
-            new WeighbridgeTransaction { Id = "1", VehicleId = vehicleId, IsCompleted = false }
+            new WeighbridgeTransaction { Id = "1", VehicleId = 1, IsCompleted = false }
         };
         _mockRepo.Setup(r => r.GetIncompleteTransactionsByVehicleIdAsync(vehicleId)).ReturnsAsync(transactions);
 
@@ -1151,7 +1164,7 @@ public class TransactionServiceTests : IDisposable
 
         // Assert
         result.Should().NotBeNull().And.HaveCount(1);
-        result.First().VehicleId.Should().Be(vehicleId);
+        result.First().Id.Should().Be("1");
         _mockRepo.Verify(r => r.GetIncompleteTransactionsByVehicleIdAsync(vehicleId), Times.Once);
     }
 
@@ -1159,7 +1172,7 @@ public class TransactionServiceTests : IDisposable
     public async Task GetIncompleteTransactionsByVehicleIdAsync_WithNoMatching_ShouldReturnEmpty()
     {
         // Arrange
-        var vehicleId = 999;
+        var vehicleId = "non-existing";
         _mockRepo.Setup(r => r.GetIncompleteTransactionsByVehicleIdAsync(vehicleId)).ReturnsAsync(new List<WeighbridgeTransaction>());
 
         // Act

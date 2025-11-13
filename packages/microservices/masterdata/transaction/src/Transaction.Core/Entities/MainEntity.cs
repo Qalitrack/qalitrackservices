@@ -102,21 +102,52 @@ public class WeighbridgeTransaction : BaseEntity
             throw new InvalidOperationException("Transaction is already completed.");
         }
 
+        // Ensure CompletedWeighings is in sync with WeighingRecords count
+        if (WeighingRecords != null && WeighingRecords.Any())
+        {
+            var maxSequence = WeighingRecords.Max(w => w.WeighingSequence);
+            if (maxSequence != CompletedWeighings)
+            {
+                CompletedWeighings = maxSequence;
+            }
+        }
+
         if (CompletedWeighings < ExpectedWeighings)
         {
             throw new InvalidOperationException($"Cannot complete transaction. Expected {ExpectedWeighings} weighings, but only {CompletedWeighings} completed.");
         }
 
+        // Update transaction status
         IsCompleted = true;
         Status = WeighbridgeTransactionStatus.Completed;
         CompletedDate = currentTime;
         UpdatedAt = currentTime;
 
         // Calculate net weight if not already set
-        if (FirstWeight.HasValue && SecondWeight.HasValue && !NetWeight.HasValue)
+        if (!NetWeight.HasValue)
         {
-            NetWeight = Math.Abs(FirstWeight.Value - SecondWeight.Value);
-            NetWeightCalculatedTimestamp = currentTime;
+            if (ExpectedWeighings == 2 && FirstWeight.HasValue && SecondWeight.HasValue)
+            {
+                // Standard 2-weighing transaction
+                NetWeight = Math.Abs(FirstWeight.Value - SecondWeight.Value);
+                NetWeightCalculatedTimestamp = currentTime;
+            }
+            else if (ExpectedWeighings > 2 && WeighingRecords != null && WeighingRecords.Count >= 2)
+            {
+                try
+                {
+                    // For transactions with more than 2 weighings, use first and last weight
+                    var firstWeighing = WeighingRecords.OrderBy(w => w.WeighingSequence).First();
+                    var lastWeighing = WeighingRecords.OrderByDescending(w => w.WeighingSequence).First();
+                    NetWeight = Math.Abs(firstWeighing.Weight - lastWeighing.Weight);
+                    NetWeightCalculatedTimestamp = currentTime;
+                }
+                catch (Exception ex)
+                {
+                    // Log the error but don't fail the transaction completion
+                    Console.WriteLine($"Error calculating net weight: {ex.Message}");
+                }
+            }
         }
     }
 
@@ -261,7 +292,7 @@ public class WeightMeasurement
     {
         if (value < 0)
             throw new ArgumentException("Weight cannot be negative", nameof(value));
-
+         
         Value = value;
         Unit = unit;
         MeasuredAt = measuredAt;

@@ -84,10 +84,10 @@ public class TransactionsControllerTests
     {
         // Arrange
         var transactionDto = new TransactionReadDto { Id = "1", ReceiptNo = "R001" };
-        _mockService.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(transactionDto);
+        _mockService.Setup(s => s.GetByIdAsync("1")).ReturnsAsync(transactionDto);
 
         // Act
-        var result = await _controller.GetById(1);
+        var result = await _controller.GetById("1");
 
         // Assert
         var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
@@ -101,10 +101,10 @@ public class TransactionsControllerTests
     public async Task GetById_WithNonExistingId_ShouldReturnNotFound()
     {
         // Arrange
-        _mockService.Setup(s => s.GetByIdAsync(999)).ReturnsAsync((TransactionReadDto?)null);
+        _mockService.Setup(s => s.GetByIdAsync("non-existing")).ReturnsAsync((TransactionReadDto?)null);
 
         // Act
-        var result = await _controller.GetById(999);
+        var result = await _controller.GetById("non-existing");
 
         // Assert
         result.Should().BeOfType<NotFoundObjectResult>();
@@ -388,12 +388,11 @@ public class TransactionsControllerTests
     #endregion
 
     #region Update Tests
-
     [Fact]
     public async Task Update_WithValidData_ShouldReturnOk()
     {
         // Arrange
-        var id = 1;
+        var id = "1";
         var updateDto = new UpdateTransactionDto { NoPlate = "XYZ-789" };
         var updatedDto = new TransactionReadDto { Id = "1", NoPlate = "XYZ-789" };
         _mockService.Setup(s => s.UpdateAsync(id, updateDto)).ReturnsAsync(updatedDto);
@@ -413,11 +412,12 @@ public class TransactionsControllerTests
     public async Task Update_WithNonExistingTransaction_ShouldReturnNotFound()
     {
         // Arrange
+        var id = "non-existing";
         var updateDto = new UpdateTransactionDto { NoPlate = "XYZ-789" };
-        _mockService.Setup(s => s.UpdateAsync(999, updateDto)).ReturnsAsync((TransactionReadDto?)null);
+        _mockService.Setup(s => s.UpdateAsync(id, updateDto)).ReturnsAsync((TransactionReadDto?)null);
 
         // Act
-        var result = await _controller.Update(999, updateDto);
+        var result = await _controller.Update(id, updateDto);
 
         // Assert
         result.Should().BeOfType<NotFoundObjectResult>();
@@ -427,12 +427,13 @@ public class TransactionsControllerTests
     public async Task Update_WhenCompletedTransaction_ShouldReturnBadRequest()
     {
         // Arrange
+        var id = "1";
         var updateDto = new UpdateTransactionDto { NoPlate = "XYZ-789" };
-        _mockService.Setup(s => s.UpdateAsync(1, updateDto))
+        _mockService.Setup(s => s.UpdateAsync(id, updateDto))
             .ThrowsAsync(new InvalidOperationException("Cannot update completed transaction"));
 
         // Act
-        var result = await _controller.Update(1, updateDto);
+        var result = await _controller.Update(id, updateDto);
 
         // Assert
         result.Should().BeOfType<BadRequestObjectResult>();
@@ -446,10 +447,10 @@ public class TransactionsControllerTests
     public async Task Delete_WithExistingId_ShouldReturnOk()
     {
         // Arrange
-        _mockService.Setup(s => s.DeleteAsync(1)).ReturnsAsync(true);
+        _mockService.Setup(s => s.DeleteAsync("1")).ReturnsAsync(true);
 
         // Act
-        var result = await _controller.Delete(1);
+        var result = await _controller.Delete("1");
 
         // Assert
         var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
@@ -462,10 +463,10 @@ public class TransactionsControllerTests
     public async Task Delete_WithNonExistingId_ShouldReturnNotFound()
     {
         // Arrange
-        _mockService.Setup(s => s.DeleteAsync(999)).ReturnsAsync(false);
+        _mockService.Setup(s => s.DeleteAsync("non-existing")).ReturnsAsync(false);
 
         // Act
-        var result = await _controller.Delete(999);
+        var result = await _controller.Delete("non-existing");
 
         // Assert
         result.Should().BeOfType<NotFoundObjectResult>();
