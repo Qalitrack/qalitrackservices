@@ -37,8 +37,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Get transaction by ID
     /// </summary>
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
     {
         try
         {
@@ -147,8 +147,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Get incomplete transactions by vehicle ID
     /// </summary>
-    [HttpGet("incomplete/vehicle-id/{vehicleId:int}")]
-    public async Task<IActionResult> GetIncompleteByVehicleId(int vehicleId)
+    [HttpGet("incomplete/vehicle-id/{vehicleId}")]
+    public async Task<IActionResult> GetIncompleteByVehicleId(string vehicleId)
     {
         try
         {
@@ -392,8 +392,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Update an existing transaction (only if not completed)
     /// </summary>
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateTransactionDto request)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateTransactionDto request)
     {
         try
         {
@@ -420,11 +420,12 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Delete a transaction (only if not completed)
     /// </summary>
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
     {
         try
         {
+            
             var result = await _transactionService.DeleteAsync(id);
             if (!result)
             {
