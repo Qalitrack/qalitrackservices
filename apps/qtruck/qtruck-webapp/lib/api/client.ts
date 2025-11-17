@@ -52,11 +52,17 @@ import {
   DriverActivity,
   DriverActivityStats,
   DriverProfileChange,
-  // Trips types
+  // Trip types
+  TripType,
+  CreateTripTypeRequest,
+  UpdateTripTypeRequest,
   Trip,
   TripListParams,
   CreateTripRequest,
   UpdateTripRequest,
+  TripMaterial,
+  CreateTripMaterialRequest,
+  UpdateTripMaterialRequest,
   Expense,
   ExpenseListParams,
   CreateExpenseRequest,
@@ -728,6 +734,92 @@ export class ApiClient {
   async getTripsByStatus(status?: string): Promise<Record<string, Trip[]> | Trip[]> {
     const params = status ? `?status=${status}` : ''
     return this.get<Record<string, Trip[]> | Trip[]>(`/api/trips/by_status/${params}`)
+  }
+
+  // Trip Types Endpoints
+  async getTripTypes(params?: { search?: string; category?: string; is_active?: boolean; ordering?: string; page?: number; page_size?: number }): Promise<ApiResponse<TripType>> {
+    const searchParams = new URLSearchParams()
+
+    if (params?.search) searchParams.set('search', params.search)
+    if (params?.category) searchParams.set('category', params.category)
+    if (params?.is_active !== undefined) searchParams.set('is_active', params.is_active.toString())
+    if (params?.ordering) searchParams.set('ordering', params.ordering)
+    if (params?.page) searchParams.set('page', params.page.toString())
+    if (params?.page_size) searchParams.set('page_size', params.page_size.toString())
+
+    const queryString = searchParams.toString()
+    return this.get<ApiResponse<TripType>>(`/api/trips/trip-types/${queryString ? '?' + queryString : ''}`)
+  }
+
+  async getActiveTripTypes(): Promise<TripType[]> {
+    return this.get<TripType[]>('/api/trips/trip-types/active/')
+  }
+
+  async getTripTypesByCategory(category?: string): Promise<Record<string, TripType[]> | TripType[]> {
+    const params = category ? `?category=${category}` : ''
+    return this.get<Record<string, TripType[]> | TripType[]>(`/api/trips/trip-types/by_category/${params}`)
+  }
+
+  async getTripType(id: string): Promise<TripType> {
+    return this.get<TripType>(`/api/trips/trip-types/${id}/`)
+  }
+
+  async createTripType(data: CreateTripTypeRequest): Promise<TripType> {
+    return this.post<TripType>('/api/trips/trip-types/', data)
+  }
+
+  async updateTripType(id: string, data: UpdateTripTypeRequest): Promise<TripType> {
+    return this.patch<TripType>(`/api/trips/trip-types/${id}/`, data)
+  }
+
+  async deleteTripType(id: string): Promise<void> {
+    return this.delete<void>(`/api/trips/trip-types/${id}/`)
+  }
+
+  // Trip Materials Endpoints
+  async getTripMaterials(params?: {
+    trip_id?: string;
+    material?: string;
+    material_variant?: string;
+    added_at_from?: string;
+    added_at_to?: string;
+    ordering?: string;
+    page?: number;
+    page_size?: number;
+  }): Promise<ApiResponse<TripMaterial>> {
+    const searchParams = new URLSearchParams()
+
+    if (params?.trip_id) searchParams.set('trip_id', params.trip_id)
+    if (params?.material) searchParams.set('material', params.material)
+    if (params?.material_variant) searchParams.set('material_variant', params.material_variant)
+    if (params?.added_at_from) searchParams.set('added_at_from', params.added_at_from)
+    if (params?.added_at_to) searchParams.set('added_at_to', params.added_at_to)
+    if (params?.ordering) searchParams.set('ordering', params.ordering)
+    if (params?.page) searchParams.set('page', params.page.toString())
+    if (params?.page_size) searchParams.set('page_size', params.page_size.toString())
+
+    const queryString = searchParams.toString()
+    return this.get<ApiResponse<TripMaterial>>(`/api/trips/trip-materials/${queryString ? '?' + queryString : ''}`)
+  }
+
+  async getTripMaterial(id: string): Promise<TripMaterial> {
+    return this.get<TripMaterial>(`/api/trips/trip-materials/${id}/`)
+  }
+
+  async createTripMaterial(data: CreateTripMaterialRequest): Promise<TripMaterial> {
+    return this.post<TripMaterial>('/api/trips/trip-materials/', data)
+  }
+
+  async updateTripMaterial(id: string, data: UpdateTripMaterialRequest): Promise<TripMaterial> {
+    return this.patch<TripMaterial>(`/api/trips/trip-materials/${id}/`, data)
+  }
+
+  async deleteTripMaterial(id: string): Promise<void> {
+    return this.delete<void>(`/api/trip-materials/${id}/`)
+  }
+
+  async calculateTripMaterialTotal(id: string): Promise<{ material_id: string; total_cost: string }> {
+    return this.post<{ material_id: string; total_cost: string }>(`/api/trips/trip-materials/${id}/calculate_total/`, {})
   }
 
   // Expenses Endpoints
