@@ -220,6 +220,24 @@ CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / config('MEDIA_ROOT', default='media')
 
+# MinIO Storage Configuration
+USE_MINIO_STORAGE = config('USE_MINIO_STORAGE', default=False, cast=bool)
+
+if USE_MINIO_STORAGE:
+    # MinIO settings
+    MINIO_ENDPOINT = config('MINIO_ENDPOINT', default='localhost:9000')
+    MINIO_ACCESS_KEY = config('MINIO_ACCESS_KEY', default='minioadmin')
+    MINIO_SECRET_KEY = config('MINIO_SECRET_KEY', default='minioadmin123')
+    MINIO_SECURE = config('MINIO_SECURE', default=False, cast=bool)
+    MINIO_PUBLIC_URL = config('MINIO_PUBLIC_URL', default=None)
+
+    # Default storage
+    DEFAULT_FILE_STORAGE = 'storage.MinIOStorage'
+
+    # Override media URL for MinIO
+    if MINIO_PUBLIC_URL:
+        MEDIA_URL = MINIO_PUBLIC_URL + '/'
+
 # Static files
 STATIC_ROOT = BASE_DIR / config('STATIC_ROOT', default='static')
 

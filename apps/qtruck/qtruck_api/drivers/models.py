@@ -13,6 +13,9 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
 from django.utils import timezone
+
+# Import MinIO storage classes
+from storage import DriverProfileStorage
 from datetime import timedelta
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -122,27 +125,32 @@ class DriverProfile(models.Model):
     profile_photo = models.ImageField(
         upload_to='driver_profiles/photos/',
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])],
-        null=True, blank=True
+        null=True, blank=True,
+        storage=DriverProfileStorage
     )
     license_front_image = models.ImageField(
         upload_to='driver_profiles/licenses/',
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'pdf'])],
-        null=True, blank=True
+        null=True, blank=True,
+        storage=DriverProfileStorage
     )
     license_back_image = models.ImageField(
         upload_to='driver_profiles/licenses/',
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'pdf'])],
-        null=True, blank=True
+        null=True, blank=True,
+        storage=DriverProfileStorage
     )
     id_front_image = models.ImageField(
         upload_to='driver_profiles/ids/',
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'pdf'])],
-        null=True, blank=True
+        null=True, blank=True,
+        storage=DriverProfileStorage
     )
     id_back_image = models.ImageField(
         upload_to='driver_profiles/ids/',
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'pdf'])],
-        null=True, blank=True
+        null=True, blank=True,
+        storage=DriverProfileStorage
     )
     
     # Approval Information
