@@ -19,14 +19,17 @@ import {
   validateRequired,
   ValidationError
 } from '@/lib/validation'
-import { Trip, TripListParams, CreateTripRequest, Truck, Material, MaterialVariant, Expense, CreateExpenseRequest } from '@/lib/types/api'
+import { Trip, TripListParams, CreateTripRequest, Truck, Material, MaterialVariant, Expense, CreateExpenseRequest, TripType } from '@/lib/types/api'
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([])
   const [trucks, setTrucks] = useState<Truck[]>([])
   const [materials, setMaterials] = useState<Material[]>([])
   const [materialVariants, setMaterialVariants] = useState<MaterialVariant[]>([])
+  const [tripTypes, setTripTypes] = useState<TripType[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedTripType, setSelectedTripType] = useState<TripType | null>(null)
+  const [includeMaterials, setIncludeMaterials] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null)
@@ -60,10 +63,11 @@ export default function TripsPage() {
         ordering: '-date' // Most recent first
       }
 
-      const [tripsResponse, trucksResponse, materialsResponse] = await Promise.all([
+      const [tripsResponse, trucksResponse, materialsResponse, tripTypesResponse] = await Promise.all([
         apiClient.getTrips(params),
         apiClient.getTrucks(),
-        apiClient.getMaterials()
+        apiClient.getMaterials(),
+        apiClient.getActiveTripTypes()
       ])
       
       if (reset) {
@@ -78,6 +82,7 @@ export default function TripsPage() {
       
       setTrucks(trucksResponse.results || [])
       setMaterials(materialsResponse.results || [])
+      setTripTypes(tripTypesResponse || [])
     } catch (error) {
       console.error('Failed to load trips:', error)
       showError('Failed to load trips', error instanceof Error ? error.message : 'An unexpected error occurred')
@@ -227,10 +232,11 @@ export default function TripsPage() {
 
       {/* Add Trip Dialog */}
       {showAddDialog && (
-        <AddTripDialog 
+        <AddTripDialog
           trucks={trucks}
           materials={materials}
           materialVariants={materialVariants}
+          tripTypes={tripTypes}
           onClose={() => setShowAddDialog(false)} 
           onSuccess={() => {
             fetchData(true)
@@ -480,22 +486,26 @@ function DriverTripCard({
 }
 
 // Add Trip Dialog Component for Drivers
-function AddTripDialog({ 
-  trucks, 
-  materials, 
-  materialVariants, 
-  onClose, 
-  onSuccess 
-}: { 
-  trucks: Truck[]; 
-  materials: Material[]; 
-  materialVariants: MaterialVariant[]; 
-  onClose: () => void; 
-  onSuccess: () => void 
+function AddTripDialog({
+  trucks,
+  materials,
+  materialVariants,
+  tripTypes,
+  onClose,
+  onSuccess
+}: {
+  trucks: Truck[];
+  materials: Material[];
+  materialVariants: MaterialVariant[];
+  tripTypes: TripType[];
+  onClose: () => void;
+  onSuccess: () => void
 }) {
   const { showSuccess, showError } = useToast()
   const [formData, setFormData] = useState({
     truck_id: '',
+    trip_type_id: '',
+    custom_trip_type: '',
     start_location: '',
     end_location: '',
     // start_mileage removed - set when starting trip
@@ -653,11 +663,16 @@ function AddTripDialog({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.truck_id) newErrors.truck_id = 'Truck is required'
     if (!formData.start_location) newErrors.start_location = 'Start location is required'
     if (!formData.end_location) newErrors.end_location = 'End location is required'
-    
+
+    // Trip type validation: either select a predefined type or enter a custom one
+    if (!formData.trip_type_id && !formData.custom_trip_type.trim()) {
+      newErrors.trip_type_id = 'Please select a trip type or enter a custom trip type'
+    }
+
     setClientErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -692,7 +707,11 @@ function AddTripDialog({
         end_location: formData.end_location,
         status: formData.status
       }
-      
+
+      // Add trip type information
+      if (formData.trip_type_id) data.trip_type_id = formData.trip_type_id
+      if (formData.custom_trip_type.trim()) data.custom_trip_type = formData.custom_trip_type.trim()
+
       if (formData.material_id) data.material_id = formData.material_id
       if (formData.material_variant_id) data.material_variant_id = formData.material_variant_id
       if (formData.material_cost) data.material_cost = formData.material_cost
@@ -700,6 +719,7 @@ function AddTripDialog({
       // Add location coordinates if captured
       if (currentLocation) {
         data.current_location_coords = [currentLocation.lng, currentLocation.lat] // GeoJSON format [lng, lat]
+        data.truck_location_coords = [currentLocation.lng, currentLocation.lat] // Also store as truck location
       }
       
       // Create trip first
@@ -769,9 +789,181 @@ function AddTripDialog({
               ))}
             </Select>
           </FormField>
-          
-          <FormField 
-            label="Start Location" 
+
+          {/* Trip Type Selection */}
+          <FormField
+            label="Trip Type"
+            required
+            errors={[...getErrorsForField(errors, 'trip_type_id'), ...(clientErrors.trip_type_id ? [clientErrors.trip_type_id] : [])]}
+          >
+            <Select
+              value={formData.trip_type_id}
+              onChange={(value) => {
+                handleInputChange('trip_type_id', value)
+                // Clear custom trip type when selecting a predefined one
+                if (value) {
+                  handleInputChange('custom_trip_type', '')
+                  // Update selected trip type for material logic
+                  const selectedType = tripTypes.find(tt => tt.id === value)
+                  setSelectedTripType(selectedType || null)
+                  // Set includeMaterials based on trip type
+                  if (selectedType) {
+                    if (selectedType.material_requirement === 'mandatory') {
+                      setIncludeMaterials(true)
+                    } else if (selectedType.material_requirement === 'none') {
+                      setIncludeMaterials(false)
+                    } else {
+                      // Optional - default to false initially
+                      setIncludeMaterials(false)
+                    }
+                  }
+                } else {
+                  setSelectedTripType(null)
+                  setIncludeMaterials(false)
+                }
+              }}
+              placeholder="Select a trip type..."
+            >
+              <option value="">Select trip type...</option>
+              {tripTypes.map((tripType) => (
+                <option key={tripType.id} value={tripType.id}>
+                  {tripType.category === 'empty' && tripType.empty_trip_option
+                    ? `${tripType.name} (${tripType.empty_trip_option})`
+                    : tripType.name
+                  }
+                </option>
+              ))}
+            </Select>
+          </FormField>
+
+          <FormField
+            label="Custom Trip Type (Optional)"
+            errors={getErrorsForField(errors, 'custom_trip_type')}
+          >
+            <Input
+              type="text"
+              value={formData.custom_trip_type}
+              onChange={(e) => {
+                handleInputChange('custom_trip_type', e.target.value)
+                // Clear predefined trip type when entering custom one
+                if (e.target.value.trim()) {
+                  handleInputChange('trip_type_id', '')
+                  setSelectedTripType(null)
+                  setIncludeMaterials(false) // Default to false for custom types
+                } else {
+                  setSelectedTripType(null)
+                  setIncludeMaterials(false)
+                }
+              }}
+              placeholder="Enter custom trip type if not listed above..."
+            />
+          </FormField>
+
+          {/* Material option for optional trip types */}
+          {selectedTripType?.material_requirement === 'optional' && (
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="includeMaterials"
+                checked={includeMaterials}
+                onChange={(e) => setIncludeMaterials(e.target.checked)}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="includeMaterials" className="ml-2 text-sm text-gray-700">
+                This trip will include materials
+              </label>
+            </div>
+          )}
+
+          {/* Material section - show for mandatory or when optional is checked */}
+          {(selectedTripType?.material_requirement === 'mandatory' ||
+            (selectedTripType?.material_requirement === 'optional' && includeMaterials)) && (
+            <>
+              <FormField
+                label="Material"
+                errors={getErrorsForField(errors, 'material_id')}
+              >
+                <div className="relative">
+                  <Input
+                    type="text"
+                    value={materialSearch}
+                    onChange={(e) => handleMaterialSearch(e.target.value)}
+                    placeholder="Search for material..."
+                    onFocus={() => {
+                      if (materialSearch) {
+                        setShowMaterialDropdown(true)
+                      }
+                    }}
+                    errors={getErrorsForField(errors, 'material_id')}
+                  />
+                  {/* Clear button */}
+                  {materialSearch && (
+                    <button
+                      type="button"
+                      onClick={clearMaterialSelection}
+                      className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                    >
+                      ✕
+                    </button>
+                  )}
+                  {/* Dropdown */}
+                  {showMaterialDropdown && filteredMaterials.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      {filteredMaterials.map((material) => (
+                        <div
+                          key={material.id}
+                          onClick={() => selectMaterial(material)}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="font-medium">{material.name}</div>
+                          {material.description && (
+                            <div className="text-xs text-gray-500">{material.description}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </FormField>
+
+              {formData.material_id && (
+                <FormField
+                  label="Material Variant"
+                  errors={getErrorsForField(errors, 'material_variant_id')}
+                >
+                  <Select
+                    value={formData.material_variant_id}
+                    onChange={(value) => handleInputChange('material_variant_id', value)}
+                  >
+                    <option value="">Select variant...</option>
+                    {filteredVariants.map((variant) => (
+                      <option key={variant.id} value={variant.id}>
+                        {variant.name}
+                      </option>
+                    ))}
+                  </Select>
+                </FormField>
+              )}
+
+              {formData.material_id && (
+                <FormField
+                  label="Trip Revenue (KSh)"
+                  errors={getErrorsForField(errors, 'material_cost')}
+                >
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.material_cost}
+                    onChange={(e) => handleInputChange('material_cost', e.target.value)}
+                    placeholder="Revenue from material delivery"
+                  />
+                </FormField>
+              )}
+            </>
+          )}
+
+          <FormField
+            label="Start Location"
             required
             errors={[...getErrorsForField(errors, 'start_location'), ...(clientErrors.start_location ? [clientErrors.start_location] : [])]}
           >
@@ -797,12 +989,8 @@ function AddTripDialog({
               errors={[...getErrorsForField(errors, 'end_location'), ...(clientErrors.end_location ? [clientErrors.end_location] : [])]}
             />
           </FormField>
-          
-          
-          <FormField 
-            label="Material" 
-            errors={getErrorsForField(errors, 'material_id')}
-          >
+
+          {/* Location Status */}
             <div className="relative">
               <Input
                 type="text"

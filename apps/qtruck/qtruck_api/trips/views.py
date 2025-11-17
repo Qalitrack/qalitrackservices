@@ -9,8 +9,8 @@ from django_filters import rest_framework as filters_rest
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django.utils import timezone
 
-from .models import Trip, Expense, Receipt, VehicleMileage
-from .serializers import TripSerializer, ExpenseSerializer, ReceiptSerializer, VehicleMileageSerializer
+from .models import Trip, TripType, Expense, Receipt, VehicleMileage, TripMaterial
+from .serializers import TripSerializer, TripTypeSerializer, ExpenseSerializer, ReceiptSerializer, VehicleMileageSerializer, TripMaterialSerializer
 from settings.permissions import (
     IsApproved, IsAdminOrDriverOrTester
 )
@@ -371,3 +371,194 @@ class VehicleMileageViewSet(viewsets.ModelViewSet):
             if driver:
                 return VehicleMileage.objects.filter(driver=driver)
         return VehicleMileage.objects.none()
+
+
+class TripTypeFilterSet(filters_rest.FilterSet):
+    """Filter set for TripType"""
+    category = filters_rest.CharFilter(field_name="category")
+    is_active = filters_rest.BooleanFilter(field_name="is_active")
+
+    class Meta:
+        model = TripType
+        fields = ['category', 'is_active']
+
+
+@extend_schema_view(
+    list=extend_schema(tags=["Trip Types"]),
+    retrieve=extend_schema(tags=["Trip Types"]),
+    create=extend_schema(tags=["Trip Types"]),
+    update=extend_schema(tags=["Trip Types"]),
+    partial_update=extend_schema(tags=["Trip Types"]),
+    destroy=extend_schema(tags=["Trip Types"]),
+    active=extend_schema(tags=["Trip Types"]),
+    by_category=extend_schema(tags=["Trip Types"]),
+)
+class TripTypeViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing Trip Types
+    - Admin users have full CRUD access
+    - Driver users can only read (list/retrieve)
+    """
+    queryset = TripType.objects.all()
+    serializer_class = TripTypeSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = TripTypeFilterSet
+    search_fields = ['name', 'description', 'empty_trip_option']
+    ordering_fields = ['name', 'category', 'created_at']
+    ordering = ['category', 'name']
+
+    def get_permissions(self):
+        """
+        Set permissions based on action:
+        - Admin users: full CRUD access
+        - Driver users: read-only access
+        """
+        if self.action in ['list', 'retrieve', 'active', 'by_category']:
+            # All authenticated users can read trip types
+            self.permission_classes = [IsApproved]
+        else:
+            # Only admin users can create/update/delete trip types
+            self.permission_classes = [IsApproved]
+            # Check if user is admin
+            if not (self.request.user.is_authenticated and self.request.user.user_type == 'admin'):
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("Only admin users can perform this action.")
+
+        return [permission() for permission in self.permission_classes]
+
+    def get_queryset(self):
+        """
+        Filter queryset based on user role:
+        - Admin: see all trip types
+        - Drivers: see only active trip types
+        """
+        if self.request.user.user_type == 'admin':
+            return TripType.objects.all()
+        elif self.request.user.user_type in ['driver', 'tester']:
+            return TripType.objects.filter(is_active=True)
+        return TripType.objects.none()
+
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        """Get all active trip types"""
+        queryset = self.get_queryset().filter(is_active=True)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def by_category(self, request):
+        """Get trip types grouped by category"""
+        category = request.query_params.get('category', None)
+        if category:
+            queryset = self.get_queryset().filter(category=category)
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            # Return trip types grouped by category
+            queryset = self.get_queryset()
+            trip_types_by_category = {}
+            for trip_type in queryset:
+                cat = trip_type.category or 'other'
+                if cat not in trip_types_by_category:
+                    trip_types_by_category[cat] = []
+                trip_types_by_category[cat].append(self.get_serializer(trip_type).data)
+            return Response(trip_types_by_category)
+
+
+class TripMaterialFilterSet(filters_rest.FilterSet):
+    """Filter set for TripMaterial"""
+    material = filters_rest.ModelChoiceFilter(queryset=Material.objects.all())
+    added_at_from = filters_rest.DateFilter(field_name="added_at", lookup_expr='gte')
+    added_at_to = filters_rest.DateFilter(field_name="added_at", lookup_expr='lte')
+
+    class Meta:
+        model = TripMaterial
+        fields = ['material', 'added_at_from', 'added_at_to']
+
+
+@extend_schema_view(
+    list=extend_schema(tags=["Trip Materials"]),
+    retrieve=extend_schema(tags=["Trip Materials"]),
+    create=extend_schema(tags=["Trip Materials"]),
+    update=extend_schema(tags=["Trip Materials"]),
+    partial_update=extend_schema(tags=["Trip Materials"]),
+    destroy=extend_schema(tags=["Trip Materials"]),
+)
+class TripMaterialViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing Trip Materials
+    - Admin users have full CRUD access
+    - Driver users can add materials to their own trips
+    """
+    queryset = TripMaterial.objects.all()
+    serializer_class = TripMaterialSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = TripMaterialFilterSet
+    ordering_fields = ['added_at', 'material__name', 'total_cost']
+    ordering = ['-added_at']
+
+    def get_permissions(self):
+        """
+        Set permissions based on action:
+        - Admin users: full CRUD access
+        - Driver users: can add materials to their own trips
+        """
+        if self.action in ['create']:
+            # Drivers can add materials to their own trips
+            self.permission_classes = [IsApproved]
+            # Check if trip belongs to the driver
+            if not (self.request.user.is_authenticated and self.request.user.user_type in ['driver', 'tester']):
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("Only authenticated users can add trip materials.")
+        else:
+            # For other actions, use default permissions
+            self.permission_classes = [IsApproved, IsAdminOrDriverOrTester]
+
+        return [permission() for permission in self.permission_classes]
+
+    def get_queryset(self):
+        """
+        Filter queryset based on user role:
+        - Admin: see all trip materials
+        - Drivers: see materials for their own trips
+        """
+        if self.request.user.user_type == 'admin':
+            return TripMaterial.objects.all()
+        elif self.request.user.user_type in ['driver', 'tester']:
+            driver = getattr(self.request.user, 'driver_profile', None)
+            if driver:
+                return TripMaterial.objects.filter(trip__driver=driver)
+        return TripMaterial.objects.none()
+
+    def perform_create(self, serializer):
+        """
+        Override to check if trip belongs to driver (for non-admin users)
+        and set appropriate permissions
+        """
+        if self.request.user.user_type not in ['admin']:
+            # Check if trip belongs to the driver
+            trip = serializer.validated_data['trip']
+            driver = getattr(self.request.user, 'driver_profile', None)
+            if not driver or trip.driver != driver:
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("You can only add materials to your own trips.")
+
+        serializer.save()
+
+    @action(detail=True, methods=['post'])
+    def calculate_total(self, request, pk=None):
+        """Recalculate total cost for a specific material"""
+        trip_material = self.get_object()
+
+        if trip_material.quantity and trip_material.unit_cost:
+            trip_material.total_cost = trip_material.quantity * trip_material.unit_cost
+            trip_material.save()
+
+            # Also recalculate trip total cost
+            trip_material.trip.calculate_total_cost()
+            trip_material.trip.save()
+
+        return Response({
+            'material_id': trip_material.id,
+            'total_cost': str(trip_material.total_cost)
+        })
