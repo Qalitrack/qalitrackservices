@@ -287,15 +287,83 @@ export interface CreateMaterialCostRequest {
   user_id?: string;
 }
 
+// Trip Type Management
+export interface TripType {
+  id: string; // UUID
+  name: string;
+  description: string;
+  is_active: boolean;
+  category: 'loaded' | 'empty' | 'maintenance' | 'other';
+  empty_trip_option: string;
+  material_requirement: 'none' | 'optional' | 'mandatory';
+  created_by: string | null; // UUID of user who created it
+  created_by_name: string; // Computed field
+  created_at: string; // ISO datetime
+  updated_at: string; // ISO datetime
+}
+
+export interface CreateTripTypeRequest {
+  name: string;
+  description?: string;
+  category: 'loaded' | 'empty' | 'maintenance' | 'other';
+  empty_trip_option?: string;
+  material_requirement?: 'none' | 'optional' | 'mandatory';
+  is_active?: boolean;
+}
+
+export interface UpdateTripTypeRequest {
+  name?: string;
+  description?: string;
+  category?: 'loaded' | 'empty' | 'maintenance' | 'other';
+  empty_trip_option?: string;
+  material_requirement?: 'none' | 'optional' | 'mandatory';
+  is_active?: boolean;
+}
+
+// Trip Material Management
+export interface TripMaterial {
+  id: string; // UUID
+  trip: string; // Trip UUID
+  material: string; // Material UUID
+  material_variant?: string | null; // MaterialVariant UUID
+  quantity?: string | null; // Decimal as string
+  unit_cost?: string | null; // Decimal as string
+  total_cost: string; // Decimal as string
+  added_at: string; // ISO datetime
+  added_by?: string | null; // User UUID
+  added_by_name?: string; // Computed field
+  notes?: string; // Additional notes
+  material_name?: string; // Computed field
+  material_variant_name?: string; // Computed field
+}
+
+export interface CreateTripMaterialRequest {
+  trip: string; // Trip UUID
+  material: string; // Material UUID
+  material_variant?: string | null; // MaterialVariant UUID
+  quantity?: string | null; // Decimal as string
+  unit_cost?: string | null; // Decimal as string
+  notes?: string; // Additional notes
+}
+
+export interface UpdateTripMaterialRequest {
+  quantity?: string | null; // Decimal as string
+  unit_cost?: string | null; // Decimal as string
+  notes?: string; // Additional notes
+}
+
 // Trip Types (comprehensive implementation)
 export interface Trip {
   id: string; // UUID
   truck: Truck; // Read-only populated truck object
   driver: Driver; // Read-only populated driver object
+  trip_type?: TripType | null; // Optional trip type
+  custom_trip_type?: string | null; // Custom trip type if not using predefined
   material?: Material | null; // Optional material being transported
   material_variant?: MaterialVariant | null; // Optional specific variant
   start_location?: string | null;
   end_location?: string | null;
+  truck_location_coords?: [number, number] | null; // Current truck location when created
   start_location_coords?: [number, number] | null; // [longitude, latitude]
   end_location_coords?: [number, number] | null; // [longitude, latitude]
   start_mileage?: number | null;
@@ -308,6 +376,7 @@ export interface Trip {
   total_cost: string; // Decimal field as string (auto-calculated)
   material_cost?: string | null; // Decimal field as string
   expenses: Expense[]; // Read-only list of expenses
+  trip_materials: TripMaterial[]; // Read-only list of trip materials
   created_at: string; // ISO datetime
   updated_at: string; // ISO datetime
   
@@ -321,11 +390,14 @@ export interface Trip {
 export interface CreateTripRequest {
   truck_id: string; // UUID
   driver_id: string; // UUID
+  trip_type_id?: string | null; // UUID - optional trip type
+  custom_trip_type?: string | null; // Custom trip type if not using predefined
   date?: string; // ISO datetime - Optional, auto-set by backend
   start_location?: string;
   end_location?: string;
   start_location_coords?: [number, number] | null;
   end_location_coords?: [number, number] | null;
+  truck_location_coords?: [number, number] | null; // Current truck location when created
   start_mileage?: number;
   end_mileage?: number;
   material_id?: string | null;
