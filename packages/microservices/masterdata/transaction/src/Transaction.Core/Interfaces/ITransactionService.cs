@@ -6,11 +6,11 @@ public interface ITransactionService
 {
     // Basic CRUD with pagination
     Task<PagedResult<TransactionReadDto>> GetAllAsync(WeighbridgeTransactionFilter filter);
-    Task<TransactionReadDto?> GetByIdAsync(int id);
+    Task<TransactionReadDto?> GetByIdAsync(string id);
     Task<TransactionReadDto?> GetByReceiptNoAsync(string receiptNo);
     Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto);
-    Task<TransactionReadDto?> UpdateAsync(int id, UpdateTransactionDto dto);
-    Task<bool> DeleteAsync(int id);
+    Task<TransactionReadDto?> UpdateAsync(string id, UpdateTransactionDto dto);
+    Task<bool> DeleteAsync(string id);
     
     // Receipt validation
     Task<bool> IsReceiptNoAvailableAsync(string receiptNo);
@@ -21,7 +21,7 @@ public interface ITransactionService
     
     // Get incomplete transactions for continuation
     Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleAsync(string noPlate);
-    Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId);
+    Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId);
     
     // Get transactions by status
     Task<IEnumerable<TransactionReadDto>> GetTransactionsByStatusAsync(string status, int limit = 100);
