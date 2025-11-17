@@ -39,11 +39,23 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<T?> UpdateAsync(T entity)
     {
-        entity.UpdatedAt = DateTime.UtcNow;
+        var existingEntity = await _dbSet.FindAsync(entity.Id);
+        if (existingEntity == null)
+        {
+            return null;
+        }
+
+        // Update all properties from the incoming entity to the existing entity
+        _context.Entry(existingEntity).CurrentValues.SetValues(entity);
         
-        _dbSet.Update(entity);
+        // Explicitly set the UpdatedAt timestamp
+        existingEntity.UpdatedAt = DateTime.UtcNow;
+        
+        // Mark the entity as modified to ensure all changes are saved
+        _context.Entry(existingEntity).State = EntityState.Modified;
+        
         await _context.SaveChangesAsync();
-        return entity;
+        return existingEntity;
     }
 
     public virtual async Task<bool> DeleteAsync(string id)
