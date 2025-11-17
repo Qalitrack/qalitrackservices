@@ -12,6 +12,50 @@ services:
     networks:
       - qtruck_dev_qs_network
 
+  minio:
+    image: minio/minio:latest
+    container_name: qtruck-minio-dev
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - minio_data_dev:/data
+    networks:
+      - qtruck_dev_qs_network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  create_minio_buckets:
+    image: minio/mc:latest
+    container_name: qtruck-create-minio-buckets
+    depends_on:
+      - minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    networks:
+      - qtruck_dev_qs_network
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD;
+      /usr/bin/mc mb myminio/qtruck-trip-images --ignore-existing;
+      /usr/bin/mc mb myminio/qtruck-expense-receipts --ignore-existing;
+      /usr/bin/mc mb myminio/qtruck-material-photos --ignore-existing;
+      /usr/bin/mc mb myminio/qtruck-driver-profiles --ignore-existing;
+      /usr/bin/mc mb myminio/qtruck-receipts --ignore-existing;
+      /usr/bin/mc policy set public myminio/qtruck-trip-images;
+      /usr/bin/mc policy set public myminio/qtruck-expense-receipts;
+      /usr/bin/mc policy set public myminio/qtruck-material-photos;
+      /usr/bin/mc policy set public myminio/qtruck-driver-profiles;
+      /usr/bin/mc policy set public myminio/qtruck-receipts;
+      exit 0;
+      "
+
   qtruck_api:
     image: ghcr.io/qalitrack/qalitrackservices/qtruck-api:main
     container_name: qtruck-api-dev
@@ -25,8 +69,15 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - MINIO_SECURE=False
+      - USE_MINIO_STORAGE=True
     depends_on:
       - postgresql
+      - minio
+      - create_minio_buckets
     networks:
       - qtruck_dev_qs_network
       - proxy-network
@@ -83,6 +134,7 @@ services:
 
 volumes:
   postgresql_data_dev:
+  minio_data_dev:
 
 networks:
   qtruck_dev_qs_network:

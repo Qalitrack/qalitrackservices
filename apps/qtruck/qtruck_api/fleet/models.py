@@ -7,6 +7,8 @@ from django.core.validators import FileExtensionValidator
 from users.models import BaseModel
 # Import Driver model from drivers app
 from drivers.models import Driver
+# Import MinIO storage classes
+from storage import MaterialPhotoStorage
 
 
 class Truck(BaseModel):
@@ -40,7 +42,7 @@ class MaterialVariant(BaseModel):
 
 class MaterialPhoto(BaseModel):
     material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name='photos')
-    photo = models.ImageField(upload_to='material_photos/')
+    photo = models.ImageField(upload_to='material_photos/', storage=MaterialPhotoStorage)
     caption = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
@@ -49,7 +51,7 @@ class MaterialPhoto(BaseModel):
 
 class MaterialVariantPhoto(BaseModel):
     material_variant = models.ForeignKey(MaterialVariant, on_delete=models.CASCADE, related_name='photos')
-    photo = models.ImageField(upload_to='material_variant_photos/')
+    photo = models.ImageField(upload_to='material_variant_photos/', storage=MaterialPhotoStorage)
     caption = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
