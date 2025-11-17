@@ -87,8 +87,15 @@ builder.Services.AddAutoMapper(typeof(TransactionProfile));
 
 // Add Entity Framework with PostgreSQL
 builder.Services.AddDbContext<TransactionDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ??
-    "Host=localhost;Database=qalitrack_transactions;Username=postgres;Password=postgres"));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                           "Host=localhost;Database=qalitrack_transactions;Username=postgres;Password=postgres";
+    
+    options.UseNpgsql(connectionString);
+    
+    // Disable lazy loading to prevent AutoMapper issues with proxies
+    options.UseLazyLoadingProxies(false);
+});
 
 // TODO: Add authentication if needed for this service
 // For authentication services, uncomment and configure JWT
@@ -182,36 +189,66 @@ else
     });
 }
 
-app.UseHttpsRedirection();
-app.UseCors("AllowAll");
 
 // Use Data Leak Prevention Middleware (sanitizes errors and sensitive data)
-app.UseDataLeakPrevention();
+if (!app.Environment.IsEnvironment("Test"))
+{
+    app.UseDataLeakPrevention();
+}
 
 // Use Serilog request logging
-app.UseSerilogRequestLogging();
+if (!app.Environment.IsEnvironment("Test"))
+{
+    app.UseSerilogRequestLogging();
+}
 
-// TODO: Uncomment if authentication is needed
+// Use authentication and authorization if needed
 // app.UseAuthentication();
 // app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
-
+// Run database migrations automatically on startup in non-Development environments
 // Run database migrations automatically on startup
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsDevelopment())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<TransactionDbContext>();
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        Log.Information("Applying database migrations...");
-        dbContext.Database.Migrate();
-        Log.Information("Database migrations applied successfully");
+        var dbContext = scope.ServiceProvider.GetRequiredService<TransactionDbContext>();
+        try
+        {
+            Log.Information("Applying database migrations...");
+            
+            // Only migrate if using a real database (not InMemory)
+            if (dbContext.Database.IsRelational())
+            {
+                dbContext.Database.Migrate();
+                Log.Information("Database migrations applied successfully");
+            }
+            else
+            {
+                Log.Information("Using non-relational database, skipping migrations");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error applying database migrations");
+            throw;
+        }
     }
-    catch (Exception ex)
+}
+else
+{
+    // In Development, just ensure the database is created
+    using (var scope = app.Services.CreateScope())
     {
-        Log.Error(ex, "Error applying database migrations");
-        throw;
+        var dbContext = scope.ServiceProvider.GetRequiredService<TransactionDbContext>();
+        
+        // Only for relational databases
+        if (dbContext.Database.IsRelational())
+        {
+            dbContext.Database.EnsureCreated();
+        }
     }
 }
 
