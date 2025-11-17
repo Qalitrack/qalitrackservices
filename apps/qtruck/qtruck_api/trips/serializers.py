@@ -1,8 +1,71 @@
 from rest_framework import serializers
 from django.contrib.gis.geos import Point
-from .models import Trip, Expense, Receipt, VehicleMileage
+from .models import Trip, TripType, Expense, Receipt, VehicleMileage, TripMaterial
 from fleet.serializers import TruckSerializer, MaterialSerializer, MaterialVariantSerializer
 from drivers.serializers import DriverSerializer
+
+
+class TripTypeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for TripType model
+    """
+    created_by_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = TripType
+        fields = [
+            'id', 'name', 'description', 'is_active', 'category',
+            'empty_trip_option', 'material_requirement',
+            'created_by', 'created_by_name', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_by', 'created_at', 'updated_at']
+
+    def get_created_by_name(self, obj):
+        """Get the name of the user who created this trip type"""
+        if obj.created_by:
+            return obj.created_by.get_full_name() or obj.created_by.email
+        return None
+
+    def create(self, validated_data):
+        """Set the created_by field to the current authenticated user"""
+        user = self.context['request'].user
+        validated_data['created_by'] = user
+        return super().create(validated_data)
+
+
+class TripMaterialSerializer(serializers.ModelSerializer):
+    """
+    Serializer for TripMaterial model
+    """
+    material_name = serializers.SerializerMethodField(read_only=True)
+    material_variant_name = serializers.SerializerMethodField(read_only=True)
+    added_by_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = TripMaterial
+        fields = [
+            'id', 'trip', 'material', 'material_variant', 'quantity', 'unit_cost',
+            'total_cost', 'added_at', 'added_by', 'added_by_name', 'notes',
+            'material_name', 'material_variant_name'
+        ]
+        read_only_fields = ['added_by', 'added_by_name', 'added_at', 'total_cost']
+
+    def get_material_name(self, obj):
+        return obj.material.name if obj.material else None
+
+    def get_material_variant_name(self, obj):
+        return obj.material_variant.name if obj.material_variant else None
+
+    def get_added_by_name(self, obj):
+        if obj.added_by:
+            return obj.added_by.get_full_name() or obj.added_by.email
+        return None
+
+    def create(self, validated_data):
+        """Set the added_by field to the current authenticated user"""
+        user = self.context['request'].user
+        validated_data['added_by'] = user
+        return super().create(validated_data)
 
 
 class ReceiptSerializer(serializers.ModelSerializer):
@@ -60,12 +123,18 @@ class TripSerializer(serializers.ModelSerializer):
     driver = DriverSerializer(read_only=True)
     material = MaterialSerializer(read_only=True)
     material_variant = MaterialVariantSerializer(read_only=True)
+    trip_type = TripTypeSerializer(read_only=True)
     expenses = ExpenseSerializer(many=True, read_only=True)
+    trip_materials = TripMaterialSerializer(many=True, read_only=True)
     truck_id = serializers.UUIDField(write_only=True)
     # driver_id removed - driver is auto-set from authenticated user
     material_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
     material_variant_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
-    
+    trip_type_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
+
+    # Computed fields
+    trip_type_display = serializers.SerializerMethodField(read_only=True)
+
     # Photo upload fields
     proof_image_file = serializers.ImageField(write_only=True, required=False, allow_null=True)
     proof_end_image_file = serializers.ImageField(write_only=True, required=False, allow_null=True)
@@ -100,6 +169,10 @@ class TripSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.proof_end_image.url)
             return obj.proof_end_image.url
         return None
+
+    def get_trip_type_display(self, obj):
+        """Get the display name for the trip type"""
+        return obj.get_trip_type_display()
     
     def validate(self, data):
         # Validate that material_variant belongs to material if both are provided
@@ -136,6 +209,7 @@ class TripSerializer(serializers.ModelSerializer):
         truck_id = validated_data.pop('truck_id')
         material_id = validated_data.pop('material_id', None)
         material_variant_id = validated_data.pop('material_variant_id', None)
+        trip_type_id = validated_data.pop('trip_type_id', None)
         
         from fleet.models import Truck, Material, MaterialVariant
         from drivers.models import Driver
@@ -150,7 +224,9 @@ class TripSerializer(serializers.ModelSerializer):
             validated_data['material'] = Material.objects.get(id=material_id)
         if material_variant_id:
             validated_data['material_variant'] = MaterialVariant.objects.get(id=material_variant_id)
-        
+        if trip_type_id:
+            validated_data['trip_type'] = TripType.objects.get(id=trip_type_id)
+
         # Convert coordinate arrays to Point objects
         if 'start_location_coords' in validated_data:
             validated_data['start_location_coords'] = self._convert_coords_to_point(validated_data['start_location_coords'])
@@ -158,6 +234,8 @@ class TripSerializer(serializers.ModelSerializer):
             validated_data['end_location_coords'] = self._convert_coords_to_point(validated_data['end_location_coords'])
         if 'current_location_coords' in validated_data:
             validated_data['current_location_coords'] = self._convert_coords_to_point(validated_data['current_location_coords'])
+        if 'truck_location_coords' in validated_data:
+            validated_data['truck_location_coords'] = self._convert_coords_to_point(validated_data['truck_location_coords'])
         
         # Create trip instance
         trip = Trip.objects.create(**validated_data)
@@ -189,7 +267,7 @@ class TripSerializer(serializers.ModelSerializer):
         
         # Handle regular field updates
         for attr, value in validated_data.items():
-            if attr in ['truck_id', 'material_id', 'material_variant_id']:
+            if attr in ['truck_id', 'material_id', 'material_variant_id', 'trip_type_id']:
                 # Handle foreign key updates
                 if attr == 'truck_id' and value:
                     from fleet.models import Truck
@@ -201,6 +279,11 @@ class TripSerializer(serializers.ModelSerializer):
                 elif attr == 'material_variant_id' and value:
                     from fleet.models import MaterialVariant
                     instance.material_variant = MaterialVariant.objects.get(id=value)
+                elif attr == 'trip_type_id' and value:
+                    instance.trip_type = TripType.objects.get(id=value)
+            elif attr.endswith('_coords'):
+                # Handle coordinate field updates
+                setattr(instance, attr, self._convert_coords_to_point(value))
             else:
                 setattr(instance, attr, value)
         
