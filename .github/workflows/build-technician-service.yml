@@ -115,7 +115,7 @@ jobs:
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;"
         run: |
           cd ${{ env.SERVICE_PATH }}
-          if [ -d "src/TechnicianApi.Infrastructure/Migrations" ]; then
+          if [ -d "src/TechnicianAPi.Infrastructure/Migrations" ]; then
             echo "Running database migrations..."
             dotnet ef database update \
               --project src/TechnicianApi.Infrastructure/TechnicianApi.Infrastructure.csproj \
