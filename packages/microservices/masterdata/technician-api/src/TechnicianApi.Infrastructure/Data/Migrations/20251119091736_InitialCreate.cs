@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TechnicianApi.Infrastructure.Migrations
+namespace TechnicianApi.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFinancialFormsAndBalanceSystem : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,6 +42,31 @@ namespace TechnicianApi.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Attachments",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    FileName = table.Column<string>(type: "TEXT", nullable: false),
+                    FilePath = table.Column<string>(type: "TEXT", nullable: false),
+                    ContentType = table.Column<string>(type: "TEXT", nullable: false),
+                    FileSize = table.Column<long>(type: "INTEGER", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UploadedBy = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    EntityType = table.Column<string>(type: "TEXT", nullable: false),
+                    EntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attachments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Technicians",
                 columns: table => new
                 {
@@ -69,6 +94,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                     Latitude = table.Column<double>(type: "REAL", nullable: false),
                     Longitude = table.Column<double>(type: "REAL", nullable: false),
                     CheckInTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CheckOutTime = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Notes = table.Column<string>(type: "TEXT", nullable: true),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -163,6 +189,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
+                    AttachmentId = table.Column<string>(type: "TEXT", nullable: true),
                     AssignmentId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     TechnicianId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     TotalAmount = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
@@ -188,6 +215,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalTable: "Assignments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AdvanceReturnForms_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AdvanceReturnForms_Technicians_TechnicianId",
                         column: x => x.TechnicianId,
@@ -309,6 +341,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                     RejectedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     RejectedBy = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     RejectionReason = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    AttachmentId = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
@@ -324,6 +357,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalTable: "Assignments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Claims_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Claims_Technicians_TechnicianId",
                         column: x => x.TechnicianId,
@@ -352,6 +390,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                     TotalRequisitions = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalRequisitionAmount = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
                     AutoGeneratedNotes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    AttachmentId = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
@@ -361,6 +400,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DailySummaries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DailySummaries_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_DailySummaries_Technicians_TechnicianId",
                         column: x => x.TechnicianId,
@@ -390,6 +434,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                     RejectedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     RejectedBy = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     RejectionReason = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    AttachmentId = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
@@ -405,6 +450,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalTable: "Assignments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PerDiemReturnForms_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_PerDiemReturnForms_Technicians_TechnicianId",
                         column: x => x.TechnicianId,
@@ -482,6 +532,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                     RejectedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     RejectedBy = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     RejectionReason = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    AttachmentId = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
@@ -497,6 +548,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalTable: "Assignments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Refunds_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Refunds_Technicians_TechnicianId",
                         column: x => x.TechnicianId,
@@ -560,16 +616,26 @@ namespace TechnicianApi.Infrastructure.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     AssignmentId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     TechnicianId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    ServiceType = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    TechnicianName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    CustomerName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     LocationName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    WorkPerformed = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: false),
-                    MaterialsUsed = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
-                    Observations = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
-                    Recommendations = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
-                    CustomerFeedback = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
-                    StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DurationMinutes = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationAddress = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    ContactPerson = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Designation = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    MobileNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    VehicleNo = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    NatureOfVisit = table.Column<int>(type: "INTEGER", nullable: false),
+                    MachineDetails = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    FaultReported = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    Findings = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    Correction = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    FinalResult = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    PartsOffered = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    CustomerComments = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    StartDay = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    EndDay = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    TotalFieldJobMinutes = table.Column<int>(type: "INTEGER", nullable: false),
                     SignatureData = table.Column<string>(type: "TEXT", nullable: true),
                     SignedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
@@ -629,6 +695,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                 name: "IX_AdvanceReturnForms_AssignmentId",
                 table: "AdvanceReturnForms",
                 column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdvanceReturnForms_AttachmentId",
+                table: "AdvanceReturnForms",
+                column: "AttachmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AdvanceReturnForms_Status",
@@ -714,6 +785,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                 column: "AssignmentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Claims_AttachmentId",
+                table: "Claims",
+                column: "AttachmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Claims_Status",
                 table: "Claims",
                 column: "Status");
@@ -722,6 +798,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                 name: "IX_Claims_TechnicianId",
                 table: "Claims",
                 column: "TechnicianId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DailySummaries_AttachmentId",
+                table: "DailySummaries",
+                column: "AttachmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DailySummaries_Date",
@@ -743,6 +824,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                 name: "IX_PerDiemReturnForms_AssignmentId",
                 table: "PerDiemReturnForms",
                 column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PerDiemReturnForms_AttachmentId",
+                table: "PerDiemReturnForms",
+                column: "AttachmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PerDiemReturnForms_Status",
@@ -805,6 +891,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                 column: "AssignmentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Refunds_AttachmentId",
+                table: "Refunds",
+                column: "AttachmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Refunds_Status",
                 table: "Refunds",
                 column: "Status");
@@ -839,6 +930,11 @@ namespace TechnicianApi.Infrastructure.Migrations
                 table: "ServiceReports",
                 column: "AssignmentId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceReports_NatureOfVisit",
+                table: "ServiceReports",
+                column: "NatureOfVisit");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ServiceReports_Status",
@@ -913,6 +1009,9 @@ namespace TechnicianApi.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Assignments");
+
+            migrationBuilder.DropTable(
+                name: "Attachments");
 
             migrationBuilder.DropTable(
                 name: "Technicians");
