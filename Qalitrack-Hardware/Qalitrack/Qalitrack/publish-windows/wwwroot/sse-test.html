@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE Test - Platform Data</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .connected { background-color: #d4edda; color: #155724; }
+        .disconnected { background-color: #f8d7da; color: #721c24; }
+        .data-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .timestamp {
+            color: #6c757d;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Platform Data Stream</h1>
+        <div>
+            Status: <span id="status" class="status disconnected">Disconnected</span>
+            <button id="connectBtn" class="btn">Connect</button>
+            <button id="clearBtn" class="btn">Clear</button>
+        </div>
+        
+        <div class="data-container">
+            <h3>Latest Data</h3>
+            <pre id="data">Waiting for data...
+            </pre>
+            <div class="timestamp" id="lastUpdate">Last update: Never</div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3>How to use</h3>
+            <p>Click "Connect" to start receiving real-time updates. The data will be displayed in JSON format above.</p>
+            <p>You can also access the raw stream directly at: <code id="streamUrl"></code></p>
+            <p>Use the following commands to test with curl:</p>
+            <pre># Get service info
+curl http://localhost:5000/api/PlatformData
+
+# Get latest data point
+curl http://localhost:5000/api/PlatformData/latest
+
+# Stream data (SSE)
+curl -N http://localhost:5000/api/PlatformData/stream</pre>
+        </div>
+    </div>
+
+    <script>
+        const statusEl = document.getElementById('status');
+        const dataEl = document.getElementById('data');
+        const lastUpdateEl = document.getElementById('lastUpdate');
+        const connectBtn = document.getElementById('connectBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const streamUrlEl = document.getElementById('streamUrl');
+        
+        // Set the stream URL in the UI
+        streamUrlEl.textContent = window.location.origin + '/api/PlatformData/stream';
+        
+        let eventSource = null;
+        
+        function connect() {
+            if (eventSource) {
+                eventSource.close();
+            }
+            
+            statusEl.textContent = 'Connecting...';
+            statusEl.className = 'status';
+            
+            // Create a new EventSource connection
+            eventSource = new EventSource('/api/PlatformData/stream');
+            
+            // Handle connection opened
+            eventSource.onopen = () => {
+                statusEl.textContent = 'Connected';
+                statusEl.className = 'status connected';
+                connectBtn.textContent = 'Disconnect';
+                logMessage('Connected to server');
+            };
+            
+            // Handle messages
+            eventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    updateData(data);
+                } catch (e) {
+                    logMessage('Error parsing message: ' + event.data);
+                }
+            };
+            
+            // Handle custom events
+            eventSource.addEventListener('connected', (event) => {
+                const data = JSON.parse(event.data);
+                logMessage(data.message);
+            });
+            
+            // Handle errors
+            eventSource.onerror = (error) => {
+                statusEl.textContent = 'Disconnected';
+                statusEl.className = 'status disconnected';
+                connectBtn.textContent = 'Reconnect';
+                logMessage('Connection error');
+                
+                // Try to reconnect after a delay
+                setTimeout(connect, 3000);
+            };
+        }
+        
+        function disconnect() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            statusEl.textContent = 'Disconnected';
+            statusEl.className = 'status disconnected';
+            connectBtn.textContent = 'Connect';
+            logMessage('Disconnected from server');
+        }
+        
+        function updateData(data) {
+            const timestamp = new Date().toLocaleTimeString();
+            dataEl.textContent = JSON.stringify(data, null, 2);
+            lastUpdateEl.textContent = `Last update: ${timestamp}`;
+            
+            // Auto-scroll to bottom
+            dataEl.scrollTop = dataEl.scrollHeight;
+        }
+        
+        function logMessage(message) {
+            console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
+        }
+        
+        // Event listeners
+        connectBtn.addEventListener('click', () => {
+            if (connectBtn.textContent === 'Connect' || connectBtn.textContent === 'Reconnect') {
+                connect();
+            } else {
+                disconnect();
+            }
+        });
+        
+        clearBtn.addEventListener('click', () => {
+            dataEl.textContent = '';
+            lastUpdateEl.textContent = 'Last update: Never';
+        });
+        
+        // Connect automatically when the page loads
+        connect();
+    </script>
+</body>
+</html>
