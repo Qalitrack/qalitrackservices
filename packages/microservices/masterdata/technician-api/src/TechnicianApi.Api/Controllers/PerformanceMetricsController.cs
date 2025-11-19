@@ -4,7 +4,7 @@ using TechnicianApi.Core.Interfaces;
 namespace TechnicianApi.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 public class PerformanceMetricsController : ControllerBase
 {
     private readonly IPerformanceMetricsService _service;

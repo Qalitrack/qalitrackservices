@@ -8,7 +8,7 @@ using TechnicianApi.Core.DTOs.Attachment;
 
 namespace TechnicianApi.Api.Controllers;
 
-[Route("api/claims")]
+[Route("/claims")]
 public class ClaimsController : BaseController
 {
     private readonly IClaimService _service;

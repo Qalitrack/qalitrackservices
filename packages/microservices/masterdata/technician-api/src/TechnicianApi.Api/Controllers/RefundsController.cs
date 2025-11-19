@@ -4,7 +4,7 @@ using TechnicianApi.Core.Interfaces;
 
 namespace TechnicianApi.Api.Controllers;
 
-[Route("api/refunds")]
+[Route("/refunds")]
 public class RefundsController : BaseController
 {
     private readonly IRefundService _service;

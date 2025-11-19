@@ -3,7 +3,7 @@ using TechnicianApi.Core.Interfaces;
 
 namespace TechnicianApi.Api.Controllers;
 
-[Route("api/assignment-balances")]
+[Route("/assignment-balances")]
 public class AssignmentBalancesController : BaseController
 {
     private readonly IAssignmentBalanceService _service;
