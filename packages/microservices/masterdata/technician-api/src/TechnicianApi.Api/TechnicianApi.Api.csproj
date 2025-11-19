@@ -27,4 +27,10 @@
     <ProjectReference Include="..\TechnicianApi.Infrastructure\TechnicianApi.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.ObjectModel">
+      <HintPath>..\..\..\..\..\..\..\.nuget\packages\microsoft.testplatform.testhost\17.6.0\lib\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

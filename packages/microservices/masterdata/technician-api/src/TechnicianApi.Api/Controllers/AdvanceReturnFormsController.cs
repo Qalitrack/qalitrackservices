@@ -8,7 +8,7 @@ using TechnicianApi.Core.DTOs.Attachment;
 
 namespace TechnicianApi.Api.Controllers;
 
-[Route("api/advance-return-forms")]
+[Route("/advance-return-forms")]
 public class AdvanceReturnFormsController : BaseController
 {
     private readonly IAdvanceReturnFormService _service;
