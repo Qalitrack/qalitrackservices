@@ -35,4 +35,12 @@
     <ProjectReference Include="..\..\src\TechnicianApi.Api\TechnicianApi.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>
