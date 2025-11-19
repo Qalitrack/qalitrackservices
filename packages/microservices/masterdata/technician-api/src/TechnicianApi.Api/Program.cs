@@ -1,18 +1,17 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
+using Microsoft.Extensions.FileProviders;
 using FluentValidation;
 using Serilog;
 using TechnicianApi.Core.Interfaces;
 using TechnicianApi.Core.Services;
 using TechnicianApi.Core.DTOs;
-// using TechnicianApi.Core.Validators;
 using TechnicianApi.Core.Mappings;
+using TechnicianApi.Core.BackgroundServices;
 using TechnicianApi.Infrastructure.Data;
 using TechnicianApi.Infrastructure.Repositories;
-// using TechnicianApi.Infrastructure.Services;
+using TechnicianApi.Api.Middleware;
+using TechnicianApi.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,161 +36,213 @@ builder.Services.AddSwaggerGen(c =>
     { 
         Title = "TechnicianApi API", 
         Version = "v1",
-        Description = @"QaliTrack TechnicianApi - Technician API service API
-
-🌐 **Gateway Information:**
-- **Gateway URL**: http://localhost:7000
-- **Gateway Health**: http://localhost:7000/health  
-- **Gateway Service Discovery**: http://localhost:7000/api/gateway/services
-- **Gateway Info**: http://localhost:7000/api/gateway/info
-
-📋 **Available Routes via Gateway:**
-- All TechnicianApi endpoints are also available via Gateway at http://localhost:7000/api/technicians/*
-- Gateway provides centralized routing to 18+ microservices including analytics, compliance, transactions, and more"
+        Description = @"QaliTrack TechnicianApi - Technician API service"
     });
     
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-    
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
-            },
-            new List<string>()
-        }
-    });
+
 });
 
 // Add AutoMapper
-builder.Services.AddAutoMapper(typeof(TechnicianProfile));
 
-// Add FluentValidation
-// builder.Services.AddValidatorsFromAssemblyContaining<TechnicianRequestValidator>();
+// Add file storage service
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
-// Add Entity Framework
+// Add DbContext with PostgreSQL
 builder.Services.AddDbContext<TechnicianApiDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-    "Data Source=technician-api.db"));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+        "Host=db;Port=5432;Database=techniciandb;Username=technician;Password=technician123;Pooling=true;MinPoolSize=5;MaxPoolSize=100",
+        npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorCodesToAdd: null);
+        }));
 
-// TODO: Add authentication if needed for this service
-// For authentication services, uncomment and configure JWT
-/*
-// Add JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
-var key = Encoding.UTF8.GetBytes(secretKey);
+// Configure static files
+builder.Services.AddDirectoryBrowser();
 
-builder.Services.AddAuthentication(x =>
+// Add AutoMapper with profiles
+builder.Services.AddAutoMapper(
+    typeof(Program).Assembly,
+    typeof(FinancialFormsProfile).Assembly,
+    typeof(TechnicianProfile).Assembly,
+    typeof(AssignmentProfile).Assembly,
+    typeof(CheckInProfile).Assembly,
+    typeof(PhotoProfile).Assembly,
+    typeof(ServiceReportProfile).Assembly,
+    typeof(RequisitionProfile).Assembly,
+    typeof(DailySummaryProfile).Assembly,
+    typeof(PerformanceMetricsProfile).Assembly,
+    typeof(AttachmentProfile).Assembly);
+
+// Configure Entity Framework - Conditional based on environment
+if (builder.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase))
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(x =>
+    // Use In-Memory for tests
+    builder.Services.AddDbContext<TechnicianApiDbContext>(options =>
+        options.UseInMemoryDatabase("TestDatabase_" + Guid.NewGuid().ToString("N")[..8]));
+}
+else
 {
-    x.RequireHttpsMetadata = false;
-    x.SaveToken = true;
-    x.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidateAudience = true,
-        ValidAudience = jwtSettings["Audience"],
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
-});
+    // Use SQLite for development/production
+    builder.Services.AddDbContext<TechnicianApiDbContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+        "Data Source=technician-api.db"));
+}
 
-builder.Services.AddAuthorization();
-*/
-
-// Add repositories
+// Add generic repository (shared by all entities)
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+// Add specialized repositories
+builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
 builder.Services.AddScoped<ITechnicianRepository, TechnicianRepository>();
-// TODO: Add additional repositories as needed
-// builder.Services.AddScoped<IAnotherRepository, AnotherRepository>();
 
 // Add services
-builder.Services.AddScoped<ITechnicianService, TechnicianApi.Core.Services.TechnicianService>();
-// TODO: Add additional services as needed
-// builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-// builder.Services.AddScoped<IJwtService, JwtService>();
-// builder.Services.AddScoped<IPasswordService, PasswordService>();
-// builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+builder.Services.AddScoped<ICheckInService, CheckInService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IServiceReportService, ServiceReportService>();
+builder.Services.AddScoped<IRequisitionService, RequisitionService>();
+builder.Services.AddScoped<IDailySummaryService, DailySummaryService>();
+builder.Services.AddScoped<IPerformanceMetricsService, PerformanceMetricsService>();
 
-// Add CORS
+// Add financial forms services
+builder.Services.AddScoped<IPettyCashAdvanceFormService, PettyCashAdvanceFormService>();
+builder.Services.AddScoped<IAdvanceReturnFormService, AdvanceReturnFormService>();
+builder.Services.AddScoped<IPerDiemReturnFormService, PerDiemReturnFormService>();
+builder.Services.AddScoped<IClaimService, ClaimService>();
+builder.Services.AddScoped<IAssignmentBalanceService, AssignmentBalanceService>();
+
+// Add CORS with more permissive settings for development
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .SetIsOriginAllowed(origin => true) // Allow any origin
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials(); // Important for cookies, authorization headers with HTTPS
     });
 });
 
 // Add Health Checks
 builder.Services.AddHealthChecks();
 
+// Add Background Services for automated daily summaries and performance metrics
+builder.Services.AddHostedService<DailySummaryBackgroundService>();
+builder.Services.AddHostedService<PerformanceMetricsBackgroundService>();
+
 var app = builder.Build();
 
+// Apply database migrations and seed data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<TechnicianApiDbContext>();
+        context.Database.Migrate();
+        
+        // Uncomment to seed initial data if needed
+        // var dbInitializer = services.GetRequiredService<DbInitializer>();
+        // await dbInitializer.InitializeAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating or initializing the database.");
+    }
+}
+
+// Enable CORS before other middleware
+app.UseCors("AllowAll");
+
+// Security middleware
+app.UseMiddleware<RequestLoggingSanitizerMiddleware>();
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<SensitiveDataFilterMiddleware>();
+
+// Enable static files and set up the uploads directory
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
+
+app.UseDirectoryBrowser(new DirectoryBrowserOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
+
 // Configure the HTTP request pipeline
+// ALWAYS generate Swagger JSON (for both DEV + PROD)
+app.UseSwagger();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "TechnicianApi API V1");
         c.SwaggerEndpoint("http://localhost:7000/swagger/v1/swagger.json", "API Gateway V1");
-        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+        c.RoutePrefix = string.Empty;
         c.DocumentTitle = "QaliTrack Services - TechnicianApi & Gateway Discovery";
+    });
+}
+else
+{
+    // ✅ PROD: Read-Only (blocks POST/PUT/DELETE via Traefik JWT)
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("v1/swagger.json", "TechnicianApi API V1");
+        c.RoutePrefix = "swagger";  // ← FIXED: Serve UI at /swagger
+        c.DocumentTitle = "QaliTrack TechnicianApi API (Read-Only)";
     });
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
 
 // Use Serilog request logging
 app.UseSerilogRequestLogging();
 
-// TODO: Uncomment if authentication is needed
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseRouting();
+
+// CORS must be after UseRouting() but before UseAuthentication() and UseAuthorization()
+app.UseCors("AllowAll");
 
 app.MapControllers();
 app.MapHealthChecks("/health");
 
-// Ensure database is created and seeded
-using (var scope = app.Services.CreateScope())
+// Initialize database with proper error handling (skip in test environment)
+if (!app.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase))
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<TechnicianApiDbContext>();
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        dbContext.Database.EnsureCreated();
-        Log.Information("Database ensured created successfully");
-    }
-    catch (Exception ex)
-    {
-        Log.Error(ex, "Error creating database");
-        throw;
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<TechnicianApiDbContext>();
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            
+            logger.LogInformation("Applying database migrations...");
+            await context.Database.MigrateAsync(); // Use async version
+            logger.LogInformation("Database migrations applied successfully.");
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while migrating the database.");
+            throw; // Re-throw to prevent app from starting with a broken database
+        }
     }
 }
 
