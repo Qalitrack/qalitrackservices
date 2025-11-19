@@ -7,7 +7,7 @@ using TechnicianApi.Core.Interfaces;
 namespace TechnicianApi.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 [Authorize]
 public class AttachmentsController : ControllerBase
 {

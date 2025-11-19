@@ -5,7 +5,7 @@ using TechnicianApi.Core.Interfaces;
 namespace TechnicianApi.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 public class CheckInsController : ControllerBase
 {
     private readonly ICheckInService _service;

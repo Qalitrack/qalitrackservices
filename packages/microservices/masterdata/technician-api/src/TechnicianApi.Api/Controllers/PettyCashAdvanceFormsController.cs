@@ -4,7 +4,7 @@ using TechnicianApi.Core.Interfaces;
 
 namespace TechnicianApi.Api.Controllers;
 
-[Route("api/petty-cash-advance-forms")]
+[Route("/petty-cash-advance-forms")]
 public class PettyCashAdvanceFormsController : BaseController
 {
     private readonly IPettyCashAdvanceFormService _service;

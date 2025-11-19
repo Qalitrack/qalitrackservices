@@ -5,7 +5,7 @@ using TechnicianApi.Core.Interfaces;
 namespace TechnicianApi.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 public class ServiceReportsController : ControllerBase
 {
     private readonly IServiceReportService _service;
