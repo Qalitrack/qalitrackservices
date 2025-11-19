@@ -9,7 +9,7 @@ using TechnicianApi.Core.DTOs.Attachment;
 namespace TechnicianApi.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 public class AssignmentsController : ControllerBase
 {
     private readonly IAssignmentService _service;
