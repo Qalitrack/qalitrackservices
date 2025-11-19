@@ -1,0 +1,62 @@
+[Unit]
+Description=Qalitrack Platform Data Service
+Documentation=https://github.com/yourcompany/qalitrack
+After=local-fs.target
+Wants=local-fs.target
+
+[Service]
+# Service type - 'notify' for .NET services with systemd support
+Type=notify
+
+# Working directory and executable
+WorkingDirectory=/opt/qalitrack
+ExecStart=/opt/qalitrack/Qalitrack
+
+# User and Group - Running as root for full system access
+User=root
+Group=root
+
+# Automatically restart the service if it crashes
+Restart=always
+RestartSec=5
+
+# Rate limiting for restarts
+StartLimitIntervalSec=200
+StartLimitBurst=5
+
+# Watchdog - systemd will restart if service doesn't notify within this time
+WatchdogSec=60
+
+# Logging configuration
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=qalitrack
+
+# Environment variables (if needed)
+# Environment="ASPNETCORE_ENVIRONMENT=Production"
+# Environment="DOTNET_PRINT_TELEMETRY_MESSAGE=false"
+
+# Security hardening options (optional but recommended)
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/qalitrack
+
+# Serial port access - adds user to dialout group
+SupplementaryGroups=dialout
+
+# Resource limits (optional)
+# MemoryLimit=512M
+# CPUQuota=50%
+
+# Timeout settings
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+# Process handling
+KillMode=mixed
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
