@@ -4,7 +4,7 @@ using TechnicianApi.Core.Interfaces;
 
 namespace TechnicianApi.Api.Controllers;
 
-[Route("api/per-diem-return-forms")]
+[Route("/per-diem-return-forms")]
 public class PerDiemReturnFormsController : BaseController
 {
     private readonly IPerDiemReturnFormService _service;
