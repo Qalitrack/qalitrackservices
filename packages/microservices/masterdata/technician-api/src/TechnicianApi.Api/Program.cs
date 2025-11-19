@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Serilog;
 using TechnicianApi.Core.Interfaces;
 using TechnicianApi.Core.Services;
@@ -29,6 +30,9 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Add HttpContextAccessor for accessing the current HTTP context in services
+builder.Services.AddHttpContextAccessor();
+
 // Configure Swagger with JWT authentication
 builder.Services.AddSwaggerGen(c =>
 {
@@ -47,19 +51,6 @@ builder.Services.AddSwaggerGen(c =>
 // Add file storage service
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
-// Add DbContext with PostgreSQL
-builder.Services.AddDbContext<TechnicianApiDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-        "Host=db;Port=5432;Database=techniciandb;Username=technician;Password=technician123;Pooling=true;MinPoolSize=5;MaxPoolSize=100",
-        npgsqlOptions =>
-        {
-            npgsqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5,
-                maxRetryDelay: TimeSpan.FromSeconds(30),
-                errorCodesToAdd: null);
-        }));
-
 // Configure static files
 builder.Services.AddDirectoryBrowser();
 
@@ -77,19 +68,48 @@ builder.Services.AddAutoMapper(
     typeof(PerformanceMetricsProfile).Assembly,
     typeof(AttachmentProfile).Assembly);
 
-// Configure Entity Framework - Conditional based on environment
+// Configure Entity Framework based on environment
 if (builder.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase))
 {
     // Use In-Memory for tests
     builder.Services.AddDbContext<TechnicianApiDbContext>(options =>
-        options.UseInMemoryDatabase("TestDatabase_" + Guid.NewGuid().ToString("N")[..8]));
+        options.UseInMemoryDatabase("TestDatabase_" + Guid.NewGuid().ToString("N")[..8])
+              .ConfigureWarnings(warnings => 
+                  warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
+}
+else if (builder.Configuration.GetValue<bool>("UsePostgreSQL") == true)
+{
+    // Use PostgreSQL if explicitly configured
+    builder.Services.AddDbContext<TechnicianApiDbContext>((serviceProvider, options) =>
+    {
+        options.UseNpgsql(
+            builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+            "Host=db;Port=5435;Database=techniciandb;Username=technician;Password=technician123;Pooling=true;MinPoolSize=5;MaxPoolSize=100",
+            npgsqlOptions =>
+            {
+                npgsqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
+                    errorCodesToAdd: null);
+            });
+            
+        // Suppress the pending model changes warning
+        options.ConfigureWarnings(warnings => 
+            warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+    });
 }
 else
 {
-    // Use SQLite for development/production
+    // Default to SQLite for development/production
     builder.Services.AddDbContext<TechnicianApiDbContext>(options =>
+    {
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-        "Data Source=technician-api.db"));
+            "Data Source=technician-api.db");
+            
+        // Suppress the pending model changes warning
+        options.ConfigureWarnings(warnings => 
+            warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+    });
 }
 
 // Add generic repository (shared by all entities)
@@ -144,16 +164,39 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<TechnicianApiDbContext>();
-        context.Database.Migrate();
+        var logger = services.GetRequiredService<ILogger<Program>>();
         
-        // Uncomment to seed initial data if needed
-        // var dbInitializer = services.GetRequiredService<DbInitializer>();
-        // await dbInitializer.InitializeAsync();
+        // Check if there are any pending migrations
+        var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
+        
+        if (pendingMigrations.Any())
+        {
+            logger.LogInformation("Applying the following migrations: {Migrations}", string.Join(", ", pendingMigrations));
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully.");
+        }
+        else
+        {
+            logger.LogInformation("No pending migrations to apply.");
+            
+            // Check if the database exists and has the expected tables
+            try
+            {
+                var canConnect = await context.Database.CanConnectAsync();
+                logger.LogInformation("Database connection test: {Status}", canConnect ? "Success" : "Failed");
+            }
+            catch (Exception dbEx)
+            {
+                logger.LogError(dbEx, "Error connecting to the database. The database might need to be created.");
+                throw;
+            }
+        }
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating or initializing the database.");
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+        throw; // Re-throw to prevent app from starting with a broken database
     }
 }
 

@@ -9,25 +9,18 @@ services:
       POSTGRES_USER: technician
       POSTGRES_PASSWORD: technician123
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_SHARED_BUFFERS: 512MB
-      POSTGRES_MAX_CONNECTIONS: '600'
-      POSTGRES_WORK_MEM: 2MB
-      POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
     ports:
       - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-    command: ["postgres", "-c", "listen_addresses=*"]
     networks:
       - technician-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U technician -d techniciandb"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
     build:
@@ -37,28 +30,25 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=techniciandb;Username=technician;Password=technician123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;IncludeErrorDetail=true;CommandTimeout=60
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=techniciandb;Username=technician;Password=technician123;Pooling=true;MinPoolSize=5;MaxPoolSize=100
     ports:
       - "5000:80"
     depends_on:
       db:
         condition: service_healthy
-    restart: unless-stopped
+    networks:
+      - technician-network
     volumes:
       - ./wwwroot/uploads:/app/wwwroot/uploads
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s
-    networks:
-      - technician-network
-
-volumes:
-  postgres_data:
-    driver: local
 
 networks:
   technician-network:
     driver: bridge
+
+volumes:
+  postgres_data:
