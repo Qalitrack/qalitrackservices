@@ -465,16 +465,16 @@ public class TechnicianApiDbContext : DbContext
             entity.HasIndex(e => e.PeriodEnd);
         });
 
-        // Global query filters for soft deletes
-        modelBuilder.Entity<Technician>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<Assignment>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<AssignmentTechnician>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<CheckIn>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<Photo>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<ServiceReport>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<Requisition>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<DailySummary>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<PerformanceMetrics>().HasQueryFilter(e => !e.IsDeleted);
+        // Global query filters for soft deletes - FIXED: Changed from !e.IsDeleted to e.IsDeleted == false
+        modelBuilder.Entity<Technician>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Assignment>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<AssignmentTechnician>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<CheckIn>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Photo>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<ServiceReport>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Requisition>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<DailySummary>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<PerformanceMetrics>().HasQueryFilter(e => e.IsDeleted == false);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
