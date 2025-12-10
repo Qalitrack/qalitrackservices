@@ -113,10 +113,8 @@ public class AssignmentBalanceService : IAssignmentBalanceService
             < 0 => $"Company owes technician KSH {recommendedAmount:N2}. Technician can create a Claim.",
             _ => "Balance is settled. No action needed."
         };
-
-        // Get technician ID from assignment
-        var technicianId = assignment.Technicians.FirstOrDefault()?.Id ?? assignment.AssignmentTechnicians.FirstOrDefault()?.TechnicianId ?? string.Empty;
-
+        var technicianId = assignment.TechnicianIds.FirstOrDefault() ?? string.Empty;
+        
         // Update or Create Balance Summary
         var summary = assignment.BalanceSummary;
         if (summary == null)
