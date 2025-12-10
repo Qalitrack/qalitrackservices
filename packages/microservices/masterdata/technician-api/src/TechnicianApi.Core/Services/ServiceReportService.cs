@@ -9,13 +9,13 @@ namespace TechnicianApi.Core.Services;
 public class ServiceReportService : IServiceReportService
 {
     private readonly IRepository<ServiceReport> _repository;
-    private readonly IRepository<Assignment> _assignmentRepository;
+    private readonly IAssignmentRepository _assignmentRepository;
     private readonly IRepository<CheckIn> _checkInRepository;
     private readonly IMapper _mapper;
 
     public ServiceReportService(
         IRepository<ServiceReport> repository,
-        IRepository<Assignment> assignmentRepository,
+        IAssignmentRepository assignmentRepository,
         IRepository<CheckIn> checkInRepository,
         IMapper mapper)
     {
@@ -142,29 +142,33 @@ public class ServiceReportService : IServiceReportService
         return updated == null ? null : _mapper.Map<ServiceReportResponseDto>(updated);
     }
 
-    public async Task<ServiceReportResponseDto> AutoPopulateFromAssignmentAsync(string assignmentId)
+    public async Task<ServiceReportResponseDto> AutoPopulateFromAssignmentAsync(string assignmentId, string? technicianId = null)
     {
-        var assignment = await _assignmentRepository.GetByIdWithIncludesAsync(
-            assignmentId,
-            a => a.Technicians);
+        var assignment = await _assignmentRepository.GetByIdWithTechnicianIdsAsync(assignmentId);
 
         if (assignment == null)
         {
             throw new InvalidOperationException($"Assignment with ID {assignmentId} not found");
         }
 
-        var technician = assignment.Technicians.FirstOrDefault();
-        if (technician == null)
+        // If no technicianId is provided, use the first one from the assignment
+        var selectedTechnicianId = technicianId ?? assignment.TechnicianIds.FirstOrDefault();
+    
+        if (string.IsNullOrEmpty(selectedTechnicianId))
         {
-            throw new InvalidOperationException($"Assignment {assignmentId} has no assigned technician");
+            throw new InvalidOperationException($"Assignment {assignmentId} has no assigned technicians");
         }
+
+        // TODO: Call the technician service to get the technician's name
+        // For now, we'll just use the ID as the name
+        var technicianName = selectedTechnicianId; // This should be replaced with an actual call to get the technician's name
 
         var serviceReport = new ServiceReport
         {
             Id = Guid.NewGuid().ToString(),
             AssignmentId = assignmentId,
-            TechnicianId = technician.Id,
-            TechnicianName = technician.Name,
+            TechnicianId = selectedTechnicianId,
+            TechnicianName = technicianName,
             CustomerName = string.Empty, // To be filled by technician
             LocationName = assignment.LocationName,
             LocationAddress = assignment.LocationAddress,

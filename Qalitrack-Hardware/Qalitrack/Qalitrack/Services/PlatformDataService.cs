@@ -2,7 +2,6 @@ using System.IO.Ports;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Globalization;
 using Microsoft.Extensions.Options;
 using Qalitrack.Models;
 
@@ -18,21 +17,9 @@ public class PlatformDataService : BackgroundService
     private NetworkStream? _networkStream;
     private SerialPort? _serialPort;
 
-    private readonly object _dataLock = new();
     private readonly object _connectionLock = new();
-    private double[] _latestPlatformWeights = Array.Empty<double>();
     private bool _disposed;
-
-    public double[] LatestPlatformWeights
-    {
-        get { lock (_dataLock) return (double[])_latestPlatformWeights.Clone(); }
-        private set { lock (_dataLock) _latestPlatformWeights = value; }
-    }
-
-    private const int MaxPlatformCount = 16;
-    private const int MaxBufferSize = 10000;
-    private static readonly Regex PlatformWeightRegex = new(@"Platform\s+(\d+)\s*:\s*([\d.]+)\s*kg", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex NumberRegex = new(@"-?\d+\.?\d*(?:[eE][+-]?\d+)?", RegexOptions.Compiled);
+    private readonly StringBuilder _dataBuffer = new();
 
     public PlatformDataService(
         ILogger<PlatformDataService> logger,
@@ -48,16 +35,8 @@ public class PlatformDataService : BackgroundService
             _settings.IpAddress,
             _settings.Port,
             _settings.SerialPort,
-            _settings.BaudRate,
-            _settings.ReadTimeoutMs,
-            _settings.ReconnectDelayMs
+            _settings.BaudRate
         });
-
-        _logger.LogInformation("Environment variables - " +
-            "QALITRACK_TCP_IP: {TcpIp}, " +
-            "QALITRACK_TCP_PORT: {TcpPort}",
-            Environment.GetEnvironmentVariable("QALITRACK_TCP_IP") ?? "Not set",
-            Environment.GetEnvironmentVariable("QALITRACK_TCP_PORT") ?? "Not set");
     }
 
     public bool IsConnected() => _tcpClient?.Connected == true;
@@ -75,7 +54,6 @@ public class PlatformDataService : BackgroundService
         {
             _settings.IpAddress = ip;
             _settings.Port = port;
-
             _logger.LogInformation("Forced TCP settings to {ip}:{port}", ip, port);
 
             if (IsConnected())
@@ -228,6 +206,8 @@ public class PlatformDataService : BackgroundService
         try
         {
             var portName = _settings.SerialPort;
+            
+            // Handle AUTO detection
             if (string.Equals(portName, "AUTO", StringComparison.OrdinalIgnoreCase))
             {
                 portName = DetectSerialPort();
@@ -235,6 +215,21 @@ public class PlatformDataService : BackgroundService
                 {
                     _logger.LogWarning("No serial ports detected");
                     return false;
+                }
+            }
+            // Normalize Windows COM port format
+            else if (portName.StartsWith("COM", StringComparison.OrdinalIgnoreCase) && 
+                     !portName.StartsWith("\\\\.\\", StringComparison.OrdinalIgnoreCase))
+            {
+                // For COM ports >= 10, use the \\.\COMx format
+                if (int.TryParse(portName.Substring(3), out int comNumber) && comNumber >= 10)
+                {
+                    portName = $"\\\\.\\{portName.ToUpper()}";
+                    _logger.LogInformation("Using extended COM port format: {port}", portName);
+                }
+                else
+                {
+                    portName = portName.ToUpper();
                 }
             }
 
@@ -245,19 +240,20 @@ public class PlatformDataService : BackgroundService
             {
                 ReadTimeout = _settings.ReadTimeoutMs,
                 WriteTimeout = _settings.ReadTimeoutMs,
-                Encoding = Encoding.ASCII
+                Encoding = Encoding.ASCII,
+                NewLine = "\n"
             };
 
             _serialPort.Open();
-            _logger.LogInformation("Serial port connected successfully");
+            _logger.LogInformation("Serial port connected successfully to {port}", portName);
             return true;
         }
         catch (UnauthorizedAccessException)
         {
             var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
             var suggestion = isLinux
-                ? "Service should be running as root. Check systemd service configuration."
-                : "Service should be running as LocalSystem/Administrator.";
+                ? "Service should be running as root or user should be in 'dialout' group. Check systemd service configuration."
+                : "Service should be running as LocalSystem/Administrator or COM port is already in use.";
             _logger.LogError("Access denied to {port}. {suggestion}", _settings.SerialPort, suggestion);
         }
         catch (IOException ex)
@@ -295,9 +291,24 @@ public class PlatformDataService : BackgroundService
 
             _logger.LogInformation("Available serial ports: {ports}", string.Join(", ", ports));
 
-            var preferredPort = ports.FirstOrDefault(p =>
-                p.Contains("ttyUSB", StringComparison.OrdinalIgnoreCase) ||
-                p.Contains("ttyACM", StringComparison.OrdinalIgnoreCase)) ?? ports[0];
+            var isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
+            
+            string? preferredPort;
+            if (isWindows)
+            {
+                // On Windows, prefer COM9 if available, otherwise first COM port
+                preferredPort = ports.FirstOrDefault(p => 
+                    p.Equals("COM9", StringComparison.OrdinalIgnoreCase)) 
+                    ?? ports.FirstOrDefault(p => p.StartsWith("COM", StringComparison.OrdinalIgnoreCase)) 
+                    ?? ports[0];
+            }
+            else
+            {
+                // On Linux, prefer ttyUSB or ttyACM
+                preferredPort = ports.FirstOrDefault(p =>
+                    p.Contains("ttyUSB", StringComparison.OrdinalIgnoreCase) ||
+                    p.Contains("ttyACM", StringComparison.OrdinalIgnoreCase)) ?? ports[0];
+            }
 
             _logger.LogInformation("Auto-selected serial port: {port}", preferredPort);
             return preferredPort;
@@ -312,7 +323,6 @@ public class PlatformDataService : BackgroundService
     private async Task ProcessTcpStreamAsync(CancellationToken token)
     {
         var buffer = new byte[1024];
-        var messageBuffer = new StringBuilder();
 
         while (!token.IsCancellationRequested && _tcpClient?.Connected == true)
         {
@@ -326,26 +336,7 @@ public class PlatformDataService : BackgroundService
                 }
 
                 var rawData = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                Console.WriteLine($"[TCP RAW] {rawData.Replace("\r", "\\r").Replace("\n", "\\n")} ({bytesRead} bytes)");
-                _logger.LogInformation("TCP RAW RESPONSE: {data}", rawData.TrimEnd());
-
-                messageBuffer.Append(rawData);
-
-                if (rawData.Contains('\n') || rawData.Contains('\r'))
-                {
-                    var numbers = ExtractAllNumbers(messageBuffer.ToString());
-                    if (numbers.Count > 0)
-                    {
-                        await HandleNumbers(numbers, "TCP");
-                        messageBuffer.Clear();
-                    }
-                }
-
-                if (messageBuffer.Length > MaxBufferSize)
-                {
-                    _logger.LogWarning("TCP buffer exceeded {max} bytes, clearing", MaxBufferSize);
-                    messageBuffer.Clear();
-                }
+                ProcessIncomingData(rawData, "TCP");
             }
             catch (OperationCanceledException) { break; }
             catch (IOException ex)
@@ -363,8 +354,6 @@ public class PlatformDataService : BackgroundService
 
     private async Task ProcessSerialStreamAsync(CancellationToken token)
     {
-        var lineBuffer = new StringBuilder();
-
         while (!token.IsCancellationRequested && _serialPort?.IsOpen == true)
         {
             try
@@ -372,26 +361,7 @@ public class PlatformDataService : BackgroundService
                 if (_serialPort.BytesToRead > 0)
                 {
                     var data = _serialPort.ReadExisting();
-                    Console.WriteLine($"[SERIAL RAW] {data.Replace("\r", "\\r").Replace("\n", "\\n")}");
-                    _logger.LogInformation("SERIAL RAW RESPONSE: {data}", data.TrimEnd());
-
-                    lineBuffer.Append(data);
-
-                    if (data.Contains('\n') || data.Contains('\r'))
-                    {
-                        var numbers = ExtractAllNumbers(lineBuffer.ToString());
-                        if (numbers.Count > 0)
-                        {
-                            await HandleNumbers(numbers, "Serial");
-                            lineBuffer.Clear();
-                        }
-                    }
-
-                    if (lineBuffer.Length > MaxBufferSize)
-                    {
-                        _logger.LogWarning("Serial buffer exceeded {max} bytes, clearing", MaxBufferSize);
-                        lineBuffer.Clear();
-                    }
+                    ProcessIncomingData(data, "Serial");
                 }
                 else
                 {
@@ -413,67 +383,108 @@ public class PlatformDataService : BackgroundService
         }
     }
 
-    private List<double> ExtractAllNumbers(string input)
+    private void ProcessIncomingData(string rawData, string source)
     {
-        if (string.IsNullOrWhiteSpace(input))
-            return new List<double>();
+        // Add incoming data to buffer
+        _dataBuffer.Append(rawData);
 
-        var numbers = new List<double>();
-        var lines = input.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        // Process complete lines (split by newline)
+        var bufferContent = _dataBuffer.ToString();
+        var lines = bufferContent.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-        foreach (var line in lines)
+        // Check if buffer ends with newline (complete line)
+        bool endsWithNewline = bufferContent.EndsWith('\n') || bufferContent.EndsWith('\r');
+
+        // Process all complete lines
+        int linesToProcess = endsWithNewline ? lines.Length : lines.Length - 1;
+        
+        for (int i = 0; i < linesToProcess; i++)
         {
-            var matches = PlatformWeightRegex.Matches(line);
-            foreach (Match match in matches)
+            var line = lines[i].Trim();
+            if (!string.IsNullOrWhiteSpace(line))
             {
-                if (double.TryParse(match.Groups[2].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double weight))
-                {
-                    numbers.Add(weight);
-                }
+                ProcessPlatformLine(line, source);
             }
         }
 
-        if (numbers.Count == 0)
+        // Keep incomplete line in buffer
+        if (endsWithNewline)
         {
-            var matches = NumberRegex.Matches(input);
-            foreach (Match match in matches)
-            {
-                if (double.TryParse(match.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
-                {
-                    numbers.Add(value);
-                }
-            }
+            _dataBuffer.Clear();
+        }
+        else if (lines.Length > 0)
+        {
+            _dataBuffer.Clear();
+            _dataBuffer.Append(lines[^1]);
         }
 
-        if (numbers.Count > 0)
+        // Prevent buffer from growing too large
+        if (_dataBuffer.Length > 4096)
         {
-            _logger.LogDebug("Extracted {count} numbers: [{values}]",
-                numbers.Count, string.Join(", ", numbers.Select(n => n.ToString("F2"))));
+            _logger.LogWarning("Buffer overflow, clearing buffer");
+            _dataBuffer.Clear();
         }
-
-        return numbers;
     }
 
-    private async Task HandleNumbers(List<double> numbers, string source)
+    private void ProcessPlatformLine(string line, string source)
     {
-        if (numbers.Count > MaxPlatformCount)
+        // Parse platform readings: "Platform 1 :    -20 kg" or "Total      :     00 kg"
+        var platformMatch = Regex.Match(line, @"Platform\s+(\d+)\s*:\s*(.+)", RegexOptions.IgnoreCase);
+        var totalMatch = Regex.Match(line, @"Total\s*:\s*(.+)", RegexOptions.IgnoreCase);
+
+        string type = "";
+        string platformNumber = "";
+        string weight = "";
+
+        if (platformMatch.Success)
         {
-            _logger.LogWarning("Truncated {excess} platform values (received {count} but max is {max})",
-                numbers.Count - MaxPlatformCount, numbers.Count, MaxPlatformCount);
-            numbers = numbers.Take(MaxPlatformCount).ToList();
+            type = "platform";
+            platformNumber = platformMatch.Groups[1].Value;
+            weight = platformMatch.Groups[2].Value.Trim();
+        }
+        else if (totalMatch.Success)
+        {
+            type = "total";
+            weight = totalMatch.Groups[1].Value.Trim();
+        }
+        else
+        {
+            // Unknown format, stream as-is
+            _logger.LogInformation("[{source}] {line}", source, line);
+            _ = PublishData(line, source, "unknown", "", line);
+            return;
         }
 
-        var platformData = numbers.ToArray();
-        LatestPlatformWeights = platformData;
+        // Log formatted
+        var displayLine = type == "platform" 
+            ? $"Platform {platformNumber}: {weight}" 
+            : $"Total: {weight}";
+        
+        _logger.LogInformation("[{source}] {displayLine}", source, displayLine);
 
+        // Publish immediately
+        _ = PublishData(line, source, type, platformNumber, weight);
+    }
+
+    private async Task PublishData(string rawLine, string source, string type, string platformNumber, string weight)
+    {
         try
         {
-            var payload = new { weight = platformData };
+            var payload = new
+            {
+                raw = rawLine,
+                type = type,
+                platformNumber = platformNumber,
+                weight = weight,
+                source = source,
+                timestamp = DateTime.UtcNow
+            };
+
             await _dataStreamService.PublishAsync(payload, CancellationToken.None);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to broadcast data from {source}", source);
+            _logger.LogError(ex, "Failed to publish data from {source}", source);
         }
     }
 

@@ -10,9 +10,7 @@ public class TechnicianApiDbContext : DbContext
     }
 
     // DbSets for all entities
-    public DbSet<Technician> Technicians { get; set; }
     public DbSet<Assignment> Assignments { get; set; }
-    public DbSet<AssignmentTechnician> AssignmentTechnicians { get; set; }
     public DbSet<CheckIn> CheckIns { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<ServiceReport> ServiceReports { get; set; }
@@ -38,36 +36,14 @@ public class TechnicianApiDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure Technician entity
-        modelBuilder.Entity<Technician>(entity =>
+        // Configure Assignment entity to store TechnicianIds as JSON array
+        modelBuilder.Entity<Assignment>(entity =>
         {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Description).HasMaxLength(1000);
-            entity.Property(e => e.Status).IsRequired();
-
-            entity.HasIndex(e => e.Name);
-            entity.HasIndex(e => e.Status);
-
-            // Configure many-to-many relationship
-            entity.HasMany(t => t.Assignments)
-                .WithMany(a => a.Technicians)
-                .UsingEntity<AssignmentTechnician>(
-                    j => j.HasOne(at => at.Assignment)
-                        .WithMany(a => a.AssignmentTechnicians)
-                        .HasForeignKey(at => at.AssignmentId)
-                        .OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasOne(at => at.Technician)
-                        .WithMany(t => t.AssignmentTechnicians)
-                        .HasForeignKey(at => at.TechnicianId)
-                        .OnDelete(DeleteBehavior.Cascade),
-                    j =>
-                    {
-                        j.HasKey(at => at.Id);
-                        j.HasIndex(at => new { at.AssignmentId, at.TechnicianId }).IsUnique();
-                        j.Property(at => at.AssignedAt).IsRequired();
-                        j.Property(at => at.AssignedBy).HasMaxLength(100);
-                    });
+            entity.Property(e => e.TechnicianIds)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                );
         });
 
         // Configure Assignment entity
