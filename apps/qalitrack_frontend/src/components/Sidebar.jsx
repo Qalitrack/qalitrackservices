@@ -10,21 +10,21 @@ import {
   Wrench,
   ChevronDown,
   ChevronRight,
+  ChevronLeft, // 👈 New icon for the button
   Factory,
   Truck,
   User,
   Tractor,
   Satellite,
-  Menu,
-  X
 } from "lucide-react";
 
 // 💡 1. Import the logo image file
-import logo from "/src/assets/qualitrack.png"; // Adjust path if logo is elsewhere
+import logo from "/src/assets/qualitrack.png"; 
 
 const currentUserRole = "operator"; // or "admin"
 
-export default function Sidebar({ isCollapsed }) {
+// 🔄 Component now accepts onToggle prop
+export default function Sidebar({ isCollapsed, onToggle }) {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
 
@@ -45,7 +45,7 @@ export default function Sidebar({ isCollapsed }) {
     }`;
 
   const menuItems = [
-    // ... (Your menu items array remains the same)
+    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/dashboard" },
     {
       key: "weighing",
       label: "Weighing",
@@ -79,22 +79,34 @@ export default function Sidebar({ isCollapsed }) {
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
-      {/* Branding - Replaced text with logo */}
-      <div className={`px-8 py-8 flex items-center justify-center ${isCollapsed ? "justify-center" : ""}`}>
-        {/* Logo when sidebar is expanded */}
-        {!isCollapsed && (
-          <img src={logo} alt="Qalitrack Logo" className="h-25 w-auto" />
-        )}
-        
-        {/* Logo when sidebar is collapsed (using a smaller, centered version) */}
-        {isCollapsed && (
-            <img src={logo} alt="Qalitrack Logo" className="h-20 w-auto" />
-        )}
+      {/* Branding and Collapse Button Container */}
+      <div 
+        className={`py-8 flex items-center relative ${isCollapsed ? "justify-center px-0" : "px-8"}`}
+      >
+        {/* Logo */}
+        <img 
+          src={logo} 
+          alt="Qualitrack Logo" 
+          // Conditional classes for height
+          className={`w-auto transition-all duration-300 ${isCollapsed ? "h-10" : "h-20"}`}
+        />
+
+        {/* 🚀 Collapse Button */}
+        <button
+          onClick={onToggle}
+          aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          className={`absolute top-1/2 -translate-y-1/2 p-1 rounded-full text-gray-500 bg-white shadow-md border 
+            hover:bg-gray-100 transition-colors duration-300 
+            ${isCollapsed ? "right-1" : "-right-3"} 
+            ${isCollapsed ? "border-transparent" : "border-gray-200"}`}
+        >
+          {/* Change icon based on state */}
+          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-1 space-y-1">
-        {/* ... (Menu rendering logic remains the same) ... */}
+      <nav className="flex-1 px-1 space-y-1 overflow-y-auto">
         {menuItems.map((item) =>
           item.children ? (
             <div key={item.key}>
@@ -102,7 +114,7 @@ export default function Sidebar({ isCollapsed }) {
                 onClick={() => toggleMenu(item.key)}
                 className={`flex items-center justify-between w-full px-3 py-2 rounded hover:bg-gray-100 ${
                   openMenus[item.key] ? "bg-gray-200 font-medium" : ""
-                }`}
+                } ${isCollapsed ? "justify-center" : ""}`}
               >
                 <span className="flex items-center gap-2">
                   {item.icon}
@@ -123,15 +135,31 @@ export default function Sidebar({ isCollapsed }) {
               )}
             </div>
           ) : (
-            <NavLink key={item.key} to={getPath(item)} className={linkClasses}>
-              {item.icon}
-              {!isCollapsed && item.label}
-            </NavLink>
+             // Single Link with Tooltip logic (from previous suggestion)
+            <div key={item.key} className="relative group">
+                <NavLink to={getPath(item)} className={linkClasses}>
+                    {item.icon}
+                    {!isCollapsed && item.label}
+                </NavLink>
+
+                {/* Tooltip for collapsed state */}
+                {isCollapsed && (
+                    <span className="absolute left-full ml-4 top-1/2 -translate-y-1/2 z-10 
+                                     opacity-0 group-hover:opacity-100 pointer-events-none
+                                     bg-gray-800 text-white text-xs p-2 rounded-md whitespace-nowrap 
+                                     transition-opacity duration-200">
+                        {item.label}
+                    </span>
+                )}
+            </div>
           )
         )}
       </nav>
 
-      <div className="p-3 text-sm text-gray-500 border-t">{!isCollapsed && "v0.1"}</div>
+      <div className="p-3 text-sm text-gray-500 border-t flex justify-center">{!isCollapsed && "v0.1"}</div>
     </aside>
   );
 }
+
+// NOTE: You must update the parent component (e.g., your main Layout component) 
+// to manage the 'isCollapsed' state and pass a 'onToggle' function.
