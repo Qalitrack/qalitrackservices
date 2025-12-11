@@ -1,0 +1,13 @@
+babel: {
+        plugins: [
+          // [
+          //   "babel-plugin-react-router",
+          //   {
+          //     future: {
+          //       v7_startTransition: true,   // ✅ Opt-in to React Router v7 transition behavior
+          //       v7_relativeSplatPath: true, // ✅ Opt-in to new relative splat path behavior
+          //     },
+          //   },
+          // ],
+        ],
+      },

@@ -1,60 +1,103 @@
 // src/helpers/apiClients.js
 import axios from "axios";
 
-// 🔗 Base URL (from .env file or default fallback)
+// 🔗 Base URL for Master Data/General API (Uses external URL, Vite proxy handles it via the /api path)
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://qalitrack.cseco.co.ke/api";
+// 🔗 Dedicated Transaction Base URL (Uses local proxy path configured in vite.config.js)
+const TRANSACTION_BASE_URL =import.meta.env.VITE_TRANSACTION_API_URL || "https://qalitrack.cseco.co.ke/";
 
+// --- Session Management Utility ---
+
+const getSessionData = () => {
+  try {
+    const sessionData = sessionStorage.getItem("authSession");
+    return sessionData ? JSON.parse(sessionData) : null;
+  } catch (err) {
+    console.error("❌ Error retrieving session token:", err);
+    return null;
+  }
+};
+
+const clearSession = () => {
+  sessionStorage.removeItem("authSession");
+  sessionStorage.removeItem("temp2FASession");
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("user");
+};
+
+const getSessionToken = () => {
+  const session = getSessionData();
+  if (!session) return null;
+
+  const now = Date.now();
+  if (now > session.expiresAt) {
+    clearSession();
+    return null;
+  }
+
+  return session.token;
+};
+
+
+// --- Interceptor Logic ---
+
+const setupRequestInterceptor = (client) => {
+  client.interceptors.request.use(
+    (config) => {
+      const token = getSessionToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+};
+
+const setupResponseInterceptor = (client) => {
+  client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        console.warn("⚠️ Authentication failed — clearing session");
+        clearSession();
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+      }
+
+      let message =
+        error.response?.data?.message ||
+        (typeof error.response?.data === "string"
+          ? error.response.data
+          : error.message);
+
+      if (error.response?.data?.errors) {
+        message = Object.values(error.response.data.errors)
+          .flat()
+          .join("; ");
+      }
+
+      const err = new Error(message);
+      err.originalError = error;
+      return Promise.reject(err);
+    }
+  );
+};
+
+
+// --- API Client Class for Master Data/General (using API_BASE_URL) ---
 class ApiClient {
-  constructor() {
+  constructor(baseURL) {
     this.client = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: baseURL,
       headers: { "Content-Type": "application/json" },
     });
 
-    // ✅ Add token to every request
-    this.client.interceptors.request.use(
-      (config) => {
-        const token = this.getSessionToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    // ✅ Handle errors globally
-    this.client.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          console.warn("⚠️ Authentication failed — clearing session");
-          this.clearSession();
-          if (window.location.pathname !== "/login") {
-            window.location.href = "/login";
-          }
-        }
-
-        let message =
-          error.response?.data?.message ||
-          (typeof error.response?.data === "string"
-            ? error.response.data
-            : error.message);
-
-        if (error.response?.data?.errors) {
-          message = Object.values(error.response.data.errors)
-            .flat()
-            .join("; ");
-        }
-
-        const err = new Error(message);
-        err.originalError = error;
-        return Promise.reject(err);
-      }
-    );
+    setupRequestInterceptor(this.client);
+    setupResponseInterceptor(this.client);
   }
 
-  // ✅ Store token + expiry in sessionStorage
   setSession(token, expiresIn = 3600) {
     const session = {
       token,
@@ -62,41 +105,11 @@ class ApiClient {
     };
     sessionStorage.setItem("authSession", JSON.stringify(session));
   }
+  
+  getSessionToken = getSessionToken;
+  clearSession = clearSession;
+  isAuthenticated = () => !!getSessionToken();
 
-  // ✅ Retrieve valid token
-  getSessionToken() {
-    try {
-      const sessionData = sessionStorage.getItem("authSession");
-      if (!sessionData) return null;
-
-      const session = JSON.parse(sessionData);
-      const now = Date.now();
-      if (now > session.expiresAt) {
-        this.clearSession();
-        return null;
-      }
-
-      return session.token;
-    } catch (err) {
-      console.error("❌ Error retrieving session token:", err);
-      return null;
-    }
-  }
-
-  // ✅ Remove session (used on logout or 401)
-  clearSession() {
-    sessionStorage.removeItem("authSession");
-    sessionStorage.removeItem("temp2FASession");
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
-  }
-
-  // ✅ Check if user is authenticated
-  isAuthenticated() {
-    return !!this.getSessionToken();
-  }
-
-  // ✅ REST methods
   get(endpoint, options = {}) {
     return this.client.get(endpoint, options);
   }
@@ -118,6 +131,19 @@ class ApiClient {
   }
 }
 
-// ✅ Create and export global instance
-export const apiClient = new ApiClient();
+
+// --- Transaction Client Class (using TRANSACTION_BASE_URL) ---
+class TransactionClient extends ApiClient {
+    constructor() {
+        // This super call uses the local path '/Transaction'
+        super(TRANSACTION_BASE_URL);
+    }
+}
+
+
+// ✅ Create and export global instances
+export const apiClient = new ApiClient(API_BASE_URL);
+export const transactionsClient = new TransactionClient();
+
+export { axios }; 
 export default apiClient;
