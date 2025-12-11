@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
+  // ... (import lucide-react icons)
   LayoutDashboard,
   Scale,
   Cog,
@@ -17,6 +18,9 @@ import {
   Menu,
   X
 } from "lucide-react";
+
+// 💡 1. Import the logo image file
+import logo from "/src/assets/qualitrack.png"; // Adjust path if logo is elsewhere
 
 const currentUserRole = "operator"; // or "admin"
 
@@ -41,12 +45,7 @@ export default function Sidebar({ isCollapsed }) {
     }`;
 
   const menuItems = [
-    // {
-    //   key: "dashboard",
-    //   label: "Dashboard",
-    //   icon: <LayoutDashboard size={18} />,
-    //   path: "/dashboard",
-    // },
+    // ... (Your menu items array remains the same)
     {
       key: "weighing",
       label: "Weighing",
@@ -80,13 +79,22 @@ export default function Sidebar({ isCollapsed }) {
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
-      {/* Branding */}
-      <div className={`px-4 py-4 font-bold text-2xl flex items-center justify-center ${isCollapsed ? "justify-center" : ""}`}>
-        {!isCollapsed && "Qalitrack"}
+      {/* Branding - Replaced text with logo */}
+      <div className={`px-8 py-8 flex items-center justify-center ${isCollapsed ? "justify-center" : ""}`}>
+        {/* Logo when sidebar is expanded */}
+        {!isCollapsed && (
+          <img src={logo} alt="Qalitrack Logo" className="h-20 w-auto" />
+        )}
+        
+        {/* Logo when sidebar is collapsed (using a smaller, centered version) */}
+        {isCollapsed && (
+            <img src={logo} alt="Qalitrack Logo" className="h-15 w-auto" />
+        )}
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-1 space-y-1">
+        {/* ... (Menu rendering logic remains the same) ... */}
         {menuItems.map((item) =>
           item.children ? (
             <div key={item.key}>
