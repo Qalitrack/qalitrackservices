@@ -1,109 +1,144 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSimulatedWeight, setDetectedPlate, setCapturedWeight } from "../store/weighingSlice";
-import { Button, Spin, message } from "antd";
+import { Button, message } from "antd";
+import { motion, AnimatePresence } from "framer-motion"; // Optional: for ultra-smooth plate reveal
 
 const WeighingPanel = () => {
   const dispatch = useDispatch();
-  const { currentWeight, vehiclePosition, detectedPlate, loading, error } = useSelector(
-    (state) => state.weighing
-  );
+  const { currentWeight, vehiclePosition, detectedPlate } = useSelector((state) => state.weighing);
 
-  // Memoize camera feeds to prevent unnecessary re-renders
+  // Prevent unnecessary re-renders of camera config
   const cameraFeeds = useMemo(
     () => [
-      { id: 1, src: "https://via.placeholder.com/150?text=Camera+1" },
-      { id: 2, src: "https://via.placeholder.com/150?text=Camera+2" },
-      { id: 3, src: "https://via.placeholder.com/150?text=Camera+3" },
-      { id: 4, src: "https://via.placeholder.com/150?text=Camera+4" },
+      { id: 1, label: "Front View" },
+      { id: 2, label: "Rear View" },
+      { id: 3, label: "Side Left" },
+      { id: 4, label: "Side Right" },
     ],
     []
   );
 
+  // Keep previous weight for smooth transition
+  const prevWeightRef = useRef(currentWeight);
+  const weightDirection = currentWeight > prevWeightRef.current ? "up" : "down";
+  prevWeightRef.current = currentWeight;
+
   useEffect(() => {
-    const interval = setInterval(() => {
+    const weightInterval = setInterval(() => {
       dispatch(fetchSimulatedWeight());
     }, 2000);
 
-    const detectionInterval = setInterval(() => {
-      const mockPlate = `ABC${Math.floor(Math.random() * 1000)}`;
+    const plateInterval = setInterval(() => {
+      const mockPlate = `TN-${Math.floor(Math.random() * 90) + 10} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))} ${Math.floor(Math.random() * 9999)}`;
       dispatch(setDetectedPlate(mockPlate));
-      console.log("📷 Detected plate:", mockPlate);
-    }, 3000);
+    }, 8000); // Less frequent = more realistic
 
     return () => {
-      clearInterval(interval);
-      clearInterval(detectionInterval);
+      clearInterval(weightInterval);
+      clearInterval(plateInterval);
     };
   }, [dispatch]);
 
   const handleCapture = () => {
-    if (vehiclePosition === "Fully On" && detectedPlate) {
-      dispatch(setCapturedWeight(currentWeight)); // Set captured weight for form
-      message.success(`Captured weight: ${currentWeight} kg, Plate: ${detectedPlate}`);
-      console.log("🚀 Auto-populating form with weight:", currentWeight);
+    if (vehiclePosition === "Fully On" && detectedPlate && currentWeight > 1000) {
+      dispatch(setCapturedWeight(currentWeight));
+      message.success({
+        content: `Captured: ${currentWeight.toLocaleString()} kg | Plate: ${detectedPlate}`,
+        duration: 3,
+      });
     } else {
-      message.warning("Vehicle must be fully on the bridge and a plate detected to capture.");
+      message.warning("Vehicle not fully on bridge or no plate detected");
     }
   };
 
-  return (
-    <div className="p-6 bg-white rounded-2xl shadow-md max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Smart Weighing Panel</h2>
-      {loading ? (
-        <div className="flex justify-center items-center p-8">
-          <Spin size="large" />
-        </div>
-      ) : error ? (
-        <div className="text-red-500 text-center">Error: {error}</div>
-      ) : (
-        <>
-          <div className="mb-6 p-4 bg-gray-100 rounded-lg text-center animate-pulse">
-            <h3 className="text-lg font-semibold text-gray-700">Current Weight</h3>
-            <p className="text-4xl font-bold text-blue-600">{currentWeight || 0} kg</p>
-          </div>
+  const isStable = currentWeight > 100 && Math.abs(currentWeight - prevWeightRef.current) < 50;
 
-          <div className="mb-6 p-4 bg-gray-100 rounded-lg text-center">
-            <h3 className="text-lg font-semibold text-gray-700">Vehicle Position</h3>
-            <p className="text-xl font-medium text-green-600">
-              {vehiclePosition || "Not Detected"}
-            </p>
-            <div className="mt-2 h-4 bg-gray-300 rounded-full">
-              <div
-                className={`h-full rounded-full ${
-                  vehiclePosition === "Fully On" ? "bg-green-500" : "bg-yellow-500"
-                }`}
-                style={{ width: vehiclePosition === "Fully On" ? "100%" : "50%" }}
-              ></div>
+  return (
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-6 rounded-2xl shadow-xl border border-slate-200">
+      
+
+      
+
+      {/* Vehicle Position */}
+      <div className="bg-white rounded-2xl p-6 shadow-inner border border-slate-200 mb-6">
+        <p className="text-sm text-slate-600 font-medium uppercase tracking-wider mb-3">Vehicle Position</p>
+        <div className="space-y-3">
+          <p className={`text-lg font-semibold text-center ${
+            vehiclePosition === "Fully On" ? "text-green-600" : "text-amber-600"
+          }`}>
+            {vehiclePosition || "Waiting for vehicle..."}
+          </p>
+          <div className="h-6 bg-slate-200 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-amber-500 to-green-500"
+              animate={{
+                width: vehiclePosition === "Fully On" ? "100%" : vehiclePosition === "Partial" ? "65%" : "30%",
+              }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Camera Grid */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        {cameraFeeds.map((feed) => (
+          <div
+            key={feed.id}
+            className="relative bg-black rounded-xl overflow-hidden shadow-lg group"
+          >
+            <div className="aspect-video relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20" />
+              <img
+                src={`https://picsum.photos/400/300?random=${feed.id}`}
+                alt={feed.label}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+                <p className="text-white text-xs font-medium">{feed.label}</p>
+              </div>
+
+              {/* Plate Overlay - Only on one camera */}
+              {detectedPlate && feed.id === 1 && (
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  className="absolute top-3 left-3 bg-black/80 text-white px-4 py-2 rounded-lg font-mono text-lg font-bold shadow-2xl border-2 border-green-400"
+                >
+                  {detectedPlate}
+                </motion.div>
+              )}
             </div>
           </div>
+        ))}
+      </div>
 
-          <div className="mb-6 grid grid-cols-2 gap-4">
-            <h3 className="col-span-2 text-lg font-semibold text-gray-700">Camera Feeds</h3>
-            {cameraFeeds.map((feed) => (
-              <div key={feed.id} className="bg-gray-200 p-2 rounded-lg text-center">
-                <img src={feed.src} alt={`Camera ${feed.id}`} className="w-full h-auto rounded" />
-                {detectedPlate && (
-                  <p className="mt-2 text-sm font-medium text-blue-600">
-                    Detected Plate: {detectedPlate}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
+      {/* Capture Button */}
+      <div className="text-center">
+        <Button
+          type="primary"
+          size="large"
+          onClick={handleCapture}
+          disabled={vehiclePosition !== "Fully On" || !detectedPlate || !isStable}
+          className={`font-bold text-lg px-10 py-6 h-auto rounded-xl shadow-lg transition-all ${
+            vehiclePosition === "Fully On" && detectedPlate && isStable
+              ? "bg-green-600 hover:bg-green-700 scale-100"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
+        >
+          {vehiclePosition === "Fully On" && detectedPlate && isStable
+            ? "Capture Weight & Plate"
+            : "Waiting for Stable Vehicle..."}
+        </Button>
+      </div>
 
-          <div className="text-center">
-            <Button
-              type="primary"
-              onClick={handleCapture}
-              disabled={vehiclePosition !== "Fully On" || !detectedPlate}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg"
-            >
-              Capture Weight
-            </Button>
-          </div>
-        </>
-      )}
+      {/* Optional: Small status bar */}
+      <div className="mt-4 text-center text-xs text-slate-500">
+        Auto-refresh: Weight every 2s • Plate detection every 8s
+      </div>
     </div>
   );
 };
