@@ -35,7 +35,7 @@ export default function Weighing() {
       <h1 className="mb-6 text-3xl font-bold text-amber-500">Factory Weighing System</h1>
 
       {/* TOP BAR: Hardware Controls */}
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <div className="rounded-xl border border-gray-700 bg-black shadow-lg overflow-hidden">
           <div className="bg-amber-500 px-6 py-4">
             <h2 className="text-xl font-bold text-black flex items-center gap-3">
@@ -48,7 +48,7 @@ export default function Weighing() {
             </Suspense>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* MAIN CONTENT GRID */}
       <div className="grid lg:grid-cols-12 gap-6">
@@ -95,6 +95,21 @@ export default function Weighing() {
                 <WeighingForm />
               </Suspense>
             </div>
+          </div>
+        </div>
+      </div>
+      {/* BOTTOM: Hardware Controls */}
+      <div className="mb-8">
+        <div className="rounded-xl border border-gray-700 bg-black shadow-lg overflow-hidden">
+          <div className="bg-amber-500 px-6 py-4">
+            <h2 className="text-xl font-bold text-black flex items-center gap-3">
+              Hardware Controls
+            </h2>
+          </div>
+          <div className="p-6 bg-gray-900">
+            <Suspense fallback={<SectionLoader title="Loading hardware controls..." />}>
+              <HardwareControls refreshMs={1500} />
+            </Suspense>
           </div>
         </div>
       </div>
