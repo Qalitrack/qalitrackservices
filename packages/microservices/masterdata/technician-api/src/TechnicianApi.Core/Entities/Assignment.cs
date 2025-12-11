@@ -22,9 +22,8 @@ public class Assignment : BaseEntity
     public double? LocationLatitude { get; set; }
     public double? LocationLongitude { get; set; }
 
-    // Navigation properties - Many-to-Many with Technician
-    public virtual ICollection<AssignmentTechnician> AssignmentTechnicians { get; set; } = new List<AssignmentTechnician>();
-    public virtual ICollection<Technician> Technicians { get; set; } = new List<Technician>();
+    // Technician IDs from the other microservice
+    public ICollection<string> TechnicianIds { get; set; } = new List<string>();
 
     public virtual CheckIn? CheckIn { get; set; }
     public virtual ICollection<Photo> Photos { get; set; } = new List<Photo>();

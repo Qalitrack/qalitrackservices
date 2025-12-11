@@ -1,6 +1,4 @@
-// ------------------------------------------------------------
-// Program.cs  (single file – no extra packages needed)
-// ------------------------------------------------------------
+
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -10,10 +8,9 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-// ------------------------------------------------------------
+
 namespace Qalitrack.Services;
 
-// ---- 1. Paste the whole PlateDataStreamService class here ----
 public class PlateDataStreamService : IDisposable
 {
     private readonly ConcurrentDictionary<string, (Channel<string> Channel, DateTime LastActivity)> _streams = new();
