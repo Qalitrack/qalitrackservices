@@ -29,7 +29,7 @@ public class AssignmentService : IAssignmentService
 
     public async Task<AssignmentResponseDto?> GetByIdAsync(string id)
     {
-        var assignment = await _assignmentRepository.GetByIdWithTechniciansAsync(id);
+        var assignment = await _assignmentRepository.GetByIdWithTechnicianIdsAsync(id);
         if (assignment == null)
             return null;
             
@@ -44,7 +44,7 @@ public class AssignmentService : IAssignmentService
         string? technicianId = null,
         string? status = null)
     {
-        var (items, totalCount) = await _assignmentRepository.GetPagedWithTechniciansAsync(
+        var (items, totalCount) = await _assignmentRepository.GetPagedAsync(
             pageNumber,
             pageSize,
             technicianId,
@@ -77,7 +77,7 @@ public class AssignmentService : IAssignmentService
     public async Task<AssignmentResponseDto> CreateAsync(CreateAssignmentDto dto)
     {
         var assignment = _mapper.Map<Assignment>(dto);
-        var created = await _assignmentRepository.CreateWithTechniciansAsync(assignment, dto.TechnicianIds);
+        var created = await _assignmentRepository.CreateWithTechnicianIdsAsync(assignment, dto.TechnicianIds);
         var createdDto = _mapper.Map<AssignmentResponseDto>(created);
         await IncludeAttachments(createdDto);
         return createdDto;
@@ -85,11 +85,11 @@ public class AssignmentService : IAssignmentService
 
     public async Task<AssignmentResponseDto?> UpdateAsync(string id, UpdateAssignmentDto dto)
     {
-        var existing = await _assignmentRepository.GetByIdWithTechniciansAsync(id);
+        var existing = await _assignmentRepository.GetByIdWithTechnicianIdsAsync(id);
         if (existing == null) return null;
 
         _mapper.Map(dto, existing);
-        var updated = await _assignmentRepository.UpdateWithTechniciansAsync(existing, dto.TechnicianIds);
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(existing, dto.TechnicianIds);
 
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
@@ -101,9 +101,9 @@ public class AssignmentService : IAssignmentService
 
     public async Task<AssignmentResponseDto?> AcceptAssignmentAsync(string id, string technicianId)
     {
-        var assignment = await _assignmentRepository.GetByIdWithTechniciansAsync(id);
+        var assignment = await _assignmentRepository.GetByIdWithTechnicianIdsAsync(id);
 
-        if (assignment == null || !assignment.Technicians.Any(t => t.Id == technicianId))
+        if (assignment == null || !assignment.TechnicianIds.Contains(technicianId))
             return null;
 
         if (assignment.Status != AssignmentStatus.Pending)
@@ -112,15 +112,15 @@ public class AssignmentService : IAssignmentService
         assignment.Status = AssignmentStatus.Accepted;
         assignment.AcceptedAt = DateTime.UtcNow;
 
-        var updated = await _assignmentRepository.UpdateAsync(assignment);
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
     public async Task<AssignmentResponseDto?> DeclineAssignmentAsync(string id, string technicianId)
     {
-        var assignment = await _assignmentRepository.GetByIdWithTechniciansAsync(id);
+        var assignment = await _assignmentRepository.GetByIdWithTechnicianIdsAsync(id);
 
-        if (assignment == null || !assignment.Technicians.Any(t => t.Id == technicianId))
+        if (assignment == null || !assignment.TechnicianIds.Contains(technicianId))
             return null;
 
         if (assignment.Status != AssignmentStatus.Pending)
@@ -128,15 +128,15 @@ public class AssignmentService : IAssignmentService
 
         assignment.Status = AssignmentStatus.Declined;
 
-        var updated = await _assignmentRepository.UpdateAsync(assignment);
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
     public async Task<AssignmentResponseDto?> StartAssignmentAsync(string id, string technicianId)
     {
-        var assignment = await _assignmentRepository.GetByIdWithTechniciansAsync(id);
+        var assignment = await _assignmentRepository.GetByIdWithTechnicianIdsAsync(id);
 
-        if (assignment == null || !assignment.Technicians.Any(t => t.Id == technicianId))
+        if (assignment == null || !assignment.TechnicianIds.Contains(technicianId))
             return null;
 
         if (assignment.Status != AssignmentStatus.Accepted)
@@ -145,15 +145,15 @@ public class AssignmentService : IAssignmentService
         assignment.Status = AssignmentStatus.InProgress;
         assignment.StartedAt = DateTime.UtcNow;
 
-        var updated = await _assignmentRepository.UpdateAsync(assignment);
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
     public async Task<AssignmentResponseDto?> CompleteAssignmentAsync(string id, string technicianId)
     {
-        var assignment = await _assignmentRepository.GetByIdWithTechniciansAsync(id);
+        var assignment = await _assignmentRepository.GetByIdWithTechnicianIdsAsync(id);
 
-        if (assignment == null || !assignment.Technicians.Any(t => t.Id == technicianId))
+        if (assignment == null || !assignment.TechnicianIds.Contains(technicianId))
             return null;
 
         if (assignment.Status != AssignmentStatus.InProgress)
@@ -162,7 +162,7 @@ public class AssignmentService : IAssignmentService
         assignment.Status = AssignmentStatus.Completed;
         assignment.CompletedAt = DateTime.UtcNow;
 
-        var updated = await _assignmentRepository.UpdateAsync(assignment);
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
@@ -174,7 +174,7 @@ public class AssignmentService : IAssignmentService
 
     public async Task<IEnumerable<AssignmentResponseDto>> GetByManagerIdAsync(string managerId)
     {
-        var assignments = await _assignmentRepository.GetByManagerIdWithTechniciansAsync(managerId);
+        var assignments = await _assignmentRepository.GetByManagerIdAsync(managerId);
         return _mapper.Map<IEnumerable<AssignmentResponseDto>>(assignments);
     }
 

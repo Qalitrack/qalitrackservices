@@ -154,10 +154,15 @@ builder.Services.AddSingleton<IHostedService>(serviceProvider =>
     )
 );
 
+// Add HTTP client services
+builder.Services.AddHttpClient();
+
 // Register PlatformDataService as a singleton and hosted service
 builder.Services.AddSingleton<PlatformDataService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<PlatformDataService>());
 
+// Register NprCameraService with its dependencies
+//builder.Services.AddHostedService<NprCameraService>();
 // Register CameraStreamService as a singleton and hosted service
 builder.Services.AddSingleton<CameraStreamService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<CameraStreamService>());
@@ -173,10 +178,12 @@ builder.Services.AddResponseCompression(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowAll", policy =>
+    {
         policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod());
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
 // Configure Kestrel to listen on all network interfaces
@@ -192,6 +199,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+app.UseCors("AllowAll");
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 var urls = builder.Configuration["ASPNETCORE_URLS"]?.Split(';') ?? new[] { "http://localhost:5000" };
@@ -226,15 +234,14 @@ else
     logger.LogWarning("Serial ports and system features may be restricted!");
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
 
-app.UseCors();
 app.UseResponseCompression();
 app.UseStaticFiles();
 app.UseRouting();
+
+// CORS must be after UseRouting() and before UseEndpoints()
+app.UseCors("AllowAll");
+
 app.UseAuthorization();
 app.MapControllers();
 
