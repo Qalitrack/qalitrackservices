@@ -1,12 +1,17 @@
-// src/helpers/apiClients.js
 import axios from "axios";
 
-// 🔗 Base URL for Master Data/General API (Uses external URL, Vite proxy handles it via the /api path)
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://qalitrack.cseco.co.ke/api";
-// 🔗 Dedicated Transaction Base URL (Uses local proxy path configured in vite.config.js)
-const TRANSACTION_BASE_URL =import.meta.env.VITE_TRANSACTION_API_URL || "https://qalitrack.cseco.co.ke/";
+// 💡 FIX APPLIED HERE: Base URLs must be the local proxy paths
+// defined in vite.config.js to force the request to go through the proxy.
 
-// --- Session Management Utility ---
+// 🔗 Base URL for Master Data/General API (Points to the /api proxy in vite.config.js)
+// If VITE_API_URL is set, it MUST also be a local path like /api
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
+
+// 🔗 Dedicated Transaction Base URL (Points to the /Transaction proxy in vite.config.js)
+// If VITE_TRANSACTION_API_URL is set, it MUST also be a local path like /Transaction
+const TRANSACTION_BASE_URL = import.meta.env.VITE_TRANSACTION_API_URL || "/Transaction";
+
+// --- Session Management Utility (No changes needed) ---
 
 const getSessionData = () => {
   try {
@@ -39,7 +44,7 @@ const getSessionToken = () => {
 };
 
 
-// --- Interceptor Logic ---
+// --- Interceptor Logic (No changes needed) ---
 
 const setupRequestInterceptor = (client) => {
   client.interceptors.request.use(
@@ -90,14 +95,14 @@ const setupResponseInterceptor = (client) => {
 class ApiClient {
   constructor(baseURL) {
     this.client = axios.create({
-      baseURL: baseURL,
+      baseURL: baseURL, // Now set to '/api' or '/Transaction'
       headers: { "Content-Type": "application/json" },
     });
 
     setupRequestInterceptor(this.client);
     setupResponseInterceptor(this.client);
   }
-
+// ... rest of the class methods (setSession, get, post, etc.) ...
   setSession(token, expiresIn = 3600) {
     const session = {
       token,
@@ -135,7 +140,7 @@ class ApiClient {
 // --- Transaction Client Class (using TRANSACTION_BASE_URL) ---
 class TransactionClient extends ApiClient {
     constructor() {
-        // This super call uses the local path '/Transaction'
+        // This super call now uses '/Transaction'
         super(TRANSACTION_BASE_URL);
     }
 }

@@ -83,12 +83,12 @@ export default function Sidebar({ isCollapsed }) {
       <div className={`px-8 py-8 flex items-center justify-center ${isCollapsed ? "justify-center" : ""}`}>
         {/* Logo when sidebar is expanded */}
         {!isCollapsed && (
-          <img src={logo} alt="Qalitrack Logo" className="h-20 w-auto" />
+          <img src={logo} alt="Qalitrack Logo" className="h-25 w-auto" />
         )}
         
         {/* Logo when sidebar is collapsed (using a smaller, centered version) */}
         {isCollapsed && (
-            <img src={logo} alt="Qalitrack Logo" className="h-15 w-auto" />
+            <img src={logo} alt="Qalitrack Logo" className="h-20 w-auto" />
         )}
       </div>
 
