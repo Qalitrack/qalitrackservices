@@ -14,6 +14,6 @@ public interface IServiceReportService
     Task<ServiceReportResponseDto?> SubmitReportAsync(string id);
     Task<ServiceReportResponseDto?> ApproveReportAsync(string id, string approvedBy);
     Task<ServiceReportResponseDto?> RejectReportAsync(string id, string rejectionReason);
-    Task<ServiceReportResponseDto> AutoPopulateFromAssignmentAsync(string assignmentId);
+    Task<ServiceReportResponseDto> AutoPopulateFromAssignmentAsync(string assignmentId, string? technicianId = null);
     Task CalculateFieldJobTimeAsync(string serviceReportId);
 }
