@@ -19,6 +19,7 @@ import {
 
 import { Input, Select, Button, Form, Spin, message } from "antd";
 import { debounce } from "lodash";
+import CameraGrid from "./CameraGrid";
 
 /* ---------------------------------------------------------------------------
    LiveWeighbridgeStatus (No changes here, preserving your SSE logic)
@@ -142,6 +143,9 @@ function LiveWeighbridgeStatus({ onManualCapture, onWeightStable }) {
         >
           CAPTURE WEIGHT
         </button>
+      </div>
+      <div>
+        <CameraGrid />
       </div>
     </div>
   );
@@ -301,12 +305,13 @@ export default function WeighingForm() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-">
         <div className="md:col-span-1">
           <LiveWeighbridgeStatus onManualCapture={handleManualCapture} onWeightStable={(w) => {}} />
         </div>
+        
 
-        <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow">
+        <div className="md:col-span-3 bg-white rounded-2xl p-6 shadow">
           <h2 className="text-xl font-semibold mb-4">Weighing Transaction Form</h2>
 
           {loading ? (
