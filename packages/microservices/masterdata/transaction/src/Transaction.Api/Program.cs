@@ -147,7 +147,7 @@ builder.Services.AddScoped<ITransactionService, Transaction.Core.Services.Transa
 // builder.Services.AddScoped<IPasswordService, PasswordService>();
 // builder.Services.AddScoped<IEmailService, EmailService>();
 
-// Add CORS
+// Add CORS - Allow everything
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -189,6 +189,8 @@ else
     });
 }
 
+// ⚠️ CRITICAL: Enable CORS middleware - This line was MISSING!
+app.UseCors("AllowAll");
 
 // Use Data Leak Prevention Middleware (sanitizes errors and sensitive data)
 if (!app.Environment.IsEnvironment("Test"))
@@ -208,6 +210,7 @@ if (!app.Environment.IsEnvironment("Test"))
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+
 // Run database migrations automatically on startup in non-Development environments
 // Run database migrations automatically on startup
 if (!app.Environment.IsDevelopment())
