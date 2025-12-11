@@ -4,8 +4,7 @@ import { apiClient } from "../helpers/apiClients";
 /* -------------------------------------------------------------------------- */
 /*                                 BASE PATH                                   */
 /* -------------------------------------------------------------------------- */
-const BASE = "/api/transactions"; // http://localhost:7000/api/transactions/...
-// const BASE = "/Transaction"; // <-- use this for direct backend call
+const BASE = "/Transaction/Transaction"; // This will be proxied to https://qalitrack.cseco.co.ke/Transaction
 
 // --------------------------------------------------------------------------
 // LIST / FILTER TRANSACTIONS (PAGINATED)
@@ -32,8 +31,10 @@ export const getTransactions = async ({
   weighMode,
   sortBy,
   sortDescending,
+  pathSuffix = '' // New parameter for URL suffix
 } = {}) => {
-  const response = await apiClient.get(BASE, {
+  const url = `${BASE}${pathSuffix}`; // Append suffix to BASE
+  const response = await apiClient.get(url, {
     params: {
       pageNumber,
       pageSize,
@@ -58,6 +59,7 @@ export const getTransactions = async ({
       sortDescending,
     },
   });
+  console.log(response);
   return response.data.items || response.data;
 };
 
