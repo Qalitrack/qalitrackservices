@@ -1,49 +1,51 @@
+// src/layouts/MainLayout.jsx
 import { useState, useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar"; 
+import Topbar from "../components/Topbar";
 
 export default function MainLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Memoize the toggle function using useCallback. 
-  // This is crucial for performance as it prevents the Sidebar component (a child) 
-  // from re-rendering unless the state actually changes.
   const toggleSidebar = useCallback(() => {
     setIsCollapsed(prev => !prev);
   }, []);
 
-  // Determine the left margin based on the sidebar's width.
-  // This ensures the main content area always starts immediately after the sidebar.
-  const contentShiftClass = isCollapsed ? "md:ml-16" : "md:ml-64"; 
-  // The 'md:' prefix is important for responsiveness, allowing the layout to adapt 
-  // on smaller screens where the sidebar might be hidden or overlaid.
-
   return (
-    <div className="flex h-screen bg-gray-50">
-      
-      {/* 1. Sidebar (Fixed Component) */}
-      {/* It controls the 'isCollapsed' state via the 'onToggle' prop */}
-      <Sidebar 
-        isCollapsed={isCollapsed} 
-        onToggle={toggleSidebar} 
-      />
+    <div className="flex h-screen bg-white overflow-hidden">
 
-      {/* 2. Main Content Wrapper (Dynamic Position) */}
-      {/* The margin dynamically changes with the sidebar, and 'transition-all' smooths the movement. */}
-      <div 
-        className={`flex flex-col flex-1 transition-all duration-300 ${contentShiftClass}`}
+      {/* ───────────────────────────────────────────────
+          FIXED SIDEBAR (Does NOT push content)
+      ─────────────────────────────────────────────── */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full z-30
+          transition-all duration-300 
+          bg-black text-white border-r border-neutral-800
+          ${isCollapsed ? "w-16" : "w-64"}
+        `}
       >
-        
-        {/* 3. Topbar (Header) */}
-        {/* Renders at the top of the content area. */}
-        <Topbar isCollapsed={isCollapsed} /> 
+        <Sidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
+      </aside>
 
-        {/* 4. Page Content */}
-        <main className="flex-1 p-4 overflow-y-auto">
-          {/* Outlet renders the component associated with the current route */}
+      {/* ───────────────────────────────────────────────
+          MAIN WRAPPER (Static & Responsive)
+      ─────────────────────────────────────────────── */}
+      <div
+        className={`
+          flex flex-col flex-1 h-full overflow-hidden
+          transition-all duration-300
+          ${isCollapsed ? "ml-16" : "ml-64"}
+        `}
+      >
+        {/* ─── TOPBAR ─────────────────────────────── */}
+        <Topbar isCollapsed={isCollapsed} onToggleSidebar={toggleSidebar} />
+
+        {/* ─── CONTENT ─────────────────────────────── */}
+        <main className="flex-1 overflow-y-auto p-4 bg-white">
           <Outlet />
         </main>
+
       </div>
     </div>
   );

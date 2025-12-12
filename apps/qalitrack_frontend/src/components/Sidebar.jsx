@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  // ... (import lucide-react icons)
   LayoutDashboard,
   Scale,
   Cog,
@@ -10,7 +9,7 @@ import {
   Wrench,
   ChevronDown,
   ChevronRight,
-  ChevronLeft, // 👈 New icon for the button
+  ChevronLeft,
   Factory,
   Truck,
   User,
@@ -18,12 +17,10 @@ import {
   Satellite,
 } from "lucide-react";
 
-// 💡 1. Import the logo image file
-import logo from "/src/assets/qualitrack.png"; 
+import logo from "/src/assets/qualitrack.png";
 
-const currentUserRole = "operator"; // or "admin"
+const currentUserRole = "operator";
 
-// 🔄 Component now accepts onToggle prop
 export default function Sidebar({ isCollapsed, onToggle }) {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
@@ -40,12 +37,12 @@ export default function Sidebar({ isCollapsed, onToggle }) {
   };
 
   const linkClasses = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-2 rounded transition-colors hover:bg-gray-100 ${
-      isActive ? "bg-gray-200 font-medium border-l-4 border-green-500" : ""
-    }`;
+    `flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150
+     ${isActive ? "bg-black/60 font-medium" : "hover:bg-white/5"} `;
 
   const menuItems = [
-    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/dashboard" },
+    // { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/dashboard" },
+    // { key: "dashboard", label: "Dashboard", icon: <Cog size={18} />, path: "/dashboard" },
     {
       key: "weighing",
       label: "Weighing",
@@ -67,99 +64,152 @@ export default function Sidebar({ isCollapsed, onToggle }) {
 
   const getPath = (item) => {
     const rootPath = `/${currentUserRole}`;
-    if (item.path.startsWith("/")) {
-      return item.path === "/dashboard" ? rootPath : item.path;
-    }
+    if (item.path === "/dashboard") return rootPath;
+    if (item.path.startsWith("/")) return item.path;
     return `${rootPath}/${item.path}`;
   };
 
   return (
+    // Sidebar container: black background, fixed left, overlaying content
     <aside
-      className={`h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
+      className={`
+        fixed top-0 left-0 h-full z-40 flex flex-col transition-all duration-300
+        bg-black text-white shadow-lg
+        ${isCollapsed ? "w-16" : "w-64"}
+      `}
+      aria-label="Main sidebar"
     >
-      {/* Branding and Collapse Button Container */}
-      <div 
-        className={`py-8 flex items-center relative ${isCollapsed ? "justify-center px-0" : "px-8"}`}
-      >
-        {/* Logo */}
-        <img 
-          src={logo} 
-          alt="Qualitrack Logo" 
-          // Conditional classes for height
-          className={`w-auto transition-all duration-300 ${isCollapsed ? "h-10" : "h-20"}`}
-        />
+      {/* Branding + Collapse */}
+      <div className={`flex items-center relative ${isCollapsed ? "justify-center px-0" : "justify-between px-6" } py-6`}>
+        <div className="flex items-center gap-3">
+          <img
+            src={logo}
+            alt="Qualitrack"
+            className={`transition-all duration-300 ${isCollapsed ? "h-8" : "h-12"}`}
+          />
+          {!isCollapsed && <span className="font-semibold text-lg text-white">Qualitrack</span>}
+        </div>
 
-        {/* 🚀 Collapse Button */}
+        {/* Collapse toggle button */}
         <button
           onClick={onToggle}
-          aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-          className={`absolute top-1/2 -translate-y-1/2 p-1 rounded-full text-gray-500 bg-white shadow-md border 
-            hover:bg-gray-100 transition-colors duration-300 
-            ${isCollapsed ? "right-1" : "-right-3"} 
-            ${isCollapsed ? "border-transparent" : "border-gray-200"}`}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className={`
+            absolute top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/5 hover:bg-white/10
+            ${isCollapsed ? "right-1" : "-right-3"}
+            border border-white/10
+          `}
         >
-          {/* Change icon based on state */}
-          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {isCollapsed ? <ChevronRight size={16} className="text-amber-400" /> : <ChevronLeft size={16} className="text-amber-400" />}
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-1 space-y-1 overflow-y-auto">
+      <nav className="flex-1 overflow-y-auto px-1 py-2">
         {menuItems.map((item) =>
           item.children ? (
-            <div key={item.key}>
+            <div key={item.key} className="mb-1">
               <button
                 onClick={() => toggleMenu(item.key)}
-                className={`flex items-center justify-between w-full px-3 py-2 rounded hover:bg-gray-100 ${
-                  openMenus[item.key] ? "bg-gray-200 font-medium" : ""
-                } ${isCollapsed ? "justify-center" : ""}`}
+                className={`flex items-center justify-between w-full px-3 py-2 rounded-r-md transition-colors duration-150
+                  ${openMenus[item.key] ? "bg-white/5 font-medium" : "hover:bg-white/5"}
+                  ${isCollapsed ? "justify-center" : ""}`}
+                aria-expanded={!!openMenus[item.key]}
+                aria-controls={`${item.key}-sub`}
               >
-                <span className="flex items-center gap-2">
-                  {item.icon}
-                  {!isCollapsed && item.label}
+                <span className="flex items-center gap-3">
+                  <span className="text-amber-400">{item.icon}</span>
+                  {!isCollapsed && <span className="text-sm">{item.label}</span>}
                 </span>
-                {!isCollapsed && (openMenus[item.key] ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
+
+                {!isCollapsed && (
+                  <span className="text-white/80">
+                    {openMenus[item.key] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  </span>
+                )}
               </button>
 
-              {openMenus[item.key] && !isCollapsed && (
-                <div className="ml-6 mt-1 space-y-1">
-                  {item.children.map((child) => (
-                    <NavLink key={child.key} to={getPath(child)} className={linkClasses}>
-                      {child.icon}
-                      {child.label}
-                    </NavLink>
-                  ))}
-                </div>
-              )}
+              {/* Children */}
+              <div id={`${item.key}-sub`} className={`${openMenus[item.key] && !isCollapsed ? "block" : "hidden"} mt-1`}>
+                {item.children.map((child) => (
+                  <NavLink
+                    key={child.key}
+                    to={getPath(child)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative
+                       ${isActive ? "bg-white/6" : "hover:bg-white/4"}`
+                    }
+                  >
+                    {/* amber left border indicator when active */}
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-transparent"
+                         aria-hidden />
+                    <span className="text-white/90">{child.icon}</span>
+                    {!isCollapsed && <span className="text-sm">{child.label}</span>}
+                  </NavLink>
+                ))}
+              </div>
             </div>
           ) : (
-             // Single Link with Tooltip logic (from previous suggestion)
-            <div key={item.key} className="relative group">
-                <NavLink to={getPath(item)} className={linkClasses}>
-                    {item.icon}
-                    {!isCollapsed && item.label}
-                </NavLink>
+            <div key={item.key} className="relative group mb-1">
+              <NavLink
+                to={getPath(item)}
+                className={({ isActive }) =>
+                  `
+                  flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative
+                  ${isActive ? "bg-white/6" : "hover:bg-white/4"}
+                  ${isActive ? "pl-3" : ""}
+                  `
+                }
+              >
+                {/* active left amber border */}
+                {({ isActive }) => null}
+                {/*
+                  We can't use NavLink children function and class func at same time easily in a single template,
+                  so we'll apply the amber left border via an absolute element using CSS and a small helper below.
+                */}
+                <ActiveLeftBorder />
+                <span className="text-amber-400">{item.icon}</span>
+                {!isCollapsed && <span className="text-sm">{item.label}</span>}
+              </NavLink>
 
-                {/* Tooltip for collapsed state */}
-                {isCollapsed && (
-                    <span className="absolute left-full ml-4 top-1/2 -translate-y-1/2 z-10 
-                                     opacity-0 group-hover:opacity-100 pointer-events-none
-                                     bg-gray-800 text-white text-xs p-2 rounded-md whitespace-nowrap 
-                                     transition-opacity duration-200">
-                        {item.label}
-                    </span>
-                )}
+              {/* Tooltip when collapsed */}
+              {isCollapsed && (
+                <div
+                  className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-50 opacity-0 group-hover:opacity-100 pointer-events-none
+                              bg-white text-black text-xs px-3 py-1 rounded-md shadow-md whitespace-nowrap transition-opacity duration-150"
+                  role="tooltip"
+                >
+                  {item.label}
+                </div>
+              )}
             </div>
           )
         )}
       </nav>
 
-      <div className="p-3 text-sm text-gray-500 border-t flex justify-center">{!isCollapsed && "v0.1"}</div>
+      {/* footer / version */}
+      <div className="px-3 py-3 border-t border-white/6 text-xs text-white/70">
+        {!isCollapsed ? (
+          <div className="flex items-center justify-between">
+            <span>v0.1</span>
+            <span className="text-amber-400 text-xs">QSL</span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center">
+            <span className="text-amber-400 text-xs">v0.1</span>
+          </div>
+        )}
+      </div>
     </aside>
   );
 }
 
-// NOTE: You must update the parent component (e.g., your main Layout component) 
-// to manage the 'isCollapsed' state and pass a 'onToggle' function.
+/* Helper small component that renders the amber left border for active NavLink items.
+   Since NavLink's className can detect isActive, we'll implement a tiny CSS rule
+   using the `:where` selector would be ideal, but Tailwind + inline is simpler: we add
+   a pseudo-element via an extra element and rely on NavLink's active class (bg-white/6).
+   Because controlling it precisely in this snippet is verbose, we use a small inline marker
+   that becomes amber when its parent is active (via bg-white/6 check). */
+function ActiveLeftBorder() {
+  return <span className="absolute left-0 top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-transparent" aria-hidden />;
+}
