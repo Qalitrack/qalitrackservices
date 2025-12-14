@@ -1,213 +1,240 @@
-// src/components/TransactionList.jsx
+// src/components/TransporterList.jsx
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { 
-  fetchTransactions, 
-  completeTransaction, 
-  deactivateTransactionApi 
-} from '../store/weighingSlice';
-import { Table, Tag, Typography, Space, Button, Input, message, Popconfirm } from 'antd';
-import { ReloadOutlined, SearchOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  Table,
+  Tag,
+  Typography,
+  Space,
+  Button,
+  Input,
+  message,
+  Popconfirm,
+  Avatar
+} from 'antd';
+import {
+  ReloadOutlined,
+  SearchOutlined,
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined
+} from '@ant-design/icons';
+import {
+  getTransporters,
+  deleteTransporter
+} from '../api/MasterData/Transporters';
+import TransporterFormModal from '../pages/weighing/TransporterFormModal';
 
 const { Title } = Typography;
 const { Search } = Input;
 
-export default function TransactionList() {
-  const dispatch = useDispatch();
-  const { transactions = [], loading, error } = useSelector((state) => state.weighing);
-
-  // Local state for search and pagination
-  const [searchPlate, setSearchPlate] = useState('');
-  const [searchReceipt, setSearchReceipt] = useState('');
+export default function TransporterList() {
+  const [transporters, setTransporters] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(15);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
 
-  // Fetch transactions
-  const fetchData = (filters = {}) => {
-    dispatch(fetchTransactions({ 
-      pageNumber: filters.pageNumber || page,
-      pageSize: filters.pageSize || pageSize,
-      noPlate: filters.noPlate,
-      receiptNo: filters.receiptNo,
-      sortBy: 'createdAt',
-      sortDescending: true
-    }));
-  };
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTransporter, setEditingTransporter] = useState(null);
 
-  useEffect(() => {
-    fetchData({ noPlate: searchPlate, receiptNo: searchReceipt });
-  }, [dispatch, searchPlate, searchReceipt, page, pageSize]);
-
-  const handleRefresh = () => {
-    setSearchPlate('');
-    setSearchReceipt('');
-    fetchData({ pageNumber: 1, pageSize });
-  };
-
-  const handleSearchPlate = (value) => setSearchPlate(value.trim());
-  const handleSearchReceipt = (value) => setSearchReceipt(value.trim());
-
-  const handleComplete = async (txId) => {
+  const fetchData = async (filters = {}) => {
+    setLoading(true);
     try {
-      await dispatch(completeTransaction({ transactionId: txId })).unwrap();
-      message.success("Transaction completed");
-    } catch (err) {
-      message.error("Failed to complete transaction");
+      const response = await getTransporters(
+          filters.pageNumber || page,
+          filters.pageSize || pageSize,
+          filters.searchTerm || searchTerm
+      );
+
+      setTransporters(response.items || []);
+      setTotalItems(response.totalItems || 0);
+    } catch (error) {
+      message.error("Failed to fetch transporters");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeactivate = async (txId) => {
+  useEffect(() => {
+    fetchData();
+  }, [page, pageSize, searchTerm]);
+
+  const handleRefresh = () => {
+    setSearchTerm('');
+    setPage(1);
+    fetchData({ pageNumber: 1, pageSize, searchTerm: '' });
+  };
+
+  const handleSearch = (value) => {
+    setSearchTerm(value.trim());
+    setPage(1);
+  };
+
+  const handleAdd = () => {
+    setEditingTransporter(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (transporter) => {
+    setEditingTransporter(transporter);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
     try {
-      await dispatch(deactivateTransactionApi(txId)).unwrap();
-      message.success("Transaction deactivated");
-    } catch (err) {
-      message.error("Failed to deactivate transaction");
+      await deleteTransporter(id);
+      message.success("Transporter deleted successfully");
+      fetchData();
+    } catch (error) {
+      message.error("Failed to delete transporter");
+      console.error(error);
+    }
+  };
+
+  const handleModalClose = (shouldRefresh) => {
+    setIsModalOpen(false);
+    setEditingTransporter(null);
+    if (shouldRefresh) {
+      fetchData();
     }
   };
 
   const columns = [
     {
-      title: 'Receipt No',
-      dataIndex: 'receiptNo',
-      key: 'receiptNo',
-      render: (text) => <Tag color="geekblue">{text || '-'}</Tag>,
-    },
-    {
-      title: 'Plate Number',
-      dataIndex: 'noPlate',
-      key: 'noPlate',
-      render: (plate) => plate ? <Tag color="blue">{plate}</Tag> : '-',
-    },
-    {
-      title: 'Driver',
-      dataIndex: 'driverName',
-      key: 'driverName',
-      render: (name) => name || '-',
-    },
-    {
-      title: 'Commodity',
-      dataIndex: 'commodityName',
-      key: 'commodityName',
-      render: (name) => name || '-',
-    },
-    {
-      title: 'Gross (W1)',
-      dataIndex: 'firstWeight',
-      key: 'firstWeight',
-      align: 'right',
-      render: (w) => w ? `${w.toLocaleString()} kg` : '-',
-    },
-    {
-      title: 'Tare (W2)',
-      dataIndex: 'secondWeight',
-      key: 'secondWeight',
-      align: 'right',
-      render: (w) => w > 0 ? `${w.toLocaleString()} kg` : '-',
-    },
-    {
-      title: 'Net Weight',
-      key: 'netWeight',
-      align: 'right',
-      render: (_, record) => {
-        const w1 = Number(record.firstWeight) || 0;
-        const w2 = Number(record.secondWeight) || 0;
-        if (w1 && w2) return <Tag color="green">{(w1 - w2).toLocaleString()} kg</Tag>;
-        return <Tag color="orange">Pending Tare</Tag>;
-      },
-    },
-    {
-      title: 'Status',
-      dataIndex: 'isCompleted',
-      key: 'status',
-      render: (completed, record) => (
-        <Tag color={completed ? 'success' : record.secondWeight > 0 ? 'processing' : 'warning'}>
-          {completed ? 'Completed' : record.secondWeight > 0 ? 'Tare Done' : 'Pending Tare'}
-        </Tag>
+      title: 'Logo',
+      dataIndex: 'logo',
+      key: 'logo',
+      width: 80,
+      render: (logo, record) => (
+          <Avatar
+              src={logo}
+              size={40}
+              style={{ backgroundColor: '#1890ff' }}
+          >
+            {record.name?.charAt(0).toUpperCase()}
+          </Avatar>
       ),
     },
     {
-      title: 'Date & Time',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date) => date ? new Date(date).toLocaleString() : '-',
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => <strong>{text || '-'}</strong>,
+    },
+    {
+      title: 'Contact Info',
+      dataIndex: 'contactInfo',
+      key: 'contactInfo',
+      render: (text) => text || '-',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        const color = status?.toLowerCase() === 'active' ? 'success' : 'default';
+        return <Tag color={color}>{status || 'Unknown'}</Tag>;
+      },
     },
     {
       title: 'Actions',
       key: 'actions',
       align: 'center',
+      width: 180,
       render: (_, record) => (
-        <Space size="small">
-          {!record.isCompleted && (
-            <Popconfirm title="Complete this transaction?" onConfirm={() => handleComplete(record.id)}>
-              <Button type="primary" icon={<CheckOutlined />} size="small">
-                Complete
+          <Space size="small">
+            <Button
+                type="primary"
+                icon={<EditOutlined />}
+                size="small"
+                onClick={() => handleEdit(record)}
+            >
+              Edit
+            </Button>
+            <Popconfirm
+                title="Delete this transporter?"
+                description="This action cannot be undone."
+                onConfirm={() => handleDelete(record.id)}
+                okText="Yes"
+                cancelText="No"
+            >
+              <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+              >
+                Delete
               </Button>
             </Popconfirm>
-          )}
-          <Popconfirm title="Deactivate this transaction?" onConfirm={() => handleDeactivate(record.id)}>
-            <Button danger icon={<StopOutlined />} size="small">
-              Deactivate
-            </Button>
-          </Popconfirm>
-        </Space>
+          </Space>
       ),
     },
   ];
 
   return (
-    <div className="p-6 max-w-7xl mx-auto bg-white rounded-lg shadow">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <Title level={3} className="text-amber-700 m-0">Recent Weighing Transactions</Title>
-        <Space>
-          <Search
-            placeholder="Search Plate Number"
-            allowClear
-            enterButton={<SearchOutlined />}
-            size="large"
-            onSearch={handleSearchPlate}
-            style={{ width: 200 }}
-          />
-          <Search
-            placeholder="Search Receipt No"
-            allowClear
-            enterButton={<SearchOutlined />}
-            size="large"
-            onSearch={handleSearchReceipt}
-            style={{ width: 200 }}
-          />
-          <Button
-            type="primary"
-            icon={<ReloadOutlined />}
-            onClick={handleRefresh}
-            loading={loading}
-          >
-            Refresh
-          </Button>
-        </Space>
-      </div>
+      <div className="p-6 max-w-7xl mx-auto bg-white rounded-lg shadow">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <Title level={3} className="text-amber-700 m-0">
+            Transporters Management
+          </Title>
+          <Space>
+            <Search
+                placeholder="Search by name..."
+                allowClear
+                enterButton={<SearchOutlined />}
+                size="large"
+                onSearch={handleSearch}
+                style={{ width: 250 }}
+            />
+            <Button
+                type="default"
+                icon={<ReloadOutlined />}
+                onClick={handleRefresh}
+                loading={loading}
+            >
+              Refresh
+            </Button>
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={handleAdd}
+                size="large"
+            >
+              Add Transporter
+            </Button>
+          </Space>
+        </div>
 
-      <Table
-        dataSource={transactions}
-        columns={columns}
-        rowKey="id"
-        loading={loading}
-        pagination={{
-          current: page,
-          pageSize,
-          total: transactions.length,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          onChange: (p, size) => {
-            setPage(p);
-            setPageSize(size);
-          },
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} transactions`,
-        }}
-        scroll={{ x: 1200 }}
-        bordered
-        size="middle"
-      />
-      {error && <div className="text-red-600 mt-2">{error}</div>}
-    </div>
+        <Table
+            dataSource={transporters}
+            columns={columns}
+            rowKey="id"
+            loading={loading}
+            pagination={{
+              current: page,
+              pageSize,
+              total: totalItems,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              onChange: (p, size) => {
+                setPage(p);
+                setPageSize(size);
+              },
+              showTotal: (total, range) =>
+                  `${range[0]}-${range[1]} of ${total} transporters`,
+            }}
+            bordered
+            size="middle"
+        />
+
+        <TransporterFormModal
+            open={isModalOpen}
+            transporter={editingTransporter}
+            onClose={handleModalClose}
+        />
+      </div>
   );
 }

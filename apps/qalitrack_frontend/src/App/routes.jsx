@@ -34,6 +34,8 @@ const Microservice = lazy(() => import("../pages/Userservice/Backup/Microservice
 const Transporters = lazy(() => import("../pages/Transpoters.jsx"));
 const Suppliers = lazy(() => import("../pages/Suppliers.jsx"));
 const Routes = lazy(() => import("../pages/Routes.jsx"));
+const AxleConfigs = lazy(() => import("../pages/weighing/AxleConfigs.jsx"));
+const Owners = lazy(() => import("../pages/weighing/Owners.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -131,11 +133,19 @@ export const routes = [
                     },
                     {
                         path: "transporters",
-                        element: <Transporters />
+                        element: <Transporters />,
+                    },
+                    {
+                        path: "weighing/axle-config",
+                        element: <AxleConfigs />,
+                    },
+                    {
+                        path: "weighing/owners",
+                        element: <Owners />,
                     },
                     {
                         path: "suppliers",
-                        element: <Suppliers />
+                        element: <Suppliers />,
                     },
                     {
                         path: "routes",
