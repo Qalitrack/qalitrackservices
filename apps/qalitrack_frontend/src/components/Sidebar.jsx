@@ -15,6 +15,8 @@ import {
   User,
   Tractor,
   Satellite,
+  List,
+  Users,
 } from "lucide-react";
 
 import logo from "/src/assets/qualitrack.png";
@@ -52,6 +54,8 @@ export default function Sidebar({ isCollapsed, onToggle }) {
         { key: "weighing-vehicles", label: "Vehicles", icon: <Truck size={16} />, path: "weighing/vehicle" },
         { key: "weighing-drivers", label: "Drivers", icon: <User size={16} />, path: "weighing/drivers" },
         { key: "weighing-transporters", label: "Transporters", icon: <Tractor size={16} />, path: "transporters" },
+        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: "weighing/axle-config" },
+        { key: "weighing-owners", label: "Owners", icon: <Users size={16} />, path: "weighing/owners" },
         { key: "suppliers", label: "Suppliers", icon: <Satellite size={16} />, path: "suppliers" },
       ],
     },
