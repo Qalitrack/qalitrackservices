@@ -63,29 +63,85 @@ const setupResponseInterceptor = (client) => {
   client.interceptors.response.use(
     (response) => response,
     (error) => {
+      // Log the full error for debugging
+      console.error('API Error Interceptor:', {
+        message: error.message,
+        code: error.code,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL,
+          params: error.config?.params,
+          data: error.config?.data,
+          headers: error.config?.headers
+        },
+        response: error.response ? {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data,
+          headers: error.response.headers
+        } : 'No response received',
+        request: error.request ? 'Request was made but no response received' : 'No request was made'
+      });
+
+      // Handle 401 Unauthorized
       if (error.response?.status === 401) {
         console.warn("⚠️ Authentication failed — clearing session");
         clearSession();
         if (window.location.pathname !== "/login") {
           window.location.href = "/login";
         }
+        return Promise.reject(new Error('Session expired. Please log in again.'));
       }
 
-      let message =
-        error.response?.data?.message ||
-        (typeof error.response?.data === "string"
-          ? error.response.data
-          : error.message);
-
-      if (error.response?.data?.errors) {
-        message = Object.values(error.response.data.errors)
-          .flat()
-          .join("; ");
+      // Extract error message from response
+      let message = 'An error occurred while processing your request';
+      
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        const { data, status, statusText } = error.response;
+        
+        if (data?.message) {
+          message = data.message;
+        } else if (typeof data === 'string') {
+          message = data;
+        } else if (data?.errors) {
+          message = Object.values(data.errors)
+            .flat()
+            .join("; ");
+        } else if (statusText) {
+          message = `${status}: ${statusText}`;
+        } else {
+          message = `Request failed with status code ${status}`;
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        if (error.code === 'ECONNABORTED') {
+          message = 'Request timeout: The server took too long to respond.';
+        } else if (error.message === 'Network Error') {
+          message = 'Network error: Unable to connect to the server. Please check your internet connection.';
+        } else {
+          message = 'No response received from the server. Please try again later.';
+        }
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        message = error.message || 'An unknown error occurred';
       }
 
-      const err = new Error(message);
-      err.originalError = error;
-      return Promise.reject(err);
+      // Create a new error with the enhanced message
+      const enhancedError = new Error(message);
+      
+      // Preserve all the original error information
+      enhancedError.name = error.name || 'ApiError';
+      enhancedError.code = error.code;
+      enhancedError.status = error.response?.status;
+      enhancedError.response = error.response;
+      enhancedError.request = error.request;
+      enhancedError.config = error.config;
+      enhancedError.originalError = error;
+      
+      return Promise.reject(enhancedError);
     }
   );
 };
