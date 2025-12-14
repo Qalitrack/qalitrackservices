@@ -1,3 +1,4 @@
+// transporterApi.js
 import { apiClient } from "../helpers/apiClients";
 
 // ✅ Fetch paginated transporters
@@ -5,7 +6,7 @@ export const getTransporters = async (pageNumber = 1, pageSize = 10, searchTerm 
   const response = await apiClient.get("/MasterData/Transporters", {
     params: { pageNumber, pageSize, searchTerm },
   });
-  return response.data.items || response.data;
+  return response.data;
 };
 
 // ✅ Create new transporter
