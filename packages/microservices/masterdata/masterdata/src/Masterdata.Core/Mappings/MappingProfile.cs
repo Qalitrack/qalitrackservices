@@ -66,7 +66,12 @@ public class MappingProfile : Profile
         // Owner mappings
         CreateMap<CreateOwnerDto, Owner>();
         CreateMap<UpdateOwnerDto, Owner>();
-        CreateMap<Owner, OwnerDto>();
+        CreateMap<Owner, OwnerDto>()
+            .ForMember(dest => dest.ContactInfo, opt => 
+                opt.MapFrom((src, dest) => 
+                    !string.IsNullOrEmpty(src.ContactInfo) ? 
+                        JsonDocument.Parse(src.ContactInfo) : 
+                        null));
         
         // Organisation mappings
         CreateMap<CreateOrganisationDto, Organisation>();
