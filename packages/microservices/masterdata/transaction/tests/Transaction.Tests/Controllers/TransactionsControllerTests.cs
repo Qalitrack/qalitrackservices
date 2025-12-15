@@ -158,7 +158,7 @@ public class TransactionsControllerTests
         {
             ReceiptNo = "R001",
             NoPlate = "ABC-123",
-            TransporterId = 1,
+            TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             TransporterName = "Test Transport"
         };
         var createdDto = new TransactionReadDto { Id = "1", ReceiptNo = "R001" };
@@ -198,19 +198,20 @@ public class TransactionsControllerTests
     public async Task AddWeighing_WithValidData_ShouldReturnOkWithUpdatedTransaction()
     {
         // Arrange
+        var transactionId = "12345678-1234-1234-1234-123456789abc";
         var dto = new AddWeighingDto
         {
-            TransactionId = "1",
+            TransactionId = transactionId,
             Weight = 45000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "Main WB",
             ScaleName = "Scale 1",
-            OperatorId = 101,
+            OperatorId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
             OperatorName = "Alice"
         };
         var updatedDto = new TransactionReadDto
         {
-            Id = "1",
+            Id = transactionId,  // Use the same transaction ID
             FirstWeight = 45000,
             CompletedWeighings = 1
         };
@@ -224,7 +225,7 @@ public class TransactionsControllerTests
         var wrapper = okResult.Value.Should().BeOfType<ApiResponseDto<TransactionReadDto>>().Subject;
         wrapper.Success.Should().BeTrue();
         wrapper.Data.Should().NotBeNull();
-        wrapper.Data!.Id.Should().Be("1");
+        wrapper.Data!.Id.Should().Be(transactionId);  // Assert using the transactionId variable
         wrapper.Data.FirstWeight.Should().Be(45000);
     }
 

@@ -16,43 +16,43 @@ public class WeighbridgeTransaction : BaseEntity
     public DateTime? NetWeightCalculatedTimestamp { get; set; }
     
     // Vehicle Information
-    public int? VehicleId { get; set; }
+    public Guid? VehicleId { get; set; }
     public string NoPlate { get; set; } = string.Empty;
     public string DriverName { get; set; } = string.Empty;
     
     // Commodity Information
-    public int? CommodityId { get; set; }
+    public Guid? CommodityId { get; set; }
     public string CommodityName { get; set; } = string.Empty;
     
     // Supplier Information
-    public int? SupplierId { get; set; }
+    public Guid? SupplierId { get; set; }
     public string SupplierName { get; set; } = string.Empty;
     
     // Customer Information
-    public int? CustomerId { get; set; }
+    public Guid? CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
     
     // Transporter Information (Required)
-    public int TransporterId { get; set; }
+    public Guid TransporterId { get; set; }
     public string TransporterName { get; set; } = string.Empty;
     
     // Origin and Destination
-    public int? OriginId { get; set; }
+    public Guid? OriginId { get; set; }
     public string OriginName { get; set; } = string.Empty;
-    public int? DestinationId { get; set; }
+    public Guid? DestinationId { get; set; }
     public string DestinationName { get; set; } = string.Empty;
     
     // Weighbridge Information - First Weighing
-    public int? WeighBridgeId { get; set; }
+    public Guid? WeighBridgeId { get; set; }
     public string WeighBridgeName { get; set; } = string.Empty;
     public string ScaleName { get; set; } = string.Empty;
-    public int? OperatorId { get; set; }
+    public Guid? OperatorId { get; set; }
     public string OperatorName { get; set; } = string.Empty;
     
     // Weighbridge Information - Second Weighing
     public string WeighBridgeName2nd { get; set; } = string.Empty;
     public string ScaleName2nd { get; set; } = string.Empty;
-    public int? OperatorId2nd { get; set; }
+    public Guid? OperatorId2nd { get; set; }
     public string OperatorName2nd { get; set; } = string.Empty;
     
     // Operational Details
