@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Transaction.Core.Entities;
 
 namespace Transaction.Infrastructure.Data;
@@ -17,6 +18,24 @@ public class TransactionDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Add DateTime converter for PostgreSQL
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(
+                        new ValueConverter<DateTime, DateTime>(
+                            v => v.Kind == DateTimeKind.Unspecified 
+                                ? DateTime.SpecifyKind(v, DateTimeKind.Utc) 
+                                : v.ToUniversalTime(),
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                        ));
+                }
+            }
+        }
 
         ConfigureWeighbridgeTransaction(modelBuilder);
         ConfigureWeighingRecord(modelBuilder);
