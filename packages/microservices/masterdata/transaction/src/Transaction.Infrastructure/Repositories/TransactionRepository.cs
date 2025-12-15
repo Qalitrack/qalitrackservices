@@ -2,13 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Transaction.Core.DTOs;
 using Transaction.Core.Entities;
 using Transaction.Core.Interfaces;
+using Transaction.Core.Services;
 using Transaction.Infrastructure.Data;
 
 namespace Transaction.Infrastructure.Repositories;
 
 public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransactionRepository
 {
-    public TransactionRepository(TransactionDbContext context) : base(context)
+    public TransactionRepository(TransactionDbContext context, ITimeService timeService) : base(context, timeService)
     {
     }
 
