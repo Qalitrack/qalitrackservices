@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Select, Button, message, Card, Tabs, Table, Tag, Modal } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { createTransaction } from "../store/weighingSlice";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -322,6 +324,9 @@ function AddWeighingModal({ visible, transaction, capturedWeight, onClose, onSuc
    Main Component
 ----------------------------------------------------------------------------*/
 export default function WeighingDashboard() {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.weighing);
+  
   const [capturedWeight, setCapturedWeight] = useState(null);
   const [formData, setFormData] = useState({
     receiptNo: '',
@@ -334,10 +339,17 @@ export default function WeighingDashboard() {
     operation: '',
     firstWeight: ''
   });
-  const [loading, setLoading] = useState(false);
+  
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showWeighingModal, setShowWeighingModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  
+  // Show error message if there's an error
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (capturedWeight !== null) {
@@ -367,37 +379,30 @@ export default function WeighingDashboard() {
       return;
     }
 
-    setLoading(true);
+    const payload = {
+      receiptNo: formData.receiptNo,
+      expectedWeighings: parseInt(formData.expectedWeighings),
+      noPlate: formData.noPlate,
+      driverName: formData.driverName,
+      transporterId: parseInt(formData.transporterId),
+      transporterName: formData.transporterName,
+
+      firstWeight: formData.firstWeight ? parseFloat(formData.firstWeight) : null,
+      weighBridgeId: formData.firstWeight ? 1 : null,
+      weighBridgeName: formData.firstWeight ? "Main Scale" : "",
+      scaleName: formData.firstWeight ? "Scale-01" : "",
+      operatorId: formData.firstWeight ? 1 : null,
+      operatorName: formData.firstWeight ? "Operator" : "",
+
+      commodityName: formData.commodityName,
+      weighMode: "Gross/Tare",
+      operation: formData.operation,
+    };
+
     try {
-      const payload = {
-        receiptNo: formData.receiptNo,
-        expectedWeighings: parseInt(formData.expectedWeighings),
-        noPlate: formData.noPlate,
-        driverName: formData.driverName,
-        transporterId: parseInt(formData.transporterId),
-        transporterName: formData.transporterName,
-
-        firstWeight: formData.firstWeight ? parseFloat(formData.firstWeight) : null,
-        weighBridgeId: formData.firstWeight ? 1 : null,
-        weighBridgeName: formData.firstWeight ? "Main Scale" : "",
-        scaleName: formData.firstWeight ? "Scale-01" : "",
-        operatorId: formData.firstWeight ? 1 : null,
-        operatorName: formData.firstWeight ? "Operator" : "",
-
-        commodityName: formData.commodityName,
-        weighMode: "Gross/Tare",
-        operation: formData.operation,
-      };
-
-      const response = await fetch('/api/Transaction', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
+      const resultAction = await dispatch(createTransaction(payload));
+      
+      if (createTransaction.fulfilled.match(resultAction)) {
         message.success('Transaction created successfully!');
         setFormData({
           receiptNo: '',
@@ -412,14 +417,11 @@ export default function WeighingDashboard() {
         });
         setCapturedWeight(null);
         setRefreshKey(prev => prev + 1);
-      } else {
-        message.error(result.message || 'Failed to create transaction');
+      } else if (resultAction.error) {
+        throw new Error(resultAction.error.message || 'Failed to create transaction');
       }
     } catch (error) {
-      message.error('Error creating transaction');
-      console.error(error);
-    } finally {
-      setLoading(false);
+      message.error(error.message || 'Error creating transaction');
     }
   };
 
