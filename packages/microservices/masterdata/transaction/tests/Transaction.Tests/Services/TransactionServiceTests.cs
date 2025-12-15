@@ -72,7 +72,7 @@ public class TransactionServiceTests : IDisposable
         var filter = new WeighbridgeTransactionFilter { PageNumber = 1, PageSize = 10 };
         var pagedTransactions = new PagedResult<WeighbridgeTransaction>
         {
-            Items = new List<WeighbridgeTransaction> { new WeighbridgeTransaction { Id = "1", ReceiptNo = "TRX-001" } },
+            Items = new List<WeighbridgeTransaction> { new WeighbridgeTransaction { Id = "00000000-0000-0000-0000-000000000001", ReceiptNo = "TRX-001" } },
             TotalCount = 1,
             PageNumber = 1,
             PageSize = 10
@@ -122,8 +122,8 @@ public class TransactionServiceTests : IDisposable
     public async Task GetByIdAsync_WithExistingId_ShouldReturnDto()
     {
         // Arrange
-        var id = "1";
-        var transaction = new WeighbridgeTransaction { Id = "1", ReceiptNo = "TRX-001" };
+        var id = "00000000-0000-0000-0000-000000000001";
+        var transaction = new WeighbridgeTransaction { Id = "00000000-0000-0000-0000-000000000001", ReceiptNo = "TRX-001" };
         _mockRepo.Setup(r => r.GetWithWeighingRecordsAsync(id)).ReturnsAsync(transaction);
 
         // Act
@@ -131,7 +131,7 @@ public class TransactionServiceTests : IDisposable
 
         // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be("1");
+        result.Id.Should().Be("00000000-0000-0000-0000-000000000001");
         result.ReceiptNo.Should().Be("TRX-001");
         _mockRepo.Verify(r => r.GetWithWeighingRecordsAsync(id), Times.Once);
     }
@@ -200,7 +200,7 @@ public class TransactionServiceTests : IDisposable
             ReceiptNo = "TRX-001",
             ExpectedWeighings = 2,
             NoPlate = "KAA 123A",
-            TransporterId = 1,
+            TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             TransporterName = "Test Transporter"
         };
         _mockRepo.Setup(r => r.CreateAsync(It.IsAny<WeighbridgeTransaction>()))
@@ -229,16 +229,16 @@ public class TransactionServiceTests : IDisposable
             ExpectedWeighings = 2,
             NoPlate = "KAA 123A",
             FirstWeight = 1000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
             WeighBridgeName = "WB1",
-            OperatorId = 1,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
             OperatorName = "Op1"
         };
 
         WeighbridgeTransaction? capturedTransaction = null;
         _mockRepo.Setup(r => r.CreateAsync(It.IsAny<WeighbridgeTransaction>()))
             .ReturnsAsync((WeighbridgeTransaction t) => {
-                t.Id = "1"; // Simulate repository setting the ID
+                t.Id = "00000000-0000-0000-0000-000000000001"; // Simulate repository setting the ID
                 t.AuditLogs = t.AuditLogs ?? new List<TransactionAuditLog>();
                 capturedTransaction = t;
                 return t;
@@ -257,53 +257,67 @@ public class TransactionServiceTests : IDisposable
         _mockRepo.Verify(r => r.CreateAsync(It.Is<WeighbridgeTransaction>(t => t.WeighingRecords.Any(w => w.WeighingSequence == 1))), Times.Once);
     }
 
-    [Theory]
-    [InlineData(null, null, null, null)] // No first weight
-    [MemberData(nameof(GetVariousScenarioData))] // With first weight
-    public async Task CreateAsync_VariousScenarios_ShouldHandleCorrectly(decimal? firstWeight, int? weighBridgeId, string weighBridgeName, string operatorName)
+   [Theory]
+[InlineData(null, null, null, null)] // No first weight
+[MemberData(nameof(GetVariousScenarioData))] // With first weight
+public async Task CreateAsync_VariousScenarios_ShouldHandleCorrectly(
+    decimal? firstWeight, 
+    string? weighBridgeId, 
+    string? weighBridgeName, 
+    string? operatorName)
+{
+    // Parse the GUID if provided
+    Guid? parsedWeighBridgeId = weighBridgeId != null ? Guid.Parse(weighBridgeId) : null;
+
+    // Rest of the test remains the same
+    var dto = new CreateTransactionDto
     {
-        // Arrange
-        var dto = new CreateTransactionDto
-        {
-            ReceiptNo = "TRX-001",
-            ExpectedWeighings = 2,
-            FirstWeight = firstWeight,
-            WeighBridgeId = weighBridgeId,
-            WeighBridgeName = weighBridgeName,
-            OperatorName = operatorName
-        };
-        var transaction = new WeighbridgeTransaction { 
-            Id = "1", 
-            ReceiptNo = dto.ReceiptNo,
-            WeighingRecords = new List<WeighingRecord>(),
-            AuditLogs = new List<TransactionAuditLog>()
-        };
+        ReceiptNo = "TRX-001",
+        ExpectedWeighings = 2,
+        FirstWeight = firstWeight,
+        WeighBridgeId = parsedWeighBridgeId,
+        WeighBridgeName = weighBridgeName,
+        OperatorName = operatorName
+    };
     
-        _mockRepo.Setup(r => r.CreateAsync(It.IsAny<WeighbridgeTransaction>()))
-            .ReturnsAsync((WeighbridgeTransaction t) => 
-            {
-                // Simulate the repository setting the ID
-                t.Id = "1";
-                return t;
-            });
+    var transaction = new WeighbridgeTransaction 
+    { 
+        Id = "00000000-0000-0000-0000-000000000001",
+        ReceiptNo = dto.ReceiptNo,
+        WeighingRecords = new List<WeighingRecord>(),
+        AuditLogs = new List<TransactionAuditLog>()
+    };
 
-        // Act
-        var result = await _service.CreateAsync(dto);
+    _mockRepo.Setup(r => r.CreateAsync(It.IsAny<WeighbridgeTransaction>()))
+        .ReturnsAsync((WeighbridgeTransaction t) => 
+        {
+            // Simulate the repository setting the ID
+            t.Id = "00000000-0000-0000-0000-000000000001";
+            return t;
+        });
 
-        // Assert
-        result.Should().NotBeNull();
-        if (firstWeight.HasValue)
-        {
-            result.Status.Should().Be(WeighbridgeTransactionStatus.InProgress.ToString());
-            result.CompletedWeighings.Should().Be(1);
-            result.FirstWeight.Should().Be(firstWeight);
-        }
-        else
-        {
-            result.Status.Should().Be(WeighbridgeTransactionStatus.Pending.ToString());
-            result.CompletedWeighings.Should().Be(0);
-        }
+    // Act
+    var result = await _service.CreateAsync(dto);
+
+    // Assert
+    result.Should().NotBeNull();
+    result.Id.Should().Be("00000000-0000-0000-0000-000000000001");
+    result.ReceiptNo.Should().Be("TRX-001");
+    
+    if (firstWeight.HasValue)
+    {
+        result.Status.Should().Be(WeighbridgeTransactionStatus.InProgress.ToString());
+        result.CompletedWeighings.Should().Be(1);
+        result.FirstWeight.Should().Be(firstWeight);
+        result.WeighingRecords.Should().HaveCount(1);
     }
+    else
+    {
+        result.Status.Should().Be(WeighbridgeTransactionStatus.Pending.ToString());
+        result.CompletedWeighings.Should().Be(0);
+        result.WeighingRecords.Should().BeEmpty();
+    }
+}
 
     #endregion
 
@@ -313,10 +327,10 @@ public class TransactionServiceTests : IDisposable
     public async Task UpdateAsync_WithValidDataAndModifiableTransaction_ShouldUpdateFields()
     {
         // Arrange
-        var id = "1";
+        var id = "00000000-0000-0000-0000-000000000001";
         var existingTransaction = new WeighbridgeTransaction
         {
-            Id = "1",
+            Id = "00000000-0000-0000-0000-000000000001",
             ReceiptNo = "TRX-001",
             NoPlate = "OLD-PLATE",
             DriverName = "Old Driver",
@@ -388,13 +402,13 @@ public class TransactionServiceTests : IDisposable
     public async Task UpdateAsync_WithPartialData_ShouldOnlyUpdateProvidedFields(string? noPlate, string? driverName, int? vehicleId)
     {
         // Arrange
-        var id = "1";
+        var id = "00000000-0000-0000-0000-000000000001";
         var existingTransaction = new WeighbridgeTransaction
         {
-            Id = "1",
+            Id = "00000000-0000-0000-0000-000000000001",
             NoPlate = "OLD-PLATE",
             DriverName = "Old Driver",
-            VehicleId = 0
+            VehicleId = Guid.Empty
         };
         _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(existingTransaction);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>())).ReturnsAsync(existingTransaction);
@@ -403,7 +417,7 @@ public class TransactionServiceTests : IDisposable
         {
             NoPlate = noPlate,
             DriverName = driverName,
-            VehicleId = vehicleId
+            VehicleId = vehicleId.HasValue ? Guid.Parse($"00000000-0000-0000-0000-{vehicleId.Value:D12}") : (Guid?)null
         };
 
         // Act
@@ -412,7 +426,11 @@ public class TransactionServiceTests : IDisposable
         // Assert
         if (noPlate != null) existingTransaction.NoPlate.Should().Be(noPlate);
         if (driverName != null) existingTransaction.DriverName.Should().Be(driverName);
-        if (vehicleId.HasValue) existingTransaction.VehicleId.Should().Be(vehicleId.Value);
+        if (vehicleId.HasValue) 
+        {
+            var expectedVehicleId = Guid.Parse($"00000000-0000-0000-0000-{vehicleId.Value:D12}");
+            existingTransaction.VehicleId.Should().Be(expectedVehicleId);
+        }
     }
 
     #endregion
@@ -507,7 +525,9 @@ public class TransactionServiceTests : IDisposable
     public async Task AddWeighingAsync_WithValidSequence_ShouldAddWeighingAndUpdateStatus(int expectedWeighings, int sequenceNumber)
     {
         // Arrange
-        var transactionId = "1";
+        var transactionId = "00000000-0000-0000-0000-000000000001";
+        var weighBridgeId = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        var operatorId = Guid.Parse("00000000-0000-0000-0000-000000000003");
 
         // Create existing weighing records for any previous weighings
         var existingRecords = new List<WeighingRecord>();
@@ -518,8 +538,9 @@ public class TransactionServiceTests : IDisposable
                 Id = Guid.NewGuid().ToString(),
                 WeighingSequence = i,
                 Weight = 1000 * i,
+                OperatorId = operatorId,
                 OperatorName = $"Op{i}",
-                WeighBridgeId = 1,
+                WeighBridgeId = weighBridgeId,
                 WeighBridgeName = $"WB{i}",
                 WeighingDate = DateTime.UtcNow.AddMinutes(-i)
             });
@@ -527,14 +548,14 @@ public class TransactionServiceTests : IDisposable
 
         var transaction = new WeighbridgeTransaction
         {
-            Id = $"{transactionId}",
+            Id = transactionId,
             ExpectedWeighings = expectedWeighings,
             CompletedWeighings = sequenceNumber - 1,
             Status = sequenceNumber == 1 ? WeighbridgeTransactionStatus.Pending : WeighbridgeTransactionStatus.InProgress,
             WeighingRecords = existingRecords,
             AuditLogs = new List<TransactionAuditLog>()
         };
-        _mockRepo.Setup(r => r.GetWithWeighingRecordsAsync($"{transactionId}")).ReturnsAsync(transaction);
+        _mockRepo.Setup(r => r.GetWithWeighingRecordsAsync(transactionId)).ReturnsAsync(transaction);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<WeighbridgeTransaction>()))
             .ReturnsAsync((WeighbridgeTransaction t) => t);
 
@@ -542,8 +563,9 @@ public class TransactionServiceTests : IDisposable
         {
             TransactionId = transactionId,
             Weight = 1000 * sequenceNumber,
+            OperatorId = operatorId,
             OperatorName = $"Op{sequenceNumber}",
-            WeighBridgeId = 1,
+            WeighBridgeId = weighBridgeId,
             WeighBridgeName = $"WB{sequenceNumber}"
         };
 
@@ -1152,10 +1174,11 @@ public class TransactionServiceTests : IDisposable
     public async Task GetIncompleteTransactionsByVehicleIdAsync_WithMatchingVehicleId_ShouldReturnTransactions()
     {
         // Arrange
-        var vehicleId = "1";
+        var vehicleId = "00000000-0000-0000-0000-000000000001";
+        var vehicleIdGuid = Guid.Parse(vehicleId);
         var transactions = new List<WeighbridgeTransaction>
         {
-            new WeighbridgeTransaction { Id = "1", VehicleId = 1, IsCompleted = false }
+            new WeighbridgeTransaction { Id = "1", VehicleId = vehicleIdGuid, IsCompleted = false }
         };
         _mockRepo.Setup(r => r.GetIncompleteTransactionsByVehicleIdAsync(vehicleId)).ReturnsAsync(transactions);
 
@@ -1165,6 +1188,7 @@ public class TransactionServiceTests : IDisposable
         // Assert
         result.Should().NotBeNull().And.HaveCount(1);
         result.First().Id.Should().Be("1");
+        result.First().VehicleId.Should().Be(vehicleIdGuid);
         _mockRepo.Verify(r => r.GetIncompleteTransactionsByVehicleIdAsync(vehicleId), Times.Once);
     }
 
@@ -1442,6 +1466,17 @@ public class TransactionServiceTests : IDisposable
 
     public static IEnumerable<object?[]> GetVariousScenarioData()
     {
-        yield return new object?[] { 1000m, 1, "WB1", "Op1" };
+        yield return new object?[] { 
+            1000m, 
+            "00000000-0000-0000-0000-000000000100", // weighBridgeId as string
+            "WB1", 
+            "Op1" 
+        };
+        yield return new object?[] { 
+            2000m, 
+            "00000000-0000-0000-0000-000000000200", // weighBridgeId as string
+            "WB2", 
+            "Op2" 
+        };
     }
 }

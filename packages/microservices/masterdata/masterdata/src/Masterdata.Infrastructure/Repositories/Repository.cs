@@ -18,8 +18,10 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITokenExtractionService _tokenExtractionService;
     private readonly IAuditLogRepository _auditLogRepository;
-    private string? CurrentUserId => _httpContextAccessor.HttpContext != null ? 
-        _tokenExtractionService.GetUserIdFromToken(_httpContextAccessor.HttpContext.User)?.ToString() : null;
+
+    private string? CurrentUserId => _httpContextAccessor.HttpContext != null 
+        ? _tokenExtractionService.GetUserIdFromToken(_httpContextAccessor.HttpContext.User)?.ToString() 
+        : null;
 
     public Repository(
         MasterdataDbContext context,
@@ -34,6 +36,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         _auditLogRepository = auditLogRepository;
     }
 
+    private async Task<TResult> ExecuteWithStrategyAsync<TResult>(Func<Task<TResult>> operation)
+    {
+        var strategy = Context.Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(operation);
+    }
+
     public virtual async Task<PagedResult<T>> GetPagedAsync(
         int pageNumber = 1,
         int pageSize = 10,
@@ -43,11 +51,8 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         string sortBy = "CreatedAt",
         bool sortDescending = false)
     {
-        if (pageNumber < 1)
-            pageNumber = 1;
-            
-        if (pageSize < 1)
-            pageSize = 10;
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
 
         var query = DbSet.Where(e => !e.IsDeleted);
 
@@ -60,11 +65,11 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         else if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             searchTerm = searchTerm.Trim().ToLower();
+
             if (searchProperties != null && searchProperties.Any())
             {
                 var parameter = Expression.Parameter(typeof(T), "e");
                 Expression? searchExpression = null;
-
                 var likeMethod = typeof(DbFunctionsExtensions).GetMethod(
                     nameof(DbFunctionsExtensions.Like),
                     new[] { typeof(DbFunctions), typeof(string), typeof(string) });
@@ -75,7 +80,6 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
                     if (property != null && property.PropertyType == typeof(string))
                     {
                         var propertyExpression = Expression.Property(parameter, property);
-                        
                         // Create the EF.Functions.Like call
                         var likeCall = Expression.Call(
                             null,
@@ -84,9 +88,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
                             propertyExpression,
                             Expression.Constant($"%{searchTerm}%"));
 
-                        searchExpression = searchExpression == null
-                            ? likeCall
-                            : Expression.OrElse(searchExpression, likeCall);
+                        searchExpression = searchExpression == null ? likeCall : Expression.OrElse(searchExpression, likeCall);
                     }
                 }
 
@@ -104,18 +106,18 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         }
 
         // Apply sorting
-        var sortProperty = typeof(T).GetProperty(sortBy, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase) 
-            ?? typeof(BaseEntity).GetProperty("CreatedAt"); // Fallback to CreatedAt
+        var sortProperty = typeof(T).GetProperty(sortBy, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)
+                           ?? typeof(BaseEntity).GetProperty("CreatedAt"); // Fallback to CreatedAt
 
         if (sortProperty != null)
         {
             var parameter = Expression.Parameter(typeof(T), "e");
             var propertyExpression = Expression.Property(parameter, sortProperty);
-            var lambda = Expression.Lambda<Func<T, object>>(Expression.Convert(propertyExpression, typeof(object)), parameter);
+            var lambda = Expression.Lambda<Func<T, object>>(
+                Expression.Convert(propertyExpression, typeof(object)),
+                parameter);
 
-            query = sortDescending
-                ? query.OrderByDescending(lambda)
-                : query.OrderBy(lambda);
+            query = sortDescending ? query.OrderByDescending(lambda) : query.OrderBy(lambda);
         }
 
         // Execute query
@@ -147,103 +149,100 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<T> CreateAsync(T entity)
     {
-        if (entity == null)
-            throw new ArgumentNullException(nameof(entity));
+        if (entity == null) throw new ArgumentNullException(nameof(entity));
 
         entity.Id = Guid.NewGuid().ToString();
         entity.CreatedAt = DateTime.UtcNow;
         entity.UpdatedAt = DateTime.UtcNow;
-        
         if (CurrentUserId != null)
         {
             entity.CreatedBy = CurrentUserId;
             entity.UpdatedBy = CurrentUserId;
         }
-        
-        using var transaction = await Context.Database.BeginTransactionAsync();
-        try
+
+        return await ExecuteWithStrategyAsync(async () =>
         {
-            DbSet.Add(entity);
-            
-            // Detect and track related entities before save
-            await TrackRelatedEntitiesAsync(entity, isCreate: true);
-            
-            await Context.SaveChangesAsync();
-            
-            await _auditLogRepository.LogCreateAsync(entity);
-            
-            // Log related entity changes
-            await LogRelatedEntityChangesAsync();
-            
-            await transaction.CommitAsync();
-            return entity;
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+            await using var transaction = await Context.Database.BeginTransactionAsync();
+            try
+            {
+                DbSet.Add(entity);
+                // Detect and track related entities before save
+                await TrackRelatedEntitiesAsync(entity, isCreate: true);
+                await Context.SaveChangesAsync();
+
+                await _auditLogRepository.LogCreateAsync(entity);
+                // Log related entity changes
+                await LogRelatedEntityChangesAsync();
+
+                await transaction.CommitAsync();
+                return entity;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        });
     }
 
     public virtual async Task<T?> UpdateAsync(T entity)
     {
-        if (entity == null)
-            throw new ArgumentNullException(nameof(entity));
+        if (entity == null) throw new ArgumentNullException(nameof(entity));
 
         var originalEntity = await DbSet.AsNoTracking()
             .FirstOrDefaultAsync(e => e.Id == entity.Id && !e.IsDeleted);
-            
+
         if (originalEntity == null)
         {
             return null;
         }
 
         entity.UpdatedAt = DateTime.UtcNow;
-        
         if (CurrentUserId != null)
         {
             entity.UpdatedBy = CurrentUserId;
-            
+
             var existingEntity = await DbSet.AsNoTracking()
                 .Where(e => e.Id == entity.Id)
                 .Select(e => new { e.CreatedBy })
                 .FirstOrDefaultAsync();
-                
+
             if (existingEntity != null && entity.CreatedBy == null)
             {
                 entity.CreatedBy = existingEntity.CreatedBy;
             }
         }
-        
-        using var transaction = await Context.Database.BeginTransactionAsync();
-        try
+
+        return await ExecuteWithStrategyAsync(async () =>
         {
-            DbSet.Update(entity);
-            
-            // Detect and track related entities before save
-            await TrackRelatedEntitiesAsync(entity, isCreate: false);
-            
-            await Context.SaveChangesAsync();
-            
-            await _auditLogRepository.LogUpdateAsync(originalEntity, entity);
-            
-            // Log related entity changes
-            await LogRelatedEntityChangesAsync();
-            
-            await transaction.CommitAsync();
-            return entity;
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+            await using var transaction = await Context.Database.BeginTransactionAsync();
+            try
+            {
+                DbSet.Update(entity);
+                // Detect and track related entities before save
+                await TrackRelatedEntitiesAsync(entity, isCreate: false);
+                await Context.SaveChangesAsync();
+
+                await _auditLogRepository.LogUpdateAsync(originalEntity, entity);
+                // Log related entity changes
+                await LogRelatedEntityChangesAsync();
+
+                await transaction.CommitAsync();
+                return entity;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        });
     }
 
     public virtual async Task<bool> DeleteAsync(string id)
     {
         var entities = await GetByIdsAsync(new[] { id });
         var entity = entities.FirstOrDefault();
+
         if (entity == null)
         {
             return false;
@@ -251,53 +250,47 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
         entity.IsDeleted = true;
         entity.UpdatedAt = DateTime.UtcNow;
-        
         if (CurrentUserId != null)
         {
             entity.UpdatedBy = CurrentUserId;
         }
-        
-        using var transaction = await Context.Database.BeginTransactionAsync();
-        try
+
+        return await ExecuteWithStrategyAsync(async () =>
         {
-            DbSet.Update(entity);
-            
-            // Detect and track related entities before save
-            await TrackRelatedEntitiesAsync(entity, isCreate: false);
-            
-            await Context.SaveChangesAsync();
-            
-            await _auditLogRepository.LogDeleteAsync(entity);
-            
-            // Log related entity changes
-            await LogRelatedEntityChangesAsync();
-            
-            await transaction.CommitAsync();
-            return true;
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+            await using var transaction = await Context.Database.BeginTransactionAsync();
+            try
+            {
+                DbSet.Update(entity);
+                // Detect and track related entities before save
+                await TrackRelatedEntitiesAsync(entity, isCreate: false);
+                await Context.SaveChangesAsync();
+
+                await _auditLogRepository.LogDeleteAsync(entity);
+                // Log related entity changes
+                await LogRelatedEntityChangesAsync();
+
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        });
     }
 
     public virtual async Task<PagedResult<T>> GetDeletedPagedAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
     {
-        if (pageNumber < 1)
-            pageNumber = 1;
-        
-        if (pageSize < 1)
-            pageSize = 10;
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
 
         var query = DbSet.Where(e => e.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             searchTerm = searchTerm.Trim().ToLower();
-            query = query.Where(e => 
-                EF.Functions.Like(e.Id.ToLower(), $"%{searchTerm}%")
-            );
+            query = query.Where(e => EF.Functions.Like(e.Id.ToLower(), $"%{searchTerm}%"));
         }
 
         var totalItems = await query.CountAsync();
@@ -401,13 +394,11 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         foreach (var entry in entries)
         {
             var baseEntity = (BaseEntity)entry.Entity;
-            
             switch (entry.State)
             {
                 case EntityState.Added:
                     await _auditLogRepository.LogCreateAsync(baseEntity);
                     break;
-                    
                 case EntityState.Modified:
                     var originalValues = entry.OriginalValues.ToObject();
                     if (originalValues is BaseEntity originalEntity)
@@ -415,7 +406,6 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
                         await _auditLogRepository.LogUpdateAsync(originalEntity, baseEntity);
                     }
                     break;
-                    
                 case EntityState.Deleted:
                     await _auditLogRepository.LogDeleteAsync(baseEntity);
                     break;

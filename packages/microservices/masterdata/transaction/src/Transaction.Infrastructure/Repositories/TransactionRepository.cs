@@ -2,13 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Transaction.Core.DTOs;
 using Transaction.Core.Entities;
 using Transaction.Core.Interfaces;
+using Transaction.Core.Services;
 using Transaction.Infrastructure.Data;
 
 namespace Transaction.Infrastructure.Repositories;
 
 public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransactionRepository
 {
-    public TransactionRepository(TransactionDbContext context) : base(context)
+    public TransactionRepository(TransactionDbContext context, ITimeService timeService) : base(context, timeService)
     {
     }
 
@@ -152,21 +153,18 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
 
     public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId)
     {
-        // First try to parse as int for backward compatibility
-        if (int.TryParse(vehicleId, out int vehicleIdInt))
+        // Try to parse as Guid
+        if (Guid.TryParse(vehicleId, out Guid vehicleIdGuid))
         {
             return await _dbSet
-                .Where(t => t.VehicleId == vehicleIdInt && !t.IsCompleted && !t.IsDeleted)
+                .Where(t => t.VehicleId == vehicleIdGuid && !t.IsCompleted && !t.IsDeleted)
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
         }
         
-        // If not a valid int, try to find by string ID (if the ID is stored as string somewhere)
-        // This part depends on your data model - adjust as needed
-        return await _dbSet
-            .Where(t => t.Id == vehicleId && !t.IsCompleted && !t.IsDeleted)
-            .OrderByDescending(t => t.CreatedAt)
-            .ToListAsync();
+        // If not a valid Guid, return empty list or throw an exception
+        // depending on your requirements
+        return new List<WeighbridgeTransaction>();
     }
 
     public async Task<List<WeighbridgeTransaction>> GetTransactionsByStatusAsync(WeighbridgeTransactionStatus status, int limit = 100)
