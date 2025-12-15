@@ -8,10 +8,6 @@ public class WeighbridgeTransaction : BaseEntity
     public int CompletedWeighings { get; set; } = 0;
     
     // Weight Information
-    public decimal? FirstWeight { get; set; }
-    public DateTime? FirstWeightTimestamp { get; set; }
-    public decimal? SecondWeight { get; set; }
-    public DateTime? SecondWeightTimestamp { get; set; }
     public decimal? NetWeight { get; set; }
     public DateTime? NetWeightCalculatedTimestamp { get; set; }
     
@@ -48,6 +44,10 @@ public class WeighbridgeTransaction : BaseEntity
     public string ScaleName { get; set; } = string.Empty;
     public Guid? OperatorId { get; set; }
     public string OperatorName { get; set; } = string.Empty;
+    
+    // Image fields
+    public string NPR { get; set; } = string.Empty;  // Image path or base64 string for NPR
+    public string Image { get; set; } = string.Empty; // Image path or base64 string for general image
     
     // Weighbridge Information - Second Weighing
     public string WeighBridgeName2nd { get; set; } = string.Empty;
@@ -102,19 +102,11 @@ public class WeighbridgeTransaction : BaseEntity
             throw new InvalidOperationException("Transaction is already completed.");
         }
 
-        // Ensure CompletedWeighings is in sync with WeighingRecords count
-        if (WeighingRecords != null && WeighingRecords.Any())
+        // Ensure we have the expected number of weighings
+        if (WeighingRecords == null || WeighingRecords.Count < ExpectedWeighings)
         {
-            var maxSequence = WeighingRecords.Max(w => w.WeighingSequence);
-            if (maxSequence != CompletedWeighings)
-            {
-                CompletedWeighings = maxSequence;
-            }
-        }
-
-        if (CompletedWeighings < ExpectedWeighings)
-        {
-            throw new InvalidOperationException($"Cannot complete transaction. Expected {ExpectedWeighings} weighings, but only {CompletedWeighings} completed.");
+            throw new InvalidOperationException(
+                $"Cannot complete transaction. Expected {ExpectedWeighings} weighings, but only {WeighingRecords?.Count ?? 0} completed.");
         }
 
         // Update transaction status
@@ -122,31 +114,25 @@ public class WeighbridgeTransaction : BaseEntity
         Status = WeighbridgeTransactionStatus.Completed;
         CompletedDate = currentTime;
         UpdatedAt = currentTime;
+        CompletedWeighings = WeighingRecords.Count;
 
         // Calculate net weight if not already set
-        if (!NetWeight.HasValue)
+        if (!NetWeight.HasValue && WeighingRecords.Count >= 2)
         {
-            if (ExpectedWeighings == 2 && FirstWeight.HasValue && SecondWeight.HasValue)
+            try
             {
-                // Standard 2-weighing transaction
-                NetWeight = Math.Abs(FirstWeight.Value - SecondWeight.Value);
+                // Get first and last weighings
+                var firstWeighing = WeighingRecords.OrderBy(w => w.WeighingSequence).First();
+                var lastWeighing = WeighingRecords.OrderByDescending(w => w.WeighingSequence).First();
+            
+                // Calculate net weight (absolute difference between first and last weight)
+                NetWeight = Math.Abs(firstWeighing.Weight - lastWeighing.Weight);
                 NetWeightCalculatedTimestamp = currentTime;
             }
-            else if (ExpectedWeighings > 2 && WeighingRecords != null && WeighingRecords.Count >= 2)
+            catch (Exception ex)
             {
-                try
-                {
-                    // For transactions with more than 2 weighings, use first and last weight
-                    var firstWeighing = WeighingRecords.OrderBy(w => w.WeighingSequence).First();
-                    var lastWeighing = WeighingRecords.OrderByDescending(w => w.WeighingSequence).First();
-                    NetWeight = Math.Abs(firstWeighing.Weight - lastWeighing.Weight);
-                    NetWeightCalculatedTimestamp = currentTime;
-                }
-                catch (Exception ex)
-                {
-                    // Log the error but don't fail the transaction completion
-                    Console.WriteLine($"Error calculating net weight: {ex.Message}");
-                }
+                // Log the error but don't fail the transaction completion
+                Console.WriteLine($"Error calculating net weight: {ex.Message}");
             }
         }
     }
