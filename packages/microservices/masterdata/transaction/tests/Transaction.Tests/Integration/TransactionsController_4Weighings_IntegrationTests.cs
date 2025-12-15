@@ -106,9 +106,9 @@ public class TransactionsController4WeighingsIntegrationTests : IClassFixture<Te
             ExpectedWeighings = 4,
             NoPlate = "FOUR-444",
             DriverName = "Mike Four",
-            CommodityId = 200,
+            CommodityId = Guid.Parse("00000000-0000-0000-0000-000000000200"),
             CommodityName = "Sugar",
-            TransporterId = 10,
+            TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000010"),
             TransporterName = "MultiLoad Ltd"
         };
 
@@ -171,10 +171,10 @@ public class TransactionsController4WeighingsIntegrationTests : IClassFixture<Te
             {
                 TransactionId = transactionId,
                 Weight = weights[i],
-                WeighBridgeId = 1,
+                WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 WeighBridgeName = scaleNames[i],
                 ScaleName = scaleNames[i],
-                OperatorId = i + 1,
+                OperatorId = Guid.Parse($"00000000-0000-0000-0000-00000000000{i + 1}"),
                 OperatorName = operatorNames[i],
                 Notes = $"Weighing {i + 1} for transaction {transactionId}"
             };
@@ -435,10 +435,10 @@ public class TransactionsController4WeighingsIntegrationTests : IClassFixture<Te
             {
                 TransactionId = transactionId,
                 Weight = 99999,
-                WeighBridgeId = 1,
+                WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 WeighBridgeName = "Main",
                 ScaleName = "S1",
-                OperatorId = 999,
+                OperatorId = Guid.Parse("99999999-9999-9999-9999-999999999999"),
                 OperatorName = "Hacker"
             };
 
