@@ -115,7 +115,6 @@ function IncompleteTransactions({ onAddWeighing, refreshKey }) {
   }, [dispatch, refreshKey]);
 
   useEffect(() => {
-    // Filter incomplete transactions from Redux state
     const incomplete = transactions.filter(t => !t.isCompleted);
     setLocalTransactions(incomplete);
   }, [transactions]);
@@ -225,7 +224,7 @@ function AddWeighingModal({ visible, transaction, capturedWeight, onClose, onSuc
       const payload = {
         transactionId: transaction.id,
         weight: parseFloat(formData.weight),
-        weighBridgeId: 1,
+        weighBridgeId: "00000000-0000-0000-0000-000000000001", // ← Hardcoded GUID for testing
         weighBridgeName: "Main Scale",
         scaleName: formData.scaleName || "Scale-01",
         operatorId: 1,
@@ -466,20 +465,8 @@ export default function WeighingDashboard() {
         transporterId: parseInt(formData.transporterId),
         transporterName: formData.transporterName || "",
 
-        // Only include vehicleId if it exists and is a valid number
         ...(formData.vehicleId && { vehicleId: parseInt(formData.vehicleId) }),
 
-        // Only include first weight fields if weight exists
-        ...(formData.firstWeight && {
-          firstWeight: parseFloat(formData.firstWeight),
-          weighBridgeId: 1,
-          weighBridgeName: "Main Scale",
-          scaleName: "Scale-01",
-          operatorId: 1,
-          operatorName: "Operator"
-        }),
-
-        // Only include optional IDs if they exist
         ...(formData.commodityId && { commodityId: parseInt(formData.commodityId) }),
         ...(formData.supplierId && { supplierId: parseInt(formData.supplierId) }),
 
@@ -487,6 +474,16 @@ export default function WeighingDashboard() {
         supplierName: formData.supplierName || "",
         weighMode: "Gross/Tare",
         operation: formData.operation || "",
+
+        // First weight with hardcoded GUID
+        ...(formData.firstWeight && {
+          firstWeight: parseFloat(formData.firstWeight),
+          weighBridgeId: "00000000-0000-0000-0000-000000000001", // ← Hardcoded GUID for testing
+          weighBridgeName: "Main Scale",
+          scaleName: "Scale-01",
+          operatorId: 1,
+          operatorName: "Operator"
+        }),
       };
 
       await dispatch(addTransaction(payload)).unwrap();
