@@ -75,9 +75,43 @@ builder.Services.AddSwaggerGen(c =>
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+// Configure PostgreSQL connection
+var dbHost = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? 
+             builder.Configuration.GetValue<string>("ConnectionStrings:DefaultConnection:Host") ?? 
+             "postgres-masterdata-prod";
+
+var dbPort = Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? 
+             builder.Configuration.GetValue<string>("ConnectionStrings:DefaultConnection:Port") ?? 
+             "5432";
+
+var dbName = Environment.GetEnvironmentVariable("POSTGRES_DATABASE") ?? 
+             builder.Configuration.GetValue<string>("ConnectionStrings:DefaultConnection:Database") ?? 
+             "qalitrack_masterdata";
+
+var dbUser = Environment.GetEnvironmentVariable("POSTGRES_USERNAME") ?? 
+             builder.Configuration.GetValue<string>("ConnectionStrings:DefaultConnection:Username") ?? 
+             "masterdata";
+
+var dbPass = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? 
+             builder.Configuration.GetValue<string>("ConnectionStrings:DefaultConnection:Password") ?? 
+             "masterdata123";
+
+// Validate required environment variables
+if (string.IsNullOrWhiteSpace(dbHost)) throw new Exception("Database host is not configured");
+if (string.IsNullOrWhiteSpace(dbName)) throw new Exception("Database name is not configured");
+if (string.IsNullOrWhiteSpace(dbUser)) throw new Exception("Database user is not configured");
+if (string.IsNullOrWhiteSpace(dbPass)) throw new Exception("Database password is not configured");
+
+// Build connection string
+var connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};Pooling=true;";
+
+// Configure DbContext with the connection string
 builder.Services.AddDbContext<MasterdataDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-    "Host=localhost;Database=masterdatadb;Username=masterdata;Password=masterdata123"));
+    options.UseNpgsql(connectionString, 
+        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorCodesToAdd: null)));
 
 // Configure JWT Authentication
 var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? 
