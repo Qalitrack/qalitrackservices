@@ -49,9 +49,10 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto)
     {
+        var now = _timeService.Now;
         var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
-        transaction.CreatedAt = _timeService.Now;
-        transaction.UpdatedAt = _timeService.Now;
+        transaction.CreatedAt = now;
+        transaction.UpdatedAt = now;
         transaction.Status = WeighbridgeTransactionStatus.Pending;
         transaction.IsCompleted = false;
         
@@ -59,7 +60,7 @@ public class TransactionService : ITransactionService
         if (dto.FirstWeight.HasValue)
         {
             transaction.FirstWeight = dto.FirstWeight.Value;
-            transaction.FirstWeightTimestamp = _timeService.Now;
+            transaction.FirstWeightTimestamp = now;
             transaction.CompletedWeighings = 1;
             transaction.Status = WeighbridgeTransactionStatus.InProgress;
             
@@ -68,14 +69,14 @@ public class TransactionService : ITransactionService
             {
                 WeighingSequence = 1,
                 Weight = dto.FirstWeight.Value,
-                WeighingDate = _timeService.Now,
+                WeighingDate = now,
                 WeighBridgeId = dto.WeighBridgeId,
                 WeighBridgeName = dto.WeighBridgeName,
                 ScaleName = dto.ScaleName,
                 OperatorId = dto.OperatorId,
                 OperatorName = dto.OperatorName,
-                CreatedAt = _timeService.Now,
-                UpdatedAt = _timeService.Now
+                CreatedAt = now,
+                UpdatedAt = now
             };
             transaction.WeighingRecords.Add(weighingRecord);
         }
@@ -85,11 +86,11 @@ public class TransactionService : ITransactionService
         {
             Action = "Created",
             ChangedBy = dto.OperatorName ?? "System",
-            ChangeTimestamp = _timeService.Now,
+            ChangeTimestamp = now,
             NewValues = System.Text.Json.JsonSerializer.Serialize(dto),
             Reason = "New transaction created",
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
+            CreatedAt = now,
+            UpdatedAt = now
         };
         transaction.AuditLogs.Add(auditLog);
         
