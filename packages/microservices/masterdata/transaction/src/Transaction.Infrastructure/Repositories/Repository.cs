@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Transaction.Core.Entities;
 using Transaction.Core.Interfaces;
+using Transaction.Core.Services;
 using Transaction.Infrastructure.Data;
 
 namespace Transaction.Infrastructure.Repositories;
@@ -9,11 +10,13 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 {
     protected readonly TransactionDbContext _context;
     protected readonly DbSet<T> _dbSet;
+    protected readonly ITimeService _timeService;
 
-    public Repository(TransactionDbContext context)
+    public Repository(TransactionDbContext context, ITimeService timeService)
     {
         _context = context;
         _dbSet = context.Set<T>();
+        _timeService = timeService;
     }
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
@@ -29,8 +32,8 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<T> CreateAsync(T entity)
     {
         entity.Id = Guid.NewGuid().ToString();
-        entity.CreatedAt = DateTime.UtcNow;
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.CreatedAt = _timeService.UtcNow;
+        entity.UpdatedAt = _timeService.UtcNow;
         
         _dbSet.Add(entity);
         await _context.SaveChangesAsync();
@@ -48,8 +51,8 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         // Update all properties from the incoming entity to the existing entity
         _context.Entry(existingEntity).CurrentValues.SetValues(entity);
         
-        // Explicitly set the UpdatedAt timestamp
-        existingEntity.UpdatedAt = DateTime.UtcNow;
+        // Explicitly set UpdatedAt to current time
+        existingEntity.UpdatedAt = _timeService.UtcNow;
         
         // Mark the entity as modified to ensure all changes are saved
         _context.Entry(existingEntity).State = EntityState.Modified;
