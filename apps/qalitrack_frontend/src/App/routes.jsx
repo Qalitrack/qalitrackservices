@@ -31,11 +31,14 @@ const Shifts = lazy(() => import("../pages/Userservice/Shifts.jsx"));
 const ShiftAssignment = lazy(() => import("../pages/Userservice/ShiftAssignment.jsx"));
 const Attendance = lazy(() => import("../pages/Userservice/Attendance.jsx"));
 const Microservice = lazy(() => import("../pages/Userservice/Backup/Microservice.jsx"));
-const Transporters = lazy(() => import("../pages/Transpoters.jsx"));
+const Transporters = lazy(() => import("../pages/weighing/TransporterFormModal.jsx"));
 const Suppliers = lazy(() => import("../pages/Suppliers.jsx"));
 const Routes = lazy(() => import("../pages/Routes.jsx"));
 const AxleConfigs = lazy(() => import("../pages/weighing/AxleConfigs.jsx"));
 const Owners = lazy(() => import("../pages/weighing/Owners.jsx"));
+const ProductsPortal = lazy(() => import("../components/weighing/Product.jsx"));
+const SaccosPortal = lazy(() => import("../pages/Saccos.jsx"));
+const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -144,8 +147,21 @@ export const routes = [
                         element: <Owners />,
                     },
                     {
+                        path: "weighing/products",
+                        element: <ProductsPortal />,
+
+                    },
+                    {
                         path: "suppliers",
                         element: <Suppliers />,
+                    },
+                    {
+                        path: "saccos",
+                        element: <SaccosPortal />,
+                    },
+                    {
+                        path: "weighbridges",
+                        element: <WeighbridgesPortal />,
                     },
                     {
                         path: "routes",
