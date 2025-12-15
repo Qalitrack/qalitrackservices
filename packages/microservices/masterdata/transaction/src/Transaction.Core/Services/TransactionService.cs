@@ -49,9 +49,12 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto)
     {
+        var utcNow = _timeService.UtcNow;
+        var localNow = _timeService.Now;
+        
         var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
-        transaction.CreatedAt = _timeService.Now;
-        transaction.UpdatedAt = _timeService.Now;
+        transaction.CreatedAt = utcNow;
+        transaction.UpdatedAt = utcNow;
         transaction.Status = WeighbridgeTransactionStatus.Pending;
         transaction.IsCompleted = false;
         
@@ -59,7 +62,7 @@ public class TransactionService : ITransactionService
         if (dto.FirstWeight.HasValue)
         {
             transaction.FirstWeight = dto.FirstWeight.Value;
-            transaction.FirstWeightTimestamp = _timeService.Now;
+            transaction.FirstWeightTimestamp = utcNow; // Use UTC for timestamps stored in database
             transaction.CompletedWeighings = 1;
             transaction.Status = WeighbridgeTransactionStatus.InProgress;
             
@@ -68,14 +71,14 @@ public class TransactionService : ITransactionService
             {
                 WeighingSequence = 1,
                 Weight = dto.FirstWeight.Value,
-                WeighingDate = _timeService.Now,
+                WeighingDate = utcNow, // Use UTC for timestamps stored in database
                 WeighBridgeId = dto.WeighBridgeId,
                 WeighBridgeName = dto.WeighBridgeName,
                 ScaleName = dto.ScaleName,
                 OperatorId = dto.OperatorId,
                 OperatorName = dto.OperatorName,
-                CreatedAt = _timeService.Now,
-                UpdatedAt = _timeService.Now
+                CreatedAt = utcNow,
+                UpdatedAt = utcNow
             };
             transaction.WeighingRecords.Add(weighingRecord);
         }
@@ -85,11 +88,11 @@ public class TransactionService : ITransactionService
         {
             Action = "Created",
             ChangedBy = dto.OperatorName ?? "System",
-            ChangeTimestamp = _timeService.Now,
+            ChangeTimestamp = utcNow, // Use UTC for timestamps stored in database
             NewValues = System.Text.Json.JsonSerializer.Serialize(dto),
             Reason = "New transaction created",
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
+            CreatedAt = utcNow,
+            UpdatedAt = utcNow
         };
         transaction.AuditLogs.Add(auditLog);
         
@@ -133,8 +136,9 @@ public class TransactionService : ITransactionService
         if (dto.Operation != null) existingTransaction.Operation = dto.Operation;
         if (dto.ChangeDescription != null) existingTransaction.ChangeDescription = dto.ChangeDescription;
         
-        existingTransaction.UpdatedAt = _timeService.Now;
-        existingTransaction.ChangeDate = _timeService.Now;
+        var utcNow = _timeService.UtcNow;
+        existingTransaction.UpdatedAt = utcNow;
+        existingTransaction.ChangeDate = utcNow;
         
         // Create audit log
         var auditLog = new TransactionAuditLog
@@ -144,10 +148,10 @@ public class TransactionService : ITransactionService
             ChangedBy = "System", // TODO: Get from current user context
             OldValues = oldValues,
             NewValues = System.Text.Json.JsonSerializer.Serialize(existingTransaction),
-            ChangeTimestamp = _timeService.Now,
+            ChangeTimestamp = utcNow,
             Reason = dto.ChangeDescription ?? "Transaction updated",
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
+            CreatedAt = utcNow,
+            UpdatedAt = utcNow
         };
         existingTransaction.AuditLogs.Add(auditLog);
         
@@ -199,12 +203,13 @@ public class TransactionService : ITransactionService
 
         // The sequence number is the next weighing number (1-based index)
         var sequenceNumber = (transaction.WeighingRecords?.Count ?? 0) + 1;
+        var utcNow = _timeService.UtcNow;
 
         // Add weight based on sequence
         if (sequenceNumber == 1)
         {
             transaction.FirstWeight = dto.Weight;
-            transaction.FirstWeightTimestamp = _timeService.Now;
+            transaction.FirstWeightTimestamp = utcNow;
             transaction.WeighBridgeId = dto.WeighBridgeId;
             transaction.WeighBridgeName = dto.WeighBridgeName;
             transaction.ScaleName = dto.ScaleName;
@@ -215,7 +220,7 @@ public class TransactionService : ITransactionService
         else if (sequenceNumber == 2)
         {
             transaction.SecondWeight = dto.Weight;
-            transaction.SecondWeightTimestamp = _timeService.Now;
+            transaction.SecondWeightTimestamp = utcNow;
             transaction.WeighBridgeName2nd = dto.WeighBridgeName;
             transaction.ScaleName2nd = dto.ScaleName;
             transaction.OperatorId2nd = dto.OperatorId;
@@ -228,15 +233,15 @@ public class TransactionService : ITransactionService
             WeighbridgeTransactionId = transaction.Id,
             WeighingSequence = sequenceNumber,
             Weight = dto.Weight,
-            WeighingDate = _timeService.Now,
+            WeighingDate = utcNow,
             WeighBridgeId = dto.WeighBridgeId,
             WeighBridgeName = dto.WeighBridgeName,
             ScaleName = dto.ScaleName,
             OperatorId = dto.OperatorId,
             OperatorName = dto.OperatorName,
             Notes = dto.Notes ?? string.Empty,
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
+            CreatedAt = utcNow,
+            UpdatedAt = utcNow
         };
         
         // Ensure WeighingRecords collection is initialized
@@ -263,7 +268,7 @@ public class TransactionService : ITransactionService
             // Transaction is complete
             transaction.Status = WeighbridgeTransactionStatus.Completed;
             transaction.IsCompleted = true;
-            transaction.CompletedDate = _timeService.Now;
+            transaction.CompletedDate = utcNow;
             Console.WriteLine($"DEBUG - Setting status to Completed. Sequence: {sequenceNumber}, Expected: {transaction.ExpectedWeighings}");
             
             // For transactions with exactly 2 weighings, calculate net weight as first - second
@@ -272,7 +277,7 @@ public class TransactionService : ITransactionService
                 var firstWeighing = transaction.WeighingRecords.OrderBy(w => w.WeighingSequence).First();
                 var secondWeighing = transaction.WeighingRecords.OrderBy(w => w.WeighingSequence).Last();
                 transaction.NetWeight = Math.Abs(firstWeighing.Weight - secondWeighing.Weight);
-                transaction.NetWeightCalculatedTimestamp = _timeService.Now;
+                transaction.NetWeightCalculatedTimestamp = utcNow;
             }
             // For transactions with more than 2 weighings, calculate net weight as first - last
             else if (transaction.ExpectedWeighings > 2 && transaction.WeighingRecords.Count >= 2)
@@ -280,7 +285,7 @@ public class TransactionService : ITransactionService
                 var firstWeighing = transaction.WeighingRecords.OrderBy(w => w.WeighingSequence).First();
                 var lastWeighing = transaction.WeighingRecords.OrderByDescending(w => w.WeighingSequence).First();
                 transaction.NetWeight = Math.Abs(firstWeighing.Weight - lastWeighing.Weight);
-                transaction.NetWeightCalculatedTimestamp = _timeService.Now;
+                transaction.NetWeightCalculatedTimestamp = utcNow;
             }
         }
         // For transactions that are in progress but not yet complete
@@ -289,8 +294,8 @@ public class TransactionService : ITransactionService
             transaction.Status = WeighbridgeTransactionStatus.InProgress;
         }
         
-        // Update the transaction's updated timestamp
-        transaction.UpdatedAt = _timeService.Now;
+        // Update the transaction's updated timestamp with UTC time
+        transaction.UpdatedAt = utcNow;
         
         // Debug: Log transaction state before saving
         Console.WriteLine($"DEBUG - Before Save - Status: {transaction.Status}, IsCompleted: {transaction.IsCompleted}, WeighingRecords: {transaction.WeighingRecords?.Count ?? 0}, CompletedWeighings: {transaction.CompletedWeighings}");

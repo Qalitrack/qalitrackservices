@@ -2,21 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Transaction.Infrastructure.Data;
 
 #nullable disable
 
-namespace Transaction.Infrastructure.Migrations
+namespace Transaction.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TransactionDbContext))]
-    [Migration("20251028141817_InitialCreate")]
-    partial class InitialCreate
+    partial class TransactionDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,8 +183,8 @@ namespace Transaction.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<int?>("CommodityId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("CommodityId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CommodityName")
                         .IsRequired()
@@ -209,16 +206,16 @@ namespace Transaction.Infrastructure.Migrations
                     b.Property<int>("CurrentReweighAttempt")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int?>("DestinationId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("DestinationId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("DestinationName")
                         .IsRequired()
@@ -264,11 +261,11 @@ namespace Transaction.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int?>("OperatorId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("OperatorId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int?>("OperatorId2nd")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("OperatorId2nd")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("OperatorName")
                         .IsRequired()
@@ -280,8 +277,8 @@ namespace Transaction.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int?>("OriginId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("OriginId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("OriginName")
                         .IsRequired()
@@ -328,16 +325,16 @@ namespace Transaction.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("SupplierId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("SupplierId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SupplierName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("TransporterId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("TransporterId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("TransporterName")
                         .IsRequired()
@@ -350,11 +347,11 @@ namespace Transaction.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
 
-                    b.Property<int?>("VehicleId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("VehicleId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int?>("WeighBridgeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("WeighBridgeId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("WeighBridgeName")
                         .IsRequired()
@@ -406,8 +403,8 @@ namespace Transaction.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<int?>("OperatorId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("OperatorId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("OperatorName")
                         .IsRequired()
@@ -425,8 +422,8 @@ namespace Transaction.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
 
-                    b.Property<int?>("WeighBridgeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("WeighBridgeId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("WeighBridgeName")
                         .IsRequired()
