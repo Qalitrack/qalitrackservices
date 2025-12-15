@@ -8,15 +8,15 @@ public class WeighbridgeTransactionFilter
     public string? ReceiptNo { get; set; }
     public string? NoPlate { get; set; }
     public string? DriverName { get; set; }
-    public int? VehicleId { get; set; }
-    public int? ProductId { get; set; }
-    public int? SupplierId { get; set; }
-    public int? CustomerId { get; set; }
-    public int? TransporterId { get; set; }
-    public int? OriginId { get; set; }
-    public int? DestinationId { get; set; }
-    public int? WeighBridgeId { get; set; }
-    public int? OperatorId { get; set; }
+    public Guid? VehicleId { get; set; }
+    public Guid? ProductId { get; set; }
+    public Guid? SupplierId { get; set; }
+    public Guid? CustomerId { get; set; }
+    public Guid? TransporterId { get; set; }
+    public Guid? OriginId { get; set; }
+    public Guid? DestinationId { get; set; }
+    public Guid? WeighBridgeId { get; set; }
+    public Guid? OperatorId { get; set; }
     public WeighbridgeTransactionStatus? Status { get; set; }
     public bool? IsCompleted { get; set; }
     public DateTime? StartDate { get; set; }

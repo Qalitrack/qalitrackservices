@@ -662,11 +662,14 @@ public class TransactionRepositoryTests : IDisposable
     public async Task GetPagedAsync_WithVehicleIdFilter_ShouldReturnMatchingTransactions()
     {
         // Arrange
+        var vehicleId1 = Guid.Parse("00000000-0000-0000-0000-000000000100");
+        var vehicleId2 = Guid.Parse("00000000-0000-0000-0000-000000000200");
+        
         await _repository.CreateAsync(new WeighbridgeTransaction
         {
             ReceiptNo = "TRX-600",
             NoPlate = "KAA 600A",
-            VehicleId = 100,
+            VehicleId = vehicleId1,
             ExpectedWeighings = 2,
             Status = WeighbridgeTransactionStatus.Pending
         });
@@ -674,7 +677,7 @@ public class TransactionRepositoryTests : IDisposable
         {
             ReceiptNo = "TRX-601",
             NoPlate = "KAA 601A",
-            VehicleId = 200,
+            VehicleId = vehicleId2,
             ExpectedWeighings = 2,
             Status = WeighbridgeTransactionStatus.Pending
         });
@@ -683,7 +686,7 @@ public class TransactionRepositoryTests : IDisposable
         {
             PageNumber = 1,
             PageSize = 10,
-            VehicleId = 100,
+            VehicleId = vehicleId1,
             SortBy = "CreatedAt",
             SortDescending = false
         };
@@ -693,7 +696,7 @@ public class TransactionRepositoryTests : IDisposable
 
         // Assert
         result.Items.Should().HaveCount(1);
-        result.Items.First().VehicleId.Should().Be(100);
+        result.Items.First().VehicleId.Should().Be(vehicleId1);
     }
 
     [Fact]
@@ -856,13 +859,15 @@ public class TransactionRepositoryTests : IDisposable
     public async Task GetIncompleteTransactionsByVehicleIdAsync_ShouldReturnIncompleteTransactions()
     {
         // Arrange
-        var vehicleId = "1000";
+        var vehicleId = "00000000-0000-0000-0000-000000001000";
+        var vehicleIdGuid = Guid.Parse(vehicleId);
+        
         await _repository.CreateAsync(new WeighbridgeTransaction
         {
             Id = Guid.NewGuid().ToString(),
             ReceiptNo = "TRX-1200",
             NoPlate = "KAA 1200A",
-            VehicleId = int.Parse(vehicleId), // Parse the string to int for the entity
+            VehicleId = vehicleIdGuid,
             ExpectedWeighings = 2,
             Status = WeighbridgeTransactionStatus.Pending,
             IsCompleted = false
@@ -872,7 +877,7 @@ public class TransactionRepositoryTests : IDisposable
             Id = Guid.NewGuid().ToString(),
             ReceiptNo = "TRX-1201",
             NoPlate = "KAA 1201A",
-            VehicleId = int.Parse(vehicleId), // Parse the string to int for the entity
+            VehicleId = vehicleIdGuid,
             ExpectedWeighings = 2,
             Status = WeighbridgeTransactionStatus.Completed,
             IsCompleted = true

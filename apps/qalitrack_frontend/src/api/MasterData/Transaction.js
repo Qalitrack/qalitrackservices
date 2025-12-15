@@ -67,7 +67,8 @@ export const getTransactions = async ({
 // CREATE TRANSACTION
 // --------------------------------------------------------------------------
 export const createTransaction = async (payload) => {
-  const response = await apiClient.post(BASE, payload);
+  const response = await apiClient.post(`${BASE}/`, payload);
+  console.log(response.data);
   return response.data;
 };
 
