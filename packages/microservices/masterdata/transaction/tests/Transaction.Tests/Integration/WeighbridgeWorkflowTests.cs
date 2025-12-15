@@ -83,9 +83,9 @@ public class WeighbridgeWorkflowTests : IDisposable
             ReceiptNo = truckA_ReceiptNo,
             NoPlate = truckA_NoPlate,
             DriverName = "John Doe",
-            TransporterId = 1,
+            TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             TransporterName = "Fast Transport Ltd",
-            CommodityId = 100,
+            CommodityId = Guid.Parse("00000000-0000-0000-0000-000000000100"),
             CommodityName = "Wheat",
             ExpectedWeighings = 2
         };
@@ -99,10 +99,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = truckA_TransactionId,
             Weight = 45000, // 45 tons (full truck)
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "Main Weighbridge",
             ScaleName = "Scale-01",
-            OperatorId = 101,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000101"),
             OperatorName = "Operator Alice",
             Notes = "First weighing - truck with full load"
         };
@@ -129,9 +129,9 @@ public class WeighbridgeWorkflowTests : IDisposable
             ReceiptNo = truckB_ReceiptNo,
             NoPlate = "XYZ-789",
             DriverName = "Jane Smith",
-            TransporterId = 2,
+            TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
             TransporterName = "Quick Haul Inc",
-            CommodityId = 101,
+            CommodityId = Guid.Parse("00000000-0000-0000-0000-000000000101"),
             CommodityName = "Maize",
             ExpectedWeighings = 2
         };
@@ -141,10 +141,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = truckB_Transaction!.Id,
             Weight = 38000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "Main Weighbridge",
             ScaleName = "Scale-01",
-            OperatorId = 101,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000101"),
             OperatorName = "Operator Alice"
         });
 
@@ -152,10 +152,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = truckB_Transaction.Id,
             Weight = 12000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "Main Weighbridge",
             ScaleName = "Scale-01",
-            OperatorId = 101,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000101"),
             OperatorName = "Operator Alice"
         });
 
@@ -171,9 +171,9 @@ public class WeighbridgeWorkflowTests : IDisposable
             ReceiptNo = truckC_ReceiptNo,
             NoPlate = "LMN-456",
             DriverName = "Bob Wilson",
-            TransporterId = 3,
+            TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
             TransporterName = "Express Logistics",
-            CommodityId = 102,
+            CommodityId = Guid.Parse("00000000-0000-0000-0000-000000000102"),
             CommodityName = "Rice",
             ExpectedWeighings = 2
         };
@@ -183,10 +183,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = truckC_Transaction!.Id,
             Weight = 42000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "Main Weighbridge",
             ScaleName = "Scale-01",
-            OperatorId = 102,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000102"),
             OperatorName = "Operator Bob"
         });
 
@@ -216,10 +216,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = truckA_TransactionId,
             Weight = 15000, // 15 tons (empty truck)
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "Main Weighbridge",
             ScaleName = "Scale-02",
-            OperatorId = 102,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000102"),
             OperatorName = "Operator Bob",
             Notes = "Second weighing - truck empty after offload"
         };
@@ -282,7 +282,7 @@ public class WeighbridgeWorkflowTests : IDisposable
                 ReceiptNo = "R001",
                 NoPlate = "AAA-111",
                 DriverName = "Driver 1",
-                TransporterId = 1,
+                TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 TransporterName = "Transport 1",
                 ExpectedWeighings = 2
             }),
@@ -291,7 +291,7 @@ public class WeighbridgeWorkflowTests : IDisposable
                 ReceiptNo = "R002",
                 NoPlate = "BBB-222",
                 DriverName = "Driver 2",
-                TransporterId = 2,
+                TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
                 TransporterName = "Transport 2",
                 ExpectedWeighings = 2
             }),
@@ -300,7 +300,7 @@ public class WeighbridgeWorkflowTests : IDisposable
                 ReceiptNo = "R003",
                 NoPlate = "CCC-333",
                 DriverName = "Driver 3",
-                TransporterId = 3,
+                TransporterId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
                 TransporterName = "Transport 3",
                 ExpectedWeighings = 2
             })
@@ -312,10 +312,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = transactions[0]!.Id,
             Weight = 40000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "WB1",
             ScaleName = "S1",
-            OperatorId = 1,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             OperatorName = "Op1"
         });
 
@@ -324,10 +324,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = transactions[1]!.Id,
             Weight = 35000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "WB1",
             ScaleName = "S1",
-            OperatorId = 1,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             OperatorName = "Op1"
         });
 
@@ -336,10 +336,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = transactions[2]!.Id,
             Weight = 38000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "WB1",
             ScaleName = "S1",
-            OperatorId = 1,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             OperatorName = "Op1"
         });
 
@@ -352,10 +352,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = transactions[2]!.Id,
             Weight = 12000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "WB1",
             ScaleName = "S1",
-            OperatorId = 2,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
             OperatorName = "Op2"
         });
 
@@ -363,10 +363,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = transactions[0]!.Id,
             Weight = 10000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "WB1",
             ScaleName = "S1",
-            OperatorId = 2,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
             OperatorName = "Op2"
         });
 
@@ -374,10 +374,10 @@ public class WeighbridgeWorkflowTests : IDisposable
         {
             TransactionId = transactions[1]!.Id,
             Weight = 11000,
-            WeighBridgeId = 1,
+            WeighBridgeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             WeighBridgeName = "WB1",
             ScaleName = "S1",
-            OperatorId = 2,
+            OperatorId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
             OperatorName = "Op2"
         });
 
