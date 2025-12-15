@@ -354,7 +354,69 @@ export const completeTransaction = createAsyncThunk(
         }
     }
 );
+// ─────────────────────────────────────────────────────────────────────────────
+// WEIGHBRIDGES — REAL ENDPOINT: /Weighbridges
+// ─────────────────────────────────────────────────────────────────────────────
+export const fetchWeighbridges = createAsyncThunk(
+    "weighing/fetchWeighbridges",
+    async ({ pageNumber = 1, pageSize = 100 } = {}, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/MasterData/Weighbridges", {
+                params: {
+                    pageNumber,
+                    pageSize,
+                },
+            });
 
+            const items = response.data?.items || [];
+            const meta = {
+                pageNumber: response.data?.pageNumber || pageNumber,
+                pageSize: response.data?.pageSize || pageSize,
+                totalItems: response.data?.totalItems || items.length,
+                totalPages: response.data?.totalPages || 1,
+                hasPreviousPage: response.data?.hasPreviousPage || false,
+            };
+
+            return { items, meta };
+        } catch (error) {
+            const message =
+                error.response?.data?.message ||
+                error.response?.data?.error ||
+                error.message ||
+                "Failed to fetch weighbridges";
+            return rejectWithValue(message);
+        }
+    }
+);
+
+export const fetchWeighbridgesByName = createAsyncThunk(
+    "weighing/fetchWeighbridgesByName",
+    async (searchTerm = "", { rejectWithValue }) => {
+        try {
+            if (!searchTerm?.trim()) {
+                return { items: [], meta: {} };
+            }
+
+            const response = await apiClient.get("/Weighbridges", {
+                params: {
+                    pageNumber: 1,
+                    pageSize: 30, // Good for dropdown search
+                    searchTerm: searchTerm.trim(),
+                },
+            });
+
+            const items = response.data?.items || [];
+            return { items, meta: response.data || {} };
+        } catch (error) {
+            const message =
+                error.response?.data?.message ||
+                error.response?.data?.error ||
+                error.message ||
+                "Failed to search weighbridges";
+            return rejectWithValue(message);
+        }
+    }
+);
 // ─────────────────────────────────────────────────────────────────────────────
 // SLICE — WITH OPTIMISTIC UPDATES
 // ─────────────────────────────────────────────────────────────────────────────
@@ -365,6 +427,7 @@ const initialState = {
     routes: [],
     suppliers: [],
     saccos: [],
+    weighbridges: [],        // ← ADD THIS
     transporters: [],
     transactions: [],
     currentWeight: null,
@@ -401,6 +464,7 @@ const weighingSlice = createSlice({
             state.loading = true;
             state.error = null;
         };
+
         const rejected = (state, action) => {
             state.loading = false;
             state.error = action.payload || "An error occurred";
@@ -425,6 +489,22 @@ const weighingSlice = createSlice({
                 state.loading = false;
                 state.vehicles = action.payload;
             })
+
+            // Weighbridges - Load all
+            .addCase(fetchWeighbridges.pending, pending)
+            .addCase(fetchWeighbridges.fulfilled, (state, action) => {
+                state.loading = false;
+                state.weighbridges = action.payload.items;
+            })
+            .addCase(fetchWeighbridges.rejected, rejected)
+
+            // Weighbridges - Search
+            .addCase(fetchWeighbridgesByName.pending, pending)
+            .addCase(fetchWeighbridgesByName.fulfilled, (state, action) => {
+                state.loading = false;
+                state.weighbridges = action.payload.items;
+            })
+            .addCase(fetchWeighbridgesByName.rejected, rejected)
             .addCase(fetchVehiclesByRegNumber.fulfilled, (state, action) => {
                 state.loading = false;
                 state.vehicles = action.payload;
