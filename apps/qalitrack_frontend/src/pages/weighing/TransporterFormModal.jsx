@@ -1,194 +1,321 @@
-// src/components/TransporterFormModal.jsx
-import React, { useEffect } from "react";
-import { Modal, Form, Input, Select, message } from 'antd';
-import { createTransporter, updateTransporter } from '../../api/MasterData/Transporters';
+import { useEffect, useState } from "react";
+import {
+  Pencil,
+  Trash2,
+  UserPlus,
+  Search,
+  Truck,
+} from "lucide-react";
+import {
+  getTransporters,
+  createTransporter,
+  updateTransporter,
+  deleteTransporter,
+} from "../../api/MasterData/Transporters";
 
-const { Option } = Select;
+export default function TransportersPortal() {
+  const [transporters, setTransporters] = useState([]);
+  const [editingTransporter, setEditingTransporter] = useState(null);
 
-export default function TransporterFormModal({ open, transporter, onClose }) {
-    const [form] = Form.useForm();
-    const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const isEditing = !!transporter;
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
 
-    useEffect(() => {
-        if (open && transporter) {
-            // Parse contactInfo if it's a JSON string or object
-            let contactInfo = transporter.contactInfo;
-            if (typeof contactInfo === 'string') {
-                try {
-                    contactInfo = JSON.parse(contactInfo);
-                } catch (e) {
-                    contactInfo = {};
-                }
-            }
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    licenseNumber: "",
+    status: "Active",
+    logo: "",
+  });
 
-            form.setFieldsValue({
-                name: transporter.name,
-                email: contactInfo?.Email || '',
-                phone: contactInfo?.Phone || '',
-                address: contactInfo?.Address || '',
-                licenseNumber: contactInfo?.LicenseNumber || '',
-                status: transporter.status,
-                logo: transporter.logo,
-            });
-        } else if (open) {
-            form.resetFields();
-        }
-    }, [open, transporter, form]);
+  // ─────────────────────────────────────────────
+  // Fetch Transporters
+  // ─────────────────────────────────────────────
+  useEffect(() => {
+    fetchTransporters();
+  }, [page, search]);
 
-    const handleSubmit = async () => {
-        try {
-            const values = await form.validateFields();
-            setLoading(true);
+  const fetchTransporters = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-            // Convert form values to the correct API format
-            const payload = {
-                name: values.name,
-                // ContactInfo must be a JSON object (as a string or object depending on API)
-                contactInfo: JSON.stringify({
-                    Email: values.email || "",
-                    Phone: values.phone || "",
-                    Address: values.address || "",
-                    LicenseNumber: values.licenseNumber || ""
-                }),
-                status: values.status,
-                logo: values.logo || ""
-            };
+      const data = await getTransporters(page, pageSize, search);
+      const items = data?.items || data || [];
+      const totalItems = data?.totalItems || items.length;
 
-            if (isEditing) {
-                await updateTransporter(transporter.id, payload);
-                message.success("Transporter updated successfully");
-            } else {
-                await createTransporter(payload);
-                message.success("Transporter created successfully");
-            }
+      setTransporters(items);
+      setTotalPages(Math.ceil(totalItems / pageSize));
+    } catch (err) {
+      setError(err.message || "Failed to load transporters");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            form.resetFields();
-            onClose(true);
-        } catch (error) {
-            if (error.errorFields) {
-                message.error("Please fill in all required fields");
-            } else {
-                message.error(`Failed to ${isEditing ? 'update' : 'create'} transporter`);
-                console.error(error);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
+  // ─────────────────────────────────────────────
+  // Handlers
+  // ─────────────────────────────────────────────
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((p) => ({ ...p, [name]: value }));
+  };
 
-    const handleCancel = () => {
-        form.resetFields();
-        onClose(false);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-    return (
-        <Modal
-            title={isEditing ? "Edit Transporter" : "Add New Transporter"}
-            open={open}
-            onOk={handleSubmit}
-            onCancel={handleCancel}
-            confirmLoading={loading}
-            width={600}
-            okText={isEditing ? "Update" : "Create"}
-            cancelText="Cancel"
+    try {
+      const payload = {
+        name: form.name,
+        status: form.status,
+        logo: form.logo || "",
+        contactInfo: JSON.stringify({
+          Email: form.email || "",
+          Phone: form.phone || "",
+          Address: form.address || "",
+          LicenseNumber: form.licenseNumber || "",
+        }),
+      };
+
+      if (editingTransporter) {
+        await updateTransporter(editingTransporter.id, payload);
+      } else {
+        await createTransporter(payload);
+      }
+
+      resetForm();
+      fetchTransporters();
+    } catch (err) {
+      alert(err.message || "Failed to save transporter");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (t) => {
+    let contactInfo = t.contactInfo || {};
+    if (typeof contactInfo === "string") {
+      try {
+        contactInfo = JSON.parse(contactInfo);
+      } catch {
+        contactInfo = {};
+      }
+    }
+
+    setForm({
+      name: t.name || "",
+      email: contactInfo.Email || "",
+      phone: contactInfo.Phone || "",
+      address: contactInfo.Address || "",
+      licenseNumber: contactInfo.LicenseNumber || "",
+      status: t.status || "Active",
+      logo: t.logo || "",
+    });
+
+    setEditingTransporter(t);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this transporter?")) return;
+    await deleteTransporter(id);
+    fetchTransporters();
+  };
+
+  const resetForm = () => {
+    setForm({
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      licenseNumber: "",
+      status: "Active",
+      logo: "",
+    });
+    setEditingTransporter(null);
+  };
+
+  // ─────────────────────────────────────────────
+  // UI (MATCH OWNERS / DRIVERS)
+  // ─────────────────────────────────────────────
+  return (
+    <div className="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+      <h2 className="text-2xl font-semibold text-amber-600 mb-6 flex items-center gap-2">
+        <Truck className="w-6 h-6" /> Transporter Management
+      </h2>
+
+      {/* 🔍 Search */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setPage(1);
+          fetchTransporters();
+        }}
+        className="flex items-center gap-3 mb-6 border rounded-lg px-3 py-2"
+      >
+        <Search className="w-5 h-5 text-gray-400" />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search transporters..."
+          className="flex-1 bg-transparent outline-none"
+        />
+        <button className="bg-amber-500 text-white px-4 py-1 rounded-lg">
+          Search
+        </button>
+      </form>
+
+      {/* 📝 Transporter Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
+      >
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="Transporter Name"
+          required
+          className="border rounded-lg px-3 py-2"
+        />
+
+        <select
+          name="status"
+          value={form.status}
+          onChange={handleChange}
+          className="border rounded-lg px-3 py-2"
         >
-            <Form
-                form={form}
-                layout="vertical"
-                name="transporterForm"
-                initialValues={{
-                    status: 'Active',
-                }}
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Suspended">Suspended</option>
+        </select>
+
+        <input
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+          placeholder="Email"
+          className="border rounded-lg px-3 py-2"
+        />
+
+        <input
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          placeholder="Phone Number"
+          className="border rounded-lg px-3 py-2"
+        />
+
+        <input
+          name="licenseNumber"
+          value={form.licenseNumber}
+          onChange={handleChange}
+          placeholder="License Number"
+          className="border rounded-lg px-3 py-2"
+        />
+
+        <input
+          name="logo"
+          value={form.logo}
+          onChange={handleChange}
+          placeholder="Logo URL"
+          className="border rounded-lg px-3 py-2"
+        />
+
+        <textarea
+          name="address"
+          value={form.address}
+          onChange={handleChange}
+          placeholder="Address"
+          className="border rounded-lg px-3 py-2 md:col-span-2"
+        />
+
+        <div className="md:col-span-2 flex gap-3">
+          <button className="bg-amber-500 text-white px-4 py-2 rounded-lg">
+            {editingTransporter ? "Update Transporter" : "Add Transporter"}
+          </button>
+
+          {editingTransporter && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="bg-gray-200 px-4 py-2 rounded-lg"
             >
-                <Form.Item
-                    label="Transporter Name"
-                    name="name"
-                    rules={[
-                        { required: true, message: 'Please enter transporter name' },
-                        { min: 2, message: 'Name must be at least 2 characters' }
-                    ]}
-                >
-                    <Input
-                        placeholder="Enter transporter name"
-                        size="large"
-                    />
-                </Form.Item>
+              Cancel
+            </button>
+          )}
+        </div>
+      </form>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
-                            { type: 'email', message: 'Please enter a valid email' }
-                        ]}
-                    >
-                        <Input
-                            placeholder="email@example.com"
-                            size="large"
-                        />
-                    </Form.Item>
+      {/* 📋 Transporters Table */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : transporters.length === 0 ? (
+        <p className="text-gray-500">No transporters found</p>
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border rounded-lg">
+              <thead className="bg-gray-50">
+                <tr>
+                  {["Name", "Phone", "Status", "Actions"].map((h) => (
+                    <th key={h} className="border px-3 py-2 text-left">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {transporters.map((t) => (
+                  <tr key={t.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 font-medium">{t.name}</td>
+                    <td className="px-3 py-2">
+                      {JSON.parse(t.contactInfo || "{}")?.Phone || "-"}
+                    </td>
+                    <td className="px-3 py-2">{t.status}</td>
+                    <td className="px-3 py-2 flex gap-2">
+                      <button onClick={() => handleEdit(t)}>
+                        <Pencil className="w-4 h-4 text-blue-600" />
+                      </button>
+                      <button onClick={() => handleDelete(t.id)}>
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-                    <Form.Item
-                        label="Phone"
-                        name="phone"
-                        rules={[
-                            { required: true, message: 'Please enter phone number' }
-                        ]}
-                    >
-                        <Input
-                            placeholder="+254712345678"
-                            size="large"
-                        />
-                    </Form.Item>
-                </div>
-
-                <Form.Item
-                    label="Address"
-                    name="address"
-                >
-                    <Input
-                        placeholder="Physical address"
-                        size="large"
-                    />
-                </Form.Item>
-
-                <Form.Item
-                    label="License Number"
-                    name="licenseNumber"
-                >
-                    <Input
-                        placeholder="TRN-XXX"
-                        size="large"
-                    />
-                </Form.Item>
-
-                <Form.Item
-                    label="Status"
-                    name="status"
-                    rules={[
-                        { required: true, message: 'Please select status' }
-                    ]}
-                >
-                    <Select size="large" placeholder="Select status">
-                        <Option value="Active">Active</Option>
-                        <Option value="Inactive">Inactive</Option>
-                        <Option value="Suspended">Suspended</Option>
-                    </Select>
-                </Form.Item>
-
-                <Form.Item
-                    label="Logo URL"
-                    name="logo"
-                    help="Enter a URL for the transporter logo (optional)"
-                >
-                    <Input
-                        placeholder="https://example.com/logo.png"
-                        size="large"
-                    />
-                </Form.Item>
-            </Form>
-        </Modal>
-    );
+          {/* Pagination */}
+          <div className="flex justify-between mt-4">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="border px-3 py-1 rounded-lg"
+            >
+              Previous
+            </button>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="border px-3 py-1 rounded-lg"
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
