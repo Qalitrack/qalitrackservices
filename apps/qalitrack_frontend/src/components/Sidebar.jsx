@@ -17,6 +17,7 @@ import {
   Satellite,
   List,
   Users,
+  User2
 } from "lucide-react";
 
 import logo from "/src/assets/qualitrack.png";
@@ -38,13 +39,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const linkClasses = ({ isActive }) =>
-    `flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150
-     ${isActive ? "bg-black/60 font-medium" : "hover:bg-white/5"} `;
-
   const menuItems = [
-    // { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/dashboard" },
-    // { key: "dashboard", label: "Dashboard", icon: <Cog size={18} />, path: "/dashboard" },
     {
       key: "weighing",
       label: "Weighing",
@@ -54,9 +49,12 @@ export default function Sidebar({ isCollapsed, onToggle }) {
         { key: "weighing-vehicles", label: "Vehicles", icon: <Truck size={16} />, path: "weighing/vehicle" },
         { key: "weighing-drivers", label: "Drivers", icon: <User size={16} />, path: "weighing/drivers" },
         { key: "weighing-transporters", label: "Transporters", icon: <Tractor size={16} />, path: "transporters" },
-        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: "weighing/axle-config" },
         { key: "weighing-owners", label: "Owners", icon: <Users size={16} />, path: "weighing/owners" },
         { key: "suppliers", label: "Suppliers", icon: <Satellite size={16} />, path: "suppliers" },
+        { key: "weighing-products", label: "Products", icon: <BarChart3 size={16} />, path: "weighing/products" },
+        { key: "weighing-saccos", label: "Saccos", icon: <User2 size={16} />, path: "saccos" },
+        { key: "weighing-weighbridges", label: "Weighbridges", icon: <Scale size={16} />, path: "weighbridges" },
+        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: "weighing/axle-config" },
       ],
     },
     { key: "automation", label: "Automation", icon: <Cog size={18} />, path: "automation" },
@@ -74,7 +72,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
   };
 
   return (
-    // Sidebar container: black background, fixed left, overlaying content
     <aside
       className={`
         fixed top-0 left-0 h-full z-40 flex flex-col transition-all duration-300
@@ -84,7 +81,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
       aria-label="Main sidebar"
     >
       {/* Branding + Collapse */}
-      <div className={`flex items-center relative ${isCollapsed ? "justify-center px-0" : "justify-between px-6" } py-6`}>
+      <div className={`flex items-center relative ${isCollapsed ? "justify-center px-0" : "justify-between px-6"} py-6`}>
         <div className="flex items-center gap-3">
           <img
             src={logo}
@@ -94,7 +91,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
           {!isCollapsed && <span className="font-semibold text-lg text-white">Qualitrack</span>}
         </div>
 
-        {/* Collapse toggle button */}
         <button
           onClick={onToggle}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -125,7 +121,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
                   <span className="text-amber-400">{item.icon}</span>
                   {!isCollapsed && <span className="text-sm">{item.label}</span>}
                 </span>
-
                 {!isCollapsed && (
                   <span className="text-white/80">
                     {openMenus[item.key] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
@@ -133,7 +128,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
                 )}
               </button>
 
-              {/* Children */}
               <div id={`${item.key}-sub`} className={`${openMenus[item.key] && !isCollapsed ? "block" : "hidden"} mt-1`}>
                 {item.children.map((child) => (
                   <NavLink
@@ -144,9 +138,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
                        ${isActive ? "bg-white/6" : "hover:bg-white/4"}`
                     }
                   >
-                    {/* amber left border indicator when active */}
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-transparent"
-                         aria-hidden />
+                    <ActiveLeftBorder />
                     <span className="text-white/90">{child.icon}</span>
                     {!isCollapsed && <span className="text-sm">{child.label}</span>}
                   </NavLink>
@@ -165,18 +157,11 @@ export default function Sidebar({ isCollapsed, onToggle }) {
                   `
                 }
               >
-                {/* active left amber border */}
-                {({ isActive }) => null}
-                {/*
-                  We can't use NavLink children function and class func at same time easily in a single template,
-                  so we'll apply the amber left border via an absolute element using CSS and a small helper below.
-                */}
                 <ActiveLeftBorder />
                 <span className="text-amber-400">{item.icon}</span>
                 {!isCollapsed && <span className="text-sm">{item.label}</span>}
               </NavLink>
 
-              {/* Tooltip when collapsed */}
               {isCollapsed && (
                 <div
                   className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-50 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -191,7 +176,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
         )}
       </nav>
 
-      {/* footer / version */}
+      {/* Footer / Version */}
       <div className="px-3 py-3 border-t border-white/6 text-xs text-white/70">
         {!isCollapsed ? (
           <div className="flex items-center justify-between">
@@ -208,12 +193,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
   );
 }
 
-/* Helper small component that renders the amber left border for active NavLink items.
-   Since NavLink's className can detect isActive, we'll implement a tiny CSS rule
-   using the `:where` selector would be ideal, but Tailwind + inline is simpler: we add
-   a pseudo-element via an extra element and rely on NavLink's active class (bg-white/6).
-   Because controlling it precisely in this snippet is verbose, we use a small inline marker
-   that becomes amber when its parent is active (via bg-white/6 check). */
 function ActiveLeftBorder() {
   return <span className="absolute left-0 top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-transparent" aria-hidden />;
 }
