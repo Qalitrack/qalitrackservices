@@ -1,7 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, Button, message, Card, Tabs, Table, Tag, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { createTransaction } from "../store/weighingSlice";
+import { Form, Input, Select, Button, message, Card, Tabs, Table, Tag, Modal } from "antd";
+import {
+  fetchVehicles,
+  fetchVehiclesByRegNumber,
+  fetchDrivers,
+  fetchDriversByName,
+  fetchProducts,
+  fetchProductsByName,
+  fetchRoutes,
+  fetchRoutesByName,
+  fetchSaccosByName,
+  fetchSuppliersByName,
+  fetchTransportersByName,
+  addTransaction,
+  fetchTransactions,
+  addWeighing as addWeighingThunk,
+  fetchSimulatedWeight,
+} from "../store/weighingSlice";
+import { debounce } from "lodash";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -88,30 +105,20 @@ function LiveWeighbridgeStatus({ onManualCapture }) {
 /* ---------------------------------------------------------------------------
    Incomplete Transactions Table
 ----------------------------------------------------------------------------*/
-function IncompleteTransactions({ onAddWeighing, onRefresh }) {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const fetchIncomplete = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/Transaction?IsCompleted=false&PageSize=50');
-      const result = await response.json();
-
-      if (result.success && result.data) {
-        setTransactions(result.data.items || []);
-      }
-    } catch (error) {
-      message.error('Failed to fetch incomplete transactions');
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+function IncompleteTransactions({ onAddWeighing, refreshKey }) {
+  const dispatch = useDispatch();
+  const { transactions, loading } = useSelector((state) => state.weighing);
+  const [localTransactions, setLocalTransactions] = useState([]);
 
   useEffect(() => {
-    fetchIncomplete();
-  }, [onRefresh]);
+    dispatch(fetchTransactions({ isCompleted: false, pageSize: 50 }));
+  }, [dispatch, refreshKey]);
+
+  useEffect(() => {
+    // Filter incomplete transactions from Redux state
+    const incomplete = transactions.filter(t => !t.isCompleted);
+    setLocalTransactions(incomplete);
+  }, [transactions]);
 
   const columns = [
     {
@@ -139,7 +146,7 @@ function IncompleteTransactions({ onAddWeighing, onRefresh }) {
       key: 'weighings',
       render: (_, record) => (
           <span>
-          {record.completedWeighings} / {record.expectedWeighings}
+          {record.completedWeighings || 0} / {record.expectedWeighings || 2}
         </span>
       ),
     },
@@ -171,11 +178,13 @@ function IncompleteTransactions({ onAddWeighing, onRefresh }) {
       <div>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Incomplete Transactions</h3>
-          <Button onClick={fetchIncomplete}>Refresh</Button>
+          <Button onClick={() => dispatch(fetchTransactions({ isCompleted: false, pageSize: 50 }))}>
+            Refresh
+          </Button>
         </div>
         <Table
             columns={columns}
-            dataSource={transactions}
+            dataSource={localTransactions}
             rowKey="id"
             loading={loading}
             pagination={{ pageSize: 10 }}
@@ -188,6 +197,7 @@ function IncompleteTransactions({ onAddWeighing, onRefresh }) {
    Add Weighing Modal
 ----------------------------------------------------------------------------*/
 function AddWeighingModal({ visible, transaction, capturedWeight, onClose, onSuccess }) {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     weight: '',
     operatorName: '',
@@ -223,24 +233,17 @@ function AddWeighingModal({ visible, transaction, capturedWeight, onClose, onSuc
         notes: formData.notes || "",
       };
 
-      const response = await fetch('/api/Transaction/add-weighing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const result = await dispatch(addWeighingThunk(payload)).unwrap();
 
-      const result = await response.json();
+      const completedWeighings = result.data?.completedWeighings || result.completedWeighings;
+      const expectedWeighings = result.data?.expectedWeighings || result.expectedWeighings;
 
-      if (result.success) {
-        message.success(`Weighing ${result.data.completedWeighings} of ${result.data.expectedWeighings} added!`);
-        setFormData({ weight: '', operatorName: '', scaleName: '', notes: '' });
-        onSuccess();
-        onClose();
-      } else {
-        message.error(result.message || 'Failed to add weighing');
-      }
+      message.success(`Weighing ${completedWeighings} of ${expectedWeighings} added successfully!`);
+      setFormData({ weight: '', operatorName: '', scaleName: '', notes: '' });
+      onSuccess();
+      onClose();
     } catch (error) {
-      message.error('Error adding weighing');
+      message.error(error?.message || 'Failed to add weighing');
       console.error(error);
     } finally {
       setLoading(false);
@@ -265,7 +268,7 @@ function AddWeighingModal({ visible, transaction, capturedWeight, onClose, onSuc
                 <div><strong>Vehicle:</strong> {transaction.noPlate}</div>
                 <div><strong>Driver:</strong> {transaction.driverName}</div>
                 <div><strong>Commodity:</strong> {transaction.commodityName}</div>
-                <div><strong>Progress:</strong> {transaction.completedWeighings} / {transaction.expectedWeighings}</div>
+                <div><strong>Progress:</strong> {transaction.completedWeighings || 0} / {transaction.expectedWeighings || 2}</div>
               </div>
             </div>
         )}
@@ -325,30 +328,44 @@ function AddWeighingModal({ visible, transaction, capturedWeight, onClose, onSuc
 ----------------------------------------------------------------------------*/
 export default function WeighingDashboard() {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.weighing);
-  
+  const { vehicles, drivers, products, routes, suppliers, saccos, transporters, loading, error } =
+      useSelector((state) => state.weighing || {});
+
   const [capturedWeight, setCapturedWeight] = useState(null);
   const [formData, setFormData] = useState({
     receiptNo: '',
-    expectedWeighings: '2',
+    expectedWeighings: 2,
     noPlate: '',
     driverName: '',
+    vehicleId: null,
+    driverId: null,
+    commodityId: null,
     commodityName: '',
-    transporterId: '',
+    transporterId: null,
     transporterName: '',
+    supplierId: null,
+    supplierName: '',
     operation: '',
     firstWeight: ''
   });
-  
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showWeighingModal, setShowWeighingModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  
-  // Show error message if there's an error
+
   useEffect(() => {
-    if (error) {
-      message.error(error);
-    }
+    dispatch(fetchVehicles());
+    dispatch(fetchDrivers());
+    dispatch(fetchProducts());
+    dispatch(fetchRoutes());
+    dispatch(fetchSaccosByName(""));
+    dispatch(fetchSuppliersByName(""));
+    dispatch(fetchTransportersByName(""));
+    dispatch(fetchTransactions({ pageNumber: 1, pageSize: 50 }));
+    dispatch(fetchSimulatedWeight());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (error) message.error(error);
   }, [error]);
 
   useEffect(() => {
@@ -356,6 +373,23 @@ export default function WeighingDashboard() {
       setFormData(prev => ({ ...prev, firstWeight: capturedWeight }));
     }
   }, [capturedWeight]);
+
+  const debounced = {
+    vehicles: debounce((q) => dispatch(fetchVehiclesByRegNumber(q)), 400),
+    drivers: debounce((q) => dispatch(fetchDriversByName(q)), 400),
+    products: debounce((q) => dispatch(fetchProductsByName(q)), 400),
+    routes: debounce((q) => dispatch(fetchRoutesByName(q)), 400),
+    suppliers: debounce((q) => dispatch(fetchSuppliersByName(q)), 400),
+    saccos: debounce((q) => dispatch(fetchSaccosByName(q)), 400),
+    transporters: debounce((q) => dispatch(fetchTransportersByName(q)), 400),
+  };
+
+  const makeOptions = (items = [], idField = "id", labelField = "name") =>
+      items.map((it) => (
+          <Option key={it[idField]} value={it[idField]}>
+            {it[labelField] ?? it[idField]}
+          </Option>
+      ));
 
   const handleManualCapture = (weight) => {
     if (isNaN(weight)) {
@@ -370,58 +404,117 @@ export default function WeighingDashboard() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleVehicleSelect = (vehicleId) => {
+    const vehicle = vehicles.find(v => v.id === vehicleId);
+    setFormData(prev => ({
+      ...prev,
+      vehicleId,
+      noPlate: vehicle?.registrationNumber || ''
+    }));
+  };
+
+  const handleDriverSelect = (driverId) => {
+    const driver = drivers.find(d => d.id === driverId);
+    setFormData(prev => ({
+      ...prev,
+      driverId,
+      driverName: driver?.fullName || ''
+    }));
+  };
+
+  const handleProductSelect = (productId) => {
+    const product = products.find(p => p.id === productId);
+    setFormData(prev => ({
+      ...prev,
+      commodityId: productId,
+      commodityName: product?.name || ''
+    }));
+  };
+
+  const handleTransporterSelect = (transporterId) => {
+    const transporter = transporters.find(t => t.id === transporterId);
+    setFormData(prev => ({
+      ...prev,
+      transporterId,
+      transporterName: transporter?.name || ''
+    }));
+  };
+
+  const handleSupplierSelect = (supplierId) => {
+    const supplier = suppliers.find(s => s.id === supplierId);
+    setFormData(prev => ({
+      ...prev,
+      supplierId,
+      supplierName: supplier?.name || ''
+    }));
+  };
+
   const handleCreateTransaction = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!formData.receiptNo || !formData.noPlate || !formData.driverName || !formData.transporterId) {
       message.error('Please fill in all required fields');
       return;
     }
 
-    const payload = {
-      receiptNo: formData.receiptNo,
-      expectedWeighings: parseInt(formData.expectedWeighings),
-      noPlate: formData.noPlate,
-      driverName: formData.driverName,
-      transporterId: parseInt(formData.transporterId),
-      transporterName: formData.transporterName,
-
-      firstWeight: formData.firstWeight ? parseFloat(formData.firstWeight) : null,
-      weighBridgeId: formData.firstWeight ? 1 : null,
-      weighBridgeName: formData.firstWeight ? "Main Scale" : "",
-      scaleName: formData.firstWeight ? "Scale-01" : "",
-      operatorId: formData.firstWeight ? 1 : null,
-      operatorName: formData.firstWeight ? "Operator" : "",
-
-      commodityName: formData.commodityName,
-      weighMode: "Gross/Tare",
-      operation: formData.operation,
-    };
-
     try {
-      const resultAction = await dispatch(createTransaction(payload));
-      
-      if (createTransaction.fulfilled.match(resultAction)) {
-        message.success('Transaction created successfully!');
-        setFormData({
-          receiptNo: '',
-          expectedWeighings: '2',
-          noPlate: '',
-          driverName: '',
-          commodityName: '',
-          transporterId: '',
-          transporterName: '',
-          operation: '',
-          firstWeight: ''
-        });
-        setCapturedWeight(null);
-        setRefreshKey(prev => prev + 1);
-      } else if (resultAction.error) {
-        throw new Error(resultAction.error.message || 'Failed to create transaction');
-      }
-    } catch (error) {
-      message.error(error.message || 'Error creating transaction');
+      const payload = {
+        receiptNo: formData.receiptNo,
+        expectedWeighings: parseInt(formData.expectedWeighings) || 2,
+        noPlate: formData.noPlate,
+        driverName: formData.driverName,
+        transporterId: parseInt(formData.transporterId),
+        transporterName: formData.transporterName || "",
+
+        // Only include vehicleId if it exists and is a valid number
+        ...(formData.vehicleId && { vehicleId: parseInt(formData.vehicleId) }),
+
+        // Only include first weight fields if weight exists
+        ...(formData.firstWeight && {
+          firstWeight: parseFloat(formData.firstWeight),
+          weighBridgeId: 1,
+          weighBridgeName: "Main Scale",
+          scaleName: "Scale-01",
+          operatorId: 1,
+          operatorName: "Operator"
+        }),
+
+        // Only include optional IDs if they exist
+        ...(formData.commodityId && { commodityId: parseInt(formData.commodityId) }),
+        ...(formData.supplierId && { supplierId: parseInt(formData.supplierId) }),
+
+        commodityName: formData.commodityName || "",
+        supplierName: formData.supplierName || "",
+        weighMode: "Gross/Tare",
+        operation: formData.operation || "",
+      };
+
+      await dispatch(addTransaction(payload)).unwrap();
+      message.success('Transaction created successfully!');
+
+      setFormData({
+        receiptNo: '',
+        expectedWeighings: 2,
+        noPlate: '',
+        driverName: '',
+        vehicleId: null,
+        driverId: null,
+        commodityId: null,
+        commodityName: '',
+        transporterId: null,
+        transporterName: '',
+        supplierId: null,
+        supplierName: '',
+        operation: '',
+        firstWeight: ''
+      });
+      setCapturedWeight(null);
+      setRefreshKey(prev => prev + 1);
+
+      dispatch(fetchTransactions({ pageNumber: 1, pageSize: 50 }));
+    } catch (err) {
+      message.error(err?.message || 'Error creating transaction');
+      console.error(err);
     }
   };
 
@@ -432,6 +525,7 @@ export default function WeighingDashboard() {
 
   const handleWeighingSuccess = () => {
     setRefreshKey(prev => prev + 1);
+    dispatch(fetchTransactions({ pageNumber: 1, pageSize: 50 }));
   };
 
   return (
@@ -462,56 +556,85 @@ export default function WeighingDashboard() {
                           onChange={(value) => handleChange('expectedWeighings', value)}
                           style={{ width: '100%' }}
                       >
-                        <Option value="2">2 Weighings (Standard)</Option>
-                        <Option value="3">3 Weighings</Option>
-                        <Option value="4">4 Weighings</Option>
+                        <Option value={2}>2 Weighings (Standard)</Option>
+                        <Option value={3}>3 Weighings</Option>
+                        <Option value={4}>4 Weighings</Option>
                       </Select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Vehicle Plate *</label>
-                      <Input
-                          value={formData.noPlate}
-                          onChange={(e) => handleChange('noPlate', e.target.value)}
-                          placeholder="KAA 123A"
-                      />
+                      <label className="block text-sm font-medium mb-1">Vehicle *</label>
+                      <Select
+                          showSearch
+                          placeholder="Search vehicle"
+                          onSearch={debounced.vehicles}
+                          onChange={handleVehicleSelect}
+                          filterOption={false}
+                          value={formData.vehicleId}
+                          style={{ width: '100%' }}
+                      >
+                        {makeOptions(vehicles, "id", "registrationNumber")}
+                      </Select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Driver Name *</label>
-                      <Input
-                          value={formData.driverName}
-                          onChange={(e) => handleChange('driverName', e.target.value)}
-                          placeholder="John Doe"
-                      />
+                      <label className="block text-sm font-medium mb-1">Driver *</label>
+                      <Select
+                          showSearch
+                          placeholder="Search driver"
+                          onSearch={debounced.drivers}
+                          onChange={handleDriverSelect}
+                          filterOption={false}
+                          value={formData.driverId}
+                          style={{ width: '100%' }}
+                      >
+                        {makeOptions(drivers, "id", "fullName")}
+                      </Select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Commodity Name</label>
-                      <Input
-                          value={formData.commodityName}
-                          onChange={(e) => handleChange('commodityName', e.target.value)}
-                          placeholder="Sugar"
-                      />
+                      <label className="block text-sm font-medium mb-1">Product</label>
+                      <Select
+                          showSearch
+                          placeholder="Search product"
+                          onSearch={debounced.products}
+                          onChange={handleProductSelect}
+                          filterOption={false}
+                          value={formData.commodityId}
+                          style={{ width: '100%' }}
+                      >
+                        {makeOptions(products)}
+                      </Select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Transporter ID *</label>
-                      <Input
-                          type="number"
+                      <label className="block text-sm font-medium mb-1">Transporter *</label>
+                      <Select
+                          showSearch
+                          placeholder="Search transporter"
+                          onSearch={debounced.transporters}
+                          onChange={handleTransporterSelect}
+                          filterOption={false}
                           value={formData.transporterId}
-                          onChange={(e) => handleChange('transporterId', e.target.value)}
-                          placeholder="10"
-                      />
+                          style={{ width: '100%' }}
+                      >
+                        {makeOptions(transporters)}
+                      </Select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Transporter Name</label>
-                      <Input
-                          value={formData.transporterName}
-                          onChange={(e) => handleChange('transporterName', e.target.value)}
-                          placeholder="ABC Transport Ltd"
-                      />
+                      <label className="block text-sm font-medium mb-1">Supplier</label>
+                      <Select
+                          showSearch
+                          placeholder="Search supplier"
+                          onSearch={debounced.suppliers}
+                          onChange={handleSupplierSelect}
+                          filterOption={false}
+                          value={formData.supplierId}
+                          style={{ width: '100%' }}
+                      >
+                        {makeOptions(suppliers)}
+                      </Select>
                     </div>
 
                     <div>
@@ -539,17 +662,24 @@ export default function WeighingDashboard() {
                     </div>
 
                     <div className="col-span-2 flex justify-end gap-2 pt-4">
-                      <Button onClick={() => setFormData({
-                        receiptNo: '',
-                        expectedWeighings: '2',
-                        noPlate: '',
-                        driverName: '',
-                        commodityName: '',
-                        transporterId: '',
-                        transporterName: '',
-                        operation: '',
-                        firstWeight: ''
-                      })}>
+                      <Button onClick={() => {
+                        setFormData({
+                          receiptNo: '',
+                          expectedWeighings: 2,
+                          noPlate: '',
+                          driverName: '',
+                          vehicleId: null,
+                          driverId: null,
+                          commodityId: null,
+                          commodityName: '',
+                          transporterId: null,
+                          transporterName: '',
+                          supplierId: null,
+                          supplierName: '',
+                          operation: '',
+                          firstWeight: ''
+                        });
+                      }}>
                         Reset
                       </Button>
                       <Button
@@ -577,7 +707,7 @@ export default function WeighingDashboard() {
                 <Card>
                   <IncompleteTransactions
                       onAddWeighing={handleAddWeighing}
-                      onRefresh={refreshKey}
+                      refreshKey={refreshKey}
                   />
                 </Card>
               </div>
