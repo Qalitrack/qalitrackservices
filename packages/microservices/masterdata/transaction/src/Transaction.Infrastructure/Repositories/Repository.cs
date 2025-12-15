@@ -70,7 +70,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         }
 
         entity.IsDeleted = true;
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = _timeService.UtcNow;
         
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
