@@ -250,6 +250,15 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
     }
     
+    public async Task<string?> GetLatestReceiptNumberAsync(string datePrefix)
+    {
+        return await _dbSet
+            .Where(t => t.ReceiptNo.StartsWith(datePrefix) && !t.IsDeleted)
+            .OrderByDescending(t => t.ReceiptNo)
+            .Select(t => t.ReceiptNo)
+            .FirstOrDefaultAsync();
+    }
+    
     public void MarkAsModified(WeighbridgeTransaction entity)
     {
         _context.Entry(entity).State = EntityState.Modified;
