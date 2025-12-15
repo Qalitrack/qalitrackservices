@@ -11,9 +11,11 @@ public class MasterdataDbContextFactory : IDesignTimeDbContextFactory<Masterdata
         
         // Use PostgreSQL for migrations
         // This connection string is for design-time only (migrations)
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") 
-            ?? "Host=postgres-db;Port=5632;Database=masterdatadb;Username=masterdata;Password=masterdata123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;IncludeErrorDetail=true;CommandTimeout=60";
-        
+        var connectionString =
+            Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+            ?? throw new InvalidOperationException(
+                "ConnectionStrings__DefaultConnection is not set");
+
         optionsBuilder.UseNpgsql(connectionString);
         
         return new MasterdataDbContext(optionsBuilder.Options);
