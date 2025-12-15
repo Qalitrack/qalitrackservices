@@ -48,9 +48,9 @@ public class TimeService : ITimeService
     }
 
     /// <summary>
-    /// Gets the current date and time in East African Time as UTC
+    /// Gets the current date and time in East African Time
     /// </summary>
-    public DateTime Now => DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, _timeZone), DateTimeKind.Utc);
+    public DateTime Now => TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, _timeZone);
 
     /// <summary>
     /// Gets the current UTC date and time
