@@ -49,10 +49,12 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto)
     {
-        var now = _timeService.Now;
+        var utcNow = _timeService.UtcNow;
+        var localNow = _timeService.Now;
+        
         var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
-        transaction.CreatedAt = now;
-        transaction.UpdatedAt = now;
+        transaction.CreatedAt = utcNow;
+        transaction.UpdatedAt = utcNow;
         transaction.Status = WeighbridgeTransactionStatus.Pending;
         transaction.IsCompleted = false;
         
@@ -60,7 +62,7 @@ public class TransactionService : ITransactionService
         if (dto.FirstWeight.HasValue)
         {
             transaction.FirstWeight = dto.FirstWeight.Value;
-            transaction.FirstWeightTimestamp = now;
+            transaction.FirstWeightTimestamp = utcNow; // Use UTC for timestamps stored in database
             transaction.CompletedWeighings = 1;
             transaction.Status = WeighbridgeTransactionStatus.InProgress;
             
@@ -69,14 +71,14 @@ public class TransactionService : ITransactionService
             {
                 WeighingSequence = 1,
                 Weight = dto.FirstWeight.Value,
-                WeighingDate = now,
+                WeighingDate = utcNow, // Use UTC for timestamps stored in database
                 WeighBridgeId = dto.WeighBridgeId,
                 WeighBridgeName = dto.WeighBridgeName,
                 ScaleName = dto.ScaleName,
                 OperatorId = dto.OperatorId,
                 OperatorName = dto.OperatorName,
-                CreatedAt = now,
-                UpdatedAt = now
+                CreatedAt = utcNow,
+                UpdatedAt = utcNow
             };
             transaction.WeighingRecords.Add(weighingRecord);
         }
@@ -86,11 +88,11 @@ public class TransactionService : ITransactionService
         {
             Action = "Created",
             ChangedBy = dto.OperatorName ?? "System",
-            ChangeTimestamp = now,
+            ChangeTimestamp = utcNow, // Use UTC for timestamps stored in database
             NewValues = System.Text.Json.JsonSerializer.Serialize(dto),
             Reason = "New transaction created",
-            CreatedAt = now,
-            UpdatedAt = now
+            CreatedAt = utcNow,
+            UpdatedAt = utcNow
         };
         transaction.AuditLogs.Add(auditLog);
         
