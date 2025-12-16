@@ -35,7 +35,7 @@ public class TransactionsController : BaseController
     }
 
     /// <summary>
-    /// Get transaction by ID
+    /// Get transaction by ID (includes image URLs)
     /// </summary>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
@@ -186,13 +186,21 @@ public class TransactionsController : BaseController
     }
 
     /// <summary>
-    /// Create a new transaction
+    /// Create a new transaction with optional images
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTransactionDto request)
+    [Consumes("multipart/form-data")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] // 10MB limit
+    [RequestSizeLimit(10485760)] // 10MB limit
+    public async Task<IActionResult> Create([FromForm] CreateTransactionDto request)
     {
         try
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var transaction = await _transactionService.CreateAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = transaction.Id }, transaction);
         }
@@ -200,6 +208,33 @@ public class TransactionsController : BaseController
         {
             _logger.LogError(ex, "Error creating transaction");
             return InternalServerError("An error occurred while creating transaction");
+        }
+    }
+
+    /// <summary>
+    /// Update transaction images
+    /// </summary>
+    [HttpPut("{id}/images")]
+    [Consumes("multipart/form-data")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)]
+    [RequestSizeLimit(10485760)]
+    public async Task<IActionResult> UpdateImages(string id, [FromForm] UpdateTransactionImagesDto request)
+    {
+        try
+        {
+            request.TransactionId = id;
+            var transaction = await _transactionService.UpdateTransactionImagesAsync(request);
+            if (transaction == null)
+            {
+                return NotFound("Transaction not found");
+            }
+
+            return Ok(transaction, "Transaction images updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating transaction images for id {Id}", id);
+            return InternalServerError("An error occurred while updating transaction images");
         }
     }
 
@@ -425,7 +460,6 @@ public class TransactionsController : BaseController
     {
         try
         {
-            
             var result = await _transactionService.DeleteAsync(id);
             if (!result)
             {

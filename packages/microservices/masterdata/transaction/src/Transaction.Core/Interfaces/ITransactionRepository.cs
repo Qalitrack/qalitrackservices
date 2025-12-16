@@ -7,6 +7,7 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
 {
     Task<bool> IsReceiptNoAvailableAsync(string receiptNo);
     Task<WeighbridgeTransaction?> GetByReceiptNoAsync(string receiptNo);
+    Task<string?> GetLatestReceiptNumberAsync(string datePrefix);
     
     // Paginated queries with filters
     Task<PagedResult<WeighbridgeTransaction>> GetPagedAsync(WeighbridgeTransactionFilter filter);
