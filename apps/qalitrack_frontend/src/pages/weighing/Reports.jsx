@@ -9,10 +9,7 @@ import {
 
 /**
  * Reports Page
- * --------------------
- * - Uses native HTML inputs, selects, and buttons
  * - Manages transaction-based report filters
- * - Prepares query params for GET /transactions
  */
 export default function Reports() {
   /* =========================
