@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import ReportsTable from "./ReportsTable";
 import {
   Calendar,
   ChevronDown,
@@ -9,7 +10,6 @@ import {
 
 /**
  * Reports Page
- * - Manages transaction-based report filters
  */
 export default function Reports() {
   /* =========================
@@ -22,7 +22,6 @@ export default function Reports() {
     numberPlate: "",
     weighbridge: "",
     status: "",
-    // Advanced
     driver: "",
     commodity: "",
     supplier: "",
@@ -35,20 +34,96 @@ export default function Reports() {
     completed: "",
   });
 
+  /* =========================
+     Advanced Filter Toggle
+     ========================= */
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   /* =========================
-     Helpers
+     Table State
      ========================= */
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalRecords, setTotalRecords] = useState(0);
+
+  /* =========================
+     Helper Functions
+     ========================= */
+
+  // Update a specific filter field
   const updateFilter = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleApplyFilters = () => {
-    // Hook this to GET /transactions
-    console.log("Applying filters:", filters);
+  // Fetch transactions from API
+  const fetchTransactions = async () => {
+    setLoading(true);
+    try {
+      // Build query params from filters, page, and pageSize
+      const params = new URLSearchParams({
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        receiptNumber: filters.receiptNumber,
+        numberPlate: filters.numberPlate,
+        status: filters.status,
+        driver: filters.driver,
+        supplier: filters.supplier,
+        customer: filters.customer,
+        origin: filters.origin,
+        destination: filters.destination,
+        operator: filters.operator,
+        weighMode: filters.weighMode,
+        completed: filters.completed,
+        page: currentPage,
+        pageSize: pageSize,
+      });
+
+      // Remove empty filters to make them optional
+      [...params.entries()].forEach(
+        ([key, value]) => value === "" && params.delete(key)
+      );
+
+      // Fetch data from API
+      const res = await fetch(`/api/transactions?${params.toString()}`);
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+
+      const data = await res.json();
+
+      // Map API data to table-friendly format
+      setTransactions(
+        data.items.map((tx) => ({
+          id: tx.id,
+          date: tx.createdAt || tx.date,
+          receiptNo: tx.receiptNo,
+          numberPlate: tx.numberPlate,
+          driver: tx.driver,
+          commodity: tx.commodity,
+          supplier: tx.supplier,
+          customer: tx.customer,
+          weighbridge: tx.weighbridge,
+          firstWeight: Number(tx.firstWeight),
+          weighMode: tx.weighMode?.toLowerCase(),
+          status: tx.status?.toLowerCase(),
+        }))
+      );
+
+      setTotalRecords(data.totalRecords);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Apply filters (fetch filtered data)
+  const handleApplyFilters = () => {
+    setCurrentPage(1);
+    fetchTransactions();
+  };
+
+  // Clear filters and fetch all data
   const handleClearFilters = () => {
     setFilters({
       startDate: "",
@@ -68,7 +143,35 @@ export default function Reports() {
       weighMode: "",
       completed: "",
     });
+    setCurrentPage(1);
+    fetchTransactions();
   };
+
+  /* =========================
+     Export Logic
+     ========================= */
+
+  // Export current table view as PDF
+  const handleExportPDF = () => {
+    // Placeholder: integrate with jsPDF or similar library
+    console.log("Exporting PDF with current filters & pagination...");
+    
+  };
+
+  // Export current table view as Excel
+  const handleExportExcel = () => {
+    // Placeholder: integrate with SheetJS (xlsx) or similar library
+    console.log("Exporting Excel with current filters & pagination...");
+    
+  };
+
+  /* =========================
+     Fetch data on mount & pagination changes
+     ========================= */
+  useEffect(() => {
+    fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, pageSize]);
 
   return (
     <div className="p-6">
@@ -91,7 +194,7 @@ export default function Reports() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm text-gray-700 mb-2">
-              Start Date <span className="text-red-500">*</span>
+              Start Date
             </label>
             <div className="relative">
               <input
@@ -106,7 +209,7 @@ export default function Reports() {
 
           <div>
             <label className="block text-sm text-gray-700 mb-2">
-              End Date <span className="text-red-500">*</span>
+              End Date
             </label>
             <div className="relative">
               <input
@@ -137,16 +240,6 @@ export default function Reports() {
             onChange={(e) => updateFilter("numberPlate", e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2"
           />
-{/* 
-          <select
-            value={filters.weighbridge}
-            onChange={(e) => updateFilter("weighbridge", e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2"
-          >
-            <option value="">All Weighbridges</option>
-            <option value="wb-01">Weighbridge 01</option>
-            <option value="wb-02">Weighbridge 02</option>
-          </select> */}
 
           <select
             value={filters.status}
@@ -156,10 +249,11 @@ export default function Reports() {
             <option value="">All Statuses</option>
             <option value="completed">Completed</option>
             <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
           </select>
         </div>
 
-        {/* Advanced Toggle */}
+        {/* Advanced Filters Toggle */}
         <div className="mt-4 pt-4 border-t border-gray-200">
           <button
             type="button"
@@ -220,6 +314,24 @@ export default function Reports() {
             Clear Filters
           </button>
         </div>
+      </div>
+
+      {/* Reports Table */}
+      <div className="mt-8">
+        <ReportsTable
+          transactions={transactions}
+          loading={loading}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          totalRecords={totalRecords}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          onExportPDF={handleExportPDF}
+          onExportExcel={handleExportExcel}
+        />
       </div>
     </div>
   );
