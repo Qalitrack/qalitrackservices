@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Transaction.Core.DTOs;
 
 public class TransactionReadDto
@@ -8,10 +10,6 @@ public class TransactionReadDto
     public int CompletedWeighings { get; set; }
     
     // Weight Information
-    public decimal? FirstWeight { get; set; }
-    public DateTime? FirstWeightTimestamp { get; set; }
-    public decimal? SecondWeight { get; set; }
-    public DateTime? SecondWeightTimestamp { get; set; }
     public decimal? NetWeight { get; set; }
     public DateTime? NetWeightCalculatedTimestamp { get; set; }
     
@@ -52,6 +50,10 @@ public class TransactionReadDto
     public Guid? OperatorId { get; set; }
     public string OperatorName { get; set; } = string.Empty;
     
+    // Image URLs - ADDED
+    public string? NprImageUrl { get; set; }
+    public string? TransactionImageUrl { get; set; }
+    
     // Weighbridge Information - Second Weighing
     public string WeighBridgeName2nd { get; set; } = string.Empty;
     public string ScaleName2nd { get; set; } = string.Empty;
@@ -80,8 +82,7 @@ public class TransactionReadDto
 
 public class CreateTransactionDto
 {
-    public string ReceiptNo { get; set; } = string.Empty;
-    public int ExpectedWeighings { get; set; } = 2; // Default to 2 weighings
+    public int ExpectedWeighings { get; set; } = 2;
     
     // Vehicle Information (Required)
     public string NoPlate { get; set; } = string.Empty;
@@ -92,8 +93,7 @@ public class CreateTransactionDto
     public Guid TransporterId { get; set; }
     public string TransporterName { get; set; } = string.Empty;
     
-    // First Weight Information (Optional - can be added later)
-    public decimal? FirstWeight { get; set; }
+    // Weighing Information (Optional)
     public Guid? WeighBridgeId { get; set; }
     public string WeighBridgeName { get; set; } = string.Empty;
     public string ScaleName { get; set; } = string.Empty;
@@ -121,11 +121,16 @@ public class CreateTransactionDto
     // Operational Details (Optional)
     public string WeighMode { get; set; } = string.Empty;
     public string Operation { get; set; } = string.Empty;
+    
+    public decimal? Weight { get; set; }
+    public string? Notes { get; set; }
+    // Image files - ADDED
+    public IFormFile? NprImage { get; set; }
+    public IFormFile? TransactionImage { get; set; }
 }
 
 public class UpdateTransactionDto
 {
-    
     // Vehicle Information
     public string? NoPlate { get; set; }
     public string? DriverName { get; set; }
@@ -159,7 +164,6 @@ public class UpdateTransactionDto
     
     public string? ChangeDescription { get; set; }
 }
-
 
 public class CompleteTransactionDto
 {

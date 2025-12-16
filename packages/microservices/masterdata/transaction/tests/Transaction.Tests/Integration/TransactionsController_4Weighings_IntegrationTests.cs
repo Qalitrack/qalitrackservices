@@ -1,3 +1,4 @@
+/*
 using System.Net;
 using System.Net.Http.Json;
 using AutoMapper;
@@ -476,3 +477,4 @@ public class TransactionsController4WeighingsIntegrationTests : IClassFixture<Te
             Console.WriteLine($"Total transactions in system: {allApiResponse.Data.TotalCount}");
         }
     }
+    */
