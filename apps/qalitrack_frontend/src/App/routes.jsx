@@ -39,6 +39,7 @@ const Owners = lazy(() => import("../pages/weighing/Owners.jsx"));
 const ProductsPortal = lazy(() => import("../components/weighing/Product.jsx"));
 const SaccosPortal = lazy(() => import("../pages/Saccos.jsx"));
 const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
+const Transaction = lazy(() => import("../pages/Transaction.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -105,6 +106,10 @@ export const routes = [
                     {
                         path: "weighing/factory",
                         element: <FactoryWeighing />
+                    },
+                    {
+                        path: "transactions",
+                        element: <Transaction />
                     },
                     {
                         path: "weighing/vehicle",
