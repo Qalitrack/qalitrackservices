@@ -39,8 +39,6 @@ const Owners = lazy(() => import("../pages/weighing/Owners.jsx"));
 const ProductsPortal = lazy(() => import("../components/weighing/Product.jsx"));
 const SaccosPortal = lazy(() => import("../pages/Saccos.jsx"));
 const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
-const TransactionTicket = lazy(() => import("../components/TransactionTicket.jsx"));
-const TransactionPage = lazy(() => import("../pages/Transaction.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -164,14 +162,6 @@ export const routes = [
                     {
                         path: "weighbridges",
                         element: <WeighbridgesPortal />,
-                    },
-                    {
-                        path: "transactions",
-                        element: <TransactionPage />
-                    },
-                    {
-                        path: "transaction-ticket",
-                        element: <TransactionTicket />
                     },
                     {
                         path: "routes",
