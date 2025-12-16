@@ -4,6 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using FluentValidation;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using Transaction.Core.Interfaces;
 using Transaction.Core.Services;
@@ -30,6 +33,20 @@ builder.Host.UseSerilog();
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Configure Kestrel for larger file uploads
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 10485760; // 10MB
+});
+
+// Configure FormOptions for multipart/form-data
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10485760; // 10MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 // Configure Swagger with JWT authentication
 builder.Services.AddSwaggerGen(c =>
@@ -141,6 +158,7 @@ builder.Services.AddSingleton<ITimeService, TimeService>();
 
 // Add services
 builder.Services.AddScoped<ITransactionService, Transaction.Core.Services.TransactionService>();
+builder.Services.AddScoped<IReceiptNumberService, ReceiptNumberService>();
 // TODO: Add additional services as needed
 // builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 // builder.Services.AddScoped<IJwtService, JwtService>();
@@ -155,14 +173,42 @@ builder.Services.AddCors(options =>
         policy
             .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .WithExposedHeaders("Content-Disposition"); // For file downloads
     });
 });
 
 // Add Health Checks
 builder.Services.AddHealthChecks();
 
+// Ensure uploads directory exists
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+    Directory.CreateDirectory(Path.Combine(uploadsPath, "transactions"));
+}
+
 var app = builder.Build();
+
+// Serve uploaded files
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads",
+    ServeUnknownFileTypes = true,
+    DefaultContentType = "application/octet-stream"
+});
+
+// Enable directory browsing for uploads (only in development)
+if (app.Environment.IsDevelopment())
+{
+    app.UseDirectoryBrowser(new DirectoryBrowserOptions
+    {
+        FileProvider = new PhysicalFileProvider(uploadsPath),
+        RequestPath = "/uploads"
+    });
+}
 
 // Configure the HTTP request pipeline
 // ALWAYS generate Swagger JSON (for both DEV + PROD)
