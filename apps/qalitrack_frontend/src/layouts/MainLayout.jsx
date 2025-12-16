@@ -41,8 +41,8 @@ export default function MainLayout() {
         {/* ─── TOPBAR ─────────────────────────────── */}
         <Topbar isCollapsed={isCollapsed} onToggleSidebar={toggleSidebar} />
 
-        {/* ─── CONTENT ─────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto p-4 bg-white">
+        {/* ─── CONTENT (The MAIN scroll area) ─────────────────────────────── */}
+        <main className="flex-1 overflow-y-auto p-4 bg-gray-100">
           <Outlet />
         </main>
 
