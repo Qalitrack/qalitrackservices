@@ -15,7 +15,7 @@ const Login = lazy(() => import("../pages/auth/Login.jsx"));
 
 // Operator/Shared Components
 const Dashboard = lazy(() => import("../pages/weighing/Dashboard.jsx"));
-const FactoryWeighing = lazy(() => import("../pages/weighing/Weighing.jsx"));
+const FactoryWeighing = lazy(() => import("../components/weighing/WeighingDashboard.jsx"));
 const Automation = lazy(() => import("../pages/weighing/Automation.jsx"));
 const Calibrations = lazy(() => import("../pages/weighing/Calibrations.jsx"));
 const Analytics = lazy(() => import("../pages/weighing/Analytics.jsx"));
