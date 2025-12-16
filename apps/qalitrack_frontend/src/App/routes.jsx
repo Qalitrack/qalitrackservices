@@ -15,7 +15,7 @@ const Login = lazy(() => import("../pages/auth/Login.jsx"));
 
 // Operator/Shared Components
 const Dashboard = lazy(() => import("../pages/weighing/Dashboard.jsx"));
-const FactoryWeighing = lazy(() => import("../pages/weighing/Weighing.jsx"));
+const FactoryWeighing = lazy(() => import("../components/weighing/WeighingDashboard.jsx"));
 const Automation = lazy(() => import("../pages/weighing/Automation.jsx"));
 const Calibrations = lazy(() => import("../pages/weighing/Calibrations.jsx"));
 const Analytics = lazy(() => import("../pages/weighing/Analytics.jsx"));
@@ -39,6 +39,8 @@ const Owners = lazy(() => import("../pages/weighing/Owners.jsx"));
 const ProductsPortal = lazy(() => import("../components/weighing/Product.jsx"));
 const SaccosPortal = lazy(() => import("../pages/Saccos.jsx"));
 const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
+const TransactionTicket = lazy(() => import("../components/TransactionTicket.jsx"));
+const TransactionPage = lazy(() => import("../pages/Transaction.jsx"));
 // Root redirect component that handles authenticated users
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -162,6 +164,14 @@ export const routes = [
                     {
                         path: "weighbridges",
                         element: <WeighbridgesPortal />,
+                    },
+                    {
+                        path: "transactions",
+                        element: <TransactionPage />
+                    },
+                    {
+                        path: "transaction-ticket",
+                        element: <TransactionTicket />
                     },
                     {
                         path: "routes",

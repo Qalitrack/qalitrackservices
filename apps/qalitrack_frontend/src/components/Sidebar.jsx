@@ -46,6 +46,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
       icon: <Scale size={18} />,
       children: [
         { key: "weighing-factory", label: "Factory Weighing", icon: <Factory size={16} />, path: "weighing/factory" },
+        { key: "Transactions", label: "Transactions", icon: <LayoutDashboard size={16} />, path: "transactions" },
         { key: "weighing-vehicles", label: "Vehicles", icon: <Truck size={16} />, path: "weighing/vehicle" },
         { key: "weighing-drivers", label: "Drivers", icon: <User size={16} />, path: "weighing/drivers" },
         { key: "weighing-transporters", label: "Transporters", icon: <Tractor size={16} />, path: "transporters" },

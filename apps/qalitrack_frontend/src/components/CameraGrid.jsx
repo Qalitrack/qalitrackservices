@@ -1,15 +1,15 @@
 // src/components/CameraGrid.jsx
-import React from 'react';
-import { CAMERA_CONFIG } from '../config';
+import React from'react';
+import {CAMERA_CONFIG}from'../config';
 
-const { cameraId, streamUrl, snapshotUrl, platesUrl } = CAMERA_CONFIG;
+const {cameraId,streamUrl,snapshotUrl,platesUrl}=CAMERA_CONFIG;
 
 // ────────────────────── LIVE STREAM CARD ──────────────────────
-const LiveStreamCard = () => {
-  const [key, setKey] = React.useState(0);
-  const handleError = () => setKey(k => k + 1);
+const LiveStreamCard=()=>{
+  const [key,setKey]=React.useState(0);
+  const handleError=()=>setKey(k=>k+1);
 
-  return (
+  return(
     <div className="relative bg-black rounded-3xl overflow-hidden shadow-2xl">
       <div className="aspect-video bg-gray-950">
         <img
@@ -31,15 +31,15 @@ const LiveStreamCard = () => {
 };
 
 // ────────────────────── SNAPSHOT CARD ──────────────────────
-const SnapshotCard = () => {
-  const [tick, setTick] = React.useState(0);
+const SnapshotCard=()=>{
+  const [tick,setTick]=React.useState(0);
 
-  React.useEffect(() => {
-    const id = setInterval(() => setTick(t => t + 1), 1500);
-    return () => clearInterval(id);
-  }, []);
+  React.useEffect(()=>{
+    const id=setInterval(()=>setTick(t=>t+1),1500);
+    return()=>clearInterval(id);
+  },[]);
 
-  return (
+  return(
     <div className="relative bg-black rounded-3xl overflow-hidden shadow-2xl">
       <div className="aspect-video bg-gray-950">
         <img
@@ -60,52 +60,52 @@ const SnapshotCard = () => {
 };
 
 // ────────────────────── PLATE CARD ──────────────────────
-const PlateCard = () => {
-  const [plate, setPlate] = React.useState(null);
+const PlateCard=()=>{
+  const [plate,setPlate]=React.useState(null);
 
-  React.useEffect(() => {
+  React.useEffect(()=>{
     // Define the async function properly
-    const fetchPlate = async () => {
-      try {
-        const res = await fetch(platesUrl, { cache: 'no-store' });
-        if (!res.ok) return;
+    const fetchPlate=async()=>{
+      try{
+        const res=await fetch(platesUrl,{cache:'no-store'});
+        if(!res.ok)return;
 
-        const data = await res.json();
+        const data=await res.json();
 
-        let latest = null;
-        if (Array.isArray(data)) {
-          latest = data
-            .filter(p => p.cameraId === cameraId)
-            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0] || null;
-        } else if (data && data.cameraId === cameraId) {
-          latest = data;
+        let latest=null;
+        if(Array.isArray(data)){
+          latest=data
+            .filter(p=>p.cameraId===cameraId)
+            .sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0]||null;
+        }else if(data&&data.cameraId===cameraId){
+          latest=data;
         }
 
         setPlate(latest);
-      } catch (e) {
+      }catch(e){
         // silent fail – will retry
       }
     };
 
     fetchPlate();                    // initial call
-    const id = setInterval(fetchPlate, 2000);
+    const id=setInterval(fetchPlate,2000);
 
-    return () => clearInterval(id);
-  }, [cameraId, platesUrl]); // dependencies are stable anyway
+    return()=>clearInterval(id);
+  },[cameraId,platesUrl]); // dependencies are stable anyway
 
-  return (
+  return(
     <div className="relative bg-black rounded-3xl overflow-hidden shadow-2xl flex flex-col">
       <div className="aspect-video bg-gradient-to-br from-purple-900 to-black flex items-center justify-center">
-        {plate ? (
+        {plate?(
           <div className="text-center">
             <div className="text-6xl md:text-8xl font-black text-amber-500 tracking-widest font-mono drop-shadow-2xl">
-              {plate.plateNumber || plate.plate}
+              {plate.plateNumber||plate.plate}
             </div>
             <div className="text-xl text-amber-300 mt-3">
-              {(plate.confidence * 100).toFixed(1)}% confidence
+              {(plate.confidence*100).toFixed(1)}% confidence
             </div>
           </div>
-        ) : (
+        ):(
           <div className="text-2xl text-gray-600">Waiting for vehicle...</div>
         )}
         <div className="absolute top-4 left-4 bg-purple-600 text-white px-6 py-3 rounded-full text-xl font-black">
@@ -114,7 +114,7 @@ const PlateCard = () => {
       </div>
       <div className="p-6 text-center bg-gradient-to-t from-purple-950 to-transparent">
         <p className="text-gray-400">
-          {plate ? new Date(plate.timestamp).toLocaleTimeString() : 'Real-time ANPR'}
+          {plate?new Date(plate.timestamp).toLocaleTimeString():'Real-time ANPR'}
         </p>
       </div>
     </div>
@@ -122,8 +122,8 @@ const PlateCard = () => {
 };
 
 // ────────────────────── MAIN COMPONENT – PERFECT FOR 5-COL TABLE CELL ──────────────────────
-export default function CameraGrid() {
-  return (
+export default function CameraGrid(){
+  return(
     <div className="w-full h-full flex flex-col min-w-0">
       
       <h2 className="text-3xl md:text-4xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-pink-500 mb-6 tracking-wider shrink-0">
@@ -131,10 +131,10 @@ export default function CameraGrid() {
       </h2>
 
       {/* Stacks nicely in narrow columns */}
-      <div >
-        <LiveStreamCard />
-        <SnapshotCard />
-        <PlateCard />
+      <div className="space-y-4">
+        <LiveStreamCard/>
+        <SnapshotCard/>
+        <PlateCard/>
       </div>
     </div>
   );
