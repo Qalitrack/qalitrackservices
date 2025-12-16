@@ -36,4 +36,7 @@ public interface ITransactionService
     Task<TransactionReadDto> AddReweighWeightAsync(AddReweighWeightDto dto);
     Task<TransactionReadDto> CompleteReweighAsync(CompleteReweighDto dto);
     Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(string transactionId);
+    
+    // Image operations
+    Task<TransactionReadDto> UpdateTransactionImagesAsync(UpdateTransactionImagesDto dto);
 }

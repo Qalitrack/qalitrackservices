@@ -41,5 +41,8 @@ ENV ASPNETCORE_URLS=http://+:8080
 
 # Create logs directory
 RUN mkdir -p /app/logs
+RUN mkdir -p /app/wwwroot/uploads/transactions && \
+    chmod -R 755 /app/wwwroot && \
+    chown -R app:app /app/wwwroot
 
 ENTRYPOINT ["dotnet", "Transaction.Api.dll"]
