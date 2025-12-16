@@ -7,14 +7,12 @@ import {
   Filter,
   RotateCcw,
 } from "lucide-react";
+import { getTransactions } from "../../api/Weighing/Transactions";
 
-/**
- * Reports Page
- */
 export default function Reports() {
-  /* =========================
-     Filter State
-     ========================= */
+  // =========================
+  // Filters state
+  // =========================
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
@@ -34,96 +32,61 @@ export default function Reports() {
     completed: "",
   });
 
-  /* =========================
-     Advanced Filter Toggle
-     ========================= */
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  /* =========================
-     Table State
-     ========================= */
+  // =========================
+  // Table state
+  // =========================
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  /* =========================
-     Helper Functions
-     ========================= */
-
-  // Update a specific filter field
+  // =========================
+  // Helpers
+  // =========================
   const updateFilter = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   // Fetch transactions from API
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (params = {}) => {
     setLoading(true);
     try {
-      // Build query params from filters, page, and pageSize
-      const params = new URLSearchParams({
-        startDate: filters.startDate,
-        endDate: filters.endDate,
-        receiptNumber: filters.receiptNumber,
-        numberPlate: filters.numberPlate,
-        status: filters.status,
-        driver: filters.driver,
-        supplier: filters.supplier,
-        customer: filters.customer,
-        origin: filters.origin,
-        destination: filters.destination,
-        operator: filters.operator,
-        weighMode: filters.weighMode,
-        completed: filters.completed,
+      // Include pagination params
+      const data = await getTransactions({
         page: currentPage,
-        pageSize: pageSize,
+        pageSize,
+        ...params, // spread filters here
       });
 
-      // Remove empty filters to make them optional
-      [...params.entries()].forEach(
-        ([key, value]) => value === "" && params.delete(key)
-      );
-
-      // Fetch data from API
-      const res = await fetch(`/api/transactions?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to fetch transactions");
-
-      const data = await res.json();
-
-      // Map API data to table-friendly format
-      setTransactions(
-        data.items.map((tx) => ({
-          id: tx.id,
-          date: tx.createdAt || tx.date,
-          receiptNo: tx.receiptNo,
-          numberPlate: tx.numberPlate,
-          driver: tx.driver,
-          commodity: tx.commodity,
-          supplier: tx.supplier,
-          customer: tx.customer,
-          weighbridge: tx.weighbridge,
-          firstWeight: Number(tx.firstWeight),
-          weighMode: tx.weighMode?.toLowerCase(),
-          status: tx.status?.toLowerCase(),
-        }))
-      );
-
-      setTotalRecords(data.totalRecords);
-    } catch (err) {
-      console.error(err);
+      // Assuming API returns: { data: [], totalRecords: number }
+      setTransactions(data.data || []);
+      setTotalRecords(data.totalRecords || 0);
+    } catch (error) {
+      console.error("Error fetching transactions:", error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Apply filters (fetch filtered data)
-  const handleApplyFilters = () => {
-    setCurrentPage(1);
+  // On initial load, fetch all transactions without filters
+  useEffect(() => {
     fetchTransactions();
+  }, [currentPage, pageSize]);
+
+  // Apply filters
+  const handleApplyFilters = () => {
+    // Build params object with only filled filters
+    const filterParams = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value)
+    );
+
+    setCurrentPage(1); // reset to first page
+    fetchTransactions(filterParams);
   };
 
-  // Clear filters and fetch all data
   const handleClearFilters = () => {
     setFilters({
       startDate: "",
@@ -144,34 +107,21 @@ export default function Reports() {
       completed: "",
     });
     setCurrentPage(1);
-    fetchTransactions();
+    fetchTransactions(); // fetch all again
   };
 
-  /* =========================
-     Export Logic
-     ========================= */
-
-  // Export current table view as PDF
+  // =========================
+  // Export handlers
+  // =========================
   const handleExportPDF = () => {
-    // Placeholder: integrate with jsPDF or similar library
-    console.log("Exporting PDF with current filters & pagination...");
-    
+    // Placeholder: Implement backend PDF generation or client-side library
+    console.log("Export PDF clicked", transactions);
   };
 
-  // Export current table view as Excel
   const handleExportExcel = () => {
-    // Placeholder: integrate with SheetJS (xlsx) or similar library
-    console.log("Exporting Excel with current filters & pagination...");
-    
+    // Placeholder: Implement backend Excel generation or client-side library
+    console.log("Export Excel clicked", transactions);
   };
-
-  /* =========================
-     Fetch data on mount & pagination changes
-     ========================= */
-  useEffect(() => {
-    fetchTransactions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, pageSize]);
 
   return (
     <div className="p-6">
@@ -253,7 +203,7 @@ export default function Reports() {
           </select>
         </div>
 
-        {/* Advanced Filters Toggle */}
+        {/* Advanced Toggle */}
         <div className="mt-4 pt-4 border-t border-gray-200">
           <button
             type="button"
@@ -262,11 +212,13 @@ export default function Reports() {
           >
             {showAdvanced ? (
               <>
-                <ChevronUp className="w-4 h-4 mr-2" /> Hide Advanced Filters
+                <ChevronUp className="w-4 h-4 mr-2" />
+                Hide Advanced Filters
               </>
             ) : (
               <>
-                <ChevronDown className="w-4 h-4 mr-2" /> Show Advanced Filters
+                <ChevronDown className="w-4 h-4 mr-2" />
+                Show Advanced Filters
               </>
             )}
           </button>

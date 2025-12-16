@@ -1,5 +1,5 @@
 // src/helpers/transactionHelper.js
-import { transactionsClient } from "./apiClients";
+import { transactionsClient } from "../helpers/apiClients";
 
 // 🔹 Generic error handler
 const handleRequest = async (promise) => {
