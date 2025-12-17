@@ -320,7 +320,7 @@ export default function Transactions() {
     ];
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
+        <div className="p-2 bg-gray-50 min-h-screen">
             <div className="bg-white p-6 rounded-lg shadow-sm">
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">Transaction Registry</h2>
 
