@@ -199,6 +199,7 @@ export default function Reports() {
             <option value="">All Status</option>
             <option value="true">Completed</option>
             <option value="false">Pending</option>
+            <option value="false">Inprogress</option>
           </select>
         </div>
 
