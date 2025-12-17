@@ -19,8 +19,24 @@ export default function Reports() {
   /* =========================
      Redux State
      ========================= */
-  const { transactions, loading } = useSelector(
-    (state) => state.weighing
+  const { transactions, loading } = useSelector((state) => state.weighing);
+
+  /* =========================
+     Summary Calculations
+     ========================= */
+  const totalTransactions = transactions.length;
+
+  const completedTransactions = transactions.filter(
+    (tx) => tx?.isCompleted === true
+  ).length;
+
+  const pendingTransactions = transactions.filter(
+    (tx) => tx?.isCompleted === false
+  ).length;
+
+  const totalNetWeight = transactions.reduce(
+    (sum, tx) => sum + (tx?.netWeight || 0),
+    0
   );
 
   /* =========================
@@ -46,7 +62,6 @@ export default function Reports() {
      Fetch on Page Load
      ========================= */
   useEffect(() => {
-    // Fetch ALL transactions initially (no filters)
     dispatch(fetchTransactions());
   }, [dispatch]);
 
@@ -58,11 +73,9 @@ export default function Reports() {
   };
 
   const handleApplyFilters = () => {
-    // Remove empty filters before sending
     const cleanedFilters = Object.fromEntries(
       Object.entries(filters).filter(([_, v]) => v !== "")
     );
-
     dispatch(fetchTransactions(cleanedFilters));
   };
 
@@ -80,8 +93,6 @@ export default function Reports() {
       destination: "",
       operator: "",
     });
-
-    // Reload all data
     dispatch(fetchTransactions());
   };
 
@@ -89,18 +100,18 @@ export default function Reports() {
      Export Placeholders
      ========================= */
   const handleExportPDF = () => {
-    // TODO: Use jsPDF / backend PDF endpoint
+    // TODO: jsPDF or backend export endpoint
     console.log("Export PDF", transactions);
   };
 
   const handleExportExcel = () => {
-    // TODO: Use SheetJS (xlsx)
+    // TODO: SheetJS (xlsx)
     console.log("Export Excel", transactions);
   };
 
   return (
     <div className="p-6">
-      {/* Header */}
+      {/* ================= HEADER ================= */}
       <div className="mb-6">
         <h1 className="text-4xl text-black mb-2">Reports</h1>
         <p className="text-gray-600">
@@ -108,11 +119,40 @@ export default function Reports() {
         </p>
       </div>
 
-      {/* Filters */}
+      {/* ================= SUMMARY CARDS ================= */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="bg-white border rounded-lg p-4">
+          <p className="text-sm text-gray-500">Total Transactions</p>
+          <p className="text-2xl font-semibold">{totalTransactions}</p>
+        </div>
+
+        <div className="bg-white border rounded-lg p-4">
+          <p className="text-sm text-gray-500">Completed</p>
+          <p className="text-2xl font-semibold text-green-600">
+            {completedTransactions}
+          </p>
+        </div>
+
+        <div className="bg-white border rounded-lg p-4">
+          <p className="text-sm text-gray-500">Pending</p>
+          <p className="text-2xl font-semibold text-yellow-600">
+            {pendingTransactions}
+          </p>
+        </div>
+
+        <div className="bg-white border rounded-lg p-4">
+          <p className="text-sm text-gray-500">Total Net Weight (kg)</p>
+          <p className="text-2xl font-semibold">
+            {totalNetWeight.toLocaleString()}
+          </p>
+        </div>
+      </div>
+
+      {/* ================= FILTERS ================= */}
       <div className="bg-white border rounded-lg p-6">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="w-5 h-5" />
-          <h2 className="text-lg">Filters</h2>
+          <h2 className="text-lg font-medium">Filters</h2>
         </div>
 
         {/* Date Range */}
@@ -143,20 +183,22 @@ export default function Reports() {
             onChange={(e) => updateFilter("receiptNumber", e.target.value)}
             className="border px-3 py-2 rounded"
           />
+
           <input
             placeholder="Number Plate"
             value={filters.numberPlate}
             onChange={(e) => updateFilter("numberPlate", e.target.value)}
             className="border px-3 py-2 rounded"
           />
+
           <select
             value={filters.status}
             onChange={(e) => updateFilter("status", e.target.value)}
             className="border px-3 py-2 rounded"
           >
             <option value="">All Status</option>
-            <option value="1">Completed</option>
-            <option value="0">Pending</option>
+            <option value="true">Completed</option>
+            <option value="false">Pending</option>
           </select>
         </div>
 
@@ -164,27 +206,32 @@ export default function Reports() {
         <div className="mt-4 border-t pt-4">
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-sm"
           >
             {showAdvanced ? <ChevronUp /> : <ChevronDown />}
-            {showAdvanced ? "Hide Advanced" : "Show Advanced"}
+            {showAdvanced ? "Hide Advanced Filters" : "Show Advanced Filters"}
           </button>
         </div>
 
         {/* Advanced Filters */}
         {showAdvanced && (
           <div className="grid md:grid-cols-3 gap-4 mt-4">
-            {["driver", "supplier", "customer", "origin", "destination", "operator"].map(
-              (key) => (
-                <input
-                  key={key}
-                  placeholder={key}
-                  value={filters[key]}
-                  onChange={(e) => updateFilter(key, e.target.value)}
-                  className="border px-3 py-2 rounded"
-                />
-              )
-            )}
+            {[
+              "driver",
+              "supplier",
+              "customer",
+              "origin",
+              "destination",
+              "operator",
+            ].map((key) => (
+              <input
+                key={key}
+                placeholder={key}
+                value={filters[key]}
+                onChange={(e) => updateFilter(key, e.target.value)}
+                className="border px-3 py-2 rounded"
+              />
+            ))}
           </div>
         )}
 
@@ -192,10 +239,11 @@ export default function Reports() {
         <div className="flex gap-3 mt-6">
           <button
             onClick={handleApplyFilters}
-            className="bg-yellow-400 px-4 py-2 rounded"
+            className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded"
           >
             Apply Filters
           </button>
+
           <button
             onClick={handleClearFilters}
             className="border px-4 py-2 rounded flex items-center gap-2"
@@ -206,7 +254,7 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* Table */}
+      {/* ================= TABLE ================= */}
       <div className="mt-8">
         <ReportsTable
           transactions={transactions}
