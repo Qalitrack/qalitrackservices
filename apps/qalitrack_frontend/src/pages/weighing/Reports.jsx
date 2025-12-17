@@ -19,29 +19,16 @@ export default function Reports() {
   /* =========================
      Redux State
      ========================= */
-  const { transactions, loading } = useSelector((state) => state.weighing);
-
-  /* =========================
-     Summary Calculations
-     ========================= */
-  const totalTransactions = transactions.length;
-
-  const completedTransactions = transactions.filter(
-    (tx) => tx?.isCompleted === true
-  ).length;
-
-  const pendingTransactions = transactions.filter(
-    (tx) => tx?.isCompleted === false
-  ).length;
-
-  const totalNetWeight = transactions.reduce(
-    (sum, tx) => sum + (tx?.netWeight || 0),
-    0
+  const { transactions: allTransactions, loading } = useSelector(
+    (state) => state.weighing
   );
 
   /* =========================
-     Local UI State
+     Local State
      ========================= */
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
@@ -56,14 +43,19 @@ export default function Reports() {
     operator: "",
   });
 
-  const [showAdvanced, setShowAdvanced] = useState(false);
-
   /* =========================
-     Fetch on Page Load
+     Fetch on Load
      ========================= */
   useEffect(() => {
     dispatch(fetchTransactions());
   }, [dispatch]);
+
+  /* =========================
+     Sync Filtered Data
+     ========================= */
+  useEffect(() => {
+    setFilteredTransactions(allTransactions);
+  }, [allTransactions]);
 
   /* =========================
      Helpers
@@ -72,13 +64,74 @@ export default function Reports() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  /* =========================
+     Apply Filters (LOCAL)
+     ========================= */
   const handleApplyFilters = () => {
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, v]) => v !== "")
-    );
-    dispatch(fetchTransactions(cleanedFilters));
+    let data = [...allTransactions];
+
+    // Date range
+    if (filters.startDate) {
+      data = data.filter(
+        (tx) => new Date(tx.createdAt) >= new Date(filters.startDate)
+      );
+    }
+
+    if (filters.endDate) {
+      data = data.filter(
+        (tx) => new Date(tx.createdAt) <= new Date(filters.endDate)
+      );
+    }
+
+    // Receipt number
+    if (filters.receiptNumber) {
+      data = data.filter((tx) =>
+        tx.receiptNumber
+          ?.toLowerCase()
+          .includes(filters.receiptNumber.toLowerCase())
+      );
+    }
+
+    // Number plate
+    if (filters.numberPlate) {
+      data = data.filter((tx) =>
+        tx.numberPlate
+          ?.toLowerCase()
+          .includes(filters.numberPlate.toLowerCase())
+      );
+    }
+
+    // Status
+    if (filters.status === "completed") {
+      data = data.filter((tx) => tx.isCompleted === true);
+    }
+
+    if (filters.status === "pending") {
+      data = data.filter((tx) => tx.isCompleted === false);
+    }
+
+    // Advanced filters
+    [
+      "driver",
+      "supplier",
+      "customer",
+      "origin",
+      "destination",
+      "operator",
+    ].forEach((key) => {
+      if (filters[key]) {
+        data = data.filter((tx) =>
+          tx[key]?.toLowerCase().includes(filters[key].toLowerCase())
+        );
+      }
+    });
+
+    setFilteredTransactions(data);
   };
 
+  /* =========================
+     Clear Filters
+     ========================= */
   const handleClearFilters = () => {
     setFilters({
       startDate: "",
@@ -93,33 +146,50 @@ export default function Reports() {
       destination: "",
       operator: "",
     });
-    dispatch(fetchTransactions());
+
+    setFilteredTransactions(allTransactions);
   };
+
+  /* =========================
+     Summary Calculations
+     ========================= */
+  const totalTransactions = filteredTransactions.length;
+
+  const completedTransactions = filteredTransactions.filter(
+    (tx) => tx.isCompleted === true
+  ).length;
+
+  const pendingTransactions = filteredTransactions.filter(
+    (tx) => tx.isCompleted === false
+  ).length;
+
+  const totalNetWeight = filteredTransactions.reduce(
+    (sum, tx) => sum + (tx?.netWeight || 0),
+    0
+  );
 
   /* =========================
      Export Placeholders
      ========================= */
   const handleExportPDF = () => {
-    // TODO: jsPDF or backend export endpoint
-    console.log("Export PDF", transactions);
+    console.log("Export PDF", filteredTransactions);
   };
 
   const handleExportExcel = () => {
-    // TODO: SheetJS (xlsx)
-    console.log("Export Excel", transactions);
+    console.log("Export Excel", filteredTransactions);
   };
 
   return (
     <div className="p-6">
       {/* ================= HEADER ================= */}
       <div className="mb-6">
-        <h1 className="text-4xl text-black mb-2">Reports</h1>
+        <h1 className="text-4xl mb-2">Reports</h1>
         <p className="text-gray-600">
           Transaction-based operational reports
         </p>
       </div>
 
-      {/* ================= SUMMARY CARDS ================= */}
+      {/* ================= SUMMARY ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white border rounded-lg p-4">
           <p className="text-sm text-gray-500">Total Transactions</p>
@@ -155,7 +225,7 @@ export default function Reports() {
           <h2 className="text-lg font-medium">Filters</h2>
         </div>
 
-        {/* Date Range */}
+        {/* Date Filters */}
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           {["startDate", "endDate"].map((key) => (
             <div key={key}>
@@ -197,9 +267,8 @@ export default function Reports() {
             className="border px-3 py-2 rounded"
           >
             <option value="">All Status</option>
-            <option value="true">Completed</option>
-            <option value="false">Pending</option>
-            <option value="false">Inprogress</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
           </select>
         </div>
 
@@ -258,7 +327,7 @@ export default function Reports() {
       {/* ================= TABLE ================= */}
       <div className="mt-8">
         <ReportsTable
-          transactions={transactions}
+          transactions={filteredTransactions}
           loading={loading}
           onExportPDF={handleExportPDF}
           onExportExcel={handleExportExcel}
