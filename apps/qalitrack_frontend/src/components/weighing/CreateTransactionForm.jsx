@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Input, Select, Button, message, Row, Col, Typography, Space } from "antd";
 import { debounce } from "lodash";
@@ -15,7 +15,24 @@ export default function CreateTransactionForm({ formData, setFormData, capturedW
   const dispatch = useDispatch();
   const { vehicles, drivers, products, suppliers, transporters, loading } = useSelector((state) => state.weighing);
 
-  // Debounced search logic (Same as before)
+  /**
+   * Generates a unique receipt number
+   * Format: RCT-YYMMDD-XXXX (where XXXX is a random string)
+   */
+  const generateReceiptNumber = useCallback(() => {
+    const date = new Date();
+    const datePart = date.toISOString().slice(2, 10).replace(/-/g, ""); // YYMMDD
+    const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `RCT-${datePart}-${randomPart}`;
+  }, []);
+
+  // Effect to auto-generate receipt if it's a NEW transaction and the field is empty
+  useEffect(() => {
+    if (!formData.id && !formData.receiptNo) {
+      setFormData(prev => ({ ...prev, receiptNo: generateReceiptNumber() }));
+    }
+  }, [formData.id, formData.receiptNo, setFormData, generateReceiptNumber]);
+
   const debounced = useMemo(() => ({
     vehicles: debounce((q) => dispatch(fetchVehiclesByRegNumber(q)), 400),
     drivers: debounce((q) => dispatch(fetchDriversByName(q)), 400),
@@ -32,7 +49,30 @@ export default function CreateTransactionForm({ formData, setFormData, capturedW
     setFormData(p => ({ ...p, [idKey]: id || null, [nameKey]: item?.name || item?.registrationNumber || item?.fullName || "" }));
   };
 
-  // Modern Label Component
+  const handleSubmit = async () => {
+    if (!formData.receiptNo || !formData.noPlate || !formData.weighBridgeId) {
+      return message.error("Please fill in all required fields (*)");
+    }
+
+    try {
+      const payload = { 
+        ...formData, 
+        noPlate: formData.noPlate.toUpperCase(),
+        firstWeight: parseFloat(formData.firstWeight || 0), 
+        secondWeight: parseFloat(formData.secondWeight || 0) 
+      };
+
+      await dispatch(addTransaction(payload)).unwrap();
+      message.success(formData.id ? "Transaction Finalized!" : "First Weight Saved!");
+      
+      // onTransactionCreated will trigger the reset in the parent, 
+      // which will then re-trigger the useEffect above to generate a NEW receipt number.
+      if (onTransactionCreated) onTransactionCreated();
+    } catch (err) {
+      message.error(err?.message || "Failed to save transaction");
+    }
+  };
+
   const FieldLabel = ({ children, required }) => (
     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-tight block mb-0.5">
       {children} {required && <span className="text-red-500">*</span>}
@@ -41,7 +81,7 @@ export default function CreateTransactionForm({ formData, setFormData, capturedW
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* 1. INDICATOR BANNER - Modern Inset Style */}
+      {/* Indicator Banner */}
       <div className={`mb-3 p-2 rounded-lg border flex justify-between items-center shrink-0 ${formData.id ? 'bg-blue-50 border-blue-200' : 'bg-amber-50 border-amber-200'}`}>
         <div>
           <Text className="text-[9px] uppercase font-bold text-gray-400 block leading-none">Live Weight</Text>
@@ -63,12 +103,18 @@ export default function CreateTransactionForm({ formData, setFormData, capturedW
         </Space>
       </div>
 
-      {/* 2. SCROLLABLE FORM FIELDS - 3 Column Layout */}
+      {/* Form Fields */}
       <div className="flex-1 overflow-y-auto pr-1">
         <Row gutter={[8, 10]}>
           <Col span={8}>
             <FieldLabel required>Receipt Number</FieldLabel>
-            <Input placeholder="REQ-001" size="middle" value={formData.receiptNo} onChange={e => handleChange("receiptNo", e.target.value)} />
+            <Input 
+              size="middle" 
+              value={formData.receiptNo} 
+              readOnly={!!formData.id} // Prevent editing during second weight
+              className={!!formData.id ? "bg-gray-50 cursor-not-allowed" : ""}
+              onChange={e => handleChange("receiptNo", e.target.value)} 
+            />
           </Col>
           <Col span={8}>
             <FieldLabel required>Weighbridge</FieldLabel>
@@ -83,7 +129,7 @@ export default function CreateTransactionForm({ formData, setFormData, capturedW
 
           <Col span={12}>
             <FieldLabel required>Vehicle Plate</FieldLabel>
-            <Select size="middle" showSearch className="w-full font-mono" onSearch={debounced.vehicles} onChange={id => handleSelect(vehicles, id, "vehicleId", "noPlate")} value={formData.vehicleId || formData.noPlate}>
+            <Select size="middle" showSearch className="w-full" onSearch={debounced.vehicles} onChange={id => handleSelect(vehicles, id, "vehicleId", "noPlate")} value={formData.vehicleId || formData.noPlate}>
               {vehicles.map(it => <Option key={it.id} value={it.id}>{it.registrationNumber || it.plateNumber}</Option>)}
             </Select>
           </Col>
@@ -101,7 +147,7 @@ export default function CreateTransactionForm({ formData, setFormData, capturedW
             </Select>
           </Col>
           <Col span={8}>
-            <FieldLabel>Commodity/Product</FieldLabel>
+            <FieldLabel>Commodity</FieldLabel>
             <Select size="middle" showSearch className="w-full" onSearch={debounced.products} onChange={id => handleSelect(products, id, "commodityId", "commodityName")} value={formData.commodityId}>
               {products.map(it => <Option key={it.id} value={it.id}>{it.name}</Option>)}
             </Select>
@@ -142,14 +188,19 @@ export default function CreateTransactionForm({ formData, setFormData, capturedW
         </Row>
       </div>
 
-      {/* 3. FIXED ACTION BUTTONS */}
       <div className="mt-3 pt-3 border-t flex gap-3 shrink-0 bg-white">
-        <Button size="large" className="w-1/3 text-gray-400 font-bold border-gray-200">
+        <Button 
+          size="large" 
+          className="w-1/3 text-gray-400 font-bold"
+          onClick={() => onTransactionCreated()} 
+        >
           RESET
         </Button>
         <Button 
           type="primary" 
           size="large" 
+          loading={loading}
+          onClick={handleSubmit} 
           className={`flex-1 font-bold border-none shadow-md ${formData.id ? 'bg-blue-600' : 'bg-amber-500 hover:bg-amber-600'}`}
         >
           {formData.id ? "FINALIZE TRANSACTION" : "SAVE FIRST WEIGHT"}
