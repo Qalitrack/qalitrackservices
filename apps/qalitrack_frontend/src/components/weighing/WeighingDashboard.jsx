@@ -1,171 +1,116 @@
-// src/components/weighing/WeighingDashboard.jsx
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Tabs, message, Card } from "antd";
-import LiveWeighbridgeStatus from "./LiveWeighbridgeStatus";
+import { Card, message } from "antd";
 import CreateTransactionForm from "./CreateTransactionForm";
-import IncompleteTransactionsTable from "./IncompleteTransactionsTable";
 import AddWeighingModal from "./AddWeighingModal";
+import IncompleteTransactionsTable from "./IncompleteTransactionsTable";
+import LiveWeighbridgeStatus from "./LiveWeighbridgeStatus";
+import CameraGrid from "../CameraGrid";
+
 import {
-    fetchVehicles,
-    fetchDrivers,
-    fetchProducts,
-    fetchRoutes,
-    fetchSaccosByName,
-    fetchSuppliersByName,
-    fetchTransportersByName,
-    fetchWeighbridges,        // ← NEW: Load all weighbridges
-    fetchTransactions,
-    fetchSimulatedWeight,
+  fetchVehicles, fetchDrivers, fetchProducts, fetchRoutes,
+  fetchSaccosByName, fetchSuppliersByName, fetchTransportersByName,
+  fetchWeighbridges, fetchTransactions, fetchSimulatedWeight,
 } from "../../store/weighingSlice";
 
-const { TabPane } = Tabs;
-
-const initialFormData = {
-    receiptNo: "",
-    expectedWeighings: 2,
-    noPlate: "",
-    driverName: "",
-    vehicleId: null,
-    driverId: null,
-    commodityId: null,
-    commodityName: "",
-    transporterId: null,
-    transporterName: "",
-    supplierId: null,
-    supplierName: "",
-    customerId: null,
-    customerName: "",
-    originId: null,
-    originName: "",
-    destinationId: null,
-    destinationName: "",
-    operation: "",
-    weighMode: "Gross/Tare",
-    firstWeight: "",
-    scaleName: "Scale-01",
-    operatorName: "Operator",
-    weighBridgeId: null,      // ← NEW
-    weighBridgeName: "",      // ← NEW
+const INITIAL_FORM_DATA = {
+  receiptNo: "", expectedWeighings: 2, noPlate: "", driverName: "",
+  vehicleId: null, driverId: null, commodityId: null, commodityName: "",
+  transporterId: null, transporterName: "", supplierId: null, supplierName: "",
+  customerId: null, customerName: "", originId: null, originName: "",
+  destinationId: null, destinationName: "", operation: "", weighMode: "Gross/Tare",
+  firstWeight: "", scaleName: "", operatorName: "", weighBridgeId: null, weighBridgeName: "",
 };
 
 export default function WeighingDashboard() {
-    const dispatch = useDispatch();
-    const { error } = useSelector((state) => state.weighing);
+  const dispatch = useDispatch();
+  const { error, weighbridges = [] } = useSelector((state) => state.weighing);
+  const [capturedWeight, setCapturedWeight] = useState(null);
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [showWeighingModal, setShowWeighingModal] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-    const [capturedWeight, setCapturedWeight] = useState(null);
-    const [formData, setFormData] = useState(initialFormData);
-    const [selectedTransaction, setSelectedTransaction] = useState(null);
-    const [showWeighingModal, setShowWeighingModal] = useState(false);
-    const [refreshKey, setRefreshKey] = useState(0);
+  useEffect(() => {
+    dispatch(fetchVehicles());
+    dispatch(fetchDrivers());
+    dispatch(fetchProducts());
+    dispatch(fetchRoutes());
+    dispatch(fetchSaccosByName(""));
+    dispatch(fetchSuppliersByName(""));
+    dispatch(fetchTransportersByName(""));
+    dispatch(fetchWeighbridges({ pageSize: 100 }));
+    dispatch(fetchTransactions({ pageNumber: 1, pageSize: 50 }));
+    dispatch(fetchSimulatedWeight());
+  }, [dispatch]);
 
-    // Load all master data + weighbridges on mount
-    useEffect(() => {
-        dispatch(fetchVehicles());
-        dispatch(fetchDrivers());
-        dispatch(fetchProducts());
-        dispatch(fetchRoutes());
-        dispatch(fetchSaccosByName(""));
-        dispatch(fetchSuppliersByName(""));
-        dispatch(fetchTransportersByName(""));
-        dispatch(fetchWeighbridges({ pageSize: 100 })); // ← Load all weighbridges
-        dispatch(fetchTransactions({ pageNumber: 1, pageSize: 50 }));
-        dispatch(fetchSimulatedWeight());
-    }, [dispatch]);
+  useEffect(() => { if (error) message.error(error); }, [error]);
 
-    // Global error handling
-    useEffect(() => {
-        if (error) {
-            message.error(error);
-        }
-    }, [error]);
+  const handleManualCapture = (weight) => {
+    if (isNaN(weight) || weight <= 0) return message.error("Invalid weight");
+    setCapturedWeight(weight);
+    message.success(`Captured: ${weight} kg`);
+  };
 
-    // Auto-fill captured weight into form
-    useEffect(() => {
-        if (capturedWeight !== null) {
-            setFormData((prev) => ({
-                ...prev,
-                firstWeight: capturedWeight,
-            }));
-        }
-    }, [capturedWeight]);
+  const handleTransactionCreated = () => {
+    setRefreshKey((k) => k + 1);
+    setCapturedWeight(null);
+    setFormData(INITIAL_FORM_DATA);
+  };
 
-    const handleManualCapture = (weight) => {
-        if (isNaN(weight) || weight === null || weight < 0) {
-            message.error("Captured weight is invalid.");
-            return;
-        }
-        setCapturedWeight(weight);
-        message.success(`Captured weight: ${weight} kg`);
-    };
-
-    const handleTransactionCreated = () => {
-        setRefreshKey((k) => k + 1);
-        setCapturedWeight(null);
-        // Reset form to initial state after successful creation
-        setFormData(initialFormData);
-    };
-
-    const handleAddWeighing = (transaction) => {
-        setSelectedTransaction(transaction);
-        setShowWeighingModal(true);
-    };
-
-    const handleWeighingSuccess = () => {
-        setRefreshKey((k) => k + 1);
-        setCapturedWeight(null);
-    };
-
-    const handleModalClose = () => {
-        setShowWeighingModal(false);
-        setSelectedTransaction(null);
-        setCapturedWeight(null);
-    };
-
-    return (
-        <div className="p-6 max-w-7xl mx-auto">
-            <Tabs defaultActiveKey="1" tabBarGutter={30} className="weighing-tabs">
-                <TabPane tab="Create New Transaction" key="1">
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                        <div className="lg:col-span-2">
-                            <LiveWeighbridgeStatus onManualCapture={handleManualCapture} />
-                        </div>
-                        <div className="lg:col-span-3">
-                            <CreateTransactionForm
-                                formData={formData}
-                                setFormData={setFormData}
-                                capturedWeight={capturedWeight}
-                                onTransactionCreated={handleTransactionCreated}
-                            />
-                        </div>
-                    </div>
-                </TabPane>
-
-                <TabPane tab="Continue Incomplete Weighings" key="2">
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                        <div className="lg:col-span-2">
-                            <LiveWeighbridgeStatus onManualCapture={handleManualCapture} />
-                        </div>
-                        <div className="lg:col-span-3">
-                            <Card title="Incomplete Transactions" className="h-full">
-                                <IncompleteTransactionsTable
-                                    onAddWeighing={handleAddWeighing}
-                                    refreshKey={refreshKey}
-                                />
-                            </Card>
-                        </div>
-                    </div>
-                </TabPane>
-            </Tabs>
-
-            <AddWeighingModal
-                visible={showWeighingModal}
-                transaction={selectedTransaction}
-                capturedWeight={capturedWeight}
-                onClose={handleModalClose}
-                onSuccess={handleWeighingSuccess}
+  return (
+    <div className="flex flex-col h-full gap-2 overflow-hidden">
+      <div className="flex gap-2 h-[62%] shrink-0">
+        <div className="w-[38%] h-full">
+          <Card
+            title={<span className="text-[10px] font-bold uppercase">New Transaction</span>}
+            size="small"
+            className="h-full shadow-sm flex flex-col overflow-hidden"
+            bodyStyle={{ flex: 1, padding: "4px 8px", display: "flex", flexDirection: "column", overflow: "hidden" }}
+          >
+            <CreateTransactionForm
+              formData={formData}
+              setFormData={setFormData}
+              capturedWeight={capturedWeight}
+              weighbridges={weighbridges}
+              onTransactionCreated={handleTransactionCreated}
             />
+          </Card>
         </div>
-    );
+
+        <div className="w-[62%] flex flex-col gap-2 h-full">
+          <div className="grid grid-cols-2 gap-2 h-1/2">
+            <LiveWeighbridgeStatus onManualCapture={handleManualCapture} />
+            <div className="bg-black rounded overflow-hidden"><CameraGrid type="live" /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-2 h-1/2">
+            <div className="bg-black rounded overflow-hidden"><CameraGrid type="snapshot" /></div>
+            <div className="bg-black rounded overflow-hidden"><CameraGrid type="plate" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0">
+        <Card
+          title={<span className="text-[10px] font-bold uppercase">Active Yard Queue</span>}
+          size="small"
+          className="h-full shadow-sm flex flex-col overflow-hidden"
+          bodyStyle={{ flex: 1, padding: 0, overflow: "hidden" }}
+        >
+          <IncompleteTransactionsTable
+            refreshKey={refreshKey}
+            onAddWeighing={(t) => { setSelectedTransaction(t); setShowWeighingModal(true); }}
+          />
+        </Card>
+      </div>
+
+      <AddWeighingModal
+        visible={showWeighingModal}
+        transaction={selectedTransaction}
+        capturedWeight={capturedWeight}
+        onClose={() => setShowWeighingModal(false)}
+        onSuccess={() => { setRefreshKey(k => k + 1); setCapturedWeight(null); setSelectedTransaction(null); }}
+      />
+    </div>
+  );
 }
