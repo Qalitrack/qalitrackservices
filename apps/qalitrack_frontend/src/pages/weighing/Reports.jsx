@@ -1,3 +1,4 @@
+// src/pages/weighing/Reports.jsx
 import { useState, useEffect } from "react";
 import ReportsTable from "./ReportsTable";
 import {
@@ -8,11 +9,17 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { getTransactions } from "../../api/Weighing/Transactions";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
 
+/**
+ * Reports Page
+ */
 export default function Reports() {
-  // =========================
-  // Filters state
-  // =========================
+  /* =========================
+     Filter State
+     ========================= */
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
@@ -34,59 +41,34 @@ export default function Reports() {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // =========================
-  // Table state
-  // =========================
+  /* =========================
+     Table State
+     ========================= */
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  // =========================
-  // Helpers
-  // =========================
+  /* =========================
+     Summary Analytics State
+     ========================= */
+  const [summaryData, setSummaryData] = useState({
+    drivers: 0,
+    vehicles: 0,
+    commodities: [],
+    statuses: {},
+  });
+
+  /* =========================
+     Helper Functions
+     ========================= */
   const updateFilter = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Fetch transactions from API
-  const fetchTransactions = async (params = {}) => {
-    setLoading(true);
-    try {
-      // Include pagination params
-      const data = await getTransactions({
-        page: currentPage,
-        pageSize,
-        ...params, // spread filters here
-      });
-
-      // Assuming API returns: { data: [], totalRecords: number }
-      setTransactions(data.data || []);
-      setTotalRecords(data.totalRecords || 0);
-    } catch (error) {
-      console.error("Error fetching transactions:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // On initial load, fetch all transactions without filters
-  useEffect(() => {
-    fetchTransactions();
-  }, [currentPage, pageSize]);
-
-  // Apply filters
-  const handleApplyFilters = () => {
-    // Build params object with only filled filters
-    const filterParams = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value)
-    );
-
-    setCurrentPage(1); // reset to first page
-    fetchTransactions(filterParams);
-  };
-
+  // Clear all filters
   const handleClearFilters = () => {
     setFilters({
       startDate: "",
@@ -106,26 +88,96 @@ export default function Reports() {
       weighMode: "",
       completed: "",
     });
-    setCurrentPage(1);
-    fetchTransactions(); // fetch all again
   };
 
-  // =========================
-  // Export handlers
-  // =========================
-  const handleExportPDF = () => {
-    // Placeholder: Implement backend PDF generation or client-side library
-    console.log("Export PDF clicked", transactions);
+  /* =========================
+     Fetch Transactions
+     ========================= */
+  const fetchTransactions = async () => {
+    setLoading(true);
+    try {
+      // Send filters + pagination
+      const params = {
+        ...filters,
+        page: currentPage,
+        pageSize,
+      };
+      const data = await getTransactions(params);
+
+      setTransactions(data.transactions || []); // adapt based on API response
+      setTotalRecords(data.total || data.transactions?.length || 0);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleExportExcel = () => {
-    // Placeholder: Implement backend Excel generation or client-side library
-    console.log("Export Excel clicked", transactions);
+  // Fetch transactions on mount and whenever filters or pagination change
+  useEffect(() => {
+    fetchTransactions();
+  }, [filters, currentPage, pageSize]);
+
+  /* =========================
+     Compute Summary Analytics
+     ========================= */
+  useEffect(() => {
+    if (!transactions || transactions.length === 0) return;
+
+    const driversSet = new Set();
+    const vehiclesSet = new Set();
+    const commoditiesMap = {};
+    const statusesMap = {};
+
+    transactions.forEach((t) => {
+      if (t.driver) driversSet.add(t.driver);
+      if (t.numberPlate) vehiclesSet.add(t.numberPlate);
+
+      if (t.commodity) {
+        commoditiesMap[t.commodity] = (commoditiesMap[t.commodity] || 0) + 1;
+      }
+
+      if (t.status) {
+        statusesMap[t.status] = (statusesMap[t.status] || 0) + 1;
+      }
+    });
+
+    setSummaryData({
+      drivers: driversSet.size,
+      vehicles: vehiclesSet.size,
+      commodities: Object.entries(commoditiesMap),
+      statuses: statusesMap,
+    });
+  }, [transactions]);
+
+  /* =========================
+     Export Functions
+     ========================= */
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Transactions Report", 14, 16);
+    const tableColumn = Object.keys(transactions[0] || {});
+    const tableRows = transactions.map((t) => Object.values(t));
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+    doc.save("transactions-report.pdf");
+  };
+
+  const exportExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(transactions);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+    XLSX.writeFile(wb, "transactions-report.xlsx");
   };
 
   return (
     <div className="p-6">
-      {/* Page Header */}
+      {/* =========================
+          Page Header
+         ========================= */}
       <div className="mb-6">
         <h1 className="text-black text-4xl mb-2">Reports</h1>
         <p className="text-gray-600">
@@ -133,8 +185,10 @@ export default function Reports() {
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      {/* =========================
+          Filters
+         ========================= */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="w-5 h-5 text-gray-600" />
           <h2 className="text-lg text-black">Filters</h2>
@@ -174,7 +228,7 @@ export default function Reports() {
         </div>
 
         {/* Basic Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <input
             type="text"
             placeholder="Receipt Number"
@@ -212,13 +266,11 @@ export default function Reports() {
           >
             {showAdvanced ? (
               <>
-                <ChevronUp className="w-4 h-4 mr-2" />
-                Hide Advanced Filters
+                <ChevronUp className="w-4 h-4 mr-2" /> Hide Advanced Filters
               </>
             ) : (
               <>
-                <ChevronDown className="w-4 h-4 mr-2" />
-                Show Advanced Filters
+                <ChevronDown className="w-4 h-4 mr-2" /> Show Advanced Filters
               </>
             )}
           </button>
@@ -251,7 +303,7 @@ export default function Reports() {
         <div className="flex gap-3 mt-6">
           <button
             type="button"
-            onClick={handleApplyFilters}
+            onClick={fetchTransactions}
             className="bg-[#FBBF24] hover:bg-[#F59E0B] text-black px-4 py-2 rounded-md"
           >
             Apply Filters
@@ -265,25 +317,83 @@ export default function Reports() {
             <RotateCcw className="w-4 h-4 mr-2" />
             Clear Filters
           </button>
+
+          <button
+            type="button"
+            onClick={exportPDF}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
+            Export PDF
+          </button>
+
+          <button
+            type="button"
+            onClick={exportExcel}
+            className="bg-green-500 text-white px-4 py-2 rounded-md"
+          >
+            Export Excel
+          </button>
         </div>
       </div>
 
-      {/* Reports Table */}
-      <div className="mt-8">
-        <ReportsTable
-          transactions={transactions}
-          loading={loading}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          totalRecords={totalRecords}
-          onPageChange={setCurrentPage}
-          onPageSizeChange={(size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          }}
-          onExportPDF={handleExportPDF}
-          onExportExcel={handleExportExcel}
-        />
+      {/* =========================
+          Transactions Table
+         ========================= */}
+      <ReportsTable
+        transactions={transactions}
+        loading={loading}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        totalRecords={totalRecords}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={(size) => {
+          setPageSize(size);
+          setCurrentPage(1);
+        }}
+      />
+
+      {/* =========================
+          Summary Analytics
+         ========================= */}
+      <div className="mt-10">
+        <h2 className="text-xl font-bold mb-4">Summary</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Drivers */}
+          <div className="bg-white border p-4 rounded">
+            <h3 className="font-semibold mb-2">Number of Drivers</h3>
+            <p>{summaryData.drivers}</p>
+          </div>
+
+          {/* Vehicles */}
+          <div className="bg-white border p-4 rounded">
+            <h3 className="font-semibold mb-2">Number of Vehicles</h3>
+            <p>{summaryData.vehicles}</p>
+          </div>
+
+          {/* Commodities */}
+          <div className="bg-white border p-4 rounded">
+            <h3 className="font-semibold mb-2">Commodities</h3>
+            <ul>
+              {summaryData.commodities.map(([commodity, count]) => (
+                <li key={commodity}>
+                  {commodity}: {count}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Status */}
+          <div className="bg-white border p-4 rounded">
+            <h3 className="font-semibold mb-2">Status</h3>
+            <ul>
+              {Object.entries(summaryData.statuses).map(([status, count]) => (
+                <li key={status}>
+                  {status}: {count}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );

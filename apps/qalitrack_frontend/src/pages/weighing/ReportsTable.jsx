@@ -9,9 +9,6 @@ import {
 
 /**
  * ReportsTable
- * --------------------
- * Displays transaction-based report results in a sortable,
- * paginated table with export actions.
  */
 export default function ReportsTable({
   transactions,
