@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, Tag, Button, Input, DatePicker, Select, Space, message, Modal, Descriptions } from "antd";
 import dayjs from "dayjs";
-import { fetchTransactions } from "../store/weighingSlice";
+import { fetchTransactions, fetchUserById } from "../store/weighingSlice";
 import { Printer, Eye } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -12,7 +12,7 @@ const { Option } = Select;
 
 export default function Transactions() {
     const dispatch = useDispatch();
-    const { transactions, loading, total } = useSelector((state) => state.weighing);
+    const { transactions, loading, total, users } = useSelector((state) => state.weighing);
 
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,137 +38,254 @@ export default function Transactions() {
         dispatch(fetchTransactions(params));
     };
 
-    const handlePrint = (record) => {
+    const handlePrint = async (record) => {
         const doc = new jsPDF();
         
-        // Add company header (customize with your logo URL if available)
-        doc.setFontSize(10);
-        doc.setTextColor(100);
-        doc.text("KPFC BUSINESS CENTER", 14, 15);
-        doc.text("PO BOX 36-00902 TEL: 074526667, KIKUYU", 14, 20);
+        // Modern colors: Soft Amber [255, 193, 7], Emerald Green [0, 150, 136], Slate Black [33, 33, 33], Light Amber [255, 249, 196]
+        const amber = [255, 193, 7];
+        const green = [0, 150, 136];
+        const black = [33, 33, 33];
+        const lightAmber = [255, 249, 196];
+        const darkGreen = [0, 128, 0];
+
+        // Company logo at top left, with placeholder if fails
+        const logoUrl = 'https://cdn.brandfetch.io/idvHdvVGVZ/w/1280/h/905/idBSK3DzYW.jpeg?c=1bxid64Mup7aczewSAYMX&t=1765569910329';
+        const logoImg = new Image();
+        logoImg.crossOrigin = "anonymous";
+        logoImg.src = logoUrl;
+
+        // Wait for logo to load
+        await new Promise((resolve) => {
+            logoImg.onload = resolve;
+            logoImg.onerror = () => {
+                // Placeholder if logo fails
+                doc.setFillColor(...amber);
+                doc.circle(25, 20, 10, "F");
+                doc.setTextColor(...black);
+                doc.setFontSize(14);
+                doc.text("QS", 20, 22);
+                resolve();
+            };
+        });
+
+        doc.addImage(logoImg, 'JPEG', 14, 10, 20, 20);
+
+        // Date at top right
         doc.setFontSize(8);
-        doc.text(dayjs().format("MMM DD, YYYY hh:mm A"), 160, 15); // Date on right
-        doc.setFillColor(0, 128, 0);
-        doc.roundedRect(170, 20, 30, 5, 2, 2, "F");
-        doc.setTextColor(255);
-        doc.text("LEGAL", 178, 24);
+        doc.text(dayjs().format("MMM DD, YYYY hh:mm A"), 160, 15);
 
-        // Main title
-        doc.setFontSize(16);
-        doc.setTextColor(0);
-        doc.text("WEIGHING TICKET", 70, 35);
+        // LEGAL button below the date
+        doc.setFillColor(...darkGreen);
+        doc.roundedRect(170, 20, 30, 10, 5, 5, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.text("LEGAL", 178, 26);
 
-        // Ticket Details section
+        // Centrally oriented company name and postal address immediately above the title
         doc.setFontSize(12);
-        doc.setFillColor(255, 204, 102);
-        doc.rect(14, 40, 180, 8, "F");
-        doc.setTextColor(0);
-        doc.text("TICKET DETAILS", 80, 46);
+        doc.setTextColor(...black);
+        let companyText = "Qalibrated Systems Limited";
+        let textWidth = doc.getTextWidth(companyText);
+        let x = (doc.internal.pageSize.getWidth() - textWidth) / 2;
+        doc.text(companyText, x, 40);
 
-        // Ticket Details table (two-column layout for key-value pairs)
-        const ticketDetails = [
-            ["Ticket No", record.receiptNo || "N/A"],
-            ["Axle Type", record.axleType || "N/A"],
-            ["Transporter", record.transporter || "N/A"],
-            ["Source", record.source || "N/A"],
-            ["Operator", record.operator || "N/A"],
-            ["Commodity", record.commodityName || "N/A"],
-            ["Destination", record.destination || "N/A"],
-            ["Timestamp", dayjs(record.timestamp || record.createdAt).format("MM-DD-YY hh:mm A") || "N/A"],
-            ["Driver", record.driverName || "N/A"],
-        ];
+        doc.setFontSize(10);
+        let addressText = "PO BOX 34463-00100 TEL: 0714999996, Nairobi";
+        textWidth = doc.getTextWidth(addressText);
+        x = (doc.internal.pageSize.getWidth() - textWidth) / 2;
+        doc.text(addressText, x, 47);
+
+        // Main title with green color and modern underline
+        doc.setFontSize(18);
+        doc.setTextColor(...green);
+        doc.text("WEIGHING TICKET", 60, 60);
+        doc.setDrawColor(...amber);
+        doc.setLineWidth(0.5);
+        doc.line(60, 62, 150, 62); // Thin underline
+
+        // Ticket Details section with rounded rect
+        let currentY = 70;
+        doc.setFillColor(...amber);
+        doc.roundedRect(14, currentY, 180, 8, 3, 3, "F");
+        doc.setTextColor(...black);
+        doc.setFontSize(12);
+        doc.text("TICKET DETAILS", 80, currentY + 6);
+
+        // Ticket Details table with modern styling (paired label-value)
+        currentY += 10;
+        const ticketDetails = [];
+        if (record.receiptNo) ticketDetails.push(["Ticket No", record.receiptNo, "Registration", record.noPlate || 'N/A']);
+        if (record.axleType) ticketDetails.push(["Axle Type", record.axleType, "Commodity", record.commodityName || 'N/A']);
+        if (record.transporterName) ticketDetails.push(["Transporter", record.transporterName, "Timestamp", dayjs(record.timestamp || record.createdAt).format("DD-MM-YY hh:mm A") || 'N/A']);
+        if (record.originName) ticketDetails.push(["Source", record.originName, "Destination", record.destinationName || 'N/A']);
+        if (record.operatorName) ticketDetails.push(["Operator", record.operator, "Driver", record.driverName || 'N/A']);
+        ticketDetails.push(["Weighing Status", `${record.completedWeighings || 0} / ${record.expectedWeighings || 2}`, "Current State", record.status || 'N/A']);
+        if (record.supplierName || record.supplierId) ticketDetails.push(["Supplier", record.supplierName || record.supplierId, "Customer", record.customerName || record.customerId || 'N/A']);
+        if (record.originName || record.originId) ticketDetails.push(["Origin", record.originName || record.originId, "Destination", record.destinationName || record.destinationId || 'N/A']);
+        if (record.transporterName || record.transporterId) ticketDetails.push(["Transporter", record.transporterName || record.transporterId, "Weigh Mode", record.weighMode || 'N/A']);
         autoTable(doc, {
-            startY: 50,
+            startY: currentY,
             body: ticketDetails,
-            theme: "grid",
-            styles: { fillColor: [255, 255, 204], textColor: 0, fontSize: 10 },
-            columnStyles: { 0: { cellWidth: 50 } },
+            theme: "plain",
+            styles: { fillColor: lightAmber, textColor: black, fontSize: 10, lineWidth: 0.1, lineColor: amber },
+            columnStyles: {
+                0: { cellWidth: 40, fontStyle: 'bold' },
+                1: { cellWidth: 50 },
+                2: { cellWidth: 40, fontStyle: 'bold' },
+                3: { cellWidth: 50 },
+            },
+            margin: { left: 14, right: 14 },
         });
 
         // Axle Weight Analysis section
-        let lastY = doc.lastAutoTable.finalY + 10;
-        doc.setFontSize(12);
-        doc.setFillColor(255, 204, 102);
-        doc.rect(14, lastY, 180, 8, "F");
+        let lastY = doc.lastAutoTable.finalY + 5; // Reduced space for flow
+        doc.setFillColor(...amber);
+        doc.roundedRect(14, lastY, 180, 8, 3, 3, "F");
+        doc.setTextColor(...black);
         doc.text("AXLE WEIGHT ANALYSIS", 70, lastY + 6);
         lastY += 10;
 
-        // Sample axle data (replace with record.axleWeights if it's an array of objects)
-        const axleData = record.axleWeights || [
-            { group1: 1400, group2: 0, group3: 0, group4: 0, gwv: "1400 KG" },
-            { group1: 0.00, group2: 0, group3: 0, group4: 0, gwv: "N/A" }, // PDF row
-            { group1: 8000, group2: 10000, group3: 0, group4: 0, gwv: "18000 KG" }, // Allowed
-            { group1: 8400, group2: 10500, group3: 0, group4: 0, gwv: "18000 KG" }, // Allowed-5%
-            { group1: 0, group2: 0, group3: 0, group4: 0, gwv: "0 KG" }, // Excess
-        ];
+        // Axle data with modern highlights
+        const axleData = record.axleWeights || {
+            actual: { group1: 1400, group2: 0, group3: 0, group4: 0, gwv: "1400 KG" },
+            pdf: { group1: 0.00, group2: 0, group3: 0, group4: 0, gwv: "N/A" },
+            allowed: { group1: 8000, group2: 10000, group3: 0, group4: 0, gwv: "18000 KG" },
+            allowed5: { group1: 8400, group2: 10500, group3: 0, group4: 0, gwv: "18000 KG" },
+            excess: { group1: 0, group2: 0, group3: 0, group4: 0, gwv: "0 KG" },
+            result: ["Legal", "Legal", "Legal", "Legal", "Legal"],
+        };
         const axleHeaders = [["Items", "Group 1", "Group 2", "Group 3", "Group 4", "GWV"]];
         const axleRows = [
-            ["Actual WT", ...Object.values(axleData[0]).slice(0, -1), axleData[0].gwv],
-            ["PDF", ...Object.values(axleData[1]).slice(0, -1), axleData[1].gwv],
-            ["Allowed", ...Object.values(axleData[2]).slice(0, -1), axleData[2].gwv],
-            ["Allowed-5%", ...Object.values(axleData[3]).slice(0, -1), axleData[3].gwv],
-            ["Excess", ...Object.values(axleData[4]).slice(0, -1), axleData[4].gwv],
-            ["Result", "Legal", "Legal", "Legal", "Legal", "Legal"],
+            ["Actual WT", axleData.actual.group1, axleData.actual.group2, axleData.actual.group3, axleData.actual.group4, axleData.actual.gwv],
+            ["PDF", axleData.pdf.group1, axleData.pdf.group2, axleData.pdf.group3, axleData.pdf.group4, axleData.pdf.gwv],
+            ["Allowed", axleData.allowed.group1, axleData.allowed.group2, axleData.allowed.group3, axleData.allowed.group4, axleData.allowed.gwv],
+            ["Allowed-5%", axleData.allowed5.group1, axleData.allowed5.group2, axleData.allowed5.group3, axleData.allowed5.group4, axleData.allowed5.gwv],
+            ["Excess", axleData.excess.group1, axleData.excess.group2, axleData.excess.group3, axleData.excess.group4, axleData.excess.gwv],
+            ["Result", ...axleData.result],
         ];
         autoTable(doc, {
             head: axleHeaders,
             body: axleRows,
             startY: lastY,
             theme: "grid",
-            headStyles: { fillColor: [255, 204, 102], textColor: 0 },
-            bodyStyles: { fillColor: [255, 255, 204] },
+            headStyles: { fillColor: amber, textColor: black, lineWidth: 0.1, lineColor: black },
+            bodyStyles: { fillColor: lightAmber, textColor: black, lineWidth: 0.1, lineColor: amber },
+            didParseCell: (data) => {
+                if (data.row.index === 5 && data.column.index > 0 && data.cell.text[0] === 'Legal') {
+                    data.cell.styles.fillColor = green;
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (data.row.index === 4 && data.column.index > 0 && parseFloat(data.cell.text[0]) > 0) {
+                    data.cell.styles.fillColor = [244, 67, 54]; // red for excess
+                    data.cell.styles.textColor = [255, 255, 255];
+                }
+            },
         });
 
-        // Weights summary
-        lastY = doc.lastAutoTable.finalY + 10;
-        doc.setFillColor(255, 204, 102);
-        doc.rect(14, lastY, 60, 10, "F");
-        doc.rect(74, lastY, 60, 10, "F");
-        doc.rect(134, lastY, 60, 10, "F");
+        // Weights summary with rounded green boxes
+        lastY = doc.lastAutoTable.finalY + 5; // Reduced space for flow
+        doc.setFillColor(...green);
+        doc.roundedRect(14, lastY, 60, 10, 3, 3, "F");
+        doc.roundedRect(74, lastY, 60, 10, 3, 3, "F");
+        doc.roundedRect(134, lastY, 60, 10, 3, 3, "F");
         doc.setFontSize(10);
+        doc.setTextColor(255, 255, 255);
         doc.text("First Weight", 20, lastY + 7);
         doc.text("Second Weight", 80, lastY + 7);
         doc.text("Net Weight", 140, lastY + 7);
         lastY += 10;
-        doc.text(`${record.firstWeight || 1400} Kg`, 20, lastY + 7);
-        doc.text(`${record.secondWeight || 1400} Kg`, 80, lastY + 7);
-        doc.text(`${record.netWeight || 0} Kg`, 140, lastY + 7);
+        doc.setFillColor(...lightAmber);
+        doc.roundedRect(14, lastY, 60, 10, 3, 3, "F");
+        doc.roundedRect(74, lastY, 60, 10, 3, 3, "F");
+        doc.roundedRect(134, lastY, 60, 10, 3, 3, "F");
+        doc.setTextColor(...black);
+        doc.text(`${record.firstWeight || 'N/A'} Kg`, 20, lastY + 7);
+        doc.text(`${record.secondWeight || 'N/A'} Kg`, 80, lastY + 7);
+        doc.text(`${record.netWeight || 'N/A'} Kg`, 140, lastY + 7);
 
-        // Vehicle Snapshot section (if image URL available)
-        lastY += 20;
-        doc.setFillColor(255, 204, 102);
-        doc.rect(14, lastY, 180, 8, "F");
+        // Vehicle Snapshot section with border
+        lastY += 15; // Slight space for flow
+        doc.setFillColor(...amber);
+        doc.roundedRect(14, lastY, 180, 8, 3, 3, "F");
+        doc.setTextColor(...black);
         doc.text("VEHICLE SNAPSHOT", 80, lastY + 6);
         lastY += 10;
+
+        // Function to add footer and save
+        const addFooterAndSave = () => {
+            // Footer
+            lastY += 10; // Adjust for footer flow
+            doc.setFillColor(...amber);
+            doc.roundedRect(14, lastY, 180, 12, 3, 3, "F");
+            doc.setFontSize(8);
+            doc.setTextColor(...black);
+
+            // Logo in footer if loaded
+            doc.addImage(logoImg, 'JPEG', 20, lastY + 2, 8, 8);
+            doc.text("Powered by Qalibrated Systems | www.qalibrated.co.ke | Inventing and Making Happen", 30, lastY + 8);
+
+            doc.save(`ticket-${record.receiptNo}.pdf`);
+        };
+
         if (record.vehicleSnapshotUrl) {
-            // Assuming you have a way to load the image (e.g., via canvas for CORS)
             const img = new Image();
             img.src = record.vehicleSnapshotUrl;
             img.crossOrigin = "anonymous";
-            img.onload = () => {
-                doc.addImage(img, "JPEG", 14, lastY, 180, 100); // Adjust size as needed
-                doc.save(`ticket-${record.receiptNo}.pdf`);
-            };
+            await new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = () => {
+                    // Placeholder for snapshot
+                    doc.setFillColor(...lightAmber);
+                    doc.roundedRect(14, lastY, 180, 100, 3, 3, "F");
+                    doc.setTextColor(...black);
+                    doc.text("Snapshot Placeholder", 80, lastY + 50);
+                    lastY += 20;
+                    resolve();
+                };
+            });
+            if (img.complete) {
+                // Border and image
+                doc.setDrawColor(...amber);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(14, lastY, 180, 100, 3, 3, "D");
+                doc.addImage(img, "JPEG", 14, lastY, 180, 100);
+                doc.setFontSize(8);
+                doc.text(`Captured: ${dayjs(record.capturedTime).format("DD/MM/YYYY HH:mm:ss") || 'N/A'}`, 14, lastY + 102);
+                doc.text(`Trigger Source: ${record.triggerSource || 'N/A'}`, 14, lastY + 108);
+                lastY += 120;
+            } else {
+                lastY += 20;
+            }
         } else {
-            doc.text("No snapshot available", 14, lastY + 10);
-            lastY += 20;
+            // Placeholder for no snapshot
+            doc.setFillColor(...lightAmber);
+            doc.roundedRect(14, lastY, 180, 50, 3, 3, "F");
+            doc.setTextColor(...black);
+            doc.text("No Snapshot Available", 80, lastY + 25);
+            lastY += 60;
         }
 
-        // Footer
-        lastY += 110; // Adjust based on image height
-        doc.setFillColor(255, 204, 102);
-        doc.rect(14, lastY, 180, 10, "F");
-        doc.setFontSize(8);
-        doc.text("Powered by Calibrated Systems | www.calibrated.co.ke | Inventing and Making Happen", 20, lastY + 7);
+        addFooterAndSave();
 
-        if (!record.vehicleSnapshotUrl) {
-            doc.save(`ticket-${record.receiptNo}.pdf`);
-        }
         message.success("Ticket generated successfully");
     };
 
-    const openViewModal = (record) => {
-        setSelectedRecord(record);
+    const openViewModal = async (record) => {
+        try {
+            const response = await fetch(`/Transaction?ReceiptNo=${record.receiptNo}`);
+            const fullRecord = await response.json();
+            if (fullRecord.operatorId) {
+                const operator = await dispatch(fetchUserById(fullRecord.operatorId)).unwrap();
+                fullRecord.operatorName = operator?.name || operator?.fullName || 'N/A';
+            } else {
+                // If no operatorId, fetch current user as fallback
+                const currentUser = await dispatch(fetchCurrentUser()).unwrap();
+                fullRecord.operatorId = currentUser?.id || 'N/A';
+                fullRecord.operatorName = currentUser?.name || currentUser?.fullName || 'N/A';
+            }
+            setSelectedRecord(fullRecord);
+        } catch (error) {
+            message.error("Failed to fetch full transaction details");
+            setSelectedRecord(record);
+        }
         setIsModalOpen(true);
     };
 
@@ -235,7 +352,6 @@ export default function Transactions() {
                     dataSource={transactions}
                     rowKey="id"
                     loading={loading}
-                    // APPLYING CUSTOM ROW COLORS
                     rowClassName={(record) => {
                         if (record.status === "Completed") return "bg-green-50 hover:bg-green-100 transition-colors";
                         if (record.status === "In Progress") return "bg-amber-50 hover:bg-amber-100 transition-colors";
@@ -248,7 +364,7 @@ export default function Transactions() {
                         showSizeChanger: false,
                         onChange: (page) => {
                             setFilters({ ...filters, page });
-                            window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         },
                     }}
                 />
@@ -275,38 +391,40 @@ export default function Transactions() {
             >
                 {selectedRecord && (
                     <Descriptions bordered column={1} className="mt-4">
-                        <Descriptions.Item label="Receipt Number">{selectedRecord.receiptNo}</Descriptions.Item>
-                        <Descriptions.Item label="Vehicle Plate">{selectedRecord.noPlate}</Descriptions.Item>
-                        <Descriptions.Item label="Driver Name">{selectedRecord.driverName}</Descriptions.Item>
-                        <Descriptions.Item label="Commodity">{selectedRecord.commodityName}</Descriptions.Item>
+                        <Descriptions.Item label="Receipt Number">{selectedRecord.receiptNo || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Vehicle Plate">{selectedRecord.noPlate || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Driver Name">{selectedRecord.driverName || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Commodity">{selectedRecord.commodityName || 'N/A'}</Descriptions.Item>
                         <Descriptions.Item label="Weighing Progress">
-                            {selectedRecord.completedWeighings} of {selectedRecord.expectedWeighings}
+                            {selectedRecord.completedWeighings || '0'} of {selectedRecord.expectedWeighings || '2'}
                         </Descriptions.Item>
                         <Descriptions.Item label="Current Status">
                             <Tag color={selectedRecord.status === "Completed" ? "green" : "gold"}>
-                                {selectedRecord.status}
+                                {selectedRecord.status || 'N/A'}
                             </Tag>
                         </Descriptions.Item>
                         <Descriptions.Item label="Date Created">
-                            {dayjs(selectedRecord.createdAt).format("DD MMMM YYYY, HH:mm")}
+                            {dayjs(selectedRecord.createdAt).format("DD MMMM YYYY, HH:mm") || 'N/A'}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Axle Type">{selectedRecord.axleType || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="Transporter">{selectedRecord.transporter || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="Source">{selectedRecord.source || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="Destination">{selectedRecord.destination || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="Operator">{selectedRecord.operator || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="Timestamp">
-                            {dayjs(selectedRecord.timestamp).format("DD MMMM YYYY, HH:mm") || "N/A"}
+                        <Descriptions.Item label="Transporter">{selectedRecord.transporterName || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Source">{selectedRecord.originName || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Destination">{selectedRecord.destinationName|| 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Operator">{selectedRecord.operatorName || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="First Weight">{selectedRecord.firstWeight || 'N/A'} Kg</Descriptions.Item>
+                        <Descriptions.Item label="Second Weight">{selectedRecord.secondWeight || 'N/A'} Kg</Descriptions.Item>
+                        <Descriptions.Item label="Net Weight">{selectedRecord.netWeight || 'N/A'} Kg</Descriptions.Item>
+                        <Descriptions.Item label="Captured Time">
+                            {dayjs(selectedRecord.capturedTime).format("DD MMMM YYYY, HH:mm:ss") || 'N/A'}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Axle Weights">{JSON.stringify(selectedRecord.axleWeights) || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="First Weight">{selectedRecord.firstWeight || "N/A"} Kg</Descriptions.Item>
-                        <Descriptions.Item label="Second Weight">{selectedRecord.secondWeight || "N/A"} Kg</Descriptions.Item>
-                        <Descriptions.Item label="Net Weight">{selectedRecord.netWeight || "N/A"} Kg</Descriptions.Item>
                         <Descriptions.Item label="Vehicle Snapshot">
                             {selectedRecord.vehicleSnapshotUrl ? (
                                 <img src={selectedRecord.vehicleSnapshotUrl} alt="Snapshot" style={{ width: "100%" }} />
-                            ) : "N/A"}
+                            ) : 'N/A'}
                         </Descriptions.Item>
+                        <Descriptions.Item label="Supplier">{selectedRecord.supplierName || record.supplierId || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Customer">{selectedRecord.customerName || record.customerId || 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Is Completed">{selectedRecord.isCompleted ? 'Yes' : 'No'}</Descriptions.Item>
+                        <Descriptions.Item label="Weigh Mode">{selectedRecord.weighMode || 'N/A'}</Descriptions.Item>
                     </Descriptions>
                 )}
             </Modal>
