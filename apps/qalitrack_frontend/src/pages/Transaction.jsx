@@ -72,14 +72,13 @@ export default function Transactions() {
     setIsModalOpen(true);
   };
 
-  /* ================= PRINT (UPDATED SECTION) ================= */
+  /* ================= PRINT (FULLY UPDATED) ================= */
   const handlePrint = (record) => {
     if (!record) return;
 
     const doc = new jsPDF();
     const amber = [255, 152, 0];
     const slate = [33, 33, 33];
-    const green = [16, 185, 129];
     const lightGray = [245, 245, 245];
 
     // 1. Header & Logo
@@ -112,24 +111,26 @@ export default function Transactions() {
     doc.setFontSize(10);
     doc.text("TICKET DETAILS", 105, y + 5, { align: "center" });
 
-    // 3. Ticket Information Table
+    // 3. Expanded Ticket Information Table (Includes Supplier, Customer, etc.)
     y += 7;
     autoTable(doc, {
       startY: y,
       theme: "plain",
-      styles: { fontSize: 9, cellPadding: 2 },
+      styles: { fontSize: 8.5, cellPadding: 1.5 },
       columnStyles: {
-        0: { fontStyle: "bold", cellWidth: 35 },
-        1: { cellWidth: 55 },
-        2: { fontStyle: "bold", cellWidth: 35 },
-        3: { cellWidth: 55 },
+        0: { fontStyle: "bold", cellWidth: 32 },
+        1: { cellWidth: 58 },
+        2: { fontStyle: "bold", cellWidth: 32 },
+        3: { cellWidth: 58 },
       },
       body: [
         ["TICKET NO", `: ${record.receiptNo}`, "REGISTRATION", `: ${record.noPlate}`],
         ["AXLE TYPE", `: ${record.axleType || "N/A"}`, "COMMODITY", `: ${record.commodityName}`],
         ["TRANSPORTER", `: ${record.transporterName}`, "TIMESTAMP", `: ${dayjs(record.createdAt).format("DD-MM-YY : hh:mm A")}`],
+        ["SUPPLIER", `: ${record.supplierName || "N/A"}`, "CUSTOMER", `: ${record.customerName || "N/A"}`],
         ["SOURCE", `: ${record.originName || "N/A"}`, "DESTINATION", `: ${record.destinationName || "N/A"}`],
         ["OPERATOR", `: ${record.operatorName || "N/A"}`, "DRIVER", `: ${record.driverName || "N/A"}`],
+        ["WEIGH MODE", `: ${record.weighMode || "N/A"}`, "STATUS", `: ${record.status || "N/A"}`],
       ],
     });
 
@@ -168,7 +169,7 @@ export default function Transactions() {
       styles: { halign: "center", fontSize: 10, fontStyle: "bold" },
     });
 
-    // 6. Footer
+    // 6. Footer & Snapshot
     y = doc.lastAutoTable.finalY + 10;
     doc.setFontSize(10);
     doc.setTextColor(...slate);
@@ -239,7 +240,6 @@ export default function Transactions() {
 
   return (
     <div className="h-screen p-4 bg-gray-50 flex flex-col">
-      {/* ================= FILTERS ================= */}
       <div className="mb-3 bg-white p-4 rounded-lg shadow-sm border flex flex-wrap items-center gap-3">
         <Input
           allowClear
@@ -265,7 +265,6 @@ export default function Transactions() {
         </Button>
       </div>
 
-      {/* ================= TABLE ================= */}
       <div className="flex-1 overflow-hidden bg-white rounded-lg border">
         <Table
           columns={columns}
@@ -286,7 +285,6 @@ export default function Transactions() {
         />
       </div>
 
-      {/* ================= MODAL ================= */}
       <Modal
         title={
           <div className="font-bold text-amber-600">
@@ -310,61 +308,29 @@ export default function Transactions() {
       >
         {selectedRecord && (
           <Descriptions bordered column={2} size="small" className="mt-4">
-            <Descriptions.Item label="Receipt No">
-              {selectedRecord.receiptNo}
-            </Descriptions.Item>
-            <Descriptions.Item label="Vehicle Plate">
-              {selectedRecord.noPlate}
-            </Descriptions.Item>
-            <Descriptions.Item label="Driver">
-              {selectedRecord.driverName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Commodity">
-              {selectedRecord.commodityName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Transporter">
-              {selectedRecord.transporterName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Supplier">
-              {selectedRecord.supplierName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Customer">
-              {selectedRecord.customerName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Source">
-              {selectedRecord.originName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Destination">
-              {selectedRecord.destinationName}
-            </Descriptions.Item>
-            <Descriptions.Item label="First Weight">
-              {selectedRecord.firstWeight} Kg
-            </Descriptions.Item>
-            <Descriptions.Item label="Second Weight">
-              {selectedRecord.secondWeight} Kg
-            </Descriptions.Item>
+            <Descriptions.Item label="Receipt No">{selectedRecord.receiptNo}</Descriptions.Item>
+            <Descriptions.Item label="Vehicle Plate">{selectedRecord.noPlate}</Descriptions.Item>
+            <Descriptions.Item label="Driver">{selectedRecord.driverName}</Descriptions.Item>
+            <Descriptions.Item label="Commodity">{selectedRecord.commodityName}</Descriptions.Item>
+            <Descriptions.Item label="Transporter">{selectedRecord.transporterName}</Descriptions.Item>
+            <Descriptions.Item label="Supplier">{selectedRecord.supplierName}</Descriptions.Item>
+            <Descriptions.Item label="Customer">{selectedRecord.customerName}</Descriptions.Item>
+            <Descriptions.Item label="Source">{selectedRecord.originName}</Descriptions.Item>
+            <Descriptions.Item label="Destination">{selectedRecord.destinationName}</Descriptions.Item>
+            <Descriptions.Item label="First Weight">{selectedRecord.firstWeight} Kg</Descriptions.Item>
+            <Descriptions.Item label="Second Weight">{selectedRecord.secondWeight} Kg</Descriptions.Item>
             <Descriptions.Item label="Net Weight" className="font-bold text-blue-600">
               {selectedRecord.netWeight} Kg
             </Descriptions.Item>
-            <Descriptions.Item label="Operator">
-              {selectedRecord.operatorName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Weigh Mode">
-              {selectedRecord.weighMode}
-            </Descriptions.Item>
+            <Descriptions.Item label="Operator">{selectedRecord.operatorName}</Descriptions.Item>
+            <Descriptions.Item label="Weigh Mode">{selectedRecord.weighMode}</Descriptions.Item>
             <Descriptions.Item label="Status">
               <Tag color="orange">{selectedRecord.status}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Date Created">
-              {dayjs(selectedRecord.createdAt).format("LLL")}
-            </Descriptions.Item>
+            <Descriptions.Item label="Date Created">{dayjs(selectedRecord.createdAt).format("LLL")}</Descriptions.Item>
             <Descriptions.Item label="Vehicle Proof" span={2}>
               {selectedRecord.vehicleSnapshotUrl ? (
-                <img
-                  src={selectedRecord.vehicleSnapshotUrl}
-                  className="w-full rounded border"
-                  alt="Snapshot"
-                />
+                <img src={selectedRecord.vehicleSnapshotUrl} className="w-full rounded border" alt="Snapshot" />
               ) : (
                 "No Image Available"
               )}
