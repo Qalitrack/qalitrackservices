@@ -144,9 +144,8 @@ public class TransactionProfile : Profile
             .ForMember(dest => dest.OriginId, opt => opt.MapFrom(src => src.OriginId))
             .ForMember(dest => dest.OriginName, opt => opt.MapFrom(src => src.OriginName))
             .ForMember(dest => dest.DestinationId, opt => opt.MapFrom(src => src.DestinationId))
-            .ForMember(dest => dest.DestinationName, opt => opt.MapFrom(src => src.DestinationName))
-            .ForMember(dest => dest.WeighMode, opt => opt.MapFrom(src => src.WeighMode))
-            .ForMember(dest => dest.Operation, opt => opt.MapFrom(src => src.Operation));
+            .ForMember(dest => dest.DestinationName, opt => opt.MapFrom(src => src.DestinationName)).ForMember(dest => dest.WeighMode, opt => opt.MapFrom(src => src.WeighMode));
+
         // ... rest of the existing mappings ...
         // DTO to Entity (excluding image files as they're handled separately)
         CreateMap<CreateTransactionDto, WeighbridgeTransaction>()
