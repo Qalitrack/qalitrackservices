@@ -9,6 +9,8 @@ import {
 
 /**
  * ReportsTable
+ * - Uses denormalized transaction data directly from backend
+ * - No Redux joins required
  */
 export default function ReportsTable({
   transactions,
@@ -21,13 +23,16 @@ export default function ReportsTable({
   onExportPDF,
   onExportExcel,
 }) {
+  /* =========================
+     Local State
+     ========================= */
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
 
   const totalPages = Math.ceil(totalRecords / pageSize);
 
   /* =========================
-     Sorting Logic
+     Sorting Logic (UI only)
      ========================= */
   const handleSort = (field) => {
     if (sortField === field) {
@@ -45,6 +50,7 @@ export default function ReportsTable({
   const getSortIcon = (field) => {
     if (sortField !== field)
       return <ArrowUpDown className="w-4 h-4 inline ml-1 opacity-30" />;
+
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 inline ml-1 text-amber-400" />
     ) : (
@@ -56,10 +62,8 @@ export default function ReportsTable({
      Badge Helpers
      ========================= */
   const renderBadge = (label, className) => (
-    <span
-      className={`px-2 py-1 text-xs rounded border ${className}`}
-    >
-      {label}
+    <span className={`px-2 py-1 text-xs rounded border ${className}`}>
+      {label || "-"}
     </span>
   );
 
@@ -145,7 +149,7 @@ export default function ReportsTable({
               {[
                 ["date", "Date"],
                 ["receiptNo", "Receipt"],
-                ["numberPlate", "Vehicle"],
+                ["vehicle", "Vehicle"],
                 ["driver", "Driver"],
                 ["commodity", "Commodity"],
                 ["supplier", "Supplier"],
@@ -173,19 +177,41 @@ export default function ReportsTable({
               ? renderEmpty()
               : transactions.map((t) => (
                   <tr key={t.id} className="border-t hover:bg-gray-50">
-                    <td className="p-3">{t.date}</td>
-                    <td className="p-3 font-mono">{t.receiptNo}</td>
-                    <td className="p-3">{t.numberPlate}</td>
-                    <td className="p-3">{t.driver}</td>
-                    <td className="p-3">{t.commodity}</td>
-                    <td className="p-3">{t.supplier}</td>
-                    <td className="p-3">{t.customer}</td>
-                    <td className="p-3">{t.weighbridge}</td>
-                    <td className="p-3 text-right">
-                      {t.firstWeight.toLocaleString()}
+                    <td className="p-3">
+                      {t.createdAt
+                        ? new Date(t.createdAt).toLocaleDateString()
+                        : "-"}
                     </td>
-                    <td className="p-3">{getWeighModeBadge(t.weighMode)}</td>
-                    <td className="p-3">{getStatusBadge(t.status)}</td>
+
+                    <td className="p-3 font-mono">
+                      {t.receiptNo || "-"}
+                    </td>
+
+                    <td className="p-3">{t.noPlate || "-"}</td>
+
+                    <td className="p-3">{t.driverName || "-"}</td>
+
+                    <td className="p-3">{t.commodityName || "-"}</td>
+
+                    <td className="p-3">{t.supplierName || "-"}</td>
+
+                    <td className="p-3">{t.customerName || "-"}</td>
+
+                    <td className="p-3">{t.weighbridgeName || "-"}</td>
+
+                    <td className="p-3 text-right">
+                      {t.firstWeight
+                        ? Number(t.firstWeight).toLocaleString()
+                        : "-"}
+                    </td>
+
+                    <td className="p-3">
+                      {getWeighModeBadge(t.weighMode)}
+                    </td>
+
+                    <td className="p-3">
+                      {getStatusBadge(t.status)}
+                    </td>
                   </tr>
                 ))}
           </tbody>
