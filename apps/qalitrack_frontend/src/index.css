@@ -4,3 +4,32 @@
 
 html, body, #root { height: 100%; }
 body { @apply bg-gray-100 text-gray-900; }
+
+.compact-transaction-form .ant-form-item {
+  margin-bottom: 8px;
+}
+
+.compact-transaction-form .ant-form-item-label > label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #444;
+}
+
+.compact-transaction-form .ant-select,
+.compact-transaction-form .ant-input {
+  font-size: 13px;
+}
+.compact-transaction-table .ant-table-thead > tr > th {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #444;
+}
+
+.compact-transaction-table .ant-table-tbody > tr > td {
+  font-size: 13px;
+}
+
+.compact-transaction-table .ant-btn {
+  font-size: 13px;
+}
