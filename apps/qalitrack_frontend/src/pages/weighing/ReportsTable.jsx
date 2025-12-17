@@ -154,7 +154,7 @@ export default function ReportsTable({
                 ["commodity", "Commodity"],
                 ["supplier", "Supplier"],
                 ["customer", "Customer"],
-                ["weighbridge", "Weighbridge"],
+                // ["weighbridge", "Weighbridge"],
                 ["firstWeight", "Weight (kg)"],
               ].map(([key, label]) => (
                 <th
@@ -197,7 +197,7 @@ export default function ReportsTable({
 
                     <td className="p-3">{t.customerName || "-"}</td>
 
-                    <td className="p-3">{t.weighbridgeName || "-"}</td>
+                    {/* <td className="p-3">{t.weighbridgeName || "-"}</td> */}
 
                     <td className="p-3 text-right">
                       {t.firstWeight
