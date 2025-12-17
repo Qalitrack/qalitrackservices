@@ -10,6 +10,11 @@ import {
   RotateCcw,
 } from "lucide-react";
 
+// ✅ EXPORT LIBRARIES (ADDED)
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+
 /**
  * Reports Page
  */
@@ -70,7 +75,6 @@ export default function Reports() {
   const handleApplyFilters = () => {
     let data = [...allTransactions];
 
-    // Date range
     if (filters.startDate) {
       data = data.filter(
         (tx) => new Date(tx.createdAt) >= new Date(filters.startDate)
@@ -83,7 +87,6 @@ export default function Reports() {
       );
     }
 
-    // Receipt number
     if (filters.receiptNumber) {
       data = data.filter((tx) =>
         tx.receiptNumber
@@ -92,7 +95,6 @@ export default function Reports() {
       );
     }
 
-    // Number plate
     if (filters.numberPlate) {
       data = data.filter((tx) =>
         tx.numberPlate
@@ -101,16 +103,14 @@ export default function Reports() {
       );
     }
 
-    // Status
     if (filters.status === "completed") {
       data = data.filter((tx) => tx.isCompleted === true);
     }
 
-    if (filters.status === "pending") {
+    if (filters.status === "InProgress") {
       data = data.filter((tx) => tx.isCompleted === false);
     }
 
-    // Advanced filters
     [
       "driver",
       "supplier",
@@ -169,149 +169,168 @@ export default function Reports() {
   );
 
   /* =========================
-     Export Placeholders
+     EXPORT: PDF (ADDED)
      ========================= */
   const handleExportPDF = () => {
-    console.log("Export PDF", filteredTransactions);
+    const doc = new jsPDF("landscape");
+
+    doc.setFontSize(16);
+    doc.text("Transaction Report", 14, 15);
+
+    autoTable(doc, {
+      startY: 25,
+      head: [
+        [
+          "Date",
+          "Receipt",
+          "Vehicle",
+          "Driver",
+          "Commodity",
+          "Supplier",
+          "Customer",
+          "Weight (kg)",
+          "Mode",
+          "Status",
+        ],
+      ],
+      body: filteredTransactions.map((t) => [
+        t.createdAt
+          ? new Date(t.createdAt).toLocaleDateString()
+          : "-",
+        t.receiptNo || "-",
+        t.noPlate || "-",
+        t.driverName || "-",
+        t.commodityName || "-",
+        t.supplierName || "-",
+        t.customerName || "-",
+        t.firstWeight
+          ? Number(t.firstWeight).toLocaleString()
+          : "-",
+        t.weighMode || "-",
+        t.status || "-",
+      ]),
+      styles: { fontSize: 9 },
+      headStyles: {
+        fillColor: [251, 191, 36], // yellow / amber
+        textColor: 0,
+      },
+    });
+
+    doc.save("transaction-report.pdf");
   };
 
+  /* =========================
+     EXPORT: EXCEL (ADDED)
+     ========================= */
   const handleExportExcel = () => {
-    console.log("Export Excel", filteredTransactions);
+    const data = filteredTransactions.map((t) => ({
+      Date: t.createdAt
+        ? new Date(t.createdAt).toLocaleDateString()
+        : "",
+      Receipt: t.receiptNo || "",
+      Vehicle: t.noPlate || "",
+      Driver: t.driverName || "",
+      Commodity: t.commodityName || "",
+      Supplier: t.supplierName || "",
+      Customer: t.customerName || "",
+      WeightKG: t.firstWeight || "",
+      Mode: t.weighMode || "",
+      Status: t.status || "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+    XLSX.writeFile(workbook, "transaction-report.xlsx");
   };
 
   return (
-    <div className="p-6">
-      {/* ================= HEADER ================= */}
-      <div className="mb-6">
-        <h1 className="text-4xl mb-2">Reports</h1>
-        <p className="text-gray-600">
-          Transaction-based operational reports
-        </p>
-      </div>
+  <div className="p-6">
+    {/* ================= HEADER ================= */}
+    <div className="mb-6">
+      <h1 className="text-4xl mb-2">Reports</h1>
+      <p className="text-gray-600">
+        Transaction-based operational reports
+      </p>
+    </div>
 
-      {/* ================= SUMMARY ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white border rounded-lg p-4">
-          <p className="text-sm text-gray-500">Total Transactions</p>
-          <p className="text-2xl font-semibold">{totalTransactions}</p>
-        </div>
-
-        <div className="bg-white border rounded-lg p-4">
-          <p className="text-sm text-gray-500">Completed</p>
-          <p className="text-2xl font-semibold text-green-600">
-            {completedTransactions}
-          </p>
-        </div>
-
-        <div className="bg-white border rounded-lg p-4">
-          <p className="text-sm text-gray-500">Pending</p>
-          <p className="text-2xl font-semibold text-yellow-600">
-            {pendingTransactions}
-          </p>
-        </div>
-
-        <div className="bg-white border rounded-lg p-4">
-          <p className="text-sm text-gray-500">Total Net Weight (kg)</p>
-          <p className="text-2xl font-semibold">
-            {totalNetWeight.toLocaleString()}
-          </p>
-        </div>
-      </div>
-
-      {/* ================= FILTERS ================= */}
-      <div className="bg-white border rounded-lg p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Filter className="w-5 h-5" />
-          <h2 className="text-lg font-medium">Filters</h2>
-        </div>
-
-        {/* Date Filters */}
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          {["startDate", "endDate"].map((key) => (
-            <div key={key}>
-              <label className="block text-sm mb-1">
-                {key === "startDate" ? "Start Date" : "End Date"}
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={filters[key]}
-                  onChange={(e) => updateFilter(key, e.target.value)}
-                  className="w-full border px-3 py-2 pl-10 rounded"
-                />
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Basic Filters */}
-        <div className="grid md:grid-cols-4 gap-4">
+    {/* ================= FILTERS ================= */}
+    <div className="bg-white border rounded-lg p-4 mb-6">
+      {/* Top Row */}
+      <div className="flex flex-wrap gap-4 items-end">
+        {/* Start Date */}
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600">Start Date</label>
           <input
-            placeholder="Receipt Number"
+            type="date"
+            value={filters.startDate}
+            onChange={(e) => updateFilter("startDate", e.target.value)}
+            className="border rounded px-3 py-2"
+          />
+        </div>
+
+        {/* End Date */}
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600">End Date</label>
+          <input
+            type="date"
+            value={filters.endDate}
+            onChange={(e) => updateFilter("endDate", e.target.value)}
+            className="border rounded px-3 py-2"
+          />
+        </div>
+
+        {/* Receipt */}
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600">Receipt No</label>
+          <input
+            type="text"
+            placeholder="RCT123"
             value={filters.receiptNumber}
-            onChange={(e) => updateFilter("receiptNumber", e.target.value)}
-            className="border px-3 py-2 rounded"
+            onChange={(e) =>
+              updateFilter("receiptNumber", e.target.value)
+            }
+            className="border rounded px-3 py-2"
           />
+        </div>
 
+        {/* Number Plate */}
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600">Number Plate</label>
           <input
-            placeholder="Number Plate"
+            type="text"
+            placeholder="KAA 123A"
             value={filters.numberPlate}
-            onChange={(e) => updateFilter("numberPlate", e.target.value)}
-            className="border px-3 py-2 rounded"
+            onChange={(e) =>
+              updateFilter("numberPlate", e.target.value)
+            }
+            className="border rounded px-3 py-2"
           />
+        </div>
 
+        {/* Status */}
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600">Status</label>
           <select
             value={filters.status}
             onChange={(e) => updateFilter("status", e.target.value)}
-            className="border px-3 py-2 rounded"
+            className="border rounded px-3 py-2"
           >
-            <option value="">All Status</option>
+            <option value="">All</option>
             <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
+            <option value="InProgress">In Progress</option>
           </select>
         </div>
 
-        {/* Advanced Toggle */}
-        <div className="mt-4 border-t pt-4">
-          <button
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center gap-2 text-sm"
-          >
-            {showAdvanced ? <ChevronUp /> : <ChevronDown />}
-            {showAdvanced ? "Hide Advanced Filters" : "Show Advanced Filters"}
-          </button>
-        </div>
-
-        {/* Advanced Filters */}
-        {showAdvanced && (
-          <div className="grid md:grid-cols-3 gap-4 mt-4">
-            {[
-              "driver",
-              "supplier",
-              "customer",
-              "origin",
-              "destination",
-              "operator",
-            ].map((key) => (
-              <input
-                key={key}
-                placeholder={key}
-                value={filters[key]}
-                onChange={(e) => updateFilter(key, e.target.value)}
-                className="border px-3 py-2 rounded"
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex gap-3 mt-6">
+        {/* Buttons */}
+        <div className="flex gap-2">
           <button
             onClick={handleApplyFilters}
-            className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded"
+            className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded flex items-center gap-2"
           >
-            Apply Filters
+            <Filter size={16} />
+            Apply
           </button>
 
           <button
@@ -319,20 +338,79 @@ export default function Reports() {
             className="border px-4 py-2 rounded flex items-center gap-2"
           >
             <RotateCcw size={16} />
-            Clear
+            Reset
+          </button>
+
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="border px-3 py-2 rounded"
+          >
+            {showAdvanced ? <ChevronUp /> : <ChevronDown />}
           </button>
         </div>
       </div>
 
-      {/* ================= TABLE ================= */}
-      <div className="mt-8">
-        <ReportsTable
-          transactions={filteredTransactions}
-          loading={loading}
-          onExportPDF={handleExportPDF}
-          onExportExcel={handleExportExcel}
-        />
+      {/* ================= ADVANCED FILTERS ================= */}
+      {showAdvanced && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          {[
+            ["driver", "Driver"],
+            ["supplier", "Supplier"],
+            ["customer", "Customer"],
+            ["origin", "Origin"],
+            ["destination", "Destination"],
+            ["operator", "Operator"],
+          ].map(([key, label]) => (
+            <div key={key} className="flex flex-col">
+              <label className="text-sm text-gray-600">{label}</label>
+              <input
+                type="text"
+                value={filters[key]}
+                onChange={(e) => updateFilter(key, e.target.value)}
+                className="border rounded px-3 py-2"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* ================= SUMMARY ================= */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="bg-white border rounded-lg p-4">
+        <p className="text-sm text-gray-500">Total Transactions</p>
+        <p className="text-2xl font-semibold">{totalTransactions}</p>
+      </div>
+
+      <div className="bg-white border rounded-lg p-4">
+        <p className="text-sm text-gray-500">Completed</p>
+        <p className="text-2xl font-semibold text-green-600">
+          {completedTransactions}
+        </p>
+      </div>
+
+      <div className="bg-white border rounded-lg p-4">
+        <p className="text-sm text-gray-500">In-Progress</p>
+        <p className="text-2xl font-semibold text-yellow-600">
+          {pendingTransactions}
+        </p>
+      </div>
+
+      <div className="bg-white border rounded-lg p-4">
+        <p className="text-sm text-gray-500">Total Net Weight (kg)</p>
+        <p className="text-2xl font-semibold">
+          {totalNetWeight.toLocaleString()}
+        </p>
       </div>
     </div>
-  );
+
+    {/* ================= TABLE ================= */}
+    <ReportsTable
+      transactions={filteredTransactions}
+      loading={loading}
+      onExportPDF={handleExportPDF}
+      onExportExcel={handleExportExcel}
+    />
+  </div>
+);
 }
