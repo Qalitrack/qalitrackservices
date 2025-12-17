@@ -185,8 +185,7 @@ public class TransactionService : ITransactionService
         if (dto.OriginName != null) existingTransaction.OriginName = dto.OriginName;
         if (dto.DestinationId.HasValue) existingTransaction.DestinationId = dto.DestinationId;
         if (dto.DestinationName != null) existingTransaction.DestinationName = dto.DestinationName;
-        if (dto.WeighMode != null) existingTransaction.WeighMode = dto.WeighMode;
-        if (dto.Operation != null) existingTransaction.Operation = dto.Operation;
+        if (dto.WeighMode != null) existingTransaction.WeighMode = dto.WeighMode.Value;
         if (dto.ChangeDescription != null) existingTransaction.ChangeDescription = dto.ChangeDescription;
         
         var utcNow = _timeService.UtcNow;
