@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Transaction.Core.Entities;
 
 namespace Transaction.Core.DTOs;
 
@@ -61,8 +62,7 @@ public class TransactionReadDto
     public string OperatorName2nd { get; set; } = string.Empty;
     
     // Operational Details
-    public string WeighMode { get; set; } = string.Empty;
-    public string Operation { get; set; } = string.Empty;
+    public WeighingDirection WeighMode { get; set; } = WeighingDirection.Unknown;
     
     // Transaction Status
     public string Status { get; set; } = string.Empty;
@@ -118,9 +118,8 @@ public class CreateTransactionDto
     public Guid? DestinationId { get; set; }
     public string DestinationName { get; set; } = string.Empty;
     
-    // Operational Details (Optional)
-    public string WeighMode { get; set; } = string.Empty;
-    public string Operation { get; set; } = string.Empty;
+    // Direction of the weighing operation (Optional)
+    public WeighingDirection WeighMode { get; set; } = WeighingDirection.Unknown;
     
     public decimal? Weight { get; set; }
     public string? Notes { get; set; }
@@ -158,9 +157,8 @@ public class UpdateTransactionDto
     public Guid? DestinationId { get; set; }
     public string? DestinationName { get; set; }
     
-    // Operational Details
-    public string? WeighMode { get; set; }
-    public string? Operation { get; set; }
+    // Direction of the weighing operation
+    public WeighingDirection? WeighMode { get; set; }
     
     public string? ChangeDescription { get; set; }
 }
