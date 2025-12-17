@@ -55,9 +55,8 @@ public class WeighbridgeTransaction : BaseEntity
     public Guid? OperatorId2nd { get; set; }
     public string OperatorName2nd { get; set; } = string.Empty;
     
-    // Operational Details
-    public string WeighMode { get; set; } = string.Empty; // e.g., "Inbound", "Outbound"
-    public string Operation { get; set; } = string.Empty;
+    // Direction of the weighing operation (Inbound/Outbound)
+    public WeighingDirection WeighMode { get; set; }
     
     // Transaction Status
     public WeighbridgeTransactionStatus Status { get; set; } = WeighbridgeTransactionStatus.Pending;
@@ -254,6 +253,13 @@ public class ReweighRecord
     
     // Navigation property
     public virtual WeighbridgeTransaction? WeighbridgeTransaction { get; set; }
+}
+
+public enum WeighingDirection
+{
+    Inbound,
+    Outbound,
+    Unknown
 }
 
 public enum WeighbridgeTransactionStatus

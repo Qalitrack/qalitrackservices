@@ -71,9 +71,10 @@ public class TransactionDbContext : DbContext
             entity.Property(e => e.ScaleName2nd).HasMaxLength(100);
             entity.Property(e => e.OperatorName2nd).HasMaxLength(100);
             entity.Property(e => e.WeighMode).HasMaxLength(50);
-            entity.Property(e => e.Operation).HasMaxLength(50);
             entity.Property(e => e.ReweighPermissionReason).HasMaxLength(500);
             entity.Property(e => e.ChangeDescription).HasMaxLength(1000);
+            entity.Property(e => e.Image)
+                .HasColumnName("image");
 
             // Indexes
             entity.HasIndex(e => e.ReceiptNo).IsUnique();
@@ -136,7 +137,10 @@ public class TransactionDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Status).HasMaxLength(50).IsRequired();
             entity.Property(e => e.Reason).HasMaxLength(500);
-            entity.Property(e => e.Notes).HasMaxLength(2000);
+            entity.Property(e => e.Notes)
+                .HasMaxLength(1000)
+                .IsRequired(false);  // This makes the column nullable
+
             entity.Property(e => e.PerformedBy).HasMaxLength(100);
             entity.Property(e => e.Operator1).HasMaxLength(100);
             entity.Property(e => e.Operator2).HasMaxLength(100);
