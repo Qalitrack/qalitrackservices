@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
+import DriverReport from "./reportFiles/DriverReport";
+// future imports
+// import CustomerReport from "./reportfiles/CustomerReport";
+// import CommodityReport from "./reportfiles/CommodityReport";
+// import SupplierReport from "./reportfiles/SupplierReport";
+
 import { fetchTransactions } from "../../store/weighingSlice";
-import {
-  ChevronDown,
-  ChevronUp,
-  Filter,
-  RotateCcw,
-} from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 // EXPORT LIBRARIES
 import jsPDF from "jspdf";
@@ -15,7 +16,7 @@ import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 
 /**
- * Reports Page
+ * Reports Page (Main Container)
  */
 export default function Reports() {
   const dispatch = useDispatch();
@@ -23,34 +24,36 @@ export default function Reports() {
   /* =========================
      Redux State
      ========================= */
-  const { transactions: allTransactions, loading } = useSelector(
+  const { transactions, loading } = useSelector(
     (state) => state.weighing
   );
 
   /* =========================
-     Local State
+     Report Tabs State
      ========================= */
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const REPORT_TABS = [
+    "transactions",
+    "drivers",
+    "customers",
+    "commodities",
+    "suppliers",
+  ];
+
+  const [activeTab, setActiveTab] = useState("transactions");
 
   /* =========================
-     Pagination State
+     Pagination State (Transactions)
      ========================= */
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const [pageSize, setPageSize] = useState(10);
 
+  /* =========================
+     Filters (Transactions)
+     ========================= */
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
-    receiptNumber: "",
-    numberPlate: "",
     status: "",
-    driver: "",
-    supplier: "",
-    customer: "",
-    origin: "",
-    destination: "",
-    operator: "",
   });
 
   /* =========================
@@ -61,199 +64,86 @@ export default function Reports() {
   }, [dispatch]);
 
   /* =========================
-     Sync Filtered Data
+     Filtered Transactions
      ========================= */
-  useEffect(() => {
-    setFilteredTransactions(allTransactions);
-  }, [allTransactions]);
-
-  /* Reset page when filters change */
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredTransactions]);
-
-  /* =========================
-     Helpers
-     ========================= */
-  const updateFilter = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  /* =========================
-     Apply Filters
-     ========================= */
-  const handleApplyFilters = () => {
-    let data = [...allTransactions];
+  const filteredTransactions = useMemo(() => {
+    let data = [...transactions];
 
     if (filters.startDate) {
       data = data.filter(
-        (tx) => new Date(tx.createdAt) >= new Date(filters.startDate)
+        (t) => new Date(t.createdAt) >= new Date(filters.startDate)
       );
     }
 
     if (filters.endDate) {
       data = data.filter(
-        (tx) => new Date(tx.createdAt) <= new Date(filters.endDate)
+        (t) => new Date(t.createdAt) <= new Date(filters.endDate)
       );
     }
 
-    if (filters.receiptNumber) {
-      data = data.filter((tx) =>
-        tx.receiptNumber
-          ?.toLowerCase()
-          .includes(filters.receiptNumber.toLowerCase())
-      );
+    if (filters.status) {
+      data = data.filter((t) => t.status === filters.status);
     }
 
-    if (filters.numberPlate) {
-      data = data.filter((tx) =>
-        tx.numberPlate
-          ?.toLowerCase()
-          .includes(filters.numberPlate.toLowerCase())
-      );
-    }
-
-    if (filters.status === "completed") {
-      data = data.filter((tx) => tx.isCompleted === true);
-    }
-
-    if (filters.status === "InProgress") {
-      data = data.filter((tx) => tx.isCompleted === false);
-    }
-
-    [
-      "driver",
-      "supplier",
-      "customer",
-      "origin",
-      "destination",
-      "operator",
-    ].forEach((key) => {
-      if (filters[key]) {
-        data = data.filter((tx) =>
-          tx[key]?.toLowerCase().includes(filters[key].toLowerCase())
-        );
-      }
-    });
-
-    setFilteredTransactions(data);
-  };
+    return data;
+  }, [transactions, filters]);
 
   /* =========================
-     Clear Filters
+     Pagination Slice
      ========================= */
-  const handleClearFilters = () => {
-    setFilters({
-      startDate: "",
-      endDate: "",
-      receiptNumber: "",
-      numberPlate: "",
-      status: "",
-      driver: "",
-      supplier: "",
-      customer: "",
-      origin: "",
-      destination: "",
-      operator: "",
-    });
+  const totalRecords = filteredTransactions.length;
 
-    setFilteredTransactions(allTransactions);
-  };
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredTransactions.slice(start, start + pageSize);
+  }, [filteredTransactions, currentPage, pageSize]);
 
   /* =========================
-     Summary Calculations
+     EXPORT: PDF (Transactions)
      ========================= */
-  const totalTransactions = filteredTransactions.length;
-
-  const completedTransactions = filteredTransactions.filter(
-    (tx) => tx.isCompleted === true
-  ).length;
-
-  const pendingTransactions = filteredTransactions.filter(
-    (tx) => tx.isCompleted === false
-  ).length;
-
-  const totalNetWeight = filteredTransactions.reduce(
-    (sum, tx) => sum + (tx?.netWeight || 0),
-    0
-  );
-
-  /* =========================
-     Pagination Logic
-     ========================= */
-  const totalPages = Math.ceil(
-    filteredTransactions.length / rowsPerPage
-  );
-
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-
-  const paginatedTransactions = filteredTransactions.slice(
-    startIndex,
-    endIndex
-  );
-
-  const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  };
-
-  /* =========================
-     EXPORT: PDF
-     ========================= */
-  const handleExportPDF = () => {
+  const handleExportPDF = (rows) => {
     const doc = new jsPDF("landscape");
-
     doc.setFontSize(16);
     doc.text("Transaction Report", 14, 15);
 
     autoTable(doc, {
       startY: 25,
-      head: [
-        [
-          "Date",
-          "Receipt",
-          "Vehicle",
-          "Driver",
-          "Commodity",
-          "Supplier",
-          "Customer",
-          "Weight (kg)",
-          "Mode",
-          "Status",
-        ],
-      ],
-      body: filteredTransactions.map((t) => [
-        t.createdAt
-          ? new Date(t.createdAt).toLocaleDateString()
-          : "-",
+      head: [[
+        "Date",
+        "Receipt",
+        "Vehicle",
+        "Driver",
+        "Commodity",
+        "Supplier",
+        "Customer",
+        "First Weight",
+        "Net Weight",
+        "Status",
+      ]],
+      body: rows.map((t) => [
+        t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "-",
         t.receiptNo || "-",
         t.noPlate || "-",
         t.driverName || "-",
         t.commodityName || "-",
         t.supplierName || "-",
         t.customerName || "-",
-        t.firstWeight
-          ? Number(t.firstWeight).toLocaleString()
-          : "-",
-        t.weighMode || "-",
+        t.firstWeight || "-",
+        t.netWeight || "-",
         t.status || "-",
       ]),
       styles: { fontSize: 9 },
-      headStyles: {
-        fillColor: [251, 191, 36],
-        textColor: 0,
-      },
+      headStyles: { fillColor: [251, 191, 36], textColor: 0 },
     });
 
     doc.save("transaction-report.pdf");
   };
 
   /* =========================
-     EXPORT: EXCEL
+     EXPORT: EXCEL (Transactions)
      ========================= */
-  const handleExportExcel = () => {
-    const data = filteredTransactions.map((t) => ({
+  const handleExportExcel = (rows) => {
+    const data = rows.map((t) => ({
       Date: t.createdAt
         ? new Date(t.createdAt).toLocaleDateString()
         : "",
@@ -263,16 +153,68 @@ export default function Reports() {
       Commodity: t.commodityName || "",
       Supplier: t.supplierName || "",
       Customer: t.customerName || "",
-      WeightKG: t.firstWeight || "",
-      Mode: t.weighMode || "",
+      FirstWeight: t.firstWeight || "",
+      NetWeight: t.netWeight || "",
       Status: t.status || "",
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+    XLSX.writeFile(wb, "transaction-report.xlsx");
+  };
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
-    XLSX.writeFile(workbook, "transaction-report.xlsx");
+  /* =========================
+     Reset Filters
+     ========================= */
+  const clearFilters = () => {
+    setFilters({ startDate: "", endDate: "", status: "" });
+    setCurrentPage(1);
+  };
+
+  /* =========================
+     Render Active Report
+     ========================= */
+  const renderActiveReport = () => {
+    switch (activeTab) {
+      case "transactions":
+        return (
+          <ReportsTable
+            transactions={paginatedData}
+            loading={loading}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+            onExportPDF={handleExportPDF}
+            onExportExcel={handleExportExcel}
+          />
+        );
+
+      case "drivers":
+        return (
+          <DriverReport
+            transactions={filteredTransactions}
+            loading={loading}
+          />
+        );
+
+      case "customers":
+      case "commodities":
+      case "suppliers":
+        return (
+          <div className="bg-white border rounded-lg p-12 text-center text-gray-500">
+            <h2 className="text-xl mb-2 capitalize">
+              {activeTab} report
+            </h2>
+            <p>This report view will be implemented next.</p>
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -281,134 +223,73 @@ export default function Reports() {
       <div className="mb-6">
         <h1 className="text-4xl mb-2">Reports</h1>
         <p className="text-gray-600">
-          Transaction-based operational reports
+          Operational and analytical system reports
         </p>
       </div>
 
-      {/* FILTERS */}
-      <div className="bg-white border rounded-lg p-4 mb-6">
-        <div className="flex flex-wrap gap-4 items-end">
-          <input
-            type="date"
-            value={filters.startDate}
-            onChange={(e) =>
-              updateFilter("startDate", e.target.value)
-            }
-            className="border rounded px-3 py-2"
-          />
-
-          <input
-            type="date"
-            value={filters.endDate}
-            onChange={(e) =>
-              updateFilter("endDate", e.target.value)
-            }
-            className="border rounded px-3 py-2"
-          />
-
-          <input
-            type="text"
-            placeholder="Receipt No"
-            value={filters.receiptNumber}
-            onChange={(e) =>
-              updateFilter("receiptNumber", e.target.value)
-            }
-            className="border rounded px-3 py-2"
-          />
-
-          <input
-            type="text"
-            placeholder="Number Plate"
-            value={filters.numberPlate}
-            onChange={(e) =>
-              updateFilter("numberPlate", e.target.value)
-            }
-            className="border rounded px-3 py-2"
-          />
-
-          <select
-            value={filters.status}
-            onChange={(e) =>
-              updateFilter("status", e.target.value)
-            }
-            className="border rounded px-3 py-2"
-          >
-            <option value="">All</option>
-            <option value="completed">Completed</option>
-            <option value="InProgress">In Progress</option>
-          </select>
-
+      {/* REPORT TYPE BUTTONS */}
+      <div className="flex gap-3 mb-6 flex-wrap">
+        {REPORT_TABS.map((tab) => (
           <button
-            onClick={handleApplyFilters}
-            className="bg-yellow-400 px-4 py-2 rounded"
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded border capitalize ${
+              activeTab === tab
+                ? "bg-yellow-400 border-yellow-400"
+                : "bg-white"
+            }`}
           >
-            <Filter size={16} />
+            {tab}
           </button>
-
-          <button
-            onClick={handleClearFilters}
-            className="border px-4 py-2 rounded"
-          >
-            <RotateCcw size={16} />
-          </button>
-
-          <button
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="border px-3 py-2 rounded"
-          >
-            {showAdvanced ? <ChevronUp /> : <ChevronDown />}
-          </button>
-        </div>
+        ))}
       </div>
 
-      {/* TABLE */}
-      <ReportsTable
-        transactions={paginatedTransactions}
-        loading={loading}
-        onExportPDF={handleExportPDF}
-        onExportExcel={handleExportExcel}
-      />
+      {/* FILTERS (Transactions only) */}
+      {activeTab === "transactions" && (
+        <div className="bg-white border rounded-lg p-4 mb-6">
+          <div className="flex gap-4 flex-wrap items-end">
+            <input
+              type="date"
+              value={filters.startDate}
+              onChange={(e) =>
+                setFilters({ ...filters, startDate: e.target.value })
+              }
+              className="border rounded px-3 py-2"
+            />
 
-      {/* PAGINATION */}
-      <div className="flex justify-between items-center mt-4">
-        <p className="text-sm text-gray-600">
-          Page {currentPage} of {totalPages}
-        </p>
+            <input
+              type="date"
+              value={filters.endDate}
+              onChange={(e) =>
+                setFilters({ ...filters, endDate: e.target.value })
+              }
+              className="border rounded px-3 py-2"
+            />
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
+            <select
+              value={filters.status}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+              className="border rounded px-3 py-2"
+            >
+              <option value="">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="pending">In Progress</option>
+            </select>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-            (page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 border rounded ${
-                  page === currentPage
-                    ? "bg-yellow-400"
-                    : ""
-                }`}
-              >
-                {page}
-              </button>
-            )
-          )}
-
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
+            <button
+              onClick={clearFilters}
+              className="border px-4 py-2 rounded"
+            >
+              <RotateCcw size={16} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ACTIVE REPORT */}
+      {renderActiveReport()}
     </div>
   );
 }
