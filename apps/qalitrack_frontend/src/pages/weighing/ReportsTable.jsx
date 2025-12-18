@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   FileDown,
   FileSpreadsheet,
@@ -6,25 +6,27 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
+import dayjs from "dayjs";
 
 /**
  * ReportsTable
- * - Uses denormalized transaction data directly from backend
- * - No Redux joins required
+ * - Displays sortable, paginated transaction records
+ * - Mirrors Transaction Ticket field mappings
+ * - Exports current visible data (PDF / Excel)
  */
 export default function ReportsTable({
-  transactions,
+  transactions = [],
   loading = false,
-  currentPage,
-  pageSize,
-  totalRecords,
+  currentPage = 1,
+  pageSize = 10,
+  totalRecords = 0,
   onPageChange,
   onPageSizeChange,
   onExportPDF,
   onExportExcel,
 }) {
   /* =========================
-     Local State
+     Sorting State
      ========================= */
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
@@ -32,7 +34,7 @@ export default function ReportsTable({
   const totalPages = Math.ceil(totalRecords / pageSize);
 
   /* =========================
-     Sorting Logic (UI only)
+     Sorting Logic
      ========================= */
   const handleSort = (field) => {
     if (sortField === field) {
@@ -59,39 +61,70 @@ export default function ReportsTable({
   };
 
   /* =========================
-     Badge Helpers
+     Processed Data
      ========================= */
-  const renderBadge = (label, className) => (
-    <span className={`px-2 py-1 text-xs rounded border ${className}`}>
-      {label || "-"}
+  const processedData = useMemo(() => {
+    let data = [...transactions];
+
+    if (sortField && sortOrder) {
+      data.sort((a, b) => {
+        const aVal = a?.[sortField] ?? "";
+        const bVal = b?.[sortField] ?? "";
+
+        if (typeof aVal === "number") {
+          return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
+        }
+
+        return sortOrder === "asc"
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      });
+    }
+
+    const start = (currentPage - 1) * pageSize;
+    return data.slice(start, start + pageSize);
+  }, [transactions, sortField, sortOrder, currentPage, pageSize]);
+
+  /* =========================
+     Export
+     ========================= */
+  const handleExportPDF = () => onExportPDF?.(processedData);
+  const handleExportExcel = () => onExportExcel?.(processedData);
+
+  /* =========================
+     Badges
+     ========================= */
+  const badge = (label, cls) => (
+    <span className={`px-2 py-1 text-xs rounded border ${cls}`}>
+      {label || "N/A"}
     </span>
   );
 
-  const getStatusBadge = (status) => {
+  const statusBadge = (status) => {
     const map = {
-      completed: "bg-green-100 text-green-800 border-green-200",
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      "in-progress": "bg-blue-100 text-blue-800 border-blue-200",
+      Completed: "bg-green-100 text-green-800 border-green-200",
+      Pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      "In Progress": "bg-blue-100 text-blue-800 border-blue-200",
     };
-    return renderBadge(status, map[status] || map.completed);
+    return badge(status, map[status] || map.Pending);
   };
 
-  const getWeighModeBadge = (mode) => {
+  const weighModeBadge = (mode) => {
     const map = {
       inbound: "bg-purple-100 text-purple-800 border-purple-200",
       outbound: "bg-orange-100 text-orange-800 border-orange-200",
       single: "bg-gray-100 text-gray-800 border-gray-200",
     };
-    return renderBadge(mode, map[mode] || map.single);
+    return badge(mode, map[mode] || map.single);
   };
 
   /* =========================
-     Render States
+     Render Helpers
      ========================= */
   const renderLoading = () =>
     Array.from({ length: pageSize }).map((_, i) => (
       <tr key={i} className="animate-pulse">
-        {Array.from({ length: 11 }).map((_, j) => (
+        {Array.from({ length: 12 }).map((_, j) => (
           <td key={j} className="p-3">
             <div className="h-4 bg-gray-200 rounded" />
           </td>
@@ -101,7 +134,7 @@ export default function ReportsTable({
 
   const renderEmpty = () => (
     <tr>
-      <td colSpan={11} className="h-64 text-center text-gray-500">
+      <td colSpan={12} className="h-64 text-center text-gray-500">
         <FileDown className="w-12 h-12 mx-auto mb-4 opacity-30" />
         <p className="text-lg">No transactions found</p>
         <p className="text-sm mt-2">Adjust filters and try again</p>
@@ -109,33 +142,36 @@ export default function ReportsTable({
     </tr>
   );
 
+  /* =========================
+     JSX
+     ========================= */
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+    <div className="bg-white rounded-lg border shadow-sm">
       {/* Header */}
       <div className="p-6 border-b flex justify-between items-center">
         <div>
-          <h2 className="text-xl text-black">Transaction Records</h2>
+          <h2 className="text-xl font-semibold">Transaction Reports</h2>
           <p className="text-sm text-gray-600">
-            Showing {transactions.length} of {totalRecords}
+            Showing {processedData.length} of {totalRecords} records
           </p>
         </div>
 
         <div className="flex gap-3">
           <button
-            onClick={onExportPDF}
-            disabled={loading || transactions.length === 0}
-            className="border border-amber-400 text-amber-400 px-4 py-2 rounded hover:bg-amber-50 disabled:opacity-50"
+            onClick={handleExportPDF}
+            disabled={!processedData.length}
+            className="border px-4 py-2 rounded disabled:opacity-50"
           >
-            <FileDown className="w-4 h-4 inline mr-2" />
+            <FileDown className="inline w-4 h-4 mr-2" />
             PDF
           </button>
 
           <button
-            onClick={onExportExcel}
-            disabled={loading || transactions.length === 0}
-            className="bg-amber-400 hover:bg-amber-500 text-black px-4 py-2 rounded disabled:opacity-50"
+            onClick={handleExportExcel}
+            disabled={!processedData.length}
+            className="bg-amber-400 px-4 py-2 rounded disabled:opacity-50"
           >
-            <FileSpreadsheet className="w-4 h-4 inline mr-2" />
+            <FileSpreadsheet className="inline w-4 h-4 mr-2" />
             Excel
           </button>
         </div>
@@ -144,23 +180,24 @@ export default function ReportsTable({
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 sticky top-0">
+          <thead className="bg-gray-50">
             <tr>
               {[
-                ["date", "Date"],
+                ["createdAt", "Date"],
                 ["receiptNo", "Receipt"],
-                ["vehicle", "Vehicle"],
-                ["driver", "Driver"],
-                ["commodity", "Commodity"],
-                ["supplier", "Supplier"],
-                ["customer", "Customer"],
-                // ["weighbridge", "Weighbridge"],
-                ["firstWeight", "Weight (kg)"],
+                ["noPlate", "Vehicle"],
+                ["driverName", "Driver"],
+                ["transporterName", "Transporter"],
+                ["originName", "Source"],
+                ["destinationName", "Destination"],
+                ["firstWeight", "First Wt (kg)"],
+                ["secondWeight", "Second Wt (kg)"],
+                ["netWeight", "Net Wt (kg)"],
               ].map(([key, label]) => (
                 <th
                   key={key}
                   onClick={() => handleSort(key)}
-                  className="p-3 cursor-pointer text-left"
+                  className="p-3 cursor-pointer text-left whitespace-nowrap"
                 >
                   {label} {getSortIcon(key)}
                 </th>
@@ -173,45 +210,32 @@ export default function ReportsTable({
           <tbody>
             {loading
               ? renderLoading()
-              : transactions.length === 0
+              : processedData.length === 0
               ? renderEmpty()
-              : transactions.map((t) => (
+              : processedData.map((t) => (
                   <tr key={t.id} className="border-t hover:bg-gray-50">
                     <td className="p-3">
                       {t.createdAt
-                        ? new Date(t.createdAt).toLocaleDateString()
-                        : "-"}
+                        ? dayjs(t.createdAt).format("DD MMM YYYY")
+                        : "N/A"}
                     </td>
-
-                    <td className="p-3 font-mono">
-                      {t.receiptNo || "-"}
-                    </td>
-
-                    <td className="p-3">{t.noPlate || "-"}</td>
-
-                    <td className="p-3">{t.driverName || "-"}</td>
-
-                    <td className="p-3">{t.commodityName || "-"}</td>
-
-                    <td className="p-3">{t.supplierName || "-"}</td>
-
-                    <td className="p-3">{t.customerName || "-"}</td>
-
-                    {/* <td className="p-3">{t.weighbridgeName || "-"}</td> */}
-
+                    <td className="p-3 font-mono">{t.receiptNo || "N/A"}</td>
+                    <td className="p-3">{t.noPlate || "N/A"}</td>
+                    <td className="p-3">{t.driverName || "N/A"}</td>
+                    <td className="p-3">{t.transporterName || "N/A"}</td>
+                    <td className="p-3">{t.originName || "N/A"}</td>
+                    <td className="p-3">{t.destinationName || "N/A"}</td>
                     <td className="p-3 text-right">
-                      {t.firstWeight
-                        ? Number(t.firstWeight).toLocaleString()
-                        : "-"}
+                      {t.firstWeight?.toLocaleString() || "-"}
                     </td>
-
-                    <td className="p-3">
-                      {getWeighModeBadge(t.weighMode)}
+                    <td className="p-3 text-right">
+                      {t.secondWeight?.toLocaleString() || "-"}
                     </td>
-
-                    <td className="p-3">
-                      {getStatusBadge(t.status)}
+                    <td className="p-3 text-right">
+                      {t.netWeight?.toLocaleString() || "-"}
                     </td>
+                    <td className="p-3">{weighModeBadge(t.weighMode)}</td>
+                    <td className="p-3">{statusBadge(t.status)}</td>
                   </tr>
                 ))}
           </tbody>
@@ -220,23 +244,22 @@ export default function ReportsTable({
 
       {/* Pagination */}
       <div className="p-6 border-t flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-600">Rows:</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm">Rows:</span>
           <select
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
             className="border rounded px-2 py-1"
           >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
+            {[10, 25, 50].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
-          </span>
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
@@ -244,6 +267,9 @@ export default function ReportsTable({
           >
             Prev
           </button>
+          <span className="text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
