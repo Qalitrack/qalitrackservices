@@ -3,14 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
 import { fetchTransactions } from "../../store/weighingSlice";
 import {
-  Calendar,
   ChevronDown,
   ChevronUp,
   Filter,
   RotateCcw,
 } from "lucide-react";
 
-// ✅ EXPORT LIBRARIES (ADDED)
+// EXPORT LIBRARIES
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -33,6 +32,12 @@ export default function Reports() {
      ========================= */
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  /* =========================
+     Pagination State
+     ========================= */
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
 
   const [filters, setFilters] = useState({
     startDate: "",
@@ -62,6 +67,11 @@ export default function Reports() {
     setFilteredTransactions(allTransactions);
   }, [allTransactions]);
 
+  /* Reset page when filters change */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredTransactions]);
+
   /* =========================
      Helpers
      ========================= */
@@ -70,7 +80,7 @@ export default function Reports() {
   };
 
   /* =========================
-     Apply Filters (LOCAL)
+     Apply Filters
      ========================= */
   const handleApplyFilters = () => {
     let data = [...allTransactions];
@@ -169,7 +179,27 @@ export default function Reports() {
   );
 
   /* =========================
-     EXPORT: PDF (ADDED)
+     Pagination Logic
+     ========================= */
+  const totalPages = Math.ceil(
+    filteredTransactions.length / rowsPerPage
+  );
+
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+
+  const paginatedTransactions = filteredTransactions.slice(
+    startIndex,
+    endIndex
+  );
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  /* =========================
+     EXPORT: PDF
      ========================= */
   const handleExportPDF = () => {
     const doc = new jsPDF("landscape");
@@ -211,7 +241,7 @@ export default function Reports() {
       ]),
       styles: { fontSize: 9 },
       headStyles: {
-        fillColor: [251, 191, 36], // yellow / amber
+        fillColor: [251, 191, 36],
         textColor: 0,
       },
     });
@@ -220,7 +250,7 @@ export default function Reports() {
   };
 
   /* =========================
-     EXPORT: EXCEL (ADDED)
+     EXPORT: EXCEL
      ========================= */
   const handleExportExcel = () => {
     const data = filteredTransactions.map((t) => ({
@@ -246,99 +276,80 @@ export default function Reports() {
   };
 
   return (
-  <div className="p-6">
-    {/* ================= HEADER ================= */}
-    <div className="mb-6">
-      <h1 className="text-4xl mb-2">Reports</h1>
-      <p className="text-gray-600">
-        Transaction-based operational reports
-      </p>
-    </div>
+    <div className="p-6">
+      {/* HEADER */}
+      <div className="mb-6">
+        <h1 className="text-4xl mb-2">Reports</h1>
+        <p className="text-gray-600">
+          Transaction-based operational reports
+        </p>
+      </div>
 
-    {/* ================= FILTERS ================= */}
-    <div className="bg-white border rounded-lg p-4 mb-6">
-      {/* Top Row */}
-      <div className="flex flex-wrap gap-4 items-end">
-        {/* Start Date */}
-        <div className="flex flex-col">
-          <label className="text-sm text-gray-600">Start Date</label>
+      {/* FILTERS */}
+      <div className="bg-white border rounded-lg p-4 mb-6">
+        <div className="flex flex-wrap gap-4 items-end">
           <input
             type="date"
             value={filters.startDate}
-            onChange={(e) => updateFilter("startDate", e.target.value)}
+            onChange={(e) =>
+              updateFilter("startDate", e.target.value)
+            }
             className="border rounded px-3 py-2"
           />
-        </div>
 
-        {/* End Date */}
-        <div className="flex flex-col">
-          <label className="text-sm text-gray-600">End Date</label>
           <input
             type="date"
             value={filters.endDate}
-            onChange={(e) => updateFilter("endDate", e.target.value)}
+            onChange={(e) =>
+              updateFilter("endDate", e.target.value)
+            }
             className="border rounded px-3 py-2"
           />
-        </div>
 
-        {/* Receipt */}
-        <div className="flex flex-col">
-          <label className="text-sm text-gray-600">Receipt No</label>
           <input
             type="text"
-            placeholder="RCT123"
+            placeholder="Receipt No"
             value={filters.receiptNumber}
             onChange={(e) =>
               updateFilter("receiptNumber", e.target.value)
             }
             className="border rounded px-3 py-2"
           />
-        </div>
 
-        {/* Number Plate */}
-        <div className="flex flex-col">
-          <label className="text-sm text-gray-600">Number Plate</label>
           <input
             type="text"
-            placeholder="KAA 123A"
+            placeholder="Number Plate"
             value={filters.numberPlate}
             onChange={(e) =>
               updateFilter("numberPlate", e.target.value)
             }
             className="border rounded px-3 py-2"
           />
-        </div>
 
-        {/* Status */}
-        <div className="flex flex-col">
-          <label className="text-sm text-gray-600">Status</label>
           <select
             value={filters.status}
-            onChange={(e) => updateFilter("status", e.target.value)}
+            onChange={(e) =>
+              updateFilter("status", e.target.value)
+            }
             className="border rounded px-3 py-2"
           >
             <option value="">All</option>
             <option value="completed">Completed</option>
             <option value="InProgress">In Progress</option>
           </select>
-        </div>
 
-        {/* Buttons */}
-        <div className="flex gap-2">
           <button
             onClick={handleApplyFilters}
-            className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded flex items-center gap-2"
+            className="bg-yellow-400 px-4 py-2 rounded"
           >
             <Filter size={16} />
-            Apply
           </button>
 
           <button
             onClick={handleClearFilters}
-            className="border px-4 py-2 rounded flex items-center gap-2"
+            className="border px-4 py-2 rounded"
           >
             <RotateCcw size={16} />
-            Reset
           </button>
 
           <button
@@ -350,67 +361,54 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* ================= ADVANCED FILTERS ================= */}
-      {showAdvanced && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-          {[
-            ["driver", "Driver"],
-            ["supplier", "Supplier"],
-            ["customer", "Customer"],
-            ["origin", "Origin"],
-            ["destination", "Destination"],
-            ["operator", "Operator"],
-          ].map(([key, label]) => (
-            <div key={key} className="flex flex-col">
-              <label className="text-sm text-gray-600">{label}</label>
-              <input
-                type="text"
-                value={filters[key]}
-                onChange={(e) => updateFilter(key, e.target.value)}
-                className="border rounded px-3 py-2"
-              />
-            </div>
-          ))}
+      {/* TABLE */}
+      <ReportsTable
+        transactions={paginatedTransactions}
+        loading={loading}
+        onExportPDF={handleExportPDF}
+        onExportExcel={handleExportExcel}
+      />
+
+      {/* PAGINATION */}
+      <div className="flex justify-between items-center mt-4">
+        <p className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </p>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+            (page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-1 border rounded ${
+                  page === currentPage
+                    ? "bg-yellow-400"
+                    : ""
+                }`}
+              >
+                {page}
+              </button>
+            )
+          )}
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
-      )}
-    </div>
-
-    {/* ================= SUMMARY ================= */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div className="bg-white border rounded-lg p-4">
-        <p className="text-sm text-gray-500">Total Transactions</p>
-        <p className="text-2xl font-semibold">{totalTransactions}</p>
-      </div>
-
-      <div className="bg-white border rounded-lg p-4">
-        <p className="text-sm text-gray-500">Completed</p>
-        <p className="text-2xl font-semibold text-green-600">
-          {completedTransactions}
-        </p>
-      </div>
-
-      <div className="bg-white border rounded-lg p-4">
-        <p className="text-sm text-gray-500">In-Progress</p>
-        <p className="text-2xl font-semibold text-yellow-600">
-          {pendingTransactions}
-        </p>
-      </div>
-
-      <div className="bg-white border rounded-lg p-4">
-        <p className="text-sm text-gray-500">Total Net Weight (kg)</p>
-        <p className="text-2xl font-semibold">
-          {totalNetWeight.toLocaleString()}
-        </p>
       </div>
     </div>
-
-    {/* ================= TABLE ================= */}
-    <ReportsTable
-      transactions={filteredTransactions}
-      loading={loading}
-      onExportPDF={handleExportPDF}
-      onExportExcel={handleExportExcel}
-    />
-  </div>
-);
+  );
 }
