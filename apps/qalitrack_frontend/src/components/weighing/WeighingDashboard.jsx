@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, message } from "antd";
 import CreateTransactionForm from "./CreateTransactionForm";
-import AddWeighingModal from "./AddWeighingModal";
 import IncompleteTransactionsTable from "./IncompleteTransactionsTable";
 import LiveWeighbridgeStatus from "./LiveWeighbridgeStatus";
 import CameraGrid from "../CameraGrid";
@@ -18,8 +17,8 @@ const INITIAL_FORM_DATA = {
   vehicleId: null, driverId: null, commodityId: null, commodityName: "",
   transporterId: null, transporterName: "", supplierId: null, supplierName: "",
   customerId: null, customerName: "", originId: null, originName: "",
-  destinationId: null, destinationName: "", operation: "", weighMode: "Gross/Tare",
-  firstWeight: "", scaleName: "", operatorName: "", weighBridgeId: null, weighBridgeName: "",
+  destinationId: null, destinationName: "", operation: "Inbound Product Receipt", weighMode: "Gross/Tare",
+  firstWeight: "", secondWeight: "", scaleName: "", operatorName: "", weighBridgeId: null, weighBridgeName: "",
 };
 
 export default function WeighingDashboard() {
@@ -27,8 +26,6 @@ export default function WeighingDashboard() {
   const { error, weighbridges = [] } = useSelector((state) => state.weighing);
   const [capturedWeight, setCapturedWeight] = useState(null);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [showWeighingModal, setShowWeighingModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -40,22 +37,28 @@ export default function WeighingDashboard() {
     dispatch(fetchSuppliersByName(""));
     dispatch(fetchTransportersByName(""));
     dispatch(fetchWeighbridges({ pageSize: 100 }));
-    dispatch(fetchTransactions({ pageNumber: 1, pageSize: 50 }));
+    dispatch(fetchTransactions({ isCompleted: false, pageSize: 50 }));
     dispatch(fetchSimulatedWeight());
   }, [dispatch]);
 
   useEffect(() => { if (error) message.error(error); }, [error]);
 
   const handleManualCapture = (weight) => {
-    if (isNaN(weight) || weight <= 0) return message.error("Invalid weight");
+    if (!weight || weight <= 0) return message.error("Invalid weight");
     setCapturedWeight(weight);
     message.success(`Captured: ${weight} kg`);
   };
 
   const handleTransactionCreated = () => {
-    setRefreshKey((k) => k + 1);
+    // 1. Reset Dashboard Local State
     setCapturedWeight(null);
     setFormData(INITIAL_FORM_DATA);
+    
+    // 2. Trigger Queue Table Refresh via refreshKey
+    setRefreshKey((k) => k + 1);
+    
+    // 3. Force re-fetch incomplete transactions to ensure queue is updated
+    dispatch(fetchTransactions({ isCompleted: false, pageSize: 50 }));
   };
 
   return (
@@ -99,18 +102,17 @@ export default function WeighingDashboard() {
         >
           <IncompleteTransactionsTable
             refreshKey={refreshKey}
-            onAddWeighing={(t) => { setSelectedTransaction(t); setShowWeighingModal(true); }}
+            onAddWeighing={(transaction) => {
+              setFormData({
+                ...transaction,
+                firstWeight: transaction.firstWeight?.toString() || "",
+                secondWeight: "",
+              });
+              setCapturedWeight(transaction.currentWeight || null);
+            }}
           />
         </Card>
       </div>
-
-      <AddWeighingModal
-        visible={showWeighingModal}
-        transaction={selectedTransaction}
-        capturedWeight={capturedWeight}
-        onClose={() => setShowWeighingModal(false)}
-        onSuccess={() => { setRefreshKey(k => k + 1); setCapturedWeight(null); setSelectedTransaction(null); }}
-      />
     </div>
   );
 }
