@@ -2,10 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
 import DriverReport from "./reportFiles/DriverReport";
-// future imports
-// import CustomerReport from "./reportfiles/CustomerReport";
-// import CommodityReport from "./reportfiles/CommodityReport";
-// import SupplierReport from "./reportfiles/SupplierReport";
 
 import { fetchTransactions } from "../../store/weighingSlice";
 import { RotateCcw } from "lucide-react";
@@ -45,7 +41,7 @@ export default function Reports() {
      Pagination State (Transactions)
      ========================= */
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(7); // FIXED TO 7
 
   /* =========================
      Filters (Transactions)
@@ -64,25 +60,42 @@ export default function Reports() {
   }, [dispatch]);
 
   /* =========================
+     Reset page when filters or tab change
+     ========================= */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, activeTab]);
+
+  /* =========================
      Filtered Transactions
      ========================= */
   const filteredTransactions = useMemo(() => {
     let data = [...transactions];
 
     if (filters.startDate) {
+      const start = new Date(filters.startDate);
+      start.setHours(0, 0, 0, 0);
+
       data = data.filter(
-        (t) => new Date(t.createdAt) >= new Date(filters.startDate)
+        (t) => new Date(t.createdAt) >= start
       );
     }
 
     if (filters.endDate) {
+      const end = new Date(filters.endDate);
+      end.setHours(23, 59, 59, 999);
+
       data = data.filter(
-        (t) => new Date(t.createdAt) <= new Date(filters.endDate)
+        (t) => new Date(t.createdAt) <= end
       );
     }
 
     if (filters.status) {
-      data = data.filter((t) => t.status === filters.status);
+      data = data.filter(
+        (t) =>
+          String(t.status).toLowerCase() ===
+          filters.status.toLowerCase()
+      );
     }
 
     return data;
@@ -186,7 +199,6 @@ export default function Reports() {
             pageSize={pageSize}
             totalRecords={totalRecords}
             onPageChange={setCurrentPage}
-            onPageSizeChange={setPageSize}
             onExportPDF={handleExportPDF}
             onExportExcel={handleExportExcel}
           />
@@ -274,8 +286,9 @@ export default function Reports() {
               className="border rounded px-3 py-2"
             >
               <option value="">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="pending">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
             </select>
 
             <button
