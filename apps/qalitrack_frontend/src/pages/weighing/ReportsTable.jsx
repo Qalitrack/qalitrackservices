@@ -6,10 +6,13 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
+import dayjs from "dayjs";
 
 /**
  * ReportsTable
- * - Displays paginated & sortable transaction records
+ * - Displays sortable, paginated transaction records
+ * - Mirrors Transaction Ticket field mappings
+ * - Exports current visible data (PDF / Excel)
  */
 export default function ReportsTable({
   transactions = [],
@@ -23,7 +26,7 @@ export default function ReportsTable({
   onExportExcel,
 }) {
   /* =========================
-     Local State
+     Sorting State
      ========================= */
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
@@ -58,15 +61,15 @@ export default function ReportsTable({
   };
 
   /* =========================
-     Sorted + Paginated Data
+     Processed Data
      ========================= */
   const processedData = useMemo(() => {
     let data = [...transactions];
 
     if (sortField && sortOrder) {
       data.sort((a, b) => {
-        const aVal = a[sortField] ?? "";
-        const bVal = b[sortField] ?? "";
+        const aVal = a?.[sortField] ?? "";
+        const bVal = b?.[sortField] ?? "";
 
         if (typeof aVal === "number") {
           return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
@@ -79,45 +82,49 @@ export default function ReportsTable({
     }
 
     const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-
-    return data.slice(start, end);
+    return data.slice(start, start + pageSize);
   }, [transactions, sortField, sortOrder, currentPage, pageSize]);
 
   /* =========================
-     Badge Helpers
+     Export
      ========================= */
-  const renderBadge = (label, className) => (
-    <span className={`px-2 py-1 text-xs rounded border ${className}`}>
-      {label || "-"}
+  const handleExportPDF = () => onExportPDF?.(processedData);
+  const handleExportExcel = () => onExportExcel?.(processedData);
+
+  /* =========================
+     Badges
+     ========================= */
+  const badge = (label, cls) => (
+    <span className={`px-2 py-1 text-xs rounded border ${cls}`}>
+      {label || "N/A"}
     </span>
   );
 
-  const getStatusBadge = (status) => {
+  const statusBadge = (status) => {
     const map = {
-      completed: "bg-green-100 text-green-800 border-green-200",
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      "in-progress": "bg-blue-100 text-blue-800 border-blue-200",
+      Completed: "bg-green-100 text-green-800 border-green-200",
+      Pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      "In Progress": "bg-blue-100 text-blue-800 border-blue-200",
     };
-    return renderBadge(status, map[status] || map.pending);
+    return badge(status, map[status] || map.Pending);
   };
 
-  const getWeighModeBadge = (mode) => {
+  const weighModeBadge = (mode) => {
     const map = {
       inbound: "bg-purple-100 text-purple-800 border-purple-200",
       outbound: "bg-orange-100 text-orange-800 border-orange-200",
       single: "bg-gray-100 text-gray-800 border-gray-200",
     };
-    return renderBadge(mode, map[mode] || map.single);
+    return badge(mode, map[mode] || map.single);
   };
 
   /* =========================
-     Render States
+     Render Helpers
      ========================= */
   const renderLoading = () =>
     Array.from({ length: pageSize }).map((_, i) => (
       <tr key={i} className="animate-pulse">
-        {Array.from({ length: 15 }).map((_, j) => (
+        {Array.from({ length: 12 }).map((_, j) => (
           <td key={j} className="p-3">
             <div className="h-4 bg-gray-200 rounded" />
           </td>
@@ -127,7 +134,7 @@ export default function ReportsTable({
 
   const renderEmpty = () => (
     <tr>
-      <td colSpan={15} className="h-64 text-center text-gray-500">
+      <td colSpan={12} className="h-64 text-center text-gray-500">
         <FileDown className="w-12 h-12 mx-auto mb-4 opacity-30" />
         <p className="text-lg">No transactions found</p>
         <p className="text-sm mt-2">Adjust filters and try again</p>
@@ -135,25 +142,34 @@ export default function ReportsTable({
     </tr>
   );
 
+  /* =========================
+     JSX
+     ========================= */
   return (
     <div className="bg-white rounded-lg border shadow-sm">
       {/* Header */}
       <div className="p-6 border-b flex justify-between items-center">
         <div>
-          <h2 className="text-xl">Transaction Records</h2>
+          <h2 className="text-xl font-semibold">Transaction Reports</h2>
           <p className="text-sm text-gray-600">
-            Showing {processedData.length} of {totalRecords}
+            Showing {processedData.length} of {totalRecords} records
           </p>
         </div>
 
         <div className="flex gap-3">
-          <button onClick={onExportPDF} className="border px-4 py-2 rounded">
+          <button
+            onClick={handleExportPDF}
+            disabled={!processedData.length}
+            className="border px-4 py-2 rounded disabled:opacity-50"
+          >
             <FileDown className="inline w-4 h-4 mr-2" />
             PDF
           </button>
+
           <button
-            onClick={onExportExcel}
-            className="bg-amber-400 px-4 py-2 rounded"
+            onClick={handleExportExcel}
+            disabled={!processedData.length}
+            className="bg-amber-400 px-4 py-2 rounded disabled:opacity-50"
           >
             <FileSpreadsheet className="inline w-4 h-4 mr-2" />
             Excel
@@ -172,16 +188,16 @@ export default function ReportsTable({
                 ["noPlate", "Vehicle"],
                 ["driverName", "Driver"],
                 ["transporterName", "Transporter"],
-                ["source", "Source"],
-                ["destination", "Destination"],
-                ["firstWeight", "First Weight (kg)"],
-                ["secondWeight", "Second Weight (kg)"],
-                ["netWeight", "Net Weight (kg)"],
+                ["originName", "Source"],
+                ["destinationName", "Destination"],
+                ["firstWeight", "First Wt (kg)"],
+                ["secondWeight", "Second Wt (kg)"],
+                ["netWeight", "Net Wt (kg)"],
               ].map(([key, label]) => (
                 <th
                   key={key}
                   onClick={() => handleSort(key)}
-                  className="p-3 cursor-pointer text-left"
+                  className="p-3 cursor-pointer text-left whitespace-nowrap"
                 >
                   {label} {getSortIcon(key)}
                 </th>
@@ -200,15 +216,15 @@ export default function ReportsTable({
                   <tr key={t.id} className="border-t hover:bg-gray-50">
                     <td className="p-3">
                       {t.createdAt
-                        ? new Date(t.createdAt).toLocaleDateString()
-                        : "-"}
+                        ? dayjs(t.createdAt).format("DD MMM YYYY")
+                        : "N/A"}
                     </td>
-                    <td className="p-3 font-mono">{t.receiptNo || "-"}</td>
-                    <td className="p-3">{t.noPlate || "-"}</td>
-                    <td className="p-3">{t.driverName || "-"}</td>
-                    <td className="p-3">{t.transporterName || "-"}</td>
-                    <td className="p-3">{t.source || "-"}</td>
-                    <td className="p-3">{t.destination || "-"}</td>
+                    <td className="p-3 font-mono">{t.receiptNo || "N/A"}</td>
+                    <td className="p-3">{t.noPlate || "N/A"}</td>
+                    <td className="p-3">{t.driverName || "N/A"}</td>
+                    <td className="p-3">{t.transporterName || "N/A"}</td>
+                    <td className="p-3">{t.originName || "N/A"}</td>
+                    <td className="p-3">{t.destinationName || "N/A"}</td>
                     <td className="p-3 text-right">
                       {t.firstWeight?.toLocaleString() || "-"}
                     </td>
@@ -218,12 +234,8 @@ export default function ReportsTable({
                     <td className="p-3 text-right">
                       {t.netWeight?.toLocaleString() || "-"}
                     </td>
-                    <td className="p-3">
-                      {getWeighModeBadge(t.weighMode)}
-                    </td>
-                    <td className="p-3">
-                      {getStatusBadge(t.status)}
-                    </td>
+                    <td className="p-3">{weighModeBadge(t.weighMode)}</td>
+                    <td className="p-3">{statusBadge(t.status)}</td>
                   </tr>
                 ))}
           </tbody>
@@ -251,7 +263,7 @@ export default function ReportsTable({
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="border px-3 py-1 rounded"
+            className="border px-3 py-1 rounded disabled:opacity-50"
           >
             Prev
           </button>
@@ -261,7 +273,7 @@ export default function ReportsTable({
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="border px-3 py-1 rounded"
+            className="border px-3 py-1 rounded disabled:opacity-50"
           >
             Next
           </button>
