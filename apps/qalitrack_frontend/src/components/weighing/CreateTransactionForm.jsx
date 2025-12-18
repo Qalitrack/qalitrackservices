@@ -18,7 +18,7 @@ const { Text } = Typography;
 
 // Persistent daily counter for receipt number
 const getDailyCounter = () => {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // YYYYMMDD
   const stored = localStorage.getItem("receiptCounter");
   if (!stored) return { date: today, count: 0 };
 
@@ -62,15 +62,15 @@ export default function CreateTransactionForm({
   const isSecondWeighing = !!formData.id;
 
   /**
-   * Generate receipt number: RCT-DDMMYYYY-NN
+   * Generate receipt number: RCT-YYYYMMDD-01, RCT-YYYYMMDD-02, etc.
    */
   const generateReceiptNumber = useCallback(() => {
     const date = new Date();
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-    const datePart = `${day}${month}${year}`;
+    const datePart = `${year}${month}${day}`;
     const seqNumber = incrementDailyCounter();
     const seqPart = formatSequentialNumber(seqNumber);
 

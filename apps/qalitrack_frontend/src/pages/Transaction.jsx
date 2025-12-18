@@ -38,7 +38,7 @@ export default function Transactions() {
     pageSize: 10,
   });
 
-  /* ================= FETCH ================= */
+  /* ================= FETCH TRANSACTIONS ================= */
   const loadTransactions = useCallback(() => {
     dispatch(
       fetchTransactions({
@@ -55,15 +55,13 @@ export default function Transactions() {
     loadTransactions();
   }, [loadTransactions]);
 
-  /* ================= VIEW ================= */
+  /* ================= VIEW MODAL ================= */
   const openViewModal = async (record) => {
     let enriched = { ...record };
 
     if (record.operatorId) {
       try {
-        const operator = await dispatch(
-          fetchUserById(record.operatorId)
-        ).unwrap();
+        const operator = await dispatch(fetchUserById(record.operatorId)).unwrap();
         enriched.operatorName = operator?.fullName || operator?.name || "N/A";
       } catch (err) {
         console.warn("Failed to fetch operator:", err);
@@ -77,10 +75,9 @@ export default function Transactions() {
     setIsModalOpen(true);
   };
 
-  /* ================= PRINT ================= */
+  /* ================= PRINT PDF ================= */
   const handlePrint = (record) => {
     if (!record) return;
-
     message.loading({ content: "Generating PDF ticket...", duration: 0 });
 
     const doc = new jsPDF();
@@ -88,7 +85,7 @@ export default function Transactions() {
     const slate = [33, 33, 33];
     const lightGray = [245, 245, 245];
 
-    // Logo with fallback
+    // Logo
     try {
       doc.addImage(logoSvg, "SVG", 14, 10, 25, 25);
     } catch {
@@ -126,12 +123,7 @@ export default function Transactions() {
       startY: y,
       theme: "plain",
       styles: { fontSize: 8.5, cellPadding: 1.5 },
-      columnStyles: {
-        0: { fontStyle: "bold", cellWidth: 32 },
-        1: { cellWidth: 58 },
-        2: { fontStyle: "bold", cellWidth: 32 },
-        3: { cellWidth: 58 },
-      },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 32 }, 1: { cellWidth: 58 }, 2: { fontStyle: "bold", cellWidth: 32 }, 3: { cellWidth: 58 } },
       body: [
         ["TICKET NO", `: ${record.receiptNo}`, "REGISTRATION", `: ${record.noPlate}`],
         ["AXLE TYPE", `: ${record.axleType || "N/A"}`, "COMMODITY", `: ${record.commodityName}`],
@@ -156,7 +148,6 @@ export default function Transactions() {
       body: [
         ["ITEMS", "GROUP 1", "GROUP 2", "GROUP 3", "GROUP 4", "GVW"],
         ["ACTUAL WT", `${record.firstWeight} KG`, "0", "0", "0", `${record.firstWeight} KG`],
-        ["PDF", "0.00", "0", "0", "0", "N/A"],
         ["ALLOWED", "8000", "10000", "0", "0", "18000 KG"],
         ["ALLOWED+5%", "8400", "10500", "0", "0", "18000 KG"],
         ["EXCESS", "0", "0", "0", "0", "0 KG"],
@@ -185,21 +176,18 @@ export default function Transactions() {
     if (record.vehicleSnapshotUrl) {
       try {
         doc.addImage(record.vehicleSnapshotUrl, "JPEG", 14, y, 182, 60);
-        y += 65;
       } catch {
         doc.text("Visual evidence not available", 14, y);
-        y += 10;
       }
     } else {
       doc.text("Visual evidence not available", 14, y);
-      y += 10;
     }
 
     doc.setFontSize(8);
     doc.setFont("helvetica", "italic");
-    doc.text("QALIBRATED SYSTEMS-INVENTING AND MAKING HAPPEN", 105, y + 10, { align: "center" });
+    doc.text("QALIBRATED SYSTEMS-INVENTING AND MAKING HAPPEN", 105, y + 70, { align: "center" });
     doc.setFont("helvetica", "normal");
-    doc.text("Powered by Qalibrated Systems | www.qalibrated.co.ke", 105, y + 15, { align: "center" });
+    doc.text("Powered by Qalibrated Systems | www.qalibrated.co.ke", 105, y + 75, { align: "center" });
 
     message.destroy();
     message.success("PDF generated successfully!");
@@ -224,7 +212,7 @@ export default function Transactions() {
 
         <h2 className="text-center text-3xl font-bold text-amber-500 my-8">WEIGHING TICKET</h2>
 
-        {/* Ticket Details */}
+        {/* Ticket Details Table */}
         <div className="bg-amber-500 text-white py-2 text-center font-bold mb-4">TICKET DETAILS</div>
         <table className="w-full text-xs mb-6">
           <tbody>
