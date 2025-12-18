@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
+import DriverReport from "./reportFiles/DriverReport";
+// future imports
+// import CustomerReport from "./reportfiles/CustomerReport";
+// import CommodityReport from "./reportfiles/CommodityReport";
+// import SupplierReport from "./reportfiles/SupplierReport";
+
 import { fetchTransactions } from "../../store/weighingSlice";
-import { Filter, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 // EXPORT LIBRARIES
 import jsPDF from "jspdf";
@@ -10,7 +16,7 @@ import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 
 /**
- * Reports Page
+ * Reports Page (Main Container)
  */
 export default function Reports() {
   const dispatch = useDispatch();
@@ -23,7 +29,7 @@ export default function Reports() {
   );
 
   /* =========================
-     Report Type Tabs
+     Report Tabs State
      ========================= */
   const REPORT_TABS = [
     "transactions",
@@ -31,19 +37,18 @@ export default function Reports() {
     "customers",
     "commodities",
     "suppliers",
-    // "status",
   ];
 
   const [activeTab, setActiveTab] = useState("transactions");
 
   /* =========================
-     Pagination
+     Pagination State (Transactions)
      ========================= */
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   /* =========================
-     Filters
+     Filters (Transactions)
      ========================= */
   const [filters, setFilters] = useState({
     startDate: "",
@@ -94,7 +99,7 @@ export default function Reports() {
   }, [filteredTransactions, currentPage, pageSize]);
 
   /* =========================
-     Export PDF
+     EXPORT: PDF (Transactions)
      ========================= */
   const handleExportPDF = (rows) => {
     const doc = new jsPDF("landscape");
@@ -135,7 +140,7 @@ export default function Reports() {
   };
 
   /* =========================
-     Export Excel
+     EXPORT: EXCEL (Transactions)
      ========================= */
   const handleExportExcel = (rows) => {
     const data = rows.map((t) => ({
@@ -167,6 +172,51 @@ export default function Reports() {
     setCurrentPage(1);
   };
 
+  /* =========================
+     Render Active Report
+     ========================= */
+  const renderActiveReport = () => {
+    switch (activeTab) {
+      case "transactions":
+        return (
+          <ReportsTable
+            transactions={paginatedData}
+            loading={loading}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+            onExportPDF={handleExportPDF}
+            onExportExcel={handleExportExcel}
+          />
+        );
+
+      case "drivers":
+        return (
+          <DriverReport
+            transactions={filteredTransactions}
+            loading={loading}
+          />
+        );
+
+      case "customers":
+      case "commodities":
+      case "suppliers":
+        return (
+          <div className="bg-white border rounded-lg p-12 text-center text-gray-500">
+            <h2 className="text-xl mb-2 capitalize">
+              {activeTab} report
+            </h2>
+            <p>This report view will be implemented next.</p>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="p-6">
       {/* HEADER */}
@@ -194,7 +244,7 @@ export default function Reports() {
         ))}
       </div>
 
-      {/* FILTERS (Transactions Only for now) */}
+      {/* FILTERS (Transactions only) */}
       {activeTab === "transactions" && (
         <div className="bg-white border rounded-lg p-4 mb-6">
           <div className="flex gap-4 flex-wrap items-end">
@@ -225,7 +275,7 @@ export default function Reports() {
             >
               <option value="">All Status</option>
               <option value="completed">Completed</option>
-              <option value="pending">InProgress</option>
+              <option value="pending">In Progress</option>
             </select>
 
             <button
@@ -238,27 +288,8 @@ export default function Reports() {
         </div>
       )}
 
-      {/* CONTENT */}
-      {activeTab === "transactions" ? (
-        <ReportsTable
-          transactions={paginatedData}
-          loading={loading}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          totalRecords={totalRecords}
-          onPageChange={setCurrentPage}
-          onPageSizeChange={setPageSize}
-          onExportPDF={handleExportPDF}
-          onExportExcel={handleExportExcel}
-        />
-      ) : (
-        <div className="bg-white border rounded-lg p-12 text-center text-gray-500">
-          <h2 className="text-xl mb-2 capitalize">
-            {activeTab} report
-          </h2>
-          <p>This report view will be implemented next.</p>
-        </div>
-      )}
+      {/* ACTIVE REPORT */}
+      {renderActiveReport()}
     </div>
   );
 }
