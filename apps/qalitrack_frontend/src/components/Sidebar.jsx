@@ -20,7 +20,7 @@ import {
   User2
 } from "lucide-react";
 
-import logo from "/src/assets/qualitrack.png";
+import logo from "/src/assets/logorange.svg";
 
 const currentUserRole = "operator";
 
@@ -89,7 +89,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
             alt="Qualitrack"
             className={`transition-all duration-300 ${isCollapsed ? "h-8" : "h-12"}`}
           />
-          {!isCollapsed && <span className="font-semibold text-lg text-white">Qualitrack</span>}
+          {!isCollapsed && <span className="font-semibold text-lg text-white"></span>}
         </div>
 
         <button
