@@ -86,7 +86,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
         <div className="flex items-center gap-3">
           <img
             src={logo}
-            alt="Qualitrack"
+            alt="Qalitrack"
             className={`transition-all duration-300 ${isCollapsed ? "h-8" : "h-12"}`}
           />
           {!isCollapsed && <span className="font-semibold text-lg text-white"></span>}
