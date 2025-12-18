@@ -93,7 +93,7 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
         <span className="text-3xl font-mono font-semibold text-amber-500">
           {totalWeight}
         </span>
-        <span className="ml-1 text-sm text-neutral-400">kg</span>
+        
       </div>
 
       {/* ACTION */}

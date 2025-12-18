@@ -1,42 +1,38 @@
-// src/components/CameraGrid.jsx
 import React, { useEffect, useState } from "react";
-import { CAMERA_CONFIG } from "../config";
+import clsx from "clsx";
+import { useCameraRealtime } from "../hooks/useCameraRealtime";
 
-const { cameraId, streamUrl, snapshotUrl, platesUrl } = CAMERA_CONFIG;
-
-export default function CameraGrid({ type }) {
-  if (type === "live") return <LiveStreamCard />;
-  if (type === "snapshot") return <SnapshotCard />;
-  if (type === "plate") return <PlateCard />;
+export default function CameraGrid({ type, cameraId = "npr1" }) {
+  if (type === "live") return <LiveStreamCard cameraId={cameraId} />;
+  if (type === "snapshot") return <SnapshotCard cameraId={cameraId} />;
+  if (type === "plate") return <PlateCard cameraId={cameraId} />;
   return null;
 }
 
 /* -------------------------------------------------------------------------- */
 /*                              LIVE STREAM CARD                               */
 /* -------------------------------------------------------------------------- */
-function LiveStreamCard() {
-  const [reloadKey, setReloadKey] = useState(0);
+function LiveStreamCard({ cameraId }) {
+  const { streamRef, streamConnected, isOnline } =
+    useCameraRealtime(cameraId);
 
   return (
-    <div className="bg-black rounded-2xl overflow-hidden shadow-xl h-full flex flex-col">
-      <div className="relative aspect-video bg-gray-950 flex-1">
-        <img
-          key={reloadKey}
-          src={`${streamUrl}?t=${Date.now()}`}
-          alt="Live camera stream"
-          className="w-full h-full object-cover"
-          onError={() => setReloadKey((k) => k + 1)}
-        />
+    <div className="bg-black rounded-xl overflow-hidden shadow-lg h-full flex flex-col">
+      <div className="relative aspect-[16/8.5] bg-gray-950 flex-1">
+        <img ref={streamRef} className="w-full h-full object-cover" />
 
-        <span className="absolute top-3 left-3 px-4 py-1.5 rounded-full text-sm font-bold bg-amber-500 text-black animate-pulse">
-          LIVE
-        </span>
+        <StatusBadge
+          label="LIVE"
+          color={streamConnected ? "amber" : "red"}
+          pulse={streamConnected}
+        />
       </div>
-      <div className="p-3 text-center">
-        <p className="text-amber-400 font-semibold tracking-wide">
-          Continuous Stream
-        </p>
-      </div>
+
+      <FooterText
+        main="Continuous Stream"
+        sub={isOnline ? "Camera online" : "Camera offline"}
+        color="amber"
+      />
     </div>
   );
 }
@@ -44,7 +40,8 @@ function LiveStreamCard() {
 /* -------------------------------------------------------------------------- */
 /*                             SNAPSHOT CARD                                   */
 /* -------------------------------------------------------------------------- */
-function SnapshotCard() {
+function SnapshotCard({ cameraId }) {
+  const { getSnapshotUrl, isOnline } = useCameraRealtime(cameraId);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -53,87 +50,102 @@ function SnapshotCard() {
   }, []);
 
   return (
-    <div className="bg-black rounded-2xl overflow-hidden shadow-xl h-full flex flex-col">
-      <div className="relative aspect-video bg-gray-950 flex-1">
+    <div className="bg-black rounded-xl overflow-hidden shadow-lg h-full flex flex-col">
+      <div className="relative aspect-[16/8.5] bg-gray-950 flex-1">
         <img
-          src={`${snapshotUrl}?t=${tick}`}
-          alt="Latest snapshot"
+          src={`${getSnapshotUrl()}&tick=${tick}`}
           className="w-full h-full object-cover"
         />
-        <span className="absolute top-3 left-3 px-4 py-1.5 rounded-full text-sm font-bold bg-green-500 text-black">
-          SNAPSHOT
-        </span>
+
+        <StatusBadge label="SNAPSHOT" color="orange" />
       </div>
-      <div className="p-3 text-center">
-        <p className="text-green-400 font-semibold">Latest Frame</p>
-        <p className="text-xs text-gray-500">Auto refresh • 1.5s</p>
+
+      <FooterText
+        main="Latest Frame"
+        sub={isOnline ? "Auto refresh • 1.5s" : "Camera offline"}
+        color="orange"
+      />
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                             PLATE CARD                                      */
+/* -------------------------------------------------------------------------- */
+function PlateCard({ cameraId }) {
+  const { plateData, isOnline } = useCameraRealtime(cameraId);
+
+  return (
+    <div className="bg-black rounded-xl overflow-hidden shadow-lg h-full flex flex-col">
+      <div className="relative aspect-[16/8.5] flex-1 flex items-center justify-center bg-gradient-to-br from-yellow-900 to-black">
+        {plateData ? (
+          <div className="text-center">
+            <div className="text-4xl md:text-5xl font-mono font-black tracking-widest text-amber-500">
+              {plateData.plateNumber}
+            </div>
+            <div className="mt-1 text-xs text-amber-300">
+              {(plateData.confidence * 100).toFixed(1)}% confidence
+            </div>
+          </div>
+        ) : (
+          <div className="text-gray-600 text-sm">
+            Waiting for vehicle…
+          </div>
+        )}
+
+        <StatusBadge label="PLATE" color="yellow" />
+      </div>
+
+      <div className="p-2 text-center text-[11px] text-gray-400">
+        {plateData
+          ? `Detected at ${new Date(
+              plateData.timestamp
+            ).toLocaleTimeString()}`
+          : isOnline
+          ? "Real-time ANPR"
+          : "Camera offline"}
       </div>
     </div>
   );
 }
 
 /* -------------------------------------------------------------------------- */
-/*                             PLATE CARD                                       */
+/*                                UI PARTS                                     */
 /* -------------------------------------------------------------------------- */
-function PlateCard() {
-  const [plate, setPlate] = useState(null);
-
-  useEffect(() => {
-    const fetchPlate = async () => {
-      try {
-        const res = await fetch(platesUrl, { cache: "no-store" });
-        if (!res.ok) return;
-
-        const data = await res.json();
-        let latest = null;
-
-        if (Array.isArray(data)) {
-          latest =
-            data
-              .filter((p) => p.cameraId === cameraId)
-              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0] ||
-            null;
-        } else if (data?.cameraId === cameraId) {
-          latest = data;
-        }
-
-        setPlate(latest);
-      } catch {
-        // silent retry
-      }
-    };
-
-    fetchPlate();
-    const id = setInterval(fetchPlate, 2000);
-    return () => clearInterval(id);
-  }, []);
+function StatusBadge({ label, color, pulse }) {
+  const colors = {
+    amber: "bg-amber-500 text-black",
+    orange: "bg-orange-500 text-black",
+    yellow: "bg-yellow-600 text-white",
+    red: "bg-red-600 text-white",
+  };
 
   return (
-    <div className="bg-black rounded-2xl overflow-hidden shadow-xl h-full flex flex-col">
-      <div className="relative aspect-video flex-1 flex items-center justify-center bg-gradient-to-br from-purple-900 to-black">
-        {plate ? (
-          <div className="text-center">
-            <div className="text-5xl md:text-6xl font-mono font-black tracking-widest text-amber-500">
-              {plate.plateNumber || plate.plate}
-            </div>
-            <div className="mt-2 text-sm text-amber-300">
-              {(plate.confidence * 100).toFixed(1)}% confidence
-            </div>
-          </div>
-        ) : (
-          <div className="text-gray-600 text-lg">Waiting for vehicle…</div>
-        )}
+    <span
+      className={clsx(
+        "absolute top-2 left-2 px-3 py-1 rounded-full text-xs font-bold",
+        colors[color],
+        pulse && "animate-pulse"
+      )}
+    >
+      {label}
+    </span>
+  );
+}
 
-        <span className="absolute top-3 left-3 px-4 py-1.5 rounded-full text-sm font-bold bg-purple-600 text-white">
-          PLATE
-        </span>
-      </div>
+function FooterText({ main, sub, color }) {
+  const colors = {
+    amber: "text-amber-400",
+    orange: "text-orange-400",
+    yellow: "text-yellow-400",
+  };
 
-      <div className="p-3 text-center text-xs text-gray-400 flex-shrink-0">
-        {plate
-          ? `Detected at ${new Date(plate.timestamp).toLocaleTimeString()}`
-          : "Real-time ANPR"}
-      </div>
+  return (
+    <div className="p-2 text-center">
+      <p className={clsx("font-semibold text-sm", colors[color])}>
+        {main}
+      </p>
+      <p className="text-[11px] text-gray-500">{sub}</p>
     </div>
   );
 }

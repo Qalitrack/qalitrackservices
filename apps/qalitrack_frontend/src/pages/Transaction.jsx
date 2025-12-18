@@ -9,6 +9,7 @@ import {
   Space,
   Modal,
   Descriptions,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import { fetchTransactions, fetchUserById } from "../store/weighingSlice";
@@ -27,6 +28,8 @@ export default function Transactions() {
 
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewRecord, setPreviewRecord] = useState(null);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -54,39 +57,47 @@ export default function Transactions() {
 
   /* ================= VIEW ================= */
   const openViewModal = async (record) => {
-    let enriched = record;
+    let enriched = { ...record };
 
     if (record.operatorId) {
       try {
         const operator = await dispatch(
           fetchUserById(record.operatorId)
         ).unwrap();
-        enriched = {
-          ...record,
-          operatorName: operator?.fullName || operator?.name || "N/A",
-        };
-      } catch {}
+        enriched.operatorName = operator?.fullName || operator?.name || "N/A";
+      } catch (err) {
+        console.warn("Failed to fetch operator:", err);
+        enriched.operatorName = "Unknown Operator";
+      }
+    } else {
+      enriched.operatorName = "N/A";
     }
 
     setSelectedRecord(enriched);
     setIsModalOpen(true);
   };
 
-  /* ================= PRINT (FULLY UPDATED) ================= */
+  /* ================= PRINT ================= */
   const handlePrint = (record) => {
     if (!record) return;
+
+    message.loading({ content: "Generating PDF ticket...", duration: 0 });
 
     const doc = new jsPDF();
     const amber = [255, 152, 0];
     const slate = [33, 33, 33];
     const lightGray = [245, 245, 245];
 
-    // 1. Header & Logo
+    // Logo with fallback
     try {
       doc.addImage(logoSvg, "SVG", 14, 10, 25, 25);
     } catch {
       doc.setFillColor(...amber);
-      doc.roundedRect(14, 10, 20, 20, 1, 1, "F");
+      doc.roundedRect(14, 10, 25, 25, 3, 3, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("QS", 26.5, 23, { align: "center" });
     }
 
     doc.setFontSize(14);
@@ -103,7 +114,6 @@ export default function Transactions() {
     doc.setTextColor(...amber);
     doc.text("WEIGHING TICKET", 105, 40, { align: "center" });
 
-    // 2. Ticket Details Header
     let y = 45;
     doc.setFillColor(...amber);
     doc.rect(14, y, 182, 7, "F");
@@ -111,7 +121,6 @@ export default function Transactions() {
     doc.setFontSize(10);
     doc.text("TICKET DETAILS", 105, y + 5, { align: "center" });
 
-    // 3. Expanded Ticket Information Table (Includes Supplier, Customer, etc.)
     y += 7;
     autoTable(doc, {
       startY: y,
@@ -134,7 +143,6 @@ export default function Transactions() {
       ],
     });
 
-    // 4. Axle Weight Analysis
     y = doc.lastAutoTable.finalY + 5;
     doc.setFillColor(...amber);
     doc.rect(14, y, 182, 7, "F");
@@ -158,35 +166,33 @@ export default function Transactions() {
       styles: { fontSize: 8, halign: "center" },
     });
 
-    // 5. Weight Summary
     y = doc.lastAutoTable.finalY + 5;
     autoTable(doc, {
       startY: y,
       head: [["FIRST WEIGHT", "SECOND WEIGHT", "NET WEIGHT"]],
-      body: [[`${record.firstWeight} Kg`, `${record.secondWeight || 0} Kg`, `${record.netWeight || 0} Kg`]],
+      body: [[`${record.firstWeight} Kg`, `${record.secondWeight ?? 0} Kg`, `${record.netWeight ?? 0} Kg`]],
       theme: "grid",
       headStyles: { fillColor: amber, halign: "center" },
       styles: { halign: "center", fontSize: 10, fontStyle: "bold" },
     });
 
-    // 6. Footer & Snapshot
     y = doc.lastAutoTable.finalY + 10;
     doc.setFontSize(10);
     doc.setTextColor(...slate);
     doc.text("VEHICLE SECURITY SNAPSHOT", 14, y);
-    
     y += 5;
+
     if (record.vehicleSnapshotUrl) {
-        try {
-            doc.addImage(record.vehicleSnapshotUrl, "JPEG", 14, y, 182, 60);
-            y += 65;
-        } catch {
-            doc.text("Visual evidence not available", 14, y);
-            y += 10;
-        }
-    } else {
+      try {
+        doc.addImage(record.vehicleSnapshotUrl, "JPEG", 14, y, 182, 60);
+        y += 65;
+      } catch {
         doc.text("Visual evidence not available", 14, y);
         y += 10;
+      }
+    } else {
+      doc.text("Visual evidence not available", 14, y);
+      y += 10;
     }
 
     doc.setFontSize(8);
@@ -195,10 +201,120 @@ export default function Transactions() {
     doc.setFont("helvetica", "normal");
     doc.text("Powered by Qalibrated Systems | www.qalibrated.co.ke", 105, y + 15, { align: "center" });
 
+    message.destroy();
+    message.success("PDF generated successfully!");
     doc.save(`Ticket_${record.receiptNo}.pdf`);
   };
 
-  /* ================= TABLE ================= */
+  /* ================= TICKET PREVIEW COMPONENT ================= */
+  const TicketPreview = ({ record, onClose, onDownload }) => {
+    if (!record) return null;
+
+    return (
+      <div className="bg-white p-8 font-sans text-sm leading-relaxed">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-6">
+          <img src={logoSvg} alt="Logo" className="h-14" onError={(e) => { e.target.style.display = 'none'; }} />
+          <div className="text-right">
+            <h1 className="text-2xl font-bold text-slate-800">QALIBRATED SYSTEMS LTD</h1>
+            <p>PO BOX 34463-00100, NAIROBI</p>
+            <p>TEL: +254 714 999 996 | WWW.QALIBRATED.CO.KE</p>
+          </div>
+        </div>
+
+        <h2 className="text-center text-3xl font-bold text-amber-500 my-8">WEIGHING TICKET</h2>
+
+        {/* Ticket Details */}
+        <div className="bg-amber-500 text-white py-2 text-center font-bold mb-4">TICKET DETAILS</div>
+        <table className="w-full text-xs mb-6">
+          <tbody>
+            {[
+              ["TICKET NO", record.receiptNo, "REGISTRATION", record.noPlate],
+              ["AXLE TYPE", record.axleType || "N/A", "COMMODITY", record.commodityName],
+              ["TRANSPORTER", record.transporterName, "TIMESTAMP", dayjs(record.createdAt).format("DD-MM-YY : hh:mm A")],
+              ["SUPPLIER", record.supplierName || "N/A", "CUSTOMER", record.customerName || "N/A"],
+              ["SOURCE", record.originName || "N/A", "DESTINATION", record.destinationName || "N/A"],
+              ["OPERATOR", record.operatorName || "N/A", "DRIVER", record.driverName || "N/A"],
+              ["WEIGH MODE", record.weighMode || "N/A", "STATUS", record.status || "N/A"],
+            ].map((row, i) => (
+              <tr key={i}>
+                <td className="font-bold py-1">{row[0]}</td>
+                <td className="py-1">: {row[1]}</td>
+                <td className="font-bold py-1 pl-10">{row[2]}</td>
+                <td className="py-1">: {row[3]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Axle Analysis */}
+        <div className="bg-amber-500 text-white py-2 text-center font-bold mb-3">AXLE WEIGHT ANALYSIS</div>
+        <table className="w-full border border-gray-400 text-xs text-center mb-6">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="border border-gray-400 py-2">ITEMS</th>
+              <th className="border border-gray-400">GROUP 1</th>
+              <th className="border border-gray-400">GROUP 2</th>
+              <th className="border border-gray-400">GROUP 3</th>
+              <th className="border border-gray-400">GROUP 4</th>
+              <th className="border border-gray-400">GVW</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td className="border py-1 font-medium">ACTUAL WT</td><td>{record.firstWeight} KG</td><td>0</td><td>0</td><td>0</td><td>{record.firstWeight} KG</td></tr>
+            <tr><td className="border py-1">ALLOWED</td><td>8000</td><td>10000</td><td>0</td><td>0</td><td>18000 KG</td></tr>
+            <tr><td className="border py-1">ALLOWED+5%</td><td>8400</td><td>10500</td><td>0</td><td>0</td><td>18000 KG</td></tr>
+            <tr><td className="border py-1">EXCESS</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 KG</td></tr>
+            <tr><td className="border py-1 font-bold">RESULT</td><td className="text-green-600 font-bold">LEGAL</td><td className="text-green-600 font-bold">LEGAL</td><td className="text-green-600 font-bold">LEGAL</td><td className="text-green-600 font-bold">LEGAL</td><td className="text-green-600 font-bold">LEGAL</td></tr>
+          </tbody>
+        </table>
+
+        {/* Weight Summary */}
+        <table className="w-full border-4 border-amber-500 text-center text-lg font-bold mb-8">
+          <thead className="bg-amber-500 text-white">
+            <tr>
+              <th className="py-3">FIRST WEIGHT</th>
+              <th className="py-3">SECOND WEIGHT</th>
+              <th className="py-3">NET WEIGHT</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="py-4">{record.firstWeight} Kg</td>
+              <td className="py-4">{record.secondWeight ?? 0} Kg</td>
+              <td className="py-4">{record.netWeight ?? 0} Kg</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* Snapshot */}
+        <div className="mb-8">
+          <h3 className="font-bold text-lg mb-3">VEHICLE SECURITY SNAPSHOT</h3>
+          {record.vehicleSnapshotUrl ? (
+            <img src={record.vehicleSnapshotUrl} alt="Vehicle" className="w-full border-2 border-gray-300 rounded" />
+          ) : (
+            <p className="italic text-gray-500 bg-gray-100 p-8 text-center rounded">Visual evidence not available</p>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="text-center text-xs italic text-gray-600">
+          <p>QALIBRATED SYSTEMS-INVENTING AND MAKING HAPPEN</p>
+          <p>Powered by Qalibrated Systems | www.qalibrated.co.ke</p>
+        </div>
+
+        {/* Preview Actions */}
+        <div className="flex justify-end gap-4 mt-10">
+          <Button size="large" onClick={onClose}>Close Preview</Button>
+          <Button size="large" type="primary" className="bg-amber-600" icon={<Printer />} onClick={onDownload}>
+            Download PDF
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  /* ================= TABLE COLUMNS ================= */
   const columns = [
     { title: "Receipt No", dataIndex: "receiptNo", width: 140 },
     {
@@ -214,10 +330,7 @@ export default function Transactions() {
       dataIndex: "status",
       width: 120,
       render: (status) => (
-        <Tag
-          color={status === "Completed" ? "green" : "orange"}
-          className="font-semibold"
-        >
+        <Tag color={status === "Completed" ? "green" : "orange"} className="font-semibold">
           {status?.toUpperCase()}
         </Tag>
       ),
@@ -227,11 +340,7 @@ export default function Transactions() {
       width: 120,
       fixed: "right",
       render: (_, record) => (
-        <Button
-          size="small"
-          icon={<Eye size={14} />}
-          onClick={() => openViewModal(record)}
-        >
+        <Button size="small" icon={<Eye size={14} />} onClick={() => openViewModal(record)}>
           View
         </Button>
       ),
@@ -240,6 +349,7 @@ export default function Transactions() {
 
   return (
     <div className="h-screen p-4 bg-gray-50 flex flex-col">
+      {/* Filters */}
       <div className="mb-3 bg-white p-4 rounded-lg shadow-sm border flex flex-wrap items-center gap-3">
         <Input
           allowClear
@@ -265,6 +375,7 @@ export default function Transactions() {
         </Button>
       </div>
 
+      {/* Table */}
       <div className="flex-1 overflow-hidden bg-white rounded-lg border">
         <Table
           columns={columns}
@@ -285,16 +396,23 @@ export default function Transactions() {
         />
       </div>
 
+      {/* View Details Modal */}
       <Modal
-        title={
-          <div className="font-bold text-amber-600">
-            TRANSACTION DETAILS: {selectedRecord?.receiptNo}
-          </div>
-        }
+        title={<div className="font-bold text-amber-600">TRANSACTION DETAILS: {selectedRecord?.receiptNo}</div>}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         width={800}
         footer={[
+          <Button
+            key="preview"
+            icon={<Eye size={16} />}
+            onClick={() => {
+              setPreviewRecord(selectedRecord);
+              setIsPreviewOpen(true);
+            }}
+          >
+            Preview Ticket
+          </Button>,
           <Button
             key="print"
             type="primary"
@@ -302,7 +420,7 @@ export default function Transactions() {
             className="bg-amber-600 h-10"
             onClick={() => handlePrint(selectedRecord)}
           >
-            PRINT TICKET
+            Direct Print (Download PDF)
           </Button>,
         ]}
       >
@@ -313,19 +431,19 @@ export default function Transactions() {
             <Descriptions.Item label="Driver">{selectedRecord.driverName}</Descriptions.Item>
             <Descriptions.Item label="Commodity">{selectedRecord.commodityName}</Descriptions.Item>
             <Descriptions.Item label="Transporter">{selectedRecord.transporterName}</Descriptions.Item>
-            <Descriptions.Item label="Supplier">{selectedRecord.supplierName}</Descriptions.Item>
-            <Descriptions.Item label="Customer">{selectedRecord.customerName}</Descriptions.Item>
-            <Descriptions.Item label="Source">{selectedRecord.originName}</Descriptions.Item>
-            <Descriptions.Item label="Destination">{selectedRecord.destinationName}</Descriptions.Item>
+            <Descriptions.Item label="Supplier">{selectedRecord.supplierName || "N/A"}</Descriptions.Item>
+            <Descriptions.Item label="Customer">{selectedRecord.customerName || "N/A"}</Descriptions.Item>
+            <Descriptions.Item label="Source">{selectedRecord.originName || "N/A"}</Descriptions.Item>
+            <Descriptions.Item label="Destination">{selectedRecord.destinationName || "N/A"}</Descriptions.Item>
             <Descriptions.Item label="First Weight">{selectedRecord.firstWeight} Kg</Descriptions.Item>
-            <Descriptions.Item label="Second Weight">{selectedRecord.secondWeight} Kg</Descriptions.Item>
+            <Descriptions.Item label="Second Weight">{selectedRecord.secondWeight ?? 0} Kg</Descriptions.Item>
             <Descriptions.Item label="Net Weight" className="font-bold text-blue-600">
-              {selectedRecord.netWeight} Kg
+              {selectedRecord.netWeight ?? 0} Kg
             </Descriptions.Item>
             <Descriptions.Item label="Operator">{selectedRecord.operatorName}</Descriptions.Item>
-            <Descriptions.Item label="Weigh Mode">{selectedRecord.weighMode}</Descriptions.Item>
+            <Descriptions.Item label="Weigh Mode">{selectedRecord.weighMode || "N/A"}</Descriptions.Item>
             <Descriptions.Item label="Status">
-              <Tag color="orange">{selectedRecord.status}</Tag>
+              <Tag color={selectedRecord.status === "Completed" ? "green" : "orange"}>{selectedRecord.status}</Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Date Created">{dayjs(selectedRecord.createdAt).format("LLL")}</Descriptions.Item>
             <Descriptions.Item label="Vehicle Proof" span={2}>
@@ -337,6 +455,27 @@ export default function Transactions() {
             </Descriptions.Item>
           </Descriptions>
         )}
+      </Modal>
+
+      {/* Ticket Preview Modal */}
+      <Modal
+        title={<div className="font-bold text-amber-600">TICKET PREVIEW: {previewRecord?.receiptNo}</div>}
+        open={isPreviewOpen}
+        onCancel={() => setIsPreviewOpen(false)}
+        width={1100}
+        footer={null}
+        destroyOnClose
+      >
+        <div className="overflow-auto max-h-[80vh] bg-gray-50 p-4 rounded">
+          <TicketPreview
+            record={previewRecord}
+            onClose={() => setIsPreviewOpen(false)}
+            onDownload={() => {
+              handlePrint(previewRecord);
+              setIsPreviewOpen(false);
+            }}
+          />
+        </div>
       </Modal>
     </div>
   );
