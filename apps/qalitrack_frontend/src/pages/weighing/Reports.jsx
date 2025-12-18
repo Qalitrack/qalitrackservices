@@ -410,6 +410,7 @@ export default function Reports() {
       loading={loading}
       onExportPDF={handleExportPDF}
       onExportExcel={handleExportExcel}
+      onPageChange={}
     />
   </div>
 );
