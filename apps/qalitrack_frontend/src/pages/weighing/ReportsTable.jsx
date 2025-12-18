@@ -8,12 +8,6 @@ import {
 } from "lucide-react";
 import dayjs from "dayjs";
 
-/**
- * ReportsTable
- * - Displays sortable, paginated transaction records
- * - Mirrors Transaction Ticket field mappings
- * - Exports current visible data (PDF / Excel)
- */
 export default function ReportsTable({
   transactions = [],
   loading = false,
@@ -24,18 +18,14 @@ export default function ReportsTable({
   onPageSizeChange,
   onExportPDF,
   onExportExcel,
+  showColumns = null, // NEW: Array of keys to display
+  onRowClick = null, // NEW: optional row click
 }) {
-  /* =========================
-     Sorting State
-     ========================= */
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
 
   const totalPages = Math.ceil(totalRecords / pageSize);
 
-  /* =========================
-     Sorting Logic
-     ========================= */
   const handleSort = (field) => {
     if (sortField === field) {
       if (sortOrder === "asc") setSortOrder("desc");
@@ -60,9 +50,6 @@ export default function ReportsTable({
     );
   };
 
-  /* =========================
-     Processed Data
-     ========================= */
   const processedData = useMemo(() => {
     let data = [...transactions];
 
@@ -74,7 +61,6 @@ export default function ReportsTable({
         if (typeof aVal === "number") {
           return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
         }
-
         return sortOrder === "asc"
           ? String(aVal).localeCompare(String(bVal))
           : String(bVal).localeCompare(String(aVal));
@@ -85,15 +71,9 @@ export default function ReportsTable({
     return data.slice(start, start + pageSize);
   }, [transactions, sortField, sortOrder, currentPage, pageSize]);
 
-  /* =========================
-     Export
-     ========================= */
   const handleExportPDF = () => onExportPDF?.(processedData);
   const handleExportExcel = () => onExportExcel?.(processedData);
 
-  /* =========================
-     Badges
-     ========================= */
   const badge = (label, cls) => (
     <span className={`px-2 py-1 text-xs rounded border ${cls}`}>
       {label || "N/A"}
@@ -118,13 +98,10 @@ export default function ReportsTable({
     return badge(mode, map[mode] || map.single);
   };
 
-  /* =========================
-     Render Helpers
-     ========================= */
   const renderLoading = () =>
     Array.from({ length: pageSize }).map((_, i) => (
       <tr key={i} className="animate-pulse">
-        {Array.from({ length: 12 }).map((_, j) => (
+        {Array.from({ length: showColumns?.length || 12 }).map((_, j) => (
           <td key={j} className="p-3">
             <div className="h-4 bg-gray-200 rounded" />
           </td>
@@ -134,23 +111,42 @@ export default function ReportsTable({
 
   const renderEmpty = () => (
     <tr>
-      <td colSpan={12} className="h-64 text-center text-gray-500">
+      <td colSpan={showColumns?.length || 12} className="h-64 text-center text-gray-500">
         <FileDown className="w-12 h-12 mx-auto mb-4 opacity-30" />
-        <p className="text-lg">No transactions found</p>
+        <p className="text-lg">No records found</p>
         <p className="text-sm mt-2">Adjust filters and try again</p>
       </td>
     </tr>
   );
 
-  /* =========================
-     JSX
-     ========================= */
+  // =========================
+  // Default columns if showColumns is not provided
+  // =========================
+  const allColumns = [
+    ["createdAt", "Date"],
+    ["receiptNo", "Receipt"],
+    ["noPlate", "Vehicle"],
+    ["driverName", "Driver"],
+    ["transporterName", "Transporter"],
+    ["originName", "Source"],
+    ["destinationName", "Destination"],
+    ["firstWeight", "First Wt (kg)"],
+    ["secondWeight", "Second Wt (kg)"],
+    ["netWeight", "Net Wt (kg)"],
+    ["weighMode", "Mode"],
+    ["status", "Status"],
+  ];
+
+  const columnsToRender = showColumns
+    ? allColumns.filter(([key]) => showColumns.includes(key))
+    : allColumns;
+
   return (
     <div className="bg-white rounded-lg border shadow-sm">
       {/* Header */}
       <div className="p-6 border-b flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-semibold">Transaction Reports</h2>
+          <h2 className="text-xl font-semibold">Reports</h2>
           <p className="text-sm text-gray-600">
             Showing {processedData.length} of {totalRecords} records
           </p>
@@ -182,18 +178,7 @@ export default function ReportsTable({
         <table className="w-full text-sm">
           <thead className="bg-gray-50">
             <tr>
-              {[
-                ["createdAt", "Date"],
-                ["receiptNo", "Receipt"],
-                ["noPlate", "Vehicle"],
-                ["driverName", "Driver"],
-                ["transporterName", "Transporter"],
-                ["originName", "Source"],
-                ["destinationName", "Destination"],
-                ["firstWeight", "First Wt (kg)"],
-                ["secondWeight", "Second Wt (kg)"],
-                ["netWeight", "Net Wt (kg)"],
-              ].map(([key, label]) => (
+              {columnsToRender.map(([key, label]) => (
                 <th
                   key={key}
                   onClick={() => handleSort(key)}
@@ -202,8 +187,6 @@ export default function ReportsTable({
                   {label} {getSortIcon(key)}
                 </th>
               ))}
-              <th className="p-3">Mode</th>
-              <th className="p-3">Status</th>
             </tr>
           </thead>
 
@@ -213,29 +196,28 @@ export default function ReportsTable({
               : processedData.length === 0
               ? renderEmpty()
               : processedData.map((t) => (
-                  <tr key={t.id} className="border-t hover:bg-gray-50">
-                    <td className="p-3">
-                      {t.createdAt
-                        ? dayjs(t.createdAt).format("DD MMM YYYY")
-                        : "N/A"}
-                    </td>
-                    <td className="p-3 font-mono">{t.receiptNo || "N/A"}</td>
-                    <td className="p-3">{t.noPlate || "N/A"}</td>
-                    <td className="p-3">{t.driverName || "N/A"}</td>
-                    <td className="p-3">{t.transporterName || "N/A"}</td>
-                    <td className="p-3">{t.originName || "N/A"}</td>
-                    <td className="p-3">{t.destinationName || "N/A"}</td>
-                    <td className="p-3 text-right">
-                      {t.firstWeight?.toLocaleString() || "-"}
-                    </td>
-                    <td className="p-3 text-right">
-                      {t.secondWeight?.toLocaleString() || "-"}
-                    </td>
-                    <td className="p-3 text-right">
-                      {t.netWeight?.toLocaleString() || "-"}
-                    </td>
-                    <td className="p-3">{weighModeBadge(t.weighMode)}</td>
-                    <td className="p-3">{statusBadge(t.status)}</td>
+                  <tr
+                    key={t.id}
+                    className="border-t hover:bg-gray-50 cursor-pointer"
+                    onClick={() => onRowClick?.(t)}
+                  >
+                    {columnsToRender.map(([key]) => {
+                      if (key === "createdAt")
+                        return (
+                          <td key={key} className="p-3">
+                            {t[key] ? dayjs(t[key]).format("DD MMM YYYY") : "-"}
+                          </td>
+                        );
+                      if (key === "netWeight" || key === "firstWeight" || key === "secondWeight")
+                        return (
+                          <td key={key} className="p-3 text-right">
+                            {t[key]?.toLocaleString() || "-"}
+                          </td>
+                        );
+                      if (key === "status") return <td key={key} className="p-3">{statusBadge(t[key])}</td>;
+                      if (key === "weighMode") return <td key={key} className="p-3">{weighModeBadge(t[key])}</td>;
+                      return <td key={key} className="p-3">{t[key] || "-"}</td>;
+                    })}
                   </tr>
                 ))}
           </tbody>
