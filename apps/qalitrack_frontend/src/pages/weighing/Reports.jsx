@@ -14,22 +14,11 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 
-/**
- * Reports Page (Main Container)
- */
 export default function Reports() {
   const dispatch = useDispatch();
 
-  /* =========================
-     Redux State
-     ========================= */
-  const { transactions, loading } = useSelector(
-    (state) => state.weighing
-  );
+  const { transactions, loading } = useSelector((state) => state.weighing);
 
-  /* =========================
-     Report Tabs State
-     ========================= */
   const REPORT_TABS = [
     "transactions",
     "drivers",
@@ -40,83 +29,55 @@ export default function Reports() {
 
   const [activeTab, setActiveTab] = useState("transactions");
 
-  /* =========================
-     Pagination State (Transactions)
-     ========================= */
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(7);
 
-  /* =========================
-     Filters (Transactions)
-     ========================= */
+  // Filters
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
     status: "",
   });
 
-  /* =========================
-     Fetch on Load
-     ========================= */
+  // Fetch transactions on mount
   useEffect(() => {
     dispatch(fetchTransactions());
   }, [dispatch]);
 
-  /* =========================
-     Reset page when filters or tab change
-     ========================= */
+  // Reset page when filters or tab change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, activeTab]);
 
-  /* =========================
-     Filtered Transactions
-     ========================= */
+  // Filtered transactions
   const filteredTransactions = useMemo(() => {
     let data = [...transactions];
 
     if (filters.startDate) {
       const start = new Date(filters.startDate);
       start.setHours(0, 0, 0, 0);
-
-      data = data.filter(
-        (t) => new Date(t.createdAt) >= start
-      );
+      data = data.filter((t) => new Date(t.createdAt) >= start);
     }
 
     if (filters.endDate) {
       const end = new Date(filters.endDate);
       end.setHours(23, 59, 59, 999);
-
-      data = data.filter(
-        (t) => new Date(t.createdAt) <= end
-      );
+      data = data.filter((t) => new Date(t.createdAt) <= end);
     }
 
     if (filters.status) {
       data = data.filter(
-        (t) =>
-          String(t.status).toLowerCase() ===
-          filters.status.toLowerCase()
+        (t) => String(t.status).toLowerCase() === filters.status.toLowerCase()
       );
     }
 
     return data;
   }, [transactions, filters]);
 
-  /* =========================
-     Pagination Slice
-     ========================= */
   const totalRecords = filteredTransactions.length;
 
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    return filteredTransactions.slice(start, start + pageSize);
-  }, [filteredTransactions, currentPage, pageSize]);
-
-  /* =========================
-     EXPORT: PDF (Transactions)
-     ========================= */
+  // EXPORT: PDF
   const handleExportPDF = (rows) => {
     const doc = new jsPDF("landscape");
     doc.setFontSize(16);
@@ -155,14 +116,10 @@ export default function Reports() {
     doc.save("transaction-report.pdf");
   };
 
-  /* =========================
-     EXPORT: EXCEL (Transactions)
-     ========================= */
+  // EXPORT: EXCEL
   const handleExportExcel = (rows) => {
     const data = rows.map((t) => ({
-      Date: t.createdAt
-        ? new Date(t.createdAt).toLocaleDateString()
-        : "",
+      Date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "",
       Receipt: t.receiptNo || "",
       Vehicle: t.noPlate || "",
       Driver: t.driverName || "",
@@ -180,23 +137,19 @@ export default function Reports() {
     XLSX.writeFile(wb, "transaction-report.xlsx");
   };
 
-  /* =========================
-     Reset Filters
-     ========================= */
+  // Reset filters
   const clearFilters = () => {
     setFilters({ startDate: "", endDate: "", status: "" });
     setCurrentPage(1);
   };
 
-  /* =========================
-     Render Active Report
-     ========================= */
+  // Render active report
   const renderActiveReport = () => {
     switch (activeTab) {
       case "transactions":
         return (
           <ReportsTable
-            transactions={paginatedData}
+            transactions={filteredTransactions} // PASS FULL DATA
             loading={loading}
             currentPage={currentPage}
             pageSize={pageSize}
@@ -206,47 +159,14 @@ export default function Reports() {
             onExportExcel={handleExportExcel}
           />
         );
-
       case "drivers":
-        return (
-          <DriverReport
-            transactions={filteredTransactions}
-            loading={loading}
-          />
-        );
-
+        return <DriverReport transactions={filteredTransactions} loading={loading} />;
       case "customers":
-        return (
-          <CustomerReport
-            transactions={filteredTransactions}
-            loading={loading}
-          />
-        );
-
+        return <CustomerReport transactions={filteredTransactions} loading={loading} />;
       case "commodities":
-        return (
-          <CommodityReport
-            transactions={filteredTransactions}
-            loading={loading}
-          />
-        );
-
+        return <CommodityReport transactions={filteredTransactions} loading={loading} />;
       case "suppliers":
-        return (
-          <SupplierReport
-            transactions={filteredTransactions}
-            loading={loading}
-          />
-        );
-        return (
-          <div className="bg-white border rounded-lg p-12 text-center text-gray-500">
-            <h2 className="text-xl mb-2 capitalize">
-              {activeTab} report
-            </h2>
-            <p>This report view will be implemented next.</p>
-          </div>
-        );
-
+        return <SupplierReport transactions={filteredTransactions} loading={loading} />;
       default:
         return null;
     }
@@ -291,7 +211,6 @@ export default function Reports() {
               }
               className="border rounded px-3 py-2"
             />
-
             <input
               type="date"
               value={filters.endDate}
@@ -300,7 +219,6 @@ export default function Reports() {
               }
               className="border rounded px-3 py-2"
             />
-
             <select
               value={filters.status}
               onChange={(e) =>
@@ -313,7 +231,6 @@ export default function Reports() {
               <option value="Pending">Pending</option>
               <option value="In Progress">In Progress</option>
             </select>
-
             <button
               onClick={clearFilters}
               className="border px-4 py-2 rounded"
