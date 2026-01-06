@@ -21,14 +21,15 @@ export default function DriverReport({ transactions = [], loading }) {
           trips: 0,
           totalNetWeight: 0,
           vehicles: new Set(),
-          transactions: [],
         };
       }
 
       map[driver].trips += 1;
       map[driver].totalNetWeight += tx.netWeight || 0;
-      if (tx.noPlate) map[driver].vehicles.add(tx.noPlate);
-      map[driver].transactions.push(tx);
+
+      if (tx.noPlate) {
+        map[driver].vehicles.add(tx.noPlate);
+      }
     });
 
     return Object.values(map).map((d) => ({
@@ -48,7 +49,7 @@ export default function DriverReport({ transactions = [], loading }) {
   );
 
   // =========================
-  // Summary Table
+  // Summary Table Rows
   // =========================
   const summaryRows = driverSummary.map((d) => ({
     id: d.id,
@@ -59,17 +60,18 @@ export default function DriverReport({ transactions = [], loading }) {
   }));
 
   // =========================
-  // Transactions for selected driver (drill-down)
+  // Drill-down: Vehicles & Weights per Driver
   // =========================
   const driverTransactions = useMemo(() => {
     if (!selectedDriver) return [];
+
     return transactions
-      .filter((t) => (t.driverName || "Unknown Driver") === selectedDriver)
+      .filter(
+        (t) => (t.driverName || "Unknown Driver") === selectedDriver
+      )
       .map((t) => ({
         id: t.id,
-        date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "-",
         vehicle: t.noPlate || "-",
-        commodity: t.commodityName || "-",
         netWeight: t.netWeight || 0,
       }));
   }, [selectedDriver, transactions]);
@@ -91,13 +93,17 @@ export default function DriverReport({ transactions = [], loading }) {
             <p className="text-gray-500 text-sm">Total Drivers</p>
             <p className="text-xl font-semibold">{totalDrivers}</p>
           </div>
+
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Trips</p>
+            <p className="text-gray-500 text-sm">Total Transactions</p>
             <p className="text-xl font-semibold">{totalTrips}</p>
           </div>
+
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
+            <p className="text-xl font-semibold">
+              {totalWeight.toFixed(2)}
+            </p>
           </div>
         </div>
       )}
@@ -122,15 +128,16 @@ export default function DriverReport({ transactions = [], loading }) {
             >
               <ChevronLeft size={16} /> Back
             </button>
+
             <h3 className="text-xl font-semibold">
-              {selectedDriver} — Transactions
+              {selectedDriver} — Vehicle Loads
             </h3>
           </div>
 
           <ReportsTable
             transactions={driverTransactions}
             loading={loading}
-            showColumns={["date", "vehicle", "commodity", "netWeight"]}
+            showColumns={["vehicle", "netWeight"]}
           />
         </div>
       )}
