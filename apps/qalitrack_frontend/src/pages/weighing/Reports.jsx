@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
 import DriverReport from "./reportFiles/DriverReport";
+import CustomerReport from "./reportFiles/CustomerReport";
+import CommodityReport from "./reportFiles/CommodityReport";
+import SupplierReport from "./reportFiles/SupplierReport";
 
 import { fetchTransactions } from "../../store/weighingSlice";
 import { RotateCcw } from "lucide-react";
@@ -41,7 +44,7 @@ export default function Reports() {
      Pagination State (Transactions)
      ========================= */
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(7); // FIXED TO 7
+  const [pageSize] = useState(7);
 
   /* =========================
      Filters (Transactions)
@@ -213,8 +216,28 @@ export default function Reports() {
         );
 
       case "customers":
+        return (
+          <CustomerReport
+            transactions={filteredTransactions}
+            loading={loading}
+          />
+        );
+
       case "commodities":
+        return (
+          <CommodityReport
+            transactions={filteredTransactions}
+            loading={loading}
+          />
+        );
+
       case "suppliers":
+        return (
+          <SupplierReport
+            transactions={filteredTransactions}
+            loading={loading}
+          />
+        );
         return (
           <div className="bg-white border rounded-lg p-12 text-center text-gray-500">
             <h2 className="text-xl mb-2 capitalize">
