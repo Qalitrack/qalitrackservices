@@ -36,16 +36,6 @@ public class TechnicianApiDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure Assignment entity to store TechnicianIds as JSON array
-        modelBuilder.Entity<Assignment>(entity =>
-        {
-            entity.Property(e => e.TechnicianIds)
-                .HasConversion(
-                    v => string.Join(',', v),
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
-                );
-        });
-
         // Configure Assignment entity
         modelBuilder.Entity<Assignment>(entity =>
         {
@@ -56,6 +46,16 @@ public class TechnicianApiDbContext : DbContext
             entity.Property(e => e.ServiceType).IsRequired().HasMaxLength(100);
             entity.Property(e => e.LocationName).HasMaxLength(200);
             entity.Property(e => e.LocationAddress).HasMaxLength(500);
+
+            // Configure TechnicianIds as comma-separated string
+            entity.Property(e => e.TechnicianIds)
+                .HasColumnName("TechnicianIds")
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => string.IsNullOrEmpty(v) 
+                        ? new List<string>() 
+                        : v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                );
 
             entity.HasIndex(e => e.ManagerId);
             entity.HasIndex(e => e.Status);
