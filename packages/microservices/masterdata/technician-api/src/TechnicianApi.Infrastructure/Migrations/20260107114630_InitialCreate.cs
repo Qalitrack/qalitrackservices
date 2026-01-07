@@ -12,36 +12,6 @@ namespace TechnicianApi.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Assignments",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    ManagerId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    ServiceType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Priority = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    AcceptedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LocationName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    LocationAddress = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    LocationLatitude = table.Column<double>(type: "double precision", nullable: true),
-                    LocationLongitude = table.Column<double>(type: "double precision", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Assignments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Attachments",
                 columns: table => new
                 {
@@ -67,12 +37,12 @@ namespace TechnicianApi.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Technicians",
+                name: "Technician",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -82,7 +52,261 @@ namespace TechnicianApi.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Technicians", x => x.Id);
+                    table.PrimaryKey("PK_Technician", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Assignments",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ManagerId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                    ServiceType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Priority = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    AcceptedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LocationName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    LocationAddress = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    LocationLatitude = table.Column<double>(type: "double precision", nullable: true),
+                    LocationLongitude = table.Column<double>(type: "double precision", nullable: true),
+                    TechnicianIds = table.Column<string>(type: "text", nullable: false),
+                    TechnicianId = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Assignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Assignments_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DailySummaries",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TotalAssignments = table.Column<int>(type: "integer", nullable: false),
+                    CompletedTasks = table.Column<int>(type: "integer", nullable: false),
+                    PendingTasks = table.Column<int>(type: "integer", nullable: false),
+                    DelayedTasks = table.Column<int>(type: "integer", nullable: false),
+                    CancelledTasks = table.Column<int>(type: "integer", nullable: false),
+                    PerformanceScore = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
+                    AlertLevel = table.Column<int>(type: "integer", nullable: false),
+                    TotalWorkingMinutes = table.Column<int>(type: "integer", nullable: false),
+                    FirstCheckIn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastCheckOut = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TotalRequisitions = table.Column<int>(type: "integer", nullable: false),
+                    TotalRequisitionAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    AutoGeneratedNotes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    AttachmentId = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DailySummaries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DailySummaries_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DailySummaries_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PerformanceMetrics",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    PeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TotalAssignments = table.Column<int>(type: "integer", nullable: false),
+                    CompletedAssignments = table.Column<int>(type: "integer", nullable: false),
+                    DelayedAssignments = table.Column<int>(type: "integer", nullable: false),
+                    CompletionRate = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
+                    OnTimeRate = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
+                    PerformanceScore = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
+                    AlertLevel = table.Column<int>(type: "integer", nullable: false),
+                    AverageCompletionMinutes = table.Column<int>(type: "integer", nullable: false),
+                    TotalWorkingHours = table.Column<int>(type: "integer", nullable: false),
+                    ReportsSubmitted = table.Column<int>(type: "integer", nullable: false),
+                    ReportsApproved = table.Column<int>(type: "integer", nullable: false),
+                    ReportsRejected = table.Column<int>(type: "integer", nullable: false),
+                    ReportApprovalRate = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
+                    TotalRequisitions = table.Column<int>(type: "integer", nullable: false),
+                    ApprovedRequisitions = table.Column<int>(type: "integer", nullable: false),
+                    TotalRequisitionAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    AmberThreshold = table.Column<int>(type: "integer", nullable: false),
+                    RedThreshold = table.Column<int>(type: "integer", nullable: false),
+                    CalculatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PerformanceMetrics", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PerformanceMetrics_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdvanceReturnForms",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    AttachmentId = table.Column<string>(type: "text", nullable: true),
+                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    ApprovalComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    RejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RejectedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    RejectionReason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdvanceReturnForms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdvanceReturnForms_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AdvanceReturnForms_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AdvanceReturnForms_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AssignmentBalanceSummaries",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TotalAdvancesGiven = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalReturns = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalExpensesClaimed = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalMaterialsRequisitioned = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalRefunds = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalMoneyOut = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalMoneyAccountedFor = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    NetBalance = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    BalanceStatus = table.Column<int>(type: "integer", nullable: false),
+                    IsReconciled = table.Column<bool>(type: "boolean", nullable: false),
+                    ReconciledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReconciledBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    ReconciliationNotes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    IsManagerApproved = table.Column<bool>(type: "boolean", nullable: false),
+                    ManagerApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ManagerApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    IsCfoApproved = table.Column<bool>(type: "boolean", nullable: false),
+                    CfoApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CfoApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    LastCalculatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    RecommendedAction = table.Column<int>(type: "integer", nullable: false),
+                    RecommendedAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    RecommendationMessage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssignmentBalanceSummaries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssignmentBalanceSummaries_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AssignmentBalanceSummaries_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AssignmentTechnician",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    AssignmentId = table.Column<string>(type: "text", nullable: false),
+                    TechnicianId = table.Column<string>(type: "text", nullable: false),
+                    AssignedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AssignedBy = table.Column<string>(type: "text", nullable: true),
+                    IsPrimary = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssignmentTechnician", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssignmentTechnician_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AssignmentTechnician_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,6 +336,112 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalTable: "Assignments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Claims",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TechnicianName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    SupportingDocuments = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    Justification = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ManagerReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ManagerReviewedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    ManagerComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CfoReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CfoReviewedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    CfoComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    DisbursedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DisbursedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    VoucherNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    ReferenceNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    PaymentMethod = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    RejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RejectedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    RejectionReason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    AttachmentId = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Claims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Claims_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Claims_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Claims_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PerDiemReturnForms",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ProjectName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    FaresOrCarExpense = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Mileage = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Meals = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Medical = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Incidentals = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    ApprovalComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    RejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RejectedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    RejectionReason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    AttachmentId = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PerDiemReturnForms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PerDiemReturnForms_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PerDiemReturnForms_Attachments_AttachmentId",
+                        column: x => x.AttachmentId,
+                        principalTable: "Attachments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PerDiemReturnForms_Technician_TechnicianId",
+                        column: x => x.TechnicianId,
+                        principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,329 +515,6 @@ namespace TechnicianApi.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AdvanceReturnForms",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    AttachmentId = table.Column<string>(type: "text", nullable: true),
-                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    ApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    ApprovalComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    RejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    RejectedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    RejectionReason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AdvanceReturnForms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AdvanceReturnForms_Assignments_AssignmentId",
-                        column: x => x.AssignmentId,
-                        principalTable: "Assignments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AdvanceReturnForms_Attachments_AttachmentId",
-                        column: x => x.AttachmentId,
-                        principalTable: "Attachments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_AdvanceReturnForms_Technicians_TechnicianId",
-                        column: x => x.TechnicianId,
-                        principalTable: "Technicians",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AssignmentBalanceSummaries",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    TotalAdvancesGiven = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalReturns = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalExpensesClaimed = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalMaterialsRequisitioned = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalRefunds = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalMoneyOut = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalMoneyAccountedFor = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    NetBalance = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    BalanceStatus = table.Column<int>(type: "integer", nullable: false),
-                    IsReconciled = table.Column<bool>(type: "boolean", nullable: false),
-                    ReconciledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ReconciledBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    ReconciliationNotes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    IsManagerApproved = table.Column<bool>(type: "boolean", nullable: false),
-                    ManagerApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ManagerApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    IsCfoApproved = table.Column<bool>(type: "boolean", nullable: false),
-                    CfoApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CfoApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    LastCalculatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RecommendedAction = table.Column<int>(type: "integer", nullable: false),
-                    RecommendedAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    RecommendationMessage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AssignmentBalanceSummaries", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AssignmentBalanceSummaries_Assignments_AssignmentId",
-                        column: x => x.AssignmentId,
-                        principalTable: "Assignments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AssignmentBalanceSummaries_Technicians_TechnicianId",
-                        column: x => x.TechnicianId,
-                        principalTable: "Technicians",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AssignmentTechnicians",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    AssignmentId = table.Column<string>(type: "text", nullable: false),
-                    TechnicianId = table.Column<string>(type: "text", nullable: false),
-                    AssignedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    AssignedBy = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    IsPrimary = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AssignmentTechnicians", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AssignmentTechnicians_Assignments_AssignmentId",
-                        column: x => x.AssignmentId,
-                        principalTable: "Assignments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AssignmentTechnicians_Technicians_TechnicianId",
-                        column: x => x.TechnicianId,
-                        principalTable: "Technicians",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Claims",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    TechnicianName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    SupportingDocuments = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    Justification = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    ManagerReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ManagerReviewedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    ManagerComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    CfoReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CfoReviewedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    CfoComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    DisbursedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DisbursedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    VoucherNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    ReferenceNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    PaymentMethod = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    RejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    RejectedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    RejectionReason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    AttachmentId = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Claims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Claims_Assignments_AssignmentId",
-                        column: x => x.AssignmentId,
-                        principalTable: "Assignments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Claims_Attachments_AttachmentId",
-                        column: x => x.AttachmentId,
-                        principalTable: "Attachments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Claims_Technicians_TechnicianId",
-                        column: x => x.TechnicianId,
-                        principalTable: "Technicians",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DailySummaries",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TotalAssignments = table.Column<int>(type: "integer", nullable: false),
-                    CompletedTasks = table.Column<int>(type: "integer", nullable: false),
-                    PendingTasks = table.Column<int>(type: "integer", nullable: false),
-                    DelayedTasks = table.Column<int>(type: "integer", nullable: false),
-                    CancelledTasks = table.Column<int>(type: "integer", nullable: false),
-                    PerformanceScore = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
-                    AlertLevel = table.Column<int>(type: "integer", nullable: false),
-                    TotalWorkingMinutes = table.Column<int>(type: "integer", nullable: false),
-                    FirstCheckIn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastCheckOut = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TotalRequisitions = table.Column<int>(type: "integer", nullable: false),
-                    TotalRequisitionAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    AutoGeneratedNotes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    AttachmentId = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DailySummaries", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DailySummaries_Attachments_AttachmentId",
-                        column: x => x.AttachmentId,
-                        principalTable: "Attachments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_DailySummaries_Technicians_TechnicianId",
-                        column: x => x.TechnicianId,
-                        principalTable: "Technicians",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PerDiemReturnForms",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    AssignmentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    ProjectName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    FaresOrCarExpense = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Mileage = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Meals = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Medical = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Incidentals = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    ApprovedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ApprovedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    ApprovalComments = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    RejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    RejectedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    RejectionReason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    AttachmentId = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PerDiemReturnForms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PerDiemReturnForms_Assignments_AssignmentId",
-                        column: x => x.AssignmentId,
-                        principalTable: "Assignments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PerDiemReturnForms_Attachments_AttachmentId",
-                        column: x => x.AttachmentId,
-                        principalTable: "Attachments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_PerDiemReturnForms_Technicians_TechnicianId",
-                        column: x => x.TechnicianId,
-                        principalTable: "Technicians",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PerformanceMetrics",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    TechnicianId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    PeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TotalAssignments = table.Column<int>(type: "integer", nullable: false),
-                    CompletedAssignments = table.Column<int>(type: "integer", nullable: false),
-                    DelayedAssignments = table.Column<int>(type: "integer", nullable: false),
-                    CompletionRate = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
-                    OnTimeRate = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
-                    PerformanceScore = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
-                    AlertLevel = table.Column<int>(type: "integer", nullable: false),
-                    AverageCompletionMinutes = table.Column<int>(type: "integer", nullable: false),
-                    TotalWorkingHours = table.Column<int>(type: "integer", nullable: false),
-                    ReportsSubmitted = table.Column<int>(type: "integer", nullable: false),
-                    ReportsApproved = table.Column<int>(type: "integer", nullable: false),
-                    ReportsRejected = table.Column<int>(type: "integer", nullable: false),
-                    ReportApprovalRate = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
-                    TotalRequisitions = table.Column<int>(type: "integer", nullable: false),
-                    ApprovedRequisitions = table.Column<int>(type: "integer", nullable: false),
-                    TotalRequisitionAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    AmberThreshold = table.Column<int>(type: "integer", nullable: false),
-                    RedThreshold = table.Column<int>(type: "integer", nullable: false),
-                    CalculatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PerformanceMetrics", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PerformanceMetrics_Technicians_TechnicianId",
-                        column: x => x.TechnicianId,
-                        principalTable: "Technicians",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Refunds",
                 columns: table => new
                 {
@@ -554,9 +561,9 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalTable: "Attachments",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Refunds_Technicians_TechnicianId",
+                        name: "FK_Refunds_Technician_TechnicianId",
                         column: x => x.TechnicianId,
-                        principalTable: "Technicians",
+                        principalTable: "Technician",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -602,9 +609,9 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Requisitions_Technicians_TechnicianId",
+                        name: "FK_Requisitions_Technician_TechnicianId",
                         column: x => x.TechnicianId,
-                        principalTable: "Technicians",
+                        principalTable: "Technician",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -659,9 +666,9 @@ namespace TechnicianApi.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ServiceReports_Technicians_TechnicianId",
+                        name: "FK_ServiceReports_Technician_TechnicianId",
                         column: x => x.TechnicianId,
-                        principalTable: "Technicians",
+                        principalTable: "Technician",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -758,14 +765,18 @@ namespace TechnicianApi.Infrastructure.Migrations
                 column: "Status");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssignmentTechnicians_AssignmentId_TechnicianId",
-                table: "AssignmentTechnicians",
-                columns: new[] { "AssignmentId", "TechnicianId" },
-                unique: true);
+                name: "IX_Assignments_TechnicianId",
+                table: "Assignments",
+                column: "TechnicianId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssignmentTechnicians_TechnicianId",
-                table: "AssignmentTechnicians",
+                name: "IX_AssignmentTechnician_AssignmentId",
+                table: "AssignmentTechnician",
+                column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssignmentTechnician_TechnicianId",
+                table: "AssignmentTechnician",
                 column: "TechnicianId");
 
             migrationBuilder.CreateIndex(
@@ -950,16 +961,6 @@ namespace TechnicianApi.Infrastructure.Migrations
                 name: "IX_ServiceReports_TechnicianId",
                 table: "ServiceReports",
                 column: "TechnicianId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Technicians_Name",
-                table: "Technicians",
-                column: "Name");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Technicians_Status",
-                table: "Technicians",
-                column: "Status");
         }
 
         /// <inheritdoc />
@@ -972,7 +973,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                 name: "AssignmentBalanceSummaries");
 
             migrationBuilder.DropTable(
-                name: "AssignmentTechnicians");
+                name: "AssignmentTechnician");
 
             migrationBuilder.DropTable(
                 name: "CheckIns");
@@ -1014,7 +1015,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                 name: "Attachments");
 
             migrationBuilder.DropTable(
-                name: "Technicians");
+                name: "Technician");
         }
     }
 }

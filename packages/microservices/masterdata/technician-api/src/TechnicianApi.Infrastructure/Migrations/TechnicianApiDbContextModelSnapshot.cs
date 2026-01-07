@@ -201,6 +201,14 @@ namespace TechnicianApi.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TechnicianId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TechnicianIds")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("TechnicianIds");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -219,6 +227,8 @@ namespace TechnicianApi.Infrastructure.Migrations
                     b.HasIndex("ManagerId");
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("TechnicianId");
 
                     b.ToTable("Assignments");
                 });
@@ -361,8 +371,7 @@ namespace TechnicianApi.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("AssignedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("AssignmentId")
                         .IsRequired()
@@ -392,12 +401,11 @@ namespace TechnicianApi.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssignmentId");
+
                     b.HasIndex("TechnicianId");
 
-                    b.HasIndex("AssignmentId", "TechnicianId")
-                        .IsUnique();
-
-                    b.ToTable("AssignmentTechnicians");
+                    b.ToTable("AssignmentTechnician");
                 });
 
             modelBuilder.Entity("TechnicianApi.Core.Entities.Attachment", b =>
@@ -1472,16 +1480,14 @@ namespace TechnicianApi.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -1494,11 +1500,7 @@ namespace TechnicianApi.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name");
-
-                    b.HasIndex("Status");
-
-                    b.ToTable("Technicians");
+                    b.ToTable("Technician");
                 });
 
             modelBuilder.Entity("TechnicianApi.Core.Entities.AdvanceReturnForm", b =>
@@ -1535,6 +1537,13 @@ namespace TechnicianApi.Infrastructure.Migrations
                     b.Navigation("AdvanceReturnForm");
                 });
 
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Assignment", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Technician", null)
+                        .WithMany("Assignments")
+                        .HasForeignKey("TechnicianId");
+                });
+
             modelBuilder.Entity("TechnicianApi.Core.Entities.AssignmentBalanceSummary", b =>
                 {
                     b.HasOne("TechnicianApi.Core.Entities.Assignment", "Assignment")
@@ -1555,7 +1564,7 @@ namespace TechnicianApi.Infrastructure.Migrations
             modelBuilder.Entity("TechnicianApi.Core.Entities.AssignmentTechnician", b =>
                 {
                     b.HasOne("TechnicianApi.Core.Entities.Assignment", "Assignment")
-                        .WithMany("AssignmentTechnicians")
+                        .WithMany()
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1740,8 +1749,6 @@ namespace TechnicianApi.Infrastructure.Migrations
                 {
                     b.Navigation("AdvanceReturnForms");
 
-                    b.Navigation("AssignmentTechnicians");
-
                     b.Navigation("BalanceSummary");
 
                     b.Navigation("CheckIn");
@@ -1764,6 +1771,8 @@ namespace TechnicianApi.Infrastructure.Migrations
             modelBuilder.Entity("TechnicianApi.Core.Entities.Technician", b =>
                 {
                     b.Navigation("AssignmentTechnicians");
+
+                    b.Navigation("Assignments");
                 });
 #pragma warning restore 612, 618
         }
