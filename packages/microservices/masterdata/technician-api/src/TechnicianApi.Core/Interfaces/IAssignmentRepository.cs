@@ -12,8 +12,8 @@ public interface IAssignmentRepository : IRepository<Assignment>
         int pageSize,
         string? technicianId = null,
         string? status = null);
-    Task<Assignment> CreateWithTechnicianIdsAsync(Assignment assignment, List<string> technicianIds);
-    Task<Assignment?> UpdateWithTechnicianIdsAsync(Assignment assignment, List<string>? technicianIds = null);
+    Task<Assignment> CreateWithTechnicianIdsAsync(Assignment assignment);
+    Task<Assignment?> UpdateWithTechnicianIdsAsync(Assignment assignment);
     Task<Assignment?> AssignTechnicianAsync(string assignmentId, string technicianId);
     Task<Assignment?> UnassignTechnicianAsync(string assignmentId, string technicianId);
 }
