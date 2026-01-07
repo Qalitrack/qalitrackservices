@@ -2,7 +2,6 @@ namespace TechnicianApi.Core.DTOs.Assignment;
 
 public class CreateAssignmentDto
 {
-    public List<string> TechnicianIds { get; set; } = new List<string>();
     public string ManagerId { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

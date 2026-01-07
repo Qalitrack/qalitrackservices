@@ -18,7 +18,6 @@ public class AssignmentProfile : Profile
         CreateMap<CreateAssignmentDto, Assignment>()
             .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => Enum.Parse<AssignmentPriority>(src.Priority)))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => AssignmentStatus.Pending))
-            .ForMember(dest => dest.TechnicianIds, opt => opt.MapFrom(src => src.TechnicianIds ?? new List<string>()))
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
@@ -45,8 +44,6 @@ public class AssignmentProfile : Profile
                 src.Priority != null ? Enum.Parse<AssignmentPriority>(src.Priority) : default(AssignmentPriority?)))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => 
                 src.Status != null ? Enum.Parse<AssignmentStatus>(src.Status) : default(AssignmentStatus?)))
-            .ForMember(dest => dest.TechnicianIds, opt => opt.MapFrom(src => 
-                src.TechnicianIds ?? new List<string>()))
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
     }
 }
