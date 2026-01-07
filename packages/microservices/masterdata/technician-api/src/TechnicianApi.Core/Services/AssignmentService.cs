@@ -77,7 +77,7 @@ public class AssignmentService : IAssignmentService
     public async Task<AssignmentResponseDto> CreateAsync(CreateAssignmentDto dto)
     {
         var assignment = _mapper.Map<Assignment>(dto);
-        var created = await _assignmentRepository.CreateWithTechnicianIdsAsync(assignment, dto.TechnicianIds);
+        var created = await _assignmentRepository.CreateWithTechnicianIdsAsync(assignment);
         var createdDto = _mapper.Map<AssignmentResponseDto>(created);
         await IncludeAttachments(createdDto);
         return createdDto;
@@ -89,7 +89,7 @@ public class AssignmentService : IAssignmentService
         if (existing == null) return null;
 
         _mapper.Map(dto, existing);
-        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(existing, dto.TechnicianIds);
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(existing);
 
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
@@ -112,7 +112,7 @@ public class AssignmentService : IAssignmentService
         assignment.Status = AssignmentStatus.Accepted;
         assignment.AcceptedAt = DateTime.UtcNow;
 
-        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment);
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
@@ -128,7 +128,7 @@ public class AssignmentService : IAssignmentService
 
         assignment.Status = AssignmentStatus.Declined;
 
-        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment);
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
@@ -145,7 +145,7 @@ public class AssignmentService : IAssignmentService
         assignment.Status = AssignmentStatus.InProgress;
         assignment.StartedAt = DateTime.UtcNow;
 
-        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment);
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
@@ -162,7 +162,7 @@ public class AssignmentService : IAssignmentService
         assignment.Status = AssignmentStatus.Completed;
         assignment.CompletedAt = DateTime.UtcNow;
 
-        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment, assignment.TechnicianIds.ToList());
+        var updated = await _assignmentRepository.UpdateWithTechnicianIdsAsync(assignment);
         return updated == null ? null : _mapper.Map<AssignmentResponseDto>(updated);
     }
 
