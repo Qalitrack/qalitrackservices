@@ -62,39 +62,26 @@ public class AssignmentRepository : Repository<Assignment>, IAssignmentRepositor
         return (items, totalCount);
     }
 
-    public async Task<Assignment> CreateWithTechnicianIdsAsync(Assignment assignment, List<string> technicianIds)
+    public async Task<Assignment> CreateWithTechnicianIdsAsync(Assignment assignment)
     {
         assignment.Id = Guid.NewGuid().ToString();
         assignment.CreatedAt = DateTime.UtcNow;
         assignment.UpdatedAt = DateTime.UtcNow;
-
-        if (technicianIds != null && technicianIds.Any())
-        {
-            assignment.TechnicianIds = technicianIds.Distinct().ToList();
-        }
-
         _context.Assignments.Add(assignment);
         await _context.SaveChangesAsync();
 
         return assignment;
     }
 
-    public async Task<Assignment?> UpdateWithTechnicianIdsAsync(Assignment assignment, List<string>? technicianIds = null)
+    public async Task<Assignment?> UpdateWithTechnicianIdsAsync(Assignment assignment)
     {
         var existing = await _context.Assignments
             .FirstOrDefaultAsync(a => a.Id == assignment.Id && !a.IsDeleted);
 
         if (existing == null) return null;
 
-        // Update properties
         _context.Entry(existing).CurrentValues.SetValues(assignment);
-
-        // Update technician IDs if provided
-        if (technicianIds != null)
-        {
-            existing.TechnicianIds = technicianIds.Distinct().ToList();
-        }
-
+        
         existing.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 

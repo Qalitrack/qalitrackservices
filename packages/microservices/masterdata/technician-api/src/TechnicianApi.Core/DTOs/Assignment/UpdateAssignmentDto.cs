@@ -2,7 +2,6 @@ namespace TechnicianApi.Core.DTOs.Assignment;
 
 public class UpdateAssignmentDto
 {
-    public List<string>? TechnicianIds { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
     public string? ServiceType { get; set; }
