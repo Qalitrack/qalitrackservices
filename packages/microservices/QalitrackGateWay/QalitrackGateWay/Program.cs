@@ -87,29 +87,33 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 var app = builder.Build();
 
 // Add request logging middleware
+// Add request logging for YARP
 app.Use(async (context, next) =>
 {
     var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
     
-    // Log incoming request
-    logger.LogInformation($"Incoming Request: {context.Request.Method} {context.Request.Path}{context.Request.QueryString}");
-    logger.LogInformation($"Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}: {h.Value}"))}");
+    // Log the incoming request
+    logger.LogInformation($"[YARP] Incoming: {context.Request.Method} {context.Request.Path}{context.Request.QueryString}");
     
-    // Capture the original response body
-    var originalBody = context.Response.Body;
-    using var responseBody = new MemoryStream();
-    context.Response.Body = responseBody;
+    // Get the proxy feature
+    var proxyFeature = context.Features.Get<IReverseProxyFeature>();
+    if (proxyFeature != null)
+    {
+        // Log the matched route if available
+        if (proxyFeature.Route != null && proxyFeature.Route.Config != null)
+        {
+            logger.LogInformation($"[YARP] Matched Route: {proxyFeature.Route.Config.RouteId}");
+        }
+        
+        // Log the destination endpoint
+        var endpoint = context.GetEndpoint();
+        if (endpoint != null)
+        {
+            logger.LogInformation($"[YARP] Forwarding to: {endpoint.DisplayName}");
+        }
+    }
     
-    // Continue processing the request
-    await next();
-    
-    // Log the response status
-    logger.LogInformation($"Response: {context.Response.StatusCode} for {context.Request.Method} {context.Request.Path}");
-    
-    // Copy the response body back to the original stream
-    responseBody.Seek(0, SeekOrigin.Begin);
-    await responseBody.CopyToAsync(originalBody);
-    context.Response.Body = originalBody;
+    await next(context); // Add 'context' parameter here
 });
 
 // Add request logging for YARP
