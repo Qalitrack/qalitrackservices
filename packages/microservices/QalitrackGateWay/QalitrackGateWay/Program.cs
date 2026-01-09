@@ -13,7 +13,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Configure();
 });
 
-// Always use port 7001
+// Always use port 7000
 builder.WebHost.UseUrls("http://*:7000");
 
 // Disable HTTPS redirection
@@ -111,39 +111,6 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
 
-// Enable CORS before other middleware
-app.UseCors();
-
-// Add request logging middleware
-// Add request logging for YARP
-app.Use(async (context, next) =>
-{
-    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-    
-    // Log the incoming request
-    logger.LogInformation($"[YARP] Incoming: {context.Request.Method} {context.Request.Path}{context.Request.QueryString}");
-    
-    // Get the proxy feature
-    var proxyFeature = context.Features.Get<IReverseProxyFeature>();
-    if (proxyFeature != null)
-    {
-        // Log the matched route if available
-        if (proxyFeature.Route != null && proxyFeature.Route.Config != null)
-        {
-            logger.LogInformation($"[YARP] Matched Route: {proxyFeature.Route.Config.RouteId}");
-        }
-        
-        // Log the destination endpoint
-        var endpoint = context.GetEndpoint();
-        if (endpoint != null)
-        {
-            logger.LogInformation($"[YARP] Forwarding to: {endpoint.DisplayName}");
-        }
-    }
-    
-    await next(context); // Add 'context' parameter here
-});
-
 // Add request logging for YARP
 app.Use(async (context, next) =>
 {
@@ -173,13 +140,8 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Configure YARP with default pipeline
-app.MapReverseProxy(proxyPipeline =>
-{
-    proxyPipeline.UseSessionAffinity();
-    proxyPipeline.UseLoadBalancing();
-    proxyPipeline.UsePassiveHealthChecks();
-});
+// Enable CORS - moved after logging middleware
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -187,7 +149,12 @@ app.UseAuthorization();
 // Expose a simple health endpoint
 app.MapGet("/", () => Results.Ok(new { status = "ok" }));
 
-// Map the reverse proxy - default policy will require authentication
-app.MapReverseProxy();
+// Map the reverse proxy
+app.MapReverseProxy(proxyPipeline =>
+{
+    proxyPipeline.UseSessionAffinity();
+    proxyPipeline.UseLoadBalancing();
+    proxyPipeline.UsePassiveHealthChecks();
+});
 
 app.Run();
