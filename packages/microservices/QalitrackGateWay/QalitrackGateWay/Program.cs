@@ -79,11 +79,40 @@ builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+// Configure CORS
+var corsSection = builder.Configuration.GetSection("Cors");
+var allowedOrigins = corsSection.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+var allowedMethods = corsSection.GetSection("AllowedMethods").Get<string[]>() ?? new[] { "GET", "POST", "PUT", "DELETE" };
+var allowedHeaders = corsSection.GetSection("AllowedHeaders").Get<string[]>() ?? new[] { "*" };
+var allowCredentials = corsSection.GetValue<bool>("AllowCredentials");
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+              .WithMethods(allowedMethods)
+              .WithHeaders(allowedHeaders);
+
+        if (allowCredentials)
+        {
+            policy.AllowCredentials();
+        }
+        else
+        {
+            policy.DisallowCredentials();
+        }
+    });
+});
+
 // Configure logging for the application
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
+
+// Enable CORS before other middleware
+app.UseCors();
 
 // Add request logging middleware
 // Add request logging for YARP
