@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import electron from 'vite-plugin-electron';
 
 // 🔗 Define the base URL for the Transactions API
 const TRANSACTION_API_TARGET = 'https://qalitrack.cseco.co.ke/';
@@ -13,7 +14,12 @@ export default defineConfig({
     VitePWA({
       // ... (Your PWA configuration remains the same)
     }),
+    electron({
+      entry: 'electron/main.cjs',
+    }),
   ],
+
+  base: './', // ⚡ Important for Electron - ensures relative paths work
 
   // 🌍 Vite Development Server Configuration (CORS Fix)
   server: {
