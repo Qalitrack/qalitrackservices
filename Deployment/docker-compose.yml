@@ -14,8 +14,8 @@ services:
       - JWT_AUDIENCE=qalitrack
     networks:
       - qalitrack-proxy
-    expose:
-      - "3000"
+    ports:
+      - "7000:3000"
     deploy:
       resources:
         limits:
@@ -70,8 +70,8 @@ services:
         condition: service_started
     networks:
       - qalitrack-proxy
-    expose:
-      - "80"
+    ports:
+      - "7001:80"
     deploy:
       resources:
         limits:
@@ -142,9 +142,10 @@ services:
       - rabbitmq_prod_data:/var/lib/rabbitmq
     networks:
       - qalitrack-proxy
+    ports:
+      - "7010:15672"
     expose:
       - "5672"
-      - "15672"
 
   # =================================================================
   # MASTERDATA SERVICE (PROD)
@@ -169,8 +170,8 @@ services:
         condition: service_healthy
     networks:
       - qalitrack-proxy
-    expose:
-      - "80"
+    ports:
+      - "7002:80"
     deploy:
       resources:
         limits:
@@ -246,8 +247,8 @@ services:
         condition: service_started
     networks:
       - qalitrack-proxy
-    expose:
-      - "80"
+    ports:
+      - "7003:80"
     deploy:
       resources:
         limits:
@@ -308,9 +309,10 @@ services:
       - rabbitmq_backup_prod_data:/var/lib/rabbitmq
     networks:
       - qalitrack-proxy
+    ports:
+      - "7011:15672"
     expose:
       - "5672"
-      - "15672"
     deploy:
       resources:
         limits:
@@ -352,8 +354,8 @@ services:
         condition: service_started
     networks:
       - qalitrack-proxy
-    expose:
-      - "80"
+    ports:
+      - "7004:80"
     deploy:
       resources:
         limits:
@@ -414,9 +416,10 @@ services:
       - rabbitmq_transaction_prod_data:/var/lib/rabbitmq
     networks:
       - qalitrack-proxy
+    ports:
+      - "7012:15672"
     expose:
       - "5672"
-      - "15672"
     deploy:
       resources:
         limits:
@@ -459,5 +462,3 @@ networks:
   qalitrack-proxy:
     driver: bridge
     name: qalitrack-proxy
-
-
