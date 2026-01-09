@@ -1,8 +1,15 @@
 import { useMemo, useState } from "react";
 import ReportsTable from "../ReportsTable";
+import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
-export default function DriverReport({ transactions = [], loading }) {
+export default function DriverReport({
+  transactions = [],
+  loading,
+  currentPage,
+  pageSize,
+  onPageChange,
+}) {
   const [selectedDriver, setSelectedDriver] = useState(null);
 
   // =========================
@@ -39,7 +46,7 @@ export default function DriverReport({ transactions = [], loading }) {
   }, [transactions]);
 
   // =========================
-  // KPIs
+  // KPIs (NOT PAGINATED)
   // =========================
   const totalDrivers = driverSummary.length;
   const totalTrips = driverSummary.reduce((sum, d) => sum + d.trips, 0);
@@ -49,15 +56,20 @@ export default function DriverReport({ transactions = [], loading }) {
   );
 
   // =========================
-  // Summary Table Rows
+  // Paginated Summary Rows
   // =========================
-  const summaryRows = driverSummary.map((d) => ({
-    id: d.id,
-    driverName: d.driverName,
-    trips: d.trips,
-    vehicles: d.vehicles,
-    netWeight: d.totalNetWeight.toFixed(2),
-  }));
+  const paginatedSummaryRows = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    return driverSummary.slice(start, end).map((d) => ({
+      id: d.id,
+      driverName: d.driverName,
+      trips: d.trips,
+      vehicles: d.vehicles,
+      netWeight: d.totalNetWeight.toFixed(2),
+    }));
+  }, [driverSummary, currentPage, pageSize]);
 
   // =========================
   // Drill-down: Vehicles & Weights per Driver
@@ -110,12 +122,21 @@ export default function DriverReport({ transactions = [], loading }) {
 
       {/* SUMMARY TABLE */}
       {!selectedDriver && (
-        <ReportsTable
-          transactions={summaryRows}
-          loading={loading}
-          onRowClick={(row) => setSelectedDriver(row.driverName)}
-          showColumns={["driverName", "trips", "vehicles", "netWeight"]}
-        />
+        <>
+          <ReportsTable
+            transactions={paginatedSummaryRows}
+            loading={loading}
+            onRowClick={(row) => setSelectedDriver(row.driverName)}
+            showColumns={["driverName", "trips", "vehicles", "netWeight"]}
+          />
+
+          <ReportsPagination
+            currentPage={currentPage}
+            totalRecords={driverSummary.length}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+          />
+        </>
       )}
 
       {/* DRILL-DOWN TABLE */}
