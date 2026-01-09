@@ -3,14 +3,12 @@ import ReportsTable from "../ReportsTable";
 import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
-export default function CommodityReport({
-  transactions = [],
-  loading,
-  currentPage,
-  pageSize,
-  onPageChange,
-}) {
+export default function CommodityReport({ transactions = [], loading }) {
   const [selectedCommodity, setSelectedCommodity] = useState(null);
+
+  // Internal pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 5;
 
   // =========================
   // Group Transactions by Commodity
@@ -41,10 +39,7 @@ export default function CommodityReport({
   // KPIs (NOT PAGINATED)
   // =========================
   const totalCommodities = commoditySummary.length;
-  const totalTrips = commoditySummary.reduce(
-    (sum, c) => sum + c.trips,
-    0
-  );
+  const totalTrips = commoditySummary.reduce((sum, c) => sum + c.trips, 0);
   const totalWeight = commoditySummary.reduce(
     (sum, c) => sum + c.totalNetWeight,
     0
@@ -54,16 +49,14 @@ export default function CommodityReport({
   // Paginated Summary Rows
   // =========================
   const paginatedSummaryRows = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-
-    return commoditySummary.slice(start, end).map((c) => ({
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return commoditySummary.slice(start, start + PAGE_SIZE).map((c) => ({
       id: c.id,
       commodityName: c.commodityName,
       trips: c.trips,
       netWeight: c.totalNetWeight.toFixed(2),
     }));
-  }, [commoditySummary, currentPage, pageSize]);
+  }, [commoditySummary, currentPage]);
 
   // =========================
   // Drill-down: Suppliers per Commodity
@@ -73,8 +66,7 @@ export default function CommodityReport({
 
     return transactions
       .filter(
-        (t) =>
-          (t.commodityName || "Unknown Commodity") === selectedCommodity
+        (t) => (t.commodityName || "Unknown Commodity") === selectedCommodity
       )
       .map((t) => ({
         id: t.id,
@@ -108,9 +100,7 @@ export default function CommodityReport({
 
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">
-              {totalWeight.toFixed(2)}
-            </p>
+            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
           </div>
         </div>
       )}
@@ -121,17 +111,15 @@ export default function CommodityReport({
           <ReportsTable
             transactions={paginatedSummaryRows}
             loading={loading}
-            onRowClick={(row) =>
-              setSelectedCommodity(row.commodityName)
-            }
+            onRowClick={(row) => setSelectedCommodity(row.commodityName)}
             showColumns={["commodityName", "trips", "netWeight"]}
           />
 
           <ReportsPagination
             currentPage={currentPage}
             totalRecords={commoditySummary.length}
-            pageSize={pageSize}
-            onPageChange={onPageChange}
+            pageSize={PAGE_SIZE}
+            onPageChange={setCurrentPage}
           />
         </>
       )}
