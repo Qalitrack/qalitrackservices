@@ -1,0 +1,463 @@
+services:
+  # =================================================================
+  # GATEWAY SERVICE (PROD) - Handles JWT Authentication
+  # =================================================================
+  gateway-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/gateway-service:latest
+    container_name: qalitrack-gateway-service-prod
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:3000
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ISSUER=qalitrack
+      - JWT_AUDIENCE=qalitrack
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "3000"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # =================================================================
+  # USER SERVICE (PROD)
+  # =================================================================
+  user-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/user-service:latest
+    container_name: qalitrack-user-service-prod
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - UsePostgreSQL=true
+      - UseRedis=true
+      - ConnectionStrings__DefaultConnection=Host=postgres-userservice-prod;Port=5432;Database=userservicedb;Username=userservice;Password=${USER_SERVICE_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-cache-prod:6379,password=${USER_SERVICE_REDIS_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ISSUER=qalitrack
+      - JWT_AUDIENCE=qalitrack
+      - RABBITMQ_HOST=rabbitmq-prod
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - Backup__Path=/app/Backups
+      - Email__FromEmail=${EMAIL_FROM_EMAIL}
+      - Email__FromName=${EMAIL_FROM_NAME}
+      - Email__SmtpHost=${EMAIL_SMTP_HOST}
+      - Email__SmtpPort=${EMAIL_SMTP_PORT}
+      - Email__SmtpUsername=${EMAIL_SMTP_USERNAME}
+      - Email__SmtpPassword=${EMAIL_SMTP_PASSWORD}
+      - Email__EnableSsl=${EMAIL_ENABLE_SSL}
+    volumes:
+      - ./user-service/data:/app/data
+      - ./user-service/logs:/app/logs
+      - ./user-service/userservice-backups:/app/Backups
+    depends_on:
+      postgres-userservice-prod:
+        condition: service_healthy
+      redis-cache-prod:
+        condition: service_healthy
+      rabbitmq-prod:
+        condition: service_started
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "80"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+
+  postgres-userservice-prod:
+    image: postgres:15-alpine
+    container_name: qalitrack-postgres-userservice-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=userservicedb
+      - POSTGRES_USER=userservice
+      - POSTGRES_PASSWORD=${USER_SERVICE_DB_PASSWORD}
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_userservice_prod_data:/var/lib/postgresql/data
+      - ./user-service/userservice-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5432"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U userservice -d userservicedb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis-cache-prod:
+    image: redis:7-alpine
+    container_name: qalitrack-redis-prod
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${USER_SERVICE_REDIS_PASSWORD} --maxmemory 1gb --maxmemory-policy allkeys-lru --tcp-keepalive 60 --timeout 300
+    volumes:
+      - redis_prod_data:/data
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "6379"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  rabbitmq-prod:
+    image: rabbitmq:3-management-alpine
+    container_name: qalitrack-rabbitmq-prod
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_prod_data:/var/lib/rabbitmq
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5672"
+      - "15672"
+
+  # =================================================================
+  # MASTERDATA SERVICE (PROD)
+  # =================================================================
+  masterdata-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/masterdata-service:latest
+    container_name: qalitrack-masterdata-service-prod
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres-masterdata-prod;Port=5432;Database=qalitrack_masterdata;Username=masterdata;Password=${MASTERDATA_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ISSUER=qalitrack
+      - JWT_AUDIENCE=qalitrack
+    volumes:
+      - ./masterdata/logs:/app/logs
+      - ./masterdata/docs:/app/wwwroot/docs
+      - ./masterdata/data:/app/data
+    depends_on:
+      postgres-masterdata-prod:
+        condition: service_healthy
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "80"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+
+  postgres-masterdata-prod:
+    image: postgres:16
+    container_name: qalitrack-postgres-masterdata-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=qalitrack_masterdata
+      - POSTGRES_USER=masterdata
+      - POSTGRES_PASSWORD=${MASTERDATA_DB_PASSWORD}
+      - POSTGRES_INITDB_ARGS=-E UTF8 --locale=en_US.utf8
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_masterdata_prod_data:/var/lib/postgresql/data
+      - ./masterdata/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U masterdata -d qalitrack_masterdata"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+  # =================================================================
+  # BACKUP SERVICE (PROD)
+  # =================================================================
+  backup-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/backup-service:latest
+    container_name: qalitrack-backup-service-prod
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - UsePostgreSQL=true
+      - UseRedis=true
+      - ConnectionStrings__DefaultConnection=Host=postgres-backupservice-prod;Port=5432;Database=backupservicedb;Username=backupservice;Password=${BACKUP_SERVICE_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-backup-prod:6379,password=${BACKUP_SERVICE_REDIS_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ISSUER=qalitrack
+      - JWT_AUDIENCE=qalitrack
+      - RABBITMQ_HOST=rabbitmq-backup-prod
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - Backup__Path=/app/Backups
+      - Backup__MetadataPath=/app/backup-metadata
+    volumes:
+      - ./backup-service/data:/app/data
+      - ./backup-service/logs:/app/logs
+      - ./backup-service/backups:/app/Backups
+      - ./backup-service/metadata:/app/backup-metadata
+    depends_on:
+      postgres-backupservice-prod:
+        condition: service_started
+      redis-backup-prod:
+        condition: service_started
+      rabbitmq-backup-prod:
+        condition: service_started
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "80"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+
+  postgres-backupservice-prod:
+    image: postgres:15-alpine
+    container_name: qalitrack-postgres-backupservice-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=backupservicedb
+      - POSTGRES_USER=backupservice
+      - POSTGRES_PASSWORD=${BACKUP_SERVICE_DB_PASSWORD}
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_backupservice_prod_data:/var/lib/postgresql/data
+      - ./backup-service/backup-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5432"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+  redis-backup-prod:
+    image: redis:7-alpine
+    container_name: qalitrack-redis-backup-prod
+    restart: unless-stopped
+    command: redis-server --requirepass ${BACKUP_SERVICE_REDIS_PASSWORD} --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_backup_prod_data:/data
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "6379"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+  rabbitmq-backup-prod:
+    image: rabbitmq:3-management-alpine
+    container_name: qalitrack-rabbitmq-backup-prod
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - rabbitmq_backup_prod_data:/var/lib/rabbitmq
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5672"
+      - "15672"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+  # =================================================================
+  # TRANSACTION SERVICE (PROD)
+  # =================================================================
+  transaction-service-prod:
+    image: ghcr.io/qalitrack/qalitrackservices/transaction-service:latest
+    container_name: qalitrack-transaction-service-prod
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - UsePostgreSQL=true
+      - UseRedis=true
+      - ConnectionStrings__DefaultConnection=Host=postgres-transaction-prod;Port=5432;Database=transactiondb;Username=transaction;Password=${TRANSACTION_SERVICE_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-transaction-prod:6379,password=${TRANSACTION_SERVICE_REDIS_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ISSUER=qalitrack
+      - JWT_AUDIENCE=qalitrack
+      - RABBITMQ_HOST=rabbitmq-transaction-prod
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - Transaction__MetadataPath=/app/transaction-metadata
+    volumes:
+      - ./transaction-service/data:/app/data
+      - ./transaction-service/logs:/app/logs
+      - ./transaction-service/metadata:/app/transaction-metadata
+    depends_on:
+      postgres-transaction-prod:
+        condition: service_started
+      redis-transaction-prod:
+        condition: service_started
+      rabbitmq-transaction-prod:
+        condition: service_started
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "80"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+
+  postgres-transaction-prod:
+    image: postgres:15-alpine
+    container_name: qalitrack-postgres-transaction-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=transactiondb
+      - POSTGRES_USER=transaction
+      - POSTGRES_PASSWORD=${TRANSACTION_SERVICE_DB_PASSWORD}
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_transaction_prod_data:/var/lib/postgresql/data
+      - ./transaction-service/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5432"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+  redis-transaction-prod:
+    image: redis:7-alpine
+    container_name: qalitrack-redis-transaction-prod
+    restart: unless-stopped
+    command: redis-server --requirepass ${TRANSACTION_SERVICE_REDIS_PASSWORD} --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_transaction_prod_data:/data
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "6379"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+  rabbitmq-transaction-prod:
+    image: rabbitmq:3-management-alpine
+    container_name: qalitrack-rabbitmq-transaction-prod
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - rabbitmq_transaction_prod_data:/var/lib/rabbitmq
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5672"
+      - "15672"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+volumes:
+  postgres_userservice_prod_data:
+    driver: local
+    name: postgres_userservice_prod_data
+  redis_prod_data:
+    driver: local
+    name: redis_prod_data
+  rabbitmq_prod_data:
+    driver: local
+    name: rabbitmq_prod_data
+  postgres_masterdata_prod_data:
+    driver: local
+    name: postgres_masterdata_prod_data
+  postgres_backupservice_prod_data:
+    driver: local
+    name: postgres_backupservice_prod_data
+  redis_backup_prod_data:
+    driver: local
+    name: redis_backup_prod_data
+  rabbitmq_backup_prod_data:
+    driver: local
+    name: rabbitmq_backup_prod_data
+  postgres_transaction_prod_data:
+    driver: local
+    name: postgres_transaction_prod_data
+  redis_transaction_prod_data:
+    driver: local
+    name: redis_transaction_prod_data
+  rabbitmq_transaction_prod_data:
+    driver: local
+    name: rabbitmq_transaction_prod_data
+
+networks:
+  qalitrack-proxy:
+    driver: bridge
+    name: qalitrack-proxy
+
+
