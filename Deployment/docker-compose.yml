@@ -8,21 +8,21 @@ services:
     restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:3000
+      - ASPNETCORE_URLS=http://+:7000
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
     networks:
       - qalitrack-proxy
     ports:
-      - "7000:3000"
+      - "7000:7000"
     deploy:
       resources:
         limits:
           memory: 256M
           cpus: '0.25'
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:7000/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
