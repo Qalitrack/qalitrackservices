@@ -3,14 +3,12 @@ import ReportsTable from "../ReportsTable";
 import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
-export default function DriverReport({
-  transactions = [],
-  loading,
-  currentPage,
-  pageSize,
-  onPageChange,
-}) {
+export default function DriverReport({ transactions = [], loading }) {
   const [selectedDriver, setSelectedDriver] = useState(null);
+
+  // Pagination internal to this report
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 5;
 
   // =========================
   // Group Transactions by Driver
@@ -34,9 +32,7 @@ export default function DriverReport({
       map[driver].trips += 1;
       map[driver].totalNetWeight += tx.netWeight || 0;
 
-      if (tx.noPlate) {
-        map[driver].vehicles.add(tx.noPlate);
-      }
+      if (tx.noPlate) map[driver].vehicles.add(tx.noPlate);
     });
 
     return Object.values(map).map((d) => ({
@@ -46,7 +42,7 @@ export default function DriverReport({
   }, [transactions]);
 
   // =========================
-  // KPIs (NOT PAGINATED)
+  // KPIs
   // =========================
   const totalDrivers = driverSummary.length;
   const totalTrips = driverSummary.reduce((sum, d) => sum + d.trips, 0);
@@ -56,31 +52,26 @@ export default function DriverReport({
   );
 
   // =========================
-  // Paginated Summary Rows
+  // Paginated summary rows
   // =========================
   const paginatedSummaryRows = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-
-    return driverSummary.slice(start, end).map((d) => ({
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return driverSummary.slice(start, start + PAGE_SIZE).map((d) => ({
       id: d.id,
       driverName: d.driverName,
       trips: d.trips,
       vehicles: d.vehicles,
       netWeight: d.totalNetWeight.toFixed(2),
     }));
-  }, [driverSummary, currentPage, pageSize]);
+  }, [driverSummary, currentPage]);
 
   // =========================
-  // Drill-down: Vehicles & Weights per Driver
+  // Drill-down rows
   // =========================
   const driverTransactions = useMemo(() => {
     if (!selectedDriver) return [];
-
     return transactions
-      .filter(
-        (t) => (t.driverName || "Unknown Driver") === selectedDriver
-      )
+      .filter((t) => (t.driverName || "Unknown Driver") === selectedDriver)
       .map((t) => ({
         id: t.id,
         vehicle: t.noPlate || "-",
@@ -90,7 +81,7 @@ export default function DriverReport({
 
   return (
     <div className="bg-white border rounded-lg p-6">
-      {/* HEADER */}
+      {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">Driver Report</h2>
         <p className="text-sm text-gray-600">
@@ -105,22 +96,18 @@ export default function DriverReport({
             <p className="text-gray-500 text-sm">Total Drivers</p>
             <p className="text-xl font-semibold">{totalDrivers}</p>
           </div>
-
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Transactions</p>
             <p className="text-xl font-semibold">{totalTrips}</p>
           </div>
-
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">
-              {totalWeight.toFixed(2)}
-            </p>
+            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
           </div>
         </div>
       )}
 
-      {/* SUMMARY TABLE */}
+      {/* Summary Table */}
       {!selectedDriver && (
         <>
           <ReportsTable
@@ -133,13 +120,13 @@ export default function DriverReport({
           <ReportsPagination
             currentPage={currentPage}
             totalRecords={driverSummary.length}
-            pageSize={pageSize}
-            onPageChange={onPageChange}
+            pageSize={PAGE_SIZE}
+            onPageChange={setCurrentPage}
           />
         </>
       )}
 
-      {/* DRILL-DOWN TABLE */}
+      {/* Drill-down Table */}
       {selectedDriver && (
         <div>
           <div className="flex items-center gap-3 mb-4">
