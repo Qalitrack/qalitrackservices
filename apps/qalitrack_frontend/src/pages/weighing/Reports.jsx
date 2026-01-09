@@ -17,12 +17,19 @@ export default function Reports() {
   const dispatch = useDispatch();
   const { transactions, loading } = useSelector((state) => state.weighing);
 
-  const REPORT_TABS = ["transactions", "drivers", "customers", "commodities", "suppliers"];
+  const REPORT_TABS = [
+    "transactions",
+    "drivers",
+    "customers",
+    "commodities",
+    "suppliers",
+  ];
+
   const [activeTab, setActiveTab] = useState("transactions");
 
-  // 🔒 Single source of truth for pagination
+  // 🔒 Pagination ONLY for transactions
+  const PAGE_SIZE = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(7);
 
   // Filters (transactions only)
   const [filters, setFilters] = useState({
@@ -35,7 +42,7 @@ export default function Reports() {
     dispatch(fetchTransactions());
   }, [dispatch]);
 
-  // Reset pagination ONLY when it makes sense
+  // Reset pagination when filters or tab change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, activeTab]);
@@ -60,7 +67,8 @@ export default function Reports() {
 
     if (filters.status) {
       data = data.filter(
-        (t) => String(t.status).toLowerCase() === filters.status.toLowerCase()
+        (t) =>
+          String(t.status).toLowerCase() === filters.status.toLowerCase()
       );
     }
 
@@ -69,13 +77,14 @@ export default function Reports() {
 
   const totalRecords = filteredTransactions.length;
 
-  // Shared pagination for all reports
+  // =========================
+  // Pagination (Transactions only)
+  // =========================
   const paginatedTransactions = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
     return filteredTransactions.slice(start, end);
-  }, [filteredTransactions, currentPage, pageSize]);
-
+  }, [filteredTransactions, currentPage]);
 
   // =========================
   // EXPORTS
@@ -87,9 +96,16 @@ export default function Reports() {
     autoTable(doc, {
       startY: 25,
       head: [[
-        "Date", "Receipt", "Vehicle", "Driver",
-        "Commodity", "Supplier", "Customer",
-        "First Weight", "Net Weight", "Status",
+        "Date",
+        "Receipt",
+        "Vehicle",
+        "Driver",
+        "Commodity",
+        "Supplier",
+        "Customer",
+        "First Weight",
+        "Net Weight",
+        "Status",
       ]],
       body: rows.map((t) => [
         t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "-",
@@ -111,7 +127,9 @@ export default function Reports() {
   const handleExportExcel = (rows) => {
     const ws = XLSX.utils.json_to_sheet(
       rows.map((t) => ({
-        Date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "",
+        Date: t.createdAt
+          ? new Date(t.createdAt).toLocaleDateString()
+          : "",
         Receipt: t.receiptNo || "",
         Vehicle: t.noPlate || "",
         Driver: t.driverName || "",
@@ -137,86 +155,39 @@ export default function Reports() {
   // Active Report Renderer
   // =========================
   const renderActiveReport = () => {
-  // Transactions keep their own table + exports
-  if (activeTab === "transactions") {
-    return (
-      <ReportsTable
-        transactions={paginatedTransactions}
-        loading={loading}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setCurrentPage}
-        onPageSizeChange={setPageSize}
-        onExportPDF={handleExportPDF}
-        onExportExcel={handleExportExcel}
-      />
-    );
-  }
+    if (activeTab === "transactions") {
+      return (
+        <ReportsTable
+          transactions={paginatedTransactions}
+          loading={loading}
+          currentPage={currentPage}
+          pageSize={PAGE_SIZE}
+          totalRecords={totalRecords}
+          onPageChange={setCurrentPage}
+          onExportPDF={handleExportPDF}
+          onExportExcel={handleExportExcel}
+        />
+      );
+    }
 
-  // Shared pagination props for other reports
-  const sharedProps = {
-    transactions: paginatedTransactions,
-    loading,
-    currentPage,
-    pageSize,
-    totalRecords,
-    onPageChange: setCurrentPage,
+    // 🔥 Summary reports get FULL filtered data (no slicing)
+    switch (activeTab) {
+      case "drivers":
+        return <DriverReport transactions={filteredTransactions} loading={loading} />;
+      case "customers":
+        return <CustomerReport transactions={filteredTransactions} loading={loading} />;
+      case "commodities":
+        return <CommodityReport transactions={filteredTransactions} loading={loading} />;
+      case "suppliers":
+        return <SupplierReport transactions={filteredTransactions} loading={loading} />;
+      default:
+        return null;
+    }
   };
 
-  switch (activeTab) {
-    case "drivers":
-      return (
-        <DriverReport
-          transactions={filteredTransactions}
-          loading={loading}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onPageChange={setCurrentPage}
-        />
-      );
-
-    case "customers":
-      return (
-        <CustomerReport
-          transactions={filteredTransactions}
-          loading={loading}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onPageChange={setCurrentPage}
-        />
-      );
-
-    case "commodities":
-      return (
-        <CommodityReport
-          transactions={filteredTransactions}
-          loading={loading}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onPageChange={setCurrentPage}
-        />
-      );
-
-    case "suppliers":
-      return (
-        <SupplierReport
-          transactions={filteredTransactions}
-          loading={loading}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onPageChange={setCurrentPage}
-        />
-      );
-    default:
-      return null;
-  }
-};
-
-
   return (
-    <div className="p-6">
-      <h1 className="text-4xl mb-2">Reports</h1>
+    <div className="p-4 sm:p-6">
+      <h1 className="text-3xl sm:text-4xl mb-2">Reports</h1>
       <p className="text-gray-600 mb-6">
         Operational and analytical system reports
       </p>
@@ -227,7 +198,7 @@ export default function Reports() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded border capitalize ${
+            className={`px-4 py-2 rounded border capitalize text-sm sm:text-base ${
               activeTab === tab
                 ? "bg-yellow-400 border-yellow-400"
                 : "bg-white"
@@ -247,7 +218,7 @@ export default function Reports() {
             onChange={(e) =>
               setFilters({ ...filters, startDate: e.target.value })
             }
-            className="border rounded px-3 py-2"
+            className="border rounded px-3 py-2 w-full sm:w-auto"
           />
           <input
             type="date"
@@ -255,14 +226,14 @@ export default function Reports() {
             onChange={(e) =>
               setFilters({ ...filters, endDate: e.target.value })
             }
-            className="border rounded px-3 py-2"
+            className="border rounded px-3 py-2 w-full sm:w-auto"
           />
           <select
             value={filters.status}
             onChange={(e) =>
               setFilters({ ...filters, status: e.target.value })
             }
-            className="border rounded px-3 py-2"
+            className="border rounded px-3 py-2 w-full sm:w-auto"
           >
             <option value="">All Status</option>
             <option value="Completed">Completed</option>
@@ -270,7 +241,10 @@ export default function Reports() {
             <option value="In Progress">In Progress</option>
           </select>
 
-          <button onClick={clearFilters} className="border px-4 py-2 rounded">
+          <button
+            onClick={clearFilters}
+            className="border px-4 py-2 rounded"
+          >
             <RotateCcw size={16} />
           </button>
         </div>
