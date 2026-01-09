@@ -60,8 +60,8 @@ builder.Services.AddAuthorization(options =>
         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
         .Build();
     
-    // Add a policy for anonymous endpoints
-    options.AddPolicy("Anonymous", policy => policy.RequireAssertion(_ => true));
+    // Add a policy for public endpoints (renamed from Anonymous to avoid conflict)
+    options.AddPolicy("Public", policy => policy.RequireAssertion(_ => true));
 });
 
 // Add YARP Reverse Proxy from configuration
