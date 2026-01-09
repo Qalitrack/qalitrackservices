@@ -13,9 +13,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Configure();
 });
 
-// Set the HTTP port from environment variable or use default 80
-var port = Environment.GetEnvironmentVariable("HTTP_PORT") ?? "80";
-builder.WebHost.UseUrls($"http://*:{port}");
+// Always use port 7001
+builder.WebHost.UseUrls("http://*:7000");
 
 // Disable HTTPS redirection
 builder.Services.Configure<Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionOptions>(options =>
