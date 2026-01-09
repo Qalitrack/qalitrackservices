@@ -3,14 +3,12 @@ import ReportsTable from "../ReportsTable";
 import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
-export default function SupplierReport({
-  transactions = [],
-  loading,
-  currentPage,
-  pageSize,
-  onPageChange,
-}) {
+export default function SupplierReport({ transactions = [], loading }) {
   const [selectedSupplier, setSelectedSupplier] = useState(null);
+
+  // Internal pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 5;
 
   // =========================
   // Group Transactions by Supplier
@@ -41,10 +39,7 @@ export default function SupplierReport({
   // KPIs (NOT PAGINATED)
   // =========================
   const totalSuppliers = supplierSummary.length;
-  const totalTrips = supplierSummary.reduce(
-    (sum, s) => sum + s.trips,
-    0
-  );
+  const totalTrips = supplierSummary.reduce((sum, s) => sum + s.trips, 0);
   const totalWeight = supplierSummary.reduce(
     (sum, s) => sum + s.totalNetWeight,
     0
@@ -54,16 +49,14 @@ export default function SupplierReport({
   // Paginated Summary Rows
   // =========================
   const paginatedSummaryRows = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-
-    return supplierSummary.slice(start, end).map((s) => ({
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return supplierSummary.slice(start, start + PAGE_SIZE).map((s) => ({
       id: s.id,
       supplierName: s.supplierName,
       trips: s.trips,
       netWeight: s.totalNetWeight.toFixed(2),
     }));
-  }, [supplierSummary, currentPage, pageSize]);
+  }, [supplierSummary, currentPage]);
 
   // =========================
   // Drill-down: Commodities per Supplier
@@ -107,9 +100,7 @@ export default function SupplierReport({
 
           <div className="bg-amber-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">
-              {totalWeight.toFixed(2)}
-            </p>
+            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
           </div>
         </div>
       )}
@@ -120,17 +111,15 @@ export default function SupplierReport({
           <ReportsTable
             transactions={paginatedSummaryRows}
             loading={loading}
-            onRowClick={(row) =>
-              setSelectedSupplier(row.supplierName)
-            }
+            onRowClick={(row) => setSelectedSupplier(row.supplierName)}
             showColumns={["supplierName", "trips", "netWeight"]}
           />
 
           <ReportsPagination
             currentPage={currentPage}
             totalRecords={supplierSummary.length}
-            pageSize={pageSize}
-            onPageChange={onPageChange}
+            pageSize={PAGE_SIZE}
+            onPageChange={setCurrentPage}
           />
         </>
       )}
