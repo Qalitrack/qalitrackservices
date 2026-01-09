@@ -1,12 +1,19 @@
 import { useMemo, useState } from "react";
 import ReportsTable from "../ReportsTable";
+import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
-export default function CustomerReport({ transactions = [], loading }) {
+export default function CustomerReport({
+  transactions = [],
+  loading,
+  currentPage,
+  pageSize,
+  onPageChange,
+}) {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   // =========================
-  // Summary (cards stay same)
+  // Summary
   // =========================
   const customerSummary = useMemo(() => {
     const map = {};
@@ -30,12 +37,25 @@ export default function CustomerReport({ transactions = [], loading }) {
     return Object.values(map);
   }, [transactions]);
 
+  // =========================
+  // KPIs (NOT PAGINATED)
+  // =========================
   const totalCustomers = customerSummary.length;
   const totalTransactions = customerSummary.reduce((s, c) => s + c.count, 0);
   const totalWeight = customerSummary.reduce((s, c) => s + c.netWeight, 0);
 
   // =========================
-  // Drill-down rows (TABLE SAFE)
+  // PAGINATED SUMMARY ROWS
+  // =========================
+  const paginatedSummary = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    return customerSummary.slice(start, end);
+  }, [customerSummary, currentPage, pageSize]);
+
+  // =========================
+  // Drill-down rows
   // =========================
   const customerRows = useMemo(() => {
     if (!selectedCustomer) return [];
@@ -62,7 +82,7 @@ export default function CustomerReport({ transactions = [], loading }) {
         </p>
       </div>
 
-      {/* KPIs (UNCHANGED) */}
+      {/* KPIs */}
       {!selectedCustomer && (
         <div className="flex gap-6 mb-6 flex-wrap">
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
@@ -84,16 +104,23 @@ export default function CustomerReport({ transactions = [], loading }) {
         </div>
       )}
 
-      {/* SUMMARY LIST */}
+      {/* SUMMARY TABLE */}
       {!selectedCustomer && (
-        <ReportsTable
-          transactions={customerSummary}
-          loading={loading}
-          showColumns={["destinationName", "netWeight"]}
-          onRowClick={(row) => setSelectedCustomer(row.destinationName)}
-          totalRecords={customerSummary.length}
-          pageSize={customerSummary.length}
-        />
+        <>
+          <ReportsTable
+            transactions={paginatedSummary}
+            loading={loading}
+            showColumns={["destinationName", "netWeight"]}
+            onRowClick={(row) => setSelectedCustomer(row.destinationName)}
+          />
+
+          <ReportsPagination
+            currentPage={currentPage}
+            totalRecords={customerSummary.length}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+          />
+        </>
       )}
 
       {/* DRILL DOWN */}
@@ -116,8 +143,6 @@ export default function CustomerReport({ transactions = [], loading }) {
             transactions={customerRows}
             loading={loading}
             showColumns={["destinationName", "commodityName", "netWeight"]}
-            totalRecords={customerRows.length}
-            pageSize={customerRows.length}
           />
         </div>
       )}

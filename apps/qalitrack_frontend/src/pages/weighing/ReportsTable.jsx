@@ -247,7 +247,7 @@ export default function ReportsTable({
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
             className="border rounded px-2 py-1"
           >
-            {[10, 25, 50].map((n) => (
+            {[5, 7, 10].map((n) => (
               <option key={n} value={n}>
                 {n}
               </option>
