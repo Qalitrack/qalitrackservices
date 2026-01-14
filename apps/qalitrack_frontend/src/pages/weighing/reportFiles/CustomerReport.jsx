@@ -1,17 +1,12 @@
 import { useMemo, useState } from "react";
 import ReportsTable from "../ReportsTable";
-import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
 export default function CustomerReport({ transactions = [], loading }) {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  // Internal pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 5;
-
   // =========================
-  // Summary
+  // Summary (cards stay same)
   // =========================
   const customerSummary = useMemo(() => {
     const map = {};
@@ -35,26 +30,16 @@ export default function CustomerReport({ transactions = [], loading }) {
     return Object.values(map);
   }, [transactions]);
 
-  // =========================
-  // KPIs (NOT PAGINATED)
-  // =========================
   const totalCustomers = customerSummary.length;
   const totalTransactions = customerSummary.reduce((s, c) => s + c.count, 0);
   const totalWeight = customerSummary.reduce((s, c) => s + c.netWeight, 0);
 
   // =========================
-  // Paginated summary
-  // =========================
-  const paginatedSummary = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return customerSummary.slice(start, start + PAGE_SIZE);
-  }, [customerSummary, currentPage]);
-
-  // =========================
-  // Drill-down rows
+  // Drill-down rows (TABLE SAFE)
   // =========================
   const customerRows = useMemo(() => {
     if (!selectedCustomer) return [];
+
     return transactions
       .filter(
         (t) => (t.destinationName || "Unknown Customer") === selectedCustomer
@@ -77,7 +62,7 @@ export default function CustomerReport({ transactions = [], loading }) {
         </p>
       </div>
 
-      {/* KPIs */}
+      {/* KPIs (UNCHANGED) */}
       {!selectedCustomer && (
         <div className="flex gap-6 mb-6 flex-wrap">
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
@@ -92,31 +77,26 @@ export default function CustomerReport({ transactions = [], loading }) {
 
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
+            <p className="text-xl font-semibold">
+              {totalWeight.toFixed(2)}
+            </p>
           </div>
         </div>
       )}
 
-      {/* SUMMARY TABLE */}
+      {/* SUMMARY LIST */}
       {!selectedCustomer && (
-        <>
-          <ReportsTable
-            transactions={paginatedSummary}
-            loading={loading}
-            showColumns={["destinationName", "netWeight"]}
-            onRowClick={(row) => setSelectedCustomer(row.destinationName)}
-          />
-
-          <ReportsPagination
-            currentPage={currentPage}
-            totalRecords={customerSummary.length}
-            pageSize={PAGE_SIZE}
-            onPageChange={setCurrentPage}
-          />
-        </>
+        <ReportsTable
+          transactions={customerSummary}
+          loading={loading}
+          showColumns={["destinationName", "netWeight"]}
+          onRowClick={(row) => setSelectedCustomer(row.destinationName)}
+          totalRecords={customerSummary.length}
+          pageSize={customerSummary.length}
+        />
       )}
 
-      {/* DRILL-DOWN */}
+      {/* DRILL DOWN */}
       {selectedCustomer && (
         <div>
           <div className="flex items-center gap-3 mb-4">
@@ -136,6 +116,8 @@ export default function CustomerReport({ transactions = [], loading }) {
             transactions={customerRows}
             loading={loading}
             showColumns={["destinationName", "commodityName", "netWeight"]}
+            totalRecords={customerRows.length}
+            pageSize={customerRows.length}
           />
         </div>
       )}

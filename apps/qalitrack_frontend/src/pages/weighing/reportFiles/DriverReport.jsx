@@ -1,14 +1,9 @@
 import { useMemo, useState } from "react";
 import ReportsTable from "../ReportsTable";
-import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
 export default function DriverReport({ transactions = [], loading }) {
   const [selectedDriver, setSelectedDriver] = useState(null);
-
-  // Pagination internal to this report
-  const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 5;
 
   // =========================
   // Group Transactions by Driver
@@ -32,7 +27,9 @@ export default function DriverReport({ transactions = [], loading }) {
       map[driver].trips += 1;
       map[driver].totalNetWeight += tx.netWeight || 0;
 
-      if (tx.noPlate) map[driver].vehicles.add(tx.noPlate);
+      if (tx.noPlate) {
+        map[driver].vehicles.add(tx.noPlate);
+      }
     });
 
     return Object.values(map).map((d) => ({
@@ -52,26 +49,26 @@ export default function DriverReport({ transactions = [], loading }) {
   );
 
   // =========================
-  // Paginated summary rows
+  // Summary Table Rows
   // =========================
-  const paginatedSummaryRows = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return driverSummary.slice(start, start + PAGE_SIZE).map((d) => ({
-      id: d.id,
-      driverName: d.driverName,
-      trips: d.trips,
-      vehicles: d.vehicles,
-      netWeight: d.totalNetWeight.toFixed(2),
-    }));
-  }, [driverSummary, currentPage]);
+  const summaryRows = driverSummary.map((d) => ({
+    id: d.id,
+    driverName: d.driverName,
+    trips: d.trips,
+    vehicles: d.vehicles,
+    netWeight: d.totalNetWeight.toFixed(2),
+  }));
 
   // =========================
-  // Drill-down rows
+  // Drill-down: Vehicles & Weights per Driver
   // =========================
   const driverTransactions = useMemo(() => {
     if (!selectedDriver) return [];
+
     return transactions
-      .filter((t) => (t.driverName || "Unknown Driver") === selectedDriver)
+      .filter(
+        (t) => (t.driverName || "Unknown Driver") === selectedDriver
+      )
       .map((t) => ({
         id: t.id,
         vehicle: t.noPlate || "-",
@@ -81,7 +78,7 @@ export default function DriverReport({ transactions = [], loading }) {
 
   return (
     <div className="bg-white border rounded-lg p-6">
-      {/* Header */}
+      {/* HEADER */}
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">Driver Report</h2>
         <p className="text-sm text-gray-600">
@@ -96,37 +93,32 @@ export default function DriverReport({ transactions = [], loading }) {
             <p className="text-gray-500 text-sm">Total Drivers</p>
             <p className="text-xl font-semibold">{totalDrivers}</p>
           </div>
+
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Transactions</p>
             <p className="text-xl font-semibold">{totalTrips}</p>
           </div>
+
           <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
+            <p className="text-xl font-semibold">
+              {totalWeight.toFixed(2)}
+            </p>
           </div>
         </div>
       )}
 
-      {/* Summary Table */}
+      {/* SUMMARY TABLE */}
       {!selectedDriver && (
-        <>
-          <ReportsTable
-            transactions={paginatedSummaryRows}
-            loading={loading}
-            onRowClick={(row) => setSelectedDriver(row.driverName)}
-            showColumns={["driverName", "trips", "vehicles", "netWeight"]}
-          />
-
-          <ReportsPagination
-            currentPage={currentPage}
-            totalRecords={driverSummary.length}
-            pageSize={PAGE_SIZE}
-            onPageChange={setCurrentPage}
-          />
-        </>
+        <ReportsTable
+          transactions={summaryRows}
+          loading={loading}
+          onRowClick={(row) => setSelectedDriver(row.driverName)}
+          showColumns={["driverName", "trips", "vehicles", "netWeight"]}
+        />
       )}
 
-      {/* Drill-down Table */}
+      {/* DRILL-DOWN TABLE */}
       {selectedDriver && (
         <div>
           <div className="flex items-center gap-3 mb-4">
