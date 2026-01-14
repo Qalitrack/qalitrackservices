@@ -1,12 +1,17 @@
 import { useMemo, useState } from "react";
 import ReportsTable from "../ReportsTable";
+import ReportsPagination from "../ReportsPagination";
 import { ChevronLeft } from "lucide-react";
 
 export default function SupplierReport({ transactions = [], loading }) {
   const [selectedSupplier, setSelectedSupplier] = useState(null);
 
+  // Internal pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 5;
+
   // =========================
-  // Group by Supplier
+  // Group Transactions by Supplier
   // =========================
   const supplierSummary = useMemo(() => {
     const map = {};
@@ -17,36 +22,46 @@ export default function SupplierReport({ transactions = [], loading }) {
       if (!map[supplier]) {
         map[supplier] = {
           id: supplier,
-          originName: supplier,
-          count: 0,
-          netWeight: 0,
+          supplierName: supplier,
+          trips: 0,
+          totalNetWeight: 0,
         };
       }
 
-      map[supplier].count += 1;
-      map[supplier].netWeight += Number(tx.netWeight) || 0;
+      map[supplier].trips += 1;
+      map[supplier].totalNetWeight += Number(tx.netWeight) || 0;
     });
 
     return Object.values(map);
   }, [transactions]);
 
   // =========================
-  // KPIs
+  // KPIs (NOT PAGINATED)
   // =========================
   const totalSuppliers = supplierSummary.length;
-  const totalTransactions = supplierSummary.reduce(
-    (s, sup) => s + sup.count,
-    0
-  );
+  const totalTrips = supplierSummary.reduce((sum, s) => sum + s.trips, 0);
   const totalWeight = supplierSummary.reduce(
-    (s, sup) => s + sup.netWeight,
+    (sum, s) => sum + s.totalNetWeight,
     0
   );
 
   // =========================
-  // Drill-down rows
+  // Paginated Summary Rows
   // =========================
-  const supplierRows = useMemo(() => {
+  const paginatedSummaryRows = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return supplierSummary.slice(start, start + PAGE_SIZE).map((s) => ({
+      id: s.id,
+      supplierName: s.supplierName,
+      trips: s.trips,
+      netWeight: s.totalNetWeight.toFixed(2),
+    }));
+  }, [supplierSummary, currentPage]);
+
+  // =========================
+  // Drill-down: Commodities per Supplier
+  // =========================
+  const supplierTransactions = useMemo(() => {
     if (!selectedSupplier) return [];
 
     return transactions
@@ -55,8 +70,7 @@ export default function SupplierReport({ transactions = [], loading }) {
       )
       .map((t) => ({
         id: t.id,
-        originName: selectedSupplier,          // Supplier
-        destinationName: t.commodityName || "-", // Commodity (mapped)
+        commodityName: t.commodityName || "-",
         netWeight: t.netWeight || 0,
       }));
   }, [selectedSupplier, transactions]);
@@ -67,7 +81,7 @@ export default function SupplierReport({ transactions = [], loading }) {
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">Supplier Report</h2>
         <p className="text-sm text-gray-600">
-          Supply weight analysis per supplier
+          Summary and detailed breakdown per supplier
         </p>
       </div>
 
@@ -81,31 +95,36 @@ export default function SupplierReport({ transactions = [], loading }) {
 
           <div className="bg-amber-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Transactions</p>
-            <p className="text-xl font-semibold">{totalTransactions}</p>
+            <p className="text-xl font-semibold">{totalTrips}</p>
           </div>
 
           <div className="bg-amber-100 p-4 rounded shadow flex-1 min-w-[150px]">
             <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">
-              {totalWeight.toFixed(2)}
-            </p>
+            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
           </div>
         </div>
       )}
 
       {/* SUMMARY TABLE */}
       {!selectedSupplier && (
-        <ReportsTable
-          transactions={supplierSummary}
-          loading={loading}
-          showColumns={["originName", "netWeight"]}
-          onRowClick={(row) => setSelectedSupplier(row.originName)}
-          totalRecords={supplierSummary.length}
-          pageSize={supplierSummary.length}
-        />
+        <>
+          <ReportsTable
+            transactions={paginatedSummaryRows}
+            loading={loading}
+            onRowClick={(row) => setSelectedSupplier(row.supplierName)}
+            showColumns={["supplierName", "trips", "netWeight"]}
+          />
+
+          <ReportsPagination
+            currentPage={currentPage}
+            totalRecords={supplierSummary.length}
+            pageSize={PAGE_SIZE}
+            onPageChange={setCurrentPage}
+          />
+        </>
       )}
 
-      {/* DRILL-DOWN */}
+      {/* DRILL-DOWN TABLE */}
       {selectedSupplier && (
         <div>
           <div className="flex items-center gap-3 mb-4">
@@ -122,11 +141,9 @@ export default function SupplierReport({ transactions = [], loading }) {
           </div>
 
           <ReportsTable
-            transactions={supplierRows}
+            transactions={supplierTransactions}
             loading={loading}
-            showColumns={["destinationName", "netWeight"]}
-            totalRecords={supplierRows.length}
-            pageSize={supplierRows.length}
+            showColumns={["commodityName", "netWeight"]}
           />
         </div>
       )}

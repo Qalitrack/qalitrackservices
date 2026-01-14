@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Yarp.ReverseProxy.Model;
 using System.Net;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +14,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Configure();
 });
 
-// Set the HTTP port from environment variable or use default 80
-var port = Environment.GetEnvironmentVariable("HTTP_PORT") ?? "80";
-builder.WebHost.UseUrls($"http://*:{port}");
+// Don't hardcode port - let environment variable control it
+// REMOVED: builder.WebHost.UseUrls("http://*:7000");
 
 // Disable HTTPS redirection
 builder.Services.Configure<Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionOptions>(options =>
@@ -24,45 +24,31 @@ builder.Services.Configure<Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionOpti
     options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
 });
 
-// Disable HTTPS requirement for authentication
-builder.Services.Configure<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Authentication:Authority"],
-        ValidAudience = builder.Configuration["Authentication:Audience"],
-    };
-});
+// Get JWT configuration from environment
+var jwtSecretKey = builder.Configuration["JWT_SECRET_KEY"] 
+    ?? throw new InvalidOperationException("JWT_SECRET_KEY is not configured");
+var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? "qalitrack";
+var jwtAudience = builder.Configuration["JWT_AUDIENCE"] ?? "qalitrack";
+
+var key = Encoding.ASCII.GetBytes(jwtSecretKey);
 
 // Add Authentication/Authorization
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var cfg = builder.Configuration.GetSection("Authentication");
-        options.Authority = cfg["Authority"];
-        options.Audience = cfg["Audience"];
         options.RequireHttpsMetadata = false;
-        
-        // For dev environments that use self-signed certs, you might need to relax HTTPS metadata.
-        if (bool.TryParse(cfg["RequireHttpsMetadata"], out var requireHttps))
-        {
-            options.RequireHttpsMetadata = requireHttps;
-        }
-        
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = true,
-            ValidIssuer = "qalitrack",
+            ValidIssuer = jwtIssuer,
             ValidateAudience = true,
-            ValidAudience = "qalitrack",
+            ValidAudience = jwtAudience,
             ValidateLifetime = true,
-            ValidateIssuerSigningKey = true
+            ClockSkew = TimeSpan.Zero
         };
     });
 
@@ -73,6 +59,9 @@ builder.Services.AddAuthorization(options =>
         .RequireAuthenticatedUser()
         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
         .Build();
+    
+    // Add a policy for public endpoints (renamed from Anonymous to avoid conflict)
+    options.AddPolicy("Public", policy => policy.RequireAssertion(_ => true));
 });
 
 // Add YARP Reverse Proxy from configuration
@@ -80,41 +69,37 @@ builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+// Configure CORS
+var corsSection = builder.Configuration.GetSection("Cors");
+var allowedOrigins = corsSection.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+var allowedMethods = corsSection.GetSection("AllowedMethods").Get<string[]>() ?? new[] { "GET", "POST", "PUT", "DELETE" };
+var allowedHeaders = corsSection.GetSection("AllowedHeaders").Get<string[]>() ?? new[] { "*" };
+var allowCredentials = corsSection.GetValue<bool>("AllowCredentials");
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+              .WithMethods(allowedMethods)
+              .WithHeaders(allowedHeaders);
+
+        if (allowCredentials)
+        {
+            policy.AllowCredentials();
+        }
+        else
+        {
+            policy.DisallowCredentials();
+        }
+    });
+});
+
 // Configure logging for the application
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
-
-// Add request logging middleware
-// Add request logging for YARP
-app.Use(async (context, next) =>
-{
-    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-    
-    // Log the incoming request
-    logger.LogInformation($"[YARP] Incoming: {context.Request.Method} {context.Request.Path}{context.Request.QueryString}");
-    
-    // Get the proxy feature
-    var proxyFeature = context.Features.Get<IReverseProxyFeature>();
-    if (proxyFeature != null)
-    {
-        // Log the matched route if available
-        if (proxyFeature.Route != null && proxyFeature.Route.Config != null)
-        {
-            logger.LogInformation($"[YARP] Matched Route: {proxyFeature.Route.Config.RouteId}");
-        }
-        
-        // Log the destination endpoint
-        var endpoint = context.GetEndpoint();
-        if (endpoint != null)
-        {
-            logger.LogInformation($"[YARP] Forwarding to: {endpoint.DisplayName}");
-        }
-    }
-    
-    await next(context); // Add 'context' parameter here
-});
 
 // Add request logging for YARP
 app.Use(async (context, next) =>
@@ -145,21 +130,25 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Configure YARP with default pipeline
+// Enable CORS - moved after logging middleware
+app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Expose a simple health endpoint (anonymous)
+app.MapGet("/", () => Results.Ok(new { status = "ok", service = "QaliTrack Gateway" }))
+   .WithMetadata(new AllowAnonymousAttribute());
+
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
+   .WithMetadata(new AllowAnonymousAttribute());
+
+// Map the reverse proxy
 app.MapReverseProxy(proxyPipeline =>
 {
     proxyPipeline.UseSessionAffinity();
     proxyPipeline.UseLoadBalancing();
     proxyPipeline.UsePassiveHealthChecks();
 });
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Expose a simple health endpoint
-app.MapGet("/", () => Results.Ok(new { status = "ok" }));
-
-// Map the reverse proxy - default policy will require authentication
-app.MapReverseProxy();
 
 app.Run();
