@@ -9,12 +9,14 @@ import SupplierReport from "./reportFiles/SupplierReport";
 import { fetchTransactions } from "../../store/weighingSlice";
 import { RotateCcw } from "lucide-react";
 
+// EXPORT LIBRARIES
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 
 export default function Reports() {
   const dispatch = useDispatch();
+
   const { transactions, loading } = useSelector((state) => state.weighing);
 
   const REPORT_TABS = [
@@ -27,29 +29,28 @@ export default function Reports() {
 
   const [activeTab, setActiveTab] = useState("transactions");
 
-  // 🔒 Pagination ONLY for transactions
-  const PAGE_SIZE = 5;
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(7);
 
-  // Filters (transactions only)
+  // Filters
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
     status: "",
   });
 
+  // Fetch transactions on mount
   useEffect(() => {
     dispatch(fetchTransactions());
   }, [dispatch]);
 
-  // Reset pagination when filters or tab change
+  // Reset page when filters or tab change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, activeTab]);
 
-  // =========================
-  // Filtered Transactions
-  // =========================
+  // Filtered transactions
   const filteredTransactions = useMemo(() => {
     let data = [...transactions];
 
@@ -67,8 +68,7 @@ export default function Reports() {
 
     if (filters.status) {
       data = data.filter(
-        (t) =>
-          String(t.status).toLowerCase() === filters.status.toLowerCase()
+        (t) => String(t.status).toLowerCase() === filters.status.toLowerCase()
       );
     }
 
@@ -77,20 +77,10 @@ export default function Reports() {
 
   const totalRecords = filteredTransactions.length;
 
-  // =========================
-  // Pagination (Transactions only)
-  // =========================
-  const paginatedTransactions = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    return filteredTransactions.slice(start, end);
-  }, [filteredTransactions, currentPage]);
-
-  // =========================
-  // EXPORTS
-  // =========================
+  // EXPORT: PDF
   const handleExportPDF = (rows) => {
     const doc = new jsPDF("landscape");
+    doc.setFontSize(16);
     doc.text("Transaction Report", 14, 15);
 
     autoTable(doc, {
@@ -119,59 +109,56 @@ export default function Reports() {
         t.netWeight || "-",
         t.status || "-",
       ]),
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [251, 191, 36], textColor: 0 },
     });
 
     doc.save("transaction-report.pdf");
   };
 
+  // EXPORT: EXCEL
   const handleExportExcel = (rows) => {
-    const ws = XLSX.utils.json_to_sheet(
-      rows.map((t) => ({
-        Date: t.createdAt
-          ? new Date(t.createdAt).toLocaleDateString()
-          : "",
-        Receipt: t.receiptNo || "",
-        Vehicle: t.noPlate || "",
-        Driver: t.driverName || "",
-        Commodity: t.commodityName || "",
-        Supplier: t.supplierName || "",
-        Customer: t.customerName || "",
-        NetWeight: t.netWeight || "",
-        Status: t.status || "",
-      }))
-    );
+    const data = rows.map((t) => ({
+      Date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "",
+      Receipt: t.receiptNo || "",
+      Vehicle: t.noPlate || "",
+      Driver: t.driverName || "",
+      Commodity: t.commodityName || "",
+      Supplier: t.supplierName || "",
+      Customer: t.customerName || "",
+      FirstWeight: t.firstWeight || "",
+      NetWeight: t.netWeight || "",
+      Status: t.status || "",
+    }));
 
+    const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Transactions");
     XLSX.writeFile(wb, "transaction-report.xlsx");
   };
 
+  // Reset filters
   const clearFilters = () => {
     setFilters({ startDate: "", endDate: "", status: "" });
     setCurrentPage(1);
   };
 
-  // =========================
-  // Active Report Renderer
-  // =========================
+  // Render active report
   const renderActiveReport = () => {
-    if (activeTab === "transactions") {
-      return (
-        <ReportsTable
-          transactions={paginatedTransactions}
-          loading={loading}
-          currentPage={currentPage}
-          pageSize={PAGE_SIZE}
-          totalRecords={totalRecords}
-          onPageChange={setCurrentPage}
-          onExportPDF={handleExportPDF}
-          onExportExcel={handleExportExcel}
-        />
-      );
-    }
-
-    // 🔥 Summary reports get FULL filtered data (no slicing)
     switch (activeTab) {
+      case "transactions":
+        return (
+          <ReportsTable
+            transactions={filteredTransactions} // PASS FULL DATA
+            loading={loading}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setCurrentPage}
+            onExportPDF={handleExportPDF}
+            onExportExcel={handleExportExcel}
+          />
+        );
       case "drivers":
         return <DriverReport transactions={filteredTransactions} loading={loading} />;
       case "customers":
@@ -186,19 +173,22 @@ export default function Reports() {
   };
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="text-3xl sm:text-4xl mb-2">Reports</h1>
-      <p className="text-gray-600 mb-6">
-        Operational and analytical system reports
-      </p>
+    <div className="p-6">
+      {/* HEADER */}
+      <div className="mb-6">
+        <h1 className="text-4xl mb-2">Reports</h1>
+        <p className="text-gray-600">
+          Operational and analytical system reports
+        </p>
+      </div>
 
-      {/* Tabs */}
+      {/* REPORT TYPE BUTTONS */}
       <div className="flex gap-3 mb-6 flex-wrap">
         {REPORT_TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded border capitalize text-sm sm:text-base ${
+            className={`px-4 py-2 rounded border capitalize ${
               activeTab === tab
                 ? "bg-yellow-400 border-yellow-400"
                 : "bg-white"
@@ -209,47 +199,49 @@ export default function Reports() {
         ))}
       </div>
 
-      {/* Filters */}
+      {/* FILTERS (Transactions only) */}
       {activeTab === "transactions" && (
-        <div className="bg-white border rounded-lg p-4 mb-6 flex gap-4 flex-wrap">
-          <input
-            type="date"
-            value={filters.startDate}
-            onChange={(e) =>
-              setFilters({ ...filters, startDate: e.target.value })
-            }
-            className="border rounded px-3 py-2 w-full sm:w-auto"
-          />
-          <input
-            type="date"
-            value={filters.endDate}
-            onChange={(e) =>
-              setFilters({ ...filters, endDate: e.target.value })
-            }
-            className="border rounded px-3 py-2 w-full sm:w-auto"
-          />
-          <select
-            value={filters.status}
-            onChange={(e) =>
-              setFilters({ ...filters, status: e.target.value })
-            }
-            className="border rounded px-3 py-2 w-full sm:w-auto"
-          >
-            <option value="">All Status</option>
-            <option value="Completed">Completed</option>
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-          </select>
-
-          <button
-            onClick={clearFilters}
-            className="border px-4 py-2 rounded"
-          >
-            <RotateCcw size={16} />
-          </button>
+        <div className="bg-white border rounded-lg p-4 mb-6">
+          <div className="flex gap-4 flex-wrap items-end">
+            <input
+              type="date"
+              value={filters.startDate}
+              onChange={(e) =>
+                setFilters({ ...filters, startDate: e.target.value })
+              }
+              className="border rounded px-3 py-2"
+            />
+            <input
+              type="date"
+              value={filters.endDate}
+              onChange={(e) =>
+                setFilters({ ...filters, endDate: e.target.value })
+              }
+              className="border rounded px-3 py-2"
+            />
+            <select
+              value={filters.status}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+              className="border rounded px-3 py-2"
+            >
+              <option value="">All Status</option>
+              <option value="Completed">Completed</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+            </select>
+            <button
+              onClick={clearFilters}
+              className="border px-4 py-2 rounded"
+            >
+              <RotateCcw size={16} />
+            </button>
+          </div>
         </div>
       )}
 
+      {/* ACTIVE REPORT */}
       {renderActiveReport()}
     </div>
   );
