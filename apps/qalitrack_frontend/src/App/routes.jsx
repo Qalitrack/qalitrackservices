@@ -1,4 +1,4 @@
-// App/routes.jsx - Clean routes configuration with RBAC
+// App/routes.jsx - Simplified with single layout
 import React from 'react';
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
@@ -7,13 +7,11 @@ import useAuth from '../api/helpers/auth.js';
 
 // Layout
 const MainLayout = lazy(() => import("../layouts/MainLayout.jsx"));
-const UserServiceLayout = lazy(() => import("../layouts/UserServiceLayout.jsx"));
+
 // Auth
 const Login = lazy(() => import("../pages/auth/Login.jsx"));
 
-// Admin Components
-
-// Operator/Shared Components
+// Components (all your existing lazy imports remain the same)
 const Dashboard = lazy(() => import("../pages/weighing/Dashboard.jsx"));
 const FactoryWeighing = lazy(() => import("../components/weighing/WeighingDashboard.jsx"));
 const Automation = lazy(() => import("../pages/weighing/Automation.jsx"));
@@ -40,7 +38,8 @@ const ProductsPortal = lazy(() => import("../components/weighing/Product.jsx"));
 const SaccosPortal = lazy(() => import("../pages/Saccos.jsx"));
 const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
 const Transaction = lazy(() => import("../pages/Transaction.jsx"));
-// Root redirect component that handles authenticated users
+
+// Root redirect component
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
 
@@ -52,9 +51,9 @@ const RootRedirect = () => {
     const primaryRole = user?.userRoles?.[0];
 
     if (primaryRole === 'Admin') {
-        return <Navigate to="/admin" replace />;
+        return <Navigate to="/admin/dashboard" replace />;
     } else if (primaryRole === 'Operator') {
-        return <Navigate to="/operator" replace />;
+        return <Navigate to="/operator/dashboard" replace />;
     }
 
     return <Navigate to="/login" replace />;
@@ -76,7 +75,7 @@ const NotFound = () => (
     </div>
 );
 
-// Routes configuration
+// Routes configuration - ALL using MainLayout
 export const routes = [
     // Public routes
     {
@@ -86,17 +85,17 @@ export const routes = [
 
     // Root redirect
     {
-        path: "/login",
+        path: "/",
         element: <RootRedirect />
     },
 
-    // Admin routes - RBAC protected
+    // Operator routes
     {
         path: "",
-        element: <ProtectedRoute allowedRoles={["Operator"]} />,
+        element: <ProtectedRoute allowedRoles={["Operator", "Admin"]} />,
         children: [
             {
-                path: "/Operator",
+                path: "/operator",
                 element: <MainLayout />,
                 children: [
                     {
@@ -141,32 +140,31 @@ export const routes = [
                     },
                     {
                         path: "transporters",
-                        element: <Transporters />,
+                        element: <Transporters />
                     },
                     {
                         path: "weighing/axle-config",
-                        element: <AxleConfigs />,
+                        element: <AxleConfigs />
                     },
                     {
                         path: "weighing/owners",
-                        element: <Owners />,
+                        element: <Owners />
                     },
                     {
                         path: "weighing/products",
-                        element: <ProductsPortal />,
-
+                        element: <ProductsPortal />
                     },
                     {
                         path: "suppliers",
-                        element: <Suppliers />,
+                        element: <Suppliers />
                     },
                     {
                         path: "saccos",
-                        element: <SaccosPortal />,
+                        element: <SaccosPortal />
                     },
                     {
                         path: "weighbridges",
-                        element: <WeighbridgesPortal />,
+                        element: <WeighbridgesPortal />
                     },
                     {
                         path: "routes",
@@ -177,19 +175,85 @@ export const routes = [
         ]
     },
 
-    // Operator routes - RBAC protected (now matching admin path structure)
+    // Admin routes - NOW USING MainLayout
     {
         path: "",
         element: <ProtectedRoute allowedRoles={["Admin"]} />,
         children: [
             {
-                path: "/Admin",
-                element: <UserServiceLayout />,
+                path: "/admin",
+                element: <MainLayout />, // ← Changed from UserServiceLayout
                 children: [
                     {
                         path: "dashboard",
                         element: <AdminDashboard />
                     },
+                    // All operator routes accessible to admin
+                    {
+                        path: "weighing/factory",
+                        element: <FactoryWeighing />
+                    },
+                    {
+                        path: "transactions",
+                        element: <Transaction />
+                    },
+                    {
+                        path: "weighing/vehicle",
+                        element: <Vehicle />
+                    },
+                    {
+                        path: "weighing/drivers",
+                        element: <Drivers />
+                    },
+                    {
+                        path: "automation",
+                        element: <Automation />
+                    },
+                    {
+                        path: "calibrations",
+                        element: <Calibrations />
+                    },
+                    {
+                        path: "analytics",
+                        element: <Analytics />
+                    },
+                    {
+                        path: "reports",
+                        element: <Reports />
+                    },
+                    {
+                        path: "system",
+                        element: <System />
+                    },
+                    {
+                        path: "transporters",
+                        element: <Transporters />
+                    },
+                    {
+                        path: "weighing/axle-config",
+                        element: <AxleConfigs />
+                    },
+                    {
+                        path: "weighing/owners",
+                        element: <Owners />
+                    },
+                    {
+                        path: "weighing/products",
+                        element: <ProductsPortal />
+                    },
+                    {
+                        path: "suppliers",
+                        element: <Suppliers />
+                    },
+                    {
+                        path: "saccos",
+                        element: <SaccosPortal />
+                    },
+                    {
+                        path: "weighbridges",
+                        element: <WeighbridgesPortal />
+                    },
+                    // Admin-specific routes
                     {
                         path: "security/password-policy",
                         element: <PasswordPolicy />
@@ -203,11 +267,11 @@ export const routes = [
                         element: <Roles />
                     },
                     {
-                        path:"shifts",
+                        path: "shifts",
                         element: <Shifts />
                     },
                     {
-                        path:"attendance",
+                        path: "attendance",
                         element: <Attendance />
                     },
                     {
@@ -217,28 +281,6 @@ export const routes = [
                     {
                         path: "backup/microservice",
                         element: <Microservice />
-                    }
-                ]
-            }
-        ]
-    },
-
-    // Shared routes - RBAC protected
-    {
-        path: "",
-        element: <ProtectedRoute allowedRoles={["Admin", "Operator"]} />,
-        children: [
-            {
-                path: "/shared",
-                element: <MainLayout />,
-                children: [
-                    {
-                        path: "reports",
-                        element: <Reports />
-                    },
-                    {
-                        path: "analytics",
-                        element: <Analytics />
                     }
                 ]
             }
