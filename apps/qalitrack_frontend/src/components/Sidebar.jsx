@@ -17,21 +17,33 @@ import {
   Satellite,
   List,
   Users,
-  User2
+  User2,
+  Shield,
+  Lock,
+  Database
 } from "lucide-react";
-
+import useAuth from "../api/helpers/auth";
 import logo from "/src/assets/logorange.svg";
 
-const currentUserRole = "operator";
-
-export default function Sidebar({ isCollapsed, onToggle }) {
+export default function UnifiedSidebar({ isCollapsed, onToggle }) {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
+  const { getCurrentUser } = useAuth();
+  
+  const user = getCurrentUser();
+  const userRoles = user?.userRoles || [];
+  const isAdmin = userRoles.includes('Admin');
+  const isOperator = userRoles.includes('Operator');
+
+  // Determine base path based on primary role
+  const basePath = isAdmin ? '/admin' : '/operator';
 
   useEffect(() => {
-    const rootPath = `/${currentUserRole}`;
-    if (location.pathname.startsWith(`${rootPath}/weighing`)) {
+    if (location.pathname.includes('/weighing')) {
       setOpenMenus((prev) => ({ ...prev, weighing: true }));
+    }
+    if (location.pathname.includes('/security')) {
+      setOpenMenus((prev) => ({ ...prev, security: true }));
     }
   }, [location.pathname]);
 
@@ -39,38 +51,150 @@ export default function Sidebar({ isCollapsed, onToggle }) {
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const menuItems = [
+  // Define all menu items with role restrictions
+  const allMenuItems = [
+    // Dashboard (everyone sees it)
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      icon: <LayoutDashboard size={18} />,
+      path: `${basePath}/dashboard`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Weighing section (visible to both Admin and Operator)
     {
       key: "weighing",
       label: "Weighing",
       icon: <Scale size={18} />,
+      roles: ['Admin', 'Operator'],
       children: [
-        { key: "weighing-factory", label: "Factory Weighing", icon: <Factory size={16} />, path: "weighing/factory" },
-        { key: "Transactions", label: "Transactions", icon: <LayoutDashboard size={16} />, path: "transactions" },
-        { key: "weighing-vehicles", label: "Vehicles", icon: <Truck size={16} />, path: "weighing/vehicle" },
-        { key: "weighing-drivers", label: "Drivers", icon: <User size={16} />, path: "weighing/drivers" },
-        { key: "weighing-transporters", label: "Transporters", icon: <Tractor size={16} />, path: "transporters" },
-        { key: "weighing-owners", label: "Owners", icon: <Users size={16} />, path: "weighing/owners" },
-        { key: "suppliers", label: "Suppliers", icon: <Satellite size={16} />, path: "suppliers" },
-        { key: "weighing-products", label: "Products", icon: <BarChart3 size={16} />, path: "weighing/products" },
-        { key: "weighing-saccos", label: "Saccos", icon: <User2 size={16} />, path: "saccos" },
-        { key: "weighing-weighbridges", label: "Weighbridges", icon: <Scale size={16} />, path: "weighbridges" },
-        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: "weighing/axle-config" },
+        { key: "weighing-factory", label: "Factory Weighing", icon: <Factory size={16} />, path: `${basePath}/weighing/factory`, roles: ['Admin', 'Operator'] },
+        { key: "transactions", label: "Transactions", icon: <LayoutDashboard size={16} />, path: `${basePath}/transactions`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-vehicles", label: "Vehicles", icon: <Truck size={16} />, path: `${basePath}/weighing/vehicle`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-drivers", label: "Drivers", icon: <User size={16} />, path: `${basePath}/weighing/drivers`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-transporters", label: "Transporters", icon: <Tractor size={16} />, path: `${basePath}/transporters`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-owners", label: "Owners", icon: <Users size={16} />, path: `${basePath}/weighing/owners`, roles: ['Admin', 'Operator'] },
+        { key: "suppliers", label: "Suppliers", icon: <Satellite size={16} />, path: `${basePath}/suppliers`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-products", label: "Products", icon: <BarChart3 size={16} />, path: `${basePath}/weighing/products`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-saccos", label: "Saccos", icon: <User2 size={16} />, path: `${basePath}/saccos`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-weighbridges", label: "Weighbridges", icon: <Scale size={16} />, path: `${basePath}/weighbridges`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: `${basePath}/weighing/axle-config`, roles: ['Admin', 'Operator'] },
       ],
     },
-    { key: "automation", label: "Automation", icon: <Cog size={18} />, path: "automation" },
-    { key: "calibrations", label: "Calibrations", icon: <Wrench size={18} />, path: "calibrations" },
-    { key: "analytics", label: "Analytics", icon: <BarChart3 size={18} />, path: "analytics" },
-    { key: "reports", label: "Reports", icon: <FileText size={18} />, path: "reports" },
-    { key: "system", label: "System", icon: <Cog size={18} />, path: "system" },
+
+    // Automation
+    { 
+      key: "automation", 
+      label: "Automation", 
+      icon: <Cog size={18} />, 
+      path: `${basePath}/automation`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Calibrations
+    { 
+      key: "calibrations", 
+      label: "Calibrations", 
+      icon: <Wrench size={18} />, 
+      path: `${basePath}/calibrations`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Analytics
+    { 
+      key: "analytics", 
+      label: "Analytics", 
+      icon: <BarChart3 size={18} />, 
+      path: `${basePath}/analytics`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Reports
+    { 
+      key: "reports", 
+      label: "Reports", 
+      icon: <FileText size={18} />, 
+      path: `${basePath}/reports`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Shifts (Admin only)
+    {
+      key: "shifts",
+      label: "Shifts",
+      icon: <User size={18} />,
+      path: `${basePath}/shifts`,
+      roles: ['Admin']
+    },
+
+    // Shift Assignment (Admin only)
+    {
+      key: "shift-assignment",
+      label: "Shift Assignment",
+      icon: <Users size={18} />,
+      path: `${basePath}/shift-assignment`,
+      roles: ['Admin']
+    },
+
+    // Attendance (Admin only)
+    {
+      key: "attendance",
+      label: "Attendance",
+      icon: <User2 size={18} />,
+      path: `${basePath}/attendance`,
+      roles: ['Admin']
+    },
+
+    // Security section (Admin only)
+    {
+      key: "security",
+      label: "Security",
+      icon: <Shield size={18} />,
+      roles: ['Admin'],
+      children: [
+        { key: "permissions", label: "Permissions", icon: <Shield size={16} />, path: `${basePath}/security/permissions`, roles: ['Admin'] },
+        { key: "roles", label: "Roles", icon: <Users size={16} />, path: `${basePath}/security/roles`, roles: ['Admin'] },
+        { key: "password-policy", label: "Password Policy", icon: <Lock size={16} />, path: `${basePath}/security/password-policy`, roles: ['Admin'] },
+      ],
+    },
+
+    // Backup Service (Admin only)
+    {
+      key: "backup",
+      label: "Backup Service",
+      icon: <Database size={18} />,
+      path: `${basePath}/backup/microservice`,
+      roles: ['Admin']
+    },
+
+    // System
+    { 
+      key: "system", 
+      label: "System", 
+      icon: <Cog size={18} />, 
+      path: `${basePath}/system`,
+      roles: ['Admin', 'Operator']
+    },
   ];
 
-  const getPath = (item) => {
-    const rootPath = `/${currentUserRole}`;
-    if (item.path === "/dashboard") return rootPath;
-    if (item.path.startsWith("/")) return item.path;
-    return `${rootPath}/${item.path}`;
+  // Filter menu items based on user roles
+  const filterMenuByRole = (items) => {
+    return items.filter(item => {
+      const hasAccess = item.roles?.some(role => userRoles.includes(role));
+      if (!hasAccess) return false;
+
+      if (item.children) {
+        item.children = item.children.filter(child => 
+          child.roles?.some(role => userRoles.includes(role))
+        );
+        return item.children.length > 0;
+      }
+      return true;
+    });
   };
+
+  const menuItems = filterMenuByRole(allMenuItems);
 
   return (
     <aside
@@ -89,7 +213,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
             alt="Qalitrack"
             className={`transition-all duration-300 ${isCollapsed ? "h-8" : "h-12"}`}
           />
-          {!isCollapsed && <span className="font-semibold text-lg text-white"></span>}
         </div>
 
         <button
@@ -133,7 +256,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
                 {item.children.map((child) => (
                   <NavLink
                     key={child.key}
-                    to={getPath(child)}
+                    to={child.path}
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative
                        ${isActive ? "bg-white/6" : "hover:bg-white/4"}`
@@ -149,12 +272,11 @@ export default function Sidebar({ isCollapsed, onToggle }) {
           ) : (
             <div key={item.key} className="relative group mb-1">
               <NavLink
-                to={getPath(item)}
+                to={item.path}
                 className={({ isActive }) =>
                   `
                   flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative
                   ${isActive ? "bg-white/6" : "hover:bg-white/4"}
-                  ${isActive ? "pl-3" : ""}
                   `
                 }
               >
