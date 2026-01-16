@@ -35,6 +35,7 @@ export default function Transactions() {
             pageNumber: filters.page,
             pageSize: filters.pageSize,
         };
+        
         dispatch(fetchTransactions(params));
     };
 
