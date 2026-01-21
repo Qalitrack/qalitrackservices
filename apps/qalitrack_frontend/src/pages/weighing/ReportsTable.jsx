@@ -9,6 +9,7 @@ export default function ReportsTable({
   pageSize = 4, // default 4 rows per page
   totalRecords = 0,
   onPageChange = () => {},
+  onPageSizeChange = () => {},
   onExportPDF,
   onExportExcel,
   showColumns = null,
@@ -21,29 +22,8 @@ export default function ReportsTable({
   const totalPages = Math.ceil(totalRecords / pageSize);
 
   // =========================
-  // Sorting ONLY (no pagination here)
+  // Sorting
   // =========================
-  const processedData = useMemo(() => {
-    let data = [...transactions];
-
-    if (sortField && sortOrder) {
-      data.sort((a, b) => {
-        const aVal = a?.[sortField] ?? "";
-        const bVal = b?.[sortField] ?? "";
-
-        if (typeof aVal === "number") {
-          return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
-        }
-
-        return sortOrder === "asc"
-          ? String(aVal).localeCompare(String(bVal))
-          : String(bVal).localeCompare(String(aVal));
-      });
-    }
-
-    return data;
-  }, [transactions, sortField, sortOrder]);
-
   const handleSort = (field) => {
     if (sortField === field) {
       if (sortOrder === "asc") setSortOrder("desc");
@@ -68,12 +48,35 @@ export default function ReportsTable({
   };
 
   // =========================
+  // Process data with sorting & pagination
+  // =========================
+  const processedData = useMemo(() => {
+    let data = [...transactions];
+
+    if (sortField && sortOrder) {
+      data.sort((a, b) => {
+        const aVal = a?.[sortField] ?? "";
+        const bVal = b?.[sortField] ?? "";
+
+        if (typeof aVal === "number") return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
+        return sortOrder === "asc"
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      });
+    }
+
+    const start = (currentPage - 1) * pageSize;
+    return data.slice(start, start + pageSize);
+  }, [transactions, sortField, sortOrder, currentPage, pageSize]);
+
+  const handleExportPDF = () => onExportPDF?.(processedData);
+  const handleExportExcel = () => onExportExcel?.(processedData);
+
+  // =========================
   // Badges
   // =========================
   const badge = (label, cls) => (
-    <span className={`px-2 py-1 text-xs rounded border ${cls}`}>
-      {label || "N/A"}
-    </span>
+    <span className={`px-2 py-1 text-xs rounded border ${cls}`}>{label || "N/A"}</span>
   );
 
   const statusBadge = (status) => {
@@ -100,7 +103,7 @@ export default function ReportsTable({
   const renderLoading = () =>
     Array.from({ length: pageSize }).map((_, i) => (
       <tr key={i} className="animate-pulse">
-        {Array.from({ length: showColumns?.length || 12 }).map((_, j) => (
+        {Array.from({ length: showColumns?.length || 13 }).map((_, j) => (
           <td key={j} className="p-2 sm:p-3">
             <div className="h-4 bg-gray-200 rounded" />
           </td>
@@ -110,7 +113,7 @@ export default function ReportsTable({
 
   const renderEmpty = () => (
     <tr>
-      <td colSpan={showColumns?.length || 12} className="h-64 text-center text-gray-500">
+      <td colSpan={showColumns?.length || 13} className="h-64 text-center text-gray-500">
         <FileDown className="w-12 h-12 mx-auto mb-4 opacity-30" />
         <p className="text-lg">No records found</p>
         <p className="text-sm mt-2">Adjust filters and try again</p>
@@ -126,8 +129,11 @@ export default function ReportsTable({
     ["receiptNo", "Receipt"],
     ["noPlate", "Vehicle"],
     ["driverName", "Driver"],
+    ["transporterName", "Transporter"],
     ["originName", "Source"],
     ["destinationName", "Destination"],
+    ["firstWeight", "First Wt (kg)"],
+    ["secondWeight", "Second Wt (kg)"],
     ["netWeight", "Net Wt (kg)"],
     ["weighMode", "Mode"],
     ["status", "Status"],
@@ -147,7 +153,7 @@ export default function ReportsTable({
   return (
     <div className="bg-white rounded-lg border shadow-sm">
       {/* Header */}
-      <div className="p-4 sm:p-6 border-b flex flex-col sm:flex-row justify-between gap-4">
+      <div className="p-4 sm:p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h2 className="text-xl font-semibold">Reports</h2>
           <p className="text-sm text-gray-600">
@@ -155,20 +161,20 @@ export default function ReportsTable({
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <button
-            onClick={() => onExportPDF?.(processedData)}
+            onClick={handleExportPDF}
             disabled={!processedData.length}
-            className="border px-4 py-2 rounded disabled:opacity-50"
+            className="border px-4 py-2 rounded disabled:opacity-50 w-full sm:w-auto"
           >
             <FileDown className="inline w-4 h-4 mr-2" />
             PDF
           </button>
 
           <button
-            onClick={() => onExportExcel?.(processedData)}
+            onClick={handleExportExcel}
             disabled={!processedData.length}
-            className="bg-amber-400 px-4 py-2 rounded disabled:opacity-50"
+            className="bg-amber-400 px-4 py-2 rounded disabled:opacity-50 w-full sm:w-auto"
           >
             <FileSpreadsheet className="inline w-4 h-4 mr-2" />
             Excel
@@ -177,7 +183,7 @@ export default function ReportsTable({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
         <table className="w-full min-w-[600px] text-sm">
           <thead className="bg-gray-50">
             <tr>
