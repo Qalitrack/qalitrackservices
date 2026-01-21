@@ -24,6 +24,12 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .FirstOrDefaultAsync(e => e.ReceiptNo.ToLower() == receiptNo.ToLower() && !e.IsDeleted);
     }
 
+    public async Task<WeighbridgeTransaction?> GetByIdAsync(int ticketId)
+    {
+        return await _dbSet
+            .FirstOrDefaultAsync(t => t.TicketID == ticketId && !t.IsDeleted);
+    }
+
     public async Task<PagedResult<WeighbridgeTransaction>> GetPagedAsync(WeighbridgeTransactionFilter filter)
     {
         var query = _dbSet.Where(t => !t.IsDeleted).AsQueryable();
@@ -44,69 +50,65 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             query = query.Where(t => t.DriverName.Contains(filter.DriverName));
         }
 
-        if (filter.VehicleId.HasValue)
+        if (filter.VehicleID.HasValue)
         {
-            query = query.Where(t => t.VehicleId == filter.VehicleId.Value);
+            query = query.Where(t => t.VehicleID == filter.VehicleID.Value);
         }
 
-        if (filter.ProductId.HasValue)
+        if (filter.CommodityID.HasValue)
         {
-            query = query.Where(t => t.CommodityId == filter.ProductId.Value);
+            query = query.Where(t => t.CommodityID == filter.CommodityID.Value);
         }
 
-        if (filter.SupplierId.HasValue)
+        if (filter.SupplierID.HasValue)
         {
-            query = query.Where(t => t.SupplierId == filter.SupplierId.Value);
+            query = query.Where(t => t.SupplierID == filter.SupplierID.Value);
         }
 
-        if (filter.CustomerId.HasValue)
+        if (filter.CustomerID.HasValue)
         {
-            query = query.Where(t => t.CustomerId == filter.CustomerId.Value);
+            query = query.Where(t => t.CustomerID == filter.CustomerID.Value);
         }
 
-        if (filter.TransporterId.HasValue)
+        if (filter.TransporterID.HasValue)
         {
-            query = query.Where(t => t.TransporterId == filter.TransporterId.Value);
+            query = query.Where(t => t.TransporterID == filter.TransporterID.Value);
         }
 
-        if (filter.OriginId.HasValue)
+        if (filter.OriginID.HasValue)
         {
-            query = query.Where(t => t.OriginId == filter.OriginId.Value);
+            query = query.Where(t => t.OriginID == filter.OriginID.Value);
         }
 
-        if (filter.DestinationId.HasValue)
+        if (filter.DestinationID.HasValue)
         {
-            query = query.Where(t => t.DestinationId == filter.DestinationId.Value);
+            query = query.Where(t => t.DestinationID == filter.DestinationID.Value);
         }
 
-        if (filter.WeighBridgeId.HasValue)
+        if (filter.WeighBridgeID.HasValue)
         {
-            query = query.Where(t => t.WeighBridgeId == filter.WeighBridgeId.Value);
+            query = query.Where(t => t.WeighBridgeID == filter.WeighBridgeID.Value);
         }
 
-        if (filter.OperatorId.HasValue)
+        if (filter.OperatorID.HasValue)
         {
-            query = query.Where(t => t.OperatorId == filter.OperatorId.Value || t.OperatorId2nd == filter.OperatorId.Value);
+            query = query.Where(t => t.OperatorID == filter.OperatorID.Value || 
+                                     (t.OperatorID2nd != null && t.OperatorID2nd == filter.OperatorID.Value.ToString()));
         }
 
-        if (filter.Status.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.Status))
         {
-            query = query.Where(t => t.Status == filter.Status.Value);
-        }
-
-        if (filter.IsCompleted.HasValue)
-        {
-            query = query.Where(t => t.IsCompleted == filter.IsCompleted.Value);
+            query = query.Where(t => t.Status == filter.Status);
         }
 
         if (filter.StartDate.HasValue)
         {
-            query = query.Where(t => t.CreatedAt >= filter.StartDate.Value);
+            query = query.Where(t => t.FirstWeightDate >= filter.StartDate.Value);
         }
 
         if (filter.EndDate.HasValue)
         {
-            query = query.Where(t => t.CreatedAt <= filter.EndDate.Value);
+            query = query.Where(t => t.FirstWeightDate <= filter.EndDate.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(filter.WeighMode))
@@ -128,8 +130,9 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             "noplate" => filter.SortDescending ? query.OrderByDescending(t => t.NoPlate) : query.OrderBy(t => t.NoPlate),
             "drivername" => filter.SortDescending ? query.OrderByDescending(t => t.DriverName) : query.OrderBy(t => t.DriverName),
             "status" => filter.SortDescending ? query.OrderByDescending(t => t.Status) : query.OrderBy(t => t.Status),
-            "completeddate" => filter.SortDescending ? query.OrderByDescending(t => t.CompletedDate) : query.OrderBy(t => t.CompletedDate),
-            _ => filter.SortDescending ? query.OrderByDescending(t => t.CreatedAt) : query.OrderBy(t => t.CreatedAt)
+            "secondweightdate" => filter.SortDescending ? query.OrderByDescending(t => t.SecondWeightDate) : query.OrderBy(t => t.SecondWeightDate),
+            "firstweightdate" => filter.SortDescending ? query.OrderByDescending(t => t.FirstWeightDate) : query.OrderBy(t => t.FirstWeightDate),
+            _ => filter.SortDescending ? query.OrderByDescending(t => t.FirstWeightDate) : query.OrderBy(t => t.FirstWeightDate)
         };
 
         // Apply pagination
@@ -150,110 +153,40 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
     public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleAsync(string noPlate)
     {
         return await _dbSet
-            .Where(t => t.NoPlate == noPlate && !t.IsCompleted && !t.IsDeleted)
-            .OrderByDescending(t => t.CreatedAt)
+            .Where(t => t.NoPlate == noPlate && 
+                       (t.Status == "Active" || t.Status == "InProgress") && 
+                       !t.IsDeleted)
+            .OrderByDescending(t => t.FirstWeightDate)
             .ToListAsync();
     }
 
-    public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId)
+    public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId)
     {
-        // Try to parse as Guid
-        if (Guid.TryParse(vehicleId, out Guid vehicleIdGuid))
-        {
-            return await _dbSet
-                .Where(t => t.VehicleId == vehicleIdGuid && !t.IsCompleted && !t.IsDeleted)
-                .OrderByDescending(t => t.CreatedAt)
-                .ToListAsync();
-        }
-        
-        // If not a valid Guid, return empty list or throw an exception
-        // depending on your requirements
-        return new List<WeighbridgeTransaction>();
+        return await _dbSet
+            .Where(t => t.VehicleID == vehicleId && 
+                       (t.Status == "Active" || t.Status == "InProgress") && 
+                       !t.IsDeleted)
+            .OrderByDescending(t => t.FirstWeightDate)
+            .ToListAsync();
     }
 
-    public async Task<List<WeighbridgeTransaction>> GetTransactionsByStatusAsync(WeighbridgeTransactionStatus status, int limit = 100)
+    public async Task<List<WeighbridgeTransaction>> GetTransactionsByStatusAsync(string status, int limit = 100)
     {
         return await _dbSet
             .Where(t => t.Status == status && !t.IsDeleted)
-            .OrderByDescending(t => t.CreatedAt)
+            .OrderByDescending(t => t.FirstWeightDate)
             .Take(limit)
             .ToListAsync();
     }
 
-    public async Task<WeighbridgeTransaction?> GetWithWeighingRecordsAsync(string id)
+    public async Task<List<ReweighRecord>> GetReweighRecordsAsync(int ticketId)
     {
-        var transaction = await _dbSet
-            .Include(t => t.WeighingRecords)
-            .Include(t => t.ReweighRecords)
-            .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
-            
-        if (transaction?.WeighingRecords != null)
-        {
-            // Order the weighing records by sequence
-            transaction.WeighingRecords = transaction.WeighingRecords
-                .OrderBy(w => w.WeighingSequence)
-                .ToList();
-                
-            // Ensure CompletedWeighings is in sync with the actual number of weighings
-            if (transaction.WeighingRecords.Any())
-            {
-                var maxSequence = transaction.WeighingRecords.Max(w => w.WeighingSequence);
-                if (maxSequence != transaction.CompletedWeighings)
-                {
-                    // Update the CompletedWeighings
-                    transaction.CompletedWeighings = maxSequence;
-                    transaction.UpdatedAt = DateTime.UtcNow;
-                    
-                    // Explicitly mark the entity as modified
-                    _context.Entry(transaction).Property(x => x.CompletedWeighings).IsModified = true;
-                    _context.Entry(transaction).Property(x => x.UpdatedAt).IsModified = true;
-                    
-                    // Save changes
-                    await _context.SaveChangesAsync();
-                    
-                    // Detach the entity to avoid tracking issues
-                    _context.Entry(transaction).State = EntityState.Detached;
-                    
-                    // Reload the transaction with includes
-                    transaction = await _dbSet
-                        .Include(t => t.WeighingRecords)
-                        .Include(t => t.ReweighRecords)
-                        .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
-                }
-            }
-            else
-            {
-                // If no weighing records, ensure CompletedWeighings is 0
-                if (transaction.CompletedWeighings != 0)
-                {
-                    transaction.CompletedWeighings = 0;
-                    transaction.UpdatedAt = DateTime.UtcNow;
-                    
-                    _context.Entry(transaction).Property(x => x.CompletedWeighings).IsModified = true;
-                    _context.Entry(transaction).Property(x => x.UpdatedAt).IsModified = true;
-                    
-                    await _context.SaveChangesAsync();
-                    
-                    _context.Entry(transaction).State = EntityState.Detached;
-                    
-                    transaction = await _dbSet
-                        .Include(t => t.WeighingRecords)
-                        .Include(t => t.ReweighRecords)
-                        .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
-                }
-            }
-        }
-        
-        return transaction;
+        return await _context.ReweighRecords
+            .Where(r => r.WeighbridgeTransactionId == ticketId && !r.IsDeleted)
+            .OrderBy(r => r.AttemptNumber)
+            .ToListAsync();
     }
 
-    public async Task<WeighbridgeTransaction?> GetWithAuditLogsAsync(string id)
-    {
-        return await _dbSet
-            .Include(t => t.AuditLogs)
-            .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
-    }
-    
     public async Task<string?> GetLatestReceiptNumberAsync(string datePrefix)
     {
         return await _dbSet
@@ -262,15 +195,26 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .Select(t => t.ReceiptNo)
             .FirstOrDefaultAsync();
     }
-    
-    public void MarkAsModified(WeighbridgeTransaction entity)
+
+    public async Task<bool> DeleteAsync(int ticketId)
     {
-        _context.Entry(entity).State = EntityState.Modified;
+        var entity = await _dbSet.FirstOrDefaultAsync(t => t.TicketID == ticketId);
+        if (entity == null)
+        {
+            return false;
+        }
+
+        // Soft delete
+        entity.IsDeleted = true;
+        entity.UpdatedAt = DateTime.UtcNow;
+        
+        await _context.SaveChangesAsync();
+        return true;
     }
-    
+
     public override async Task<WeighbridgeTransaction?> UpdateAsync(WeighbridgeTransaction entity)
     {
-        var existingEntity = await _dbSet.FindAsync(entity.Id);
+        var existingEntity = await _dbSet.FirstOrDefaultAsync(t => t.TicketID == entity.TicketID);
         if (existingEntity == null)
         {
             return null;
@@ -281,9 +225,6 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
         
         // Explicitly set the UpdatedAt timestamp
         existingEntity.UpdatedAt = DateTime.UtcNow;
-        
-        // Explicitly mark the CompletedWeighings as modified to ensure it's updated
-        _context.Entry(existingEntity).Property(x => x.CompletedWeighings).IsModified = true;
         
         // Mark the entity as modified to ensure all changes are saved
         _context.Entry(existingEntity).State = EntityState.Modified;

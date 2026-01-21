@@ -8,121 +8,45 @@ public class TransactionProfile : Profile
 {
     public TransactionProfile()
     {
-        // Base entity mappings - Removed to avoid circular references
-        // CreateMap<BaseEntity, object>().IncludeAllDerived();
-
-        // WeighingRecord mappings
-        CreateMap<WeighingRecord, WeighingRecordDto>()
-            .ReverseMap()
-            .ForMember(dest => dest.Transaction, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
-
-        // Audit Log mappings
-        CreateMap<TransactionAuditLog, AuditLogDto>().ReverseMap()
-            .ForMember(dest => dest.Transaction, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
-
-        // ReweighRecord mappings
-        CreateMap<ReweighRecord, ReweighRecordDto>().ReverseMap()
-            .ForMember(dest => dest.WeighbridgeTransaction, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
-
         // WeighbridgeTransaction to TransactionReadDto
         CreateMap<WeighbridgeTransaction, TransactionReadDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.IsCompleted, opt => opt.MapFrom(src => src.IsCompleted))
-            .ForMember(dest => dest.CompletedWeighings, opt => opt.MapFrom(src => 
-                src.WeighingRecords != null ? src.WeighingRecords.Count : 0))
-            .ForMember(dest => dest.ExpectedWeighings, opt => opt.MapFrom(src => src.ExpectedWeighings))
-            .ForMember(dest => dest.WeighingRecords, opt => opt.MapFrom(src => 
-                src.WeighingRecords != null ? 
-                    src.WeighingRecords.OrderBy(w => w.WeighingSequence) : 
-                    Enumerable.Empty<WeighingRecord>()))
-            .ForMember(dest => dest.CompletedDate, opt => opt.MapFrom(src => src.CompletedDate));
+            .ReverseMap();
 
         // CreateTransactionDto to WeighbridgeTransaction
         CreateMap<CreateTransactionDto, WeighbridgeTransaction>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => WeighbridgeTransactionStatus.Pending))
-            .ForMember(dest => dest.IsCompleted, opt => opt.MapFrom(_ => false))
-            .ForMember(dest => dest.ReweighPermissionGranted, opt => opt.MapFrom(_ => false))
-            .ForMember(dest => dest.WeighingRecords, opt => opt.Ignore())
-            .ForMember(dest => dest.AuditLogs, opt => opt.Ignore())
-            .ForMember(dest => dest.ReweighRecords, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.NetWeightCalculatedTimestamp, opt => opt.Ignore())
-            .ForMember(dest => dest.CompletedDate, opt => opt.Ignore())
-            .ForMember(dest => dest.ChangeDescription, opt => opt.Ignore())
-            .ForMember(dest => dest.ChangeDate, opt => opt.Ignore());
-
-        // UpdateTransactionDto to WeighbridgeTransaction
-        CreateMap<UpdateTransactionDto, WeighbridgeTransaction>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Status, opt => opt.Ignore())
-            .ForMember(dest => dest.IsCompleted, opt => opt.Ignore())
-            .ForMember(dest => dest.CompletedDate, opt => opt.Ignore())
-            .ForMember(dest => dest.ReweighPermissionGranted, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.WeighingRecords, opt => opt.Ignore())
-            .ForMember(dest => dest.AuditLogs, opt => opt.Ignore())
-            .ForMember(dest => dest.ReweighRecords, opt => opt.Ignore())
-            .ForMember(dest => dest.NetWeightCalculatedTimestamp, opt => opt.Ignore())
-            .ForMember(dest => dest.ChangeDate, opt => opt.Ignore());
-
-        // AddWeighingDto to WeighingRecord
-        CreateMap<AddWeighingDto, WeighingRecord>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.WeighbridgeTransactionId, opt => opt.MapFrom(src => src.TransactionId))
-            .ForMember(dest => dest.WeighingDate, opt => opt.Ignore())  // Will be set in service
-            .ForMember(dest => dest.WeighingSequence, opt => opt.Ignore())  // Will be set in service
-            .ForMember(dest => dest.Transaction, opt => opt.Ignore())
+            .ForMember(dest => dest.TicketID, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => "Active"))
+            .ForMember(dest => dest.FirstWeightDate, opt => opt.MapFrom(_ => DateTime.Now))
+            .ForMember(dest => dest.SecondWeightDate, opt => opt.MapFrom(_ => DateTime.Now))
+            .ForMember(dest => dest.SecondWeight, opt => opt.Ignore())
+            .ForMember(dest => dest.NetWeight, opt => opt.Ignore())
+            .ForMember(dest => dest.ChangeDate, opt => opt.Ignore())
+            .ForMember(dest => dest.ChangeDesc, opt => opt.Ignore())
+            .ForMember(dest => dest.ReweighPermission, opt => opt.Ignore())
+            .ForMember(dest => dest.ApiId, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
 
-        // RequestReweighDto to WeighbridgeTransaction
-        CreateMap<RequestReweighDto, WeighbridgeTransaction>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.ReweighReason, opt => opt.MapFrom(src => src.Reason))
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());  // Will be set in service
-
-        // StartReweighDto to ReweighRecord
-        CreateMap<StartReweighDto, ReweighRecord>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.WeighbridgeTransactionId, opt => opt.Ignore())
-            .ForMember(dest => dest.AttemptNumber, opt => opt.Ignore())
-            .ForMember(dest => dest.StartedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.CompletedAt, opt => opt.Ignore())
+        // UpdateTransactionDto to WeighbridgeTransaction
+        CreateMap<UpdateTransactionDto, WeighbridgeTransaction>()
+            .ForMember(dest => dest.TicketID, opt => opt.Ignore())
+            .ForMember(dest => dest.ReceiptNo, opt => opt.Ignore())
+            .ForMember(dest => dest.FirstWeight, opt => opt.Ignore())
+            .ForMember(dest => dest.FirstWeightDate, opt => opt.Ignore())
             .ForMember(dest => dest.Status, opt => opt.Ignore())
-            .ForMember(dest => dest.Weight1, opt => opt.Ignore())
-            .ForMember(dest => dest.Weight2, opt => opt.Ignore())
-            .ForMember(dest => dest.NetWeight, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.WeighbridgeTransaction, opt => opt.Ignore());
-
-        // AddReweighWeightDto to ReweighRecord
-        CreateMap<AddReweighWeightDto, ReweighRecord>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.WeighbridgeTransactionId, opt => opt.Ignore())
-            .ForMember(dest => dest.AttemptNumber, opt => opt.Ignore())
-            .ForMember(dest => dest.StartedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.CompletedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.Status, opt => opt.Ignore())
-            .ForMember(dest => dest.Weight1, opt => opt.Ignore())
-            .ForMember(dest => dest.Weight2, opt => opt.Ignore())
+            .ForMember(dest => dest.ApiId, opt => opt.Ignore())
             .ForMember(dest => dest.NetWeight, opt => opt.Ignore())
+            .ForMember(dest => dest.ChangeDate, opt => opt.Ignore())
+            .ForMember(dest => dest.ReweighPermission, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+        // ReweighRecord mappings (if still needed)
+        CreateMap<ReweighRecord, ReweighRecordDto>().ReverseMap()
+            .ForMember(dest => dest.WeighbridgeTransaction, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())

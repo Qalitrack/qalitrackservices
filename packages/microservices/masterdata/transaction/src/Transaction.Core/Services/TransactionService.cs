@@ -2,7 +2,6 @@ using AutoMapper;
 using Transaction.Core.DTOs;
 using Transaction.Core.Entities;
 using Transaction.Core.Interfaces;
-using AddWeighingDto = Transaction.Core.DTOs.AddWeighingDto;
 
 namespace Transaction.Core.Services;
 
@@ -12,20 +11,17 @@ public class TransactionService : ITransactionService
     private readonly IMapper _mapper;
     private readonly ITimeService _timeService;
     private readonly IReceiptNumberService _receiptNumberService;
-    private readonly IFileStorageService _fileStorageService;
 
     public TransactionService(
         ITransactionRepository transactionRepository, 
         IMapper mapper, 
         ITimeService timeService,
-        IReceiptNumberService receiptNumberService,
-        IFileStorageService fileStorageService)
+        IReceiptNumberService receiptNumberService)
     {
         _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _timeService = timeService ?? throw new ArgumentNullException(nameof(timeService));
         _receiptNumberService = receiptNumberService ?? throw new ArgumentNullException(nameof(receiptNumberService));
-        _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
     }
 
     public async Task<PagedResult<TransactionReadDto>> GetAllAsync(WeighbridgeTransactionFilter filter)
@@ -43,10 +39,9 @@ public class TransactionService : ITransactionService
         };
     }
 
-    public async Task<TransactionReadDto?> GetByIdAsync(string id)
+    public async Task<TransactionReadDto?> GetByIdAsync(int ticketId)
     {
-        // Use GetWithWeighingRecordsAsync to ensure related entities are loaded
-        var transaction = await _transactionRepository.GetWithWeighingRecordsAsync(id);
+        var transaction = await _transactionRepository.GetByIdAsync(ticketId);
         return transaction == null ? null : _mapper.Map<TransactionReadDto>(transaction);
     }
 
@@ -56,176 +51,76 @@ public class TransactionService : ITransactionService
         return transaction == null ? null : _mapper.Map<TransactionReadDto>(transaction);
     }
 
-   public async Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto)
-{
-    var utcNow = _timeService.UtcNow;
-    var localNow = _timeService.Now;
-    
-    // Generate receipt number
-    var receiptNo = await _receiptNumberService.GenerateReceiptNumberAsync();
-    
-    var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
-    transaction.ReceiptNo = receiptNo;
-    transaction.CreatedAt = utcNow;
-    transaction.UpdatedAt = utcNow;
-    transaction.Status = WeighbridgeTransactionStatus.Pending;
-    transaction.IsCompleted = false;
-    transaction.WeighingRecords = new List<WeighingRecord>(); // Initialize the collection
-    
-    // Handle NPR image upload
-    if (dto.NprImage != null && dto.NprImage.Length > 0)
+    public async Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto)
     {
-        try
-        {
-            using var nprStream = dto.NprImage.OpenReadStream();
-            var nprFileName = $"npr_{receiptNo}_{Guid.NewGuid()}{Path.GetExtension(dto.NprImage.FileName)}";
-            transaction.NPR = await _fileStorageService.UploadFileAsync(nprStream, nprFileName, "transactions");
-        }
-        catch (Exception ex)
-        {
-            // Log the error but don't fail the transaction creation
-            Console.WriteLine($"Error uploading NPR image: {ex.Message}");
-        }
-    }
-    
-    // Handle transaction image upload
-    if (dto.TransactionImage != null && dto.TransactionImage.Length > 0)
-    {
-        try
-        {
-            using var imgStream = dto.TransactionImage.OpenReadStream();
-            var imgFileName = $"img_{receiptNo}_{Guid.NewGuid()}{Path.GetExtension(dto.TransactionImage.FileName)}";
-            transaction.Image = await _fileStorageService.UploadFileAsync(imgStream, imgFileName, "transactions");
-        }
-        catch (Exception ex)
-        {
-            // Log the error but don't fail the transaction creation
-            Console.WriteLine($"Error uploading transaction image: {ex.Message}");
-        }
-    }
-    
-    // If first weight is provided, create the first weighing record
-    if (dto.Weight.HasValue)
-    {
-        var weighingRecord = new WeighingRecord
-        {
-            WeighingSequence = 1,
-            Weight = dto.Weight.Value,
-            WeighingDate = utcNow,
-            WeighBridgeId = dto.WeighBridgeId,
-            WeighBridgeName = dto.WeighBridgeName,
-            ScaleName = dto.ScaleName,
-            OperatorId = dto.OperatorId,
-            OperatorName = dto.OperatorName,
-            Notes = dto.Notes,
-            CreatedAt = utcNow,
-            UpdatedAt = utcNow
-        };
+        var utcNow = _timeService.UtcNow;
         
-        transaction.WeighingRecords.Add(weighingRecord);
-        transaction.CompletedWeighings = 1;
-        transaction.Status = WeighbridgeTransactionStatus.InProgress;
+        // Generate receipt number
+        var receiptNo = await _receiptNumberService.GenerateReceiptNumberAsync();
+        
+        var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
+        transaction.ReceiptNo = receiptNo;
+        transaction.CreatedAt = utcNow;
+        transaction.UpdatedAt = utcNow;
+        transaction.Status = "Active";
+        transaction.FirstWeightDate = utcNow;
+        transaction.SecondWeightDate = utcNow;
+        
+        var createdTransaction = await _transactionRepository.CreateAsync(transaction);
+        return _mapper.Map<TransactionReadDto>(createdTransaction);
     }
-    
-    // Create audit log
-    var auditLog = new TransactionAuditLog
-    {
-        Action = "Created",
-        ChangedBy = dto.OperatorName ?? "System",
-        ChangeTimestamp = utcNow,
-        NewValues = System.Text.Json.JsonSerializer.Serialize(new
-        {
-            dto.NoPlate,
-            dto.DriverName,
-            dto.TransporterId,
-            dto.TransporterName,
-            HasNprImage = dto.NprImage != null,
-            HasTransactionImage = dto.TransactionImage != null,
-            InitialWeighing = dto.Weight.HasValue ? "Yes" : "No"
-        }),
-        Reason = "New transaction created",
-        CreatedAt = utcNow,
-        UpdatedAt = utcNow
-    };
-    transaction.AuditLogs = new List<TransactionAuditLog> { auditLog };
-    
-    var createdTransaction = await _transactionRepository.CreateAsync(transaction);
-    return _mapper.Map<TransactionReadDto>(createdTransaction);
-}
 
-    public async Task<TransactionReadDto?> UpdateAsync(string id, UpdateTransactionDto dto)
+    public async Task<TransactionReadDto?> UpdateAsync(int ticketId, UpdateTransactionDto dto)
     {
-        var existingTransaction = await _transactionRepository.GetByIdAsync(id.ToString());
+        var existingTransaction = await _transactionRepository.GetByIdAsync(ticketId);
         if (existingTransaction == null)
         {
             return null;
         }
 
-        // Check if transaction is completed (immutable)
-        if (!existingTransaction.CanBeModified())
-        {
-            throw new InvalidOperationException("Cannot modify a completed transaction. Request reweigh permission if needed.");
-        }
-
-        var oldValues = System.Text.Json.JsonSerializer.Serialize(existingTransaction);
+        var utcNow = _timeService.UtcNow;
         
         // Only update non-null fields
         if (dto.NoPlate != null) existingTransaction.NoPlate = dto.NoPlate;
         if (dto.DriverName != null) existingTransaction.DriverName = dto.DriverName;
-        if (dto.VehicleId.HasValue) existingTransaction.VehicleId = dto.VehicleId;
-        if (dto.ProductId.HasValue) existingTransaction.CommodityId = dto.ProductId;
-        if (dto.ProductName != null) existingTransaction.CommodityName = dto.ProductName;
-        if (dto.SupplierId.HasValue) existingTransaction.SupplierId = dto.SupplierId;
+        if (dto.VehicleID.HasValue) existingTransaction.VehicleID = dto.VehicleID;
+        if (dto.CommodityID.HasValue) existingTransaction.CommodityID = dto.CommodityID;
+        if (dto.CommodityName != null) existingTransaction.CommodityName = dto.CommodityName;
+        if (dto.SupplierID.HasValue) existingTransaction.SupplierID = dto.SupplierID;
         if (dto.SupplierName != null) existingTransaction.SupplierName = dto.SupplierName;
-        if (dto.CustomerId.HasValue) existingTransaction.CustomerId = dto.CustomerId;
+        if (dto.CustomerID.HasValue) existingTransaction.CustomerID = dto.CustomerID;
         if (dto.CustomerName != null) existingTransaction.CustomerName = dto.CustomerName;
-        if (dto.TransporterId.HasValue) existingTransaction.TransporterId = dto.TransporterId.Value;
+        if (dto.TransporterID.HasValue) existingTransaction.TransporterID = dto.TransporterID.Value;
         if (dto.TransporterName != null) existingTransaction.TransporterName = dto.TransporterName;
-        if (dto.OriginId.HasValue) existingTransaction.OriginId = dto.OriginId;
+        if (dto.OriginID.HasValue) existingTransaction.OriginID = dto.OriginID;
         if (dto.OriginName != null) existingTransaction.OriginName = dto.OriginName;
-        if (dto.DestinationId.HasValue) existingTransaction.DestinationId = dto.DestinationId;
+        if (dto.DestinationID.HasValue) existingTransaction.DestinationID = dto.DestinationID;
         if (dto.DestinationName != null) existingTransaction.DestinationName = dto.DestinationName;
         if (dto.WeighMode != null) existingTransaction.WeighMode = dto.WeighMode.Value;
         if (dto.ChangeDescription != null) existingTransaction.ChangeDescription = dto.ChangeDescription;
         
-        var utcNow = _timeService.UtcNow;
         existingTransaction.UpdatedAt = utcNow;
         existingTransaction.ChangeDate = utcNow;
-        
-        // Create audit log
-        var auditLog = new TransactionAuditLog
-        {
-            WeighbridgeTransactionId = existingTransaction.Id,
-            Action = "Updated",
-            ChangedBy = "System", // TODO: Get from current user context
-            OldValues = oldValues,
-            NewValues = System.Text.Json.JsonSerializer.Serialize(existingTransaction),
-            ChangeTimestamp = utcNow,
-            Reason = dto.ChangeDescription ?? "Transaction updated",
-            CreatedAt = utcNow,
-            UpdatedAt = utcNow
-        };
-        existingTransaction.AuditLogs.Add(auditLog);
         
         var updatedTransaction = await _transactionRepository.UpdateAsync(existingTransaction);
         return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 
-    public async Task<bool> DeleteAsync(string id)
+    public async Task<bool> DeleteAsync(int ticketId)
     {
-        var transaction = await _transactionRepository.GetByIdAsync(id.ToString());
+        var transaction = await _transactionRepository.GetByIdAsync(ticketId);
         if (transaction == null)
         {
             return false;
         }
 
         // Check if transaction is completed
-        if (transaction.IsCompleted)
+        if (transaction.Status == "Completed")
         {
             throw new InvalidOperationException("Cannot delete a completed transaction.");
         }
 
-        return await _transactionRepository.DeleteAsync(id.ToString());
+        return await _transactionRepository.DeleteAsync(ticketId);
     }
 
     public async Task<bool> IsReceiptNoAvailableAsync(string receiptNo)
@@ -233,391 +128,81 @@ public class TransactionService : ITransactionService
         return await _transactionRepository.IsReceiptNoAvailableAsync(receiptNo);
     }
 
-    public async Task<TransactionReadDto?> AddWeighingAsync(AddWeighingDto dto)
+    public async Task<TransactionReadDto?> AddSecondWeightAsync(AddSecondWeightDto dto)
     {
-        var transaction = await _transactionRepository.GetWithWeighingRecordsAsync(dto.TransactionId);
+        var transaction = await _transactionRepository.GetByIdAsync(dto.TicketID);
         if (transaction == null)
         {
             return null;
         }
 
-        // Check if we can add more weighings
-        if (!transaction.CanAddWeighing())
+        // Check if second weight already exists
+        if (!string.IsNullOrEmpty(transaction.SecondWeight))
         {
-            throw new InvalidOperationException("Cannot add more weighings. Transaction is either completed or has reached maximum weighings.");
-        }
-        
-        // Ensure the transaction is in a valid state for adding weighings
-        if (transaction.Status == WeighbridgeTransactionStatus.Pending)
-        {
-            transaction.Status = WeighbridgeTransactionStatus.InProgress;
+            throw new InvalidOperationException("Second weight has already been recorded for this transaction.");
         }
 
-        // The sequence number is the next weighing number (1-based index)
-        var sequenceNumber = (transaction.WeighingRecords?.Count ?? 0) + 1;
         var utcNow = _timeService.UtcNow;
 
-        // Update transaction status based on weighings
-        if (sequenceNumber == 1)
+        // Update second weighing information
+        transaction.SecondWeight = dto.SecondWeight;
+        transaction.WeighBridgeName2nd = dto.WeighBridgeName2nd;
+        transaction.ScaleName2nd = dto.ScaleName2nd;
+        transaction.OperatorID2nd = dto.OperatorID2nd;
+        transaction.OperatorName2nd = dto.OperatorName2nd;
+        transaction.SecondWeightDate = utcNow;
+        transaction.UpdatedAt = utcNow;
+
+        // Calculate net weight
+        if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) && 
+            decimal.TryParse(transaction.SecondWeight, out var secondWeight))
         {
-            transaction.Status = WeighbridgeTransactionStatus.InProgress;
+            var netWeight = Math.Abs(firstWeight - secondWeight);
+            transaction.NetWeight = netWeight.ToString("F2");
         }
 
-        // Create and add weighing record to the transaction
-        var weighingRecord = new WeighingRecord
+        // Update status to completed if both weights are present
+        if (!string.IsNullOrEmpty(transaction.FirstWeight) && !string.IsNullOrEmpty(transaction.SecondWeight))
         {
-            WeighbridgeTransactionId = transaction.Id,
-            WeighingSequence = sequenceNumber,
-            Weight = dto.Weight,
-            WeighingDate = utcNow,
-            WeighBridgeId = dto.WeighBridgeId,
-            WeighBridgeName = dto.WeighBridgeName,
-            ScaleName = dto.ScaleName,
-            OperatorId = dto.OperatorId,
-            OperatorName = dto.OperatorName,
-            Notes = dto.Notes ?? string.Empty,
-            CreatedAt = utcNow,
-            UpdatedAt = utcNow
-        };
-        
-        // Ensure WeighingRecords collection is initialized
-        if (transaction.WeighingRecords == null)
-        {
-            transaction.WeighingRecords = new List<WeighingRecord>();
+            transaction.Status = "Completed";
         }
-        
-        // Add the weighing record to the transaction
-        transaction.WeighingRecords.Add(weighingRecord);
-        
-        // Update the CompletedWeighings to match the actual count of weighings
-        transaction.CompletedWeighings = transaction.WeighingRecords.Count;
-        
-        // Debug: Log current state before updating status
-        Console.WriteLine($"DEBUG - Sequence: {sequenceNumber}, Expected: {transaction.ExpectedWeighings}, Current Status: {transaction.Status}");
-        
-        // Ensure CompletedWeighings is properly set
-        transaction.CompletedWeighings = sequenceNumber;
-        
-        // Update the transaction's status based on the weighing sequence
-        transaction.CompletedWeighings = sequenceNumber;
-        
-        if (sequenceNumber >= transaction.ExpectedWeighings)
-        {
-            // Transaction is complete
-            transaction.Status = WeighbridgeTransactionStatus.Completed;
-            transaction.IsCompleted = true;
-            transaction.CompletedDate = utcNow;
-            
-            // Calculate net weight based on first and last weighing
-            if (transaction.WeighingRecords.Count >= 2)
-            {
-                var firstWeighing = transaction.WeighingRecords.OrderBy(w => w.WeighingSequence).First();
-                var lastWeighing = transaction.WeighingRecords.OrderByDescending(w => w.WeighingSequence).First();
-                transaction.NetWeight = Math.Abs(firstWeighing.Weight - lastWeighing.Weight);
-                transaction.NetWeightCalculatedTimestamp = utcNow;
-            }
-        }
-        // For transactions that are in progress but not yet complete
-        else if (sequenceNumber > 0)
-        {
-            transaction.Status = WeighbridgeTransactionStatus.InProgress;
-        }
-        
-        // Update the transaction's updated timestamp with UTC time
-        transaction.UpdatedAt = utcNow;
-        
-        // Debug: Log transaction state before saving
-        Console.WriteLine($"DEBUG - Before Save - Status: {transaction.Status}, IsCompleted: {transaction.IsCompleted}, WeighingRecords: {transaction.WeighingRecords?.Count ?? 0}, CompletedWeighings: {transaction.CompletedWeighings}");
-        
-        // Mark the entity as modified to ensure all properties are updated
-        _transactionRepository.MarkAsModified(transaction);
-        
-        // Save the transaction
-        var savedTransaction = await _transactionRepository.UpdateAsync(transaction);
-        if (savedTransaction == null) 
-        {
-            Console.WriteLine("DEBUG - Failed to save transaction");
-            return null;
-        }
-        
-        // Debug: Log saved transaction state
-        Console.WriteLine($"DEBUG - After Save - Status: {savedTransaction.Status}, IsCompleted: {savedTransaction.IsCompleted}, WeighingRecords: {savedTransaction.WeighingRecords?.Count ?? 0}");
-        
-        // Create audit log
-        var auditLog = new TransactionAuditLog
-        {
-            WeighbridgeTransactionId = savedTransaction.Id,
-            Action = $"Weighing{sequenceNumber}Added",
-            ChangedBy = dto.OperatorName,
-            NewValues = System.Text.Json.JsonSerializer.Serialize(dto),
-            ChangeTimestamp = _timeService.Now,
-            Reason = $"Weighing #{sequenceNumber} completed",
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
-        };
-        
-        if (savedTransaction.AuditLogs == null)
-        {
-            savedTransaction.AuditLogs = new List<TransactionAuditLog>();
-        }
-        savedTransaction.AuditLogs.Add(auditLog);
-        
-        // Save the transaction with the audit log
-        savedTransaction = await _transactionRepository.UpdateAsync(savedTransaction);
-        
-        // Ensure we have the latest state from the database with all related entities
-        var result = await _transactionRepository.GetWithWeighingRecordsAsync(savedTransaction.Id);
-        
-        // Use AutoMapper for consistent mapping
-        return _mapper.Map<TransactionReadDto>(result);
+
+        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
+        return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 
     public async Task<TransactionReadDto?> CompleteTransactionAsync(CompleteTransactionDto dto)
     {
-        var transaction = await _transactionRepository.GetWithWeighingRecordsAsync(dto.TransactionId);
+        var transaction = await _transactionRepository.GetByIdAsync(dto.TicketID);
         if (transaction == null)
         {
-            throw new ArgumentException("Transaction not found", nameof(dto.TransactionId));
+            throw new ArgumentException("Transaction not found", nameof(dto.TicketID));
         }
 
-        if (transaction.IsReweighInProgress)
+        // Verify both weights are present
+        if (string.IsNullOrEmpty(transaction.FirstWeight) || string.IsNullOrEmpty(transaction.SecondWeight))
         {
-            transaction.CompleteReweigh(_timeService.Now);
-        }
-        else
-        {
-            if (transaction.WeighingRecords == null || transaction.WeighingRecords.Count < transaction.ExpectedWeighings)
-            {
-                throw new InvalidOperationException($"Cannot complete transaction. Expected {transaction.ExpectedWeighings} weighings but only {transaction.WeighingRecords?.Count ?? 0} completed.");
-            }
-            
-            // Calculate net weight based on all weighings
-            if (transaction.WeighingRecords.Count >= 2)
-            {
-                var firstWeighing = transaction.WeighingRecords.OrderBy(w => w.WeighingSequence).First();
-                var lastWeighing = transaction.WeighingRecords.OrderByDescending(w => w.WeighingSequence).First();
-                transaction.NetWeight = Math.Abs(firstWeighing.Weight - lastWeighing.Weight);
-                transaction.NetWeightCalculatedTimestamp = _timeService.UtcNow;
-            }
-            transaction.CompleteTransaction(_timeService.Now);
-        }
-    
-        // Create audit log
-        var auditLog = new TransactionAuditLog
-        {
-            WeighbridgeTransactionId = transaction.Id,
-            Action = transaction.IsReweighInProgress ? "ReweighCompleted" : "Completed",
-            ChangedBy = "System", // TODO: Get from current user context
-            ChangeTimestamp = _timeService.Now,
-            Reason = transaction.IsReweighInProgress ? "Reweigh completed" : "Transaction completed",
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
-        };
-        transaction.AuditLogs.Add(auditLog);
-
-        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
-        return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
-    }
-
-    public async Task<TransactionReadDto?> StartReweighAsync(string transactionId, string startedBy)
-    {
-        var transaction = await _transactionRepository.GetWithWeighingRecordsAsync(transactionId);
-        if (transaction == null)
-        {
-            throw new ArgumentException("Transaction not found", nameof(transactionId));
-        }
-
-        if (!transaction.IsReweighRequested)
-        {
-            throw new InvalidOperationException("Cannot start reweigh that hasn't been requested.");
-        }
-
-        if (transaction.IsReweighInProgress)
-        {
-            throw new InvalidOperationException("Reweigh is already in progress for this transaction.");
-        }
-
-        transaction.StartReweigh(_timeService.Now);
-        transaction.UpdatedAt = _timeService.Now;
-
-        // Create audit log
-        var auditLog = new TransactionAuditLog
-        {
-            WeighbridgeTransactionId = transactionId.ToString(),
-            Action = "ReweighStarted",
-            ChangedBy = startedBy,
-            ChangeTimestamp = _timeService.Now,
-            Reason = "Starting reweigh process",
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
-        };
-        transaction.AuditLogs.Add(auditLog);
-
-        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
-        return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
-    }
-
-    public async Task<TransactionReadDto> AddReweighWeightAsync(AddReweighWeightDto dto)
-    {
-        var transaction = await _transactionRepository.GetWithWeighingRecordsAsync(dto.TransactionId);
-        if (transaction == null)
-        {
-            throw new ArgumentException("Transaction not found", nameof(dto.TransactionId));
-        }
-
-        if (!transaction.IsReweighInProgress)
-        {
-            throw new InvalidOperationException("Cannot add weight - no reweigh in progress for this transaction");
-        }
-
-        // Add the weight to the current reweigh attempt
-        transaction.AddReweighWeight(dto.Weight, dto.OperatorName, _timeService.Now, dto.Notes);
-        
-        // Create audit log
-        var auditLog = new TransactionAuditLog
-        {
-            WeighbridgeTransactionId = dto.TransactionId,
-            Action = "ReweighWeightAdded",
-            ChangedBy = dto.OperatorName,
-            ChangeTimestamp = _timeService.Now,
-            Reason = $"Added weight {dto.Weight} to reweigh attempt {transaction.CurrentReweighAttempt}",
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
-        };
-        transaction.AuditLogs.Add(auditLog);
-
-        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
-        return _mapper.Map<TransactionReadDto>(updatedTransaction);
-    }
-
-    public async Task<TransactionReadDto> CompleteReweighAsync(CompleteReweighDto dto)
-    {
-        if (dto == null)
-        {
-            throw new ArgumentNullException(nameof(dto));
-        }
-
-        var transaction = await _transactionRepository.GetByIdAsync(dto.TransactionId);
-        if (transaction == null)
-        {
-            throw new KeyNotFoundException($"Transaction with ID {dto.TransactionId} not found");
-        }
-
-        if (!transaction.IsReweighInProgress)
-        {
-            throw new InvalidOperationException("No reweigh in progress for this transaction");
-        }
-
-        // Complete the current reweigh attempt
-        transaction.CompleteReweigh(_timeService.Now);
-        
-        // Create audit log
-        var auditLog = new TransactionAuditLog
-        {
-            WeighbridgeTransactionId = dto.TransactionId,
-            Action = "ReweighCompleted",
-            ChangedBy = dto.CompletedBy ?? "System",
-            ChangeTimestamp = _timeService.Now,
-            Reason = $"Reweigh attempt {transaction.CurrentReweighAttempt} completed" + (string.IsNullOrEmpty(dto.Notes) ? "" : $": {dto.Notes}"),
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
-        };
-        
-        transaction.AuditLogs.Add(auditLog);
-        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
-        return _mapper.Map<TransactionReadDto>(updatedTransaction);
-    }
-    
-    public async Task<TransactionReadDto> UpdateTransactionImagesAsync(UpdateTransactionImagesDto dto)
-    {
-        if (dto == null)
-        {
-            throw new ArgumentNullException(nameof(dto));
-        }
-
-        // Get the existing transaction
-        var transaction = await _transactionRepository.GetByIdAsync(dto.TransactionId);
-        if (transaction == null)
-        {
-            throw new KeyNotFoundException($"Transaction with ID {dto.TransactionId} not found");
+            throw new InvalidOperationException("Cannot complete transaction. Both first and second weights are required.");
         }
 
         var utcNow = _timeService.UtcNow;
-        var changesMade = false;
-        var changeDescription = new List<string>();
-
-        // Handle NPR image upload if provided
-        if (dto.NprImage != null && dto.NprImage.Length > 0)
+        
+        // Calculate net weight if not already calculated
+        if (string.IsNullOrEmpty(transaction.NetWeight))
         {
-            // Delete old image if exists
-            if (!string.IsNullOrEmpty(transaction.NPR))
+            if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) && 
+                decimal.TryParse(transaction.SecondWeight, out var secondWeight))
             {
-                await _fileStorageService.DeleteFileAsync(transaction.NPR);
+                var netWeight = Math.Abs(firstWeight - secondWeight);
+                transaction.NetWeight = netWeight.ToString("F2");
             }
-            
-            // Upload new image
-            using var nprStream = dto.NprImage.OpenReadStream();
-            var nprFileName = $"npr_{transaction.Id}{Path.GetExtension(dto.NprImage.FileName)}";
-            transaction.NPR = await _fileStorageService.UploadFileAsync(nprStream, nprFileName, "transactions");
-            changesMade = true;
-            changeDescription.Add("updated NPR image");
         }
 
-        // Handle general transaction image upload if provided
-        if (dto.TransactionImage != null && dto.TransactionImage.Length > 0)
-        {
-            // Delete old image if exists
-            if (!string.IsNullOrEmpty(transaction.Image))
-            {
-                await _fileStorageService.DeleteFileAsync(transaction.Image);
-            }
-            
-            // Upload new image
-            using var imgStream = dto.TransactionImage.OpenReadStream();
-            var imgFileName = $"img_{transaction.Id}{Path.GetExtension(dto.TransactionImage.FileName)}";
-            transaction.Image = await _fileStorageService.UploadFileAsync(imgStream, imgFileName, "transactions");
-            changesMade = true;
-            changeDescription.Add("updated transaction image");
-        }
+        transaction.Status = "Completed";
+        transaction.UpdatedAt = utcNow;
 
-        // Only update if there were changes
-        if (changesMade)
-        {
-            transaction.ChangeDescription = dto.ChangeDescription ?? $"Updated {string.Join(" and ", changeDescription)}";
-            transaction.ChangeDate = utcNow;
-            transaction.UpdatedAt = utcNow;
-            
-            // Create audit log
-            var auditLog = new TransactionAuditLog
-            {
-                WeighbridgeTransactionId = transaction.Id,
-                Action = "ImagesUpdated",
-                ChangedBy = "System", // TODO: Get from current user context
-                ChangeTimestamp = utcNow,
-                Reason = transaction.ChangeDescription,
-                CreatedAt = utcNow,
-                UpdatedAt = utcNow
-            };
-            
-            transaction.AuditLogs.Add(auditLog);
-            
-            var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
-            return _mapper.Map<TransactionReadDto>(updatedTransaction);
-        }
-
-        // If no changes were made, return the current state
-        return _mapper.Map<TransactionReadDto>(transaction);
-    }
-
-    public async Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(string transactionId)
-    {
-        var transaction = await _transactionRepository.GetWithWeighingRecordsAsync(transactionId);
-        if (transaction == null)
-        {
-            throw new ArgumentException("Transaction not found", nameof(transactionId));
-        }
-
-        return _mapper.Map<IEnumerable<ReweighRecordDto>>(transaction.ReweighRecords ?? new List<ReweighRecord>());
+        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
+        return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 
     public async Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleAsync(string noPlate)
@@ -626,7 +211,7 @@ public class TransactionService : ITransactionService
         return _mapper.Map<IEnumerable<TransactionReadDto>>(transactions);
     }
 
-    public async Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId)
+    public async Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId)
     {
         var transactions = await _transactionRepository.GetIncompleteTransactionsByVehicleIdAsync(vehicleId);
         return _mapper.Map<IEnumerable<TransactionReadDto>>(transactions);
@@ -634,61 +219,47 @@ public class TransactionService : ITransactionService
 
     public async Task<IEnumerable<TransactionReadDto>> GetTransactionsByStatusAsync(string status, int limit = 100)
     {
-        if (!Enum.TryParse<WeighbridgeTransactionStatus>(status, true, out var statusEnum))
-        {
-            throw new ArgumentException($"Invalid status: {status}");
-        }
-
-        var transactions = await _transactionRepository.GetTransactionsByStatusAsync(statusEnum, limit);
+        var transactions = await _transactionRepository.GetTransactionsByStatusAsync(status, limit);
         return _mapper.Map<IEnumerable<TransactionReadDto>>(transactions);
-    }
-
-    public async Task<TransactionReadDto?> GetWithWeighingRecordsAsync(string id)
-    {
-        var transaction = await _transactionRepository.GetWithWeighingRecordsAsync(id);
-        return transaction == null ? null : _mapper.Map<TransactionReadDto>(transaction);
-    }
-
-    public async Task<TransactionReadDto?> GetWithAuditLogsAsync(string id)
-    {
-        var transaction = await _transactionRepository.GetWithAuditLogsAsync(id);
-        return transaction == null ? null : _mapper.Map<TransactionReadDto>(transaction);
     }
 
     public async Task<bool> RequestReweighAsync(RequestReweighDto dto)
     {
-        var transaction = await _transactionRepository.GetByIdAsync(dto.TransactionId);
+        var transaction = await _transactionRepository.GetByIdAsync(dto.TicketID);
         if (transaction == null)
         {
-            throw new ArgumentException("Transaction not found", nameof(dto.TransactionId));
+            throw new ArgumentException("Transaction not found", nameof(dto.TicketID));
         }
 
-        if (!transaction.IsCompleted)
+        if (transaction.Status != "Completed")
         {
             throw new InvalidOperationException("Can only request reweigh for completed transactions.");
         }
 
-        if (transaction.IsReweighRequested || transaction.IsReweighInProgress)
-        {
-            throw new InvalidOperationException("A reweigh has already been requested or is in progress for this transaction.");
-        }
+        var utcNow = _timeService.UtcNow;
 
-        transaction.RequestReweigh(dto.Reason, "System", _timeService.Now); // TODO: Replace "System" with actual user
-
-        // Create audit log
-        var auditLog = new TransactionAuditLog
-        {
-            WeighbridgeTransactionId = transaction.Id,
-            Action = "ReweighRequested",
-            ChangedBy = "System", // TODO: Get from current user context
-            ChangeTimestamp = _timeService.Now,
-            Reason = dto.Reason,
-            CreatedAt = _timeService.Now,
-            UpdatedAt = _timeService.Now
-        };
-        transaction.AuditLogs.Add(auditLog);
+        // Update reweigh permission
+        transaction.ReweighPermission = dto.Reason;
+        transaction.Status = "ReweighRequested";
+        transaction.UpdatedAt = utcNow;
+        transaction.ChangeDate = utcNow;
+        transaction.ChangeDesc = $"Reweigh requested: {dto.Reason}";
 
         await _transactionRepository.UpdateAsync(transaction);
         return true;
     }
+
+    public async Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(int ticketId)
+    {
+        var transaction = await _transactionRepository.GetByIdAsync(ticketId);
+        if (transaction == null)
+        {
+            throw new ArgumentException("Transaction not found", nameof(ticketId));
+        }
+
+        // Since ReweighRecords are stored separately, query them
+        var reweighRecords = await _transactionRepository.GetReweighRecordsAsync(ticketId);
+        return _mapper.Map<IEnumerable<ReweighRecordDto>>(reweighRecords ?? new List<ReweighRecord>());
+    }
 }
+
