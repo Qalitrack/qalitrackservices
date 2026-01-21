@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Transaction.Core.Entities;
 
 namespace Transaction.Core.DTOs;
 
@@ -53,17 +54,17 @@ public class TransactionReadDto
     public string? OperatorName2nd { get; set; }
     
     // Operational Details
-    public string? WeighMode { get; set; }
-    public string? Operation { get; set; }
+    public WeighingDirection WeighMode { get; set; } = WeighingDirection.Unknown;
     
-    // Date Information
-    public DateTime FirstWeightDate { get; set; }
-    public DateTime SecondWeightDate { get; set; }
+    // Transaction Status
+    public string Status { get; set; } = string.Empty;
+    public bool IsCompleted { get; set; }
+    public DateTime? CompletedDate { get; set; }
     
-    // Transaction Status and Modifications
-    public string Status { get; set; } = "Active";
-    public string? ReweighPermission { get; set; }
-    public string? ChangeDesc { get; set; }
+    // Reweigh Information
+    public bool ReweighPermissionGranted { get; set; }
+    public string? ReweighPermissionReason { get; set; }
+    public string? ChangeDescription { get; set; }
     public DateTime? ChangeDate { get; set; }
     
     // API Integration
@@ -113,9 +114,8 @@ public class CreateTransactionDto
     public int? DestinationID { get; set; }
     public string? DestinationName { get; set; }
     
-    // Operational Details (Optional)
-    public string? WeighMode { get; set; }
-    public string? Operation { get; set; }
+    // Direction of the weighing operation (Optional)
+    public WeighingDirection WeighMode { get; set; } = WeighingDirection.Unknown;
     
     public string? Notes { get; set; }
 }
@@ -152,15 +152,8 @@ public class UpdateTransactionDto
     public int? DestinationID { get; set; }
     public string? DestinationName { get; set; }
     
-    // Weighbridge Information - Second Weighing
-    public string? WeighBridgeName2nd { get; set; }
-    public string? ScaleName2nd { get; set; }
-    public string? OperatorID2nd { get; set; }
-    public string? OperatorName2nd { get; set; }
-    
-    // Operational Details
-    public string? WeighMode { get; set; }
-    public string? Operation { get; set; }
+    // Direction of the weighing operation
+    public WeighingDirection? WeighMode { get; set; }
     
     public string? ChangeDesc { get; set; }
 }
