@@ -263,4 +263,6 @@ Thumbs.db
 todo/
 
 # Temporary AI automation scripts
+_*apps/qalitrack_frontend/release/
+apps/qalitrack_frontend/dist-electron/
 _*

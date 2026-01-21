@@ -1,24 +1,19 @@
 import { useState, useMemo } from "react";
-import {
-  FileDown,
-  FileSpreadsheet,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
+import { FileDown, FileSpreadsheet, ArrowUpDown, ArrowUp, ArrowDown, Eye } from "lucide-react";
 import dayjs from "dayjs";
 
 export default function ReportsTable({
   transactions = [],
   loading = false,
   currentPage = 1,
-  pageSize = 5,
+  pageSize = 4, // default 4 rows per page
   totalRecords = 0,
   onPageChange = () => {},
   onExportPDF,
   onExportExcel,
   showColumns = null,
   onRowClick = null,
+  onPreview = null, // added preview callback
 }) {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
@@ -63,8 +58,7 @@ export default function ReportsTable({
   };
 
   const getSortIcon = (field) => {
-    if (sortField !== field)
-      return <ArrowUpDown className="w-4 h-4 inline ml-1 opacity-30" />;
+    if (sortField !== field) return <ArrowUpDown className="w-4 h-4 inline ml-1 opacity-30" />;
 
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 inline ml-1 text-amber-400" />
@@ -101,10 +95,34 @@ export default function ReportsTable({
   };
 
   // =========================
-  // Columns
+  // Loading & Empty states
+  // =========================
+  const renderLoading = () =>
+    Array.from({ length: pageSize }).map((_, i) => (
+      <tr key={i} className="animate-pulse">
+        {Array.from({ length: showColumns?.length || 12 }).map((_, j) => (
+          <td key={j} className="p-2 sm:p-3">
+            <div className="h-4 bg-gray-200 rounded" />
+          </td>
+        ))}
+      </tr>
+    ));
+
+  const renderEmpty = () => (
+    <tr>
+      <td colSpan={showColumns?.length || 12} className="h-64 text-center text-gray-500">
+        <FileDown className="w-12 h-12 mx-auto mb-4 opacity-30" />
+        <p className="text-lg">No records found</p>
+        <p className="text-sm mt-2">Adjust filters and try again</p>
+      </td>
+    </tr>
+  );
+
+  // =========================
+  // Columns: dynamically map showColumns to labels
   // =========================
   const defaultColumns = [
-    ["createdAt", "Date"],
+    ["createdAt", "Date & Time"],
     ["receiptNo", "Receipt"],
     ["noPlate", "Vehicle"],
     ["driverName", "Driver"],
@@ -113,6 +131,7 @@ export default function ReportsTable({
     ["netWeight", "Net Wt (kg)"],
     ["weighMode", "Mode"],
     ["status", "Status"],
+    ["actions", "Actions"], // <- Preview button column
   ];
 
   const columnsToRender = showColumns
@@ -165,103 +184,94 @@ export default function ReportsTable({
               {columnsToRender.map(([key, label]) => (
                 <th
                   key={key}
-                  onClick={() => handleSort(key)}
-                  className="p-3 cursor-pointer text-left whitespace-nowrap"
+                  onClick={() => key !== "actions" && handleSort(key)}
+                  className="p-2 sm:p-3 cursor-pointer text-left whitespace-nowrap"
                 >
-                  {label} {getSortIcon(key)}
+                  {label} {key !== "actions" && getSortIcon(key)}
                 </th>
               ))}
             </tr>
           </thead>
 
           <tbody>
-            {loading ? (
-              Array.from({ length: pageSize }).map((_, i) => (
-                <tr key={i} className="animate-pulse">
-                  {columnsToRender.map((_, j) => (
-                    <td key={j} className="p-3">
-                      <div className="h-4 bg-gray-200 rounded" />
-                    </td>
-                  ))}
-                </tr>
-              ))
-            ) : processedData.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columnsToRender.length}
-                  className="h-40 text-center text-gray-500"
-                >
-                  No records found
-                </td>
-              </tr>
-            ) : (
-              processedData.map((t) => (
-                <tr
-                  key={t.id}
-                  onClick={() => onRowClick?.(t)}
-                  className="border-t hover:bg-gray-50 cursor-pointer"
-                >
-                  {columnsToRender.map(([key]) => {
-                    if (key === "createdAt")
-                      return (
-                        <td key={key} className="p-3">
-                          {t[key]
-                            ? dayjs(t[key]).format("DD MMM YYYY")
-                            : "-"}
-                        </td>
-                      );
-                    if (key === "netWeight")
-                      return (
-                        <td key={key} className="p-3 text-right">
-                          {t[key]?.toLocaleString() || "-"}
-                        </td>
-                      );
-                    if (key === "status")
-                      return (
-                        <td key={key} className="p-3">
-                          {statusBadge(t[key])}
-                        </td>
-                      );
-                    if (key === "weighMode")
-                      return (
-                        <td key={key} className="p-3">
-                          {weighModeBadge(t[key])}
-                        </td>
-                      );
-                    return (
-                      <td key={key} className="p-3">
-                        {t[key] ?? "-"}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))
-            )}
+            {loading
+              ? renderLoading()
+              : processedData.length === 0
+              ? renderEmpty()
+              : processedData.map((t) => (
+                  <tr
+                    key={t.id}
+                    className="border-t hover:bg-gray-50"
+                    onClick={() => onRowClick?.(t)}
+                  >
+                    {columnsToRender.map(([key]) => {
+                      if (key === "createdAt")
+                        return (
+                          <td key={key} className="p-2 sm:p-3">
+                            {t[key] ? dayjs(t[key]).format("DD MMM YYYY HH:mm") : "-"}
+                          </td>
+                        );
+                      if (key === "netWeight" || key === "firstWeight" || key === "secondWeight")
+                        return (
+                          <td key={key} className="p-2 sm:p-3 text-right">
+                            {t[key]?.toLocaleString() || "-"}
+                          </td>
+                        );
+                      if (key === "status") return <td key={key} className="p-2 sm:p-3">{statusBadge(t[key])}</td>;
+                      if (key === "weighMode") return <td key={key} className="p-2 sm:p-3">{weighModeBadge(t[key])}</td>;
+                      if (key === "actions")
+                        return (
+                          <td key={key} className="p-2 sm:p-3">
+                            <button
+                              onClick={() => onPreview?.(t)}
+                              className="px-2 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 flex items-center gap-1"
+                            >
+                              <Eye className="w-4 h-4" /> Preview
+                            </button>
+                          </td>
+                        );
+                      return <td key={key} className="p-2 sm:p-3">{t[key] ?? "-"}</td>;
+                    })}
+                  </tr>
+                ))}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
-      <div className="p-4 sm:p-6 border-t flex justify-between items-center">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="border px-3 py-1 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+      <div className="p-4 sm:p-6 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <span className="text-sm">Rows:</span>
+          <select
+            value={pageSize}
+            onChange={(e) => onPageSizeChange(Number(e.target.value))}
+            className="border rounded px-2 py-1"
+          >
+            {[4, 10, 25, 50].map((n) => (
+              <option key={n} value={n}>{n}</option>
+            ))}
+          </select>
+        </div>
 
-        <span className="text-sm">
-          Page {currentPage} of {totalPages}
-        </span>
-
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="border px-3 py-1 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="border px-3 py-1 rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="border px-3 py-1 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
