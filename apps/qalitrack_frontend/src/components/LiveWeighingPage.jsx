@@ -8,7 +8,7 @@ export default function LiveWeighbridgeStatus({ onWeightStable, onLiveWeightChan
 
   useEffect(() => {
     // Example: Replace this with your actual EventSource / WebSocket
-    const es = new EventSource("http://172.16.0.215:5000/weight-stream");
+    const es = new EventSource("http://172.16.0.1:5000/weight-stream");
 
     es.onmessage = (event) => {
       const weight = parseFloat(event.data);
