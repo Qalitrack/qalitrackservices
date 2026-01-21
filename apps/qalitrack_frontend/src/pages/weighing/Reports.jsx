@@ -15,6 +15,7 @@ import * as XLSX from "xlsx";
 
 export default function Reports() {
   const dispatch = useDispatch();
+
   const { transactions, loading } = useSelector((state) => state.weighing);
 
   const REPORT_TABS = [
@@ -35,7 +36,10 @@ export default function Reports() {
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
+    startTime: "",
+    endTime: "",
     status: "",
+    search: "",
   });
 
   useEffect(() => {
@@ -54,14 +58,16 @@ export default function Reports() {
     let data = [...transactions];
 
     if (filters.startDate) {
-      const start = new Date(filters.startDate);
-      start.setHours(0, 0, 0, 0);
+      const start = new Date(
+        `${filters.startDate}T${filters.startTime || "00:00"}`
+      );
       data = data.filter((t) => new Date(t.createdAt) >= start);
     }
 
     if (filters.endDate) {
-      const end = new Date(filters.endDate);
-      end.setHours(23, 59, 59, 999);
+      const end = new Date(
+        `${filters.endDate}T${filters.endTime || "23:59"}`
+      );
       data = data.filter((t) => new Date(t.createdAt) <= end);
     }
 
@@ -96,7 +102,7 @@ export default function Reports() {
     autoTable(doc, {
       startY: 25,
       head: [[
-        "Date",
+        "Date & Time",
         "Receipt",
         "Vehicle",
         "Driver",
@@ -108,7 +114,7 @@ export default function Reports() {
         "Status",
       ]],
       body: rows.map((t) => [
-        t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "-",
+        t.createdAt ? new Date(t.createdAt).toLocaleString() : "-",
         t.receiptNo || "-",
         t.noPlate || "-",
         t.driverName || "-",
@@ -147,7 +153,14 @@ export default function Reports() {
   };
 
   const clearFilters = () => {
-    setFilters({ startDate: "", endDate: "", status: "" });
+    setFilters({
+      startDate: "",
+      endDate: "",
+      startTime: "",
+      endTime: "",
+      status: "",
+      search: "",
+    });
     setCurrentPage(1);
   };
 
@@ -251,6 +264,34 @@ export default function Reports() {
       )}
 
       {renderActiveReport()}
+
+      {/* Preview Modal */}
+      {showPreview && previewRecord && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-4/5 max-h-[90vh] overflow-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Preview Transaction</h2>
+              <button
+                className="px-3 py-1 rounded border"
+                onClick={() => setShowPreview(false)}
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <strong>Receipt No:</strong> {previewRecord.receiptNo}<br/>
+              <strong>Vehicle:</strong> {previewRecord.noPlate}<br/>
+              <strong>Driver:</strong> {previewRecord.driverName}<br/>
+              <strong>Commodity:</strong> {previewRecord.commodityName}<br/>
+              <strong>First Weight:</strong> {previewRecord.firstWeight} Kg<br/>
+              <strong>Net Weight:</strong> {previewRecord.netWeight} Kg<br/>
+              <strong>Status:</strong> {previewRecord.status}<br/>
+              <strong>Date:</strong> {new Date(previewRecord.createdAt).toLocaleString()}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

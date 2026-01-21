@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import UnifiedSidebar from "../components/Sidebar"; // ← Use the new unified sidebar
 import Topbar from "../components/Topbar";
 
 export default function MainLayout() {
@@ -15,7 +15,7 @@ export default function MainLayout() {
   return (
     <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
       <aside className={`h-full transition-all duration-300 ease-in-out bg-black text-white ${sidebarWidth} shrink-0`}>
-        <Sidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
+        <UnifiedSidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
       </aside>
 
       <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
