@@ -1,51 +1,33 @@
-// src/layouts/MainLayout.jsx
 import { useState, useCallback } from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import UnifiedSidebar from "../components/Sidebar"; // ← Use the new unified sidebar
 import Topbar from "../components/Topbar";
 
 export default function MainLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = useCallback(() => {
-    setIsCollapsed(prev => !prev);
+    setIsCollapsed((prev) => !prev);
   }, []);
 
-  return (
-    <div className="flex h-screen bg-white overflow-hidden">
+  const sidebarWidth = isCollapsed ? "w-16" : "w-64";
 
-      {/* ───────────────────────────────────────────────
-          FIXED SIDEBAR (Does NOT push content)
-      ─────────────────────────────────────────────── */}
-      <aside
-        className={`
-          fixed top-0 left-0 h-full z-30
-          transition-all duration-300 
-          bg-black text-white border-r border-neutral-800
-          ${isCollapsed ? "w-16" : "w-64"}
-        `}
-      >
-        <Sidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
+  return (
+    <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
+      <aside className={`h-full transition-all duration-300 ease-in-out bg-black text-white ${sidebarWidth} shrink-0`}>
+        <UnifiedSidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
       </aside>
 
-      {/* ───────────────────────────────────────────────
-          MAIN WRAPPER (Static & Responsive)
-      ─────────────────────────────────────────────── */}
-      <div
-        className={`
-          flex flex-col flex-1 h-full overflow-hidden
-          transition-all duration-300
-          ${isCollapsed ? "ml-16" : "ml-64"}
-        `}
-      >
-        {/* ─── TOPBAR ─────────────────────────────── */}
-        <Topbar isCollapsed={isCollapsed} onToggleSidebar={toggleSidebar} />
+      <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
+        <header className="h-14 bg-white shadow-sm z-20 shrink-0">
+          <Topbar isCollapsed={isCollapsed} onToggleSidebar={toggleSidebar} />
+        </header>
 
-        {/* ─── CONTENT ─────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto p-4 bg-white">
-          <Outlet />
+        <main className="flex-1 bg-gray-50 overflow-hidden relative">
+          <div className="absolute inset-0 p-2">
+            <Outlet />
+          </div>
         </main>
-
       </div>
     </div>
   );

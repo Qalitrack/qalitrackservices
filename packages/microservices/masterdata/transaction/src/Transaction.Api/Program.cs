@@ -11,6 +11,7 @@ using Serilog;
 using Transaction.Core.Interfaces;
 using Transaction.Core.Services;
 using Transaction.Core.DTOs;
+using Transaction.Infrastructure.Services;
 // using Transaction.Core.Validators;
 using Transaction.Core.Mappings;
 using Transaction.Infrastructure.Data;
@@ -159,6 +160,7 @@ builder.Services.AddSingleton<ITimeService, TimeService>();
 // Add services
 builder.Services.AddScoped<ITransactionService, Transaction.Core.Services.TransactionService>();
 builder.Services.AddScoped<IReceiptNumberService, ReceiptNumberService>();
+builder.Services.AddScoped<IFileStorageService, FileSystemStorageService>();
 // TODO: Add additional services as needed
 // builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 // builder.Services.AddScoped<IJwtService, JwtService>();

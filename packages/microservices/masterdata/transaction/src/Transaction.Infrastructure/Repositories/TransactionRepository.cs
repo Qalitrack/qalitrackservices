@@ -112,9 +112,13 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
         }
 
         if (!string.IsNullOrWhiteSpace(filter.WeighMode))
-        {
-            query = query.Where(t => t.WeighMode == filter.WeighMode);
-        }
+            if (!string.IsNullOrWhiteSpace(filter.WeighMode))
+            {
+                if (Enum.TryParse<WeighingDirection>(filter.WeighMode, true, out var weighMode))
+                {
+                    query = query.Where(t => t.WeighMode == weighMode);
+                }
+            }
 
         // Get total count before pagination
         var totalCount = await query.CountAsync();

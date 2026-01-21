@@ -17,20 +17,33 @@ import {
   Satellite,
   List,
   Users,
+  User2,
+  Shield,
+  Lock,
+  Database
 } from "lucide-react";
+import useAuth from "../api/helpers/auth";
+import logo from "/src/assets/logorange.svg";
 
-import logo from "/src/assets/qualitrack.png";
-
-const currentUserRole = "operator";
-
-export default function Sidebar({ isCollapsed, onToggle }) {
+export default function UnifiedSidebar({ isCollapsed, onToggle }) {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
+  const { getCurrentUser } = useAuth();
+  
+  const user = getCurrentUser();
+  const userRoles = user?.userRoles || [];
+  const isAdmin = userRoles.includes('Admin');
+  const isOperator = userRoles.includes('Operator');
+
+  // Determine base path based on primary role
+  const basePath = isAdmin ? '/admin' : '/operator';
 
   useEffect(() => {
-    const rootPath = `/${currentUserRole}`;
-    if (location.pathname.startsWith(`${rootPath}/weighing`)) {
+    if (location.pathname.includes('/weighing')) {
       setOpenMenus((prev) => ({ ...prev, weighing: true }));
+    }
+    if (location.pathname.includes('/security')) {
+      setOpenMenus((prev) => ({ ...prev, security: true }));
     }
   }, [location.pathname]);
 
@@ -38,43 +51,152 @@ export default function Sidebar({ isCollapsed, onToggle }) {
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const linkClasses = ({ isActive }) =>
-    `flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150
-     ${isActive ? "bg-black/60 font-medium" : "hover:bg-white/5"} `;
+  // Define all menu items with role restrictions
+  const allMenuItems = [
+    // Dashboard (everyone sees it)
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      icon: <LayoutDashboard size={18} />,
+      path: `${basePath}/dashboard`,
+      roles: ['Admin', 'Operator']
+    },
 
-  const menuItems = [
-    // { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/dashboard" },
-    // { key: "dashboard", label: "Dashboard", icon: <Cog size={18} />, path: "/dashboard" },
+    // Weighing section (visible to both Admin and Operator)
     {
       key: "weighing",
       label: "Weighing",
       icon: <Scale size={18} />,
+      roles: ['Admin', 'Operator'],
       children: [
-        { key: "weighing-factory", label: "Factory Weighing", icon: <Factory size={16} />, path: "weighing/factory" },
-        { key: "weighing-vehicles", label: "Vehicles", icon: <Truck size={16} />, path: "weighing/vehicle" },
-        { key: "weighing-drivers", label: "Drivers", icon: <User size={16} />, path: "weighing/drivers" },
-        { key: "weighing-transporters", label: "Transporters", icon: <Tractor size={16} />, path: "transporters" },
-        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: "weighing/axle-config" },
-        { key: "weighing-owners", label: "Owners", icon: <Users size={16} />, path: "weighing/owners" },
-        { key: "suppliers", label: "Suppliers", icon: <Satellite size={16} />, path: "suppliers" },
+        { key: "weighing-factory", label: "Factory Weighing", icon: <Factory size={16} />, path: `${basePath}/weighing/factory`, roles: ['Admin', 'Operator'] },
+        { key: "transactions", label: "Transactions", icon: <LayoutDashboard size={16} />, path: `${basePath}/transactions`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-vehicles", label: "Vehicles", icon: <Truck size={16} />, path: `${basePath}/weighing/vehicle`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-drivers", label: "Drivers", icon: <User size={16} />, path: `${basePath}/weighing/drivers`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-transporters", label: "Transporters", icon: <Tractor size={16} />, path: `${basePath}/transporters`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-owners", label: "Owners", icon: <Users size={16} />, path: `${basePath}/weighing/owners`, roles: ['Admin', 'Operator'] },
+        { key: "suppliers", label: "Suppliers", icon: <Satellite size={16} />, path: `${basePath}/suppliers`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-products", label: "Products", icon: <BarChart3 size={16} />, path: `${basePath}/weighing/products`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-saccos", label: "Saccos", icon: <User2 size={16} />, path: `${basePath}/saccos`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-weighbridges", label: "Weighbridges", icon: <Scale size={16} />, path: `${basePath}/weighbridges`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: `${basePath}/weighing/axle-config`, roles: ['Admin', 'Operator'] },
       ],
     },
-    { key: "automation", label: "Automation", icon: <Cog size={18} />, path: "automation" },
-    { key: "calibrations", label: "Calibrations", icon: <Wrench size={18} />, path: "calibrations" },
-    { key: "analytics", label: "Analytics", icon: <BarChart3 size={18} />, path: "analytics" },
-    { key: "reports", label: "Reports", icon: <FileText size={18} />, path: "reports" },
-    { key: "system", label: "System", icon: <Cog size={18} />, path: "system" },
+
+    // Automation
+    { 
+      key: "automation", 
+      label: "Automation", 
+      icon: <Cog size={18} />, 
+      path: `${basePath}/automation`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Calibrations
+    { 
+      key: "calibrations", 
+      label: "Calibrations", 
+      icon: <Wrench size={18} />, 
+      path: `${basePath}/calibrations`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Analytics
+    { 
+      key: "analytics", 
+      label: "Analytics", 
+      icon: <BarChart3 size={18} />, 
+      path: `${basePath}/analytics`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Reports
+    { 
+      key: "reports", 
+      label: "Reports", 
+      icon: <FileText size={18} />, 
+      path: `${basePath}/reports`,
+      roles: ['Admin', 'Operator']
+    },
+
+    // Shifts (Admin only)
+    {
+      key: "shifts",
+      label: "Shifts",
+      icon: <User size={18} />,
+      path: `${basePath}/shifts`,
+      roles: ['Admin']
+    },
+
+    // Shift Assignment (Admin only)
+    {
+      key: "shift-assignment",
+      label: "Shift Assignment",
+      icon: <Users size={18} />,
+      path: `${basePath}/shift-assignment`,
+      roles: ['Admin']
+    },
+
+    // Attendance (Admin only)
+    {
+      key: "attendance",
+      label: "Attendance",
+      icon: <User2 size={18} />,
+      path: `${basePath}/attendance`,
+      roles: ['Admin']
+    },
+
+    // Security section (Admin only)
+    {
+      key: "security",
+      label: "Security",
+      icon: <Shield size={18} />,
+      roles: ['Admin'],
+      children: [
+        { key: "permissions", label: "Permissions", icon: <Shield size={16} />, path: `${basePath}/security/permissions`, roles: ['Admin'] },
+        { key: "roles", label: "Roles", icon: <Users size={16} />, path: `${basePath}/security/roles`, roles: ['Admin'] },
+        { key: "password-policy", label: "Password Policy", icon: <Lock size={16} />, path: `${basePath}/security/password-policy`, roles: ['Admin'] },
+      ],
+    },
+
+    // Backup Service (Admin only)
+    {
+      key: "backup",
+      label: "Backup Service",
+      icon: <Database size={18} />,
+      path: `${basePath}/backup/microservice`,
+      roles: ['Admin']
+    },
+
+    // System
+    { 
+      key: "system", 
+      label: "System", 
+      icon: <Cog size={18} />, 
+      path: `${basePath}/system`,
+      roles: ['Admin', 'Operator']
+    },
   ];
 
-  const getPath = (item) => {
-    const rootPath = `/${currentUserRole}`;
-    if (item.path === "/dashboard") return rootPath;
-    if (item.path.startsWith("/")) return item.path;
-    return `${rootPath}/${item.path}`;
+  // Filter menu items based on user roles
+  const filterMenuByRole = (items) => {
+    return items.filter(item => {
+      const hasAccess = item.roles?.some(role => userRoles.includes(role));
+      if (!hasAccess) return false;
+
+      if (item.children) {
+        item.children = item.children.filter(child => 
+          child.roles?.some(role => userRoles.includes(role))
+        );
+        return item.children.length > 0;
+      }
+      return true;
+    });
   };
 
+  const menuItems = filterMenuByRole(allMenuItems);
+
   return (
-    // Sidebar container: black background, fixed left, overlaying content
     <aside
       className={`
         fixed top-0 left-0 h-full z-40 flex flex-col transition-all duration-300
@@ -84,17 +206,15 @@ export default function Sidebar({ isCollapsed, onToggle }) {
       aria-label="Main sidebar"
     >
       {/* Branding + Collapse */}
-      <div className={`flex items-center relative ${isCollapsed ? "justify-center px-0" : "justify-between px-6" } py-6`}>
+      <div className={`flex items-center relative ${isCollapsed ? "justify-center px-0" : "justify-between px-6"} py-6`}>
         <div className="flex items-center gap-3">
           <img
             src={logo}
-            alt="Qualitrack"
+            alt="Qalitrack"
             className={`transition-all duration-300 ${isCollapsed ? "h-8" : "h-12"}`}
           />
-          {!isCollapsed && <span className="font-semibold text-lg text-white">Qualitrack</span>}
         </div>
 
-        {/* Collapse toggle button */}
         <button
           onClick={onToggle}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -125,7 +245,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
                   <span className="text-amber-400">{item.icon}</span>
                   {!isCollapsed && <span className="text-sm">{item.label}</span>}
                 </span>
-
                 {!isCollapsed && (
                   <span className="text-white/80">
                     {openMenus[item.key] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
@@ -133,20 +252,17 @@ export default function Sidebar({ isCollapsed, onToggle }) {
                 )}
               </button>
 
-              {/* Children */}
               <div id={`${item.key}-sub`} className={`${openMenus[item.key] && !isCollapsed ? "block" : "hidden"} mt-1`}>
                 {item.children.map((child) => (
                   <NavLink
                     key={child.key}
-                    to={getPath(child)}
+                    to={child.path}
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative
                        ${isActive ? "bg-white/6" : "hover:bg-white/4"}`
                     }
                   >
-                    {/* amber left border indicator when active */}
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-transparent"
-                         aria-hidden />
+                    <ActiveLeftBorder />
                     <span className="text-white/90">{child.icon}</span>
                     {!isCollapsed && <span className="text-sm">{child.label}</span>}
                   </NavLink>
@@ -156,27 +272,19 @@ export default function Sidebar({ isCollapsed, onToggle }) {
           ) : (
             <div key={item.key} className="relative group mb-1">
               <NavLink
-                to={getPath(item)}
+                to={item.path}
                 className={({ isActive }) =>
                   `
                   flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative
                   ${isActive ? "bg-white/6" : "hover:bg-white/4"}
-                  ${isActive ? "pl-3" : ""}
                   `
                 }
               >
-                {/* active left amber border */}
-                {({ isActive }) => null}
-                {/*
-                  We can't use NavLink children function and class func at same time easily in a single template,
-                  so we'll apply the amber left border via an absolute element using CSS and a small helper below.
-                */}
                 <ActiveLeftBorder />
                 <span className="text-amber-400">{item.icon}</span>
                 {!isCollapsed && <span className="text-sm">{item.label}</span>}
               </NavLink>
 
-              {/* Tooltip when collapsed */}
               {isCollapsed && (
                 <div
                   className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-50 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -191,7 +299,7 @@ export default function Sidebar({ isCollapsed, onToggle }) {
         )}
       </nav>
 
-      {/* footer / version */}
+      {/* Footer / Version */}
       <div className="px-3 py-3 border-t border-white/6 text-xs text-white/70">
         {!isCollapsed ? (
           <div className="flex items-center justify-between">
@@ -208,12 +316,6 @@ export default function Sidebar({ isCollapsed, onToggle }) {
   );
 }
 
-/* Helper small component that renders the amber left border for active NavLink items.
-   Since NavLink's className can detect isActive, we'll implement a tiny CSS rule
-   using the `:where` selector would be ideal, but Tailwind + inline is simpler: we add
-   a pseudo-element via an extra element and rely on NavLink's active class (bg-white/6).
-   Because controlling it precisely in this snippet is verbose, we use a small inline marker
-   that becomes amber when its parent is active (via bg-white/6 check). */
 function ActiveLeftBorder() {
   return <span className="absolute left-0 top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-transparent" aria-hidden />;
 }

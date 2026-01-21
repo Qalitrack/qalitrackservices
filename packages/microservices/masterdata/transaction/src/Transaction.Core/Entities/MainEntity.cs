@@ -64,23 +64,25 @@ public class WeighbridgeTransaction : BaseEntity
     public string? OperatorID2nd { get; set; }
     public string? OperatorName2nd { get; set; }
     
-    // Operational Details
-    public string? WeighMode { get; set; }
-    public string? Operation { get; set; }
+    // Direction of the weighing operation (Inbound/Outbound)
+    public WeighingDirection WeighMode { get; set; }
     
-    // Date Information
-    [Required]
-    [NotFutureDate]                      
-    public DateTime FirstWeightDate { get; set; } = DateTime.Now;
-    [Required]
-    [NotFutureDate]                      
-    public DateTime SecondWeightDate { get; set; } = DateTime.Now;
+    // Transaction Status
+    public WeighbridgeTransactionStatus Status { get; set; } = WeighbridgeTransactionStatus.Pending;
+    public bool IsCompleted { get; set; } = false;
+    public DateTime? CompletedDate { get; set; }
     
-    // Transaction Status and Modifications
-    [Required]
-    public string Status { get; set; } = "Active";
-    public string? ReweighPermission { get; set; }
-    public string? ChangeDesc { get; set; }
+    // Reweigh and Modifications
+    public bool IsReweighRequested => Status == WeighbridgeTransactionStatus.ReweighRequested;
+    public bool IsReweighInProgress => Status == WeighbridgeTransactionStatus.ReweighInProgress;
+    public bool ReweighPermissionGranted { get; set; }
+    public string? ReweighPermissionReason { get; set; }
+    public string? ReweighReason { get; private set; }
+    public DateTime? ReweighRequestDate { get; private set; }
+    public string? ReweighRequestedBy { get; private set; }
+    public int CurrentReweighAttempt { get; private set; } = 0;
+    public int MaxReweighAttempts { get; set; } = 3; // Default to 3 attempts
+    public string? ChangeDescription { get; set; }
     public DateTime? ChangeDate { get; set; }
     
     // API Integration
@@ -129,7 +131,25 @@ public class ReweighRecord
     public virtual WeighbridgeTransaction? WeighbridgeTransaction { get; set; }
 }
 
-// Value Object for weight measurement (if still needed)
+public enum WeighingDirection
+{
+    Inbound,
+    Outbound,
+    Unknown
+}
+
+public enum WeighbridgeTransactionStatus
+{
+    Pending,            // Initial state, awaiting weighings
+    InProgress,         // At least one weighing done, more expected
+    Completed,          // All weighings done, transaction immutable
+    Cancelled,          // Transaction cancelled
+    OnHold,             // Temporarily paused
+    ReweighRequested,   // Requested for reweigh
+    ReweighInProgress   // Reweigh in progress
+}
+
+// Value Object for weight measurement
 public class WeightMeasurement
 {
     public decimal Value { get; private set; }

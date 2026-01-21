@@ -8,4 +8,6 @@ export * from "./Transporters";
 export * from "./Routes";
 export * from "./Saccos";
 export * from "./Products";
+export * from "./Weighbridges";
+
 

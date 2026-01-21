@@ -96,14 +96,8 @@ public class TransactionService : ITransactionService
         if (dto.OriginName != null) existingTransaction.OriginName = dto.OriginName;
         if (dto.DestinationID.HasValue) existingTransaction.DestinationID = dto.DestinationID;
         if (dto.DestinationName != null) existingTransaction.DestinationName = dto.DestinationName;
-        if (dto.WeighMode != null) existingTransaction.WeighMode = dto.WeighMode;
-        if (dto.Operation != null) existingTransaction.Operation = dto.Operation;
-        if (dto.SecondWeight != null) existingTransaction.SecondWeight = dto.SecondWeight;
-        if (dto.WeighBridgeName2nd != null) existingTransaction.WeighBridgeName2nd = dto.WeighBridgeName2nd;
-        if (dto.ScaleName2nd != null) existingTransaction.ScaleName2nd = dto.ScaleName2nd;
-        if (dto.OperatorID2nd != null) existingTransaction.OperatorID2nd = dto.OperatorID2nd;
-        if (dto.OperatorName2nd != null) existingTransaction.OperatorName2nd = dto.OperatorName2nd;
-        if (dto.ChangeDesc != null) existingTransaction.ChangeDesc = dto.ChangeDesc;
+        if (dto.WeighMode != null) existingTransaction.WeighMode = dto.WeighMode.Value;
+        if (dto.ChangeDescription != null) existingTransaction.ChangeDescription = dto.ChangeDescription;
         
         existingTransaction.UpdatedAt = utcNow;
         existingTransaction.ChangeDate = utcNow;
