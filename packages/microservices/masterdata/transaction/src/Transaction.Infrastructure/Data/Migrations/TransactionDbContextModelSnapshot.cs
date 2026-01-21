@@ -46,8 +46,8 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
 
                     b.Property<string>("Operator1")
                         .HasMaxLength(100)
@@ -76,9 +76,9 @@ namespace Transaction.Infrastructure.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("WeighbridgeTransactionId")
-                        .IsRequired()
-                        .HasColumnType("character varying(36)");
+                    b.Property<int>("WeighbridgeTransactionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("WeighbridgeTransactionId");
 
                     b.Property<decimal?>("Weight1")
                         .HasColumnType("decimal(18,2)");
@@ -105,97 +105,38 @@ namespace Transaction.Infrastructure.Data.Migrations
                     b.ToTable("ReweighRecords");
                 });
 
-            modelBuilder.Entity("Transaction.Core.Entities.TransactionAuditLog", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime>("ChangeTimestamp")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ChangedBy")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("ChangedFields")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("NewValues")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("OldValues")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("WeighbridgeTransactionId")
-                        .IsRequired()
-                        .HasColumnType("character varying(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Action");
-
-                    b.HasIndex("ChangeTimestamp");
-
-                    b.HasIndex("WeighbridgeTransactionId");
-
-                    b.ToTable("AuditLogs");
-                });
-
             modelBuilder.Entity("Transaction.Core.Entities.WeighbridgeTransaction", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
+                    b.Property<int>("TicketID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("TicketID");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TicketID"));
+
+                    b.Property<int?>("ApiId")
+                        .HasColumnType("integer")
+                        .HasColumnName("api_id");
 
                     b.Property<DateTime?>("ChangeDate")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ChangeDate")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("ChangeDescription")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                    b.Property<string>("ChangeDesc")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("ChangeDesc");
 
-                    b.Property<Guid?>("CommodityId")
-                        .HasColumnType("uuid");
+                    b.Property<int?>("CommodityID")
+                        .HasColumnType("integer")
+                        .HasColumnName("CommodityID");
 
                     b.Property<string>("CommodityName")
-                        .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime?>("CompletedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("CompletedWeighings")
-                        .HasColumnType("integer");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("CommodityName");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -203,209 +144,150 @@ namespace Transaction.Infrastructure.Data.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
-                    b.Property<int>("CurrentReweighAttempt")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uuid");
+                    b.Property<int?>("CustomerID")
+                        .HasColumnType("integer")
+                        .HasColumnName("CustomerID");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("CustomerName");
 
-                    b.Property<Guid?>("DestinationId")
-                        .HasColumnType("uuid");
+                    b.Property<int?>("DestinationID")
+                        .HasColumnType("integer")
+                        .HasColumnName("DestinationID");
 
                     b.Property<string>("DestinationName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("DestinationName");
 
                     b.Property<string>("DriverName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("DriverName");
 
-                    b.Property<int>("ExpectedWeighings")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("image");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("MaxReweighAttempts")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("NPR")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("NetWeight")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime?>("NetWeightCalculatedTimestamp")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NoPlate")
+                    b.Property<string>("FirstWeight")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("FirstWeight");
 
-                    b.Property<Guid?>("OperatorId")
-                        .HasColumnType("uuid");
+                    b.Property<DateTime>("FirstWeightDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("FirstWeightDate")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<Guid?>("OperatorId2nd")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("OperatorName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("OperatorName2nd")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid?>("OriginId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("OriginName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("ReceiptNo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<bool>("ReweighPermissionGranted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("ReweighPermissionReason")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("ReweighReason")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ReweighRequestDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ReweighRequestedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ScaleName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("ScaleName2nd")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("SupplierId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("SupplierName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<Guid>("TransporterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("TransporterName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("VehicleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("WeighBridgeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("WeighBridgeName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("WeighBridgeName2nd")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("WeighMode")
-                        .HasMaxLength(50)
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("IsCompleted");
-
-                    b.HasIndex("NoPlate");
-
-                    b.HasIndex("ReceiptNo")
-                        .IsUnique();
-
-                    b.HasIndex("Status");
-
-                    b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("Transaction.Core.Entities.WeighingRecord", b =>
-                {
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                    b.Property<string>("NetWeight")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("NetWeight");
 
-                    b.Property<Guid?>("OperatorId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("NoPlate")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("NoPlate");
+
+                    b.Property<string>("Operation")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("Operation");
+
+                    b.Property<int?>("OperatorID")
+                        .HasColumnType("integer")
+                        .HasColumnName("OperatorID");
+
+                    b.Property<string>("OperatorID2nd")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("OperatorID2nd");
 
                     b.Property<string>("OperatorName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("OperatorName");
+
+                    b.Property<string>("OperatorName2nd")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("OperatorName2nd");
+
+                    b.Property<int?>("OriginID")
+                        .HasColumnType("integer")
+                        .HasColumnName("OriginID");
+
+                    b.Property<string>("OriginName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("OriginName");
+
+                    b.Property<string>("ReceiptNo")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("ReceiptNo");
+
+                    b.Property<string>("ReweighPermission")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("ReweighPermission");
 
                     b.Property<string>("ScaleName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("ScaleName");
+
+                    b.Property<string>("ScaleName2nd")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("ScaleName2nd");
+
+                    b.Property<string>("SecondWeight")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("SecondWeight");
+
+                    b.Property<DateTime>("SecondWeightDate")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("SecondWeightDate")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("Status");
+
+                    b.Property<int?>("SupplierID")
+                        .HasColumnType("integer")
+                        .HasColumnName("SupplierID");
+
+                    b.Property<string>("SupplierName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("SupplierName");
+
+                    b.Property<int>("TransporterID")
+                        .HasColumnType("integer")
+                        .HasColumnName("TransporterID");
+
+                    b.Property<string>("TransporterName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("TransporterName");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -413,76 +295,51 @@ namespace Transaction.Infrastructure.Data.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("WeighBridgeId")
-                        .HasColumnType("uuid");
+                    b.Property<int?>("VehicleID")
+                        .HasColumnType("integer")
+                        .HasColumnName("vehicleID");
+
+                    b.Property<int?>("WeighBridgeID")
+                        .HasColumnType("integer")
+                        .HasColumnName("WeighBridgeID");
 
                     b.Property<string>("WeighBridgeName")
-                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("WeighBridgeName");
+
+                    b.Property<string>("WeighBridgeName2nd")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("WeighBridgeName2nd");
 
-                    b.Property<string>("WeighbridgeTransactionId")
-                        .IsRequired()
-                        .HasColumnType("character varying(36)");
+                    b.Property<string>("WeighMode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("WeighMode");
 
-                    b.Property<DateTime>("WeighingDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.HasKey("TicketID");
 
-                    b.Property<int>("WeighingSequence")
-                        .HasColumnType("integer");
+                    b.HasIndex("FirstWeightDate");
 
-                    b.Property<decimal>("Weight")
-                        .HasColumnType("numeric");
+                    b.HasIndex("NoPlate");
 
-                    b.HasKey("Id");
+                    b.HasIndex("ReceiptNo");
 
-                    b.HasIndex("WeighbridgeTransactionId");
+                    b.HasIndex("Status");
 
-                    b.HasIndex("WeighingDate");
-
-                    b.ToTable("WeighingRecords");
+                    b.ToTable("tickets", (string)null);
                 });
 
             modelBuilder.Entity("Transaction.Core.Entities.ReweighRecord", b =>
                 {
                     b.HasOne("Transaction.Core.Entities.WeighbridgeTransaction", "WeighbridgeTransaction")
-                        .WithMany("ReweighRecords")
+                        .WithMany()
                         .HasForeignKey("WeighbridgeTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("WeighbridgeTransaction");
-                });
-
-            modelBuilder.Entity("Transaction.Core.Entities.TransactionAuditLog", b =>
-                {
-                    b.HasOne("Transaction.Core.Entities.WeighbridgeTransaction", "Transaction")
-                        .WithMany("AuditLogs")
-                        .HasForeignKey("WeighbridgeTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Transaction");
-                });
-
-            modelBuilder.Entity("Transaction.Core.Entities.WeighingRecord", b =>
-                {
-                    b.HasOne("Transaction.Core.Entities.WeighbridgeTransaction", "Transaction")
-                        .WithMany("WeighingRecords")
-                        .HasForeignKey("WeighbridgeTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Transaction");
-                });
-
-            modelBuilder.Entity("Transaction.Core.Entities.WeighbridgeTransaction", b =>
-                {
-                    b.Navigation("AuditLogs");
-
-                    b.Navigation("ReweighRecords");
-
-                    b.Navigation("WeighingRecords");
                 });
 #pragma warning restore 612, 618
         }
