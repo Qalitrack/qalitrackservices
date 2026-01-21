@@ -1,235 +1,108 @@
+using System.ComponentModel.DataAnnotations;
+using Transaction.Core.Validation;
+
 namespace Transaction.Core.Entities;
 
 public class WeighbridgeTransaction : BaseEntity
 {
+    // Primary Key
+    [Key]
+    public int TicketID { get; set; }
+    
     // Receipt and Identification
+    [Required]
+    
     public string ReceiptNo { get; set; } = string.Empty;
-    public int ExpectedWeighings { get; set; } = 2; // Default to 2 weighings
-    public int CompletedWeighings { get; set; } = 0;
     
     // Weight Information
-    public decimal? NetWeight { get; set; }
-    public DateTime? NetWeightCalculatedTimestamp { get; set; }
+    [Required]
+    public string FirstWeight { get; set; } = string.Empty;
+    public string? SecondWeight { get; set; }
+    public string? NetWeight { get; set; }
     
     // Vehicle Information
-    public Guid? VehicleId { get; set; }
+    public int? VehicleID { get; set; }
+    [Required]
     public string NoPlate { get; set; } = string.Empty;
+    [Required]
     public string DriverName { get; set; } = string.Empty;
     
     // Commodity Information
-    public Guid? CommodityId { get; set; }
-    public string CommodityName { get; set; } = string.Empty;
+    public int? CommodityID { get; set; }
+    public string? CommodityName { get; set; }
     
     // Supplier Information
-    public Guid? SupplierId { get; set; }
-    public string SupplierName { get; set; } = string.Empty;
+    public int? SupplierID { get; set; }
+    public string? SupplierName { get; set; }
     
     // Customer Information
-    public Guid? CustomerId { get; set; }
-    public string CustomerName { get; set; } = string.Empty;
+    public int? CustomerID { get; set; }
+    public string? CustomerName { get; set; }
     
-    // Transporter Information (Required)
-    public Guid TransporterId { get; set; }
+    // Transporter Information 
+    [Required]
+    public int TransporterID { get; set; }
+    [Required]
     public string TransporterName { get; set; } = string.Empty;
     
     // Origin and Destination
-    public Guid? OriginId { get; set; }
-    public string OriginName { get; set; } = string.Empty;
-    public Guid? DestinationId { get; set; }
-    public string DestinationName { get; set; } = string.Empty;
+    public int? OriginID { get; set; }
+    public string? OriginName { get; set; }
+    public int? DestinationID { get; set; }
+    public string? DestinationName { get; set; }
     
     // Weighbridge Information - First Weighing
-    public Guid? WeighBridgeId { get; set; }
-    public string WeighBridgeName { get; set; } = string.Empty;
-    public string ScaleName { get; set; } = string.Empty;
-    public Guid? OperatorId { get; set; }
-    public string OperatorName { get; set; } = string.Empty;
-    
-    // Image fields
-    public string NPR { get; set; } = string.Empty;  // Image path or base64 string for NPR
-    public string Image { get; set; } = string.Empty; // Image path or base64 string for general image
+    public int? WeighBridgeID { get; set; }
+    public string? WeighBridgeName { get; set; }
+    public string? ScaleName { get; set; }
+    public int? OperatorID { get; set; }
+    public string? OperatorName { get; set; }
     
     // Weighbridge Information - Second Weighing
-    public string WeighBridgeName2nd { get; set; } = string.Empty;
-    public string ScaleName2nd { get; set; } = string.Empty;
-    public Guid? OperatorId2nd { get; set; }
-    public string OperatorName2nd { get; set; } = string.Empty;
+    public string? WeighBridgeName2nd { get; set; }
+    public string? ScaleName2nd { get; set; }
+    public string? OperatorID2nd { get; set; }
+    public string? OperatorName2nd { get; set; }
     
     // Operational Details
-    public string WeighMode { get; set; } = string.Empty; // e.g., "Inbound", "Outbound"
-    public string Operation { get; set; } = string.Empty;
+    public string? WeighMode { get; set; }
+    public string? Operation { get; set; }
     
-    // Transaction Status
-    public WeighbridgeTransactionStatus Status { get; set; } = WeighbridgeTransactionStatus.Pending;
-    public bool IsCompleted { get; set; } = false;
-    public DateTime? CompletedDate { get; set; }
+    // Date Information
+    [Required]
+    [NotFutureDate]                      
+    public DateTime FirstWeightDate { get; set; } = DateTime.Now;
+    [Required]
+    [NotFutureDate]                      
+    public DateTime SecondWeightDate { get; set; } = DateTime.Now;
     
-    // Reweigh and Modifications
-    public bool IsReweighRequested => Status == WeighbridgeTransactionStatus.ReweighRequested;
-    public bool IsReweighInProgress => Status == WeighbridgeTransactionStatus.ReweighInProgress;
-    public bool ReweighPermissionGranted { get; set; }
-    public string? ReweighPermissionReason { get; set; }
-    public string? ReweighReason { get; private set; }
-    public DateTime? ReweighRequestDate { get; private set; }
-    public string? ReweighRequestedBy { get; private set; }
-    public int CurrentReweighAttempt { get; private set; } = 0;
-    public int MaxReweighAttempts { get; set; } = 3; // Default to 3 attempts
-    public string? ChangeDescription { get; set; }
+    // Transaction Status and Modifications
+    [Required]
+    public string Status { get; set; } = "Active";
+    public string? ReweighPermission { get; set; }
+    public string? ChangeDesc { get; set; }
     public DateTime? ChangeDate { get; set; }
     
-    // Navigation property for reweigh records
-    public virtual ICollection<ReweighRecord> ReweighRecords { get; set; } = new List<ReweighRecord>();
-    
-    // Navigation Properties
-    public virtual ICollection<WeighingRecord> WeighingRecords { get; set; } = new List<WeighingRecord>();
-    public virtual ICollection<TransactionAuditLog> AuditLogs { get; set; } = new List<TransactionAuditLog>();
-    
-    // Methods
-    public bool CanBeModified()
-    {
-        return !IsCompleted;
-    }
-    
-    public bool CanAddWeighing()
-    {
-        return !IsCompleted && CompletedWeighings < ExpectedWeighings;
-    }
-    
-    public void CompleteTransaction(DateTime currentTime)
-    {
-        if (IsCompleted)
-        {
-            throw new InvalidOperationException("Transaction is already completed.");
-        }
-
-        // Ensure we have the expected number of weighings
-        if (WeighingRecords == null || WeighingRecords.Count < ExpectedWeighings)
-        {
-            throw new InvalidOperationException(
-                $"Cannot complete transaction. Expected {ExpectedWeighings} weighings, but only {WeighingRecords?.Count ?? 0} completed.");
-        }
-
-        // Update transaction status
-        IsCompleted = true;
-        Status = WeighbridgeTransactionStatus.Completed;
-        CompletedDate = currentTime;
-        UpdatedAt = currentTime;
-        CompletedWeighings = WeighingRecords.Count;
-
-        // Calculate net weight if not already set
-        if (!NetWeight.HasValue && WeighingRecords.Count >= 2)
-        {
-            try
-            {
-                // Get first and last weighings
-                var firstWeighing = WeighingRecords.OrderBy(w => w.WeighingSequence).First();
-                var lastWeighing = WeighingRecords.OrderByDescending(w => w.WeighingSequence).First();
-            
-                // Calculate net weight (absolute difference between first and last weight)
-                NetWeight = Math.Abs(firstWeighing.Weight - lastWeighing.Weight);
-                NetWeightCalculatedTimestamp = currentTime;
-            }
-            catch (Exception ex)
-            {
-                // Log the error but don't fail the transaction completion
-                Console.WriteLine($"Error calculating net weight: {ex.Message}");
-            }
-        }
-    }
-
-    public void RequestReweigh(string reason, string requestedBy, DateTime currentTime)
-    {
-        if (!IsCompleted)
-        {
-            throw new InvalidOperationException("Cannot request reweigh on an incomplete transaction.");
-        }
-
-        if (IsReweighRequested || IsReweighInProgress)
-        {
-            throw new InvalidOperationException("Reweigh has already been requested or is in progress.");
-        }
-
-        Status = WeighbridgeTransactionStatus.ReweighRequested;
-        ReweighReason = reason;
-        ReweighRequestDate = currentTime;
-        ReweighRequestedBy = requestedBy;
-        UpdatedAt = currentTime;
-    }
-
-    public void StartReweigh(DateTime currentTime)
-    {
-        if (!IsReweighRequested)
-        {
-            throw new InvalidOperationException("Cannot start reweigh that hasn't been requested.");
-        }
-
-        Status = WeighbridgeTransactionStatus.ReweighInProgress;
-        IsCompleted = false;
-        CompletedDate = null;
-        UpdatedAt = currentTime;
-    }
-
-    public void CompleteReweigh(DateTime currentTime)
-    {
-        if (!IsReweighInProgress)
-        {
-            throw new InvalidOperationException("Cannot complete reweigh that isn't in progress.");
-        }
-
-        CompleteTransaction(currentTime);
-    }
-    
-    public void AddReweighWeight(decimal weight, string operatorName, DateTime currentTime, string? notes = null)
-    {
-        if (!IsReweighInProgress)
-        {
-            throw new InvalidOperationException("Cannot add weight - no reweigh in progress");
-        }
-
-        var currentReweigh = ReweighRecords.FirstOrDefault(r => r.AttemptNumber == CurrentReweighAttempt);
-        if (currentReweigh == null)
-        {
-            throw new InvalidOperationException("No active reweigh record found for the current attempt");
-        }
-
-        if (!currentReweigh.Weight1.HasValue)
-        {
-            currentReweigh.Weight1 = weight;
-            currentReweigh.Operator1 = operatorName;
-            currentReweigh.Weight1Timestamp = currentTime;
-        }
-        else if (!currentReweigh.Weight2.HasValue)
-        {
-            currentReweigh.Weight2 = weight;
-            currentReweigh.Operator2 = operatorName;
-            currentReweigh.Weight2Timestamp = currentTime;
-            currentReweigh.NetWeight = Math.Abs(currentReweigh.Weight1.Value - (decimal)currentReweigh.Weight2.Value);
-        }
-        else
-        {
-            throw new InvalidOperationException("Maximum weights (2) already recorded for this reweigh attempt");
-        }
-
-        if (!string.IsNullOrEmpty(notes))
-        {
-            currentReweigh.Notes = string.IsNullOrEmpty(currentReweigh.Notes)
-                ? notes
-                : $"{currentReweigh.Notes}\n{notes}";
-        }
-
-        UpdatedAt = currentTime;
-    }
+    // API Integration
+    public int? ApiId { get; set; }
 }
 
+// If you still need the ReweighRecord and enum, keep them separate or remove them
+// since they're not part of the MySQL tickets table structure
 
 public class ReweighRecord
 {
+    [Required]
     public int Id { get; set; }
-    public string WeighbridgeTransactionId { get; set; } = string.Empty;
+    [Required]
+    public int WeighbridgeTransactionId { get; set; }
+    [Required]
     public int AttemptNumber { get; set; }
+    [Required]
     public DateTime StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
-    public string Status { get; set; } = "Pending"; // Pending, InProgress, Completed, Cancelled
+    [Required]
+    public string Status { get; set; } = "Pending";
     public string? Reason { get; set; }
     public string? Notes { get; set; }
     public string? PerformedBy { get; set; }
@@ -256,18 +129,7 @@ public class ReweighRecord
     public virtual WeighbridgeTransaction? WeighbridgeTransaction { get; set; }
 }
 
-public enum WeighbridgeTransactionStatus
-{
-    Pending,            // Initial state, awaiting weighings
-    InProgress,         // At least one weighing done, more expected
-    Completed,          // All weighings done, transaction immutable
-    Cancelled,          // Transaction cancelled
-    OnHold,             // Temporarily paused
-    ReweighRequested,   // Requested for reweigh
-    ReweighInProgress   // Reweigh in progress
-}
-
-// Value Object for weight measurement
+// Value Object for weight measurement (if still needed)
 public class WeightMeasurement
 {
     public decimal Value { get; private set; }
