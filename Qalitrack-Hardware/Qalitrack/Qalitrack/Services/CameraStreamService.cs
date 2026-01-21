@@ -16,6 +16,10 @@ public class CameraStreamService : BackgroundService
     private readonly ConcurrentDictionary<string, CameraStream> _cameraStreams = new();
     private string? _ffmpegPath;
 
+    // Health monitoring configuration
+    private const int FRAME_TIMEOUT_SECONDS = 10; // If no frame in 10 seconds, reconnect
+    private const int HEALTH_CHECK_INTERVAL_MS = 2000; // Check health every 2 seconds
+
     public CameraStreamService(
         ILogger<CameraStreamService> logger,
         CameraSettings settings,
@@ -47,16 +51,23 @@ public class CameraStreamService : BackgroundService
     {
         if (_cameraStreams.TryGetValue(cameraId, out var stream))
         {
+            var timeSinceLastFrame = DateTime.UtcNow - stream.LastFrameTime;
+            var isHealthy = stream.IsConnected && 
+                           stream.LatestFrame.Length > 0 && 
+                           timeSinceLastFrame.TotalSeconds < FRAME_TIMEOUT_SECONDS;
+
             return new CameraStreamStatus
             {
                 CameraId = cameraId,
                 IsConnected = stream.IsConnected,
                 HasFrame = stream.LatestFrame.Length > 0,
                 FrameSize = stream.LatestFrame.Length,
-                LastFrameTime = stream.LastFrameTime
+                LastFrameTime = stream.LastFrameTime,
+                IsHealthy = isHealthy,
+                SecondsSinceLastFrame = (int)timeSinceLastFrame.TotalSeconds
             };
         }
-        return new CameraStreamStatus { CameraId = cameraId, IsConnected = false };
+        return new CameraStreamStatus { CameraId = cameraId, IsConnected = false, IsHealthy = false };
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -102,21 +113,119 @@ public class CameraStreamService : BackgroundService
         {
             var cameraStream = new CameraStream(camera);
             _cameraStreams[camera.Id] = cameraStream;
+            
+            // Start camera stream task
             tasks.Add(RunCameraStreamAsync(camera, cameraStream, stoppingToken));
+            
+            // Start health monitor task
+            tasks.Add(MonitorCameraHealthAsync(camera, cameraStream, stoppingToken));
         }
 
         await Task.WhenAll(tasks);
     }
 
-    private async Task RunCameraStreamAsync(Camera camera, CameraStream stream, CancellationToken stoppingToken)
+    private async Task MonitorCameraHealthAsync(Camera camera, CameraStream stream, CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Starting camera stream for {name} ({id}) at {url}", camera.Name, camera.Id, camera.GetRtspUrl());
+        _logger.LogInformation("Starting health monitor for camera {id}", camera.Id);
+        
+        // Give the camera time to connect initially
+        await Task.Delay(5000, stoppingToken);
 
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
+                await Task.Delay(HEALTH_CHECK_INTERVAL_MS, stoppingToken);
+
+                var timeSinceLastFrame = DateTime.UtcNow - stream.LastFrameTime;
+                var isStalled = stream.IsConnected && 
+                               timeSinceLastFrame.TotalSeconds > FRAME_TIMEOUT_SECONDS;
+
+                // Check if FFmpeg process died unexpectedly
+                var processAlive = stream.FfmpegProcess != null && !stream.FfmpegProcess.HasExited;
+
+                if (isStalled)
+                {
+                    _logger.LogWarning(
+                        "Camera {id} health check FAILED: No frames received for {seconds} seconds. Forcing reconnect...",
+                        camera.Id, 
+                        (int)timeSinceLastFrame.TotalSeconds
+                    );
+                    
+                    // Force reconnection by canceling the stream
+                    stream.StreamCts?.Cancel();
+                }
+                else if (stream.IsConnected && !processAlive)
+                {
+                    _logger.LogWarning(
+                        "Camera {id} health check FAILED: FFmpeg process died unexpectedly. Forcing reconnect...",
+                        camera.Id
+                    );
+                    
+                    stream.IsConnected = false;
+                    stream.StreamCts?.Cancel();
+                }
+                else if (stream.IsConnected && stream.LatestFrame.Length > 0)
+                {
+                    // Only log healthy status every 30 seconds to avoid spam
+                    if (timeSinceLastFrame.TotalSeconds < 3)
+                    {
+                        _logger.LogTrace(
+                            "Camera {id} health check OK: Frame received {seconds}s ago, {size} bytes",
+                            camera.Id,
+                            (int)timeSinceLastFrame.TotalSeconds,
+                            stream.LatestFrame.Length
+                        );
+                    }
+                }
+                else if (stream.IsConnected)
+                {
+                    _logger.LogDebug(
+                        "Camera {id}: Connected but waiting for first frame ({seconds}s elapsed)...",
+                        camera.Id,
+                        (int)timeSinceLastFrame.TotalSeconds
+                    );
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in health monitor for camera {id}", camera.Id);
+            }
+        }
+
+        _logger.LogInformation("Health monitor stopped for camera {id}", camera.Id);
+    }
+
+    private async Task RunCameraStreamAsync(Camera camera, CameraStream stream, CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("Starting camera stream for {name} ({id}) at {url}", 
+            camera.Name, camera.Id, camera.GetRtspUrl());
+
+        var reconnectAttempt = 0;
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                reconnectAttempt++;
+                
+                if (reconnectAttempt > 1)
+                {
+                    _logger.LogInformation(
+                        "Camera {id}: Reconnection attempt #{attempt}",
+                        camera.Id, 
+                        reconnectAttempt
+                    );
+                }
+
                 await ConnectAndStreamAsync(camera, stream, stoppingToken);
+                
+                // If we got here, the stream ended normally or was cancelled
+                reconnectAttempt = 0; // Reset counter on clean disconnect
             }
             catch (OperationCanceledException)
             {
@@ -125,9 +234,19 @@ public class CameraStreamService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Camera {id} stream error, reconnecting in {delay}ms", camera.Id, _settings.ReconnectDelayMs);
+                _logger.LogError(ex, 
+                    "Camera {id} stream error (attempt #{attempt}), reconnecting in {delay}ms", 
+                    camera.Id, 
+                    reconnectAttempt,
+                    _settings.ReconnectDelayMs);
+                    
                 stream.IsConnected = false;
-                await Task.Delay(_settings.ReconnectDelayMs, stoppingToken);
+                
+                // Exponential backoff for repeated failures (max 30 seconds)
+                var delay = Math.Min(_settings.ReconnectDelayMs * (int)Math.Pow(2, Math.Min(reconnectAttempt - 1, 4)), 30000);
+                _logger.LogDebug("Camera {id}: Using reconnect delay of {delay}ms", camera.Id, delay);
+                
+                await Task.Delay(delay, stoppingToken);
             }
             finally
             {
@@ -188,18 +307,32 @@ public class CameraStreamService : BackgroundService
             rtspUrl = $"{uri.Scheme}://{camera.Username}:{camera.Password}@{uri.Host}:{uri.Port}{uri.PathAndQuery}";
         }
 
-        _logger.LogInformation("Camera {id}: Connecting to RTSP stream: {url}", camera.Id, camera.GetRtspUrl());
+        _logger.LogInformation("Camera {id}: Connecting to RTSP stream: {url}", 
+            camera.Id, camera.GetRtspUrl());
 
         stream.StreamCts = new CancellationTokenSource();
         var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, stream.StreamCts.Token);
 
+        // Improved FFmpeg arguments for better reliability
+        var ffmpegArgs = $"-rtsp_transport tcp " +
+                        $"-stimeout 5000000 " +           // 5 second socket timeout
+                        $"-max_delay 500000 " +           // Max demux delay
+                        $"-fflags +genpts+discardcorrupt " + // Generate PTS, discard corrupt packets
+                        $"-i \"{rtspUrl}\" " +
+                        $"-f mjpeg " +
+                        $"-q:v 5 " +                      // Quality
+                        $"-r 15 " +                       // Frame rate
+                        $"-nostdin " +                    // Don't read stdin
+                        $"-";
+
         var startInfo = new ProcessStartInfo
         {
             FileName = _ffmpegPath!,
-            Arguments = $"-rtsp_transport tcp -i \"{rtspUrl}\" -f mjpeg -q:v 5 -r 15 -",
+            Arguments = ffmpegArgs,
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            RedirectStandardInput = true,
             CreateNoWindow = true
         };
 
@@ -211,12 +344,14 @@ public class CameraStreamService : BackgroundService
             {
                 if (e.Data.Contains("error", StringComparison.OrdinalIgnoreCase) ||
                     e.Data.Contains("failed", StringComparison.OrdinalIgnoreCase) ||
-                    e.Data.Contains("invalid", StringComparison.OrdinalIgnoreCase))
+                    e.Data.Contains("invalid", StringComparison.OrdinalIgnoreCase) ||
+                    e.Data.Contains("timeout", StringComparison.OrdinalIgnoreCase))
                 {
                     _logger.LogError("Camera {id} FFmpeg: {message}", camera.Id, e.Data);
                 }
                 else if (e.Data.Contains("Stream", StringComparison.OrdinalIgnoreCase) ||
-                         e.Data.Contains("Duration", StringComparison.OrdinalIgnoreCase))
+                         e.Data.Contains("Duration", StringComparison.OrdinalIgnoreCase) ||
+                         e.Data.Contains("Input", StringComparison.OrdinalIgnoreCase))
                 {
                     _logger.LogInformation("Camera {id} FFmpeg: {message}", camera.Id, e.Data);
                 }
@@ -228,12 +363,32 @@ public class CameraStreamService : BackgroundService
         };
 
         stream.FfmpegProcess.Start();
+        
+        // Close stdin to prevent FFmpeg from waiting for input
+        stream.FfmpegProcess.StandardInput.Close();
+        
         stream.FfmpegProcess.BeginErrorReadLine();
         stream.IsConnected = true;
+        
+        // Reset frame tracking for new connection
+        stream.LastFrameTime = DateTime.UtcNow;
 
-        _logger.LogInformation("Camera {id}: FFmpeg process started (PID: {pid}), reading MJPEG stream", camera.Id, stream.FfmpegProcess.Id);
+        _logger.LogInformation("Camera {id}: FFmpeg process started (PID: {pid}), reading MJPEG stream", 
+            camera.Id, stream.FfmpegProcess.Id);
 
-        await ReadMjpegStreamAsync(camera, stream, stream.FfmpegProcess.StandardOutput.BaseStream, combinedCts.Token);
+        try
+        {
+            await ReadMjpegStreamAsync(camera, stream, stream.FfmpegProcess.StandardOutput.BaseStream, combinedCts.Token);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Camera {id}: Error reading MJPEG stream", camera.Id);
+            throw;
+        }
+        finally
+        {
+            _logger.LogInformation("Camera {id}: Stream reading ended", camera.Id);
+        }
     }
 
     private async Task ReadMjpegStreamAsync(Camera camera, CameraStream cameraStream, Stream stream, CancellationToken token)
@@ -245,12 +400,20 @@ public class CameraStreamService : BackgroundService
         byte[] jpegStart = { 0xFF, 0xD8 };
         byte[] jpegEnd = { 0xFF, 0xD9 };
 
+        var frameCount = 0;
+        var lastLogTime = DateTime.UtcNow;
+
         while (!token.IsCancellationRequested)
         {
             try
             {
                 var bytesRead = await stream.ReadAsync(buffer, token);
-                if (bytesRead == 0) break;
+                
+                if (bytesRead == 0)
+                {
+                    _logger.LogWarning("Camera {id}: Stream ended (0 bytes read)", camera.Id);
+                    break;
+                }
 
                 for (int i = 0; i < bytesRead; i++)
                 {
@@ -268,6 +431,7 @@ public class CameraStreamService : BackgroundService
                         if (i > 0 && buffer[i - 1] == jpegEnd[0] && buffer[i] == jpegEnd[1])
                         {
                             var frame = frameBuffer.ToArray();
+                            frameCount++;
 
                             lock (cameraStream.FrameLock)
                             {
@@ -276,6 +440,19 @@ public class CameraStreamService : BackgroundService
                             }
 
                             cameraStream.FrameSemaphore.Release();
+
+                            // Log frame rate every 10 seconds
+                            var timeSinceLog = DateTime.UtcNow - lastLogTime;
+                            if (timeSinceLog.TotalSeconds >= 10)
+                            {
+                                var fps = frameCount / timeSinceLog.TotalSeconds;
+                                _logger.LogInformation(
+                                    "Camera {id}: Receiving frames at {fps:F1} FPS (frame size: {size} bytes)",
+                                    camera.Id, fps, frame.Length
+                                );
+                                frameCount = 0;
+                                lastLogTime = DateTime.UtcNow;
+                            }
 
                             _ = Task.Run(async () =>
                             {
@@ -298,9 +475,17 @@ public class CameraStreamService : BackgroundService
             }
             catch (OperationCanceledException)
             {
+                _logger.LogInformation("Camera {id}: Stream reading cancelled", camera.Id);
                 break;
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Camera {id}: Error reading stream", camera.Id);
+                throw;
+            }
         }
+
+        _logger.LogInformation("Camera {id}: Exiting stream reader (total frames: {count})", camera.Id, frameCount);
     }
 
     public async IAsyncEnumerable<byte[]> StreamFramesAsync(
@@ -351,12 +536,15 @@ public class CameraStreamService : BackgroundService
                 {
                     if (!stream.FfmpegProcess.HasExited)
                     {
+                        _logger.LogDebug("Killing FFmpeg process {pid} for camera {id}", 
+                            stream.FfmpegProcess.Id, stream.Camera.Id);
                         stream.FfmpegProcess.Kill(true);
                         stream.FfmpegProcess.WaitForExit(2000);
                     }
                 }
                 catch (InvalidOperationException)
                 {
+                    // Process already exited
                 }
                 catch (Exception ex)
                 {
@@ -369,10 +557,13 @@ public class CameraStreamService : BackgroundService
                 }
                 catch
                 {
+                    // Ignore disposal errors
                 }
 
                 stream.FfmpegProcess = null;
             }
+
+            stream.IsConnected = false;
         }
         catch (Exception ex)
         {
@@ -401,7 +592,7 @@ public class CameraStream
     public Process? FfmpegProcess { get; set; }
     public CancellationTokenSource? StreamCts { get; set; }
     public bool IsConnected { get; set; }
-    public DateTime LastFrameTime { get; set; }
+    public DateTime LastFrameTime { get; set; } = DateTime.MinValue;
 
     public CameraStream(Camera camera)
     {
@@ -416,4 +607,6 @@ public class CameraStreamStatus
     public bool HasFrame { get; set; }
     public int FrameSize { get; set; }
     public DateTime LastFrameTime { get; set; }
+    public bool IsHealthy { get; set; }
+    public int SecondsSinceLastFrame { get; set; }
 }
