@@ -13,12 +13,33 @@ import {
 } from "../../store/weighingSlice";
 
 const INITIAL_FORM_DATA = {
-  receiptNo: "", expectedWeighings: 2, noPlate: "", driverName: "",
-  vehicleId: null, driverId: null, commodityId: null, commodityName: "",
-  transporterId: null, transporterName: "", supplierId: null, supplierName: "",
-  customerId: null, customerName: "", originId: null, originName: "",
-  destinationId: null, destinationName: "", operation: "Inbound Product Receipt", weighMode: "Gross/Tare",
-  firstWeight: "", secondWeight: "", scaleName: "", operatorName: "", weighBridgeId: null, weighBridgeName: "",
+  receiptNo: "", 
+  expectedWeighings: 2, 
+  noPlate: "", 
+  driverName: "",
+  vehicleId: null, 
+  driverId: null, 
+  commodityId: null, 
+  commodityName: "",
+  transporterId: null, 
+  transporterName: "", 
+  supplierId: null, 
+  supplierName: "",
+  customerId: null, 
+  customerName: "", 
+  originId: null, 
+  originName: "",
+  destinationId: null, 
+  destinationName: "", 
+  operation: "Inbound Product Receipt", 
+  weighMode: "Gross/Tare",
+  firstWeight: "", 
+  secondWeight: "", 
+  scaleName: "", 
+  operatorName: "", 
+  operatorId: null,
+  weighBridgeId: null, 
+  weighBridgeName: "",
 };
 
 export default function WeighingDashboard() {
@@ -41,7 +62,14 @@ export default function WeighingDashboard() {
     dispatch(fetchSimulatedWeight());
   }, [dispatch]);
 
-  useEffect(() => { if (error) message.error(error); }, [error]);
+  useEffect(() => { 
+    if (error) message.error(error); 
+  }, [error]);
+
+  // Debug: Log weighbridges when they change
+  useEffect(() => {
+    console.log("🔍 Dashboard - weighbridges state:", weighbridges);
+  }, [weighbridges]);
 
   const handleManualCapture = (weight) => {
     if (!weight || weight <= 0) return message.error("Invalid weight");
@@ -69,13 +97,20 @@ export default function WeighingDashboard() {
             title={<span className="text-[10px] font-bold uppercase">New Transaction</span>}
             size="small"
             className="h-full shadow-sm flex flex-col overflow-hidden"
-            bodyStyle={{ flex: 1, padding: "4px 8px", display: "flex", flexDirection: "column", overflow: "hidden" }}
+            styles={{ 
+              body: { 
+                flex: 1, 
+                padding: "4px 8px", 
+                display: "flex", 
+                flexDirection: "column", 
+                overflow: "hidden" 
+              } 
+            }}
           >
             <CreateTransactionForm
               formData={formData}
               setFormData={setFormData}
               capturedWeight={capturedWeight}
-              weighbridges={weighbridges}
               onTransactionCreated={handleTransactionCreated}
             />
           </Card>
@@ -98,7 +133,13 @@ export default function WeighingDashboard() {
           title={<span className="text-[10px] font-bold uppercase">Active Yard Queue</span>}
           size="small"
           className="h-full shadow-sm flex flex-col overflow-hidden"
-          bodyStyle={{ flex: 1, padding: 0, overflow: "hidden" }}
+          styles={{ 
+            body: { 
+              flex: 1, 
+              padding: 0, 
+              overflow: "hidden" 
+            } 
+          }}
         >
           <IncompleteTransactionsTable
             refreshKey={refreshKey}

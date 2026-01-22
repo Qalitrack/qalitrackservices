@@ -1,17 +1,19 @@
+// src/api/helpers/apiClients.js
 import axios from "axios";
 
-// 💡 FIX APPLIED HERE: Base URLs must be the local proxy paths
-// defined in vite.config.js to force the request to go through the proxy.
+/* -------------------------------------------------------------------------- */
+/*                           BASE URL CONFIGURATION                           */
+/* -------------------------------------------------------------------------- */
+// ✅ CRITICAL: Leave these EMPTY so Vite proxy handles routing
+// During development: requests go to http://localhost:5173/Transaction
+// Vite proxy forwards to: https://qalitrack.cseco.co.ke/api/Transaction
 
-// 🔗 Base URL for Master Data/General API (Points to the /api proxy in vite.config.js)
-// If VITE_API_URL is set, it MUST also be a local path like /api
-const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
+const API_BASE_URL = "";  // Empty string = use Vite proxy
+const TRANSACTION_BASE_URL = "";  // Empty string = use Vite proxy
 
-// 🔗 Dedicated Transaction Base URL (Points to the /Transaction proxy in vite.config.js)
-// If VITE_TRANSACTION_API_URL is set, it MUST also be a local path like /Transaction
-const TRANSACTION_BASE_URL = import.meta.env.VITE_TRANSACTION_API_URL || "/Transaction";
-
-// --- Session Management Utility (No changes needed) ---
+/* -------------------------------------------------------------------------- */
+/*                           SESSION MANAGEMENT                               */
+/* -------------------------------------------------------------------------- */
 
 const getSessionData = () => {
   try {
@@ -43,8 +45,9 @@ const getSessionToken = () => {
   return session.token;
 };
 
-
-// --- Interceptor Logic (No changes needed) ---
+/* -------------------------------------------------------------------------- */
+/*                           INTERCEPTOR SETUP                                */
+/* -------------------------------------------------------------------------- */
 
 const setupRequestInterceptor = (client) => {
   client.interceptors.request.use(
@@ -53,36 +56,47 @@ const setupRequestInterceptor = (client) => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      
+      // Enhanced logging for debugging
+      const fullUrl = `${config.baseURL || ''}${config.url}`;
+      console.log(`🔵 API Request: ${config.method?.toUpperCase()} ${fullUrl}`, {
+        params: config.params,
+        data: config.data,
+      });
+      
       return config;
     },
-    (error) => Promise.reject(error)
+    (error) => {
+      console.error('❌ Request Interceptor Error:', error);
+      return Promise.reject(error);
+    }
   );
 };
 
 const setupResponseInterceptor = (client) => {
   client.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      const fullUrl = `${response.config.baseURL || ''}${response.config.url}`;
+      console.log(`✅ API Response: ${response.status} ${fullUrl}`, {
+        data: response.data,
+      });
+      return response;
+    },
     (error) => {
-      // Log the full error for debugging
-      console.error('API Error Interceptor:', {
+      // Comprehensive error logging
+      const errorDetails = {
         message: error.message,
         code: error.code,
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          baseURL: error.config?.baseURL,
-          params: error.config?.params,
-          data: error.config?.data,
-          headers: error.config?.headers
-        },
-        response: error.response ? {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data,
-          headers: error.response.headers
-        } : 'No response received',
-        request: error.request ? 'Request was made but no response received' : 'No request was made'
-      });
+        url: error.config?.url,
+        method: error.config?.method,
+        baseURL: error.config?.baseURL,
+        params: error.config?.params,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data,
+      };
+      
+      console.error('❌ API Error Details:', errorDetails);
 
       // Handle 401 Unauthorized
       if (error.response?.status === 401) {
@@ -94,29 +108,28 @@ const setupResponseInterceptor = (client) => {
         return Promise.reject(new Error('Session expired. Please log in again.'));
       }
 
-      // Extract error message from response
+      // Extract meaningful error message
       let message = 'An error occurred while processing your request';
       
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         const { data, status, statusText } = error.response;
         
-        if (data?.message) {
+        // Check if we got HTML instead of JSON (common proxy error)
+        if (typeof data === 'string' && data.includes('<!DOCTYPE html>')) {
+          message = `Server returned HTML instead of JSON. Check proxy configuration for ${error.config?.url}`;
+          console.error('⚠️ PROXY ERROR: Received HTML page instead of API response');
+        } else if (data?.message) {
           message = data.message;
         } else if (typeof data === 'string') {
           message = data;
         } else if (data?.errors) {
-          message = Object.values(data.errors)
-            .flat()
-            .join("; ");
+          message = Object.values(data.errors).flat().join("; ");
         } else if (statusText) {
           message = `${status}: ${statusText}`;
         } else {
           message = `Request failed with status code ${status}`;
         }
       } else if (error.request) {
-        // The request was made but no response was received
         if (error.code === 'ECONNABORTED') {
           message = 'Request timeout: The server took too long to respond.';
         } else if (error.message === 'Network Error') {
@@ -125,14 +138,11 @@ const setupResponseInterceptor = (client) => {
           message = 'No response received from the server. Please try again later.';
         }
       } else {
-        // Something happened in setting up the request that triggered an Error
         message = error.message || 'An unknown error occurred';
       }
 
-      // Create a new error with the enhanced message
+      // Create enhanced error
       const enhancedError = new Error(message);
-      
-      // Preserve all the original error information
       enhancedError.name = error.name || 'ApiError';
       enhancedError.code = error.code;
       enhancedError.status = error.response?.status;
@@ -146,23 +156,29 @@ const setupResponseInterceptor = (client) => {
   );
 };
 
+/* -------------------------------------------------------------------------- */
+/*                           API CLIENT CLASS                                 */
+/* -------------------------------------------------------------------------- */
 
-// --- API Client Class for Master Data/General (using API_BASE_URL) ---
 class ApiClient {
   constructor(baseURL) {
     this.client = axios.create({
-      baseURL: baseURL, // Now set to '/api' or '/Transaction'
-      headers: { "Content-Type": "application/json" },
+      baseURL: baseURL,
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      timeout: 30000, // 30 second timeout
     });
 
     setupRequestInterceptor(this.client);
     setupResponseInterceptor(this.client);
   }
-// ... rest of the class methods (setSession, get, post, etc.) ...
+
   setSession(token, expiresIn = 3600) {
     const session = {
       token,
-      expiresAt: Date.now() + expiresIn * 1000, // default 1 hour
+      expiresAt: Date.now() + expiresIn * 1000,
     };
     sessionStorage.setItem("authSession", JSON.stringify(session));
   }
@@ -192,19 +208,37 @@ class ApiClient {
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                       TRANSACTION CLIENT CLASS                             */
+/* -------------------------------------------------------------------------- */
 
-// --- Transaction Client Class (using TRANSACTION_BASE_URL) ---
 class TransactionClient extends ApiClient {
-    constructor() {
-        // This super call now uses '/Transaction'
-        super(TRANSACTION_BASE_URL);
-    }
+  constructor() {
+    super(TRANSACTION_BASE_URL);
+  }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                           EXPORT INSTANCES                                 */
+/* -------------------------------------------------------------------------- */
 
-// ✅ Create and export global instances
+// ✅ Main API client for MasterData, Users, etc.
 export const apiClient = new ApiClient(API_BASE_URL);
+
+// ✅ Transaction-specific client (uses same base, both go through Vite proxy)
 export const transactionsClient = new TransactionClient();
 
-export { axios }; 
+// Additional exports
+export { axios };
 export default apiClient;
+
+/* -------------------------------------------------------------------------- */
+/*                           HELPER FUNCTIONS                                 */
+/* -------------------------------------------------------------------------- */
+
+// Export session helpers for use in other modules
+export const sessionHelpers = {
+  getSessionToken,
+  clearSession,
+  getSessionData,
+};
