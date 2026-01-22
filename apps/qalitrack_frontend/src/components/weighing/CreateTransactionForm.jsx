@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useCallback } from "react";
+import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input, Select, Button, message, Row, Col, Typography, Space } from "antd";
+import { Input, Select, Button, message, Row, Col, Typography, Space, Alert } from "antd";
 import { debounce } from "lodash";
 import {
   fetchVehiclesByRegNumber,
@@ -23,9 +23,7 @@ const getDailyCounter = () => {
   if (!stored) return { date: today, count: 0 };
 
   const parsed = JSON.parse(stored);
-  if (parsed.date === today) {
-    return { date: today, count: parsed.count };
-  }
+  if (parsed.date === today) return { date: today, count: parsed.count };
   return { date: today, count: 0 };
 };
 
@@ -36,9 +34,7 @@ const incrementDailyCounter = () => {
   return counter.count;
 };
 
-const formatSequentialNumber = (num) => {
-  return String(num).padStart(2, "0");
-};
+const formatSequentialNumber = (num) => String(num).padStart(2, "0");
 
 export default function CreateTransactionForm({
   formData,
@@ -58,6 +54,7 @@ export default function CreateTransactionForm({
   } = useSelector((state) => state.weighing);
 
   const currentUser = useSelector((state) => state.auth?.user);
+  const [submitError, setSubmitError] = useState(null);
 
   const isSecondWeighing = !!formData.id;
 
@@ -130,7 +127,6 @@ export default function CreateTransactionForm({
     }));
   };
 
-  // Handle weighbridge (scale) selection
   const handleScaleSelect = (scaleName) => {
     const selected = weighbridges.find((wb) => wb.location === scaleName || wb.name === scaleName);
     console.log("🔍 Selected weighbridge:", selected);
@@ -142,7 +138,6 @@ export default function CreateTransactionForm({
     }));
   };
 
-  // Net Weight Calculation & Validation
   const { netWeight, isValid, errorMsg } = useMemo(() => {
     if (!isSecondWeighing) {
       return { netWeight: 0, isValid: true, errorMsg: "" };
@@ -182,27 +177,20 @@ export default function CreateTransactionForm({
   }, [formData, capturedWeight, isSecondWeighing]);
 
   const handleSubmit = async () => {
-    console.log("🚀 ═══════════════════════════════════════════════════════");
-    console.log("🚀 SUBMIT HANDLER CALLED");
-    console.log("🚀 isSecondWeighing:", isSecondWeighing);
-    console.log("🚀 formData:", formData);
-    console.log("🚀 capturedWeight:", capturedWeight);
-    console.log("🚀 currentUser:", currentUser);
-    console.log("🚀 ═══════════════════════════════════════════════════════");
+    setSubmitError(null);
+
+    console.log("┌───────────────────────────────────────┐");
+    console.log("│         SUBMIT HANDLER CALLED         │");
+    console.log("└───────────────────────────────────────┘");
+    console.log("isSecondWeighing:", isSecondWeighing);
+    console.log("formData:", formData);
+    console.log("capturedWeight:", capturedWeight);
 
     // Validation
-    if (!formData.receiptNo) {
-      message.error("Receipt number is required");
-      return;
-    }
-    if (!formData.noPlate) {
-      message.error("Vehicle plate is required");
-      return;
-    }
-    if (!formData.scaleName || !formData.weighBridgeId) {
-      message.error("Please select a weighbridge scale");
-      return;
-    }
+    if (!formData.receiptNo) return message.error("Receipt number is required");
+    if (!formData.noPlate) return message.error("Vehicle plate is required");
+    if (!formData.scaleName || !formData.weighBridgeId) return message.error("Please select a weighbridge scale");
+    if (!formData.transporterId) return message.error("Transporter is required (backend needs transporterID)");
 
     try {
       if (!isSecondWeighing) {
@@ -234,19 +222,18 @@ export default function CreateTransactionForm({
           notes: formData.notes || "",
         };
 
-        console.log("📦 ═══════════════════════════════════════════════════════");
-        console.log("📦 FIRST WEIGHT PAYLOAD:");
+        console.log("┌───────────────────────────────────────┐");
+        console.log("│   FINAL FIRST WEIGHT PAYLOAD (SENDING)  │");
+        console.log("└───────────────────────────────────────┘");
         console.log(JSON.stringify(payload, null, 2));
-        console.log("📦 ═══════════════════════════════════════════════════════");
 
-        console.log("🔄 Dispatching addTransaction...");
         const result = await dispatch(addTransaction(payload)).unwrap();
-        
-        console.log("✅ ═══════════════════════════════════════════════════════");
-        console.log("✅ FIRST WEIGHT SUCCESS:");
-        console.log(JSON.stringify(result, null, 2));
-        console.log("✅ ═══════════════════════════════════════════════════════");
-        
+
+        console.log("┌───────────────────────────────────────┐");
+        console.log("│       TRANSACTION SAVED SUCCESS       │");
+        console.log("└───────────────────────────────────────┘");
+        console.log("Backend response:", JSON.stringify(result, null, 2));
+
         message.success("First Weight Saved! Vehicle added to queue.");
       } else {
         // SECOND WEIGHING - POST /Transaction/add-second-weight
@@ -265,34 +252,34 @@ export default function CreateTransactionForm({
           notes: formData.notes || "",
         };
 
-        console.log("📦 ═══════════════════════════════════════════════════════");
-        console.log("📦 SECOND WEIGHT PAYLOAD:");
+        console.log("┌───────────────────────────────────────┐");
+        console.log("│   FINAL SECOND WEIGHT PAYLOAD         │");
+        console.log("└───────────────────────────────────────┘");
         console.log(JSON.stringify(payload, null, 2));
-        console.log("📦 ═══════════════════════════════════════════════════════");
 
-        console.log("🔄 Dispatching addSecondWeight...");
         const result = await dispatch(addSecondWeight(payload)).unwrap();
-        
-        console.log("✅ ═══════════════════════════════════════════════════════");
-        console.log("✅ SECOND WEIGHT SUCCESS:");
-        console.log(JSON.stringify(result, null, 2));
-        console.log("✅ ═══════════════════════════════════════════════════════");
-        
-        message.success(`Transaction Finalized! Net Weight: ${netWeight} KG`);
+
+        console.log("┌───────────────────────────────────────┐");
+        console.log("│       SECOND WEIGHT SAVED SUCCESS     │");
+        console.log("└───────────────────────────────────────┘");
+        console.log("Backend response:", JSON.stringify(result, null, 2));
+
+        message.success(`Transaction Finalized! Net Weight: ${netWeight.toLocaleString()} KG`);
       }
 
       if (onTransactionCreated) onTransactionCreated();
     } catch (err) {
-      console.error("❌ ═══════════════════════════════════════════════════════");
-      console.error("❌ TRANSACTION ERROR:");
+      console.error("┌───────────────────────────────────────┐");
+      console.error("│         TRANSACTION SAVE FAILED       │");
+      console.error("└───────────────────────────────────────┘");
       console.error("Error object:", err);
-      console.error("Error message:", err?.message);
-      console.error("Error response:", err?.response);
-      console.error("Error stack:", err?.stack);
-      console.error("❌ ═══════════════════════════════════════════════════════");
-      
-      const errorMessage = err?.message || err || "Operation failed";
-      message.error(errorMessage);
+      console.error("Message:", err?.message);
+      console.error("Response:", err?.response?.data || err?.response);
+      console.error("Stack:", err?.stack);
+
+      const errorMsg = err?.message || "Failed to save transaction. Check console for details.";
+      setSubmitError(errorMsg);
+      message.error(errorMsg);
     }
   };
 
@@ -393,6 +380,19 @@ export default function CreateTransactionForm({
             </Text>
           )}
         </div>
+      )}
+
+      {/* Error Display */}
+      {submitError && (
+        <Alert
+          message="Save Failed"
+          description={submitError}
+          type="error"
+          showIcon
+          closable
+          onClose={() => setSubmitError(null)}
+          className="mb-4"
+        />
       )}
 
       {/* Form Fields */}
