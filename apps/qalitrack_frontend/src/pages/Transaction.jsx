@@ -225,21 +225,21 @@ export default function Transactions() {
       dataIndex: 'firstWeight', 
       width: 75, 
       align: 'right', 
-      render: (w) => <span className="text-[11px] font-semibold text-blue-600">{w ? `${(w/1000).toFixed(1)}t` : '-'}</span> 
+      render: (w) => <span className="text-[11px] font-semibold text-blue-600">{w ? `${w} kg` : '-'}</span> 
     },
     { 
       title: '2nd Wt', 
       dataIndex: 'secondWeight', 
       width: 75, 
       align: 'right', 
-      render: (w) => <span className="text-[11px] font-semibold text-green-600">{w ? `${(w/1000).toFixed(1)}t` : '-'}</span> 
+      render: (w) => <span className="text-[11px] font-semibold text-green-600">{w ? `${w} kg` : '-'}</span> 
     },
     { 
       title: 'Net Wt', 
       dataIndex: 'netWeight', 
       width: 80, 
       align: 'right', 
-      render: (w) => <span className="text-[11px] font-bold text-orange-600">{w ? `${(w/1000).toFixed(1)}t` : '-'}</span> 
+      render: (w) => <span className="text-[11px] font-bold text-orange-600">{w ? `${w} kg` : '-'}</span> 
     },
     { 
       title: 'Status', 

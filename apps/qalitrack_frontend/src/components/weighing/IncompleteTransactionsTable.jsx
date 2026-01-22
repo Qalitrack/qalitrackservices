@@ -73,7 +73,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing, refreshKey 
         weighMode: editedData.weighMode,
       };
 
-      await dispatch(updateTransactionApi({ id, data: dataToUpdate })).unwrap();
+      await dispatch(updateTransactionApi({ ticketId: id, data: dataToUpdate })).unwrap();
       message.success('✓ Updated successfully');
       setEditingKey(null);
       setEditedData({});
@@ -402,12 +402,12 @@ export default function IncompleteTransactionsTable({ onAddWeighing, refreshKey 
         </div>
       )}
 
-      {/* Creative but Simple Styling */}
-      <style jsx>{`
-        .modern-operator-table :global(.ant-table) {
+      {/* Inline CSS styles - removed jsx attribute */}
+      <style>{`
+        .modern-operator-table .ant-table {
           background: white;
         }
-        .modern-operator-table :global(.ant-table-thead > tr > th) {
+        .modern-operator-table .ant-table-thead > tr > th {
           background: linear-gradient(to bottom, #ffffff, #f9fafb) !important;
           border-bottom: 2px solid #f59e0b !important;
           padding: 14px 16px !important;
@@ -417,31 +417,31 @@ export default function IncompleteTransactionsTable({ onAddWeighing, refreshKey 
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
-        .modern-operator-table :global(.ant-table-tbody > tr.regular-row > td) {
+        .modern-operator-table .ant-table-tbody > tr.regular-row > td {
           padding: 14px 16px !important;
           border-bottom: 1px solid #f3f4f6 !important;
           background: white !important;
           transition: all 0.2s ease;
         }
-        .modern-operator-table :global(.ant-table-tbody > tr.regular-row:hover > td) {
+        .modern-operator-table .ant-table-tbody > tr.regular-row:hover > td {
           background: #fffbeb !important;
           box-shadow: inset 0 0 0 1px #fef3c7;
         }
-        .modern-operator-table :global(.ant-table-tbody > tr.editing-row > td) {
+        .modern-operator-table .ant-table-tbody > tr.editing-row > td {
           padding: 14px 16px !important;
           background: #fef3c7 !important;
           border-bottom: 1px solid #fbbf24 !important;
           box-shadow: inset 0 2px 4px rgba(251, 191, 36, 0.1);
         }
-        .custom-pagination :global(.ant-pagination-item) {
+        .custom-pagination .ant-pagination-item {
           border-radius: 6px;
           border-color: #e5e7eb;
         }
-        .custom-pagination :global(.ant-pagination-item-active) {
+        .custom-pagination .ant-pagination-item-active {
           background: linear-gradient(135deg, #f59e0b, #f97316);
           border-color: #f59e0b;
         }
-        .custom-pagination :global(.ant-pagination-item-active a) {
+        .custom-pagination .ant-pagination-item-active a {
           color: white;
           font-weight: 600;
         }

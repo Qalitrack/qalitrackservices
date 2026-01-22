@@ -14,7 +14,7 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
   /* ----------------------------- STREAM ----------------------------- */
   useEffect(() => {
     const source = new EventSource(
-      "http://172.16.0.215:5000/api/PlatformData/stream"
+      "http://172.16.0.93:5000/api/PlatformData/stream"
     );
 
     source.onmessage = (event) => {
