@@ -3,55 +3,111 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import electron from 'vite-plugin-electron';
 
-// 🔗 Define the base URL for the Transactions API
-const TRANSACTION_API_TARGET = 'https://qalitrack.cseco.co.ke/';
-
 export default defineConfig({
   plugins: [
-    react({
-      // ... (Your Babel configuration remains the same)
-    }),
+    react(),
     VitePWA({
-      // ... (Your PWA configuration remains the same)
+      // Your PWA configuration
     }),
     electron({
       entry: 'electron/main.cjs',
     }),
   ],
 
-  base: './', // ⚡ Important for Electron - ensures relative paths work
+  base: './',
 
-  // 🌍 Vite Development Server Configuration (CORS Fix)
   server: {
+    port: 5173,
+    host: true,
+    
     proxy: {
-      // 💥 CRITICAL FIX APPLIED HERE 💥
-      '/Transaction': {
-        target: TRANSACTION_API_TARGET, 
-        changeOrigin: true,       
-        secure: true,   
-        // 🚀 FIX: The Transactions API *root* likely handles routing based on the full path.
-        // We need to ensure that when we request /Transaction, the target server gets
-        // a path it expects. Since your transactionsClient in Redux is calling client.get(""),
-        // the full path being sent to the proxy is just /Transaction.
-        // Let's assume the actual API endpoint is https://qalitrack.cseco.co.ke/Transaction/...
-        // We should NOT use rewrite here if the target API expects the /Transaction prefix.
-        // Let's try the rewrite first, as it often solves the "HTML page" problem.
-
-        // If your API endpoint for fetching transactions is JUST the target URL, then 
-        // the proxy needs to remove the `/Transaction` prefix from the path before forwarding it.
-        rewrite: (path) => path.replace(/^\/Transaction/, ''), 
-      },
-      
-      // ✅ MASTER DATA PROXY: Redirects http://localhost:5173/api/... to https://qalitrack.cseco.co.ke/api/...
-      // NOTE: This master data proxy is likely correct if the base is 'https://qalitrack.cseco.co.ke/api'
-      '/api': {
-        target: TRANSACTION_API_TARGET, // Use the same base target
+      // ✅ AUTH API (unchanged)
+      '/Auth': {
+        target: 'https://qalitrack.cseco.co.ke/api',
         changeOrigin: true,
-        secure: true,
-        // The Redux client for Master Data is configured to append the MasterData endpoints,
-        // e.g., /MasterData/Vehicles. We assume the API expects the path without the local '/api' prefix.
-        rewrite: (path) => path.replace(/^\/api/, ''), 
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('❌ Auth Proxy Error:', err.message);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const fullUrl = `https://qalitrack.cseco.co.ke/api${req.url}`;
+            console.log(`📤 Auth: ${req.method} ${req.url} → ${fullUrl}`);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log(`📥 Auth Response: ${proxyRes.statusCode}`);
+          });
+        },
       },
-    }
-  }
+
+      // ✅ TRANSACTION API (UPDATED: target to /api/transactions for gateway)
+      // TRANSACTION API - UPDATED to direct /api/Transaction
+      '/api/Transaction': {
+  target: 'https://qalitrack.cseco.co.ke',
+  changeOrigin: true,
+  secure: false,
+  rewrite: (path) => path.replace(/^\/api\/Transaction/, '/api/Transaction'), // optional, but explicit
+  configure: (proxy, _options) => {
+    proxy.on('error', (err, _req, _res) => {
+      console.log('❌ Transaction Proxy Error:', err.message);
+    });
+    proxy.on('proxyReq', (proxyReq, req, _res) => {
+      const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
+      console.log(`📤 Transaction: ${req.method} ${req.url} → ${fullUrl}`);
+    });
+    proxy.on('proxyRes', (proxyRes, req, _res) => {
+      console.log(`📥 Transaction Response: ${proxyRes.statusCode} ${proxyRes.statusMessage || ''}`);
+    });
+  },
+},
+
+      // ✅ MASTER DATA API (unchanged)
+      '/MasterData': {
+        target: 'https://qalitrack.cseco.co.ke/api',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('❌ MasterData Proxy Error:', err.message);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const fullUrl = `https://qalitrack.cseco.co.ke/api${req.url}`;
+            console.log(`📤 MasterData: ${req.method} ${req.url} → ${fullUrl}`);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log(`📥 MasterData Response: ${proxyRes.statusCode}`);
+          });
+        },
+      },
+
+      // ✅ USERS API (unchanged)
+      '/Users': {
+        target: 'https://qalitrack.cseco.co.ke/api',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const fullUrl = `https://qalitrack.cseco.co.ke/api${req.url}`;
+            console.log(`📤 Users: ${req.method} ${req.url} → ${fullUrl}`);
+          });
+        },
+      },
+
+      // ✅ FALLBACK FOR OTHER /api ROUTES (unchanged)
+      '/api': {
+        target: 'https://qalitrack.cseco.co.ke',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log(`📤 API Fallback: ${req.method} ${req.url} → https://qalitrack.cseco.co.ke${req.url}`);
+          });
+        },
+      },
+    },
+  },
+
+  build: {
+    outDir: 'dist',
+  },
 });

@@ -1,16 +1,23 @@
-// src/features/weighing/weighingSlice.js
+// src/store/weighingSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { apiClient } from "../api/helpers/apiClients";
 
-// Import REAL transaction API helpers
+// ✅ CORRECTED: Import from the right path
 import {
     getTransactions,
-    getTransactionById as apiGetTransaction,
+    getTransactionById,
     createTransaction,
-    updateTransaction as apiUpdateTransaction,
+    updateTransaction,
     deleteTransaction,
-    addWeighing as apiAddWeighing,
-    completeTransaction as apiCompleteTransaction,
+    addWeighing,
+    completeTransaction,
+    getTransactionByReceipt,
+    getIncompleteByVehicleNo,
+    getIncompleteByVehicleId,
+    getTransactionsByStatus,
+    checkReceipt,
+    requestReweigh,
+    getReweighRecords,
 } from "../api/MasterData/Transaction";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -22,7 +29,7 @@ export const fetchSimulatedWeight = createAsyncThunk(
         try {
             const weight = Math.floor(Math.random() * 50000) + 10000;
             const position = Math.random() < 0.7 ? "Fully On" : "Partially On";
-            console.log("Simulated weight:", weight, "kg, Position:", position);
+            console.log("✅ Simulated weight:", weight, "kg, Position:", position);
             return { weight, position };
         } catch (error) {
             return rejectWithValue("Simulation failed");
@@ -33,6 +40,8 @@ export const fetchSimulatedWeight = createAsyncThunk(
 // ─────────────────────────────────────────────────────────────────────────────
 // MASTER DATA THUNKS
 // ─────────────────────────────────────────────────────────────────────────────
+
+// VEHICLES
 export const fetchVehicles = createAsyncThunk(
     "weighing/fetchVehicles",
     async (_, { rejectWithValue }) => {
@@ -91,15 +100,21 @@ export const fetchVehiclesByRegNumber = createAsyncThunk(
     }
 );
 
-export const fetchDrivers = createAsyncThunk("weighing/fetchDrivers", async (_, { rejectWithValue }) => {
-    try {
-        const response = await apiClient.get("/MasterData/Drivers", { params: { pageNumber: 1, pageSize: 50 } });
-        const data = response.data;
-        return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
-    } catch (error) {
-        return rejectWithValue(error.response?.data?.message || error.message);
+// DRIVERS
+export const fetchDrivers = createAsyncThunk(
+    "weighing/fetchDrivers", 
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/MasterData/Drivers", { 
+                params: { pageNumber: 1, pageSize: 50 } 
+            });
+            const data = response.data;
+            return data?.data?.items || data?.items || (Array.isArray(data.data) ? data.data : []);
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
     }
-});
+);
 
 export const fetchDriversByName = createAsyncThunk(
     "weighing/fetchDriversByName",
@@ -129,14 +144,20 @@ export const fetchDriverById = createAsyncThunk(
     }
 );
 
-export const fetchProducts = createAsyncThunk("weighing/fetchProducts", async (_, { rejectWithValue }) => {
-    try {
-        const response = await apiClient.get("/MasterData/Products", { params: { pageNumber: 1, pageSize: 50 } });
-        return response.data?.items || (Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-        return rejectWithValue(error.response?.data?.message || error.message);
+// PRODUCTS/COMMODITIES
+export const fetchProducts = createAsyncThunk(
+    "weighing/fetchProducts", 
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/MasterData/Products", { 
+                params: { pageNumber: 1, pageSize: 50 } 
+            });
+            return response.data?.items || (Array.isArray(response.data) ? response.data : []);
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
     }
-});
+);
 
 export const fetchProductsByName = createAsyncThunk(
     "weighing/fetchProductsByName",
@@ -152,14 +173,20 @@ export const fetchProductsByName = createAsyncThunk(
     }
 );
 
-export const fetchRoutes = createAsyncThunk("weighing/fetchRoutes", async (_, { rejectWithValue }) => {
-    try {
-        const response = await apiClient.get("/MasterData/Routes", { params: { pageNumber: 1, pageSize: 50 } });
-        return response.data?.items || (Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-        return rejectWithValue(error.response?.data?.message || error.message);
+// ROUTES
+export const fetchRoutes = createAsyncThunk(
+    "weighing/fetchRoutes", 
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/MasterData/Routes", { 
+                params: { pageNumber: 1, pageSize: 50 } 
+            });
+            return response.data?.items || (Array.isArray(response.data) ? response.data : []);
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
     }
-});
+);
 
 export const fetchRoutesByName = createAsyncThunk(
     "weighing/fetchRoutesByName",
@@ -175,6 +202,7 @@ export const fetchRoutesByName = createAsyncThunk(
     }
 );
 
+// SACCOS
 export const fetchSaccosByName = createAsyncThunk(
     "weighing/fetchSaccosByName",
     async (name, { rejectWithValue }) => {
@@ -203,14 +231,20 @@ export const fetchSaccoById = createAsyncThunk(
     }
 );
 
-export const fetchSuppliers = createAsyncThunk("weighing/fetchSuppliers", async (_, { rejectWithValue }) => {
-    try {
-        const response = await apiClient.get("/MasterData/Suppliers", { params: { pageNumber: 1, pageSize: 50 } });
-        return response.data?.items || (Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-        return rejectWithValue(error.response?.data?.message || error.message);
+// SUPPLIERS
+export const fetchSuppliers = createAsyncThunk(
+    "weighing/fetchSuppliers", 
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/MasterData/Suppliers", { 
+                params: { pageNumber: 1, pageSize: 50 } 
+            });
+            return response.data?.items || (Array.isArray(response.data) ? response.data : []);
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
     }
-});
+);
 
 export const fetchSuppliersByName = createAsyncThunk(
     "weighing/fetchSuppliersByName",
@@ -239,14 +273,20 @@ export const fetchSupplierById = createAsyncThunk(
     }
 );
 
-export const fetchTransporters = createAsyncThunk("weighing/fetchTransporters", async (_, { rejectWithValue }) => {
-    try {
-        const response = await apiClient.get("/MasterData/Transporters", { params: { pageNumber: 1, pageSize: 50 } });
-        return response.data?.items || (Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-        return rejectWithValue(error.response?.data?.message || error.message);
+// TRANSPORTERS
+export const fetchTransporters = createAsyncThunk(
+    "weighing/fetchTransporters", 
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/MasterData/Transporters", { 
+                params: { pageNumber: 1, pageSize: 50 } 
+            });
+            return response.data?.items || (Array.isArray(response.data) ? response.data : []);
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
     }
-});
+);
 
 export const fetchTransportersByName = createAsyncThunk(
     "weighing/fetchTransportersByName",
@@ -276,7 +316,7 @@ export const fetchTransporterById = createAsyncThunk(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// USER THUNKS — NEW: Fetch User by ID & Current User
+// USER THUNKS
 // ─────────────────────────────────────────────────────────────────────────────
 export const fetchUserById = createAsyncThunk(
     "weighing/fetchUserById",
@@ -298,7 +338,6 @@ export const fetchCurrentUser = createAsyncThunk(
     "weighing/fetchCurrentUser",
     async (_, { rejectWithValue }) => {
         try {
-            // Adjust endpoint if your backend uses something different (e.g., /Users/me, /auth/me)
             const response = await apiClient.get("/Users/me");
             return response.data?.data?.user || response.data?.user || response.data || null;
         } catch (error) {
@@ -319,7 +358,22 @@ export const fetchWeighbridges = createAsyncThunk(
                 params: { pageNumber, pageSize },
             });
 
-            const items = response.data?.items || [];
+            console.log("🔍 Weighbridges API Response:", response.data);
+
+            // Handle different response structures
+            let items = [];
+            if (response.data?.items) {
+                items = response.data.items;
+            } else if (response.data?.data?.items) {
+                items = response.data.data.items;
+            } else if (Array.isArray(response.data?.data)) {
+                items = response.data.data;
+            } else if (Array.isArray(response.data)) {
+                items = response.data;
+            }
+
+            console.log("✅ Weighbridges extracted:", items);
+
             const meta = {
                 pageNumber: response.data?.pageNumber || pageNumber,
                 pageSize: response.data?.pageSize || pageSize,
@@ -330,6 +384,7 @@ export const fetchWeighbridges = createAsyncThunk(
 
             return { items, meta };
         } catch (error) {
+            console.error("❌ Weighbridges fetch error:", error);
             const message =
                 error.response?.data?.message ||
                 error.response?.data?.error ||
@@ -348,7 +403,7 @@ export const fetchWeighbridgesByName = createAsyncThunk(
                 return { items: [], meta: {} };
             }
 
-            const response = await apiClient.get("/Weighbridges", {
+            const response = await apiClient.get("/MasterData/Weighbridges", {
                 params: {
                     pageNumber: 1,
                     pageSize: 30,
@@ -370,14 +425,19 @@ export const fetchWeighbridgesByName = createAsyncThunk(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// REAL TRANSACTION THUNKS
+// TRANSACTION THUNKS - UPDATED TO MATCH SWAGGER
 // ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Fetch transactions with filters matching Swagger spec
+ */
 export const fetchTransactions = createAsyncThunk(
     "weighing/fetchTransactions",
     async (filters = {}, { rejectWithValue }) => {
         try {
+            console.log("📤 Fetching transactions with filters:", filters);
             const response = await getTransactions(filters);
-            const items = response?.data?.items || response?.data || [];
+            const items = response?.data?.items || response?.items || response?.data || [];
             return Array.isArray(items) ? items : [];
         } catch (error) {
             console.error("Failed to fetch transactions:", error);
@@ -386,64 +446,205 @@ export const fetchTransactions = createAsyncThunk(
     }
 );
 
+/**
+ * Create new transaction - POST /Transaction
+ */
 export const addTransaction = createAsyncThunk(
     "weighing/addTransaction",
     async (payload, { rejectWithValue }) => {
         try {
-            console.log("Creating transaction:", payload);
+            console.log("📤 Creating transaction:", payload);
             const response = await createTransaction(payload);
             return response;
         } catch (err) {
-            console.error("Transaction creation failed:", err.response?.data || err);
-            return rejectWithValue(err.response?.data || err.message || "Save failed");
+            console.error("❌ Transaction creation failed:", err);
+            return rejectWithValue(err.message || "Save failed");
         }
     }
 );
 
+/**
+ * Update transaction - PUT /Transaction/{ticketId}
+ */
 export const updateTransactionApi = createAsyncThunk(
     "weighing/updateTransactionApi",
-    async ({ id, data }, { rejectWithValue }) => {
+    async ({ ticketId, data }, { rejectWithValue }) => {
         try {
-            const response = await apiUpdateTransaction(id, data);
+            const response = await updateTransaction(ticketId, data);
             return response;
         } catch (err) {
-            return rejectWithValue(err.response?.data || err.message);
+            return rejectWithValue(err.message);
         }
     }
 );
 
+/**
+ * Delete transaction - DELETE /Transaction/{ticketId}
+ */
 export const deactivateTransactionApi = createAsyncThunk(
     "weighing/deactivateTransactionApi",
-    async (transactionId, { rejectWithValue }) => {
+    async (ticketId, { rejectWithValue }) => {
         try {
-            await deleteTransaction(transactionId);
-            return { transactionId };
+            await deleteTransaction(ticketId);
+            return { ticketId };
         } catch (err) {
-            return rejectWithValue(err.response?.data || err.message);
+            return rejectWithValue(err.message);
         }
     }
 );
 
-export const addWeighing = createAsyncThunk(
-    "weighing/addWeighing",
+/**
+ * Add second weight - POST /Transaction/add-second-weight
+ */
+export const addSecondWeight = createAsyncThunk(
+    "weighing/addSecondWeight",
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await apiAddWeighing(payload);
+            // Map payload to match Swagger AddSecondWeightDto
+            const weighingData = {
+                ticketID: payload.transactionId || payload.ticketID,
+                secondWeight: String(payload.weight || payload.secondWeight),
+                weighBridgeName2nd: payload.weighBridgeName || payload.weighBridgeName2nd,
+                scaleName2nd: payload.scaleName || payload.scaleName2nd || "Scale-01",
+                operatorID2nd: String(payload.operatorId || payload.operatorID2nd || ""),
+                operatorName2nd: payload.operatorName || payload.operatorName2nd || "",
+                notes: payload.notes || "",
+            };
+            
+            console.log("📤 Sending second weight:", weighingData);
+            const response = await addWeighing(weighingData);
             return response;
         } catch (err) {
-            return rejectWithValue(err.response?.data || err.message);
+            console.error("❌ Second weight failed:", err);
+            return rejectWithValue(err.message);
         }
     }
 );
 
-export const completeTransaction = createAsyncThunk(
+/**
+ * Complete transaction - POST /Transaction/complete
+ */
+export const completeTransactionThunk = createAsyncThunk(
     "weighing/completeTransaction",
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await apiCompleteTransaction(payload);
+            // Match Swagger CompleteTransactionDto
+            const data = {
+                ticketID: payload.transactionId || payload.ticketID
+            };
+            const response = await completeTransaction(data);
             return response;
         } catch (err) {
-            return rejectWithValue(err.response?.data || err.message);
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Get transaction by receipt - GET /Transaction/receipt/{receiptNo}
+ */
+export const fetchTransactionByReceipt = createAsyncThunk(
+    "weighing/fetchTransactionByReceipt",
+    async (receiptNo, { rejectWithValue }) => {
+        try {
+            const response = await getTransactionByReceipt(receiptNo);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Get incomplete by vehicle plate - GET /Transaction/incomplete/vehicle/{noPlate}
+ */
+export const fetchIncompleteByPlate = createAsyncThunk(
+    "weighing/fetchIncompleteByPlate",
+    async (noPlate, { rejectWithValue }) => {
+        try {
+            const response = await getIncompleteByVehicleNo(noPlate);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Get incomplete by vehicle ID - GET /Transaction/incomplete/vehicle-id/{vehicleId}
+ */
+export const fetchIncompleteByVehicleIdThunk = createAsyncThunk(
+    "weighing/fetchIncompleteByVehicleId",
+    async (vehicleId, { rejectWithValue }) => {
+        try {
+            const response = await getIncompleteByVehicleId(vehicleId);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Get by status - GET /Transaction/status/{status}
+ */
+export const fetchTransactionsByStatus = createAsyncThunk(
+    "weighing/fetchTransactionsByStatus",
+    async ({ status, limit = 100 }, { rejectWithValue }) => {
+        try {
+            const response = await getTransactionsByStatus(status, limit);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Request reweigh - POST /Transaction/request-reweigh
+ */
+export const requestReweighThunk = createAsyncThunk(
+    "weighing/requestReweigh",
+    async (payload, { rejectWithValue }) => {
+        try {
+            const data = {
+                ticketID: payload.transactionId || payload.ticketID,
+                reason: payload.reason || ""
+            };
+            const response = await requestReweigh(data);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Get reweigh records - GET /Transaction/{ticketId}/reweigh-records
+ */
+export const fetchReweighRecords = createAsyncThunk(
+    "weighing/fetchReweighRecords",
+    async (ticketId, { rejectWithValue }) => {
+        try {
+            const response = await getReweighRecords(ticketId);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Check receipt - GET /Transaction/check-receipt/{receiptNo}
+ */
+export const checkReceiptThunk = createAsyncThunk(
+    "weighing/checkReceipt",
+    async (receiptNo, { rejectWithValue }) => {
+        try {
+            const response = await checkReceipt(receiptNo);
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.message);
         }
     }
 );
@@ -461,10 +662,11 @@ const initialState = {
     weighbridges: [],
     transporters: [],
     transactions: [],
+    incompleteTransactions: [],
+    reweighRecords: [],
     
-    // NEW: User-related state
-    users: [],         // For fetched users (e.g., by ID or search)
-    currentUser: null, // Logged-in user (most commonly used)
+    users: [],
+    currentUser: null,
 
     currentWeight: null,
     vehiclePosition: null,
@@ -484,15 +686,8 @@ const weighingSlice = createSlice({
         setCapturedWeight: (state, action) => {
             state.capturedWeight = action.payload;
         },
-        completeWeighing: (state, action) => {
-            const { transactionId } = action.payload;
-            const tx = state.transactions.find(t => t.id === transactionId);
-            if (tx) tx.isCompleted = true;
-        },
-        deactivateTransaction: (state, action) => {
-            const { transactionId } = action.payload;
-            const tx = state.transactions.find(t => t.id === transactionId);
-            if (tx) tx.active = false;
+        clearError: (state) => {
+            state.error = null;
         },
     },
     extraReducers: (builder) => {
@@ -516,7 +711,7 @@ const weighingSlice = createSlice({
             })
             .addCase(fetchSimulatedWeight.rejected, rejected)
 
-            // Master data
+            // Vehicles
             .addCase(fetchVehicles.fulfilled, (state, action) => {
                 state.loading = false;
                 state.vehicles = action.payload;
@@ -534,6 +729,7 @@ const weighingSlice = createSlice({
                 state.vehicles = action.payload;
             })
 
+            // Drivers
             .addCase(fetchDrivers.fulfilled, (state, action) => {
                 state.loading = false;
                 state.drivers = action.payload;
@@ -547,6 +743,7 @@ const weighingSlice = createSlice({
                 state.drivers = action.payload;
             })
 
+            // Products
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.loading = false;
                 state.products = action.payload;
@@ -556,6 +753,7 @@ const weighingSlice = createSlice({
                 state.products = action.payload;
             })
 
+            // Routes
             .addCase(fetchRoutes.fulfilled, (state, action) => {
                 state.loading = false;
                 state.routes = action.payload;
@@ -565,6 +763,7 @@ const weighingSlice = createSlice({
                 state.routes = action.payload;
             })
 
+            // Saccos
             .addCase(fetchSaccosByName.fulfilled, (state, action) => {
                 state.loading = false;
                 state.saccos = action.payload;
@@ -574,6 +773,7 @@ const weighingSlice = createSlice({
                 state.saccos = action.payload;
             })
 
+            // Suppliers
             .addCase(fetchSuppliers.fulfilled, (state, action) => {
                 state.loading = false;
                 state.suppliers = action.payload;
@@ -587,6 +787,7 @@ const weighingSlice = createSlice({
                 state.suppliers = action.payload;
             })
 
+            // Transporters
             .addCase(fetchTransporters.fulfilled, (state, action) => {
                 state.loading = false;
                 state.transporters = action.payload;
@@ -615,12 +816,11 @@ const weighingSlice = createSlice({
             })
             .addCase(fetchWeighbridgesByName.rejected, rejected)
 
-            // NEW: User cases
+            // Users
             .addCase(fetchUserById.pending, pending)
             .addCase(fetchUserById.fulfilled, (state, action) => {
                 state.loading = false;
                 if (action.payload) {
-                    // Keep consistency with other "byId" thunks (return as array)
                     state.users = [action.payload];
                 }
             })
@@ -637,7 +837,7 @@ const weighingSlice = createSlice({
                 state.currentUser = null;
             })
 
-            // Transactions
+            // TRANSACTIONS
             .addCase(fetchTransactions.pending, pending)
             .addCase(fetchTransactions.fulfilled, (state, action) => {
                 state.loading = false;
@@ -655,38 +855,106 @@ const weighingSlice = createSlice({
             })
             .addCase(addTransaction.rejected, rejected)
 
+            .addCase(updateTransactionApi.pending, pending)
             .addCase(updateTransactionApi.fulfilled, (state, action) => {
                 state.loading = false;
                 const updated = action.payload.data || action.payload;
                 const idx = state.transactions.findIndex(t => t.id === updated.id);
                 if (idx !== -1) state.transactions[idx] = { ...state.transactions[idx], ...updated };
             })
+            .addCase(updateTransactionApi.rejected, rejected)
 
+            .addCase(deactivateTransactionApi.pending, pending)
             .addCase(deactivateTransactionApi.fulfilled, (state, action) => {
                 state.loading = false;
-                const tx = state.transactions.find(t => t.id === action.payload.transactionId);
+                const tx = state.transactions.find(t => t.id === action.payload.ticketId);
                 if (tx) tx.active = false;
             })
+            .addCase(deactivateTransactionApi.rejected, rejected)
 
-            .addCase(addWeighing.fulfilled, (state, action) => {
+            .addCase(addSecondWeight.pending, pending)
+            .addCase(addSecondWeight.fulfilled, (state, action) => {
                 state.loading = false;
-                // You can update related transaction here if needed
+                const updated = action.payload.data || action.payload;
+                const idx = state.transactions.findIndex(t => t.id === updated.id);
+                if (idx !== -1) {
+                    state.transactions[idx] = { ...state.transactions[idx], ...updated };
+                }
             })
+            .addCase(addSecondWeight.rejected, rejected)
 
-            .addCase(completeTransaction.fulfilled, (state, action) => {
+            .addCase(completeTransactionThunk.pending, pending)
+            .addCase(completeTransactionThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 const completedTx = action.payload.data || action.payload;
-                const tx = state.transactions.find(t => t.id === completedTx.id);
+                const tx = state.transactions.find(t => t.id === completedTx.id || t.id === completedTx.ticketID);
                 if (tx) tx.isCompleted = true;
-            });
+            })
+            .addCase(completeTransactionThunk.rejected, rejected)
+
+            .addCase(fetchTransactionByReceipt.pending, pending)
+            .addCase(fetchTransactionByReceipt.fulfilled, (state, action) => {
+                state.loading = false;
+                // Optionally store in a separate field or update transactions
+            })
+            .addCase(fetchTransactionByReceipt.rejected, rejected)
+
+            .addCase(fetchIncompleteByPlate.pending, pending)
+            .addCase(fetchIncompleteByPlate.fulfilled, (state, action) => {
+                state.loading = false;
+                state.incompleteTransactions = Array.isArray(action.payload) 
+                    ? action.payload 
+                    : action.payload?.data || [];
+            })
+            .addCase(fetchIncompleteByPlate.rejected, rejected)
+
+            .addCase(fetchIncompleteByVehicleIdThunk.pending, pending)
+            .addCase(fetchIncompleteByVehicleIdThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.incompleteTransactions = Array.isArray(action.payload) 
+                    ? action.payload 
+                    : action.payload?.data || [];
+            })
+            .addCase(fetchIncompleteByVehicleIdThunk.rejected, rejected)
+
+            .addCase(fetchTransactionsByStatus.pending, pending)
+            .addCase(fetchTransactionsByStatus.fulfilled, (state, action) => {
+                state.loading = false;
+                state.transactions = Array.isArray(action.payload) 
+                    ? action.payload 
+                    : action.payload?.data || [];
+            })
+            .addCase(fetchTransactionsByStatus.rejected, rejected)
+
+            .addCase(requestReweighThunk.pending, pending)
+            .addCase(requestReweighThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                // Update transaction status if needed
+            })
+            .addCase(requestReweighThunk.rejected, rejected)
+
+            .addCase(fetchReweighRecords.pending, pending)
+            .addCase(fetchReweighRecords.fulfilled, (state, action) => {
+                state.loading = false;
+                state.reweighRecords = Array.isArray(action.payload) 
+                    ? action.payload 
+                    : action.payload?.data || [];
+            })
+            .addCase(fetchReweighRecords.rejected, rejected)
+
+            .addCase(checkReceiptThunk.pending, pending)
+            .addCase(checkReceiptThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                // Store check result if needed
+            })
+            .addCase(checkReceiptThunk.rejected, rejected);
     },
 });
 
 export const {
     setDetectedPlate,
     setCapturedWeight,
-    completeWeighing,
-    deactivateTransaction,
+    clearError,
 } = weighingSlice.actions;
 
 export default weighingSlice.reducer;

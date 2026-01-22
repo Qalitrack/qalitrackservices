@@ -8,9 +8,9 @@ import {
   fetchProductsByName,
   fetchSuppliersByName,
   fetchTransportersByName,
-  fetchWeighbridgesByName,
+  fetchWeighbridges,
   addTransaction,
-  addWeighing as addWeighingThunk,
+  addSecondWeight,
 } from "../../store/weighingSlice";
 
 const { Option } = Select;
@@ -18,7 +18,7 @@ const { Text } = Typography;
 
 // Persistent daily counter for receipt number
 const getDailyCounter = () => {
-  const today = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // YYYYMMDD
+  const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const stored = localStorage.getItem("receiptCounter");
   if (!stored) return { date: today, count: 0 };
 
@@ -45,7 +45,6 @@ export default function CreateTransactionForm({
   setFormData,
   capturedWeight,
   onTransactionCreated,
-  weighbridges,
 }) {
   const dispatch = useDispatch();
   const {
@@ -54,6 +53,7 @@ export default function CreateTransactionForm({
     products,
     suppliers,
     transporters,
+    weighbridges = [],
     loading,
   } = useSelector((state) => state.weighing);
 
@@ -61,9 +61,28 @@ export default function CreateTransactionForm({
 
   const isSecondWeighing = !!formData.id;
 
-  /**
-   * Generate receipt number: RCT-YYYYMMDD-01, RCT-YYYYMMDD-02, etc.
-   */
+  // Load weighbridges on mount
+  useEffect(() => {
+    if (weighbridges.length === 0) {
+      console.log("🔄 Loading weighbridges...");
+      dispatch(fetchWeighbridges({ pageNumber: 1, pageSize: 100 }));
+    } else {
+      console.log("✅ Weighbridges already loaded:", weighbridges);
+    }
+  }, [dispatch, weighbridges.length]);
+
+  // Auto-populate operator information
+  useEffect(() => {
+    if (currentUser && !isSecondWeighing) {
+      setFormData((prev) => ({
+        ...prev,
+        operatorId: currentUser.id,
+        operatorName: currentUser.fullName || currentUser.name || currentUser.username || "Operator",
+      }));
+    }
+  }, [currentUser, isSecondWeighing, setFormData]);
+
+  // Generate receipt number
   const generateReceiptNumber = useCallback(() => {
     const date = new Date();
     const year = date.getFullYear();
@@ -90,7 +109,6 @@ export default function CreateTransactionForm({
       products: debounce((q) => dispatch(fetchProductsByName(q)), 400),
       suppliers: debounce((q) => dispatch(fetchSuppliersByName(q)), 400),
       transporters: debounce((q) => dispatch(fetchTransportersByName(q)), 400),
-      weighbridges: debounce((q) => dispatch(fetchWeighbridgesByName(q)), 400),
     }),
     [dispatch]
   );
@@ -109,6 +127,18 @@ export default function CreateTransactionForm({
         item?.plateNumber ||
         item?.fullName ||
         "",
+    }));
+  };
+
+  // Handle weighbridge (scale) selection
+  const handleScaleSelect = (scaleName) => {
+    const selected = weighbridges.find((wb) => wb.location === scaleName || wb.name === scaleName);
+    console.log("🔍 Selected weighbridge:", selected);
+    setFormData((prev) => ({
+      ...prev,
+      weighBridgeId: selected?.id || null,
+      weighBridgeName: scaleName || "",
+      scaleName: scaleName || "",
     }));
   };
 
@@ -152,47 +182,117 @@ export default function CreateTransactionForm({
   }, [formData, capturedWeight, isSecondWeighing]);
 
   const handleSubmit = async () => {
-    if (!formData.receiptNo || !formData.noPlate || !formData.weighBridgeId) {
-      return message.error("Please fill in all required fields (*)");
+    console.log("🚀 ═══════════════════════════════════════════════════════");
+    console.log("🚀 SUBMIT HANDLER CALLED");
+    console.log("🚀 isSecondWeighing:", isSecondWeighing);
+    console.log("🚀 formData:", formData);
+    console.log("🚀 capturedWeight:", capturedWeight);
+    console.log("🚀 currentUser:", currentUser);
+    console.log("🚀 ═══════════════════════════════════════════════════════");
+
+    // Validation
+    if (!formData.receiptNo) {
+      message.error("Receipt number is required");
+      return;
+    }
+    if (!formData.noPlate) {
+      message.error("Vehicle plate is required");
+      return;
+    }
+    if (!formData.scaleName || !formData.weighBridgeId) {
+      message.error("Please select a weighbridge scale");
+      return;
     }
 
     try {
       if (!isSecondWeighing) {
-        // FIRST WEIGHING
+        // FIRST WEIGHING - POST /Transaction
         const payload = {
-          ...formData,
           noPlate: formData.noPlate.toUpperCase(),
-          firstWeight: parseFloat(formData.firstWeight || capturedWeight || 0),
-          secondWeight: null,
+          driverName: formData.driverName || "",
+          vehicleID: formData.vehicleId ? parseInt(formData.vehicleId) : 0,
+          firstWeight: String(parseFloat(formData.firstWeight || capturedWeight || 0)),
+          transporterID: formData.transporterId ? parseInt(formData.transporterId) : 0,
+          transporterName: formData.transporterName || "",
+          weighBridgeID: formData.weighBridgeId ? parseInt(formData.weighBridgeId) : 0,
+          weighBridgeName: formData.weighBridgeName || formData.scaleName || "",
+          scaleName: formData.scaleName || "",
+          operatorID: formData.operatorId ? parseInt(formData.operatorId) : (currentUser?.id || 0),
+          operatorName: formData.operatorName || currentUser?.fullName || currentUser?.name || "Operator",
+          commodityID: formData.commodityId ? parseInt(formData.commodityId) : 0,
+          commodityName: formData.commodityName || "",
+          supplierID: formData.supplierId ? parseInt(formData.supplierId) : 0,
+          supplierName: formData.supplierName || "",
+          customerID: formData.customerId ? parseInt(formData.customerId) : 0,
+          customerName: formData.customerName || "",
+          originID: formData.originId ? parseInt(formData.originId) : 0,
+          originName: formData.originName || "",
+          destinationID: formData.destinationId ? parseInt(formData.destinationId) : 0,
+          destinationName: formData.destinationName || "",
+          weighMode: formData.weighMode || "Gross/Tare",
+          operation: formData.operation || "Inbound Product Receipt",
+          notes: formData.notes || "",
         };
 
-        await dispatch(addTransaction(payload)).unwrap();
+        console.log("📦 ═══════════════════════════════════════════════════════");
+        console.log("📦 FIRST WEIGHT PAYLOAD:");
+        console.log(JSON.stringify(payload, null, 2));
+        console.log("📦 ═══════════════════════════════════════════════════════");
+
+        console.log("🔄 Dispatching addTransaction...");
+        const result = await dispatch(addTransaction(payload)).unwrap();
+        
+        console.log("✅ ═══════════════════════════════════════════════════════");
+        console.log("✅ FIRST WEIGHT SUCCESS:");
+        console.log(JSON.stringify(result, null, 2));
+        console.log("✅ ═══════════════════════════════════════════════════════");
+        
         message.success("First Weight Saved! Vehicle added to queue.");
       } else {
-        // SECOND WEIGHING
+        // SECOND WEIGHING - POST /Transaction/add-second-weight
         if (!isValid) {
-          return message.error(errorMsg);
+          message.error(errorMsg);
+          return;
         }
 
         const payload = {
-          transactionId: formData.id,
-          weight: parseFloat(formData.secondWeight || capturedWeight),
-          weighBridgeId: formData.weighBridgeId,
-          weighBridgeName: formData.weighBridgeName,
-          scaleName: formData.scaleName || "Scale-01",
-          operatorId: currentUser?.id,
-          operatorName: currentUser?.fullName || currentUser?.name || "Operator",
+          ticketID: parseInt(formData.id),
+          secondWeight: String(parseFloat(formData.secondWeight || capturedWeight)),
+          weighBridgeName2nd: formData.weighBridgeName || formData.scaleName || "",
+          scaleName2nd: formData.scaleName || "",
+          operatorID2nd: String(formData.operatorId || currentUser?.id || ""),
+          operatorName2nd: formData.operatorName || currentUser?.fullName || currentUser?.name || "Operator",
           notes: formData.notes || "",
-          netWeight,
         };
 
-        await dispatch(addWeighingThunk(payload)).unwrap();
+        console.log("📦 ═══════════════════════════════════════════════════════");
+        console.log("📦 SECOND WEIGHT PAYLOAD:");
+        console.log(JSON.stringify(payload, null, 2));
+        console.log("📦 ═══════════════════════════════════════════════════════");
+
+        console.log("🔄 Dispatching addSecondWeight...");
+        const result = await dispatch(addSecondWeight(payload)).unwrap();
+        
+        console.log("✅ ═══════════════════════════════════════════════════════");
+        console.log("✅ SECOND WEIGHT SUCCESS:");
+        console.log(JSON.stringify(result, null, 2));
+        console.log("✅ ═══════════════════════════════════════════════════════");
+        
         message.success(`Transaction Finalized! Net Weight: ${netWeight} KG`);
       }
 
       if (onTransactionCreated) onTransactionCreated();
     } catch (err) {
-      message.error(err?.message || "Operation failed");
+      console.error("❌ ═══════════════════════════════════════════════════════");
+      console.error("❌ TRANSACTION ERROR:");
+      console.error("Error object:", err);
+      console.error("Error message:", err?.message);
+      console.error("Error response:", err?.response);
+      console.error("Error stack:", err?.stack);
+      console.error("❌ ═══════════════════════════════════════════════════════");
+      
+      const errorMessage = err?.message || err || "Operation failed";
+      message.error(errorMessage);
     }
   };
 
@@ -226,7 +326,6 @@ export default function CreateTransactionForm({
           </div>
         </div>
         <Space size="small">
-          {/* Manual First Weight - Only during first weighing */}
           {!isSecondWeighing && (
             <div className="text-right">
               <FieldLabel>Manual W1</FieldLabel>
@@ -241,7 +340,6 @@ export default function CreateTransactionForm({
             </div>
           )}
 
-          {/* Manual Second Weight - Only during second weighing */}
           {isSecondWeighing && (
             <>
               <div className="text-right">
@@ -297,7 +395,7 @@ export default function CreateTransactionForm({
         </div>
       )}
 
-      {/* Rest of the form - unchanged */}
+      {/* Form Fields */}
       <div className="flex-1 overflow-y-auto pr-1">
         <Row gutter={[8, 10]}>
           <Col span={8}>
@@ -306,39 +404,49 @@ export default function CreateTransactionForm({
               size="middle"
               value={formData.receiptNo}
               readOnly
-              className="bg-gray-50"
+              className="bg-gray-50 font-mono font-semibold"
             />
           </Col>
+
           <Col span={8}>
-            <FieldLabel required>Weighbridge</FieldLabel>
+            <FieldLabel required>Scale Name</FieldLabel>
             <Select
               size="middle"
               className="w-full"
               showSearch
-              onSearch={debounced.weighbridges}
-              onChange={(id) =>
-                handleSelect(weighbridges, id, "weighBridgeId", "weighBridgeName")
-              }
-              value={formData.weighBridgeId}
+              onChange={handleScaleSelect}
+              value={formData.scaleName}
               disabled={isSecondWeighing}
+              placeholder="Select weighbridge scale"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+              notFoundContent={
+                weighbridges.length === 0 ? "Loading weighbridges..." : "No weighbridges found"
+              }
             >
-              {weighbridges.map((it) => (
-                <Option key={it.id} value={it.id}>
-                  {it.name}
-                </Option>
-              ))}
+              {weighbridges.map((wb) => {
+                const displayName = wb.location || wb.name || `Weighbridge ${wb.id}`;
+                return (
+                  <Option key={wb.id} value={displayName}>
+                    {displayName}
+                  </Option>
+                );
+              })}
             </Select>
           </Col>
+
           <Col span={8}>
-            <FieldLabel>Scale Name</FieldLabel>
+            <FieldLabel required>Operator</FieldLabel>
             <Input
               size="middle"
-              value={formData.scaleName}
-              onChange={(e) => handleChange("scaleName", e.target.value)}
+              value={formData.operatorName}
+              readOnly
+              className="bg-gray-50 font-semibold text-gray-700"
+              placeholder="Auto-filled from login"
             />
           </Col>
 
-          {/* All other fields remain exactly as before */}
           <Col span={12}>
             <FieldLabel required>Vehicle Plate</FieldLabel>
             <Select
@@ -351,6 +459,7 @@ export default function CreateTransactionForm({
               }
               value={formData.vehicleId || formData.noPlate}
               disabled={isSecondWeighing}
+              placeholder="Search vehicle..."
             >
               {vehicles.map((it) => (
                 <Option key={it.id} value={it.id}>
@@ -359,6 +468,7 @@ export default function CreateTransactionForm({
               ))}
             </Select>
           </Col>
+
           <Col span={12}>
             <FieldLabel required>Driver Name</FieldLabel>
             <Select
@@ -371,6 +481,7 @@ export default function CreateTransactionForm({
               }
               value={formData.driverId || formData.driverName}
               disabled={isSecondWeighing}
+              placeholder="Search driver..."
             >
               {drivers.map((it) => (
                 <Option key={it.id} value={it.id}>
@@ -392,6 +503,7 @@ export default function CreateTransactionForm({
               }
               value={formData.transporterId}
               disabled={isSecondWeighing}
+              placeholder="Select transporter..."
             >
               {transporters.map((it) => (
                 <Option key={it.id} value={it.id}>
@@ -400,6 +512,7 @@ export default function CreateTransactionForm({
               ))}
             </Select>
           </Col>
+
           <Col span={8}>
             <FieldLabel>Commodity</FieldLabel>
             <Select
@@ -412,6 +525,7 @@ export default function CreateTransactionForm({
               }
               value={formData.commodityId}
               disabled={isSecondWeighing}
+              placeholder="Select commodity..."
             >
               {products.map((it) => (
                 <Option key={it.id} value={it.id}>
@@ -420,6 +534,7 @@ export default function CreateTransactionForm({
               ))}
             </Select>
           </Col>
+
           <Col span={8}>
             <FieldLabel>Supplier</FieldLabel>
             <Select
@@ -432,6 +547,7 @@ export default function CreateTransactionForm({
               }
               value={formData.supplierId}
               disabled={isSecondWeighing}
+              placeholder="Select supplier..."
             >
               {suppliers.map((it) => (
                 <Option key={it.id} value={it.id}>
@@ -448,8 +564,10 @@ export default function CreateTransactionForm({
               value={formData.customerName}
               onChange={(e) => handleChange("customerName", e.target.value)}
               disabled={isSecondWeighing}
+              placeholder="Enter customer name"
             />
           </Col>
+
           <Col span={6}>
             <FieldLabel>Origin</FieldLabel>
             <Input
@@ -457,8 +575,10 @@ export default function CreateTransactionForm({
               value={formData.originName}
               onChange={(e) => handleChange("originName", e.target.value)}
               disabled={isSecondWeighing}
+              placeholder="Origin"
             />
           </Col>
+
           <Col span={6}>
             <FieldLabel>Destination</FieldLabel>
             <Input
@@ -466,6 +586,7 @@ export default function CreateTransactionForm({
               value={formData.destinationName}
               onChange={(e) => handleChange("destinationName", e.target.value)}
               disabled={isSecondWeighing}
+              placeholder="Destination"
             />
           </Col>
 
@@ -481,6 +602,7 @@ export default function CreateTransactionForm({
               <Option value="Gross/Tare">Gross / Tare</Option>
             </Select>
           </Col>
+
           <Col span={16}>
             <FieldLabel>Operation Type</FieldLabel>
             <Select
