@@ -9,10 +9,10 @@ using TechnicianApi.Infrastructure.Data;
 
 #nullable disable
 
-namespace TechnicianApi.Infrastructure.Migrations
+namespace TechnicianApi.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TechnicianApiDbContext))]
-    [Migration("20260107114630_InitialCreate")]
+    [Migration("20260123082504_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
