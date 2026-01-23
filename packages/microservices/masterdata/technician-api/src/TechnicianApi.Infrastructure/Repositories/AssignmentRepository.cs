@@ -87,18 +87,28 @@ public class AssignmentRepository : Repository<Assignment>, IAssignmentRepositor
 
         return existing;
     }
-
     public async Task<Assignment?> AssignTechnicianAsync(string assignmentId, string technicianId)
     {
         var assignment = await GetByIdWithTechnicianIdsAsync(assignmentId);
         if (assignment == null) return null;
 
-        // Check if already assigned
+        // Force attach if detached
+        var entry = _context.Entry(assignment);
+        if (entry.State == EntityState.Detached)
+        {
+            _context.Attach(assignment);
+            entry.State = EntityState.Modified;  // or Unchanged → but Modified is safer
+        }
+
         if (assignment.TechnicianIds.Contains(technicianId))
             return assignment;
 
         assignment.TechnicianIds.Add(technicianId);
         assignment.UpdatedAt = DateTime.UtcNow;
+
+        // Optional: force mark collection as modified
+        entry.Collection(a => a.TechnicianIds).IsModified = true;
+
         await _context.SaveChangesAsync();
 
         return assignment;
