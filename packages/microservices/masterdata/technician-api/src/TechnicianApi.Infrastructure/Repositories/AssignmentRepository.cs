@@ -92,24 +92,20 @@ public class AssignmentRepository : Repository<Assignment>, IAssignmentRepositor
         var assignment = await GetByIdWithTechnicianIdsAsync(assignmentId);
         if (assignment == null) return null;
 
-        // Force attach if detached
         var entry = _context.Entry(assignment);
-        if (entry.State == EntityState.Detached)
-        {
-            _context.Attach(assignment);
-            entry.State = EntityState.Modified;  // or Unchanged → but Modified is safer
-        }
+        Console.WriteLine($"[ASSIGN] Loaded entity state: {entry.State} | Tracked: {entry.State != EntityState.Detached}");
 
         if (assignment.TechnicianIds.Contains(technicianId))
             return assignment;
 
+        var oldCount = assignment.TechnicianIds.Count;
         assignment.TechnicianIds.Add(technicianId);
         assignment.UpdatedAt = DateTime.UtcNow;
 
-        // Optional: force mark collection as modified
-        entry.Collection(a => a.TechnicianIds).IsModified = true;
+        Console.WriteLine($"[ASSIGN] Added technician — count now: {assignment.TechnicianIds.Count} (was {oldCount})");
 
-        await _context.SaveChangesAsync();
+        var rows = await _context.SaveChangesAsync();
+        Console.WriteLine($"[ASSIGN] SaveChanges returned {rows} rows affected");
 
         return assignment;
     }
