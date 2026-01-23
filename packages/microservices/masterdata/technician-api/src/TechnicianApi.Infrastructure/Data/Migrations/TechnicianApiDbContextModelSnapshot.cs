@@ -8,7 +8,7 @@ using TechnicianApi.Infrastructure.Data;
 
 #nullable disable
 
-namespace TechnicianApi.Infrastructure.Migrations
+namespace TechnicianApi.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TechnicianApiDbContext))]
     partial class TechnicianApiDbContextModelSnapshot : ModelSnapshot
