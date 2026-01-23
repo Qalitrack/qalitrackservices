@@ -798,4 +798,378 @@ public class WeighbridgeTransactionIntegrationTests
         _output.WriteLine($"Still waiting (tare) .: {active}");
         _output.WriteLine($"Unique vehicles ......: {unique}");
     }
+
+    [Fact]
+    public async Task Scenario_VehiclesWithReweighingAndStandard_ShouldHandleReweighAndTwoWeighings()
+    {
+        _output.WriteLine("=== SCENARIO 9: Vehicles with Reweighing (One with Reweigh, One Standard) ===\n");
+
+        // Vehicle 1: Will do initial weighings then reweigh (updates existing transaction)
+        var vehicle1Plate = "KXZ-123V";
+        var createDtoV1 = new CreateTransactionDto
+        {
+            NoPlate = vehicle1Plate,
+            DriverName = "Henry Onyango",
+            TransporterID = 25,
+            TransporterName = "MultiWeigh Trans Ltd",
+            FirstWeight = "52000",
+            WeighBridgeID = 5,
+            WeighBridgeName = "Primary Gate",
+            ScaleName = "Scale-X1",
+            OperatorID = 301,
+            OperatorName = "Victor Kimani",
+            CommodityID = 12,
+            CommodityName = "Sorghum",
+            SupplierID = 51,
+            SupplierName = "Eastern Grains Coop",
+            CustomerID = 36,
+            CustomerName = "Feed Millers Inc.",
+            OriginID = 15,
+            OriginName = "Machakos",
+            DestinationID = 20,
+            DestinationName = "Thika Factory",
+            WeighMode = "Gross → Tare",
+            Operation = "Inbound"
+        };
+
+        var createdV1 = new TransactionReadDto
+        {
+            TicketID = 1025,
+            ReceiptNo = "WB-20260121-025",
+            NoPlate = createDtoV1.NoPlate,
+            DriverName = createDtoV1.DriverName,
+            TransporterID = createDtoV1.TransporterID,
+            TransporterName = createDtoV1.TransporterName,
+            FirstWeight = createDtoV1.FirstWeight,
+            SecondWeight = null,
+            NetWeight = null,
+            Status = "Active",
+            FirstWeightDate = DateTime.UtcNow.AddMinutes(-60),
+            WeighBridgeID = createDtoV1.WeighBridgeID,
+            WeighBridgeName = createDtoV1.WeighBridgeName,
+            ScaleName = createDtoV1.ScaleName,
+            OperatorID = createDtoV1.OperatorID,
+            OperatorName = createDtoV1.OperatorName,
+            CommodityID = createDtoV1.CommodityID,
+            CommodityName = createDtoV1.CommodityName,
+            SupplierID = createDtoV1.SupplierID,
+            SupplierName = createDtoV1.SupplierName,
+            CustomerID = createDtoV1.CustomerID,
+            CustomerName = createDtoV1.CustomerName,
+            OriginID = createDtoV1.OriginID,
+            OriginName = createDtoV1.OriginName,
+            DestinationID = createDtoV1.DestinationID,
+            DestinationName = createDtoV1.DestinationName,
+            WeighMode = createDtoV1.WeighMode,
+            Operation = createDtoV1.Operation,
+            ApiId = 123456
+        };
+
+        _mockService.Setup(s => s.CreateAsync(It.Is<CreateTransactionDto>(d => d.NoPlate == vehicle1Plate))).ReturnsAsync(createdV1);
+
+        var createResultV1 = await _controller.Create(createDtoV1);
+        createResultV1.Should().BeOfType<CreatedAtActionResult>();
+
+        LogFullTransaction("Vehicle 1 After First Weighing", createdV1);
+
+        var secondDtoV1 = new AddSecondWeightDto
+        {
+            TicketID = createdV1.TicketID,
+            SecondWeight = "27000",
+            WeighBridgeName2nd = "Secondary Gate",
+            ScaleName2nd = "Scale-Y1",
+            OperatorID2nd = "302",
+            OperatorName2nd = "Rachel Nduta"
+        };
+
+        var completedV1 = new TransactionReadDto
+        {
+            TicketID = createdV1.TicketID,
+            ReceiptNo = createdV1.ReceiptNo,
+            NoPlate = createdV1.NoPlate,
+            DriverName = createdV1.DriverName,
+            TransporterID = createdV1.TransporterID,
+            TransporterName = createdV1.TransporterName,
+            CommodityID = createdV1.CommodityID,
+            CommodityName = createdV1.CommodityName,
+            SupplierID = createdV1.SupplierID,
+            SupplierName = createdV1.SupplierName,
+            CustomerID = createdV1.CustomerID,
+            CustomerName = createdV1.CustomerName,
+            OriginID = createdV1.OriginID,
+            OriginName = createdV1.OriginName,
+            DestinationID = createdV1.DestinationID,
+            DestinationName = createdV1.DestinationName,
+            FirstWeight = createdV1.FirstWeight,
+            FirstWeightDate = createdV1.FirstWeightDate,
+            WeighBridgeID = createdV1.WeighBridgeID,
+            WeighBridgeName = createdV1.WeighBridgeName,
+            ScaleName = createdV1.ScaleName,
+            OperatorID = createdV1.OperatorID,
+            OperatorName = createdV1.OperatorName,
+            WeighMode = createdV1.WeighMode,
+            Operation = createdV1.Operation,
+            ApiId = createdV1.ApiId,
+            SecondWeight = secondDtoV1.SecondWeight,
+            NetWeight = "25000",
+            Status = "Completed",
+            SecondWeightDate = DateTime.UtcNow.AddMinutes(-30),
+            WeighBridgeName2nd = secondDtoV1.WeighBridgeName2nd,
+            ScaleName2nd = secondDtoV1.ScaleName2nd,
+            OperatorID2nd = secondDtoV1.OperatorID2nd,
+            OperatorName2nd = secondDtoV1.OperatorName2nd,
+            ChangeDesc = "Second weighing completed"
+        };
+
+        _mockService.Setup(s => s.AddSecondWeightAsync(It.Is<AddSecondWeightDto>(d => d.TicketID == createdV1.TicketID && d.SecondWeight == "27000"))).ReturnsAsync(completedV1);
+
+        var secondResultV1 = await _controller.AddSecondWeight(secondDtoV1);
+        secondResultV1.Should().BeOfType<OkObjectResult>();
+
+        LogFullTransaction("Vehicle 1 After Initial Second Weighing", completedV1);
+
+        // Request reweigh for Vehicle 1
+        var reweighRequestV1 = new RequestReweighDto
+        {
+            TicketID = completedV1.TicketID,
+            Reason = "Discrepancy in net weight detected – reweigh approved"
+        };
+
+        _mockService.Setup(s => s.RequestReweighAsync(It.Is<RequestReweighDto>(r => r.TicketID == completedV1.TicketID))).ReturnsAsync(true);
+
+        var reqResultV1 = await _controller.RequestReweigh(reweighRequestV1);
+        reqResultV1.Should().BeOfType<OkObjectResult>();
+
+        var requestedV1 = new TransactionReadDto
+        {
+            TicketID = completedV1.TicketID,
+            ReceiptNo = completedV1.ReceiptNo,
+            NoPlate = completedV1.NoPlate,
+            DriverName = completedV1.DriverName,
+            TransporterID = completedV1.TransporterID,
+            TransporterName = completedV1.TransporterName,
+            FirstWeight = completedV1.FirstWeight,
+            SecondWeight = completedV1.SecondWeight,
+            NetWeight = completedV1.NetWeight,
+            FirstWeightDate = completedV1.FirstWeightDate,
+            SecondWeightDate = completedV1.SecondWeightDate,
+            WeighBridgeID = completedV1.WeighBridgeID,
+            WeighBridgeName = completedV1.WeighBridgeName,
+            ScaleName = completedV1.ScaleName,
+            OperatorID = completedV1.OperatorID,
+            OperatorName = completedV1.OperatorName,
+            WeighBridgeName2nd = completedV1.WeighBridgeName2nd,
+            ScaleName2nd = completedV1.ScaleName2nd,
+            OperatorID2nd = completedV1.OperatorID2nd,
+            OperatorName2nd = completedV1.OperatorName2nd,
+            CommodityID = completedV1.CommodityID,
+            CommodityName = completedV1.CommodityName,
+            SupplierID = completedV1.SupplierID,
+            SupplierName = completedV1.SupplierName,
+            CustomerID = completedV1.CustomerID,
+            CustomerName = completedV1.CustomerName,
+            OriginID = completedV1.OriginID,
+            OriginName = completedV1.OriginName,
+            DestinationID = completedV1.DestinationID,
+            DestinationName = completedV1.DestinationName,
+            WeighMode = completedV1.WeighMode,
+            Operation = completedV1.Operation,
+            ApiId = completedV1.ApiId,
+            Status = "ReweighRequested",
+            ReweighPermission = reweighRequestV1.Reason,
+            ChangeDesc = $"Reweigh requested: {reweighRequestV1.Reason}; Previous second weight: {completedV1.SecondWeight}"
+        };
+
+        LogFullTransaction("Vehicle 1 After Reweigh Request", requestedV1);
+
+        // Perform reweighing (updates the second weight in the existing transaction)
+        var reweighDtoV1 = new AddSecondWeightDto
+        {
+            TicketID = requestedV1.TicketID,
+            SecondWeight = "26500",
+            WeighBridgeName2nd = "Reweigh Gate",
+            ScaleName2nd = "Scale-Z1",
+            OperatorID2nd = "303",
+            OperatorName2nd = "Samuel Otieno"
+        };
+
+        var reweighedV1 = new TransactionReadDto
+        {
+            TicketID = requestedV1.TicketID,
+            ReceiptNo = requestedV1.ReceiptNo,
+            NoPlate = requestedV1.NoPlate,
+            DriverName = requestedV1.DriverName,
+            TransporterID = requestedV1.TransporterID,
+            TransporterName = requestedV1.TransporterName,
+            CommodityID = requestedV1.CommodityID,
+            CommodityName = requestedV1.CommodityName,
+            SupplierID = requestedV1.SupplierID,
+            SupplierName = requestedV1.SupplierName,
+            CustomerID = requestedV1.CustomerID,
+            CustomerName = requestedV1.CustomerName,
+            OriginID = requestedV1.OriginID,
+            OriginName = requestedV1.OriginName,
+            DestinationID = requestedV1.DestinationID,
+            DestinationName = requestedV1.DestinationName,
+            FirstWeight = requestedV1.FirstWeight,
+            FirstWeightDate = requestedV1.FirstWeightDate,
+            WeighBridgeID = requestedV1.WeighBridgeID,
+            WeighBridgeName = requestedV1.WeighBridgeName,
+            ScaleName = requestedV1.ScaleName,
+            OperatorID = requestedV1.OperatorID,
+            OperatorName = requestedV1.OperatorName,
+            WeighMode = requestedV1.WeighMode,
+            Operation = requestedV1.Operation,
+            ApiId = requestedV1.ApiId,
+            SecondWeight = reweighDtoV1.SecondWeight,
+            NetWeight = "25500",
+            Status = "Completed",
+            SecondWeightDate = DateTime.UtcNow,
+            WeighBridgeName2nd = reweighDtoV1.WeighBridgeName2nd,
+            ScaleName2nd = reweighDtoV1.ScaleName2nd,
+            OperatorID2nd = reweighDtoV1.OperatorID2nd,
+            OperatorName2nd = reweighDtoV1.OperatorName2nd,
+            ReweighPermission = requestedV1.ReweighPermission,
+            ChangeDesc = $"{requestedV1.ChangeDesc}; Reweighed second weight updated from 27000 to 26500"
+        };
+
+        _mockService.Setup(s => s.AddSecondWeightAsync(It.Is<AddSecondWeightDto>(d => d.TicketID == requestedV1.TicketID && d.SecondWeight == "26500"))).ReturnsAsync(reweighedV1);
+
+        var reweighResultV1 = await _controller.AddSecondWeight(reweighDtoV1);
+        reweighResultV1.Should().BeOfType<OkObjectResult>();
+
+        LogFullTransaction("Vehicle 1 After Reweighing (Updated Transaction) - As in DB", reweighedV1);
+
+        // Vehicle 2: Standard 2 weighings
+        var vehicle2Plate = "KYZ-456W";
+        var createDtoV2 = new CreateTransactionDto
+        {
+            NoPlate = vehicle2Plate,
+            DriverName = "Irene Njeri",
+            TransporterID = 26,
+            TransporterName = "Standard Trans Ltd",
+            FirstWeight = "49000",
+            WeighBridgeID = 6,
+            WeighBridgeName = "Entry Point",
+            ScaleName = "Scale-A2",
+            OperatorID = 401,
+            OperatorName = "Thomas Mutua",
+            CommodityID = 13,
+            CommodityName = "Barley",
+            SupplierID = 52,
+            SupplierName = "Highland Farmers",
+            CustomerID = 37,
+            CustomerName = "Brewery Co.",
+            OriginID = 16,
+            OriginName = "Nyeri",
+            DestinationID = 21,
+            DestinationName = "Nairobi Plant",
+            WeighMode = "Gross → Tare",
+            Operation = "Inbound"
+        };
+
+        var createdV2 = new TransactionReadDto
+        {
+            TicketID = 1026,
+            ReceiptNo = "WB-20260121-026",
+            NoPlate = createDtoV2.NoPlate,
+            DriverName = createDtoV2.DriverName,
+            TransporterID = createDtoV2.TransporterID,
+            TransporterName = createDtoV2.TransporterName,
+            FirstWeight = createDtoV2.FirstWeight,
+            SecondWeight = null,
+            NetWeight = null,
+            Status = "Active",
+            FirstWeightDate = DateTime.UtcNow.AddMinutes(-45),
+            WeighBridgeID = createDtoV2.WeighBridgeID,
+            WeighBridgeName = createDtoV2.WeighBridgeName,
+            ScaleName = createDtoV2.ScaleName,
+            OperatorID = createDtoV2.OperatorID,
+            OperatorName = createDtoV2.OperatorName,
+            CommodityID = createDtoV2.CommodityID,
+            CommodityName = createDtoV2.CommodityName,
+            SupplierID = createDtoV2.SupplierID,
+            SupplierName = createDtoV2.SupplierName,
+            CustomerID = createDtoV2.CustomerID,
+            CustomerName = createDtoV2.CustomerName,
+            OriginID = createDtoV2.OriginID,
+            OriginName = createDtoV2.OriginName,
+            DestinationID = createDtoV2.DestinationID,
+            DestinationName = createDtoV2.DestinationName,
+            WeighMode = createDtoV2.WeighMode,
+            Operation = createDtoV2.Operation,
+            ApiId = 654321
+        };
+
+        _mockService.Setup(s => s.CreateAsync(It.Is<CreateTransactionDto>(d => d.NoPlate == vehicle2Plate))).ReturnsAsync(createdV2);
+
+        var createResultV2 = await _controller.Create(createDtoV2);
+        createResultV2.Should().BeOfType<CreatedAtActionResult>();
+
+        LogFullTransaction("Vehicle 2 After First Weighing", createdV2);
+
+        var secondDtoV2 = new AddSecondWeightDto
+        {
+            TicketID = createdV2.TicketID,
+            SecondWeight = "24000",
+            WeighBridgeName2nd = "Exit Point",
+            ScaleName2nd = "Scale-B2",
+            OperatorID2nd = "402",
+            OperatorName2nd = "Patricia Akinyi"
+        };
+
+        var completedV2 = new TransactionReadDto
+        {
+            TicketID = createdV2.TicketID,
+            ReceiptNo = createdV2.ReceiptNo,
+            NoPlate = createdV2.NoPlate,
+            DriverName = createdV2.DriverName,
+            TransporterID = createdV2.TransporterID,
+            TransporterName = createdV2.TransporterName,
+            CommodityID = createdV2.CommodityID,
+            CommodityName = createdV2.CommodityName,
+            SupplierID = createdV2.SupplierID,
+            SupplierName = createdV2.SupplierName,
+            CustomerID = createdV2.CustomerID,
+            CustomerName = createdV2.CustomerName,
+            OriginID = createdV2.OriginID,
+            OriginName = createdV2.OriginName,
+            DestinationID = createdV2.DestinationID,
+            DestinationName = createdV2.DestinationName,
+            FirstWeight = createdV2.FirstWeight,
+            FirstWeightDate = createdV2.FirstWeightDate,
+            WeighBridgeID = createdV2.WeighBridgeID,
+            WeighBridgeName = createdV2.WeighBridgeName,
+            ScaleName = createdV2.ScaleName,
+            OperatorID = createdV2.OperatorID,
+            OperatorName = createdV2.OperatorName,
+            WeighMode = createdV2.WeighMode,
+            Operation = createdV2.Operation,
+            ApiId = createdV2.ApiId,
+            SecondWeight = secondDtoV2.SecondWeight,
+            NetWeight = "25000",
+            Status = "Completed",
+            SecondWeightDate = DateTime.UtcNow,
+            WeighBridgeName2nd = secondDtoV2.WeighBridgeName2nd,
+            ScaleName2nd = secondDtoV2.ScaleName2nd,
+            OperatorID2nd = secondDtoV2.OperatorID2nd,
+            OperatorName2nd = secondDtoV2.OperatorName2nd,
+            ChangeDesc = "Second weighing completed"
+        };
+
+        _mockService.Setup(s => s.AddSecondWeightAsync(It.Is<AddSecondWeightDto>(d => d.TicketID == createdV2.TicketID))).ReturnsAsync(completedV2);
+
+        var secondResultV2 = await _controller.AddSecondWeight(secondDtoV2);
+        secondResultV2.Should().BeOfType<OkObjectResult>();
+
+        LogFullTransaction("Vehicle 2 After Second Weighing - As in DB", completedV2);
+
+        // Final assertions
+        reweighedV1.Status.Should().Be("Completed");
+        reweighedV1.NetWeight.Should().Be("25500");
+        reweighedV1.ChangeDesc.Should().Contain("Reweigh");
+
+        completedV2.Status.Should().Be("Completed");
+        completedV2.NetWeight.Should().Be("25000");
+    }
 }
