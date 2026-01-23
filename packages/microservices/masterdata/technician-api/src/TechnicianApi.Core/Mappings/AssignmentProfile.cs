@@ -10,11 +10,12 @@ public class AssignmentProfile : Profile
     {
         // Entity to ResponseDto
         CreateMap<Assignment, AssignmentResponseDto>()
-            .ForMember(dest => dest.TechnicianIds, opt => opt.MapFrom(src => src.TechnicianIds))
+            .ForMember(dest => dest.TechnicianIds, opt => opt.MapFrom(src => 
+                src.TechnicianIds != null ? src.TechnicianIds.ToList() : new List<string>()))  // ✅ FIX HERE
             .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority.ToString()))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
 
-        // CreateDto to Entity
+        // Rest of your mappings...
         CreateMap<CreateAssignmentDto, Assignment>()
             .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => Enum.Parse<AssignmentPriority>(src.Priority)))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => AssignmentStatus.Pending))
@@ -38,7 +39,6 @@ public class AssignmentProfile : Profile
             .ForMember(dest => dest.Refunds, opt => opt.Ignore())
             .ForMember(dest => dest.BalanceSummary, opt => opt.Ignore());
 
-        // UpdateDto to Entity
         CreateMap<UpdateAssignmentDto, Assignment>()
             .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => 
                 src.Priority != null ? Enum.Parse<AssignmentPriority>(src.Priority) : default(AssignmentPriority?)))
