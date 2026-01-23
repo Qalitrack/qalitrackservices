@@ -15,7 +15,6 @@ public class AssignmentRepository : Repository<Assignment>, IAssignmentRepositor
     public async Task<Assignment?> GetByIdWithTechnicianIdsAsync(string id)
     {
         return await _context.Assignments
-            .Include(a => a.TechnicianIds)
             .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
     }
 
