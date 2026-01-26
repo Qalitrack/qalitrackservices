@@ -6,12 +6,11 @@ import { ChevronLeft } from "lucide-react";
 export default function SupplierReport({ transactions = [], loading }) {
   const [selectedSupplier, setSelectedSupplier] = useState(null);
 
-  // Internal pagination
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 5;
 
   // =========================
-  // Group Transactions by Supplier
+  // Summary
   // =========================
   const supplierSummary = useMemo(() => {
     const map = {};
@@ -36,17 +35,17 @@ export default function SupplierReport({ transactions = [], loading }) {
   }, [transactions]);
 
   // =========================
-  // KPIs (NOT PAGINATED)
+  // KPIs
   // =========================
   const totalSuppliers = supplierSummary.length;
-  const totalTrips = supplierSummary.reduce((sum, s) => sum + s.trips, 0);
+  const totalTrips = supplierSummary.reduce((s, d) => s + d.trips, 0);
   const totalWeight = supplierSummary.reduce(
-    (sum, s) => sum + s.totalNetWeight,
+    (s, d) => s + d.totalNetWeight,
     0
   );
 
   // =========================
-  // Paginated Summary Rows
+  // Paginated Summary
   // =========================
   const paginatedSummaryRows = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -54,12 +53,12 @@ export default function SupplierReport({ transactions = [], loading }) {
       id: s.id,
       supplierName: s.supplierName,
       trips: s.trips,
-      netWeight: s.totalNetWeight.toFixed(2),
+      netWeight: s.totalNetWeight.toLocaleString(),
     }));
   }, [supplierSummary, currentPage]);
 
   // =========================
-  // Drill-down: Commodities per Supplier
+  // Drill-down
   // =========================
   const supplierTransactions = useMemo(() => {
     if (!selectedSupplier) return [];
@@ -76,32 +75,16 @@ export default function SupplierReport({ transactions = [], loading }) {
   }, [selectedSupplier, transactions]);
 
   return (
-    <div className="bg-white border rounded-lg p-6">
-      {/* HEADER */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold">Supplier Report</h2>
-        <p className="text-sm text-gray-600">
-          Summary and detailed breakdown per supplier
-        </p>
-      </div>
-
+    <div className="bg-white border rounded-lg p-4 space-y-4">
       {/* KPIs */}
       {!selectedSupplier && (
-        <div className="flex gap-6 mb-6 flex-wrap">
-          <div className="bg-amber-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Suppliers</p>
-            <p className="text-xl font-semibold">{totalSuppliers}</p>
-          </div>
-
-          <div className="bg-amber-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Transactions</p>
-            <p className="text-xl font-semibold">{totalTrips}</p>
-          </div>
-
-          <div className="bg-amber-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
-          </div>
+        <div className="grid grid-cols-3 gap-3">
+          <CompactStat label="Suppliers" value={totalSuppliers} />
+          <CompactStat label="Trips" value={totalTrips} />
+          <CompactStat
+            label="Net Weight"
+            value={totalWeight.toLocaleString()}
+          />
         </div>
       )}
 
@@ -113,6 +96,7 @@ export default function SupplierReport({ transactions = [], loading }) {
             loading={loading}
             onRowClick={(row) => setSelectedSupplier(row.supplierName)}
             showColumns={["supplierName", "trips", "netWeight"]}
+            compact
           />
 
           <ReportsPagination
@@ -124,18 +108,18 @@ export default function SupplierReport({ transactions = [], loading }) {
         </>
       )}
 
-      {/* DRILL-DOWN TABLE */}
+      {/* DRILL-DOWN */}
       {selectedSupplier && (
-        <div>
-          <div className="flex items-center gap-3 mb-4">
+        <>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setSelectedSupplier(null)}
-              className="flex items-center gap-1 text-sm border rounded px-3 py-1"
+              className="flex items-center gap-1 text-xs border rounded px-2 py-1"
             >
-              <ChevronLeft size={16} /> Back
+              <ChevronLeft size={14} /> Back
             </button>
 
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-sm font-semibold">
               {selectedSupplier} — Commodities
             </h3>
           </div>
@@ -144,9 +128,19 @@ export default function SupplierReport({ transactions = [], loading }) {
             transactions={supplierTransactions}
             loading={loading}
             showColumns={["commodityName", "netWeight"]}
+            compact
           />
-        </div>
+        </>
       )}
+    </div>
+  );
+}
+
+function CompactStat({ label, value }) {
+  return (
+    <div className="bg-yellow-50 border rounded px-3 py-2">
+      <p className="text-[11px] text-gray-500 uppercase">{label}</p>
+      <p className="text-lg font-semibold leading-tight">{value}</p>
     </div>
   );
 }

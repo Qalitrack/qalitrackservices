@@ -6,7 +6,6 @@ import { ChevronLeft } from "lucide-react";
 export default function DriverReport({ transactions = [], loading }) {
   const [selectedDriver, setSelectedDriver] = useState(null);
 
-  // Pagination (summary only)
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 5;
 
@@ -85,32 +84,16 @@ export default function DriverReport({ transactions = [], loading }) {
   }, [transactions, selectedDriver]);
 
   return (
-    <div className="bg-white border rounded-lg p-5">
-      {/* HEADER */}
-      <div className="mb-5">
-        <h2 className="text-2xl font-semibold">Driver Report</h2>
-        <p className="text-sm text-gray-600">
-          Summary and detailed trip breakdown per driver
-        </p>
-      </div>
-
+    <div className="bg-white border rounded-lg p-4 space-y-4">
       {/* KPIs */}
       {!selectedDriver && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-          <div className="bg-yellow-100 p-3 rounded">
-            <p className="text-xs text-gray-500">Drivers</p>
-            <p className="text-lg font-semibold">{totalDrivers}</p>
-          </div>
-          <div className="bg-yellow-100 p-3 rounded">
-            <p className="text-xs text-gray-500">Trips</p>
-            <p className="text-lg font-semibold">{totalTrips}</p>
-          </div>
-          <div className="bg-yellow-100 p-3 rounded">
-            <p className="text-xs text-gray-500">Total Net Weight</p>
-            <p className="text-lg font-semibold">
-              {totalWeight.toLocaleString()}
-            </p>
-          </div>
+        <div className="grid grid-cols-3 gap-3">
+          <CompactStat label="Drivers" value={totalDrivers} />
+          <CompactStat label="Trips" value={totalTrips} />
+          <CompactStat
+            label="Net Weight"
+            value={totalWeight.toLocaleString()}
+          />
         </div>
       )}
 
@@ -137,16 +120,16 @@ export default function DriverReport({ transactions = [], loading }) {
       {/* DRIVER DETAILS */}
       {selectedDriver && (
         <>
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setSelectedDriver(null)}
-              className="flex items-center gap-1 text-sm border rounded px-3 py-1"
+              className="flex items-center gap-1 text-xs border rounded px-2 py-1"
             >
-              <ChevronLeft size={16} /> Back
+              <ChevronLeft size={14} /> Back
             </button>
 
-            <h3 className="text-xl font-semibold">
-              {selectedDriver} — Trip Details
+            <h3 className="text-sm font-semibold">
+              {selectedDriver} — Trips
             </h3>
           </div>
 
@@ -154,11 +137,11 @@ export default function DriverReport({ transactions = [], loading }) {
             <table className="w-full text-sm min-w-[1000px]">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="p-2 text-left">Date & Time</th>
+                  <th className="p-2 text-left">Date</th>
                   <th className="p-2 text-left">Vehicle</th>
-                  <th className="p-2 text-right">1st Weight</th>
-                  <th className="p-2 text-right">2nd Weight</th>
-                  <th className="p-2 text-right">Net Weight</th>
+                  <th className="p-2 text-right">1st</th>
+                  <th className="p-2 text-right">2nd</th>
+                  <th className="p-2 text-right">Net</th>
                   <th className="p-2 text-left">Source</th>
                   <th className="p-2 text-left">Destination</th>
                 </tr>
@@ -187,6 +170,15 @@ export default function DriverReport({ transactions = [], loading }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function CompactStat({ label, value }) {
+  return (
+    <div className="bg-yellow-50 border rounded px-3 py-2">
+      <p className="text-[11px] text-gray-500 uppercase">{label}</p>
+      <p className="text-lg font-semibold leading-tight">{value}</p>
     </div>
   );
 }
