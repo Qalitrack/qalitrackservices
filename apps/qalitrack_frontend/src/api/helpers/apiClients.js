@@ -1,17 +1,19 @@
 import axios from "axios";
 
-// 💡 FIX APPLIED HERE: Base URLs must be the local proxy paths
-// defined in vite.config.js to force the request to go through the proxy.
+/* -------------------------------------------------------------------------- */
+/*                           BASE URL CONFIGURATION                           */
+/* -------------------------------------------------------------------------- */
 
 // 🔗 Base URL for Master Data/General API (Points to the /api proxy in vite.config.js)
-// If VITE_API_URL is set, it MUST also be a local path like /api
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-// 🔗 Dedicated Transaction Base URL (Points to the /Transaction proxy in vite.config.js)
-// If VITE_TRANSACTION_API_URL is set, it MUST also be a local path like /Transaction
-const TRANSACTION_BASE_URL = import.meta.env.VITE_TRANSACTION_API_URL || "/Transaction";
+// 🔗 Transaction Base URL - Points to /api/Transaction
+// The nested /Transaction/Transaction path is handled in Transactions.js
+const TRANSACTION_BASE_URL = import.meta.env.VITE_TRANSACTION_API_URL || "/api/Transaction";
 
-// --- Session Management Utility (No changes needed) ---
+/* -------------------------------------------------------------------------- */
+/*                         SESSION MANAGEMENT UTILITY                         */
+/* -------------------------------------------------------------------------- */
 
 const getSessionData = () => {
   try {
@@ -43,8 +45,31 @@ const getSessionToken = () => {
   return session.token;
 };
 
+/* -------------------------------------------------------------------------- */
+/*                         LOGGING UTILITY                                    */
+/* -------------------------------------------------------------------------- */
 
-// --- Interceptor Logic (No changes needed) ---
+const logError = (level, message, data) => {
+  if (import.meta.env.MODE !== 'production') {
+    console[level](message, data);
+  } else {
+    // In production, you could send to error tracking service
+    // Example: Sentry.captureException(data);
+  }
+};
+
+const logRequest = (method, url, config) => {
+  if (import.meta.env.MODE !== 'production') {
+    console.log(`🚀 API Request: ${method.toUpperCase()} ${url}`, {
+      params: config?.params,
+      data: config?.data,
+    });
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                         INTERCEPTOR LOGIC                                  */
+/* -------------------------------------------------------------------------- */
 
 const setupRequestInterceptor = (client) => {
   client.interceptors.request.use(
@@ -53,6 +78,13 @@ const setupRequestInterceptor = (client) => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      
+      // Add request timestamp for performance monitoring
+      config.metadata = { startTime: Date.now() };
+      
+      // Log request in development
+      logRequest(config.method, config.url, config);
+      
       return config;
     },
     (error) => Promise.reject(error)
@@ -61,10 +93,17 @@ const setupRequestInterceptor = (client) => {
 
 const setupResponseInterceptor = (client) => {
   client.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      // Log response time in development
+      if (import.meta.env.MODE !== 'production' && response.config.metadata) {
+        const duration = Date.now() - response.config.metadata.startTime;
+        console.log(`✅ API Response (${duration}ms): ${response.status} ${response.config.url}`);
+      }
+      return response;
+    },
     (error) => {
       // Log the full error for debugging
-      console.error('API Error Interceptor:', {
+      logError('error', 'API Error Interceptor:', {
         message: error.message,
         code: error.code,
         config: {
@@ -73,15 +112,12 @@ const setupResponseInterceptor = (client) => {
           baseURL: error.config?.baseURL,
           params: error.config?.params,
           data: error.config?.data,
-          headers: error.config?.headers
         },
         response: error.response ? {
           status: error.response.status,
           statusText: error.response.statusText,
           data: error.response.data,
-          headers: error.response.headers
         } : 'No response received',
-        request: error.request ? 'Request was made but no response received' : 'No request was made'
       });
 
       // Handle 401 Unauthorized
@@ -146,19 +182,27 @@ const setupResponseInterceptor = (client) => {
   );
 };
 
+/* -------------------------------------------------------------------------- */
+/*                         API CLIENT CLASS                                   */
+/* -------------------------------------------------------------------------- */
 
-// --- API Client Class for Master Data/General (using API_BASE_URL) ---
 class ApiClient {
-  constructor(baseURL) {
+  constructor(baseURL, timeout = 30000) {
     this.client = axios.create({
-      baseURL: baseURL, // Now set to '/api' or '/Transaction'
+      baseURL: baseURL,
+      timeout: timeout, // 30 seconds default
       headers: { "Content-Type": "application/json" },
     });
+
+    this.cancelTokens = new Map();
 
     setupRequestInterceptor(this.client);
     setupResponseInterceptor(this.client);
   }
-// ... rest of the class methods (setSession, get, post, etc.) ...
+
+  /**
+   * Set session token and expiration
+   */
   setSession(token, expiresIn = 3600) {
     const session = {
       token,
@@ -171,40 +215,116 @@ class ApiClient {
   clearSession = clearSession;
   isAuthenticated = () => !!getSessionToken();
 
-  get(endpoint, options = {}) {
-    return this.client.get(endpoint, options);
-  }
-
-  post(endpoint, data, options = {}) {
-    return this.client.post(endpoint, data, options);
-  }
-
-  put(endpoint, data, options = {}) {
-    return this.client.put(endpoint, data, options);
-  }
-
-  delete(endpoint, options = {}) {
-    return this.client.delete(endpoint, options);
-  }
-
-  patch(endpoint, data, options = {}) {
-    return this.client.patch(endpoint, data, options);
-  }
-}
-
-
-// --- Transaction Client Class (using TRANSACTION_BASE_URL) ---
-class TransactionClient extends ApiClient {
-    constructor() {
-        // This super call now uses '/Transaction'
-        super(TRANSACTION_BASE_URL);
+  /**
+   * Create a cancellable request
+   * @param {string} key - Unique key for this request
+   */
+  createCancelToken(key) {
+    // Cancel previous request with same key
+    if (this.cancelTokens.has(key)) {
+      this.cancelTokens.get(key).cancel('Request superseded');
     }
+    
+    const source = axios.CancelToken.source();
+    this.cancelTokens.set(key, source);
+    return source.token;
+  }
+
+  /**
+   * Cancel a specific request
+   */
+  cancelRequest(key) {
+    if (this.cancelTokens.has(key)) {
+      this.cancelTokens.get(key).cancel('Request cancelled by user');
+      this.cancelTokens.delete(key);
+    }
+  }
+
+  /**
+   * GET request
+   */
+  get(endpoint, options = {}) {
+    const { cancelKey, ...axiosOptions } = options;
+    
+    if (cancelKey) {
+      axiosOptions.cancelToken = this.createCancelToken(cancelKey);
+    }
+    
+    return this.client.get(endpoint, axiosOptions);
+  }
+
+  /**
+   * POST request
+   */
+  post(endpoint, data, options = {}) {
+    const { cancelKey, ...axiosOptions } = options;
+    
+    if (cancelKey) {
+      axiosOptions.cancelToken = this.createCancelToken(cancelKey);
+    }
+    
+    return this.client.post(endpoint, data, axiosOptions);
+  }
+
+  /**
+   * PUT request
+   */
+  put(endpoint, data, options = {}) {
+    const { cancelKey, ...axiosOptions } = options;
+    
+    if (cancelKey) {
+      axiosOptions.cancelToken = this.createCancelToken(cancelKey);
+    }
+    
+    return this.client.put(endpoint, data, axiosOptions);
+  }
+
+  /**
+   * DELETE request
+   */
+  delete(endpoint, options = {}) {
+    const { cancelKey, ...axiosOptions } = options;
+    
+    if (cancelKey) {
+      axiosOptions.cancelToken = this.createCancelToken(cancelKey);
+    }
+    
+    return this.client.delete(endpoint, axiosOptions);
+  }
+
+  /**
+   * PATCH request
+   */
+  patch(endpoint, data, options = {}) {
+    const { cancelKey, ...axiosOptions } = options;
+    
+    if (cancelKey) {
+      axiosOptions.cancelToken = this.createCancelToken(cancelKey);
+    }
+    
+    return this.client.patch(endpoint, data, axiosOptions);
+  }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                         TRANSACTION CLIENT CLASS                           */
+/* -------------------------------------------------------------------------- */
+
+class TransactionClient extends ApiClient {
+  constructor() {
+    // Uses /api/Transaction as base
+    // The nested /Transaction path is handled in Transactions.js
+    super(TRANSACTION_BASE_URL);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                         EXPORT GLOBAL INSTANCES                            */
+/* -------------------------------------------------------------------------- */
 
 // ✅ Create and export global instances
 export const apiClient = new ApiClient(API_BASE_URL);
 export const transactionsClient = new TransactionClient();
 
-export { axios }; 
+export { axios };
 export default apiClient;
