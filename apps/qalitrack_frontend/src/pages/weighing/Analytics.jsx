@@ -13,10 +13,11 @@ import {
 
 const YELLOW = "#facc15"
 const YELLOW_LIGHT = "#fde68a"
+const YELLOW_BG = "#fffbeb"
 
 export default function Analytics({ transactions = [] }) {
   // =========================
-  // BASIC METRICS
+  // CORE METRICS (shared truth)
   // =========================
   const totalTransactions = transactions.length
 
@@ -35,7 +36,7 @@ export default function Analytics({ transactions = [] }) {
   ).length
 
   // =========================
-  // STATUS METRICS
+  // STATUS (same as reports)
   // =========================
   const statusCounts = transactions.reduce((acc, t) => {
     const key = t.status || "UNKNOWN"
@@ -52,10 +53,7 @@ export default function Analytics({ transactions = [] }) {
       : 0
 
   const statusChartData = Object.entries(statusCounts).map(
-    ([status, count]) => ({
-      name: status,
-      value: count,
-    })
+    ([name, value]) => ({ name, value })
   )
 
   // =========================
@@ -71,7 +69,7 @@ export default function Analytics({ transactions = [] }) {
   )
 
   // =========================
-  // TOP DRIVERS
+  // TOP DRIVERS (same logic as DriverReport)
   // =========================
   const topDrivers = Object.values(
     transactions.reduce((acc, t) => {
@@ -90,38 +88,28 @@ export default function Analytics({ transactions = [] }) {
   const weightByCommodity = Object.values(
     transactions.reduce((acc, t) => {
       const commodity = t.commodityName || "Unknown"
-      acc[commodity] = acc[commodity] || {
-        name: commodity,
-        weight: 0,
-      }
+      acc[commodity] = acc[commodity] || { name: commodity, weight: 0 }
       acc[commodity].weight += t.netWeight || 0
       return acc
     }, {})
   ).sort((a, b) => b.weight - a.weight)
 
   return (
-    <div className="space-y-6">
-      {/* KPI CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
-        <StatCard title="Transactions" value={totalTransactions} />
-        <StatCard
-          title="Total Net Weight (kg)"
-          value={totalNetWeight.toLocaleString()}
-        />
-        <StatCard
-          title="Avg Net Weight"
-          value={avgNetWeight.toLocaleString()}
-        />
-        <StatCard title="Today" value={todayCount} />
-        <StatCard title="Completed" value={completedCount} />
-        <StatCard title="Completion Rate" value={`${completionRate}%`} />
+    <div className="space-y-5">
+      {/* KPI STRIP */}
+      <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
+        <KPI label="Transactions" value={totalTransactions} />
+        <KPI label="Total Weight" value={totalNetWeight.toLocaleString()} />
+        <KPI label="Avg Weight" value={avgNetWeight.toLocaleString()} />
+        <KPI label="Today" value={todayCount} />
+        <KPI label="Completed" value={completedCount} />
+        <KPI label="Completion %" value={`${completionRate}%`} />
       </div>
 
-      {/* CHARTS ROW 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Transactions per Day */}
+      {/* ROW 1 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <ChartCard title="Transactions per Day">
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart data={transactionsByDay}>
               <XAxis dataKey="day" />
               <YAxis allowDecimals={false} />
@@ -131,23 +119,20 @@ export default function Analytics({ transactions = [] }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        {/* Status Pie */}
         <ChartCard title="Transactions by Status">
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie
                 data={statusChartData}
                 dataKey="value"
                 nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={95}
+                outerRadius={90}
                 label
               >
-                {statusChartData.map((_, index) => (
+                {statusChartData.map((_, i) => (
                   <Cell
-                    key={index}
-                    fill={index % 2 === 0 ? YELLOW : YELLOW_LIGHT}
+                    key={i}
+                    fill={i % 2 === 0 ? YELLOW : YELLOW_LIGHT}
                   />
                 ))}
               </Pie>
@@ -157,23 +142,21 @@ export default function Analytics({ transactions = [] }) {
         </ChartCard>
       </div>
 
-      {/* CHARTS ROW 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Drivers */}
-        <ChartCard title="Top Drivers by Trips">
-          <ResponsiveContainer width="100%" height={280}>
+      {/* ROW 2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <ChartCard title="Top Drivers">
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart data={topDrivers} layout="vertical">
               <XAxis type="number" allowDecimals={false} />
-              <YAxis type="category" dataKey="name" width={120} />
+              <YAxis type="category" dataKey="name" width={110} />
               <Tooltip />
               <Bar dataKey="trips" fill={YELLOW} radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        {/* Commodity Weight */}
         <ChartCard title="Net Weight by Commodity">
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart data={weightByCommodity}>
               <XAxis dataKey="name" />
               <YAxis />
@@ -188,23 +171,23 @@ export default function Analytics({ transactions = [] }) {
 }
 
 /* =========================
-   REUSABLE UI PIECES
+   UI ATOMS
 ========================= */
 
-function StatCard({ title, value }) {
+function KPI({ label, value }) {
   return (
-    <div className="bg-white rounded shadow p-4">
-      <p className="text-xs text-gray-500">{title}</p>
-      <p className="text-2xl font-semibold">{value}</p>
+    <div className="bg-yellow-50 border rounded px-3 py-2">
+      <p className="text-[11px] text-gray-500 uppercase">{label}</p>
+      <p className="text-lg font-semibold">{value}</p>
     </div>
   )
 }
 
 function ChartCard({ title, children }) {
   return (
-    <div className="bg-white rounded shadow p-4">
-      <h3 className="font-semibold mb-4">{title}</h3>
-      {children}
+    <div className="bg-white border rounded p-4">
+      <h3 className="text-sm font-semibold mb-3">{title}</h3>
+      <div className="bg-[#fffbeb] rounded p-2">{children}</div>
     </div>
   )
 }
