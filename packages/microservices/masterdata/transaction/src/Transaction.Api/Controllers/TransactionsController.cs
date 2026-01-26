@@ -40,8 +40,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Get transaction by ID (TicketID)
     /// </summary>
-    [HttpGet("{ticketId:int}")]
-    public async Task<IActionResult> GetById(int ticketId)
+    [HttpGet("{ticketId}")]
+    public async Task<IActionResult> GetById(string ticketId)
     {
         try
         {
@@ -104,8 +104,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Get incomplete transactions by vehicle ID
     /// </summary>
-    [HttpGet("incomplete/vehicle-id/{vehicleId:int}")]
-    public async Task<IActionResult> GetIncompleteByVehicleId(int vehicleId)
+    [HttpGet("incomplete/vehicle-id/{vehicleId}")]
+    public async Task<IActionResult> GetIncompleteByVehicleId(string vehicleId)
     {
         try
         {
@@ -145,8 +145,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Create a new transaction
     /// </summary>
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTransactionDto request)
+    [HttpPost("Transaction")]
+    public async Task<IActionResult> Create([FromBody] CreateTransactionRequest request)
     {
         try
         {
@@ -155,7 +155,7 @@ public class TransactionsController : BaseController
                 return BadRequest(ModelState);
             }
 
-            var transaction = await _transactionService.CreateAsync(request);
+            var transaction = await _transactionService.CreateAsync(request.Request);
             return CreatedAtAction(nameof(GetById), new { ticketId = transaction.TicketID }, transaction);
         }
         catch (Exception ex)
@@ -252,8 +252,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Get reweigh records for a transaction
     /// </summary>
-    [HttpGet("{ticketId:int}/reweigh-records")]
-    public async Task<IActionResult> GetReweighRecords(int ticketId)
+    [HttpGet("{ticketId}/reweigh-records")]
+    public async Task<IActionResult> GetReweighRecords(string ticketId)
     {
         try
         {
@@ -270,8 +270,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Update an existing transaction
     /// </summary>
-    [HttpPut("{ticketId:int}")]
-    public async Task<IActionResult> Update(int ticketId, [FromBody] UpdateTransactionDto request)
+    [HttpPut("{ticketId}")]
+    public async Task<IActionResult> Update(string ticketId, [FromBody] UpdateTransactionDto request)
     {
         try
         {
@@ -298,8 +298,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Delete a transaction
     /// </summary>
-    [HttpDelete("{ticketId:int}")]
-    public async Task<IActionResult> Delete(int ticketId)
+    [HttpDelete("{ticketId}")]
+    public async Task<IActionResult> Delete(string ticketId)
     {
         try
         {
@@ -340,4 +340,10 @@ public class TransactionsController : BaseController
             return InternalServerError("An error occurred while checking receipt number");
         }
     }
+}
+
+// Wrapper class for the request with nested structure
+public class CreateTransactionRequest
+{
+    public CreateTransactionDto Request { get; set; } = new();
 }

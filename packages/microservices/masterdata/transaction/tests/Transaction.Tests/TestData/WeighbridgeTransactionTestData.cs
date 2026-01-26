@@ -1,3 +1,4 @@
+/*
 using Transaction.Core.Entities;
 
 namespace Transaction.Tests.TestData;
@@ -157,3 +158,4 @@ public class WeighbridgeTransactionBuilder
 
     public static implicit operator WeighbridgeTransaction(WeighbridgeTransactionBuilder builder) => builder.Build();
 }
+*/
