@@ -1,3 +1,6 @@
+// ============================================
+// TransactionsController.cs - Updated Controller
+// ============================================
 using Microsoft.AspNetCore.Mvc;
 using Transaction.Core.DTOs;
 using Transaction.Core.Interfaces;
@@ -35,14 +38,14 @@ public class TransactionsController : BaseController
     }
 
     /// <summary>
-    /// Get transaction by ID (includes image URLs)
+    /// Get transaction by ID (TicketID)
     /// </summary>
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id)
+    [HttpGet("{ticketId:int}")]
+    public async Task<IActionResult> GetById(int ticketId)
     {
         try
         {
-            var transaction = await _transactionService.GetByIdAsync(id);
+            var transaction = await _transactionService.GetByIdAsync(ticketId);
             if (transaction == null)
             {
                 return NotFound("Transaction not found");
@@ -52,7 +55,7 @@ public class TransactionsController : BaseController
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting transaction with id {Id}", id);
+            _logger.LogError(ex, "Error getting transaction with TicketID {TicketId}", ticketId);
             return InternalServerError("An error occurred while retrieving transaction");
         }
     }
@@ -81,52 +84,6 @@ public class TransactionsController : BaseController
     }
 
     /// <summary>
-    /// Get transaction with weighing records
-    /// </summary>
-    [HttpGet("{id}/weighing-records")]
-    public async Task<IActionResult> GetWithWeighingRecords(string id)
-    {
-        try
-        {
-            var transaction = await _transactionService.GetWithWeighingRecordsAsync(id);
-            if (transaction == null)
-            {
-                return NotFound("Transaction not found");
-            }
-
-            return Ok(transaction);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting transaction with weighing records for id {Id}", id);
-            return InternalServerError("An error occurred while retrieving transaction");
-        }
-    }
-
-    /// <summary>
-    /// Get transaction with audit logs
-    /// </summary>
-    [HttpGet("{id}/audit-logs")]
-    public async Task<IActionResult> GetWithAuditLogs(string id)
-    {
-        try
-        {
-            var transaction = await _transactionService.GetWithAuditLogsAsync(id);
-            if (transaction == null)
-            {
-                return NotFound("Transaction not found");
-            }
-
-            return Ok(transaction);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting transaction with audit logs for id {Id}", id);
-            return InternalServerError("An error occurred while retrieving transaction");
-        }
-    }
-
-    /// <summary>
     /// Get incomplete transactions by vehicle number plate
     /// </summary>
     [HttpGet("incomplete/vehicle/{noPlate}")]
@@ -147,8 +104,8 @@ public class TransactionsController : BaseController
     /// <summary>
     /// Get incomplete transactions by vehicle ID
     /// </summary>
-    [HttpGet("incomplete/vehicle-id/{vehicleId}")]
-    public async Task<IActionResult> GetIncompleteByVehicleId(string vehicleId)
+    [HttpGet("incomplete/vehicle-id/{vehicleId:int}")]
+    public async Task<IActionResult> GetIncompleteByVehicleId(int vehicleId)
     {
         try
         {
@@ -186,13 +143,10 @@ public class TransactionsController : BaseController
     }
 
     /// <summary>
-    /// Create a new transaction with optional images
+    /// Create a new transaction
     /// </summary>
     [HttpPost]
-    [Consumes("multipart/form-data")]
-    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] // 10MB limit
-    [RequestSizeLimit(10485760)] // 10MB limit
-    public async Task<IActionResult> Create([FromForm] CreateTransactionDto request)
+    public async Task<IActionResult> Create([FromBody] CreateTransactionDto request)
     {
         try
         {
@@ -202,7 +156,7 @@ public class TransactionsController : BaseController
             }
 
             var transaction = await _transactionService.CreateAsync(request);
-            return CreatedAtAction(nameof(GetById), new { id = transaction.Id }, transaction);
+            return CreatedAtAction(nameof(GetById), new { ticketId = transaction.TicketID }, transaction);
         }
         catch (Exception ex)
         {
@@ -212,57 +166,30 @@ public class TransactionsController : BaseController
     }
 
     /// <summary>
-    /// Update transaction images
+    /// Add second weight to an existing transaction
     /// </summary>
-    [HttpPut("{id}/images")]
-    [Consumes("multipart/form-data")]
-    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)]
-    [RequestSizeLimit(10485760)]
-    public async Task<IActionResult> UpdateImages(string id, [FromForm] UpdateTransactionImagesDto request)
+    [HttpPost("add-second-weight")]
+    public async Task<IActionResult> AddSecondWeight([FromBody] AddSecondWeightDto request)
     {
         try
         {
-            request.TransactionId = id;
-            var transaction = await _transactionService.UpdateTransactionImagesAsync(request);
+            var transaction = await _transactionService.AddSecondWeightAsync(request);
             if (transaction == null)
             {
                 return NotFound("Transaction not found");
             }
 
-            return Ok(transaction, "Transaction images updated successfully");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating transaction images for id {Id}", id);
-            return InternalServerError("An error occurred while updating transaction images");
-        }
-    }
-
-    /// <summary>
-    /// Add a weighing to an existing transaction
-    /// </summary>
-    [HttpPost("add-weighing")]
-    public async Task<IActionResult> AddWeighing([FromBody] AddWeighingDto request)
-    {
-        try
-        {
-            var transaction = await _transactionService.AddWeighingAsync(request);
-            if (transaction == null)
-            {
-                return NotFound("Transaction not found");
-            }
-
-            return Ok(transaction, "Weighing added successfully");
+            return Ok(transaction, "Second weight added successfully");
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Invalid operation when adding weighing to transaction {TransactionId}", request.TransactionId);
+            _logger.LogWarning(ex, "Invalid operation when adding second weight to transaction {TicketID}", request.TicketID);
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error adding weighing to transaction {TransactionId}", request.TransactionId);
-            return InternalServerError("An error occurred while adding weighing");
+            _logger.LogError(ex, "Error adding second weight to transaction {TicketID}", request.TicketID);
+            return InternalServerError("An error occurred while adding second weight");
         }
     }
 
@@ -284,12 +211,12 @@ public class TransactionsController : BaseController
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Invalid operation when completing transaction {TransactionId}", request.TransactionId);
+            _logger.LogWarning(ex, "Invalid operation when completing transaction {TicketID}", request.TicketID);
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error completing transaction {TransactionId}", request.TransactionId);
+            _logger.LogError(ex, "Error completing transaction {TicketID}", request.TicketID);
             return InternalServerError("An error occurred while completing transaction");
         }
     }
@@ -312,127 +239,43 @@ public class TransactionsController : BaseController
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Invalid operation when requesting reweigh for transaction {TransactionId}", request.TransactionId);
+            _logger.LogWarning(ex, "Invalid operation when requesting reweigh for transaction {TicketID}", request.TicketID);
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error requesting reweigh for transaction {TransactionId}", request.TransactionId);
+            _logger.LogError(ex, "Error requesting reweigh for transaction {TicketID}", request.TicketID);
             return InternalServerError("An error occurred while requesting reweigh");
-        }
-    }
-
-    /// <summary>
-    /// Start a reweigh process for a transaction
-    /// </summary>
-    [HttpPost("{transactionId}/start-reweigh")]
-    public async Task<IActionResult> StartReweigh(string transactionId, [FromBody] StartReweighDto dto)
-    {
-        try
-        {
-            var result = await _transactionService.StartReweighAsync(transactionId, dto.StartedBy);
-            if (result == null)
-            {
-                return NotFound("Transaction not found");
-            }
-
-            return Ok(result, "Reweigh started successfully");
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Cannot start reweigh for transaction {TransactionId}", transactionId);
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error starting reweigh for transaction {TransactionId}", transactionId);
-            return InternalServerError("An error occurred while starting reweigh");
-        }
-    }
-
-    /// <summary>
-    /// Add a weight measurement during reweigh
-    /// </summary>
-    [HttpPost("add-reweigh-weight")]
-    public async Task<IActionResult> AddReweighWeight([FromBody] AddReweighWeightDto dto)
-    {
-        try
-        {
-            var result = await _transactionService.AddReweighWeightAsync(dto);
-            return Ok(result, "Weight added to reweigh successfully");
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogWarning(ex, "Invalid arguments when adding reweigh weight for transaction {TransactionId}", dto.TransactionId);
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Cannot add weight to reweigh for transaction {TransactionId}", dto.TransactionId);
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error adding weight to reweigh for transaction {TransactionId}", dto.TransactionId);
-            return InternalServerError("An error occurred while adding weight to reweigh");
-        }
-    }
-
-    /// <summary>
-    /// Complete a reweigh process
-    /// </summary>
-    [HttpPost("complete-reweigh")]
-    public async Task<IActionResult> CompleteReweigh([FromBody] CompleteReweighDto dto)
-    {
-        try
-        {
-            var result = await _transactionService.CompleteReweighAsync(dto);
-            return Ok(result, "Reweigh completed successfully");
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogWarning(ex, "Invalid arguments when completing reweigh for transaction {TransactionId}", dto.TransactionId);
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Cannot complete reweigh for transaction {TransactionId}", dto.TransactionId);
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error completing reweigh for transaction {TransactionId}", dto.TransactionId);
-            return InternalServerError("An error occurred while completing reweigh");
         }
     }
 
     /// <summary>
     /// Get reweigh records for a transaction
     /// </summary>
-    [HttpGet("{transactionId}/reweigh-records")]
-    public async Task<IActionResult> GetReweighRecords(string transactionId)
+    [HttpGet("{ticketId:int}/reweigh-records")]
+    public async Task<IActionResult> GetReweighRecords(int ticketId)
     {
         try
         {
-            var records = await _transactionService.GetReweighRecordsAsync(transactionId);
+            var records = await _transactionService.GetReweighRecordsAsync(ticketId);
             return Ok(records);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting reweigh records for transaction {TransactionId}", transactionId);
+            _logger.LogError(ex, "Error getting reweigh records for transaction {TicketID}", ticketId);
             return InternalServerError("An error occurred while retrieving reweigh records");
         }
     }
 
     /// <summary>
-    /// Update an existing transaction (only if not completed)
+    /// Update an existing transaction
     /// </summary>
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateTransactionDto request)
+    [HttpPut("{ticketId:int}")]
+    public async Task<IActionResult> Update(int ticketId, [FromBody] UpdateTransactionDto request)
     {
         try
         {
-            var transaction = await _transactionService.UpdateAsync(id, request);
+            var transaction = await _transactionService.UpdateAsync(ticketId, request);
             if (transaction == null)
             {
                 return NotFound("Transaction not found");
@@ -442,25 +285,25 @@ public class TransactionsController : BaseController
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Invalid operation when updating transaction {Id}", id);
+            _logger.LogWarning(ex, "Invalid operation when updating transaction {TicketID}", ticketId);
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating transaction with id {Id}", id);
+            _logger.LogError(ex, "Error updating transaction with TicketID {TicketID}", ticketId);
             return InternalServerError("An error occurred while updating transaction");
         }
     }
 
     /// <summary>
-    /// Delete a transaction (only if not completed)
+    /// Delete a transaction
     /// </summary>
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id)
+    [HttpDelete("{ticketId:int}")]
+    public async Task<IActionResult> Delete(int ticketId)
     {
         try
         {
-            var result = await _transactionService.DeleteAsync(id);
+            var result = await _transactionService.DeleteAsync(ticketId);
             if (!result)
             {
                 return NotFound("Transaction not found");
@@ -470,12 +313,12 @@ public class TransactionsController : BaseController
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Invalid operation when deleting transaction {Id}", id);
+            _logger.LogWarning(ex, "Invalid operation when deleting transaction {TicketID}", ticketId);
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting transaction with id {Id}", id);
+            _logger.LogError(ex, "Error deleting transaction with TicketID {TicketID}", ticketId);
             return InternalServerError("An error occurred while deleting transaction");
         }
     }

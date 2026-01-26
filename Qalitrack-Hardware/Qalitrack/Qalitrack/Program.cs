@@ -66,7 +66,7 @@ var runtimeConfig = new RuntimeConfiguration();
 // Load defaults from appsettings.json (compiled with app)
 if (builder.Configuration.GetSection("TcpListener").Exists())
 {
-    builder.Configuration.Bind("TcpListener", runtimeConfig.TcpListener.TcpListener);
+    builder.Configuration.Bind("TcpListener", runtimeConfig.TcpListener);
 }
 if (builder.Configuration.GetSection("CameraSettings").Exists())
 {
@@ -74,7 +74,10 @@ if (builder.Configuration.GetSection("CameraSettings").Exists())
 }
 
 // Create temporary logger for config loading
-var tempLogger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<RuntimeConfigurationManager>();
+var tempLoggerFactory = LoggerFactory.Create(b => b.AddConsole());
+var tempLogger = tempLoggerFactory.CreateLogger<RuntimeConfigurationManager>();
+
+// Create and register ConfigurationManager with auto-reload support
 var configManager = new RuntimeConfigurationManager(tempLogger);
 
 // Load from external config file (NOT compiled - can change without rebuild)
@@ -85,22 +88,16 @@ runtimeConfig = configManager.LoadConfiguration(runtimeConfig);
 var tcpIp = Environment.GetEnvironmentVariable("QALITRACK_TCP_IP");
 if (!string.IsNullOrWhiteSpace(tcpIp))
 {
-    runtimeConfig.TcpListener.TcpListener.IpAddress = tcpIp;
+    runtimeConfig.TcpListener.IpAddress = tcpIp;
     tempLogger.LogInformation("TCP IP overridden from environment: {ip}", tcpIp);
 }
 
 var tcpPort = Environment.GetEnvironmentVariable("QALITRACK_TCP_PORT");
 if (!string.IsNullOrWhiteSpace(tcpPort) && int.TryParse(tcpPort, out int port))
 {
-    runtimeConfig.TcpListener.TcpListener.Port = port;
+    runtimeConfig.TcpListener.Port = port;
     tempLogger.LogInformation("TCP Port overridden from environment: {port}", port);
 }
-
-// Environment variables for camera settings can be added here if needed
-// For now, all camera configuration is done via appsettings.json or external config file
-
-// Apply TCP binding
-runtimeConfig.TcpListener.BindTcpListener();
 
 // Bind serial settings from TcpListener config if present
 if (builder.Configuration.GetSection("TcpListener:SerialPort").Exists())
@@ -161,8 +158,6 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PlatformDataService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<PlatformDataService>());
 
-// Register NprCameraService with its dependencies
-//builder.Services.AddHostedService<NprCameraService>();
 // Register CameraStreamService as a singleton and hosted service
 builder.Services.AddSingleton<CameraStreamService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<CameraStreamService>());
@@ -193,6 +188,53 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 });
 
 var app = builder.Build();
+
+// Setup configuration reload handler AFTER app is built
+var reloadLogger = app.Services.GetRequiredService<ILogger<Program>>();
+configManager.ConfigurationChanged += (newConfig) =>
+{
+    try
+    {
+        reloadLogger.LogInformation("═══════════════════════════════════════════════════════════════");
+        reloadLogger.LogInformation("Configuration file changed, reloading settings...");
+        reloadLogger.LogInformation("═══════════════════════════════════════════════════════════════");
+        
+        // Update connection settings
+        var platformService = app.Services.GetService<PlatformDataService>();
+        if (platformService != null && newConfig.TcpListener != null)
+        {
+            var newTcp = newConfig.TcpListener;
+            if (!string.IsNullOrWhiteSpace(newTcp.IpAddress))
+            {
+                reloadLogger.LogInformation("→ Updating TCP settings: {ip}:{port}", 
+                    newTcp.IpAddress, newTcp.Port);
+                platformService.ForceTcpSettings(newTcp.IpAddress, newTcp.Port);
+            }
+            
+            // Update serial settings if changed
+            if (!string.IsNullOrWhiteSpace(newTcp.SerialPort))
+            {
+                reloadLogger.LogInformation("→ Serial port updated: {port} @ {baud} baud", 
+                    newTcp.SerialPort, newTcp.BaudRate);
+            }
+        }
+
+        // Camera settings would be updated similarly
+        var cameraService = app.Services.GetService<CameraStreamService>();
+        if (cameraService != null && newConfig.CameraSettings != null)
+        {
+            reloadLogger.LogInformation("→ Camera settings updated (restart service for full effect)");
+            // Note: Full camera reload may require service restart
+        }
+        
+        reloadLogger.LogInformation("✓ Configuration reload complete");
+        reloadLogger.LogInformation("═══════════════════════════════════════════════════════════════");
+    }
+    catch (Exception ex)
+    {
+        reloadLogger.LogError(ex, "✗ Error applying configuration changes");
+    }
+};
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -234,6 +276,22 @@ else
     logger.LogWarning("Serial ports and system features may be restricted!");
 }
 
+// Log configuration file details
+logger.LogInformation("═══════════════════════════════════════════════════════════════");
+logger.LogInformation("Configuration Management:");
+logger.LogInformation("  File: {path}", configManager.GetConfigFilePath());
+logger.LogInformation("  Exists: {exists}", configManager.ConfigFileExists() ? "Yes ✓" : "No (using defaults)");
+if (configManager.ConfigFileExists())
+{
+    var lastModified = configManager.GetLastModifiedTime();
+    if (lastModified.HasValue)
+    {
+        logger.LogInformation("  Last modified: {time}", lastModified.Value.ToLocalTime());
+    }
+}
+logger.LogInformation("  Auto-reload: Enabled ✓");
+logger.LogInformation("  You can edit this file while service is running!");
+logger.LogInformation("═══════════════════════════════════════════════════════════════");
 
 app.UseResponseCompression();
 app.UseStaticFiles();
@@ -269,6 +327,7 @@ app.MapGet("/", async (HttpContext context) =>
     response.AppendLine($"Platform: {RuntimeInformation.OSDescription}");
     response.AppendLine($"Runtime:  {RuntimeInformation.FrameworkDescription}");
     response.AppendLine($"Config:   {configManager.GetConfigFilePath()}");
+    response.AppendLine($"Auto-reload: Enabled ✓ (edit config anytime!)");
     response.AppendLine();
     response.AppendLine("═══════════════════════════════════════════════════════════════");
     response.AppendLine("                    ACTIVE SERVICES");
@@ -389,3 +448,6 @@ if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 logger.LogInformation("Service configured and ready to start");
 
 app.Run();
+
+// Cleanup
+tempLoggerFactory.Dispose();

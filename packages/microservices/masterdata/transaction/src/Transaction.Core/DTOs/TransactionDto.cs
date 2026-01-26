@@ -1,79 +1,73 @@
 using Microsoft.AspNetCore.Http;
-using Transaction.Core.Entities;
 
 namespace Transaction.Core.DTOs;
 
 public class TransactionReadDto
 {
-    public string Id { get; set; } = string.Empty;
+    public int TicketID { get; set; }
     public string ReceiptNo { get; set; } = string.Empty;
-    public int ExpectedWeighings { get; set; }
-    public int CompletedWeighings { get; set; }
     
     // Weight Information
-    public decimal? NetWeight { get; set; }
-    public DateTime? NetWeightCalculatedTimestamp { get; set; }
-    
-    // All weighings in sequence
-    public List<WeighingRecordDto> WeighingRecords { get; set; } = new();
+    public string FirstWeight { get; set; } = string.Empty;
+    public string? SecondWeight { get; set; }
+    public string? NetWeight { get; set; }
     
     // Vehicle Information
-    public Guid? VehicleId { get; set; }
+    public int? VehicleID { get; set; }
     public string NoPlate { get; set; } = string.Empty;
     public string DriverName { get; set; } = string.Empty;
     
     // Commodity Information
-    public Guid? CommodityId { get; set; }
-    public string CommodityName { get; set; } = string.Empty;
+    public int? CommodityID { get; set; }
+    public string? CommodityName { get; set; }
     
     // Supplier Information
-    public Guid? SupplierId { get; set; }
-    public string SupplierName { get; set; } = string.Empty;
+    public int? SupplierID { get; set; }
+    public string? SupplierName { get; set; }
     
     // Customer Information
-    public Guid? CustomerId { get; set; }
-    public string CustomerName { get; set; } = string.Empty;
+    public int? CustomerID { get; set; }
+    public string? CustomerName { get; set; }
     
     // Transporter Information
-    public Guid TransporterId { get; set; }
+    public int TransporterID { get; set; }
     public string TransporterName { get; set; } = string.Empty;
     
     // Origin and Destination
-    public Guid? OriginId { get; set; }
-    public string OriginName { get; set; } = string.Empty;
-    public Guid? DestinationId { get; set; }
-    public string DestinationName { get; set; } = string.Empty;
+    public int? OriginID { get; set; }
+    public string? OriginName { get; set; }
+    public int? DestinationID { get; set; }
+    public string? DestinationName { get; set; }
     
     // Weighbridge Information - First Weighing
-    public Guid? WeighBridgeId { get; set; }
-    public string WeighBridgeName { get; set; } = string.Empty;
-    public string ScaleName { get; set; } = string.Empty;
-    public Guid? OperatorId { get; set; }
-    public string OperatorName { get; set; } = string.Empty;
-    
-    // Image URLs - ADDED
-    public string? NprImageUrl { get; set; }
-    public string? TransactionImageUrl { get; set; }
+    public int? WeighBridgeID { get; set; }
+    public string? WeighBridgeName { get; set; }
+    public string? ScaleName { get; set; }
+    public int? OperatorID { get; set; }
+    public string? OperatorName { get; set; }
     
     // Weighbridge Information - Second Weighing
-    public string WeighBridgeName2nd { get; set; } = string.Empty;
-    public string ScaleName2nd { get; set; } = string.Empty;
-    public Guid? OperatorId2nd { get; set; }
-    public string OperatorName2nd { get; set; } = string.Empty;
+    public string? WeighBridgeName2nd { get; set; }
+    public string? ScaleName2nd { get; set; }
+    public string? OperatorID2nd { get; set; }
+    public string? OperatorName2nd { get; set; }
     
     // Operational Details
-    public WeighingDirection WeighMode { get; set; } = WeighingDirection.Unknown;
+    public string? WeighMode { get; set; }
+    public string? Operation { get; set; }
     
-    // Transaction Status
-    public string Status { get; set; } = string.Empty;
-    public bool IsCompleted { get; set; }
-    public DateTime? CompletedDate { get; set; }
+    // Date Information
+    public DateTime FirstWeightDate { get; set; }
+    public DateTime SecondWeightDate { get; set; }
     
-    // Reweigh Information
-    public bool ReweighPermissionGranted { get; set; }
-    public string? ReweighPermissionReason { get; set; }
-    public string? ChangeDescription { get; set; }
+    // Transaction Status and Modifications
+    public string Status { get; set; } = "Active";
+    public string? ReweighPermission { get; set; }
+    public string? ChangeDesc { get; set; }
     public DateTime? ChangeDate { get; set; }
+    
+    // API Integration
+    public int? ApiId { get; set; }
     
     // Base properties
     public DateTime CreatedAt { get; set; }
@@ -82,50 +76,48 @@ public class TransactionReadDto
 
 public class CreateTransactionDto
 {
-    public int ExpectedWeighings { get; set; } = 2;
-    
     // Vehicle Information (Required)
     public string NoPlate { get; set; } = string.Empty;
     public string DriverName { get; set; } = string.Empty;
-    public Guid? VehicleId { get; set; }
+    public int? VehicleID { get; set; }
+    
+    // Weight Information (First weight is required)
+    public string FirstWeight { get; set; } = string.Empty;
     
     // Transporter Information (Required)
-    public Guid TransporterId { get; set; }
+    public int TransporterID { get; set; }
     public string TransporterName { get; set; } = string.Empty;
     
     // Weighing Information (Optional)
-    public Guid? WeighBridgeId { get; set; }
-    public string WeighBridgeName { get; set; } = string.Empty;
-    public string ScaleName { get; set; } = string.Empty;
-    public Guid? OperatorId { get; set; }
-    public string OperatorName { get; set; } = string.Empty;
+    public int? WeighBridgeID { get; set; }
+    public string? WeighBridgeName { get; set; }
+    public string? ScaleName { get; set; }
+    public int? OperatorID { get; set; }
+    public string? OperatorName { get; set; }
     
     // Commodity Information (Optional)
-    public Guid? CommodityId { get; set; }
-    public string CommodityName { get; set; } = string.Empty;
+    public int? CommodityID { get; set; }
+    public string? CommodityName { get; set; }
     
     // Supplier Information (Optional)
-    public Guid? SupplierId { get; set; }
-    public string SupplierName { get; set; } = string.Empty;
+    public int? SupplierID { get; set; }
+    public string? SupplierName { get; set; }
     
     // Customer Information (Optional)
-    public Guid? CustomerId { get; set; }
-    public string CustomerName { get; set; } = string.Empty;
+    public int? CustomerID { get; set; }
+    public string? CustomerName { get; set; }
     
     // Origin and Destination (Optional)
-    public Guid? OriginId { get; set; }
-    public string OriginName { get; set; } = string.Empty;
-    public Guid? DestinationId { get; set; }
-    public string DestinationName { get; set; } = string.Empty;
+    public int? OriginID { get; set; }
+    public string? OriginName { get; set; }
+    public int? DestinationID { get; set; }
+    public string? DestinationName { get; set; }
     
-    // Direction of the weighing operation (Optional)
-    public WeighingDirection WeighMode { get; set; } = WeighingDirection.Unknown;
+    // Operational Details (Optional)
+    public string? WeighMode { get; set; }
+    public string? Operation { get; set; }
     
-    public decimal? Weight { get; set; }
     public string? Notes { get; set; }
-    // Image files - ADDED
-    public IFormFile? NprImage { get; set; }
-    public IFormFile? TransactionImage { get; set; }
 }
 
 public class UpdateTransactionDto
@@ -133,43 +125,64 @@ public class UpdateTransactionDto
     // Vehicle Information
     public string? NoPlate { get; set; }
     public string? DriverName { get; set; }
-    public Guid? VehicleId { get; set; }
+    public int? VehicleID { get; set; }
+    
+    // Weight Information
+    public string? SecondWeight { get; set; }
     
     // Commodity Information
-    public Guid? ProductId { get; set; }
-    public string? ProductName { get; set; }
+    public int? CommodityID { get; set; }
+    public string? CommodityName { get; set; }
     
     // Supplier Information
-    public Guid? SupplierId { get; set; }
+    public int? SupplierID { get; set; }
     public string? SupplierName { get; set; }
     
     // Customer Information
-    public Guid? CustomerId { get; set; }
+    public int? CustomerID { get; set; }
     public string? CustomerName { get; set; }
     
     // Transporter Information
-    public Guid? TransporterId { get; set; }
+    public int? TransporterID { get; set; }
     public string? TransporterName { get; set; }
     
     // Origin and Destination
-    public Guid? OriginId { get; set; }
+    public int? OriginID { get; set; }
     public string? OriginName { get; set; }
-    public Guid? DestinationId { get; set; }
+    public int? DestinationID { get; set; }
     public string? DestinationName { get; set; }
     
-    // Direction of the weighing operation
-    public WeighingDirection? WeighMode { get; set; }
+    // Weighbridge Information - Second Weighing
+    public string? WeighBridgeName2nd { get; set; }
+    public string? ScaleName2nd { get; set; }
+    public string? OperatorID2nd { get; set; }
+    public string? OperatorName2nd { get; set; }
     
-    public string? ChangeDescription { get; set; }
+    // Operational Details
+    public string? WeighMode { get; set; }
+    public string? Operation { get; set; }
+    
+    public string? ChangeDesc { get; set; }
+}
+
+public class AddSecondWeightDto
+{
+    public int TicketID { get; set; }
+    public string SecondWeight { get; set; } = string.Empty;
+    public string? WeighBridgeName2nd { get; set; }
+    public string? ScaleName2nd { get; set; }
+    public string? OperatorID2nd { get; set; }
+    public string? OperatorName2nd { get; set; }
+    public string? Notes { get; set; }
 }
 
 public class CompleteTransactionDto
 {
-    public string TransactionId { get; set; } = string.Empty;
+    public int TicketID { get; set; }
 }
 
 public class RequestReweighDto
 {
-    public string TransactionId { get; set; } = string.Empty;
+    public int TicketID { get; set; }
     public string Reason { get; set; } = string.Empty;
 }
