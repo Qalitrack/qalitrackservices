@@ -21,9 +21,66 @@ export default defineConfig({
     host: true,
     
     proxy: {
-      // ✅ AUTH API (unchanged)
-      '/Auth': {
-        target: 'https://qalitrack.cseco.co.ke/api',
+      // ✅ TRANSACTION API - Most specific route first
+      '/api/Transaction': {
+        target: 'https://qalitrack.cseco.co.ke',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('❌ Transaction Proxy Error:', err.message);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
+            console.log(`📤 Transaction: ${req.method} ${req.url} → ${fullUrl}`);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log(`📥 Transaction Response: ${proxyRes.statusCode} for ${req.url}`);
+          });
+        },
+      },
+
+      // ✅ REPORTS API - For user shifts and reports
+      '/api/Reports': {
+        target: 'https://qalitrack.cseco.co.ke',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('❌ Reports Proxy Error:', err.message);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
+            console.log(`📤 Reports: ${req.method} ${req.url} → ${fullUrl}`);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log(`📥 Reports Response: ${proxyRes.statusCode} for ${req.url}`);
+          });
+        },
+      },
+
+      // ✅ ROLES API
+      '/api/Roles': {
+        target: 'https://qalitrack.cseco.co.ke',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('❌ Roles Proxy Error:', err.message);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
+            console.log(`📤 Roles: ${req.method} ${req.url} → ${fullUrl}`);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log(`📥 Roles Response: ${proxyRes.statusCode}`);
+          });
+        },
+      },
+
+      // ✅ AUTH API
+      '/api/Auth': {
+        target: 'https://qalitrack.cseco.co.ke',
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {
@@ -31,7 +88,7 @@ export default defineConfig({
             console.log('❌ Auth Proxy Error:', err.message);
           });
           proxy.on('proxyReq', (proxyReq, req, _res) => {
-            const fullUrl = `https://qalitrack.cseco.co.ke/api${req.url}`;
+            const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
             console.log(`📤 Auth: ${req.method} ${req.url} → ${fullUrl}`);
           });
           proxy.on('proxyRes', (proxyRes, req, _res) => {
@@ -40,30 +97,9 @@ export default defineConfig({
         },
       },
 
-      // ✅ TRANSACTION API (UPDATED: target to /api/transactions for gateway)
-      // TRANSACTION API - UPDATED to direct /api/Transaction
-      '/api/Transaction': {
-  target: 'https://qalitrack.cseco.co.ke',
-  changeOrigin: true,
-  secure: false,
-  rewrite: (path) => path.replace(/^\/api\/Transaction/, '/api/Transaction'), // optional, but explicit
-  configure: (proxy, _options) => {
-    proxy.on('error', (err, _req, _res) => {
-      console.log('❌ Transaction Proxy Error:', err.message);
-    });
-    proxy.on('proxyReq', (proxyReq, req, _res) => {
-      const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
-      console.log(`📤 Transaction: ${req.method} ${req.url} → ${fullUrl}`);
-    });
-    proxy.on('proxyRes', (proxyRes, req, _res) => {
-      console.log(`📥 Transaction Response: ${proxyRes.statusCode} ${proxyRes.statusMessage || ''}`);
-    });
-  },
-},
-
-      // ✅ MASTER DATA API (unchanged)
-      '/MasterData': {
-        target: 'https://qalitrack.cseco.co.ke/api',
+      // ✅ MASTER DATA API
+      '/api/MasterData': {
+        target: 'https://qalitrack.cseco.co.ke',
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {
@@ -71,7 +107,7 @@ export default defineConfig({
             console.log('❌ MasterData Proxy Error:', err.message);
           });
           proxy.on('proxyReq', (proxyReq, req, _res) => {
-            const fullUrl = `https://qalitrack.cseco.co.ke/api${req.url}`;
+            const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
             console.log(`📤 MasterData: ${req.method} ${req.url} → ${fullUrl}`);
           });
           proxy.on('proxyRes', (proxyRes, req, _res) => {
@@ -80,20 +116,65 @@ export default defineConfig({
         },
       },
 
-      // ✅ USERS API (unchanged)
+      // ✅ USERS API
+      '/api/Users': {
+        target: 'https://qalitrack.cseco.co.ke',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const fullUrl = `https://qalitrack.cseco.co.ke${req.url}`;
+            console.log(`📤 Users: ${req.method} ${req.url} → ${fullUrl}`);
+          });
+        },
+      },
+
+      // ✅ Handle old-style routes without /api prefix for backward compatibility
+      '/Reports': {
+        target: 'https://qalitrack.cseco.co.ke/api',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log(`📤 Old Reports route: ${req.method} ${req.url} → https://qalitrack.cseco.co.ke/api${req.url}`);
+          });
+        },
+      },
+
+      '/Roles': {
+        target: 'https://qalitrack.cseco.co.ke/api',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log(`📤 Old Roles route: ${req.method} ${req.url} → https://qalitrack.cseco.co.ke/api${req.url}`);
+          });
+        },
+      },
+
       '/Users': {
         target: 'https://qalitrack.cseco.co.ke/api',
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {
           proxy.on('proxyReq', (proxyReq, req, _res) => {
-            const fullUrl = `https://qalitrack.cseco.co.ke/api${req.url}`;
-            console.log(`📤 Users: ${req.method} ${req.url} → ${fullUrl}`);
+            console.log(`📤 Old Users route: ${req.method} ${req.url} → https://qalitrack.cseco.co.ke/api${req.url}`);
           });
         },
       },
 
-      // ✅ FALLBACK FOR OTHER /api ROUTES (unchanged)
+      '/MasterData': {
+        target: 'https://qalitrack.cseco.co.ke/api',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log(`📤 Old MasterData route: ${req.method} ${req.url} → https://qalitrack.cseco.co.ke/api${req.url}`);
+          });
+        },
+      },
+
+      // ✅ FALLBACK FOR OTHER /api ROUTES - Keep this last
       '/api': {
         target: 'https://qalitrack.cseco.co.ke',
         changeOrigin: true,
