@@ -78,7 +78,8 @@ namespace Transaction.Infrastructure.Data.Migrations
 
                     b.Property<string>("WeighbridgeTransactionId")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("WeighbridgeTransactionId");
 
                     b.Property<decimal?>("Weight1")
@@ -110,11 +111,13 @@ namespace Transaction.Infrastructure.Data.Migrations
                 {
                     b.Property<string>("TicketID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("TicketID");
 
                     b.Property<string>("ApiId")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("api_id");
 
                     b.Property<DateTime?>("ChangeDate")
@@ -129,7 +132,8 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnName("ChangeDesc");
 
                     b.Property<string>("CommodityID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("CommodityID");
 
                     b.Property<string>("CommodityName")
@@ -144,7 +148,8 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("CustomerID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("CustomerID");
 
                     b.Property<string>("CustomerName")
@@ -153,7 +158,8 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnName("CustomerName");
 
                     b.Property<string>("DestinationID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("DestinationID");
 
                     b.Property<string>("DestinationName")
@@ -163,8 +169,8 @@ namespace Transaction.Infrastructure.Data.Migrations
 
                     b.Property<string>("DriverName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("DriverName");
 
                     b.Property<string>("FirstWeight")
@@ -192,8 +198,8 @@ namespace Transaction.Infrastructure.Data.Migrations
 
                     b.Property<string>("NoPlate")
                         .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("character varying(7)")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("NoPlate");
 
                     b.Property<string>("Operation")
@@ -202,12 +208,13 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnName("Operation");
 
                     b.Property<string>("OperatorID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("OperatorID");
 
                     b.Property<string>("OperatorID2nd")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("OperatorID2nd");
 
                     b.Property<string>("OperatorName")
@@ -221,12 +228,13 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnName("OperatorName2nd");
 
                     b.Property<string>("OriginID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("OriginID");
 
                     b.Property<string>("OriginName")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("OriginName");
 
                     b.Property<string>("ReceiptNo")
@@ -270,7 +278,8 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnName("Status");
 
                     b.Property<string>("SupplierID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("SupplierID");
 
                     b.Property<string>("SupplierName")
@@ -280,7 +289,8 @@ namespace Transaction.Infrastructure.Data.Migrations
 
                     b.Property<string>("TransporterID")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("TransporterID");
 
                     b.Property<string>("TransporterName")
@@ -296,16 +306,18 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("VehicleID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("vehicleID");
 
                     b.Property<string>("WeighBridgeID")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("WeighBridgeID");
 
                     b.Property<string>("WeighBridgeName")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("WeighBridgeName");
 
                     b.Property<string>("WeighBridgeName2nd")

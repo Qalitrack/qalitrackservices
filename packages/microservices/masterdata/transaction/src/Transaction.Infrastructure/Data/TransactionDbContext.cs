@@ -32,10 +32,11 @@ public class TransactionDbContext : DbContext
             // Map to MySQL table name
             entity.ToTable("tickets");
             
-            // Primary Key
+            // Primary Key - Updated for GUID support
             entity.HasKey(e => e.TicketID);
             entity.Property(e => e.TicketID)
                   .HasColumnName("TicketID")
+                  .HasMaxLength(50)
                   .ValueGeneratedOnAdd();
 
             // Receipt and Identification
@@ -58,63 +59,80 @@ public class TransactionDbContext : DbContext
                   .HasMaxLength(20)
                   .HasColumnName("NetWeight");
 
-            // Vehicle Information
-            entity.Property(e => e.VehicleID).HasColumnName("vehicleID");
+            // Vehicle Information - Updated for GUID support
+            entity.Property(e => e.VehicleID)
+                  .HasMaxLength(50)
+                  .HasColumnName("vehicleID");
             entity.Property(e => e.NoPlate)
                   .IsRequired()
-                  .HasMaxLength(7)
+                  .HasMaxLength(20)  // Increased from 7 to 20
                   .HasColumnName("NoPlate");
             entity.Property(e => e.DriverName)
                   .IsRequired()
-                  .HasMaxLength(50)
+                  .HasMaxLength(100)  // Increased from 50 to 100
                   .HasColumnName("DriverName");
 
-            // Commodity Information
-            entity.Property(e => e.CommodityID).HasColumnName("CommodityID");
+            // Commodity Information - Updated for GUID support
+            entity.Property(e => e.CommodityID)
+                  .HasMaxLength(50)
+                  .HasColumnName("CommodityID");
             entity.Property(e => e.CommodityName)
                   .HasMaxLength(100)
                   .HasColumnName("CommodityName");
 
-            // Supplier Information
-            entity.Property(e => e.SupplierID).HasColumnName("SupplierID");
+            // Supplier Information - Updated for GUID support
+            entity.Property(e => e.SupplierID)
+                  .HasMaxLength(50)
+                  .HasColumnName("SupplierID");
             entity.Property(e => e.SupplierName)
                   .HasMaxLength(100)
                   .HasColumnName("SupplierName");
 
-            // Customer Information
-            entity.Property(e => e.CustomerID).HasColumnName("CustomerID");
+            // Customer Information - Updated for GUID support
+            entity.Property(e => e.CustomerID)
+                  .HasMaxLength(50)
+                  .HasColumnName("CustomerID");
             entity.Property(e => e.CustomerName)
                   .HasMaxLength(100)
                   .HasColumnName("CustomerName");
 
-            // Transporter Information
+            // Transporter Information - Updated for GUID support
             entity.Property(e => e.TransporterID)
                   .IsRequired()
+                  .HasMaxLength(50)
                   .HasColumnName("TransporterID");
             entity.Property(e => e.TransporterName)
                   .IsRequired()
                   .HasMaxLength(100)
                   .HasColumnName("TransporterName");
 
-            // Origin and Destination
-            entity.Property(e => e.OriginID).HasColumnName("OriginID");
-            entity.Property(e => e.OriginName)
+            // Origin and Destination - Updated for GUID support
+            entity.Property(e => e.OriginID)
                   .HasMaxLength(50)
+                  .HasColumnName("OriginID");
+            entity.Property(e => e.OriginName)
+                  .HasMaxLength(100)  // Increased from 50 to 100
                   .HasColumnName("OriginName");
-            entity.Property(e => e.DestinationID).HasColumnName("DestinationID");
+            entity.Property(e => e.DestinationID)
+                  .HasMaxLength(50)
+                  .HasColumnName("DestinationID");
             entity.Property(e => e.DestinationName)
                   .HasMaxLength(100)
                   .HasColumnName("DestinationName");
 
-            // Weighbridge Information - First Weighing
-            entity.Property(e => e.WeighBridgeID).HasColumnName("WeighBridgeID");
-            entity.Property(e => e.WeighBridgeName)
+            // Weighbridge Information - First Weighing - Updated for GUID support
+            entity.Property(e => e.WeighBridgeID)
                   .HasMaxLength(50)
+                  .HasColumnName("WeighBridgeID");
+            entity.Property(e => e.WeighBridgeName)
+                  .HasMaxLength(100)  // Increased from 50 to 100
                   .HasColumnName("WeighBridgeName");
             entity.Property(e => e.ScaleName)
                   .HasMaxLength(100)
                   .HasColumnName("ScaleName");
-            entity.Property(e => e.OperatorID).HasColumnName("OperatorID");
+            entity.Property(e => e.OperatorID)
+                  .HasMaxLength(50)
+                  .HasColumnName("OperatorID");
             entity.Property(e => e.OperatorName)
                   .HasMaxLength(100)
                   .HasColumnName("OperatorName");
@@ -127,7 +145,7 @@ public class TransactionDbContext : DbContext
                   .HasMaxLength(100)
                   .HasColumnName("ScaleName2nd");
             entity.Property(e => e.OperatorID2nd)
-                  .HasMaxLength(10)
+                  .HasMaxLength(50)  // Increased from 10 to 50
                   .HasColumnName("OperatorID2nd");
             entity.Property(e => e.OperatorName2nd)
                   .HasMaxLength(100)
@@ -167,8 +185,10 @@ public class TransactionDbContext : DbContext
                   .HasDefaultValueSql("CURRENT_TIMESTAMP")
                   .ValueGeneratedOnAddOrUpdate();
 
-            // API Integration
-            entity.Property(e => e.ApiId).HasColumnName("api_id");
+            // API Integration - Updated for GUID support
+            entity.Property(e => e.ApiId)
+                  .HasMaxLength(50)
+                  .HasColumnName("api_id");
 
             // Indexes
             entity.HasIndex(e => e.ReceiptNo);
@@ -184,8 +204,9 @@ public class TransactionDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             
-            // Change foreign key to match the new int type
+            // Change foreign key to support GUID strings
             entity.Property(e => e.WeighbridgeTransactionId)
+                  .HasMaxLength(50)
                   .HasColumnName("WeighbridgeTransactionId");
                   
             entity.Property(e => e.Status).HasMaxLength(50).IsRequired();
