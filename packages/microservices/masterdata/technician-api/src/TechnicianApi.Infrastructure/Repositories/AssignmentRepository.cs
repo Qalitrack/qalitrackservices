@@ -15,7 +15,6 @@ public class AssignmentRepository : Repository<Assignment>, IAssignmentRepositor
     public async Task<Assignment?> GetByIdWithTechnicianIdsAsync(string id)
     {
         return await _context.Assignments
-            .Include(a => a.TechnicianIds)
             .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
     }
 
@@ -88,19 +87,25 @@ public class AssignmentRepository : Repository<Assignment>, IAssignmentRepositor
 
         return existing;
     }
-
     public async Task<Assignment?> AssignTechnicianAsync(string assignmentId, string technicianId)
     {
         var assignment = await GetByIdWithTechnicianIdsAsync(assignmentId);
         if (assignment == null) return null;
 
-        // Check if already assigned
+        var entry = _context.Entry(assignment);
+        Console.WriteLine($"[ASSIGN] Loaded entity state: {entry.State} | Tracked: {entry.State != EntityState.Detached}");
+
         if (assignment.TechnicianIds.Contains(technicianId))
             return assignment;
 
+        var oldCount = assignment.TechnicianIds.Count;
         assignment.TechnicianIds.Add(technicianId);
         assignment.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+
+        Console.WriteLine($"[ASSIGN] Added technician — count now: {assignment.TechnicianIds.Count} (was {oldCount})");
+
+        var rows = await _context.SaveChangesAsync();
+        Console.WriteLine($"[ASSIGN] SaveChanges returned {rows} rows affected");
 
         return assignment;
     }
