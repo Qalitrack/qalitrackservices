@@ -6,7 +6,6 @@ import { ChevronLeft } from "lucide-react";
 export default function CustomerReport({ transactions = [], loading }) {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  // Internal pagination
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 5;
 
@@ -36,7 +35,7 @@ export default function CustomerReport({ transactions = [], loading }) {
   }, [transactions]);
 
   // =========================
-  // KPIs (NOT PAGINATED)
+  // KPIs
   // =========================
   const totalCustomers = customerSummary.length;
   const totalTransactions = customerSummary.reduce((s, c) => s + c.count, 0);
@@ -68,32 +67,16 @@ export default function CustomerReport({ transactions = [], loading }) {
   }, [selectedCustomer, transactions]);
 
   return (
-    <div className="bg-white border rounded-lg p-6">
-      {/* HEADER */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold">Customer Report</h2>
-        <p className="text-sm text-gray-600">
-          Weight breakdown per customer
-        </p>
-      </div>
-
+    <div className="bg-white border rounded-lg p-4 space-y-4">
       {/* KPIs */}
       {!selectedCustomer && (
-        <div className="flex gap-6 mb-6 flex-wrap">
-          <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Customers</p>
-            <p className="text-xl font-semibold">{totalCustomers}</p>
-          </div>
-
-          <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Transactions</p>
-            <p className="text-xl font-semibold">{totalTransactions}</p>
-          </div>
-
-          <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
-          </div>
+        <div className="grid grid-cols-3 gap-3">
+          <CompactStat label="Customers" value={totalCustomers} />
+          <CompactStat label="Transactions" value={totalTransactions} />
+          <CompactStat
+            label="Net Weight"
+            value={totalWeight.toLocaleString()}
+          />
         </div>
       )}
 
@@ -105,6 +88,7 @@ export default function CustomerReport({ transactions = [], loading }) {
             loading={loading}
             showColumns={["destinationName", "netWeight"]}
             onRowClick={(row) => setSelectedCustomer(row.destinationName)}
+            compact
           />
 
           <ReportsPagination
@@ -118,16 +102,16 @@ export default function CustomerReport({ transactions = [], loading }) {
 
       {/* DRILL-DOWN */}
       {selectedCustomer && (
-        <div>
-          <div className="flex items-center gap-3 mb-4">
+        <>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setSelectedCustomer(null)}
-              className="flex items-center gap-1 text-sm border rounded px-3 py-1"
+              className="flex items-center gap-1 text-xs border rounded px-2 py-1"
             >
-              <ChevronLeft size={16} /> Back
+              <ChevronLeft size={14} /> Back
             </button>
 
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-sm font-semibold">
               {selectedCustomer} — Loads
             </h3>
           </div>
@@ -136,9 +120,19 @@ export default function CustomerReport({ transactions = [], loading }) {
             transactions={customerRows}
             loading={loading}
             showColumns={["destinationName", "commodityName", "netWeight"]}
+            compact
           />
-        </div>
+        </>
       )}
+    </div>
+  );
+}
+
+function CompactStat({ label, value }) {
+  return (
+    <div className="bg-yellow-50 border rounded px-3 py-2">
+      <p className="text-[11px] text-gray-500 uppercase">{label}</p>
+      <p className="text-lg font-semibold leading-tight">{value}</p>
     </div>
   );
 }

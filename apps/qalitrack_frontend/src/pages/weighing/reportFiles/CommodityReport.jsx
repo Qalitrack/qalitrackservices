@@ -6,12 +6,11 @@ import { ChevronLeft } from "lucide-react";
 export default function CommodityReport({ transactions = [], loading }) {
   const [selectedCommodity, setSelectedCommodity] = useState(null);
 
-  // Internal pagination
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 5;
 
   // =========================
-  // Group Transactions by Commodity
+  // Summary
   // =========================
   const commoditySummary = useMemo(() => {
     const map = {};
@@ -36,17 +35,17 @@ export default function CommodityReport({ transactions = [], loading }) {
   }, [transactions]);
 
   // =========================
-  // KPIs (NOT PAGINATED)
+  // KPIs
   // =========================
   const totalCommodities = commoditySummary.length;
-  const totalTrips = commoditySummary.reduce((sum, c) => sum + c.trips, 0);
+  const totalTrips = commoditySummary.reduce((s, c) => s + c.trips, 0);
   const totalWeight = commoditySummary.reduce(
-    (sum, c) => sum + c.totalNetWeight,
+    (s, c) => s + c.totalNetWeight,
     0
   );
 
   // =========================
-  // Paginated Summary Rows
+  // Paginated Summary
   // =========================
   const paginatedSummaryRows = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -54,12 +53,12 @@ export default function CommodityReport({ transactions = [], loading }) {
       id: c.id,
       commodityName: c.commodityName,
       trips: c.trips,
-      netWeight: c.totalNetWeight.toFixed(2),
+      netWeight: c.totalNetWeight.toLocaleString(),
     }));
   }, [commoditySummary, currentPage]);
 
   // =========================
-  // Drill-down: Suppliers per Commodity
+  // Drill-down
   // =========================
   const commodityTransactions = useMemo(() => {
     if (!selectedCommodity) return [];
@@ -76,32 +75,16 @@ export default function CommodityReport({ transactions = [], loading }) {
   }, [selectedCommodity, transactions]);
 
   return (
-    <div className="bg-white border rounded-lg p-6">
-      {/* HEADER */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold">Commodity Report</h2>
-        <p className="text-sm text-gray-600">
-          Summary and detailed breakdown per commodity
-        </p>
-      </div>
-
+    <div className="bg-white border rounded-lg p-4 space-y-4">
       {/* KPIs */}
       {!selectedCommodity && (
-        <div className="flex gap-6 mb-6 flex-wrap">
-          <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Commodities</p>
-            <p className="text-xl font-semibold">{totalCommodities}</p>
-          </div>
-
-          <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Transactions</p>
-            <p className="text-xl font-semibold">{totalTrips}</p>
-          </div>
-
-          <div className="bg-yellow-100 p-4 rounded shadow flex-1 min-w-[150px]">
-            <p className="text-gray-500 text-sm">Total Net Weight (kg)</p>
-            <p className="text-xl font-semibold">{totalWeight.toFixed(2)}</p>
-          </div>
+        <div className="grid grid-cols-3 gap-3">
+          <CompactStat label="Commodities" value={totalCommodities} />
+          <CompactStat label="Trips" value={totalTrips} />
+          <CompactStat
+            label="Net Weight"
+            value={totalWeight.toLocaleString()}
+          />
         </div>
       )}
 
@@ -113,6 +96,7 @@ export default function CommodityReport({ transactions = [], loading }) {
             loading={loading}
             onRowClick={(row) => setSelectedCommodity(row.commodityName)}
             showColumns={["commodityName", "trips", "netWeight"]}
+            compact
           />
 
           <ReportsPagination
@@ -124,18 +108,18 @@ export default function CommodityReport({ transactions = [], loading }) {
         </>
       )}
 
-      {/* DRILL-DOWN TABLE */}
+      {/* DRILL-DOWN */}
       {selectedCommodity && (
-        <div>
-          <div className="flex items-center gap-3 mb-4">
+        <>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setSelectedCommodity(null)}
-              className="flex items-center gap-1 text-sm border rounded px-3 py-1"
+              className="flex items-center gap-1 text-xs border rounded px-2 py-1"
             >
-              <ChevronLeft size={16} /> Back
+              <ChevronLeft size={14} /> Back
             </button>
 
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-sm font-semibold">
               {selectedCommodity} — Suppliers
             </h3>
           </div>
@@ -144,9 +128,19 @@ export default function CommodityReport({ transactions = [], loading }) {
             transactions={commodityTransactions}
             loading={loading}
             showColumns={["supplier", "netWeight"]}
+            compact
           />
-        </div>
+        </>
       )}
+    </div>
+  );
+}
+
+function CompactStat({ label, value }) {
+  return (
+    <div className="bg-yellow-50 border rounded px-3 py-2">
+      <p className="text-[11px] text-gray-500 uppercase">{label}</p>
+      <p className="text-lg font-semibold leading-tight">{value}</p>
     </div>
   );
 }
