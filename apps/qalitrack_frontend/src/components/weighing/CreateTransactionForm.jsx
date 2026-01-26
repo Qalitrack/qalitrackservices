@@ -190,43 +190,45 @@ export default function CreateTransactionForm({
     if (!formData.receiptNo) return message.error("Receipt number is required");
     if (!formData.noPlate) return message.error("Vehicle plate is required");
     if (!formData.scaleName || !formData.weighBridgeId) return message.error("Please select a weighbridge scale");
-    if (!formData.transporterId) return message.error("Transporter is required (backend needs transporterID)");
+    if (!formData.transporterId) return message.error("Transporter is required");
 
     try {
       if (!isSecondWeighing) {
-        // FIRST WEIGHING - POST /Transaction
+        // FIRST WEIGHING - POST /Transaction/Transaction/Transaction
+        // ✅ Based on curl screenshot, we need to format GUIDs correctly
         const payload = {
           noPlate: formData.noPlate.toUpperCase(),
           driverName: formData.driverName || "",
-          vehicleID: formData.vehicleId ? parseInt(formData.vehicleId) : 0,
+          vehicleID: formData.vehicleId || "00000000-0000-0000-0000-000000000000",
           firstWeight: String(parseFloat(formData.firstWeight || capturedWeight || 0)),
-          transporterID: formData.transporterId ? parseInt(formData.transporterId) : 0,
+          transporterID: formData.transporterId || "00000000-0000-0000-0000-000000000000",
           transporterName: formData.transporterName || "",
-          weighBridgeID: formData.weighBridgeId ? parseInt(formData.weighBridgeId) : 0,
+          weighBridgeID: formData.weighBridgeId || "00000000-0000-0000-0000-000000000000",
           weighBridgeName: formData.weighBridgeName || formData.scaleName || "",
           scaleName: formData.scaleName || "",
-          operatorID: formData.operatorId ? parseInt(formData.operatorId) : (currentUser?.id || 0),
+          operatorID: formData.operatorId || currentUser?.id || "00000000-0000-0000-0000-000000000000",
           operatorName: formData.operatorName || currentUser?.fullName || currentUser?.name || "Operator",
-          commodityID: formData.commodityId ? parseInt(formData.commodityId) : 0,
+          commodityID: formData.commodityId || "00000000-0000-0000-0000-000000000000",
           commodityName: formData.commodityName || "",
-          supplierID: formData.supplierId ? parseInt(formData.supplierId) : 0,
+          supplierID: formData.supplierId || "00000000-0000-0000-0000-000000000000",
           supplierName: formData.supplierName || "",
-          customerID: formData.customerId ? parseInt(formData.customerId) : 0,
+          customerID: formData.customerId || "00000000-0000-0000-0000-000000000000",
           customerName: formData.customerName || "",
-          originID: formData.originId ? parseInt(formData.originId) : 0,
+          originID: formData.originId || "00000000-0000-0000-0000-000000000000",
           originName: formData.originName || "",
-          destinationID: formData.destinationId ? parseInt(formData.destinationId) : 0,
+          destinationID: formData.destinationId || "00000000-0000-0000-0000-000000000000",
           destinationName: formData.destinationName || "",
-          weighMode: formData.weighMode || "Gross/Tare",
-          operation: formData.operation || "Inbound Product Receipt",
+          weighMode: formData.weighMode || "entry",
+          operation: formData.operation || "weighing",
           notes: formData.notes || "",
         };
 
         console.log("┌───────────────────────────────────────┐");
-        console.log("│   FINAL FIRST WEIGHT PAYLOAD (SENDING)  │");
+        console.log("│   FINAL FIRST WEIGHT PAYLOAD          │");
         console.log("└───────────────────────────────────────┘");
         console.log(JSON.stringify(payload, null, 2));
 
+        // ✅ The addTransaction thunk will wrap this in { request: payload }
         const result = await dispatch(addTransaction(payload)).unwrap();
 
         console.log("┌───────────────────────────────────────┐");
@@ -236,7 +238,7 @@ export default function CreateTransactionForm({
 
         message.success("First Weight Saved! Vehicle added to queue.");
       } else {
-        // SECOND WEIGHING - POST /Transaction/add-second-weight
+        // SECOND WEIGHING - POST /Transaction/Transaction/add-second-weight
         if (!isValid) {
           message.error(errorMsg);
           return;
@@ -257,6 +259,7 @@ export default function CreateTransactionForm({
         console.log("└───────────────────────────────────────┘");
         console.log(JSON.stringify(payload, null, 2));
 
+        // ✅ The addSecondWeight thunk will wrap this in { request: payload }
         const result = await dispatch(addSecondWeight(payload)).unwrap();
 
         console.log("┌───────────────────────────────────────┐");
@@ -599,6 +602,7 @@ export default function CreateTransactionForm({
               onChange={(v) => handleChange("weighMode", v)}
               disabled={isSecondWeighing}
             >
+              <Option value="entry">Entry</Option>
               <Option value="Gross/Tare">Gross / Tare</Option>
             </Select>
           </Col>
@@ -612,6 +616,7 @@ export default function CreateTransactionForm({
               onChange={(v) => handleChange("operation", v)}
               disabled={isSecondWeighing}
             >
+              <Option value="weighing">Weighing</Option>
               <Option value="Inbound Product Receipt">Inbound Receipt</Option>
               <Option value="Outbound Product Dispatch">Outbound Dispatch</Option>
             </Select>
