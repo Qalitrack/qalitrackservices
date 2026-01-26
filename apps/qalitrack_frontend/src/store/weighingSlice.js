@@ -18,8 +18,7 @@ import {
     checkReceipt,
     requestReweigh,
     getReweighRecords,
-} from "../api/MasterData/Transaction";
-
+} from "../api/Transaction/Transaction";
 // ─────────────────────────────────────────────────────────────────────────────
 // SIMULATED WEIGHT
 // ─────────────────────────────────────────────────────────────────────────────
