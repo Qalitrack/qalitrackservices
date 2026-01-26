@@ -4,7 +4,7 @@ namespace Transaction.Core.DTOs;
 
 public class TransactionReadDto
 {
-    public int TicketID { get; set; }
+    public string TicketID { get; set; } = string.Empty;
     public string ReceiptNo { get; set; } = string.Empty;
     
     // Weight Information
@@ -13,37 +13,37 @@ public class TransactionReadDto
     public string? NetWeight { get; set; }
     
     // Vehicle Information
-    public int? VehicleID { get; set; }
+    public string? VehicleID { get; set; }
     public string NoPlate { get; set; } = string.Empty;
     public string DriverName { get; set; } = string.Empty;
     
     // Commodity Information
-    public int? CommodityID { get; set; }
+    public string? CommodityID { get; set; }
     public string? CommodityName { get; set; }
     
     // Supplier Information
-    public int? SupplierID { get; set; }
+    public string? SupplierID { get; set; }
     public string? SupplierName { get; set; }
     
     // Customer Information
-    public int? CustomerID { get; set; }
+    public string? CustomerID { get; set; }
     public string? CustomerName { get; set; }
     
     // Transporter Information
-    public int TransporterID { get; set; }
+    public string TransporterID { get; set; } = string.Empty;
     public string TransporterName { get; set; } = string.Empty;
     
     // Origin and Destination
-    public int? OriginID { get; set; }
+    public string? OriginID { get; set; }
     public string? OriginName { get; set; }
-    public int? DestinationID { get; set; }
+    public string? DestinationID { get; set; }
     public string? DestinationName { get; set; }
     
     // Weighbridge Information - First Weighing
-    public int? WeighBridgeID { get; set; }
+    public string? WeighBridgeID { get; set; }
     public string? WeighBridgeName { get; set; }
     public string? ScaleName { get; set; }
-    public int? OperatorID { get; set; }
+    public string? OperatorID { get; set; }
     public string? OperatorName { get; set; }
     
     // Weighbridge Information - Second Weighing
@@ -67,7 +67,7 @@ public class TransactionReadDto
     public DateTime? ChangeDate { get; set; }
     
     // API Integration
-    public int? ApiId { get; set; }
+    public string? ApiId { get; set; }
     
     // Base properties
     public DateTime CreatedAt { get; set; }
@@ -79,38 +79,38 @@ public class CreateTransactionDto
     // Vehicle Information (Required)
     public string NoPlate { get; set; } = string.Empty;
     public string DriverName { get; set; } = string.Empty;
-    public int? VehicleID { get; set; }
+    public string? VehicleID { get; set; }
     
     // Weight Information (First weight is required)
     public string FirstWeight { get; set; } = string.Empty;
     
     // Transporter Information (Required)
-    public int TransporterID { get; set; }
+    public string TransporterID { get; set; } = string.Empty;
     public string TransporterName { get; set; } = string.Empty;
     
     // Weighing Information (Optional)
-    public int? WeighBridgeID { get; set; }
+    public string? WeighBridgeID { get; set; }
     public string? WeighBridgeName { get; set; }
     public string? ScaleName { get; set; }
-    public int? OperatorID { get; set; }
+    public string? OperatorID { get; set; }
     public string? OperatorName { get; set; }
     
     // Commodity Information (Optional)
-    public int? CommodityID { get; set; }
+    public string? CommodityID { get; set; }
     public string? CommodityName { get; set; }
     
     // Supplier Information (Optional)
-    public int? SupplierID { get; set; }
+    public string? SupplierID { get; set; }
     public string? SupplierName { get; set; }
     
     // Customer Information (Optional)
-    public int? CustomerID { get; set; }
+    public string? CustomerID { get; set; }
     public string? CustomerName { get; set; }
     
     // Origin and Destination (Optional)
-    public int? OriginID { get; set; }
+    public string? OriginID { get; set; }
     public string? OriginName { get; set; }
-    public int? DestinationID { get; set; }
+    public string? DestinationID { get; set; }
     public string? DestinationName { get; set; }
     
     // Operational Details (Optional)
@@ -125,31 +125,31 @@ public class UpdateTransactionDto
     // Vehicle Information
     public string? NoPlate { get; set; }
     public string? DriverName { get; set; }
-    public int? VehicleID { get; set; }
+    public string? VehicleID { get; set; }
     
     // Weight Information
     public string? SecondWeight { get; set; }
     
     // Commodity Information
-    public int? CommodityID { get; set; }
+    public string? CommodityID { get; set; }
     public string? CommodityName { get; set; }
     
     // Supplier Information
-    public int? SupplierID { get; set; }
+    public string? SupplierID { get; set; }
     public string? SupplierName { get; set; }
     
     // Customer Information
-    public int? CustomerID { get; set; }
+    public string? CustomerID { get; set; }
     public string? CustomerName { get; set; }
     
     // Transporter Information
-    public int? TransporterID { get; set; }
+    public string? TransporterID { get; set; }
     public string? TransporterName { get; set; }
     
     // Origin and Destination
-    public int? OriginID { get; set; }
+    public string? OriginID { get; set; }
     public string? OriginName { get; set; }
-    public int? DestinationID { get; set; }
+    public string? DestinationID { get; set; }
     public string? DestinationName { get; set; }
     
     // Weighbridge Information - Second Weighing
@@ -167,7 +167,7 @@ public class UpdateTransactionDto
 
 public class AddSecondWeightDto
 {
-    public int TicketID { get; set; }
+    public string TicketID { get; set; } = string.Empty;
     public string SecondWeight { get; set; } = string.Empty;
     public string? WeighBridgeName2nd { get; set; }
     public string? ScaleName2nd { get; set; }
@@ -178,11 +178,11 @@ public class AddSecondWeightDto
 
 public class CompleteTransactionDto
 {
-    public int TicketID { get; set; }
+    public string TicketID { get; set; } = string.Empty;
 }
 
 public class RequestReweighDto
 {
-    public int TicketID { get; set; }
+    public string TicketID { get; set; } = string.Empty;
     public string Reason { get; set; } = string.Empty;
 }
