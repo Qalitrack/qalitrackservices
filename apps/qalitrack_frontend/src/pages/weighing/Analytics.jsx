@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react"
 import dayjs from "dayjs"
 import {
   BarChart,
@@ -14,140 +15,185 @@ import {
   Legend,
 } from "recharts"
 
+/* =========================
+   COLORS
+========================= */
 const YELLOW = "#facc15"
 const YELLOW_LIGHT = "#fde68a"
 const YELLOW_BG = "#fffbeb"
 const GRAY = "#9ca3af"
 
+/* =========================
+   MAIN COMPONENT
+========================= */
 export default function Analytics({ transactions = [] }) {
   /* =========================
-     CORE METRICS
-  ========================= */
-  const totalTransactions = transactions.length
+     FILTER STATES
+  ========================== */
+  const [status, setStatus] = useState("ALL")
+  const [fromDate, setFromDate] = useState("")
+  const [toDate, setToDate] = useState("")
 
-  const totalNetWeight = transactions.reduce(
+  /* =========================
+     FILTERED TRANSACTIONS
+  ========================== */
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((t) => {
+      const created = dayjs(t.createdAt)
+      if (status !== "ALL" && t.status !== status) return false
+      if (fromDate && created.isBefore(dayjs(fromDate), "day")) return false
+      if (toDate && created.isAfter(dayjs(toDate), "day")) return false
+      return true
+    })
+  }, [transactions, status, fromDate, toDate])
+
+  /* =========================
+     KPI METRICS
+  ========================== */
+  const totalTransactions = filteredTransactions.length
+  const totalNetWeight = filteredTransactions.reduce(
     (sum, t) => sum + (t.netWeight || 0),
     0
   )
-
-  const avgNetWeight =
-    totalTransactions > 0
-      ? Math.round(totalNetWeight / totalTransactions)
-      : 0
-
-  const todayCount = transactions.filter((t) =>
-    dayjs(t.createdAt).isSame(dayjs(), "day")
+  const avgWeight =
+    totalTransactions > 0 ? Math.round(totalNetWeight / totalTransactions) : 0
+  const completedCount = filteredTransactions.filter(
+    (t) => t.status === "Completed"
   ).length
-
-  /* =========================
-     STATUS
-  ========================= */
-  const statusCounts = transactions.reduce((acc, t) => {
-    const key = t.status || "UNKNOWN"
-    acc[key] = (acc[key] || 0) + 1
-    return acc
-  }, {})
-
-  const completedCount = statusCounts["Completed"] || 0
   const completionRate =
     totalTransactions > 0
       ? Math.round((completedCount / totalTransactions) * 100)
       : 0
 
-  const statusChartData = Object.entries(statusCounts).map(
-    ([name, value]) => ({ name, value })
-  )
-
   /* =========================
-     TRANSACTIONS BY DAY
-  ========================= */
-  const transactionsByDay = Object.values(
-    transactions.reduce((acc, t) => {
+     DAILY DATA
+  ========================== */
+  const dailyData = useMemo(() => {
+    const map = {}
+    filteredTransactions.forEach((t) => {
       const day = dayjs(t.createdAt).format("DD MMM")
-      acc[day] = acc[day] || { day, count: 0, weight: 0 }
-      acc[day].count += 1
-      acc[day].weight += t.netWeight || 0
-      return acc
-    }, {})
-  )
+      map[day] = map[day] || { day, count: 0, weight: 0 }
+      map[day].count++
+      map[day].weight += t.netWeight || 0
+    })
+    return Object.values(map)
+  }, [filteredTransactions])
 
   /* =========================
-     TRANSACTIONS BY HOUR
-  ========================= */
-  const transactionsByHour = Array.from({ length: 24 }, (_, h) => ({
-    hour: `${h}:00`,
-    count: transactions.filter(
-      (t) => dayjs(t.createdAt).hour() === h
-    ).length,
-  }))
+     HOURLY DATA
+  ========================== */
+  const hourlyData = useMemo(() => {
+    return Array.from({ length: 24 }, (_, h) => ({
+      hour: `${h}:00`,
+      count: filteredTransactions.filter(
+        (t) => dayjs(t.createdAt).hour() === h
+      ).length,
+    }))
+  }, [filteredTransactions])
 
   /* =========================
-     CUMULATIVE TRANSACTIONS
-  ========================= */
-  let runningTotal = 0
-  const cumulativeData = transactionsByDay.map((d) => {
-    runningTotal += d.count
-    return { day: d.day, total: runningTotal }
-  })
+     STATUS DISTRIBUTION
+  ========================== */
+  const statusData = useMemo(() => {
+    const map = {}
+    filteredTransactions.forEach((t) => {
+      const key = t.status || "Unknown"
+      map[key] = (map[key] || 0) + 1
+    })
+    return Object.entries(map).map(([name, value]) => ({ name, value }))
+  }, [filteredTransactions])
 
   /* =========================
-     STATUS TREND
-  ========================= */
-  const statusTrend = Object.values(
-    transactions.reduce((acc, t) => {
-      const day = dayjs(t.createdAt).format("DD MMM")
-      acc[day] = acc[day] || { day, Completed: 0, Pending: 0 }
-
-      if (t.status === "Completed") acc[day].Completed += 1
-      else acc[day].Pending += 1
-
-      return acc
-    }, {})
-  )
+     COMMODITY BREAKDOWN
+  ========================== */
+  const commodityData = useMemo(() => {
+    const map = {}
+    filteredTransactions.forEach((t) => {
+      const key = t.commodityName || "Unknown"
+      map[key] = map[key] || { name: key, weight: 0 }
+      map[key].weight += t.netWeight || 0
+    })
+    return Object.values(map).sort((a, b) => b.weight - a.weight)
+  }, [filteredTransactions])
 
   /* =========================
-     TOP DRIVERS
-  ========================= */
-  const topDrivers = Object.values(
-    transactions.reduce((acc, t) => {
-      const driver = t.driverName || "Unknown"
-      acc[driver] = acc[driver] || { name: driver, trips: 0 }
-      acc[driver].trips += 1
-      return acc
-    }, {})
-  )
-    .sort((a, b) => b.trips - a.trips)
-    .slice(0, 5)
+     PREVIOUS PERIOD COMPARISON
+  ========================== */
+  const comparison = useMemo(() => {
+    if (!fromDate || !toDate) return null
+
+    const range = dayjs(toDate).diff(dayjs(fromDate), "day") + 1
+    const prevFrom = dayjs(fromDate).subtract(range, "day")
+    const prevTo = dayjs(toDate).subtract(range, "day")
+
+    const prevData = transactions.filter((t) => {
+      const d = dayjs(t.createdAt)
+      return d.isAfter(prevFrom) && d.isBefore(prevTo)
+    })
+    const prevWeight = prevData.reduce((s, t) => s + (t.netWeight || 0), 0)
+
+    return {
+      weightChange:
+        prevWeight > 0
+          ? Math.round(((totalNetWeight - prevWeight) / prevWeight) * 100)
+          : 0,
+    }
+  }, [fromDate, toDate, totalNetWeight, transactions])
 
   /* =========================
-     NET WEIGHT BY COMMODITY
-  ========================= */
-  const weightByCommodity = Object.values(
-    transactions.reduce((acc, t) => {
-      const commodity = t.commodityName || "Unknown"
-      acc[commodity] = acc[commodity] || { name: commodity, weight: 0 }
-      acc[commodity].weight += t.netWeight || 0
-      return acc
-    }, {})
-  ).sort((a, b) => b.weight - a.weight)
+     EXPORT PREVIEW
+  ========================== */
+  const exportPayload = {
+    filters: { status, fromDate, toDate },
+    summary: { totalTransactions, totalNetWeight, avgWeight, completionRate },
+    data: filteredTransactions,
+  }
 
   return (
-    <div className="h-full overflow-y-auto pr-2 space-y-8">
+    <div className="h-full overflow-y-auto space-y-8 pr-2">
+      {/* FILTERS */}
+      <div className="flex flex-wrap gap-3">
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
+        >
+          <option value="ALL">All Status</option>
+          <option value="Completed">Completed</option>
+          <option value="Pending">Pending</option>
+        </select>
+
+        <input
+          type="date"
+          value={fromDate}
+          onChange={(e) => setFromDate(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
+        />
+
+        <input
+          type="date"
+          value={toDate}
+          onChange={(e) => setToDate(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
+        />
+      </div>
+
       {/* KPI STRIP */}
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
         <KPI label="Transactions" value={totalTransactions} />
         <KPI label="Total Weight" value={totalNetWeight.toLocaleString()} />
-        <KPI label="Avg Weight" value={avgNetWeight.toLocaleString()} />
-        <KPI label="Today" value={todayCount} />
-        <KPI label="Completed" value={completedCount} />
-        <KPI label="Completion %" value={`${completionRate}%`} />
+        <KPI label="Avg Weight" value={avgWeight.toLocaleString()} />
+        <KPI label="Completed %" value={`${completionRate}%`} />
+        {comparison && (
+          <KPI label="Weight Change" value={`${comparison.weightChange}%`} />
+        )}
       </div>
 
-      {/* ROW 1 */}
-      <Section title="Daily Overview">
+      {/* VOLUME + STATUS */}
+      <Section title="Volume Overview">
         <ChartCard title="Transactions per Day">
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={transactionsByDay}>
+            <BarChart data={dailyData}>
               <XAxis dataKey="day" />
               <YAxis />
               <Tooltip />
@@ -156,12 +202,12 @@ export default function Analytics({ transactions = [] }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Transactions by Status">
+        <ChartCard title="Status Distribution">
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
-              <Pie data={statusChartData} dataKey="value" label outerRadius={90}>
-                {statusChartData.map((_, i) => (
-                  <Cell key={i} fill={i % 2 === 0 ? YELLOW : YELLOW_LIGHT} />
+              <Pie data={statusData} dataKey="value" label outerRadius={90}>
+                {statusData.map((_, i) => (
+                  <Cell key={i} fill={i % 2 ? YELLOW : YELLOW_LIGHT} />
                 ))}
               </Pie>
               <Tooltip />
@@ -170,11 +216,11 @@ export default function Analytics({ transactions = [] }) {
         </ChartCard>
       </Section>
 
-      {/* ROW 2 */}
-      <Section title="Time & Behaviour">
-        <ChartCard title="Transactions by Hour">
+      {/* TIME + COMMODITY */}
+      <Section title="Time & Commodity">
+        <ChartCard title="Hourly Transactions">
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={transactionsByHour}>
+            <BarChart data={hourlyData}>
               <XAxis dataKey="hour" />
               <YAxis />
               <Tooltip />
@@ -183,40 +229,13 @@ export default function Analytics({ transactions = [] }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Cumulative Transactions">
+        <ChartCard title="Commodity Contribution">
           <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={cumulativeData}>
-              <XAxis dataKey="day" />
+            <BarChart data={commodityData}>
+              <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Line dataKey="total" stroke={YELLOW} strokeWidth={3} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </Section>
-
-      {/* ROW 3 */}
-      <Section title="Performance Breakdown">
-        <ChartCard title="Status Trend">
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={statusTrend}>
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line dataKey="Completed" stroke={YELLOW} />
-              <Line dataKey="Pending" stroke={GRAY} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Top Drivers">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={topDrivers} layout="vertical">
-              <XAxis type="number" />
-              <YAxis type="category" dataKey="name" width={120} />
-              <Tooltip />
-              <Bar dataKey="trips" fill={YELLOW} />
+              <Bar dataKey="weight" fill={YELLOW} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -228,7 +247,6 @@ export default function Analytics({ transactions = [] }) {
 /* =========================
    UI ATOMS
 ========================= */
-
 function KPI({ label, value }) {
   return (
     <div className="bg-yellow-50 border rounded px-3 py-2">
@@ -251,9 +269,7 @@ function Section({ title, children }) {
   return (
     <div className="space-y-3">
       <h2 className="text-sm font-semibold text-gray-600">{title}</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {children}
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">{children}</div>
     </div>
   )
 }
