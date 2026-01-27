@@ -20,7 +20,24 @@ export default function Transactions() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedRecord, setEditedRecord] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [filters, setFilters] = useState({ search: "", dateRange: null, page: 1, pageSize: 15 });
+  const [filters, setFilters] = useState({ 
+    search: "", 
+    dateRange: null, 
+    status: null, 
+    vehicle: '',
+    driver: '',
+    commodity: '',
+    supplier: '',
+    transporter: '',
+    customer: '',
+    operator: '',
+    origin: '',
+    destination: '',
+    weighbridge: '',
+    weighMode: null,
+    page: 1, 
+    pageSize: 15 
+  });
   const [showFilters, setShowFilters] = useState(false);
 
   const loadTransactions = useCallback(() => {
@@ -38,8 +55,94 @@ export default function Transactions() {
       params.endDate = filters.dateRange[1].format("YYYY-MM-DD");
     }
     
+    if (filters.status) {
+      params.status = filters.status;
+    }
+    
     dispatch(fetchTransactions(params));
-  }, [dispatch, filters]);
+  }, [dispatch, filters.page, filters.pageSize, filters.search, filters.dateRange, filters.status]);
+
+  // Client-side filtering for additional fields
+  const filteredTransactions = React.useMemo(() => {
+    let filtered = transactions || [];
+    
+    // Apply status filter based on second weight
+    if (filters.status) {
+      if (filters.status === 'completed') {
+        filtered = filtered.filter(t => 
+          (t.secondWeight && parseFloat(t.secondWeight) > 0) || 
+          t.status === 'Completed' || 
+          t.status === 'completed'
+        );
+      } else if (filters.status === 'inprogress') {
+        filtered = filtered.filter(t => 
+          (!t.secondWeight || parseFloat(t.secondWeight) === 0) && 
+          t.status !== 'Completed' && 
+          t.status !== 'completed'
+        );
+      }
+    }
+    
+    // Apply client-side filters
+    if (filters.vehicle) {
+      const vehicleLower = filters.vehicle.toLowerCase();
+      filtered = filtered.filter(t => t.noPlate?.toLowerCase().includes(vehicleLower));
+    }
+    
+    if (filters.driver) {
+      const driverLower = filters.driver.toLowerCase();
+      filtered = filtered.filter(t => t.driverName?.toLowerCase().includes(driverLower));
+    }
+    
+    if (filters.commodity) {
+      const commodityLower = filters.commodity.toLowerCase();
+      filtered = filtered.filter(t => t.commodityName?.toLowerCase().includes(commodityLower));
+    }
+    
+    if (filters.supplier) {
+      const supplierLower = filters.supplier.toLowerCase();
+      filtered = filtered.filter(t => t.supplierName?.toLowerCase().includes(supplierLower));
+    }
+    
+    if (filters.transporter) {
+      const transporterLower = filters.transporter.toLowerCase();
+      filtered = filtered.filter(t => t.transporterName?.toLowerCase().includes(transporterLower));
+    }
+    
+    if (filters.customer) {
+      const customerLower = filters.customer.toLowerCase();
+      filtered = filtered.filter(t => t.customerName?.toLowerCase().includes(customerLower));
+    }
+    
+    if (filters.operator) {
+      const operatorLower = filters.operator.toLowerCase();
+      filtered = filtered.filter(t => 
+        t.operatorName?.toLowerCase().includes(operatorLower) ||
+        t.firstWeightOperator?.toLowerCase().includes(operatorLower)
+      );
+    }
+    
+    if (filters.origin) {
+      const originLower = filters.origin.toLowerCase();
+      filtered = filtered.filter(t => t.originName?.toLowerCase().includes(originLower));
+    }
+    
+    if (filters.destination) {
+      const destinationLower = filters.destination.toLowerCase();
+      filtered = filtered.filter(t => t.destinationName?.toLowerCase().includes(destinationLower));
+    }
+    
+    if (filters.weighbridge) {
+      const weighbridgeLower = filters.weighbridge.toLowerCase();
+      filtered = filtered.filter(t => t.weighBridgeName?.toLowerCase().includes(weighbridgeLower));
+    }
+    
+    if (filters.weighMode) {
+      filtered = filtered.filter(t => t.weighMode?.toLowerCase() === filters.weighMode.toLowerCase());
+    }
+    
+    return filtered;
+  }, [transactions, filters]);
 
   useEffect(() => { 
     const timeoutId = setTimeout(() => {
@@ -69,7 +172,7 @@ export default function Transactions() {
     try {
       setSaving(true);
       await dispatch(updateTransactionApi({
-        id: editedRecord.id,
+        ticketId: editedRecord.ticketID || editedRecord.id,
         data: {
           receiptNo: editedRecord.receiptNo,
           noPlate: editedRecord.noPlate,
@@ -86,6 +189,7 @@ export default function Transactions() {
           containerNo: editedRecord.containerNo,
           sealNo: editedRecord.sealNo,
           remarks: editedRecord.remarks,
+          notes: editedRecord.notes,
         }
       })).unwrap();
       message.success('Updated successfully!');
@@ -133,11 +237,13 @@ export default function Transactions() {
       styles: { fontSize: 8.5, cellPadding: 1.5 },
       columnStyles: { 0: { fontStyle: "bold", cellWidth: 32 }, 1: { cellWidth: 58 }, 2: { fontStyle: "bold", cellWidth: 32 }, 3: { cellWidth: 58 } },
       body: [
-        ["TICKET NO", `: ${record.receiptNo}`, "REGISTRATION", `: ${record.noPlate}`],
-        ["AXLE TYPE", `: ${record.axleType || "N/A"}`, "COMMODITY", `: ${record.commodityName}`],
-        ["TRANSPORTER", `: ${record.transporterName}`, "DRIVER", `: ${record.driverName || "N/A"}`],
+        ["TICKET NO", `: ${record.receiptNo || 'N/A'}`, "REGISTRATION", `: ${record.noPlate || 'N/A'}`],
+        ["AXLE TYPE", `: ${record.axleType || "N/A"}`, "COMMODITY", `: ${record.commodityName || 'N/A'}`],
+        ["TRANSPORTER", `: ${record.transporterName || 'N/A'}`, "DRIVER", `: ${record.driverName || "N/A"}`],
         ["SUPPLIER", `: ${record.supplierName || "N/A"}`, "CUSTOMER", `: ${record.customerName || "N/A"}`],
         ["SOURCE", `: ${record.originName || "N/A"}`, "DESTINATION", `: ${record.destinationName || "N/A"}`],
+        ["CONTAINER", `: ${record.containerNo || "N/A"}`, "SEAL NO", `: ${record.sealNo || "N/A"}`],
+        ["WEIGH MODE", `: ${record.weighMode || "N/A"}`, "OPERATION", `: ${record.operation || "N/A"}`],
       ],
     });
 
@@ -155,12 +261,28 @@ export default function Transactions() {
       styles: { halign: "center", fontSize: 9 },
       head: [["MEASUREMENT", "WEIGHT", "OPERATOR", "TIMESTAMP"]],
       body: [
-        ["FIRST WEIGHT", `${record.firstWeight || 0} Kg`, record.firstWeightOperator || "N/A", record.firstWeightTime ? dayjs(record.firstWeightTime).format("DD-MM-YY HH:mm") : "N/A"],
-        ["SECOND WEIGHT", `${record.secondWeight || 0} Kg`, record.secondWeightOperator || "N/A", record.secondWeightTime ? dayjs(record.secondWeightTime).format("DD-MM-YY HH:mm") : "N/A"],
+        ["FIRST WEIGHT", `${record.firstWeight || 0} Kg`, record.firstWeightOperator || record.operatorName || "N/A", record.firstWeightTime ? dayjs(record.firstWeightTime).format("DD-MM-YY HH:mm") : "N/A"],
+        ["SECOND WEIGHT", `${record.secondWeight || 0} Kg`, record.secondWeightOperator || record.operatorName || "N/A", record.secondWeightTime ? dayjs(record.secondWeightTime).format("DD-MM-YY HH:mm") : "N/A"],
         [{ content: "NET WEIGHT", styles: { fillColor: colors.light, fontStyle: "bold" } }, { content: `${record.netWeight || 0} Kg`, styles: { fillColor: colors.light, fontStyle: "bold" } }, "", ""],
         [{ content: "TURNAROUND", styles: { fillColor: colors.accent } }, { content: calculateTurnaroundTime(record.firstWeightTime, record.secondWeightTime), colSpan: 3, styles: { fillColor: colors.accent } }],
       ],
     });
+
+    // Add remarks/notes section
+    if (record.remarks || record.notes) {
+      y = doc.lastAutoTable.finalY + 5;
+      doc.setFillColor(...colors.header);
+      doc.rect(14, y, 182, 7, "F");
+      doc.setTextColor(isColor ? 255 : 0, isColor ? 255 : 0, isColor ? 255 : 0);
+      doc.text("REMARKS/NOTES", 105, y + 5, { align: "center" });
+      
+      y += 7;
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
+      const remarkText = record.remarks || record.notes || 'N/A';
+      const splitRemarks = doc.splitTextToSize(remarkText, 170);
+      doc.text(splitRemarks, 14, y + 3);
+    }
 
     doc.save(`Ticket_${record.receiptNo}_${isColor ? 'Color' : 'BW'}.pdf`);
     message.success("PDF generated!");
@@ -173,86 +295,198 @@ export default function Transactions() {
       width: 75, 
       render: (d) => (
         <div className="leading-tight">
-          <div className="text-xs font-bold text-gray-900">{dayjs(d).format('DD MMM')}</div>
-          <div className="text-[10px] text-gray-400">{dayjs(d).format('YY')}</div>
+          <div className="text-[10px] font-semibold text-gray-800">{dayjs(d).format('DD MMM')}</div>
+          <div className="text-[9px] text-gray-500">{dayjs(d).format('HH:mm')}</div>
         </div>
       ) 
     },
     { 
       title: 'Receipt', 
       dataIndex: 'receiptNo', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] font-mono font-bold text-amber-600">{t}</span> 
+      width: 85, 
+      render: (t) => <span className="text-[10px] font-mono font-semibold text-amber-700">{t || '-'}</span> 
     },
     { 
       title: 'Vehicle', 
       dataIndex: 'noPlate', 
-      width: 85, 
-      render: (t) => <div className="inline-block bg-gray-900 text-white px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide">{t}</div> 
+      width: 75, 
+      render: (t) => <div className="inline-block bg-gray-900 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{t || '-'}</div> 
     },
     { 
       title: 'Driver', 
       dataIndex: 'driverName', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] text-gray-700">{t}</span> 
+      width: 90, 
+      render: (t) => <span className="text-[10px] font-medium text-gray-700">{t || '-'}</span> 
+    },
+    { 
+      title: 'Axle Type', 
+      dataIndex: 'axleType', 
+      width: 75, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Commodity', 
       dataIndex: 'commodityName', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t}</span> 
+      width: 90, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Supplier', 
+      dataIndex: 'supplierName', 
+      width: 90, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Transporter', 
       dataIndex: 'transporterName', 
-      width: 120, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t}</span> 
+      width: 95, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
-      title: 'Route', 
+      title: 'Customer', 
+      dataIndex: 'customerName', 
+      width: 90, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Origin', 
       dataIndex: 'originName', 
-      width: 140, 
-      render: (_, r) => (
-        <div className="text-[10px] text-gray-500">
-          <span className="font-medium">{r.originName || '-'}</span>
-          <span className="mx-1">→</span>
-          <span className="font-medium">{r.destinationName || '-'}</span>
-        </div>
+      width: 80, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Destination', 
+      dataIndex: 'destinationName', 
+      width: 90, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Container', 
+      dataIndex: 'containerNo', 
+      width: 85, 
+      render: (t) => <span className="text-[10px] font-mono text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Seal No', 
+      dataIndex: 'sealNo', 
+      width: 80, 
+      render: (t) => <span className="text-[10px] font-mono text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Weighbridge', 
+      dataIndex: 'weighBridgeName', 
+      width: 100, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Scale', 
+      dataIndex: 'scaleName', 
+      width: 80, 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
+    },
+    { 
+      title: 'Weigh Mode', 
+      dataIndex: 'weighMode', 
+      width: 85, 
+      render: (t) => (
+        <Tag color="blue" className="text-[9px] font-medium px-1.5 py-0 rounded-full border-0 m-0">
+          {t || 'N/A'}
+        </Tag>
       )
+    },
+    { 
+      title: 'Operation', 
+      dataIndex: 'operation', 
+      width: 85, 
+      render: (t) => (
+        <Tag color="purple" className="text-[9px] font-medium px-1.5 py-0 rounded-full border-0 m-0">
+          {t || 'N/A'}
+        </Tag>
+      )
+    },
+    { 
+      title: 'Operator', 
+      dataIndex: 'operatorName', 
+      width: 95, 
+      render: (text, record) => {
+        const operatorName = text || record.firstWeightOperator || 'N/A';
+        return (
+          <div className="flex items-center gap-1.5">
+            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
+              {operatorName !== 'N/A' ? operatorName.charAt(0).toUpperCase() : '?'}
+            </div>
+            <span className="text-[10px] text-gray-700 font-medium truncate max-w-[55px]">{operatorName}</span>
+          </div>
+        );
+      }
     },
     { 
       title: '1st Wt', 
       dataIndex: 'firstWeight', 
       width: 75, 
       align: 'right', 
-      render: (w) => <span className="text-[11px] font-semibold text-blue-600">{w ? `${w} kg` : '-'}</span> 
+      render: (w) => (
+        <div className="flex flex-col items-end leading-tight">
+          <span className="text-[10px] font-semibold text-blue-600">{w ? `${parseFloat(w).toLocaleString()}` : '-'}</span>
+          <span className="text-[8px] text-gray-500">kg</span>
+        </div>
+      )
     },
     { 
       title: '2nd Wt', 
       dataIndex: 'secondWeight', 
       width: 75, 
       align: 'right', 
-      render: (w) => <span className="text-[11px] font-semibold text-green-600">{w ? `${w} kg` : '-'}</span> 
+      render: (w) => (
+        <div className="flex flex-col items-end leading-tight">
+          <span className="text-[10px] font-semibold text-green-600">{w ? `${parseFloat(w).toLocaleString()}` : '-'}</span>
+          <span className="text-[8px] text-gray-500">kg</span>
+        </div>
+      )
     },
     { 
       title: 'Net Wt', 
       dataIndex: 'netWeight', 
       width: 80, 
       align: 'right', 
-      render: (w) => <span className="text-[11px] font-bold text-orange-600">{w ? `${w} kg` : '-'}</span> 
+      render: (w) => (
+        <div className="flex flex-col items-end leading-tight">
+          <span className="text-[10px] font-bold text-orange-600">{w ? `${parseFloat(w).toLocaleString()}` : '-'}</span>
+          <span className="text-[8px] text-gray-500">kg</span>
+        </div>
+      )
+    },
+    { 
+      title: 'Turnaround', 
+      width: 80, 
+      render: (_, record) => {
+        const time = calculateTurnaroundTime(record.firstWeightTime, record.secondWeightTime);
+        return (
+          <Tag color="cyan" className="text-[9px] font-medium px-1.5 py-0 rounded-full border-0 m-0">
+            {time}
+          </Tag>
+        );
+      }
     },
     { 
       title: 'Status', 
       dataIndex: 'status', 
-      width: 85, 
-      render: (s) => (
-        <Tag 
-          color={s === 'Completed' ? '#10b981' : '#f59e0b'} 
-          className="text-[10px] font-bold px-2 py-0.5 rounded-full border-0 m-0"
-        >
-          {s?.toUpperCase()}
-        </Tag>
-      ) 
+      width: 90, 
+      fixed: 'right',
+      render: (s, record) => {
+        // Determine actual status based on weights
+        const hasSecondWeight = record.secondWeight && parseFloat(record.secondWeight) > 0;
+        const isCompleted = hasSecondWeight || s === 'Completed' || s === 'completed';
+        
+        return (
+          <Tag 
+            color={isCompleted ? '#10b981' : '#f59e0b'} 
+            className="text-[9px] font-semibold px-2 py-0.5 rounded-full border-0 m-0"
+          >
+            {isCompleted ? 'COMPLETED' : 'IN PROGRESS'}
+          </Tag>
+        );
+      } 
     },
     { 
       title: '', 
@@ -278,32 +512,41 @@ export default function Transactions() {
           <div className="w-1 h-7 bg-gradient-to-b from-amber-500 to-orange-600 rounded-full" />
           <div>
             <div className="text-sm font-bold text-gray-900">Transactions</div>
-            <div className="text-[10px] text-gray-500">{total || 0} records</div>
+            <div className="text-[10px] text-gray-500">
+              {Object.entries(filters).filter(([key, value]) => 
+                value && !['page', 'pageSize'].includes(key)
+              ).length > 0 ? (
+                <>
+                  <span className="font-semibold text-amber-600">{filteredTransactions.length}</span> filtered from <span className="font-semibold">{total || 0}</span> total
+                </>
+              ) : (
+                <>{total || 0} records</>
+              )}
+            </div>
           </div>
         </div>
         
         <div className="flex-1 flex gap-2 justify-end">
           <Input 
             allowClear 
-            placeholder="Search..." 
+            placeholder="Search receipt, vehicle, driver..." 
             prefix={<Search size={14} className="text-gray-400" />} 
-            className="w-56 h-8 text-xs rounded-lg" 
+            className="w-64 h-8 text-xs rounded-lg shadow-sm" 
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })} 
           />
           <Button 
             icon={<Filter size={14} />} 
-            className="h-8 text-xs rounded-lg"
+            className={`h-8 text-xs rounded-lg ${showFilters ? 'bg-amber-50 text-amber-600 border-amber-300' : ''}`}
             onClick={() => setShowFilters(!showFilters)}
           >
-            {showFilters ? 'Hide' : 'Filters'}
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
           </Button>
           <Button 
             type="primary" 
             icon={<ReloadOutlined />}
-            className="bg-gradient-to-r from-amber-500 to-amber-600 border-0 h-8 text-xs rounded-lg" 
+            className="bg-gradient-to-r from-amber-500 to-amber-600 border-0 h-8 text-xs rounded-lg shadow-sm" 
             onClick={() => {
-              setFilters({ ...filters, page: 1 });
               loadTransactions();
             }}
             loading={loading}
@@ -313,30 +556,268 @@ export default function Transactions() {
         </div>
       </div>
 
-      {/* Collapsible Filters */}
+      {/* Enhanced Multi-Column Filters */}
       {showFilters && (
-        <div className="bg-white border-b px-4 py-2 flex items-center gap-3 shrink-0">
-          <span className="text-xs text-gray-600 font-medium">Date Range:</span>
-          <RangePicker 
-            className="h-7 text-xs rounded-lg" 
-            value={filters.dateRange}
-            onChange={(d) => {
-              setFilters({ ...filters, dateRange: d, page: 1 });
-            }} 
-            size="small"
-            format="DD-MM-YYYY"
-          />
-          {(filters.search || filters.dateRange) && (
-            <Button 
-              size="small"
-              onClick={() => {
-                setFilters({ search: "", dateRange: null, page: 1, pageSize: filters.pageSize });
-              }}
-              className="h-7 text-xs"
-            >
-              Clear All
-            </Button>
-          )}
+        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 border-b border-amber-200 px-4 py-3 shrink-0 shadow-sm">
+          <div className="grid grid-cols-4 gap-3 mb-3">
+            {/* Date Range Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Date Range</label>
+              <RangePicker 
+                className="w-full h-7 text-xs rounded-md shadow-sm" 
+                value={filters.dateRange}
+                onChange={(d) => setFilters({ ...filters, dateRange: d, page: 1 })} 
+                size="small"
+                format="DD-MM-YYYY"
+                placeholder={['From', 'To']}
+              />
+            </div>
+            
+            {/* Status Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Status</label>
+              <select 
+                className="w-full h-7 text-xs rounded-md border border-gray-300 px-2 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white"
+                value={filters.status || ''}
+                onChange={(e) => setFilters({ ...filters, status: e.target.value || null, page: 1 })}
+              >
+                <option value="">All Status</option>
+                <option value="completed">Completed</option>
+                <option value="inprogress">In Progress</option>
+              </select>
+            </div>
+            
+            {/* Vehicle Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Vehicle</label>
+              <Input 
+                placeholder="Vehicle plate..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.vehicle || ''}
+                onChange={(e) => setFilters({ ...filters, vehicle: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Driver Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Driver</label>
+              <Input 
+                placeholder="Driver name..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.driver || ''}
+                onChange={(e) => setFilters({ ...filters, driver: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-5 gap-3 mb-3">
+            {/* Commodity Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Commodity</label>
+              <Input 
+                placeholder="Commodity..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.commodity || ''}
+                onChange={(e) => setFilters({ ...filters, commodity: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Supplier Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Supplier</label>
+              <Input 
+                placeholder="Supplier..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.supplier || ''}
+                onChange={(e) => setFilters({ ...filters, supplier: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Transporter Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Transporter</label>
+              <Input 
+                placeholder="Transporter..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.transporter || ''}
+                onChange={(e) => setFilters({ ...filters, transporter: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Customer Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Customer</label>
+              <Input 
+                placeholder="Customer..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.customer || ''}
+                onChange={(e) => setFilters({ ...filters, customer: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Operator Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Operator</label>
+              <Input 
+                placeholder="Operator..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.operator || ''}
+                onChange={(e) => setFilters({ ...filters, operator: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-4 gap-3">
+            {/* Origin Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Origin</label>
+              <Input 
+                placeholder="Origin..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.origin || ''}
+                onChange={(e) => setFilters({ ...filters, origin: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Destination Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Destination</label>
+              <Input 
+                placeholder="Destination..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.destination || ''}
+                onChange={(e) => setFilters({ ...filters, destination: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Weighbridge Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Weighbridge</label>
+              <Input 
+                placeholder="Weighbridge..."
+                className="w-full h-7 text-xs rounded-md"
+                value={filters.weighbridge || ''}
+                onChange={(e) => setFilters({ ...filters, weighbridge: e.target.value, page: 1 })}
+                allowClear
+              />
+            </div>
+            
+            {/* Weigh Mode Filter */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide">Weigh Mode</label>
+              <select 
+                className="w-full h-7 text-xs rounded-md border border-gray-300 px-2 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white"
+                value={filters.weighMode || ''}
+                onChange={(e) => setFilters({ ...filters, weighMode: e.target.value || null, page: 1 })}
+              >
+                <option value="">All Modes</option>
+                <option value="single">Single</option>
+                <option value="double">Double</option>
+                <option value="auto">Auto</option>
+              </select>
+            </div>
+          </div>
+          
+          {/* Filter Actions Bar */}
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-amber-300">
+            <div className="flex items-center gap-2">
+              {/* Active Filters Count */}
+              {Object.entries(filters).filter(([key, value]) => 
+                value && !['page', 'pageSize'].includes(key)
+              ).length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-amber-800 font-semibold bg-amber-200 px-2.5 py-1 rounded-full shadow-sm">
+                    {Object.entries(filters).filter(([key, value]) => 
+                      value && !['page', 'pageSize'].includes(key)
+                    ).length} active filters
+                  </span>
+                  
+                  {/* Show active filter tags */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {filters.dateRange && (
+                      <Tag 
+                        closable 
+                        onClose={() => setFilters({ ...filters, dateRange: null, page: 1 })}
+                        className="text-[10px] m-0 bg-blue-50 border-blue-200"
+                      >
+                        Date: {filters.dateRange[0].format('DD-MM')} - {filters.dateRange[1].format('DD-MM')}
+                      </Tag>
+                    )}
+                    {filters.status && (
+                      <Tag 
+                        closable 
+                        onClose={() => setFilters({ ...filters, status: null, page: 1 })}
+                        className="text-[10px] m-0 bg-green-50 border-green-200"
+                      >
+                        Status: {filters.status}
+                      </Tag>
+                    )}
+                    {filters.vehicle && (
+                      <Tag 
+                        closable 
+                        onClose={() => setFilters({ ...filters, vehicle: '', page: 1 })}
+                        className="text-[10px] m-0 bg-purple-50 border-purple-200"
+                      >
+                        Vehicle: {filters.vehicle}
+                      </Tag>
+                    )}
+                    {filters.driver && (
+                      <Tag 
+                        closable 
+                        onClose={() => setFilters({ ...filters, driver: '', page: 1 })}
+                        className="text-[10px] m-0 bg-pink-50 border-pink-200"
+                      >
+                        Driver: {filters.driver}
+                      </Tag>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Clear All Button */}
+            {Object.entries(filters).filter(([key, value]) => 
+              value && !['page', 'pageSize'].includes(key)
+            ).length > 0 && (
+              <Button 
+                size="small"
+                danger
+                icon={<CloseOutlined className="text-[10px]" />}
+                onClick={() => {
+                  setFilters({ 
+                    search: "", 
+                    dateRange: null, 
+                    status: null,
+                    vehicle: '',
+                    driver: '',
+                    commodity: '',
+                    supplier: '',
+                    transporter: '',
+                    customer: '',
+                    operator: '',
+                    origin: '',
+                    destination: '',
+                    weighbridge: '',
+                    weighMode: null,
+                    page: 1, 
+                    pageSize: filters.pageSize 
+                  });
+                }}
+                className="h-7 text-xs font-semibold shadow-sm"
+              >
+                Clear All Filters
+              </Button>
+            )}
+          </div>
         </div>
       )}
 
@@ -345,16 +826,16 @@ export default function Transactions() {
         <div className="h-full bg-white rounded-lg border shadow-sm overflow-hidden">
           <Table 
             columns={columns} 
-            dataSource={transactions} 
+            dataSource={filteredTransactions} 
             rowKey="id" 
             loading={loading} 
             size="small" 
             className="compact-table" 
-            scroll={{ y: "calc(100vh - 180px)", x: 1200 }}
+            scroll={{ y: "calc(100vh - 180px)", x: 2100 }}
             pagination={{ 
               current: filters.page, 
               pageSize: filters.pageSize, 
-              total, 
+              total: filteredTransactions.length, 
               showSizeChanger: true,
               showTotal: (total) => `Total ${total}`,
               size: 'small',
@@ -412,6 +893,10 @@ export default function Transactions() {
                   { label: 'Vehicle', field: 'noPlate', editable: true },
                   { label: 'Driver', field: 'driverName', editable: true },
                   { label: 'Commodity', field: 'commodityName', editable: true },
+                  { label: 'Axle Type', field: 'axleType', editable: true },
+                  { label: 'Weigh Mode', field: 'weighMode', editable: true },
+                  { label: 'Operation', field: 'operation', editable: true },
+                  { label: 'Scale', field: 'scaleName', editable: true },
                 ].map(({ label, field, editable }) => (
                   <div key={field}>
                     <div className="text-gray-600 font-medium mb-1">{label}</div>
@@ -440,9 +925,9 @@ export default function Transactions() {
                   { label: 'Customer', field: 'customerName' },
                   { label: 'Origin', field: 'originName' },
                   { label: 'Destination', field: 'destinationName' },
-                  { label: 'Axle Type', field: 'axleType' },
-                  { label: 'Container', field: 'containerNo' },
-                  { label: 'Seal', field: 'sealNo' },
+                  { label: 'Container No', field: 'containerNo' },
+                  { label: 'Seal No', field: 'sealNo' },
+                  { label: 'Weighbridge', field: 'weighBridgeName' },
                 ].map(({ label, field }) => (
                   <div key={field} className="flex justify-between">
                     <span className="text-gray-600">{label}:</span>
@@ -469,7 +954,7 @@ export default function Transactions() {
                   <div className="text-gray-600 mb-1">First Weight</div>
                   <div className="text-lg font-bold text-blue-600">{selectedRecord.firstWeight || 0} kg</div>
                   <div className="text-[10px] text-gray-500 mt-1">
-                    {selectedRecord.firstWeightOperator || 'N/A'}<br/>
+                    {selectedRecord.firstWeightOperator || selectedRecord.operatorName || 'N/A'}<br/>
                     {selectedRecord.firstWeightTime ? dayjs(selectedRecord.firstWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}
                   </div>
                 </div>
@@ -477,7 +962,7 @@ export default function Transactions() {
                   <div className="text-gray-600 mb-1">Second Weight</div>
                   <div className="text-lg font-bold text-green-600">{selectedRecord.secondWeight || 0} kg</div>
                   <div className="text-[10px] text-gray-500 mt-1">
-                    {selectedRecord.secondWeightOperator || 'N/A'}<br/>
+                    {selectedRecord.secondWeightOperator || selectedRecord.operatorName || 'N/A'}<br/>
                     {selectedRecord.secondWeightTime ? dayjs(selectedRecord.secondWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}
                   </div>
                 </div>
@@ -508,22 +993,35 @@ export default function Transactions() {
                       size="small"
                     />
                   ) : (
-                    <Tag color={selectedRecord.status === 'Completed' ? '#10b981' : '#f59e0b'} className="font-bold">
-                      {selectedRecord.status?.toUpperCase()}
+                    <Tag 
+                      color={
+                        (selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) || 
+                        selectedRecord.status === 'Completed' || 
+                        selectedRecord.status === 'completed' 
+                          ? '#10b981' 
+                          : '#f59e0b'
+                      } 
+                      className="font-bold text-sm px-3 py-1"
+                    >
+                      {(selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) || 
+                       selectedRecord.status === 'Completed' || 
+                       selectedRecord.status === 'completed'
+                        ? 'COMPLETED' 
+                        : 'IN PROGRESS'}
                     </Tag>
                   )}
                 </div>
                 <div>
-                  <div className="text-gray-600 font-medium mb-1">Remarks</div>
+                  <div className="text-gray-600 font-medium mb-1">Remarks / Notes</div>
                   {isEditing ? (
                     <Input.TextArea 
-                      value={editedRecord.remarks} 
-                      onChange={(e) => setEditedRecord({...editedRecord, remarks: e.target.value})} 
+                      value={editedRecord.remarks || editedRecord.notes} 
+                      onChange={(e) => setEditedRecord({...editedRecord, remarks: e.target.value, notes: e.target.value})} 
                       rows={3}
                       className="text-xs"
                     />
                   ) : (
-                    <div className="text-gray-900 bg-white p-2 rounded border">{selectedRecord.remarks || 'No remarks'}</div>
+                    <div className="text-gray-900 bg-white p-2 rounded border">{selectedRecord.remarks || selectedRecord.notes || 'No remarks'}</div>
                   )}
                 </div>
               </div>
@@ -534,17 +1032,19 @@ export default function Transactions() {
 
       <style>{`
         .compact-table .ant-table-thead > tr > th {
-          background: linear-gradient(to bottom, #fafafa, #f5f5f5) !important;
-          border-bottom: 2px solid #f59e0b !important;
-          padding: 8px 12px !important;
+          background: linear-gradient(to bottom, #fffbeb, #fef3c7) !important;
+          border-bottom: 1.5px solid #f59e0b !important;
+          padding: 6px 8px !important;
           font-weight: 700 !important;
-          font-size: 10px !important;
+          font-size: 9px !important;
           text-transform: uppercase;
           letter-spacing: 0.3px;
+          line-height: 1.2;
         }
         .compact-table .ant-table-tbody > tr > td {
-          padding: 6px 12px !important;
-          border-bottom: 1px solid #f0f0f0 !important;
+          padding: 6px 8px !important;
+          border-bottom: 1px solid #f3f4f6 !important;
+          line-height: 1.3;
         }
         .compact-table .ant-table-tbody > tr:hover > td {
           background: #fffbeb !important;
@@ -552,14 +1052,22 @@ export default function Transactions() {
         .compact-pagination .ant-pagination-item,
         .compact-pagination .ant-pagination-prev,
         .compact-pagination .ant-pagination-next {
-          min-width: 26px !important;
-          height: 26px !important;
-          line-height: 24px !important;
-          font-size: 12px !important;
+          min-width: 24px !important;
+          height: 24px !important;
+          line-height: 22px !important;
+          font-size: 11px !important;
+          border-radius: 4px;
+        }
+        .compact-pagination .ant-pagination-item-active {
+          background: linear-gradient(135deg, #f59e0b, #f97316);
+          border-color: #f59e0b;
+        }
+        .compact-pagination .ant-pagination-item-active a {
+          color: white !important;
         }
         .compact-pagination .ant-select-selector {
-          height: 26px !important;
-          font-size: 12px !important;
+          height: 24px !important;
+          font-size: 11px !important;
         }
       `}</style>
     </div>
