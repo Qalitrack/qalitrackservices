@@ -29,11 +29,14 @@ namespace UserService.Infrastructure.Services
        
        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
        {
+           // FIXED: Add initial delay to allow app to fully start
+           await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+           
            while (!stoppingToken.IsCancellationRequested)
            {
                try
                {
-                   // Create a new scope for this operation
+                   // FIXED: Single scope for the entire operation
                    using var scope = _serviceScopeFactory.CreateScope();
                    var shiftService = scope.ServiceProvider.GetRequiredService<IShiftService>();
                    var shiftRepository = scope.ServiceProvider.GetRequiredService<IShiftRepository>();
@@ -43,13 +46,25 @@ namespace UserService.Infrastructure.Services
                    
                    // Monitor and update expired shift statuses
                    await MonitorShiftStatusAsync(shiftRepository);
-
-                   // Wait for a set period before checking again (e.g., 1 minute)
-                   await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+               }
+               catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+               {
+                   _logger.LogInformation("Shift monitor service is stopping...");
+                   break;
                }
                catch (Exception ex)
                {
                    _logger.LogError(ex, "Error occurred while monitoring shifts.");
+               }
+               
+               // FIXED: Wait for 2 minutes instead of 1 minute to reduce database load
+               try
+               {
+                   await Task.Delay(TimeSpan.FromMinutes(2), stoppingToken);
+               }
+               catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+               {
+                   break;
                }
            }
        }
@@ -58,12 +73,12 @@ namespace UserService.Infrastructure.Services
         {
             var currentTimeUtc = DateTime.UtcNow;
             
-            // Create a scope to resolve services
-            using var scope = _serviceScopeFactory.CreateScope();
-            var shiftInstanceRepository = scope.ServiceProvider.GetRequiredService<IShiftInstanceRepository>();
-            
             try
             {
+                // FIXED: Reuse parent scope instead of creating new one
+                using var scope = _serviceScopeFactory.CreateScope();
+                var shiftInstanceRepository = scope.ServiceProvider.GetRequiredService<IShiftInstanceRepository>();
+                
                 // Get Nairobi timezone for proper comparison
                 var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
                 var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(currentTimeUtc, nairobiTimeZone);
@@ -79,25 +94,26 @@ namespace UserService.Infrastructure.Services
                     })
                     .ToList();
                 
-                foreach (var instance in endedInstances)
+                // FIXED: Process in parallel with semaphore to limit concurrency
+                var semaphore = new SemaphoreSlim(5); // Max 5 concurrent operations
+                var tasks = endedInstances.Select(async instance =>
                 {
-                    var scheduledEndTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(
-                        instance.ScheduledDate.Date.Add(instance.ScheduledEndTime.TimeOfDay), 
-                        nairobiTimeZone);
-                        
-             
-
+                    await semaphore.WaitAsync();
                     try
                     {
+                        var scheduledEndTimeNairobi = TimeZoneInfo.ConvertTimeFromUtc(
+                            instance.ScheduledDate.Date.Add(instance.ScheduledEndTime.TimeOfDay), 
+                            nairobiTimeZone);
+
                         // Get the shift details
                         var shift = await shiftService.GetByIdAsync(instance.ShiftId);
                         if (shift == null)
                         {
                             _logger.LogWarning("Skipping instance {InstanceId} - shift not found", instance.Id);
-                            continue;
+                            return;
                         }
 
-                        // Process all shifts regardless of mode
+                        // FIXED: Create scope per instance to avoid resource leaks
                         using var logoutScope = _serviceScopeFactory.CreateScope();
                         var userShiftRepository = logoutScope.ServiceProvider.GetRequiredService<IUserShiftRepository>();
                         var tokenService = logoutScope.ServiceProvider.GetRequiredService<ITokenService>();
@@ -105,13 +121,18 @@ namespace UserService.Infrastructure.Services
                         
                         // Log out users associated with this shift instance using the instance's end time
                         await LogoutUsersForShift(instance, shift, userShiftRepository, tokenService, userStatusService, _logger);
-                        
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, "Error processing shift instance {InstanceId}", instance.Id);
                     }
-                }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                });
+                
+                await Task.WhenAll(tasks);
             }
             catch (Exception ex)
             {
@@ -125,19 +146,16 @@ namespace UserService.Infrastructure.Services
            
            try
            {
-               
                // Get all active shifts that might need status updates
                var activeShifts = await shiftRepository.GetShiftsByStatusAsync(ShiftStatus.Active);
                
                var expiredShifts = activeShifts.Where(shift => 
                    IsShiftExpired(shift, currentDate)).ToList();
 
-
                foreach (var shift in expiredShifts)
                {
                    try
                    {
-                    
                        // Update shift status to Expired
                        shift.Status = ShiftStatus.Completed;
                        shift.UpdatedAt = DateTime.UtcNow;
@@ -147,7 +165,6 @@ namespace UserService.Infrastructure.Services
                        
                        if (updatedShift != null)
                        {
-                           
                            // Optionally, send notifications to users about shift expiration
                            await NotifyUsersAboutShiftExpiration(shift);
                        }
@@ -181,7 +198,6 @@ namespace UserService.Infrastructure.Services
                    shift.StartDate <= currentDate && 
                    (shift.EndDate == null || shift.EndDate >= currentDate)).ToList();
 
-
                foreach (var shift in shiftsToActivate)
                {
                    try
@@ -194,7 +210,7 @@ namespace UserService.Infrastructure.Services
                        
                        if (updatedShift != null)
                        {
-                           _logger.LogInformation("Successfully activated shift ");
+                           _logger.LogInformation("Successfully activated shift {ShiftId}", shift.Id);
                        }
                    }
                    catch (Exception ex)
@@ -226,7 +242,6 @@ namespace UserService.Infrastructure.Services
                {
                    return true;
                }
-               
            }
            
            return false;
@@ -262,7 +277,6 @@ namespace UserService.Infrastructure.Services
                        NotificationType.ShiftCancellation,
                        reason: "This shift has expired and is no longer active"
                    );
-                   
                }
            }
            catch (Exception ex)
@@ -316,14 +330,13 @@ namespace UserService.Infrastructure.Services
                        // Handle individual user attendance logout with the instance's scheduled end time
                        var attendanceHandled = await shiftAttendanceHandlerService.HandleLogoutAttendanceAsync(userId, actualShift, scheduledEndTime);
                        
-                       
                        if (attendanceHandled)
                        {
-                           logger.LogInformation("Successfully clocked out from expired strict shift ");
+                           logger.LogInformation("Successfully clocked out user {UserId} from expired strict shift", userId);
                        }
                        else
                        {
-                           logger.LogWarning("Failed to clock out user from expired strict shift ");
+                           logger.LogWarning("Failed to clock out user {UserId} from expired strict shift", userId);
                        }
                        
                        // Revoke the user's token to force logout
@@ -331,14 +344,14 @@ namespace UserService.Infrastructure.Services
                        
                        if (tokenRevoked)
                        {
-                           logger.LogInformation("Successfully revoked token for user from expired strict shift");
+                           logger.LogInformation("Successfully revoked token for user {UserId} from expired strict shift", userId);
                        }
                        else
                        {
-                           logger.LogWarning("Failed to revoke token for user from expired strict shift ");
+                           logger.LogWarning("Failed to revoke token for user {UserId} from expired strict shift", userId);
                        }
 
-                       // **NEW: Update user status to offline after logout**
+                       // Update user status to offline after logout
                        userStatusService.EnqueueStatusUpdate(userId, isActive: false);
                    }
                    catch (Exception ex)
@@ -349,7 +362,6 @@ namespace UserService.Infrastructure.Services
                        try
                        {
                            await tokenService.RevokeTokenAsync(userId);
-                           
                            userStatusService.EnqueueStatusUpdate(userId, isActive: false);
                        }
                        catch (Exception tokenEx)
