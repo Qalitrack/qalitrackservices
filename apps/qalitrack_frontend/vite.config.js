@@ -10,6 +10,10 @@ import electron from 'vite-plugin-electron';
 const API_TARGET = process.env.VITE_API_TARGET || 'https://qalitrack.cseco.co.ke';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+// ⚠️ CRITICAL FIX: Check if API_TARGET is reachable
+console.log('🎯 API Target:', API_TARGET);
+console.log('🏭 Environment:', IS_PRODUCTION ? 'PRODUCTION' : 'DEVELOPMENT');
+
 /* -------------------------------------------------------------------------- */
 /*                         PROXY HELPER FUNCTION                              */
 /* -------------------------------------------------------------------------- */
@@ -23,22 +27,48 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
   target,
   changeOrigin: true,
-  secure: IS_PRODUCTION,
+  secure: false, // ⚠️ CHANGED: Set to false to avoid SSL issues in development
   timeout: 30000, // 30 seconds
   proxyTimeout: 30000,
   ...options,
   configure: (proxy, _options) => {
     // Error handling
-    proxy.on('error', (err, _req, _res) => {
-      console.error(`❌ ${routeName} Proxy Error:`, err.message);
+    proxy.on('error', (err, req, res) => {
+      console.error(`❌ ${routeName} Proxy Error:`, {
+        message: err.message,
+        code: err.code,
+        url: req.url,
+        target: target
+      });
+      
+      // Send error response if headers not sent
+      if (!res.headersSent) {
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          error: 'Proxy Error',
+          message: err.message,
+          route: routeName,
+          target: target,
+          hint: 'Check if backend server is running'
+        }));
+      }
     });
 
     // Timeout handling
-    proxy.on('timeout', (req, res, target) => {
-      console.error(`⏱️ ${routeName} Timeout: Request to ${target} timed out`);
+    proxy.on('timeout', (req, res) => {
+      console.error(`⏱️ ${routeName} Timeout:`, {
+        url: req.url,
+        target: target,
+        method: req.method
+      });
+      
       if (!res.headersSent) {
-        res.writeHead(504, { 'Content-Type': 'text/plain' });
-        res.end('Gateway Timeout');
+        res.writeHead(504, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          error: 'Gateway Timeout',
+          message: `Request to ${target}${req.url} timed out after 30 seconds`,
+          route: routeName
+        }));
       }
     });
 
@@ -46,6 +76,9 @@ const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
     proxy.on('proxyReq', (proxyReq, req, _res) => {
       const fullUrl = `${target}${req.url}`;
       console.log(`📤 ${routeName}: ${req.method} ${req.url} → ${fullUrl}`);
+      
+      // ✅ FIX: Ensure proper headers
+      proxyReq.setHeader('Accept', 'application/json');
       
       // Log request body in development for debugging
       if (!IS_PRODUCTION && ['POST', 'PUT', 'PATCH'].includes(req.method)) {
@@ -55,6 +88,8 @@ const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
           if (body) {
             try {
               const parsed = JSON.parse(body);
+              // Hide sensitive data
+              if (parsed.password) parsed.password = '***';
               console.log(`📦 ${routeName} Body:`, JSON.stringify(parsed, null, 2).substring(0, 500));
             } catch {
               console.log(`📦 ${routeName} Body:`, body.substring(0, 500));
@@ -66,7 +101,7 @@ const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
 
     // Response logging
     proxy.on('proxyRes', (proxyRes, req, _res) => {
-      const statusEmoji = proxyRes.statusCode >= 400 ? '❌' : '📥';
+      const statusEmoji = proxyRes.statusCode >= 400 ? '❌' : '✅';
       console.log(`${statusEmoji} ${routeName} Response: ${proxyRes.statusCode} for ${req.url}`);
       
       // Log error response body in development
@@ -130,20 +165,29 @@ export default defineConfig({
     // Enable WebSocket support
     ws: true,
     
+    // ⚠️ CRITICAL: Proxy timeout configuration
+    hmr: {
+      timeout: 30000,
+    },
+    
     proxy: {
       /* -------------------------------------------------------------------- */
       /*              PRIMARY API ROUTES (Most specific first)                */
       /* -------------------------------------------------------------------- */
       
-      // ✅ CRITICAL: Transaction endpoint with nested path structure
-      // Based on curl: /api/Transaction/Transaction/Transaction
-      '/api/Transaction': createProxyConfig('Transaction API'),
+      // ✅ Auth endpoint - MUST come before general /api fallback
+      '/api/Auth': createProxyConfig('Auth API', API_TARGET, {
+        // ⚠️ FIX: Ensure we don't rewrite the path
+        rewrite: undefined,
+      }),
       
-      '/api/Reports': createProxyConfig('Reports API'),
-      '/api/Roles': createProxyConfig('Roles API'),
-      '/api/Auth': createProxyConfig('Auth API'),
-      '/api/MasterData': createProxyConfig('MasterData API'),
-      '/api/Users': createProxyConfig('Users API'),
+      // ✅ Transaction endpoint with nested path structure
+      '/api/Transaction': createProxyConfig('Transaction API', API_TARGET),
+      
+      '/api/Reports': createProxyConfig('Reports API', API_TARGET),
+      '/api/Roles': createProxyConfig('Roles API', API_TARGET),
+      '/api/MasterData': createProxyConfig('MasterData API', API_TARGET),
+      '/api/Users': createProxyConfig('Users API', API_TARGET),
       
       /* -------------------------------------------------------------------- */
       /*          BACKWARD COMPATIBILITY (Non-prefixed routes)                */
@@ -178,14 +222,14 @@ export default defineConfig({
         target: API_TARGET.replace('https://', 'wss://').replace('http://', 'ws://'),
         ws: true,
         changeOrigin: true,
-        secure: IS_PRODUCTION,
+        secure: false,
       },
       
       /* -------------------------------------------------------------------- */
       /*                    FALLBACK FOR OTHER /api ROUTES                    */
       /* -------------------------------------------------------------------- */
       
-      '/api': createProxyConfig('API (Fallback)'),
+      '/api': createProxyConfig('API (Fallback)', API_TARGET),
     },
   },
 
