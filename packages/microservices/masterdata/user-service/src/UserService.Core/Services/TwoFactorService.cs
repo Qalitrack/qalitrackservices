@@ -39,7 +39,7 @@ public class TwoFactorService(
             
             // Parallelize independent cache operations for better performance
             var codeKey = $"2fa_code:{userId}";
-            var attemptKey = $"2fa_attempts:{userId}";
+            var attemptKey = $"2fa_attempts:{userId}"; // FIXED: Now consistent with colon
             
             var cacheOperations = new[]
             {
@@ -127,8 +127,9 @@ public class TwoFactorService(
             if (storedCode != code)
             {
                 // Increment failed attempt count
+                // FIXED: Now uses consistent key format with colon
                 await cacheService.SetAsync(
-                    $"2fa_attempts_{userId}", 
+                    $"2fa_attempts:{userId}", 
                     attemptCount + 1, 
                     TimeSpan.FromMinutes(LockoutMinutes)
                 );
@@ -144,8 +145,8 @@ public class TwoFactorService(
             var cleanupOperations = new[]
             {
                 cacheService.RemoveAsync(codeKey),
-                cacheService.RemoveAsync($"2fa_attempts_{userId}"),
-                cacheService.RemoveAsync(sessionId)
+                cacheService.RemoveAsync($"2fa_attempts:{userId}"), // FIXED: Now consistent
+                cacheService.RemoveAsync($"2fa_session:{sessionId}")
             };
             
             await Task.WhenAll(cleanupOperations);
@@ -186,7 +187,8 @@ public class TwoFactorService(
 
     public async Task<int> GetAttemptCountAsync(string userId)
     {
-        var cacheKey = $"2fa_attempts_{userId}";
+        // FIXED: Now uses consistent key format with colon
+        var cacheKey = $"2fa_attempts:{userId}";
         var attempts = await cacheService.GetAsync<int>(cacheKey);
         return attempts;
     }
