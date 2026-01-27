@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+// src/api/helpers/auth.js
 import { apiClient } from './apiClients.js';
-import axios from "axios";
+import { useState, useEffect, useRef } from 'react';
 
 const useAuth = () => {
     const [loading, setLoading] = useState(false);
@@ -197,7 +197,6 @@ const useAuth = () => {
                 setRequires2FA(true);
                 setSessionId(responseData.sessionId);
                 setMaskedEmail(responseData.email);
-                // Temporarily store session details in sessionStorage for 2FA flow
                 sessionStorage.setItem('temp2FASession', JSON.stringify({
                     sessionId: responseData.sessionId,
                     email: responseData.email,
@@ -298,14 +297,12 @@ const useAuth = () => {
     };
 
     const verify2FA = async (code) => {
-        // Check for persisted temp session from reload
         if (!sessionId) {
             const temp2FAData = sessionStorage.getItem('temp2FASession');
             if (temp2FAData) {
                 try {
                     const { sessionId: tempSessionId, email: tempEmail, timestamp } = JSON.parse(temp2FAData);
                     
-                    // Check if 2FA session hasn't expired (10 minutes)
                     if (new Date().getTime() - timestamp < 10 * 60 * 1000) {
                         setSessionId(tempSessionId);
                         setMaskedEmail(tempEmail || '');
@@ -339,7 +336,6 @@ const useAuth = () => {
             const responseData = response.data?.data || response.data;
             const userData = responseData?.data || responseData;
 
-            // Create session after successful 2FA
             if (userData) {
                 if (!userData.token) {
                     throw new Error('Token not provided in response');
@@ -356,7 +352,6 @@ const useAuth = () => {
                 createSession(userData.token, userInfo);
             }
 
-            // Clear 2FA state and temp storage
             setRequires2FA(false);
             setSessionId('');
             setMaskedEmail('');
@@ -397,15 +392,10 @@ const useAuth = () => {
     };
 
     const logout = () => {
-        // Clear session
         sessionStorage.removeItem('authSession');
         sessionStorage.removeItem('temp2FASession');
-        
-        // Stop monitoring
         stopSessionMonitoring();
         clearActivityTimeout();
-        
-        // Reset state
         setRequires2FA(false);
         setRequiresPasswordChange(false);
         setSessionId('');

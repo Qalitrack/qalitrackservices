@@ -939,13 +939,33 @@ const weighingSlice = createSlice({
 
             .addCase(addSecondWeight.pending, pending)
             .addCase(addSecondWeight.fulfilled, (state, action) => {
-                state.loading = false;
-                const updated = action.payload.data || action.payload;
-                const idx = state.transactions.findIndex(t => t.id === updated.id);
-                if (idx !== -1) {
-                    state.transactions[idx] = { ...state.transactions[idx], ...updated };
-                }
-            })
+    state.loading = false;
+    
+    const updated = action.payload.data || action.payload;
+    console.log("✅ Redux: Second weight added, response:", updated);
+    
+    // ✅ CRITICAL FIX: Search by ticketID, not id
+    const txId = updated.ticketID || updated.id;
+    const idx = state.transactions.findIndex(
+        t => t.ticketID === txId || t.id === txId
+    );
+    
+    if (idx !== -1) {
+        // Update the transaction with new data
+        state.transactions[idx] = { 
+            ...state.transactions[idx], 
+            ...updated,
+            // ✅ Mark as completed if second weight was added successfully
+            isCompleted: true,
+            completed: true,
+            status: 'Completed'
+        };
+        
+        console.log(`✅ Redux: Transaction ${txId} marked as completed`);
+    } else {
+        console.warn(`⚠️ Redux: Could not find transaction with ID ${txId}`);
+    }
+})
             .addCase(addSecondWeight.rejected, rejected)
 
             .addCase(completeTransactionThunk.pending, pending)

@@ -1,7 +1,9 @@
-// ✅ CRITICAL FIXES:
+// ✅ FULLY UPDATED - Transaction Completion Fixed
 // 1. Keep ticketID as GUID string (don't convert to parseInt)
 // 2. Get user from session storage as fallback
 // 3. Better logging for debugging 404 errors
+// 4. ✅ FIXED: Properly fetch operator name from logged-in user
+// 5. ✅ FIXED: Second weighing now properly completes transactions
 
 import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +19,7 @@ import {
   addTransaction,
   addSecondWeight,
   fetchTransactions,
+  fetchCurrentUser,
 } from "../../store/weighingSlice";
 
 const { Option } = Select;
@@ -37,27 +40,49 @@ export default function CreateTransactionForm({
     transporters,
     weighbridges = [],
     loading,
+    currentUser: reduxCurrentUser,
   } = useSelector((state) => state.weighing);
 
-  // ✅ Get user from Redux OR sessionStorage
-  const reduxUser = useSelector((state) => state.auth?.user || state.weighing?.currentUser);
+  // ✅ Get user from Redux, auth store, OR sessionStorage (authSession)
+  const authUser = useSelector((state) => state.auth?.user);
   const [sessionUser, setSessionUser] = useState(null);
   
   useEffect(() => {
-    if (!reduxUser) {
+    // Try to get user from session storage if not in Redux
+    if (!reduxCurrentUser && !authUser) {
       try {
-        const session = sessionStorage.getItem("authSession") || sessionStorage.getItem("user");
-        if (session) {
-          const parsed = JSON.parse(session);
-          setSessionUser(parsed.user || parsed);
+        // ✅ Read from authSession (this is where useAuth stores it)
+        const authSession = sessionStorage.getItem("authSession");
+        if (authSession) {
+          const parsed = JSON.parse(authSession);
+          // The user data is stored in parsed.userData
+          const user = parsed.userData || parsed.user || parsed;
+          setSessionUser(user);
+          console.log("✅ Loaded user from authSession:", user);
+        } else {
+          // Fallback to old locations
+          const fallbackSession = sessionStorage.getItem("user");
+          if (fallbackSession) {
+            const parsed = JSON.parse(fallbackSession);
+            const user = parsed.user || parsed;
+            setSessionUser(user);
+            console.log("✅ Loaded user from fallback session:", user);
+          } else {
+            // If no session storage, try to fetch current user from API
+            console.log("⚠️ No session found, fetching current user from API");
+            dispatch(fetchCurrentUser());
+          }
         }
       } catch (err) {
-        console.warn("Could not read session storage:", err);
+        console.warn("⚠️ Could not read session storage:", err);
+        // Try API as fallback
+        dispatch(fetchCurrentUser());
       }
     }
-  }, [reduxUser]);
+  }, [reduxCurrentUser, authUser, dispatch]);
   
-  const currentUser = reduxUser || sessionUser;
+  // Use the first available user source
+  const currentUser = reduxCurrentUser || authUser || sessionUser;
   const [submitError, setSubmitError] = useState(null);
 
   const isSecondWeighing = !!(formData.id || formData.ticketID);
@@ -74,25 +99,53 @@ export default function CreateTransactionForm({
     }
   }, [dispatch, weighbridges.length]);
 
+  // ✅ FIXED: Set operator information from current user
   useEffect(() => {
     if (currentUser) {
-      const operatorName = 
-        currentUser.fullName || 
-        currentUser.name || 
-        currentUser.username || 
-        currentUser.email ||
-        "Operator";
+      // Extract operator name - prioritize fullName, then firstName + lastName, then name, then username
+      let operatorName = "Unknown Operator";
       
+      // Try fullName first
+      if (currentUser.fullName?.trim()) {
+        operatorName = currentUser.fullName.trim();
+      }
+      // Try firstName + lastName combination (this is what authSession uses)
+      else if (currentUser.firstName || currentUser.lastName) {
+        const firstName = currentUser.firstName?.trim() || '';
+        const lastName = currentUser.lastName?.trim() || '';
+        operatorName = `${firstName} ${lastName}`.trim();
+      }
+      // Try name field
+      else if (currentUser.name?.trim()) {
+        operatorName = currentUser.name.trim();
+      }
+      // Fallback to username
+      else if (currentUser.username?.trim()) {
+        operatorName = currentUser.username.trim();
+      }
+      // Last resort: email prefix
+      else if (currentUser.email) {
+        operatorName = currentUser.email.split('@')[0];
+      }
+      
+      // Extract operator ID
       const operatorId = 
         currentUser.id || 
         currentUser.userId || 
+        currentUser.uid ||
         "00000000-0000-0000-0000-000000000000";
+      
+      console.log("✅ Setting operator info:");
+      console.log("  - ID:", operatorId);
+      console.log("  - Name:", operatorName);
       
       setFormData((prev) => ({
         ...prev,
         operatorID: operatorId,
         operatorName: operatorName,
       }));
+    } else {
+      console.warn("⚠️ No current user found - operator info not set");
     }
   }, [currentUser, setFormData]);
 
@@ -197,8 +250,15 @@ export default function CreateTransactionForm({
       return;
     }
 
+    // ✅ Ensure we have operator info before submitting
+    if (!formData.operatorName || formData.operatorName === "Unknown Operator") {
+      message.error("Operator information not available. Please refresh the page.");
+      return;
+    }
+
     try {
       if (!isSecondWeighing) {
+        // ==================== FIRST WEIGHING ====================
         const payload = {
           noPlate: formData.noPlate.toUpperCase(),
           driverName: formData.driverName || "",
@@ -210,7 +270,7 @@ export default function CreateTransactionForm({
           weighBridgeName: formData.weighBridgeName || formData.scaleName || "",
           scaleName: formData.scaleName || "",
           operatorID: formData.operatorID || currentUser?.id || "00000000-0000-0000-0000-000000000000",
-          operatorName: formData.operatorName || currentUser?.fullName || currentUser?.name || "Operator",
+          operatorName: formData.operatorName,
           commodityID: formData.commodityID || "00000000-0000-0000-0000-000000000000",
           commodityName: formData.commodityName || "",
           supplierID: formData.supplierID || "00000000-0000-0000-0000-000000000000",
@@ -226,11 +286,24 @@ export default function CreateTransactionForm({
           notes: formData.notes || "",
         };
 
-        await dispatch(addTransaction(payload)).unwrap();
+        console.log("📤 Submitting FIRST weight with operator:", {
+          operatorID: payload.operatorID,
+          operatorName: payload.operatorName
+        });
+
+        const result = await dispatch(addTransaction(payload)).unwrap();
+        
+        console.log("✅ First weight saved, result:", result);
+        
         message.success("✓ First Weight Saved!");
+        
+        // ✅ Refresh incomplete transactions list
         await dispatch(fetchTransactions({ isCompleted: false, pageNumber: 1, pageSize: 100 }));
+        
         if (onTransactionCreated) onTransactionCreated();
+        
       } else {
+        // ==================== SECOND WEIGHING ====================
         if (!isValid) {
           message.error(errorMsg);
           return;
@@ -240,11 +313,13 @@ export default function CreateTransactionForm({
         const transactionId = formData.ticketID || formData.id;
         
         if (!transactionId) {
-          message.error("Transaction ID missing");
+          message.error("Transaction ID missing - cannot complete transaction");
+          console.error("❌ Missing transaction ID:", { formData });
           return;
         }
 
-        console.log("✅ Submitting second weight for ticket:", transactionId);
+        console.log("📤 Submitting SECOND weight for ticket:", transactionId);
+        console.log("📊 Net weight calculated:", netWeight, "kg");
 
         const payload = {
           ticketID: String(transactionId), // ✅ Keep as GUID string!
@@ -252,27 +327,66 @@ export default function CreateTransactionForm({
           weighBridgeName2nd: formData.weighBridgeName || formData.scaleName || "",
           scaleName2nd: formData.scaleName || "",
           operatorID2nd: String(formData.operatorID || currentUser?.id || ""),
-          operatorName2nd: formData.operatorName || currentUser?.fullName || currentUser?.name || "Operator",
+          operatorName2nd: formData.operatorName,
           notes: formData.notes || "",
         };
 
-        console.log("📤 Second weight payload:", payload);
+        console.log("📤 Second weight payload:", {
+          ticketID: payload.ticketID,
+          secondWeight: payload.secondWeight,
+          operatorID2nd: payload.operatorID2nd,
+          operatorName2nd: payload.operatorName2nd
+        });
 
-        await dispatch(addSecondWeight(payload)).unwrap();
-        message.success(`✓ Finalized! Net: ${netWeight.toLocaleString()} KG`);
-        await dispatch(fetchTransactions({ isCompleted: false, pageNumber: 1, pageSize: 100 }));
-        if (onTransactionCreated) onTransactionCreated();
+        // ✅ Add second weight - this should mark transaction as completed
+        const result = await dispatch(addSecondWeight(payload)).unwrap();
+        
+        console.log("✅ Second weight added successfully:", result);
+        console.log("✅ Transaction should now be completed");
+        
+        // ✅ Show success message with net weight
+        message.success({
+          content: `✓ Transaction Completed! Net: ${netWeight.toLocaleString()} KG`,
+          duration: 5,
+        });
+        
+        // ✅ Refresh incomplete transactions list (completed one should disappear)
+        console.log("🔄 Refreshing transactions list...");
+        await dispatch(fetchTransactions({ 
+          isCompleted: false, 
+          pageNumber: 1, 
+          pageSize: 100 
+        }));
+        
+        console.log("✅ Transaction list refreshed");
+        
+        // ✅ Reset form
+        if (onTransactionCreated) {
+          onTransactionCreated();
+        }
       }
     } catch (err) {
       console.error("❌ Save failed:", err);
-      let errorMsg = err.message || "Failed to save";
+      
+      let errorMsg = "Failed to save transaction";
+      
+      if (err.message) {
+        errorMsg = err.message;
+      }
       
       if (err.response?.status === 404) {
         errorMsg = "API endpoint not found (404). Check backend configuration.";
+      } else if (err.response?.status === 400) {
+        errorMsg = "Invalid data sent to server. " + (err.message || "");
+      } else if (err.response?.status === 500) {
+        errorMsg = "Server error. Please contact administrator.";
       }
       
       setSubmitError(errorMsg);
-      message.error(errorMsg);
+      message.error({
+        content: errorMsg,
+        duration: 6,
+      });
     }
   };
 
@@ -282,8 +396,12 @@ export default function CreateTransactionForm({
     </label>
   );
 
+  // ✅ Display operator username/email as secondary info
+  const operatorSecondaryInfo = currentUser?.username || currentUser?.email || 'Not logged in';
+
   return (
     <div className="flex flex-col h-full bg-white">
+      {/* ==================== LIVE WEIGHT HEADER ==================== */}
       <div className={`mb-3 p-2 rounded-lg border flex justify-between items-center shrink-0 ${
           isSecondWeighing ? "bg-blue-50 border-blue-200" : "bg-amber-50 border-amber-200"
         }`}>
@@ -319,6 +437,7 @@ export default function CreateTransactionForm({
         </Space>
       </div>
 
+      {/* ==================== NET WEIGHT DISPLAY (Second Weighing Only) ==================== */}
       {isSecondWeighing && (
         <div className={`mb-4 p-3 rounded-lg border text-center ${
             isValid ? "bg-green-50 border-green-300" : "bg-red-50 border-red-300"
@@ -333,19 +452,51 @@ export default function CreateTransactionForm({
         </div>
       )}
 
+      {/* ==================== SECOND WEIGHING INFO ALERT ==================== */}
       {isSecondWeighing && (
-        <Alert message={`Second Weighing Mode`}
-          description={`Vehicle: ${formData.noPlate} | First Weight: ${formData.firstWeight} kg`}
-          type="info" showIcon className="mb-3" />
+        <Alert 
+          message="Second Weighing Mode"
+          description={
+            <div className="text-[11px]">
+              <div><strong>Vehicle:</strong> {formData.noPlate}</div>
+              <div><strong>First Weight:</strong> {formData.firstWeight} kg</div>
+              <div><strong>Ticket ID:</strong> {formData.ticketID || formData.id}</div>
+            </div>
+          }
+          type="info" 
+          showIcon 
+          className="mb-3" 
+        />
       )}
 
+      {/* ==================== ERROR ALERT ==================== */}
       {submitError && (
-        <Alert message="Save Failed" description={submitError} type="error" showIcon closable
-          onClose={() => setSubmitError(null)} className="mb-4" />
+        <Alert 
+          message="Save Failed" 
+          description={submitError} 
+          type="error" 
+          showIcon 
+          closable
+          onClose={() => setSubmitError(null)} 
+          className="mb-4" 
+        />
       )}
 
+      {/* ==================== NO USER WARNING ==================== */}
+      {!currentUser && (
+        <Alert 
+          message="Warning" 
+          description="Operator information not loaded. Please refresh the page if this persists." 
+          type="warning" 
+          showIcon 
+          className="mb-3" 
+        />
+      )}
+
+      {/* ==================== FORM FIELDS ==================== */}
       <div className="flex-1 overflow-y-auto pr-1">
         <Row gutter={[8, 10]}>
+          {/* Scale Name */}
           <Col span={12}>
             <FieldLabel required>Scale Name</FieldLabel>
             <Select size="middle" className="w-full" showSearch onChange={handleScaleSelect}
@@ -360,9 +511,10 @@ export default function CreateTransactionForm({
             </Select>
           </Col>
 
+          {/* Operator */}
           <Col span={12}>
             <FieldLabel required>Operator</FieldLabel>
-            <Input size="middle" value={formData.operatorName} readOnly
+            <Input size="middle" value={formData.operatorName || "Loading..."} readOnly
               className="bg-amber-50 font-semibold text-gray-800 border-amber-200"
               placeholder="Auto-filled" prefix={
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-[10px] font-bold mr-1">
@@ -370,10 +522,11 @@ export default function CreateTransactionForm({
                 </div>
               } />
             <div className="text-[9px] text-amber-600 mt-1 font-medium">
-              ✓ {currentUser ? `${currentUser.username || currentUser.email}` : 'Loading...'}
+              {currentUser ? `✓ ${operatorSecondaryInfo}` : '⚠ Not logged in'}
             </div>
           </Col>
 
+          {/* Vehicle Plate */}
           <Col span={12}>
             <FieldLabel required>Vehicle Plate</FieldLabel>
             <Select size="middle" showSearch className="w-full" onSearch={debounced.vehicles}
@@ -385,6 +538,7 @@ export default function CreateTransactionForm({
             </Select>
           </Col>
 
+          {/* Driver */}
           <Col span={12}>
             <FieldLabel>Driver Name</FieldLabel>
             <Select size="middle" showSearch className="w-full" onSearch={debounced.drivers}
@@ -396,6 +550,7 @@ export default function CreateTransactionForm({
             </Select>
           </Col>
 
+          {/* Transporter */}
           <Col span={12}>
             <FieldLabel required>Transporter</FieldLabel>
             <Select size="middle" showSearch className="w-full" onSearch={debounced.transporters}
@@ -407,6 +562,7 @@ export default function CreateTransactionForm({
             </Select>
           </Col>
 
+          {/* Commodity */}
           <Col span={12}>
             <FieldLabel>Commodity</FieldLabel>
             <Select size="middle" showSearch className="w-full" onSearch={debounced.products}
@@ -418,6 +574,7 @@ export default function CreateTransactionForm({
             </Select>
           </Col>
 
+          {/* Supplier */}
           <Col span={12}>
             <FieldLabel>Supplier</FieldLabel>
             <Select size="middle" showSearch className="w-full" onSearch={debounced.suppliers}
@@ -429,6 +586,7 @@ export default function CreateTransactionForm({
             </Select>
           </Col>
 
+          {/* Customer */}
           <Col span={12}>
             <FieldLabel>Customer Name</FieldLabel>
             <Input size="middle" value={formData.customerName}
@@ -436,6 +594,7 @@ export default function CreateTransactionForm({
               disabled={isSecondWeighing} placeholder="Enter customer" />
           </Col>
 
+          {/* Origin */}
           <Col span={6}>
             <FieldLabel>Origin</FieldLabel>
             <Input size="middle" value={formData.originName}
@@ -443,6 +602,7 @@ export default function CreateTransactionForm({
               disabled={isSecondWeighing} placeholder="Origin" />
           </Col>
 
+          {/* Destination */}
           <Col span={6}>
             <FieldLabel>Destination</FieldLabel>
             <Input size="middle" value={formData.destinationName}
@@ -450,6 +610,7 @@ export default function CreateTransactionForm({
               disabled={isSecondWeighing} placeholder="Destination" />
           </Col>
 
+          {/* Weigh Mode */}
           <Col span={8}>
             <FieldLabel>Weigh Mode</FieldLabel>
             <Select size="middle" className="w-full" value={formData.weighMode}
@@ -459,6 +620,7 @@ export default function CreateTransactionForm({
             </Select>
           </Col>
 
+          {/* Operation Type */}
           <Col span={16}>
             <FieldLabel>Operation Type</FieldLabel>
             <Select size="middle" className="w-full" value={formData.operation}
@@ -471,6 +633,7 @@ export default function CreateTransactionForm({
         </Row>
       </div>
 
+      {/* ==================== FOOTER BUTTONS ==================== */}
       <div className="mt-3 pt-3 border-t flex gap-3 shrink-0 bg-white">
         <Button size="large" className="w-1/3 text-gray-400 font-bold" onClick={onTransactionCreated}>
           RESET
