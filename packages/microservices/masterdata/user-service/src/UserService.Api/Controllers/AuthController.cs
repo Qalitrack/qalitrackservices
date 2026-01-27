@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.DTOs.Auth;
 using AutoMapper;
@@ -154,10 +155,24 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+                
+                    // ────────────────────────────────────────────────
+                    // NEW LOGGING TO CATCH WHAT IS ACTUALLY RECEIVED
+                    _logger.LogInformation(
+                        "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid} | RequestBodyRaw={Body}",
+                        request?.SessionId ?? "(null)",
+                        request?.Code ?? "(null)",
+                        ModelState.IsValid
+                    );
+                    // ────────────────────────────────────────────────
+
+                    if (!ModelState.IsValid)
+                    {
+                        var modelErrors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                        _logger.LogWarning("Verify-2FA ModelState invalid: {Errors}", modelErrors);
+                        return BadRequest(ModelState);
+                    }
+
 
                 // Verify the 2FA code
                 var verifyResult = await _twoFactorService.VerifyCodeAsync(request.SessionId, request.Code);
