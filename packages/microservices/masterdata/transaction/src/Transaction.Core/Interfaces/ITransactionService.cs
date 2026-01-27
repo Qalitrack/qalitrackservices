@@ -6,11 +6,11 @@ public interface ITransactionService
 {
     // Basic CRUD with pagination
     Task<PagedResult<TransactionReadDto>> GetAllAsync(WeighbridgeTransactionFilter filter);
-    Task<TransactionReadDto?> GetByIdAsync(int ticketId);
+    Task<TransactionReadDto?> GetByIdAsync(string ticketId);
     Task<TransactionReadDto?> GetByReceiptNoAsync(string receiptNo);
     Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto);
-    Task<TransactionReadDto?> UpdateAsync(int ticketId, UpdateTransactionDto dto);
-    Task<bool> DeleteAsync(int ticketId);
+    Task<TransactionReadDto?> UpdateAsync(string ticketId, UpdateTransactionDto dto);
+    Task<bool> DeleteAsync(string ticketId);
     
     // Receipt validation
     Task<bool> IsReceiptNoAvailableAsync(string receiptNo);
@@ -21,12 +21,12 @@ public interface ITransactionService
     
     // Get incomplete transactions for continuation
     Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleAsync(string noPlate);
-    Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId);
+    Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId);
     
     // Get transactions by status
     Task<IEnumerable<TransactionReadDto>> GetTransactionsByStatusAsync(string status, int limit = 100);
     
     // Reweigh operations
     Task<bool> RequestReweighAsync(RequestReweighDto dto);
-    Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(int ticketId);
+    Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(string ticketId);
 }
