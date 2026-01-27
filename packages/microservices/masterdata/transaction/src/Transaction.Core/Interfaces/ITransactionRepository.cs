@@ -7,7 +7,7 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
 {
     Task<bool> IsReceiptNoAvailableAsync(string receiptNo);
     Task<WeighbridgeTransaction?> GetByReceiptNoAsync(string receiptNo);
-    Task<WeighbridgeTransaction?> GetByIdAsync(int ticketId);
+    Task<WeighbridgeTransaction?> GetByIdAsync(string ticketId);
     Task<string?> GetLatestReceiptNumberAsync(string datePrefix);
     
     // Paginated queries with filters
@@ -15,14 +15,14 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
     
     // Get incomplete transactions for a vehicle (to allow continuation)
     Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleAsync(string noPlate);
-    Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId);
+    Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId);
     
     // Get transactions by status
     Task<List<WeighbridgeTransaction>> GetTransactionsByStatusAsync(string status, int limit = 100);
     
     // Get reweigh records for a transaction
-    Task<List<ReweighRecord>> GetReweighRecordsAsync(int ticketId);
+    Task<List<ReweighRecord>> GetReweighRecordsAsync(string ticketId);
     
     // Delete by ticket ID
-    Task<bool> DeleteAsync(int ticketId);
+    Task<bool> DeleteAsync(string ticketId);
 }

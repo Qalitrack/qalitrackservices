@@ -24,7 +24,7 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .FirstOrDefaultAsync(e => e.ReceiptNo.ToLower() == receiptNo.ToLower() && !e.IsDeleted);
     }
 
-    public async Task<WeighbridgeTransaction?> GetByIdAsync(int ticketId)
+    public async Task<WeighbridgeTransaction?> GetByIdAsync(string ticketId)
     {
         return await _dbSet
             .FirstOrDefaultAsync(t => t.TicketID == ticketId && !t.IsDeleted);
@@ -50,50 +50,50 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             query = query.Where(t => t.DriverName.Contains(filter.DriverName));
         }
 
-        if (filter.VehicleID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.VehicleID))
         {
-            query = query.Where(t => t.VehicleID == filter.VehicleID.Value);
+            query = query.Where(t => t.VehicleID == filter.VehicleID);
         }
 
-        if (filter.CommodityID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.CommodityID))
         {
-            query = query.Where(t => t.CommodityID == filter.CommodityID.Value);
+            query = query.Where(t => t.CommodityID == filter.CommodityID);
         }
 
-        if (filter.SupplierID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.SupplierID))
         {
-            query = query.Where(t => t.SupplierID == filter.SupplierID.Value);
+            query = query.Where(t => t.SupplierID == filter.SupplierID);
         }
 
-        if (filter.CustomerID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.CustomerID))
         {
-            query = query.Where(t => t.CustomerID == filter.CustomerID.Value);
+            query = query.Where(t => t.CustomerID == filter.CustomerID);
         }
 
-        if (filter.TransporterID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.TransporterID))
         {
-            query = query.Where(t => t.TransporterID == filter.TransporterID.Value);
+            query = query.Where(t => t.TransporterID == filter.TransporterID);
         }
 
-        if (filter.OriginID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.OriginID))
         {
-            query = query.Where(t => t.OriginID == filter.OriginID.Value);
+            query = query.Where(t => t.OriginID == filter.OriginID);
         }
 
-        if (filter.DestinationID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.DestinationID))
         {
-            query = query.Where(t => t.DestinationID == filter.DestinationID.Value);
+            query = query.Where(t => t.DestinationID == filter.DestinationID);
         }
 
-        if (filter.WeighBridgeID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.WeighBridgeID))
         {
-            query = query.Where(t => t.WeighBridgeID == filter.WeighBridgeID.Value);
+            query = query.Where(t => t.WeighBridgeID == filter.WeighBridgeID);
         }
 
-        if (filter.OperatorID.HasValue)
+        if (!string.IsNullOrWhiteSpace(filter.OperatorID))
         {
-            query = query.Where(t => t.OperatorID == filter.OperatorID.Value || 
-                                     (t.OperatorID2nd != null && t.OperatorID2nd == filter.OperatorID.Value.ToString()));
+            query = query.Where(t => t.OperatorID == filter.OperatorID || 
+                                     t.OperatorID2nd == filter.OperatorID);
         }
 
         if (!string.IsNullOrWhiteSpace(filter.Status))
@@ -156,7 +156,7 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .ToListAsync();
     }
 
-    public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId)
+    public async Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId)
     {
         return await _dbSet
             .Where(t => t.VehicleID == vehicleId && 
@@ -175,7 +175,7 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .ToListAsync();
     }
 
-    public async Task<List<ReweighRecord>> GetReweighRecordsAsync(int ticketId)
+    public async Task<List<ReweighRecord>> GetReweighRecordsAsync(string ticketId)
     {
         return await _context.ReweighRecords
             .Where(r => r.WeighbridgeTransactionId == ticketId && !r.IsDeleted)
@@ -192,7 +192,7 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .FirstOrDefaultAsync();
     }
 
-    public async Task<bool> DeleteAsync(int ticketId)
+    public async Task<bool> DeleteAsync(string ticketId)
     {
         var entity = await _dbSet.FirstOrDefaultAsync(t => t.TicketID == ticketId);
         if (entity == null)

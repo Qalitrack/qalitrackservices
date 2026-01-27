@@ -39,7 +39,7 @@ public class TransactionService : ITransactionService
         };
     }
 
-    public async Task<TransactionReadDto?> GetByIdAsync(int ticketId)
+    public async Task<TransactionReadDto?> GetByIdAsync(string ticketId)
     {
         var transaction = await _transactionRepository.GetByIdAsync(ticketId);
         return transaction == null ? null : _mapper.Map<TransactionReadDto>(transaction);
@@ -59,6 +59,13 @@ public class TransactionService : ITransactionService
         var receiptNo = await _receiptNumberService.GenerateReceiptNumberAsync();
         
         var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
+        
+        // Generate GUID for TicketID if not provided
+        if (string.IsNullOrEmpty(transaction.TicketID))
+        {
+            transaction.TicketID = Guid.NewGuid().ToString();
+        }
+        
         transaction.ReceiptNo = receiptNo;
         transaction.CreatedAt = utcNow;
         transaction.UpdatedAt = utcNow;
@@ -70,7 +77,7 @@ public class TransactionService : ITransactionService
         return _mapper.Map<TransactionReadDto>(createdTransaction);
     }
 
-    public async Task<TransactionReadDto?> UpdateAsync(int ticketId, UpdateTransactionDto dto)
+    public async Task<TransactionReadDto?> UpdateAsync(string ticketId, UpdateTransactionDto dto)
     {
         var existingTransaction = await _transactionRepository.GetByIdAsync(ticketId);
         if (existingTransaction == null)
@@ -83,18 +90,18 @@ public class TransactionService : ITransactionService
         // Only update non-null fields
         if (dto.NoPlate != null) existingTransaction.NoPlate = dto.NoPlate;
         if (dto.DriverName != null) existingTransaction.DriverName = dto.DriverName;
-        if (dto.VehicleID.HasValue) existingTransaction.VehicleID = dto.VehicleID;
-        if (dto.CommodityID.HasValue) existingTransaction.CommodityID = dto.CommodityID;
+        if (dto.VehicleID != null) existingTransaction.VehicleID = dto.VehicleID;
+        if (dto.CommodityID != null) existingTransaction.CommodityID = dto.CommodityID;
         if (dto.CommodityName != null) existingTransaction.CommodityName = dto.CommodityName;
-        if (dto.SupplierID.HasValue) existingTransaction.SupplierID = dto.SupplierID;
+        if (dto.SupplierID != null) existingTransaction.SupplierID = dto.SupplierID;
         if (dto.SupplierName != null) existingTransaction.SupplierName = dto.SupplierName;
-        if (dto.CustomerID.HasValue) existingTransaction.CustomerID = dto.CustomerID;
+        if (dto.CustomerID != null) existingTransaction.CustomerID = dto.CustomerID;
         if (dto.CustomerName != null) existingTransaction.CustomerName = dto.CustomerName;
-        if (dto.TransporterID.HasValue) existingTransaction.TransporterID = dto.TransporterID.Value;
+        if (dto.TransporterID != null) existingTransaction.TransporterID = dto.TransporterID;
         if (dto.TransporterName != null) existingTransaction.TransporterName = dto.TransporterName;
-        if (dto.OriginID.HasValue) existingTransaction.OriginID = dto.OriginID;
+        if (dto.OriginID != null) existingTransaction.OriginID = dto.OriginID;
         if (dto.OriginName != null) existingTransaction.OriginName = dto.OriginName;
-        if (dto.DestinationID.HasValue) existingTransaction.DestinationID = dto.DestinationID;
+        if (dto.DestinationID != null) existingTransaction.DestinationID = dto.DestinationID;
         if (dto.DestinationName != null) existingTransaction.DestinationName = dto.DestinationName;
         if (dto.WeighMode != null) existingTransaction.WeighMode = dto.WeighMode;
         if (dto.Operation != null) existingTransaction.Operation = dto.Operation;
@@ -112,7 +119,7 @@ public class TransactionService : ITransactionService
         return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 
-    public async Task<bool> DeleteAsync(int ticketId)
+    public async Task<bool> DeleteAsync(string ticketId)
     {
         var transaction = await _transactionRepository.GetByIdAsync(ticketId);
         if (transaction == null)
@@ -217,7 +224,7 @@ public class TransactionService : ITransactionService
         return _mapper.Map<IEnumerable<TransactionReadDto>>(transactions);
     }
 
-    public async Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(int vehicleId)
+    public async Task<IEnumerable<TransactionReadDto>> GetIncompleteTransactionsByVehicleIdAsync(string vehicleId)
     {
         var transactions = await _transactionRepository.GetIncompleteTransactionsByVehicleIdAsync(vehicleId);
         return _mapper.Map<IEnumerable<TransactionReadDto>>(transactions);
@@ -255,7 +262,7 @@ public class TransactionService : ITransactionService
         return true;
     }
 
-    public async Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(int ticketId)
+    public async Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(string ticketId)
     {
         var transaction = await _transactionRepository.GetByIdAsync(ticketId);
         if (transaction == null)

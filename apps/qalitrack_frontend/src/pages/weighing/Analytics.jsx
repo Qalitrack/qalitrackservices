@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react"
 import dayjs from "dayjs"
 import {
   BarChart,
@@ -9,120 +10,266 @@ import {
   PieChart,
   Pie,
   Cell,
+  LineChart,
+  Line,
+  Legend,
 } from "recharts"
 
+/* =========================
+   COLORS
+========================= */
 const YELLOW = "#facc15"
 const YELLOW_LIGHT = "#fde68a"
+const YELLOW_BG = "#fffbeb"
+const GRAY = "#9ca3af"
 
+/* =========================
+   MAIN COMPONENT
+========================= */
 export default function Analytics({ transactions = [] }) {
-  const totalTransactions = transactions.length
+  /* =========================
+     FILTER STATES
+  ========================== */
+  const [status, setStatus] = useState("ALL")
+  const [fromDate, setFromDate] = useState("")
+  const [toDate, setToDate] = useState("")
 
-  const totalNetWeight = transactions.reduce(
+  /* =========================
+     FILTERED TRANSACTIONS
+  ========================== */
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((t) => {
+      const created = dayjs(t.createdAt)
+      if (status !== "ALL" && t.status !== status) return false
+      if (fromDate && created.isBefore(dayjs(fromDate), "day")) return false
+      if (toDate && created.isAfter(dayjs(toDate), "day")) return false
+      return true
+    })
+  }, [transactions, status, fromDate, toDate])
+
+  /* =========================
+     KPI METRICS
+  ========================== */
+  const totalTransactions = filteredTransactions.length
+  const totalNetWeight = filteredTransactions.reduce(
     (sum, t) => sum + (t.netWeight || 0),
     0
   )
-
-  const avgNetWeight =
+  const avgWeight =
+    totalTransactions > 0 ? Math.round(totalNetWeight / totalTransactions) : 0
+  const completedCount = filteredTransactions.filter(
+    (t) => t.status === "Completed"
+  ).length
+  const completionRate =
     totalTransactions > 0
-      ? Math.round(totalNetWeight / totalTransactions)
+      ? Math.round((completedCount / totalTransactions) * 100)
       : 0
 
-  const todayCount = transactions.filter((t) =>
-    dayjs(t.createdAt).isSame(dayjs(), "day")
-  ).length
-
-  const statusCounts = transactions.reduce((acc, t) => {
-    const key = t.status || "UNKNOWN"
-    acc[key] = (acc[key] || 0) + 1
-    return acc
-  }, {})
-
-  const statusChartData = Object.entries(statusCounts).map(
-    ([status, count]) => ({
-      name: status,
-      value: count,
-    })
-  )
-
-  const transactionsByDay = Object.values(
-    transactions.reduce((acc, t) => {
+  /* =========================
+     DAILY DATA
+  ========================== */
+  const dailyData = useMemo(() => {
+    const map = {}
+    filteredTransactions.forEach((t) => {
       const day = dayjs(t.createdAt).format("DD MMM")
-      acc[day] = acc[day] || { day, count: 0 }
-      acc[day].count += 1
-      return acc
-    }, {})
-  )
+      map[day] = map[day] || { day, count: 0, weight: 0 }
+      map[day].count++
+      map[day].weight += t.netWeight || 0
+    })
+    return Object.values(map)
+  }, [filteredTransactions])
+
+  /* =========================
+     HOURLY DATA
+  ========================== */
+  const hourlyData = useMemo(() => {
+    return Array.from({ length: 24 }, (_, h) => ({
+      hour: `${h}:00`,
+      count: filteredTransactions.filter(
+        (t) => dayjs(t.createdAt).hour() === h
+      ).length,
+    }))
+  }, [filteredTransactions])
+
+  /* =========================
+     STATUS DISTRIBUTION
+  ========================== */
+  const statusData = useMemo(() => {
+    const map = {}
+    filteredTransactions.forEach((t) => {
+      const key = t.status || "Unknown"
+      map[key] = (map[key] || 0) + 1
+    })
+    return Object.entries(map).map(([name, value]) => ({ name, value }))
+  }, [filteredTransactions])
+
+  /* =========================
+     COMMODITY BREAKDOWN
+  ========================== */
+  const commodityData = useMemo(() => {
+    const map = {}
+    filteredTransactions.forEach((t) => {
+      const key = t.commodityName || "Unknown"
+      map[key] = map[key] || { name: key, weight: 0 }
+      map[key].weight += t.netWeight || 0
+    })
+    return Object.values(map).sort((a, b) => b.weight - a.weight)
+  }, [filteredTransactions])
+
+  /* =========================
+     PREVIOUS PERIOD COMPARISON
+  ========================== */
+  const comparison = useMemo(() => {
+    if (!fromDate || !toDate) return null
+
+    const range = dayjs(toDate).diff(dayjs(fromDate), "day") + 1
+    const prevFrom = dayjs(fromDate).subtract(range, "day")
+    const prevTo = dayjs(toDate).subtract(range, "day")
+
+    const prevData = transactions.filter((t) => {
+      const d = dayjs(t.createdAt)
+      return d.isAfter(prevFrom) && d.isBefore(prevTo)
+    })
+    const prevWeight = prevData.reduce((s, t) => s + (t.netWeight || 0), 0)
+
+    return {
+      weightChange:
+        prevWeight > 0
+          ? Math.round(((totalNetWeight - prevWeight) / prevWeight) * 100)
+          : 0,
+    }
+  }, [fromDate, toDate, totalNetWeight, transactions])
+
+  /* =========================
+     EXPORT PREVIEW
+  ========================== */
+  const exportPayload = {
+    filters: { status, fromDate, toDate },
+    summary: { totalTransactions, totalNetWeight, avgWeight, completionRate },
+    data: filteredTransactions,
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <StatCard title="Total Transactions" value={totalTransactions} />
-        <StatCard
-          title="Total Net Weight (kg)"
-          value={totalNetWeight.toLocaleString()}
+    <div className="h-full overflow-y-auto space-y-8 pr-2">
+      {/* FILTERS */}
+      <div className="flex flex-wrap gap-3">
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
+        >
+          <option value="ALL">All Status</option>
+          <option value="Completed">Completed</option>
+          <option value="Pending">Pending</option>
+        </select>
+
+        <input
+          type="date"
+          value={fromDate}
+          onChange={(e) => setFromDate(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
         />
-        <StatCard
-          title="Avg Net Weight (kg)"
-          value={avgNetWeight.toLocaleString()}
+
+        <input
+          type="date"
+          value={toDate}
+          onChange={(e) => setToDate(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
         />
-        <StatCard title="Today" value={todayCount} />
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Bar Chart */}
-        <div className="bg-white rounded shadow p-4">
-          <h3 className="font-semibold mb-4">
-            Transactions per Day
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={transactionsByDay}>
+      {/* KPI STRIP */}
+      <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
+        <KPI label="Transactions" value={totalTransactions} />
+        <KPI label="Total Weight" value={totalNetWeight.toLocaleString()} />
+        <KPI label="Avg Weight" value={avgWeight.toLocaleString()} />
+        <KPI label="Completed %" value={`${completionRate}%`} />
+        {comparison && (
+          <KPI label="Weight Change" value={`${comparison.weightChange}%`} />
+        )}
+      </div>
+
+      {/* VOLUME + STATUS */}
+      <Section title="Volume Overview">
+        <ChartCard title="Transactions per Day">
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={dailyData}>
               <XAxis dataKey="day" />
-              <YAxis allowDecimals={false} />
+              <YAxis />
               <Tooltip />
-              <Bar dataKey="count" fill={YELLOW} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill={YELLOW} />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </ChartCard>
 
-        {/* Pie Chart */}
-        <div className="bg-white rounded shadow p-4">
-          <h3 className="font-semibold mb-4">
-            Transactions by Status
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartCard title="Status Distribution">
+          <ResponsiveContainer width="100%" height={260}>
             <PieChart>
-              <Pie
-                data={statusChartData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label
-              >
-                {statusChartData.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={index % 2 === 0 ? YELLOW : YELLOW_LIGHT}
-                  />
+              <Pie data={statusData} dataKey="value" label outerRadius={90}>
+                {statusData.map((_, i) => (
+                  <Cell key={i} fill={i % 2 ? YELLOW : YELLOW_LIGHT} />
                 ))}
               </Pie>
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-        </div>
-      </div>
+        </ChartCard>
+      </Section>
+
+      {/* TIME + COMMODITY */}
+      <Section title="Time & Commodity">
+        <ChartCard title="Hourly Transactions">
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={hourlyData}>
+              <XAxis dataKey="hour" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="count" fill={YELLOW_LIGHT} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="Commodity Contribution">
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={commodityData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="weight" fill={YELLOW} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </Section>
     </div>
   )
 }
 
-function StatCard({ title, value }) {
+/* =========================
+   UI ATOMS
+========================= */
+function KPI({ label, value }) {
   return (
-    <div className="bg-white rounded shadow p-4">
-      <p className="text-xs text-gray-500">{title}</p>
-      <p className="text-2xl font-semibold">{value}</p>
+    <div className="bg-yellow-50 border rounded px-3 py-2">
+      <p className="text-[11px] text-gray-500 uppercase">{label}</p>
+      <p className="text-lg font-semibold">{value}</p>
+    </div>
+  )
+}
+
+function ChartCard({ title, children }) {
+  return (
+    <div className="bg-white border rounded p-4">
+      <h3 className="text-sm font-semibold mb-3">{title}</h3>
+      <div className="bg-[#fffbeb] rounded p-2">{children}</div>
+    </div>
+  )
+}
+
+function Section({ title, children }) {
+  return (
+    <div className="space-y-3">
+      <h2 className="text-sm font-semibold text-gray-600">{title}</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">{children}</div>
     </div>
   )
 }
