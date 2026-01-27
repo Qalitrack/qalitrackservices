@@ -19,6 +19,7 @@ import {
     requestReweigh,
     getReweighRecords,
 } from "../api/Transaction/Transaction";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SIMULATED WEIGHT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -424,11 +425,11 @@ export const fetchWeighbridgesByName = createAsyncThunk(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TRANSACTION THUNKS - UPDATED TO MATCH SWAGGER
+// TRANSACTION THUNKS - ✅ UPDATED WITH FIXES
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Fetch transactions with filters matching Swagger spec
+ * ✅ FIXED: Fetch transactions with better response handling
  */
 export const fetchTransactions = createAsyncThunk(
     "weighing/fetchTransactions",
@@ -436,17 +437,34 @@ export const fetchTransactions = createAsyncThunk(
         try {
             console.log("📤 Fetching transactions with filters:", filters);
             const response = await getTransactions(filters);
-            const items = response?.data?.items || response?.items || response?.data || [];
-            return Array.isArray(items) ? items : [];
+            
+            // ✅ Log response structure
+            console.log("✅ Transactions API Response:", JSON.stringify(response, null, 2));
+            
+            // ✅ Extract items from various possible structures
+            let items = [];
+            
+            if (response?.data?.items) {
+                items = response.data.items;
+            } else if (response?.items) {
+                items = response.items;
+            } else if (response?.data && Array.isArray(response.data)) {
+                items = response.data;
+            } else if (Array.isArray(response)) {
+                items = response;
+            }
+            
+            console.log(`✅ Extracted ${items.length} transactions`);
+            return items;
         } catch (error) {
-            console.error("Failed to fetch transactions:", error);
+            console.error("❌ Failed to fetch transactions:", error);
             return rejectWithValue(error.message || "Failed to load transactions");
         }
     }
 );
 
 /**
- * Create new transaction - POST /Transaction
+ * ✅ FIXED: Create new transaction with better response extraction
  */
 export const addTransaction = createAsyncThunk(
     "weighing/addTransaction",
@@ -454,7 +472,28 @@ export const addTransaction = createAsyncThunk(
         try {
             console.log("📤 Creating transaction:", payload);
             const response = await createTransaction(payload);
-            return response;
+            
+            // ✅ Log full response to debug structure
+            console.log("✅ Transaction API Full Response:", JSON.stringify(response, null, 2));
+            
+            // ✅ Extract transaction from various possible response structures
+            let transaction = null;
+            
+            if (response?.data?.transaction) {
+                transaction = response.data.transaction;
+            } else if (response?.transaction) {
+                transaction = response.transaction;
+            } else if (response?.data) {
+                transaction = response.data;
+            } else {
+                transaction = response;
+            }
+            
+            console.log("✅ Extracted transaction for state:", transaction);
+            console.log("✅ Transaction ID:", transaction?.ticketID || transaction?.id);
+            console.log("✅ Is Completed:", transaction?.isCompleted);
+            
+            return transaction;
         } catch (err) {
             console.error("❌ Transaction creation failed:", err);
             return rejectWithValue(err.message || "Save failed");
@@ -836,20 +875,47 @@ const weighingSlice = createSlice({
                 state.currentUser = null;
             })
 
-            // TRANSACTIONS
+            // ✅ FIXED: TRANSACTIONS
             .addCase(fetchTransactions.pending, pending)
             .addCase(fetchTransactions.fulfilled, (state, action) => {
                 state.loading = false;
                 state.transactions = action.payload;
+                console.log(`✅ Redux: Transactions loaded: ${action.payload.length} items`);
             })
             .addCase(fetchTransactions.rejected, rejected)
 
             .addCase(addTransaction.pending, pending)
             .addCase(addTransaction.fulfilled, (state, action) => {
                 state.loading = false;
-                const newTx = action.payload.data || action.payload;
-                if (newTx && !state.transactions.find(t => t.id === newTx.id)) {
-                    state.transactions.unshift(newTx);
+                
+                const newTx = action.payload;
+                
+                console.log("✅ Redux: Adding transaction to state:", newTx);
+                
+                if (newTx) {
+                    // Get transaction ID (might be ticketID or id)
+                    const txId = newTx.ticketID || newTx.id;
+                    
+                    // Check if transaction already exists
+                    const existingIndex = state.transactions.findIndex(
+                        t => (t.ticketID && t.ticketID === txId) || 
+                             (t.id && t.id === txId)
+                    );
+                    
+                    if (existingIndex === -1) {
+                        // Add to beginning (newest first)
+                        state.transactions.unshift(newTx);
+                        console.log(`✅ Redux: Transaction added. Total transactions: ${state.transactions.length}`);
+                    } else {
+                        // Update existing transaction
+                        state.transactions[existingIndex] = { 
+                            ...state.transactions[existingIndex], 
+                            ...newTx 
+                        };
+                        console.log(`✅ Redux: Transaction ${txId} updated in state`);
+                    }
+                } else {
+                    console.warn("⚠️ Redux: No transaction data in action.payload");
                 }
             })
             .addCase(addTransaction.rejected, rejected)
@@ -873,13 +939,33 @@ const weighingSlice = createSlice({
 
             .addCase(addSecondWeight.pending, pending)
             .addCase(addSecondWeight.fulfilled, (state, action) => {
-                state.loading = false;
-                const updated = action.payload.data || action.payload;
-                const idx = state.transactions.findIndex(t => t.id === updated.id);
-                if (idx !== -1) {
-                    state.transactions[idx] = { ...state.transactions[idx], ...updated };
-                }
-            })
+    state.loading = false;
+    
+    const updated = action.payload.data || action.payload;
+    console.log("✅ Redux: Second weight added, response:", updated);
+    
+    // ✅ CRITICAL FIX: Search by ticketID, not id
+    const txId = updated.ticketID || updated.id;
+    const idx = state.transactions.findIndex(
+        t => t.ticketID === txId || t.id === txId
+    );
+    
+    if (idx !== -1) {
+        // Update the transaction with new data
+        state.transactions[idx] = { 
+            ...state.transactions[idx], 
+            ...updated,
+            // ✅ Mark as completed if second weight was added successfully
+            isCompleted: true,
+            completed: true,
+            status: 'Completed'
+        };
+        
+        console.log(`✅ Redux: Transaction ${txId} marked as completed`);
+    } else {
+        console.warn(`⚠️ Redux: Could not find transaction with ID ${txId}`);
+    }
+})
             .addCase(addSecondWeight.rejected, rejected)
 
             .addCase(completeTransactionThunk.pending, pending)
