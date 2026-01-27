@@ -1,22 +1,22 @@
-import { useMemo, useState } from "react";
-import ReportsTable from "../ReportsTable";
-import ReportsPagination from "../ReportsPagination";
-import { ChevronLeft } from "lucide-react";
+import { useMemo, useState } from "react"
+import ReportsTable from "../ReportsTable"
+import ReportsPagination from "../ReportsPagination"
+import { ChevronLeft } from "lucide-react"
+import dayjs from "dayjs"
 
 export default function DriverReport({ transactions = [], loading }) {
-  const [selectedDriver, setSelectedDriver] = useState(null);
+  const [selectedDriver, setSelectedDriver] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 5
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 5;
-
-  // =========================
-  // GROUP BY DRIVER
-  // =========================
+  /* =========================
+     GROUP BY DRIVER
+  ========================= */
   const driverSummary = useMemo(() => {
-    const map = {};
+    const map = {}
 
     transactions.forEach((t) => {
-      const name = t.driverName || "Unknown Driver";
+      const name = t.driverName || "Unknown Driver"
 
       if (!map[name]) {
         map[name] = {
@@ -25,67 +25,95 @@ export default function DriverReport({ transactions = [], loading }) {
           trips: 0,
           totalNetWeight: 0,
           vehicles: new Set(),
-        };
+        }
       }
 
-      map[name].trips += 1;
-      map[name].totalNetWeight += Number(t.netWeight || 0);
-      if (t.noPlate) map[name].vehicles.add(t.noPlate);
-    });
+      map[name].trips += 1
+      map[name].totalNetWeight += Number(t.netWeight || 0)
+      if (t.noPlate) map[name].vehicles.add(t.noPlate)
+    })
 
     return Object.values(map).map((d) => ({
       ...d,
       vehicles: Array.from(d.vehicles).join(", "),
-    }));
-  }, [transactions]);
+    }))
+  }, [transactions])
 
-  // =========================
-  // KPIs
-  // =========================
-  const totalDrivers = driverSummary.length;
-  const totalTrips = driverSummary.reduce((s, d) => s + d.trips, 0);
+  /* =========================
+     KPIs (SUMMARY)
+  ========================= */
+  const totalDrivers = driverSummary.length
+  const totalTrips = driverSummary.reduce((s, d) => s + d.trips, 0)
   const totalWeight = driverSummary.reduce(
     (s, d) => s + d.totalNetWeight,
     0
-  );
+  )
 
-  // =========================
-  // PAGINATED SUMMARY
-  // =========================
+  /* =========================
+     PAGINATED SUMMARY
+  ========================= */
   const paginatedRows = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
+    const start = (currentPage - 1) * PAGE_SIZE
+
     return driverSummary.slice(start, start + PAGE_SIZE).map((d) => ({
       id: d.id,
-      driverName: d.driverName,
+      driverName: (
+        <button
+          onClick={() => setSelectedDriver(d.driverName)}
+          className="text-yellow-600 hover:underline font-medium"
+        >
+          {d.driverName}
+        </button>
+      ),
       trips: d.trips,
       vehicles: d.vehicles,
       netWeight: d.totalNetWeight.toLocaleString(),
-    }));
-  }, [driverSummary, currentPage]);
+    }))
+  }, [driverSummary, currentPage])
 
-  // =========================
-  // DRIVER DETAIL (TRIPS)
-  // =========================
+  /* =========================
+     DRIVER TRIPS (DETAIL PAGE)
+  ========================= */
   const driverTrips = useMemo(() => {
-    if (!selectedDriver) return [];
+    if (!selectedDriver) return []
 
     return transactions
-      .filter((t) => (t.driverName || "Unknown Driver") === selectedDriver)
+      .filter(
+        (t) => (t.driverName || "Unknown Driver") === selectedDriver
+      )
       .map((t) => ({
         id: t.id,
-        date: new Date(t.createdAt).toLocaleString(),
+        date: dayjs(t.createdAt).format("DD MMM YYYY, HH:mm"),
         vehicle: t.noPlate || "-",
-        firstWeight: t.firstWeight || 0,
-        secondWeight: t.secondWeight || 0,
-        netWeight: t.netWeight || 0,
-        source: t.source || "-",
-        destination: t.destination || "-",
-      }));
-  }, [transactions, selectedDriver]);
+        supplier: t.originName || "-",
+        commodity: t.commodityName || "-",
+        customer: t.customerName || "-",
+        destination: t.destinationName || "-",
+        netWeight: Number(t.netWeight || 0),
+      }))
+  }, [transactions, selectedDriver])
+
+  /* =========================
+     DRIVER KPIs
+  ========================= */
+  const driverTotals = useMemo(() => {
+    const totalNet = driverTrips.reduce((s, t) => s + t.netWeight, 0)
+    const vehicles = new Set(driverTrips.map((t) => t.vehicle))
+
+    return {
+      trips: driverTrips.length,
+      totalNet,
+      vehicles: vehicles.size,
+      avgNet:
+        driverTrips.length > 0
+          ? Math.round(totalNet / driverTrips.length)
+          : 0,
+    }
+  }, [driverTrips])
 
   return (
     <div className="bg-white border rounded-lg p-4 space-y-4">
-      {/* KPIs */}
+      {/* SUMMARY KPIs */}
       {!selectedDriver && (
         <div className="grid grid-cols-3 gap-3">
           <CompactStat label="Drivers" value={totalDrivers} />
@@ -97,13 +125,12 @@ export default function DriverReport({ transactions = [], loading }) {
         </div>
       )}
 
-      {/* SUMMARY TABLE */}
+      {/* DRIVER SUMMARY TABLE */}
       {!selectedDriver && (
         <>
           <ReportsTable
             transactions={paginatedRows}
             loading={loading}
-            onRowClick={(row) => setSelectedDriver(row.driverName)}
             showColumns={["driverName", "trips", "vehicles", "netWeight"]}
             compact
           />
@@ -117,7 +144,7 @@ export default function DriverReport({ transactions = [], loading }) {
         </>
       )}
 
-      {/* DRIVER DETAILS */}
+      {/* DRIVER DETAIL PAGE */}
       {selectedDriver && (
         <>
           <div className="flex items-center gap-2">
@@ -129,40 +156,51 @@ export default function DriverReport({ transactions = [], loading }) {
             </button>
 
             <h3 className="text-sm font-semibold">
-              {selectedDriver} — Trips
+              {selectedDriver} — Driver Report
             </h3>
           </div>
 
+          {/* DRIVER KPIs */}
+          <div className="grid grid-cols-4 gap-3">
+            <CompactStat label="Trips" value={driverTotals.trips} />
+            <CompactStat
+              label="Total Net"
+              value={driverTotals.totalNet.toLocaleString()}
+            />
+            <CompactStat label="Vehicles" value={driverTotals.vehicles} />
+            <CompactStat
+              label="Avg Net"
+              value={driverTotals.avgNet.toLocaleString()}
+            />
+          </div>
+
+          {/* TRIPS TABLE */}
           <div className="border rounded-lg overflow-auto">
-            <table className="w-full text-sm min-w-[1000px]">
-              <thead className="bg-gray-50">
+            <table className="w-full text-sm min-w-[1200px]">
+              <thead className="bg-yellow-50">
                 <tr>
                   <th className="p-2 text-left">Date</th>
                   <th className="p-2 text-left">Vehicle</th>
-                  <th className="p-2 text-right">1st</th>
-                  <th className="p-2 text-right">2nd</th>
-                  <th className="p-2 text-right">Net</th>
-                  <th className="p-2 text-left">Source</th>
+                  <th className="p-2 text-left">Supplier</th>
+                  <th className="p-2 text-left">Commodity</th>
+                  <th className="p-2 text-left">Customer</th>
                   <th className="p-2 text-left">Destination</th>
+                  <th className="p-2 text-right">Net Weight</th>
                 </tr>
               </thead>
 
               <tbody>
                 {driverTrips.map((t) => (
-                  <tr key={t.id} className="border-t">
+                  <tr key={t.id} className="border-t hover:bg-gray-50">
                     <td className="p-2">{t.date}</td>
                     <td className="p-2">{t.vehicle}</td>
-                    <td className="p-2 text-right">
-                      {Number(t.firstWeight).toLocaleString()}
-                    </td>
-                    <td className="p-2 text-right">
-                      {Number(t.secondWeight).toLocaleString()}
-                    </td>
-                    <td className="p-2 text-right font-medium">
-                      {Number(t.netWeight).toLocaleString()}
-                    </td>
-                    <td className="p-2">{t.source}</td>
+                    <td className="p-2">{t.supplier}</td>
+                    <td className="p-2">{t.commodity}</td>
+                    <td className="p-2">{t.customer}</td>
                     <td className="p-2">{t.destination}</td>
+                    <td className="p-2 text-right font-medium">
+                      {t.netWeight.toLocaleString()}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -171,7 +209,7 @@ export default function DriverReport({ transactions = [], loading }) {
         </>
       )}
     </div>
-  );
+  )
 }
 
 function CompactStat({ label, value }) {
@@ -180,5 +218,5 @@ function CompactStat({ label, value }) {
       <p className="text-[11px] text-gray-500 uppercase">{label}</p>
       <p className="text-lg font-semibold leading-tight">{value}</p>
     </div>
-  );
+  )
 }
