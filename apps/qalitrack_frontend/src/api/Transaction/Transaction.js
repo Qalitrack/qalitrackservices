@@ -4,13 +4,11 @@ import { transactionsClient } from "../helpers/apiClients";
 /* -------------------------------------------------------------------------- */
 /*                                 BASE PATH                                   */
 /* -------------------------------------------------------------------------- */
-// ✅ CORRECTED: Based on curl screenshot showing successful POST at:
-// /api/Transaction/Transaction/Transaction (triple nested)
-//
-// transactionsClient baseURL = "/api/Transaction" (from apiClients.js)
-// So BASE needs to be: "/Transaction/Transaction"
-// Final URL will be: /api/Transaction + /Transaction/Transaction = /api/Transaction/Transaction/Transaction
-const BASE = "/Transaction/Transaction";
+// ✅ CORRECTED: Based on successful POST showing 201 response at /Transaction/Transaction
+// transactionsClient has baseURL = "/api/Transaction"
+// Full path is: /api/Transaction/Transaction (not triple nested)
+// So BASE should be: "/Transaction"
+const BASE = "/Transaction";
 
 // 🔹 Generic error handler
 const handleRequest = async (promise) => {
@@ -28,13 +26,8 @@ const handleRequest = async (promise) => {
         errorMessage = data;
       } else if (data.message) {
         errorMessage = data.message;
-      } else if (data.title) {
-        errorMessage = data.title;
       } else if (data.errors) {
-        // Handle validation errors
-        errorMessage = Object.entries(data.errors)
-          .map(([key, messages]) => `${key}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
-          .join('; ');
+        errorMessage = Object.values(data.errors).flat().join("; ");
       }
     } else if (error.message) {
       errorMessage = error.message;
@@ -54,50 +47,22 @@ const handleRequest = async (promise) => {
  */
 export const getTransactions = async (params = {}) => {
   console.log("🔍 Fetching transactions with params:", params);
-  console.log("🎯 Full URL: /api/Transaction/Transaction/Transaction");
   return handleRequest(transactionsClient.get(BASE, { params }));
 };
 
 /**
  * POST /api/Transaction/Transaction/Transaction
  * Create a new transaction (first weight)
+ * IMPORTANT: Payload must be wrapped in "request" object
  */
 export const createTransaction = async (payload) => {
   console.log("📤 POST createTransaction - Raw payload:", payload);
   
-  // Ensure required fields have valid values
-  const sanitizedPayload = {
-    noPlate: payload.noPlate?.toUpperCase() || "",
-    driverName: payload.driverName || "",
-    vehicleID: payload.vehicleID || "00000000-0000-0000-0000-000000000000",
-    firstWeight: String(payload.firstWeight || "0"),
-    transporterID: payload.transporterID || "00000000-0000-0000-0000-000000000000",
-    transporterName: payload.transporterName || "",
-    weighBridgeID: payload.weighBridgeID || "00000000-0000-0000-0000-000000000000",
-    weighBridgeName: payload.weighBridgeName || "",
-    scaleName: payload.scaleName || "",
-    operatorID: payload.operatorID || "00000000-0000-0000-0000-000000000000",
-    operatorName: payload.operatorName || "",
-    commodityID: payload.commodityID || "00000000-0000-0000-0000-000000000000",
-    commodityName: payload.commodityName || "",
-    supplierID: payload.supplierID || "00000000-0000-0000-0000-000000000000",
-    supplierName: payload.supplierName || "",
-    customerID: payload.customerID || "00000000-0000-0000-0000-000000000000",
-    customerName: payload.customerName || "",
-    originID: payload.originID || "00000000-0000-0000-0000-000000000000",
-    originName: payload.originName || "",
-    destinationID: payload.destinationID || "00000000-0000-0000-0000-000000000000",
-    destinationName: payload.destinationName || "",
-    weighMode: payload.weighMode || "entry",
-    operation: payload.operation || "weighing",
-    notes: payload.notes || "",
-  };
-  
-  // Wrap payload in "request" object
-  const wrappedPayload = { request: sanitizedPayload };
+  // ✅ Wrap payload in "request" object as shown in curl screenshot
+  const wrappedPayload = { request: payload };
   
   console.log("📦 Wrapped payload:", JSON.stringify(wrappedPayload, null, 2));
-  console.log("🎯 Full URL will be: /api/Transaction/Transaction/Transaction");
+  console.log("🎯 Full URL will be: /api/Transaction/Transaction");
   
   return handleRequest(transactionsClient.post(BASE, wrappedPayload));
 };
@@ -107,7 +72,7 @@ export const createTransaction = async (payload) => {
  * Get a specific transaction by ID
  */
 export const getTransactionById = async (ticketId) => {
-  console.log("🔍 GET " + BASE + "/" + ticketId);
+  console.log("🔍 GET /Transaction/" + ticketId);
   return handleRequest(transactionsClient.get(`${BASE}/${ticketId}`));
 };
 
@@ -116,7 +81,7 @@ export const getTransactionById = async (ticketId) => {
  * Update transaction
  */
 export const updateTransaction = async (ticketId, payload) => {
-  console.log("📝 PUT " + BASE + "/" + ticketId, payload);
+  console.log("📝 PUT /Transaction/" + ticketId, payload);
   
   // Wrap in "request" if not already wrapped
   const wrappedPayload = payload.request ? payload : { request: payload };
@@ -129,7 +94,7 @@ export const updateTransaction = async (ticketId, payload) => {
  * Delete/deactivate a transaction
  */
 export const deleteTransaction = async (ticketId) => {
-  console.log("🗑️ DELETE " + BASE + "/" + ticketId);
+  console.log("🗑️ DELETE /Transaction/" + ticketId);
   return handleRequest(transactionsClient.delete(`${BASE}/${ticketId}`));
 };
 
@@ -146,7 +111,7 @@ export const deactivateTransactionApi = async (ticketId) => {
  */
 export const getTransactionByReceipt = async (receiptNo) => {
   const encoded = encodeURIComponent(receiptNo);
-  console.log("🔍 GET " + BASE + "/receipt/" + encoded);
+  console.log("🔍 GET /Transaction/receipt/" + encoded);
   return handleRequest(transactionsClient.get(`${BASE}/receipt/${encoded}`));
 };
 
@@ -155,7 +120,7 @@ export const getTransactionByReceipt = async (receiptNo) => {
  */
 export const getIncompleteByPlate = async (noPlate) => {
   const encoded = encodeURIComponent(noPlate);
-  console.log("🔍 GET " + BASE + "/incomplete/vehicle/" + encoded);
+  console.log("🔍 GET /Transaction/incomplete/vehicle/" + encoded);
   return handleRequest(transactionsClient.get(`${BASE}/incomplete/vehicle/${encoded}`));
 };
 
@@ -167,7 +132,7 @@ export const getIncompleteByVehicleNo = async (noPlate) => {
  * GET /api/Transaction/Transaction/Transaction/incomplete/vehicle-id/{vehicleId}
  */
 export const getIncompleteByVehicleId = async (vehicleId) => {
-  console.log("🔍 GET " + BASE + "/incomplete/vehicle-id/" + vehicleId);
+  console.log("🔍 GET /Transaction/incomplete/vehicle-id/" + vehicleId);
   return handleRequest(transactionsClient.get(`${BASE}/incomplete/vehicle-id/${vehicleId}`));
 };
 
@@ -176,7 +141,7 @@ export const getIncompleteByVehicleId = async (vehicleId) => {
  */
 export const checkReceiptExists = async (receiptNo) => {
   const encoded = encodeURIComponent(receiptNo);
-  console.log("🔍 GET " + BASE + "/check-receipt/" + encoded);
+  console.log("🔍 GET /Transaction/check-receipt/" + encoded);
   return handleRequest(transactionsClient.get(`${BASE}/check-receipt/${encoded}`));
 };
 
@@ -192,7 +157,7 @@ export const checkReceipt = async (receiptNo) => {
  * GET /api/Transaction/Transaction/Transaction/status/{status}
  */
 export const getTransactionsByStatus = async (status, limit = 100) => {
-  console.log("🔍 GET " + BASE + "/status/" + status, { limit });
+  console.log("🔍 GET /Transaction/status/" + status, { limit });
   return handleRequest(
     transactionsClient.get(`${BASE}/status/${status}`, {
       params: { limit },
@@ -208,21 +173,10 @@ export const getTransactionsByStatus = async (status, limit = 100) => {
  * POST /api/Transaction/Transaction/Transaction/add-second-weight
  */
 export const addSecondWeight = async (payload) => {
-  console.log("📤 POST " + BASE + "/add-second-weight:", payload);
+  console.log("📤 POST /Transaction/add-second-weight:", payload);
   
-  // Ensure required fields
-  const sanitizedPayload = {
-    ticketID: payload.ticketID,
-    secondWeight: String(payload.secondWeight || "0"),
-    weighBridgeName2nd: payload.weighBridgeName2nd || "",
-    scaleName2nd: payload.scaleName2nd || "Scale-01",
-    operatorID2nd: String(payload.operatorID2nd || ""),
-    operatorName2nd: payload.operatorName2nd || "",
-    notes: payload.notes || "",
-  };
-  
-  // Wrap in "request"
-  const wrappedPayload = { request: sanitizedPayload };
+  // Wrap in "request" if not already wrapped
+  const wrappedPayload = payload.request ? payload : { request: payload };
   
   return handleRequest(transactionsClient.post(`${BASE}/add-second-weight`, wrappedPayload));
 };
@@ -230,9 +184,19 @@ export const addSecondWeight = async (payload) => {
 /**
  * Alias for backward compatibility
  */
+/**
+ * Alias for backward compatibility - properly maps old format to new
+ */
 export const addWeighing = async (payload) => {
+  // ✅ If payload is already in correct format, use it directly
+  if (payload.ticketID && payload.secondWeight) {
+    console.log("📤 addWeighing -> using payload as-is");
+    return addSecondWeight(payload);
+  }
+  
+  // ✅ Otherwise, map old format to new format
   const mappedPayload = {
-    ticketID: payload.transactionId || payload.ticketID,
+    ticketID: payload.transactionId || payload.ticketID || payload.id,
     secondWeight: String(payload.weight || payload.secondWeight || "0"),
     weighBridgeName2nd: payload.weighBridgeName || payload.weighBridgeName2nd || "",
     scaleName2nd: payload.scaleName || payload.scaleName2nd || "Scale-01",
@@ -253,7 +217,7 @@ export const completeTransaction = async (payload) => {
     ticketID: payload.ticketID || payload.transactionId || payload.id
   };
   
-  console.log("📤 POST " + BASE + "/complete:", mappedPayload);
+  console.log("📤 POST /Transaction/complete:", mappedPayload);
   
   // Wrap in "request"
   const wrappedPayload = { request: mappedPayload };
@@ -274,7 +238,7 @@ export const requestReweigh = async (payload) => {
     reason: payload.reason || ""
   };
   
-  console.log("📤 POST " + BASE + "/request-reweigh:", mappedPayload);
+  console.log("📤 POST /Transaction/request-reweigh:", mappedPayload);
   
   // Wrap in "request"
   const wrappedPayload = { request: mappedPayload };
@@ -286,7 +250,7 @@ export const requestReweigh = async (payload) => {
  * GET /api/Transaction/Transaction/Transaction/{ticketId}/reweigh-records
  */
 export const getReweighRecords = async (ticketId) => {
-  console.log("🔍 GET " + BASE + "/" + ticketId + "/reweigh-records");
+  console.log("🔍 GET /Transaction/" + ticketId + "/reweigh-records");
   return handleRequest(transactionsClient.get(`${BASE}/${ticketId}/reweigh-records`));
 };
 
@@ -295,17 +259,17 @@ export const getReweighRecords = async (ticketId) => {
 /* -------------------------------------------------------------------------- */
 
 export const getWeighingRecords = async (transactionId) => {
-  console.log("🔍 GET " + BASE + "/" + transactionId + "/weighing-records");
+  console.log("🔍 GET /Transaction/" + transactionId + "/weighing-records");
   return handleRequest(transactionsClient.get(`${BASE}/${transactionId}/weighing-records`));
 };
 
 export const getAuditLogs = async (transactionId) => {
-  console.log("🔍 GET " + BASE + "/" + transactionId + "/audit-logs");
+  console.log("🔍 GET /Transaction/" + transactionId + "/audit-logs");
   return handleRequest(transactionsClient.get(`${BASE}/${transactionId}/audit-logs`));
 };
 
 export const startReweigh = async (transactionId, payload) => {
-  console.log("📤 POST " + BASE + "/" + transactionId + "/start-reweigh", payload);
+  console.log("📤 POST /Transaction/" + transactionId + "/start-reweigh", payload);
   
   // Wrap in "request"
   const wrappedPayload = payload.request ? payload : { request: payload };
@@ -314,7 +278,7 @@ export const startReweigh = async (transactionId, payload) => {
 };
 
 export const addReweighWeight = async (payload) => {
-  console.log("📤 POST " + BASE + "/add-reweigh-weight", payload);
+  console.log("📤 POST /Transaction/add-reweigh-weight", payload);
   
   // Wrap in "request"
   const wrappedPayload = payload.request ? payload : { request: payload };
@@ -323,7 +287,7 @@ export const addReweighWeight = async (payload) => {
 };
 
 export const completeReweigh = async (payload) => {
-  console.log("📤 POST " + BASE + "/complete-reweigh", payload);
+  console.log("📤 POST /Transaction/complete-reweigh", payload);
   
   // Wrap in "request"
   const wrappedPayload = payload.request ? payload : { request: payload };

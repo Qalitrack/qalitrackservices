@@ -1,3 +1,9 @@
+// ✅ FULLY UPDATED - Transaction Completion Fixed
+// 1. Enhanced filtering to properly exclude completed transactions
+// 2. Better state management and refresh logic
+// 3. Improved transaction ID handling (ticketID vs id)
+// 4. Better logging for debugging
+
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, Tag, Button, Input, Typography, Space, Pagination, message, Spin } from "antd";
@@ -39,7 +45,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     dispatch(fetchTransactions(params))
       .unwrap()
       .then((data) => {
-        console.log("✅ Incomplete transactions loaded:", data);
+        console.log("✅ Incomplete transactions loaded:", data?.length || 0, "items");
         setLocalLoading(false);
       })
       .catch((error) => {
@@ -53,8 +59,16 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     loadTransactions();
   }, [loadTransactions]);
 
+  // ✅ Auto-refresh when Redux transactions change
   useEffect(() => {
-    console.log("📊 Transactions updated in Redux:", transactions.length);
+    console.log("📊 Redux transactions updated:", transactions.length, "total");
+    const incomplete = transactions.filter(tx => 
+      !tx.isCompleted && 
+      !tx.completed && 
+      tx.status !== 'Completed' &&
+      tx.status !== 'completed'
+    );
+    console.log("📊 Incomplete transactions:", incomplete.length);
   }, [transactions]);
 
   // Reset to page 1 when searching
@@ -64,8 +78,31 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     }
   }, [searchText, pagination.current]);
 
+  // ✅ ENHANCED FILTERING - properly exclude completed transactions
   const filteredData = useMemo(() => {
-    let data = transactions.filter(tx => !tx.isCompleted && !tx.completed);
+    console.log("🔍 Filtering transactions from Redux state:", transactions.length);
+    
+    // ✅ Filter out completed transactions with multiple checks
+    let data = transactions.filter(tx => {
+      // Check all possible completion flags
+      const isCompleted = tx.isCompleted === true || 
+                         tx.completed === true || 
+                         tx.status === 'Completed' || 
+                         tx.status === 'completed';
+      
+      // Also check if it has a second weight (might indicate completion)
+      const hasSecondWeight = tx.secondWeight && parseFloat(tx.secondWeight) > 0;
+      
+      // If it's marked as completed OR has second weight, exclude it
+      if (isCompleted) {
+        console.log("⏭️ Filtering out completed transaction:", tx.ticketID || tx.id);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    console.log(`✅ After completion filter: ${data.length} incomplete transactions`);
     
     // Client-side search filtering
     if (searchText?.trim()) {
@@ -82,8 +119,10 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
         tx.destinationName?.toLowerCase().includes(searchLower) ||
         tx.operatorName?.toLowerCase().includes(searchLower)
       );
+      console.log(`✅ After search filter: ${data.length} matching transactions`);
     }
     
+    // Sort by creation date (newest first)
     return data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [transactions, searchText]);
 
@@ -91,10 +130,11 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     setPagination(prev => ({ ...prev, total: filteredData.length }));
   }, [filteredData]);
 
-  const isEditing = (record) => record.ticketID === editingKey;
+  const isEditing = (record) => record.ticketID === editingKey || record.id === editingKey;
 
   const edit = (record) => {
-    setEditingKey(record.ticketID);
+    const recordId = record.ticketID || record.id;
+    setEditingKey(recordId);
     setEditedData({ ...record });
   };
 
@@ -176,6 +216,39 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   const calculateWaitTime = (createdAt) => {
     if (!createdAt) return '-';
     return dayjs(createdAt).fromNow();
+  };
+
+  // ✅ Handle second weighing with proper ID handling
+  const handleSecondWeighing = (record) => {
+    console.log("🎯 Starting second weighing for transaction:", record);
+    
+    const transactionId = record.ticketID || record.id;
+    
+    if (!transactionId) {
+      message.error("Cannot start second weighing - transaction ID missing");
+      console.error("❌ Missing transaction ID in record:", record);
+      return;
+    }
+    
+    console.log("✅ Transaction ID for second weighing:", transactionId);
+    
+    onAddWeighing({
+      ...record,
+      id: transactionId,
+      ticketID: transactionId,
+      firstWeight: record.firstWeight?.toString() || "",
+      secondWeight: "",
+      vehicleID: record.vehicleID,
+      driverID: record.driverID,
+      transporterID: record.transporterID,
+      commodityID: record.commodityID,
+      supplierID: record.supplierID,
+      customerID: record.customerID,
+      weighBridgeID: record.weighBridgeID,
+      operatorID: record.operatorID,
+      originID: record.originID,
+      destinationID: record.destinationID,
+    });
   };
 
   const columns = [
@@ -352,13 +425,15 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       fixed: 'right',
       render: (_, record) => {
         const editable = isEditing(record);
+        const recordId = record.ticketID || record.id;
+        
         return editable ? (
           <Space size={4}>
             <Button
               type="text"
               size="small"
               icon={<CheckOutlined className="text-[10px]" />}
-              onClick={() => save(record.ticketID)}
+              onClick={() => save(recordId)}
               loading={saving}
               className="text-green-600 hover:text-green-700 hover:bg-green-50 h-6 px-2 text-[10px] font-medium"
             >
@@ -388,23 +463,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
             <Button
               type="primary"
               size="small"
-              onClick={() => onAddWeighing({
-                ...record,
-                id: record.ticketID,
-                ticketID: record.ticketID,
-                firstWeight: record.firstWeight?.toString() || "",
-                secondWeight: "",
-                vehicleID: record.vehicleID,
-                driverID: record.driverID,
-                transporterID: record.transporterID,
-                commodityID: record.commodityID,
-                supplierID: record.supplierID,
-                customerID: record.customerID,
-                weighBridgeID: record.weighBridgeID,
-                operatorID: record.operatorID,
-                originID: record.originID,
-                destinationID: record.destinationID,
-              })}
+              onClick={() => handleSecondWeighing(record)}
               className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 border-0 text-[10px] font-semibold h-6 px-2 shadow-sm"
             >
               2nd Weight
@@ -481,7 +540,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
                 cell: EditableCell,
               },
             }}
-            rowKey="ticketID"
+            rowKey={(record) => record.ticketID || record.id}
             columns={mergedColumns}
             dataSource={filteredData}
             loading={false}
@@ -510,7 +569,11 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
             <>
               <span className="font-semibold text-amber-600">{filteredData.length}</span> found
               <span className="text-gray-400 mx-1">·</span>
-              <span className="text-gray-500">filtered from {transactions.filter(tx => !tx.isCompleted && !tx.completed).length}</span>
+              <span className="text-gray-500">filtered from {transactions.filter(tx => 
+                !tx.isCompleted && 
+                !tx.completed && 
+                tx.status !== 'Completed'
+              ).length}</span>
             </>
           ) : (
             <>

@@ -11,6 +11,14 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 // The nested /Transaction/Transaction path is handled in Transactions.js
 const TRANSACTION_BASE_URL = import.meta.env.VITE_TRANSACTION_API_URL || "/api/Transaction";
 
+// ⚠️ DEBUG: Log configuration on load
+console.log('🔧 API Client Configuration:', {
+  API_BASE_URL,
+  TRANSACTION_BASE_URL,
+  MODE: import.meta.env.MODE,
+  VITE_API_TARGET: import.meta.env.VITE_API_TARGET,
+});
+
 /* -------------------------------------------------------------------------- */
 /*                         SESSION MANAGEMENT UTILITY                         */
 /* -------------------------------------------------------------------------- */
@@ -26,6 +34,7 @@ const getSessionData = () => {
 };
 
 const clearSession = () => {
+  console.log('🧹 Clearing session data');
   sessionStorage.removeItem("authSession");
   sessionStorage.removeItem("temp2FASession");
   localStorage.removeItem("authToken");
@@ -38,6 +47,7 @@ const getSessionToken = () => {
 
   const now = Date.now();
   if (now > session.expiresAt) {
+    console.warn('⏰ Session expired, clearing...');
     clearSession();
     return null;
   }
@@ -60,10 +70,22 @@ const logError = (level, message, data) => {
 
 const logRequest = (method, url, config) => {
   if (import.meta.env.MODE !== 'production') {
-    console.log(`🚀 API Request: ${method.toUpperCase()} ${url}`, {
+    const logData = {
+      baseURL: config?.baseURL,
+      fullURL: `${config?.baseURL || ''}${url}`,
       params: config?.params,
-      data: config?.data,
-    });
+      data: config?.data ? '(data present)' : undefined,
+      headers: config?.headers ? Object.keys(config.headers) : [],
+    };
+    
+    // Hide sensitive data
+    if (config?.data?.password) {
+      logData.data = { ...config.data, password: '***' };
+    } else if (config?.data) {
+      logData.data = config.data;
+    }
+    
+    console.log(`🚀 API Request: ${method.toUpperCase()} ${url}`, logData);
   }
 };
 
@@ -79,6 +101,12 @@ const setupRequestInterceptor = (client) => {
         config.headers.Authorization = `Bearer ${token}`;
       }
       
+      // ✅ Ensure proper headers
+      if (!config.headers['Content-Type']) {
+        config.headers['Content-Type'] = 'application/json';
+      }
+      config.headers['Accept'] = 'application/json';
+      
       // Add request timestamp for performance monitoring
       config.metadata = { startTime: Date.now() };
       
@@ -87,7 +115,10 @@ const setupRequestInterceptor = (client) => {
       
       return config;
     },
-    (error) => Promise.reject(error)
+    (error) => {
+      console.error('❌ Request setup error:', error);
+      return Promise.reject(error);
+    }
   );
 };
 
@@ -97,21 +128,27 @@ const setupResponseInterceptor = (client) => {
       // Log response time in development
       if (import.meta.env.MODE !== 'production' && response.config.metadata) {
         const duration = Date.now() - response.config.metadata.startTime;
-        console.log(`✅ API Response (${duration}ms): ${response.status} ${response.config.url}`);
+        console.log(`✅ API Response (${duration}ms): ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`);
       }
       return response;
     },
     (error) => {
+      // Calculate request duration if available
+      const duration = error.config?.metadata?.startTime 
+        ? Date.now() - error.config.metadata.startTime 
+        : 'unknown';
+      
       // Log the full error for debugging
-      logError('error', 'API Error Interceptor:', {
+      logError('error', `❌ API Error (${duration}ms):`, {
         message: error.message,
         code: error.code,
+        status: error.response?.status,
         config: {
           url: error.config?.url,
-          method: error.config?.method,
           baseURL: error.config?.baseURL,
+          fullURL: error.config?.baseURL ? `${error.config.baseURL}${error.config.url}` : error.config?.url,
+          method: error.config?.method?.toUpperCase(),
           params: error.config?.params,
-          data: error.config?.data,
         },
         response: error.response ? {
           status: error.response.status,
@@ -120,11 +157,31 @@ const setupResponseInterceptor = (client) => {
         } : 'No response received',
       });
 
+      // ⚠️ CRITICAL: Better timeout error messaging
+      if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
+        console.error('⏱️ Request Timeout Details:', {
+          url: error.config?.url,
+          timeout: error.config?.timeout,
+          hint: 'The server is not responding. Check if the backend is running and accessible.',
+        });
+      }
+
+      // ⚠️ CRITICAL: Better 404 error messaging
+      if (error.response?.status === 404) {
+        console.error('🔍 404 Not Found Details:', {
+          requestedURL: error.config?.url,
+          baseURL: error.config?.baseURL,
+          fullURL: `${error.config?.baseURL || ''}${error.config?.url || ''}`,
+          hint: 'The endpoint does not exist. Check backend routes and proxy configuration.',
+        });
+      }
+
       // Handle 401 Unauthorized
       if (error.response?.status === 401) {
-        console.warn("⚠️ Authentication failed — clearing session");
+        console.warn("⚠️ 401 Unauthorized — clearing session");
         clearSession();
         if (window.location.pathname !== "/login") {
+          console.log('🔄 Redirecting to login...');
           window.location.href = "/login";
         }
         return Promise.reject(new Error('Session expired. Please log in again.'));
@@ -140,12 +197,21 @@ const setupResponseInterceptor = (client) => {
         
         if (data?.message) {
           message = data.message;
+        } else if (data?.error) {
+          message = data.error;
         } else if (typeof data === 'string') {
           message = data;
         } else if (data?.errors) {
-          message = Object.values(data.errors)
-            .flat()
-            .join("; ");
+          // Handle validation errors
+          if (Array.isArray(data.errors)) {
+            message = data.errors.join('; ');
+          } else if (typeof data.errors === 'object') {
+            message = Object.values(data.errors)
+              .flat()
+              .join("; ");
+          }
+        } else if (status === 404) {
+          message = `Endpoint not found: ${error.config?.url}. Please check if the backend server is running.`;
         } else if (statusText) {
           message = `${status}: ${statusText}`;
         } else {
@@ -154,11 +220,11 @@ const setupResponseInterceptor = (client) => {
       } else if (error.request) {
         // The request was made but no response was received
         if (error.code === 'ECONNABORTED') {
-          message = 'Request timeout: The server took too long to respond.';
+          message = 'Request timeout: The server took too long to respond. Please check if the backend is running.';
         } else if (error.message === 'Network Error') {
-          message = 'Network error: Unable to connect to the server. Please check your internet connection.';
+          message = 'Network error: Unable to connect to the server. Please check if the backend is running and accessible.';
         } else {
-          message = 'No response received from the server. Please try again later.';
+          message = 'No response received from the server. Please verify the backend is running.';
         }
       } else {
         // Something happened in setting up the request that triggered an Error
@@ -188,10 +254,15 @@ const setupResponseInterceptor = (client) => {
 
 class ApiClient {
   constructor(baseURL, timeout = 30000) {
+    console.log(`🏗️ Creating API Client:`, { baseURL, timeout });
+    
     this.client = axios.create({
       baseURL: baseURL,
       timeout: timeout, // 30 seconds default
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
     });
 
     this.cancelTokens = new Map();
@@ -208,12 +279,17 @@ class ApiClient {
       token,
       expiresAt: Date.now() + expiresIn * 1000, // default 1 hour
     };
+    console.log('💾 Setting session:', { expiresAt: new Date(session.expiresAt) });
     sessionStorage.setItem("authSession", JSON.stringify(session));
   }
   
   getSessionToken = getSessionToken;
   clearSession = clearSession;
-  isAuthenticated = () => !!getSessionToken();
+  isAuthenticated = () => {
+    const authenticated = !!getSessionToken();
+    console.log('🔐 Authentication check:', authenticated);
+    return authenticated;
+  };
 
   /**
    * Create a cancellable request
@@ -222,6 +298,7 @@ class ApiClient {
   createCancelToken(key) {
     // Cancel previous request with same key
     if (this.cancelTokens.has(key)) {
+      console.log(`🚫 Cancelling previous request: ${key}`);
       this.cancelTokens.get(key).cancel('Request superseded');
     }
     
@@ -235,6 +312,7 @@ class ApiClient {
    */
   cancelRequest(key) {
     if (this.cancelTokens.has(key)) {
+      console.log(`🚫 Cancelling request: ${key}`);
       this.cancelTokens.get(key).cancel('Request cancelled by user');
       this.cancelTokens.delete(key);
     }
@@ -325,6 +403,8 @@ class TransactionClient extends ApiClient {
 // ✅ Create and export global instances
 export const apiClient = new ApiClient(API_BASE_URL);
 export const transactionsClient = new TransactionClient();
+
+console.log('✅ API Clients initialized successfully');
 
 export { axios };
 export default apiClient;
