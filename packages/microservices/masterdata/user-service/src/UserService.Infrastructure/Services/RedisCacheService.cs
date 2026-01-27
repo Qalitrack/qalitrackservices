@@ -14,23 +14,23 @@ public class RedisCacheService : ICacheService
     private readonly IConnectionMultiplexer _connectionMultiplexer;
     private readonly ILogger<RedisCacheService> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
-    private const int MaxRetries = 3;
-    private const int BaseDelayMs = 100;
 
     public RedisCacheService(
-        IDistributedCache distributedCache, 
+        IDistributedCache distributedCache,
         IConnectionMultiplexer connectionMultiplexer,
         ILogger<RedisCacheService> logger)
     {
         _distributedCache = distributedCache;
         _connectionMultiplexer = connectionMultiplexer;
         _logger = logger;
+
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             WriteIndented = false,
-            ReferenceHandler = ReferenceHandler.Preserve
+            // IMPORTANT: Removed ReferenceHandler.Preserve to avoid breaking plain strings
+            // If you really need Preserve for complex cyclic objects → handle them separately
         };
     }
 
@@ -38,156 +38,94 @@ public class RedisCacheService : ICacheService
     {
         if (string.IsNullOrWhiteSpace(key))
         {
-            return default(T);
+            return default;
         }
 
-        for (int attempt = 0; attempt < MaxRetries; attempt++)
+        try
         {
-            try
+            var cachedString = await _distributedCache.GetStringAsync(key);
+            if (string.IsNullOrEmpty(cachedString))
             {
-                var cachedValue = await _distributedCache.GetStringAsync(key);
-                if (string.IsNullOrEmpty(cachedValue))
-                {
-                    _logger.LogDebug("Cache miss for key: {Key}", key);
-                    return default(T);
-                }
+                _logger.LogDebug("Cache miss for key: {Key}", key);
+                return default;
+            }
 
-                var deserializedValue = JsonSerializer.Deserialize<T>(cachedValue, _jsonOptions);
-                _logger.LogDebug("Cache hit for key: {Key}", key);
-                return deserializedValue;
-            }
-            catch (JsonException ex)
+            if (typeof(T) == typeof(string))
             {
-                _logger.LogError(ex, "JSON deserialization error for cache key: {Key}", key);
-                // Remove corrupted cache entry
-                await RemoveAsync(key);
-                return default(T);
+                // Direct return for strings - no JSON parsing needed
+                return (T)(object)cachedString;
             }
-            catch (RedisTimeoutException ex)
-            {
-                if (attempt == MaxRetries - 1)
-                {
-                    _logger.LogError(ex, "Redis timeout after {MaxRetries} attempts for key: {Key}. Failing gracefully.", MaxRetries, key);
-                    return default(T);
-                }
-                
-                int delayMs = BaseDelayMs * (int)Math.Pow(2, attempt); // Exponential backoff: 100ms, 200ms, 400ms
-                _logger.LogWarning("Redis timeout on attempt {Attempt}/{MaxRetries} for key: {Key}. Retrying in {DelayMs}ms...", 
-                    attempt + 1, MaxRetries, key, delayMs);
-                await Task.Delay(delayMs);
-            }
-            catch (RedisConnectionException ex)
-            {
-                if (attempt == MaxRetries - 1)
-                {
-                    _logger.LogError(ex, "Redis connection error after {MaxRetries} attempts for key: {Key}. Failing gracefully.", MaxRetries, key);
-                    return default(T);
-                }
-                
-                int delayMs = BaseDelayMs * (int)Math.Pow(2, attempt);
-                _logger.LogWarning("Redis connection error on attempt {Attempt}/{MaxRetries} for key: {Key}. Retrying in {DelayMs}ms...", 
-                    attempt + 1, MaxRetries, key, delayMs);
-                await Task.Delay(delayMs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error retrieving cache value for key: {Key}", key);
-                return default(T);
-            }
+
+            var value = JsonSerializer.Deserialize<T>(cachedString, _jsonOptions);
+            _logger.LogDebug("Cache hit for key: {Key} (type: {Type})", key, typeof(T).Name);
+            return value;
         }
-
-        return default(T);
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "JSON deserialization failed for key: {Key}", key);
+            await RemoveAsync(key); // clean up corrupted entry
+            return default;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving cache for key: {Key}", key);
+            return default;
+        }
     }
 
     public async Task SetAsync<T>(string key, T value, TimeSpan? expiration = null)
     {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            return;
-        }
-
-        if (value is null)
-        {
-            return;
-        }
-
-        for (int attempt = 0; attempt < MaxRetries; attempt++)
-        {
-            try
-            {
-                var serializedValue = JsonSerializer.Serialize(value, _jsonOptions);
-                var options = new DistributedCacheEntryOptions();
-                
-                if (expiration.HasValue)
-                {
-                    options.AbsoluteExpirationRelativeToNow = expiration.Value;
-                }
-                else
-                {
-                    // Default expiration of 15 minutes
-                    options.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15);
-                }
-
-                // Add sliding expiration to keep frequently accessed items fresh
-                options.SlidingExpiration = TimeSpan.FromMinutes(5);
-
-                await _distributedCache.SetStringAsync(key, serializedValue, options);
-                return; // Success
-            }
-            catch (JsonException ex)
-            {
-                _logger.LogError(ex, "JSON serialization error for cache key: {Key}", key);
-                return; // Don't retry serialization errors
-            }
-            catch (RedisTimeoutException ex)
-            {
-                if (attempt == MaxRetries - 1)
-                {
-                    _logger.LogError(ex, "Redis timeout after {MaxRetries} attempts for key: {Key}. Cache set failed.", MaxRetries, key);
-                    return;
-                }
-                
-                int delayMs = BaseDelayMs * (int)Math.Pow(2, attempt);
-                _logger.LogWarning("Redis timeout on attempt {Attempt}/{MaxRetries} for key: {Key}. Retrying in {DelayMs}ms...", 
-                    attempt + 1, MaxRetries, key, delayMs);
-                await Task.Delay(delayMs);
-            }
-            catch (RedisConnectionException ex)
-            {
-                if (attempt == MaxRetries - 1)
-                {
-                    _logger.LogError(ex, "Redis connection error after {MaxRetries} attempts for key: {Key}. Cache set failed.", MaxRetries, key);
-                    return;
-                }
-                
-                int delayMs = BaseDelayMs * (int)Math.Pow(2, attempt);
-                _logger.LogWarning("Redis connection error on attempt {Attempt}/{MaxRetries} for key: {Key}. Retrying in {DelayMs}ms...", 
-                    attempt + 1, MaxRetries, key, delayMs);
-                await Task.Delay(delayMs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error setting cache value for key: {Key}", key);
-                return;
-            }
-        }
-    }
-
-    public async Task RemoveAsync(string key)
-    {
-        if (string.IsNullOrWhiteSpace(key))
+        if (string.IsNullOrWhiteSpace(key) || value == null)
         {
             return;
         }
 
         try
         {
-            // Fire and forget - removing from cache is not critical
-            await _distributedCache.RemoveAsync(key);
+            string serialized;
+
+            if (typeof(T) == typeof(string))
+            {
+                // Store strings directly - no JSON wrapper
+                serialized = value.ToString()!;
+            }
+            else
+            {
+                serialized = JsonSerializer.Serialize(value, _jsonOptions);
+            }
+
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = expiration ?? TimeSpan.FromMinutes(15),
+                SlidingExpiration = TimeSpan.FromMinutes(5) // keep hot items alive
+            };
+
+            await _distributedCache.SetStringAsync(key, serialized, options);
+            _logger.LogDebug("Cache set successful for key: {Key} (type: {Type}, size: {Size} chars)",
+                key, typeof(T).Name, serialized.Length);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "JSON serialization failed for key: {Key}", key);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error removing cache value for key: {Key}. Continuing anyway.", key);
+            _logger.LogError(ex, "Error setting cache for key: {Key}", key);
+        }
+    }
+
+    public async Task RemoveAsync(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key)) return;
+
+        try
+        {
+            await _distributedCache.RemoveAsync(key);
+            _logger.LogDebug("Cache removed: {Key}", key);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to remove cache key: {Key}", key);
         }
     }
 
@@ -201,112 +139,73 @@ public class RedisCacheService : ICacheService
 
         try
         {
-            var database = _connectionMultiplexer.GetDatabase();
+            var db = _connectionMultiplexer.GetDatabase();
             var server = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
-            
+
             var keys = new List<RedisKey>();
-            await foreach (var key in server.KeysAsync(pattern: pattern, pageSize: 1000))
+            // Note: using sync Keys here (like your old version) - fine for dev/small prod
+            // For large-scale prod consider switching to async SCAN + lua script
+            foreach (var key in server.Keys(pattern: pattern, pageSize: 1000))
             {
                 keys.Add(key);
-                _logger.LogDebug("Found key matching pattern {Pattern}: {Key}", pattern, key);
             }
 
-            if (keys.Any())
+            if (keys.Count > 0)
             {
-                // Use batch operation for better performance
-                var batch = database.CreateBatch();
-                var deleteTasks = keys.Select(key => batch.KeyDeleteAsync(key)).ToArray();
-                batch.Execute();
-                await Task.WhenAll(deleteTasks);
-                
-                _logger.LogInformation("Deleted {Count} keys matching pattern: {Pattern}", keys.Count, pattern);
-                
-                // Verify deletion (optional - can be removed for better performance)
-                var verifyTasks = keys.Select(async key =>
+                await db.KeyDeleteAsync(keys.ToArray());
+                _logger.LogInformation("Removed {Count} keys matching pattern: {Pattern}", keys.Count, pattern);
+
+                // Optional: verify (can remove in production)
+                foreach (var key in keys)
                 {
-                    var exists = await database.KeyExistsAsync(key);
-                    if (exists)
+                    if (await db.KeyExistsAsync(key))
                     {
-                        _logger.LogWarning("Key {Key} still exists after deletion for pattern: {Pattern}", key, pattern);
+                        _logger.LogWarning("Key still exists after delete: {Key}", key);
                     }
-                });
-                await Task.WhenAll(verifyTasks);
+                }
             }
             else
             {
-                _logger.LogDebug("No cache entries found matching pattern: {Pattern}", pattern);
+                _logger.LogDebug("No keys found for pattern: {Pattern}", pattern);
             }
-        }
-        catch (RedisTimeoutException ex)
-        {
-            _logger.LogError(ex, "Redis timeout while removing cache values for pattern: {Pattern}", pattern);
-        }
-        catch (RedisConnectionException ex)
-        {
-            _logger.LogError(ex, "Redis connection error while removing cache values for pattern: {Pattern}", pattern);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error removing cache values for pattern: {Pattern}", pattern);
+            _logger.LogError(ex, "Failed to remove pattern: {Pattern}", pattern);
         }
     }
 
     public async Task<bool> AcquireLockAsync(string lockKey, TimeSpan lockTimeout)
     {
-        if (string.IsNullOrWhiteSpace(lockKey))
+        if (string.IsNullOrWhiteSpace(lockKey)) return false;
+
+        try
         {
-            _logger.LogWarning("Invalid lock key provided");
+            var db = _connectionMultiplexer.GetDatabase();
+            bool acquired = await db.StringSetAsync(lockKey, "locked", lockTimeout, When.NotExists);
+            _logger.LogDebug(acquired ? "Lock acquired: {LockKey}" : "Lock already held: {LockKey}", lockKey);
+            return acquired;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to acquire lock: {LockKey}", lockKey);
             return false;
         }
-
-        for (int attempt = 0; attempt < MaxRetries; attempt++)
-        {
-            try
-            {
-                var database = _connectionMultiplexer.GetDatabase();
-                bool acquired = await database.StringSetAsync(lockKey, "locked", lockTimeout, When.NotExists);
-                _logger.LogDebug(acquired ? "Acquired lock for key: {LockKey}" : "Failed to acquire lock for key: {LockKey}", lockKey);
-                return acquired;
-            }
-            catch (RedisTimeoutException ex)
-            {
-                if (attempt == MaxRetries - 1)
-                {
-                    _logger.LogError(ex, "Redis timeout after {MaxRetries} attempts while acquiring lock for key: {LockKey}", MaxRetries, lockKey);
-                    return false;
-                }
-                
-                int delayMs = BaseDelayMs * (int)Math.Pow(2, attempt);
-                _logger.LogWarning("Redis timeout on attempt {Attempt}/{MaxRetries} for lock key: {LockKey}. Retrying in {DelayMs}ms...", 
-                    attempt + 1, MaxRetries, lockKey, delayMs);
-                await Task.Delay(delayMs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error acquiring lock for key: {LockKey}", lockKey);
-                return false;
-            }
-        }
-
-        return false;
     }
 
     public async Task ReleaseLockAsync(string lockKey)
     {
-        if (string.IsNullOrWhiteSpace(lockKey))
-        {
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(lockKey)) return;
 
         try
         {
-            var database = _connectionMultiplexer.GetDatabase();
-            await database.KeyDeleteAsync(lockKey);
-            _logger.LogDebug("Released lock for key: {LockKey}", lockKey);
+            var db = _connectionMultiplexer.GetDatabase();
+            await db.KeyDeleteAsync(lockKey);
+            _logger.LogDebug("Lock released: {LockKey}", lockKey);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error releasing lock for key: {LockKey}. Lock will expire naturally.", lockKey);
+            _logger.LogWarning(ex, "Failed to release lock (will expire naturally): {LockKey}", lockKey);
         }
     }
 }
