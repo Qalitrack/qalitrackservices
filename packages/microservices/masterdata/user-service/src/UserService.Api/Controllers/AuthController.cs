@@ -166,8 +166,7 @@ namespace UserService.Api.Controllers
                     "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid} | RequestBodyRaw={Body}",
                     request?.SessionId ?? "(null)",
                     request?.Code ?? "(null)",
-                    ModelState.IsValid,
-                    JsonSerializer.Serialize(request ?? new { })
+                    ModelState.IsValid
                 );
 
                 if (!ModelState.IsValid)
