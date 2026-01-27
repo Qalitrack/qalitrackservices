@@ -24,7 +24,7 @@ namespace UserService.Api.Controllers
         private readonly IShiftLoginRestrictionService _shiftLoginRestrictionService;
 
         public AuthController(
-            ITokenService tokenService, 
+            ITokenService tokenService,
             IUserService userService,
             IShiftService shiftService,
             ILogger<AuthController> logger,
@@ -54,7 +54,7 @@ namespace UserService.Api.Controllers
                 }
 
                 var user = await _userService.ValidateUserCredentials(loginDto.Email, loginDto.Password);
-                
+
                 if (user == null)
                 {
                     return Unauthorized(new { message = "Invalid email or password" });
@@ -67,21 +67,23 @@ namespace UserService.Api.Controllers
 
                 // ONLY check shift-based login restrictions (NO ATTENDANCE YET)
                 var (canLogin, restrictionReason) = await _shiftLoginRestrictionService.CanUserLoginAsync(user.Id.ToString());
-                
+
                 if (!canLogin)
                 {
-                    _logger.LogWarning("Login denied for user {UserId} due to shift restrictions: {Reason}", 
+                    _logger.LogWarning("Login denied for user {UserId} due to shift restrictions: {Reason}",
                         user.Id, restrictionReason);
-                    return Unauthorized(new { 
+                    return Unauthorized(new
+                    {
                         message = restrictionReason,
                         errorCode = "SHIFT_RESTRICTION"
                     });
                 }
-                
+
                 // If it's the first login, redirect to password update
                 if (user.IsFirstLogin)
                 {
-                    return Ok(new { 
+                    return Ok(new
+                    {
                         message = "First login detected",
                         userId = user.Id,
                         redirectUrl = $"/api/auth/update-password/{user.Id}"
@@ -94,11 +96,12 @@ namespace UserService.Api.Controllers
 
                 if (!codeResult.Success)
                 {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = codeResult.Message, 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
+                    return BadRequest(new
+                    {
+                        Success = false,
+                        Message = codeResult.Message,
+                        Errors = (string[])null,
+                        StatusCode = 400
                     });
                 }
 
@@ -115,11 +118,12 @@ namespace UserService.Api.Controllers
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
                 _logger.LogWarning(ex, "Validation error during login for email: {Email}", loginDto?.Email ?? "unknown");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
@@ -131,21 +135,23 @@ namespace UserService.Api.Controllers
                     _ => $"Database error: {pgEx.MessageText}"
                 };
 
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = errorMessage, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = errorMessage,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred during login for user email: {Email}", loginDto?.Email ?? "unknown");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred during login", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "An error occurred during login",
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
         }
@@ -155,71 +161,80 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                
-                    // ────────────────────────────────────────────────
-                    // NEW LOGGING TO CATCH WHAT IS ACTUALLY RECEIVED
-                    _logger.LogInformation(
-                        "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid} | RequestBodyRaw={Body}",
-                        request?.SessionId ?? "(null)",
-                        request?.Code ?? "(null)",
-                        ModelState.IsValid
-                    );
-                    // ────────────────────────────────────────────────
+                // Log incoming request
+                _logger.LogInformation(
+                    "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid} | RequestBodyRaw={Body}",
+                    request?.SessionId ?? "(null)",
+                    request?.Code ?? "(null)",
+                    ModelState.IsValid,
+                    JsonSerializer.Serialize(request ?? new { })
+                );
 
-                    if (!ModelState.IsValid)
+                if (!ModelState.IsValid)
+                {
+                    var modelErrors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                    _logger.LogWarning("Verify-2FA ModelState invalid: {Errors}", modelErrors);
+                    return BadRequest(ModelState);
+                }
+
+                // Get userId BEFORE verification (before session is potentially deleted)
+                var userId = await _twoFactorService.GetUserIdFromSessionAsync(request.SessionId);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogWarning("Early session validation failed | sessionId = {Sid}", request.SessionId);
+                    return BadRequest(new
                     {
-                        var modelErrors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                        _logger.LogWarning("Verify-2FA ModelState invalid: {Errors}", modelErrors);
-                        return BadRequest(ModelState);
-                    }
+                        Success = false,
+                        Message = "Invalid or expired session",
+                        Errors = (string[])null,
+                        StatusCode = 400
+                    });
+                }
 
+                _logger.LogInformation("Session valid before verification → userId = {UserId}", userId);
 
-                // Verify the 2FA code
+                // Verify the 2FA code (this may delete the session key on success)
                 var verifyResult = await _twoFactorService.VerifyCodeAsync(request.SessionId, request.Code);
 
                 if (!verifyResult.Success)
                 {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = verifyResult.Message, 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
+                    return BadRequest(new
+                    {
+                        Success = false,
+                        Message = verifyResult.Message,
+                        Errors = (string[])null,
+                        StatusCode = 400
                     });
                 }
 
-                // Get user from session
-                var userId = await _twoFactorService.GetUserIdFromSessionAsync(request.SessionId);
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = "Invalid or expired session", 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
-                    });
-                }
-
-                // Get user data
+                // Get user data using the already-fetched userId
                 UserReadDto? user = await _userService.GetByIdAsync(userId);
                 if (user == null)
                 {
-                    return BadRequest(new { 
-                        Success = false, 
-                        Message = "User not found", 
-                        Errors = (string[])null, 
-                        StatusCode = 400 
+                    _logger.LogWarning("User not found after successful 2FA | userId = {UserId}", userId);
+                    return BadRequest(new
+                    {
+                        Success = false,
+                        Message = "User not found",
+                        Errors = (string[])null,
+                        StatusCode = 400
                     });
                 }
-                
+
                 // Generate token
                 var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(user);
 
                 // Update user active status
                 await _userService.UpdateUserActiveStatusAsync(userId, true);
 
-                // NOW handle attendance after successful login completion
+                // Handle attendance after successful login completion
                 var attendanceHandled = await _shiftLoginRestrictionService.HandleLoginAttendanceAsync(userId);
-                _logger.LogInformation("User {UserId} successfully completed 2FA verification and logged in. Attendance handled: {AttendanceHandled}");
+
+                _logger.LogInformation(
+                    "User {UserId} successfully completed 2FA verification and logged in. Attendance handled: {AttendanceHandled}",
+                    userId, attendanceHandled
+                );
+
                 var response = new LoginResponseDto
                 {
                     Token = token.Token,
@@ -230,14 +245,11 @@ namespace UserService.Api.Controllers
                     UserRoles = user.Roles?.ToList() ?? new List<string>()
                 };
 
-                var loginMessage = attendanceHandled 
-                    ? "Successfully logged in and auto clocked-in to assigned shift" 
+                var loginMessage = attendanceHandled
+                    ? "Successfully logged in and auto clocked-in to assigned shift"
                     : "Successfully logged in";
 
-                _logger.LogInformation("User {UserId} successfully completed 2FA verification and logged in. Attendance handled: {AttendanceHandled}", 
-                    userId, attendanceHandled);
-
-                return Ok(new 
+                return Ok(new
                 {
                     data = response,
                     message = loginMessage,
@@ -247,11 +259,12 @@ namespace UserService.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred during 2FA verification for session: {SessionId}", request?.SessionId);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred during verification", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "An error occurred during verification",
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
         }
@@ -277,12 +290,13 @@ namespace UserService.Api.Controllers
 
                 // Check shift restrictions (NO ATTENDANCE YET)
                 var (canLogin, restrictionReason) = await _shiftLoginRestrictionService.CanUserLoginAsync(userId);
-                
+
                 if (!canLogin)
                 {
-                    _logger.LogWarning("Login denied for user {UserId} after password update due to shift restrictions: {Reason}", 
+                    _logger.LogWarning("Login denied for user {UserId} after password update due to shift restrictions: {Reason}",
                         userId, restrictionReason);
-                    return Unauthorized(new { 
+                    return Unauthorized(new
+                    {
                         message = restrictionReason,
                         errorCode = "SHIFT_RESTRICTION"
                     });
@@ -301,11 +315,12 @@ namespace UserService.Api.Controllers
                     UserRoles = user.Roles?.ToList() ?? new List<string>(),
                 };
 
-                var message = attendanceHandled 
-                    ? "Password updated successfully and auto clocked-in to assigned shift" 
+                var message = attendanceHandled
+                    ? "Password updated successfully and auto clocked-in to assigned shift"
                     : "Password updated successfully";
 
-                return Ok(new {
+                return Ok(new
+                {
                     message = message,
                     data = response,
                     attendanceHandled = attendanceHandled
@@ -313,11 +328,12 @@ namespace UserService.Api.Controllers
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
@@ -329,11 +345,12 @@ namespace UserService.Api.Controllers
                     _ => $"Database error: {pgEx.MessageText}"
                 };
 
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = errorMessage, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = errorMessage,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (InvalidOperationException ex)
@@ -343,11 +360,12 @@ namespace UserService.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating password for user {UserId}", userId);
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred while updating password", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "An error occurred while updating password",
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
         }
@@ -359,24 +377,24 @@ namespace UserService.Api.Controllers
             try
             {
                 var token = ExtractTokenFromHeader();
-                
+
                 if (string.IsNullOrEmpty(token))
                 {
                     return BadRequest(new { message = "No token provided" });
                 }
 
                 var userId = await _tokenService.GetUserIdFromTokenAsync(token);
-                
+
                 if (userId == null)
                 {
                     try
                     {
                         var tokenHandler = new JwtSecurityTokenHandler();
                         var jwtToken = tokenHandler.ReadJwtToken(token);
-                        var userIdClaim = jwtToken.Claims.FirstOrDefault(c => 
-                            c.Type == ClaimTypes.NameIdentifier || 
+                        var userIdClaim = jwtToken.Claims.FirstOrDefault(c =>
+                            c.Type == ClaimTypes.NameIdentifier ||
                             c.Type == JwtRegisteredClaimNames.Sub);
-                        
+
                         if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var parsedUserId))
                         {
                             userId = parsedUserId;
@@ -392,21 +410,21 @@ namespace UserService.Api.Controllers
                         return BadRequest(new { message = "Invalid token" });
                     }
                 }
-                
+
                 // Handle logout attendance (auto clock-out for strict shifts)
                 await _shiftLoginRestrictionService.HandleUserLogoutAsync(userId.Value.ToString(), DateTime.UtcNow);
-                
+
                 // Update user offline status
                 await _userService.UpdateUserActiveStatusAsync(userId.Value.ToString(), false);
-                
+
                 // Delete user tokens
                 var tokensDeleted = await _tokenService.DeleteAllTokensForUserAsync(userId.Value);
-                
+
                 // Enqueue status update
                 _userStatusService.EnqueueStatusUpdate(userId.Value.ToString(), false);
-                
+
                 _logger.LogInformation("User {UserId} successfully logged out", userId.Value);
-                
+
                 if (tokensDeleted)
                 {
                     return Ok(new { message = "Successfully logged out" });
@@ -425,21 +443,23 @@ namespace UserService.Api.Controllers
                     _ => $"Database error: {pgEx.MessageText}"
                 };
 
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = errorMessage, 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = errorMessage,
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred during logout");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = "An error occurred during logout", 
-                    Errors = (string[])null, 
-                    StatusCode = 400 
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "An error occurred during logout",
+                    Errors = (string[])null,
+                    StatusCode = 400
                 });
             }
         }
