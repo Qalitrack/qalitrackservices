@@ -1,18 +1,21 @@
-// ✅ FULLY UPDATED - Transaction Completion Fixed
+// ✅ FULLY UPDATED - Transaction Completion Fixed + Turnaround Time
 // 1. Enhanced filtering to properly exclude completed transactions
 // 2. Better state management and refresh logic
 // 3. Improved transaction ID handling (ticketID vs id)
-// 4. Better logging for debugging
+// 4. ✅ NEW: Turnaround time calculation and color-coded display
+// 5. Better logging for debugging
 
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, Tag, Button, Input, Typography, Space, Pagination, message, Spin } from "antd";
-import { ReloadOutlined, SearchOutlined, CheckOutlined, CloseOutlined, EditOutlined, UserOutlined } from "@ant-design/icons";
+import { ReloadOutlined, SearchOutlined, CheckOutlined, CloseOutlined, EditOutlined, UserOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { fetchTransactions, updateTransactionApi } from "../../store/weighingSlice";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import duration from "dayjs/plugin/duration";
 
 dayjs.extend(relativeTime);
+dayjs.extend(duration);
 
 const { Text } = Typography;
 
@@ -78,6 +81,35 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     }
   }, [searchText, pagination.current]);
 
+  // ✅ Calculate turnaround time in minutes
+  const calculateTurnaroundTime = (createdAt) => {
+    if (!createdAt) return { display: '-', minutes: 0 };
+    
+    const now = dayjs();
+    const created = dayjs(createdAt);
+    const diffMinutes = now.diff(created, 'minute');
+    
+    if (diffMinutes < 1) {
+      return { display: '< 1m', minutes: 0 };
+    } else if (diffMinutes < 60) {
+      return { display: `${diffMinutes}m`, minutes: diffMinutes };
+    } else {
+      const hours = Math.floor(diffMinutes / 60);
+      const mins = diffMinutes % 60;
+      return { 
+        display: mins > 0 ? `${hours}h ${mins}m` : `${hours}h`, 
+        minutes: diffMinutes 
+      };
+    }
+  };
+
+  // ✅ Get color based on turnaround time
+  const getTurnaroundColor = (minutes) => {
+    if (minutes < 30) return 'green';      // < 30 min: good
+    if (minutes < 60) return 'orange';     // 30-60 min: warning
+    return 'red';                          // > 60 min: critical
+  };
+
   // ✅ ENHANCED FILTERING - properly exclude completed transactions
   const filteredData = useMemo(() => {
     console.log("🔍 Filtering transactions from Redux state:", transactions.length);
@@ -90,10 +122,6 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
                          tx.status === 'Completed' || 
                          tx.status === 'completed';
       
-      // Also check if it has a second weight (might indicate completion)
-      const hasSecondWeight = tx.secondWeight && parseFloat(tx.secondWeight) > 0;
-      
-      // If it's marked as completed OR has second weight, exclude it
       if (isCompleted) {
         console.log("⏭️ Filtering out completed transaction:", tx.ticketID || tx.id);
         return false;
@@ -392,6 +420,25 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
         </Tag>
       ),
     },
+    // ✅ NEW: Turnaround Time Column
+    {
+      title: <span><ClockCircleOutlined className="mr-1" />TAT</span>,
+      dataIndex: 'createdAt',
+      width: 65,
+      render: (date) => {
+        const turnaround = calculateTurnaroundTime(date);
+        const color = getTurnaroundColor(turnaround.minutes);
+        return (
+          <Tag 
+            color={color} 
+            className="text-[9px] font-bold px-1.5 py-0 rounded-full border-0 m-0"
+            title={`Turnaround Time: ${turnaround.display}`}
+          >
+            {turnaround.display}
+          </Tag>
+        );
+      },
+    },
     {
       title: 'Status',
       dataIndex: 'status',
@@ -502,7 +549,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
                 Incomplete Transactions
               </Text>
               <Text className="text-[9px] text-amber-700 font-medium">
-                Awaiting second weighing
+                Awaiting second weighing • TAT = Turnaround Time
               </Text>
             </div>
           </div>
@@ -547,12 +594,15 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
             pagination={false}
             size="small"
             className="compact-table"
-            rowClassName={(record) => 
-              isEditing(record) 
-                ? 'editing-row' 
-                : 'regular-row'
-            }
-            scroll={{ x: 1400, y: 'calc(100vh - 250px)' }}
+            rowClassName={(record) => {
+              const turnaround = calculateTurnaroundTime(record.createdAt);
+              const isEditing = editingKey === (record.ticketID || record.id);
+              
+              if (isEditing) return 'editing-row';
+              if (turnaround.minutes > 60) return 'urgent-row'; // Red highlight for >60 min
+              return 'regular-row';
+            }}
+            scroll={{ x: 1500, y: 'calc(100vh - 250px)' }}
             locale={{
               emptyText: searchText 
                 ? `No results for "${searchText}"`
@@ -578,6 +628,12 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
           ) : (
             <>
               <span className="font-semibold text-amber-600">{filteredData.length}</span> incomplete
+              <span className="text-gray-400 mx-2">•</span>
+              <span className="text-green-600">🟢 &lt;30m</span>
+              <span className="text-gray-400 mx-1">•</span>
+              <span className="text-orange-600">🟠 30-60m</span>
+              <span className="text-gray-400 mx-1">•</span>
+              <span className="text-red-600">🔴 &gt;60m</span>
             </>
           )}
         </Text>
@@ -620,6 +676,17 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
         .compact-table .ant-table-tbody > tr.regular-row:hover > td {
           background: #fffbeb !important;
           box-shadow: inset 0 0 0 1px #fef3c7;
+        }
+        .compact-table .ant-table-tbody > tr.urgent-row > td {
+          padding: 6px 8px !important;
+          border-bottom: 1px solid #f3f4f6 !important;
+          background: #fef2f2 !important;
+          transition: all 0.12s ease;
+          line-height: 1.3;
+        }
+        .compact-table .ant-table-tbody > tr.urgent-row:hover > td {
+          background: #fee2e2 !important;
+          box-shadow: inset 0 0 0 1px #fecaca;
         }
         .compact-table .ant-table-tbody > tr.editing-row > td {
           padding: 6px 8px !important;
