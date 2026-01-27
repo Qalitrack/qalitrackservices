@@ -16,9 +16,9 @@ public class ShiftInstanceBackgroundService : BackgroundService
     private readonly ILogger<ShiftInstanceBackgroundService> _logger;
     private readonly IServiceProvider _serviceProvider;
     
-    // Define different check intervals for different operations
-    private readonly TimeSpan _frequentCheckInterval = TimeSpan.FromMinutes(1);    // For time-critical operations
-    private readonly TimeSpan _standardCheckInterval = TimeSpan.FromMinutes(5);    // For less critical operations
+    // FIXED: Increased intervals to reduce database load
+    private readonly TimeSpan _frequentCheckInterval = TimeSpan.FromMinutes(2);    // Changed from 1 to 2 minutes
+    private readonly TimeSpan _standardCheckInterval = TimeSpan.FromMinutes(10);   // Changed from 5 to 10 minutes
     private DateTime _lastFrequentCheck = DateTime.MinValue;
     private DateTime _lastStandardCheck = DateTime.MinValue;
 
@@ -32,6 +32,12 @@ public class ShiftInstanceBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        // FIXED: Add startup delay to allow app initialization
+        _logger.LogInformation("ShiftInstanceBackgroundService starting with {FrequentInterval}min frequent checks and {StandardInterval}min standard checks", 
+            _frequentCheckInterval.TotalMinutes, _standardCheckInterval.TotalMinutes);
+        
+        await Task.Delay(TimeSpan.FromSeconds(45), stoppingToken);
+        
         while (!stoppingToken.IsCancellationRequested)
         {
             var now = DateTime.UtcNow;
@@ -40,6 +46,7 @@ public class ShiftInstanceBackgroundService : BackgroundService
 
             try
             {
+                // FIXED: Single scope per cycle instead of multiple nested scopes
                 using var scope = _serviceProvider.CreateScope();
                 var shiftInstanceRepository = scope.ServiceProvider.GetRequiredService<IShiftInstanceRepository>();
                 var shiftNotificationService = scope.ServiceProvider.GetRequiredService<IShiftNotificationService>();
@@ -48,7 +55,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 // Run time-critical checks more frequently
                 if (runFrequentChecks)
                 {
-                    
                     // Check for instances that need to start (time-critical)
                     await CheckForShiftStarts(shiftInstanceRepository, now);
                     
@@ -61,7 +67,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 // Run less critical checks less frequently
                 if (runStandardChecks)
                 {
-                    
                     // Check for instances that need reminder notifications (less critical)
                     await CheckForShiftReminders(shiftInstanceRepository, shiftNotificationService, userShiftRepository, now);
                     
@@ -70,32 +75,34 @@ public class ShiftInstanceBackgroundService : BackgroundService
                     
                     _lastStandardCheck = now;
                 }
-                
-                var nextFrequentCheck = _lastFrequentCheck.Add(_frequentCheckInterval);
-                var nextStandardCheck = _lastStandardCheck.Add(_standardCheckInterval);
-                var nextCheck = new[] { nextFrequentCheck, nextStandardCheck }.Min();
-                var delay = nextCheck > now ? nextCheck - now : TimeSpan.Zero;
-                
-                if (delay > TimeSpan.Zero)
-                {
-                    await Task.Delay(delay, stoppingToken);
-                }
-                else
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
-                }
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Background service is stopping...");
+                _logger.LogInformation("ShiftInstanceBackgroundService is stopping...");
                 break;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing shift instances");
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            }
+            
+            // FIXED: Better delay calculation and fallback
+            try
+            {
+                var nextFrequentCheck = _lastFrequentCheck.Add(_frequentCheckInterval);
+                var nextStandardCheck = _lastStandardCheck.Add(_standardCheckInterval);
+                var nextCheck = new[] { nextFrequentCheck, nextStandardCheck }.Min();
+                var delay = nextCheck > now ? nextCheck - now : TimeSpan.FromSeconds(30);
+                
+                await Task.Delay(delay, stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                break;
             }
         }
+        
+        _logger.LogInformation("ShiftInstanceBackgroundService stopped");
     }
 
     private async Task CheckForShiftReminders(
@@ -104,40 +111,47 @@ public class ShiftInstanceBackgroundService : BackgroundService
         IUserShiftRepository userShiftRepository,
         DateTime now)
     {
-        var reminderTime = now.AddMinutes(10);
-        var instancesNeedingReminders = await shiftInstanceRepository.GetInstancesByStatusAndTimeAsync(
-            ShiftInstanceStatus.Scheduled, 
-            reminderTime.AddMinutes(-1), 
-            reminderTime.AddMinutes(1));
-
-        foreach (var instance in instancesNeedingReminders)
+        try
         {
-            try
+            var reminderTime = now.AddMinutes(10);
+            var instancesNeedingReminders = await shiftInstanceRepository.GetInstancesByStatusAndTimeAsync(
+                ShiftInstanceStatus.Scheduled, 
+                reminderTime.AddMinutes(-1), 
+                reminderTime.AddMinutes(1));
+
+            foreach (var instance in instancesNeedingReminders)
             {
-                // Get users assigned to this shift
-                var assignedUserShifts = await userShiftRepository.GetUsersAssignedToShiftAsync(instance.ShiftId);
-                var activeUsers = assignedUserShifts.Where(us => us.User != null).Select(us => us.User).ToList();
-
-                if (activeUsers.Any())
+                try
                 {
-                    var userNotificationData = activeUsers.Select(u => (u.Email, $"{u.FirstName} {u.LastName}")).ToList();
-                    
-                    await shiftNotificationService.SendShiftNotificationsAsync(
-                        userNotificationData,
-                        instance.Id,
-                        instance.ScheduledStartTime,
-                        instance.ScheduledEndTime,
-                        instance.Shift?.Name ?? "Unknown Shift",
-                        NotificationType.ShiftReminder);
+                    // Get users assigned to this shift
+                    var assignedUserShifts = await userShiftRepository.GetUsersAssignedToShiftAsync(instance.ShiftId);
+                    var activeUsers = assignedUserShifts.Where(us => us.User != null).Select(us => us.User).ToList();
 
-                    _logger.LogInformation("Sent reminder notifications for shift instance {InstanceId} to {UserCount} users", 
-                        instance.Id, activeUsers.Count);
+                    if (activeUsers.Any())
+                    {
+                        var userNotificationData = activeUsers.Select(u => (u.Email, $"{u.FirstName} {u.LastName}")).ToList();
+                        
+                        await shiftNotificationService.SendShiftNotificationsAsync(
+                            userNotificationData,
+                            instance.Id,
+                            instance.ScheduledStartTime,
+                            instance.ScheduledEndTime,
+                            instance.Shift?.Name ?? "Unknown Shift",
+                            NotificationType.ShiftReminder);
+
+                        _logger.LogInformation("Sent reminder notifications for shift instance {InstanceId} to {UserCount} users", 
+                            instance.Id, activeUsers.Count);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error sending reminder notifications for shift instance {InstanceId}", instance.Id);
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending reminder notifications for shift instance {InstanceId}", instance.Id);
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CheckForShiftReminders");
         }
     }
 
@@ -148,18 +162,19 @@ public class ShiftInstanceBackgroundService : BackgroundService
             // Get Nairobi timezone
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
+            var nairobiToday = nairobiNow.Date;
             
+            // FIXED: Get only scheduled instances (more efficient query)
+            var allScheduledInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled))
+                .ToList();
             
-            // Get all scheduled shifts that should have started by now (past due in Nairobi time)
-            // We need to look back a bit in case we missed any shifts due to service restart or delays
-            var lookBackTime = now.AddMinutes(-5); // Look back 5 minutes to catch any we might have missed
-            
-            // Get all scheduled instances that should have started by now (in Nairobi time)
-            var allScheduledInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled)).ToList();
+            if (!allScheduledInstances.Any())
+            {
+                return; // Early return if no scheduled instances
+            }
             
             // Filter instances that should have started by now in Nairobi time
             // Only include instances scheduled for today
-            var nairobiToday = nairobiNow.Date;
             var pastDueInstances = allScheduledInstances
                 .Where(instance => 
                 {
@@ -180,25 +195,13 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 .ThenBy(instance => instance.ScheduledStartTime)
                 .ToList();
             
-            foreach (var instance in pastDueInstances)
-            {
-                var scheduledTime = TimeZoneInfo.ConvertTimeFromUtc(
-                    instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay),
-                    nairobiTimeZone);
-                _logger.LogInformation("Shift to start - ID: {Id}, Scheduled (Nairobi): {ScheduledTime}, Status: {Status}", 
-                    instance.Id, scheduledTime, instance.Status);
-            }
-            
             // Get shifts starting soon (in the next check interval) in Nairobi time
             var upcomingInstances = allScheduledInstances
-                // In the upcomingInstances filter, add this check at the beginning:
                 .Where(instance => 
                 {
-                    // Add this check first
                     if (instance.ScheduledDate.Date != DateTime.UtcNow.Date)
                         return false;
         
-                    // Rest of the existing conditions...
                     var scheduledTimeUtc = instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay);
                     var scheduledTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledTimeUtc, nairobiTimeZone);
                     return scheduledTimeInNairobi > nairobiNow && 
@@ -206,13 +209,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 })
                 .OrderBy(instance => instance.ScheduledDate)
                 .ToList();
-            
-            foreach (var instance in upcomingInstances)
-            {
-                var scheduledTime = TimeZoneInfo.ConvertTimeFromUtc(
-                    instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay),
-                    nairobiTimeZone);
-            }
 
             // Combine and deduplicate
             var allInstances = pastDueInstances
@@ -221,14 +217,18 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 .Select(g => g.First())
                 .ToList();
             
+            if (!allInstances.Any())
+            {
+                return; // Early return if no instances to process
+            }
+            
+            _logger.LogInformation("Found {Count} shift instances to start", allInstances.Count);
+            
             // Process each instance
             foreach (var instance in allInstances)
             {
-                var scheduledTime = instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay);
-                
                 try
                 {
-                    
                     // Double-check the status to avoid race conditions
                     if (instance.Status != ShiftInstanceStatus.Scheduled)
                     {
@@ -246,23 +246,22 @@ public class ShiftInstanceBackgroundService : BackgroundService
                     
                     if (updatedInstance != null && updatedInstance.Status == ShiftInstanceStatus.InProgress)
                     {
-                        _logger.LogInformation("Successfully started shift instance ");
+                        _logger.LogInformation("Successfully started shift instance {InstanceId}", instance.Id);
                     }
                     else
                     {
-                        _logger.LogError("Failed to update status for shift instance ");
+                        _logger.LogError("Failed to update status for shift instance {InstanceId}", instance.Id);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing shift instance");
+                    _logger.LogError(ex, "Error processing shift instance {InstanceId}", instance.Id);
                 }
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error in CheckForShiftStarts");
-            throw; // Re-throw to ensure the service doesn't silently fail
         }
     }
 
@@ -272,38 +271,47 @@ public class ShiftInstanceBackgroundService : BackgroundService
         IUserShiftRepository userShiftRepository,
         DateTime now)
     {
-        var alertTime = now.AddMinutes(10);
-        var instancesNeedingEndingAlerts = await shiftInstanceRepository.GetInstancesByStatusAndTimeAsync(
-            ShiftInstanceStatus.InProgress, 
-            alertTime.AddMinutes(-1), 
-            alertTime.AddMinutes(1));
-
-        foreach (var instance in instancesNeedingEndingAlerts.Where(i => i.ScheduledEndTime <= alertTime))
+        try
         {
-            try
+            var alertTime = now.AddMinutes(10);
+            var instancesNeedingEndingAlerts = await shiftInstanceRepository.GetInstancesByStatusAndTimeAsync(
+                ShiftInstanceStatus.InProgress, 
+                alertTime.AddMinutes(-1), 
+                alertTime.AddMinutes(1));
+
+            foreach (var instance in instancesNeedingEndingAlerts.Where(i => i.ScheduledEndTime <= alertTime))
             {
-                // Get users assigned to this shift
-                var assignedUserShifts = await userShiftRepository.GetUsersAssignedToShiftAsync(instance.ShiftId);
-                var activeUsers = assignedUserShifts.Where(us => !us.IsDeleted && us.User != null).ToList();
-
-                if (activeUsers.Any())
+                try
                 {
-                    var userNotificationData = activeUsers.Select(us => (us.User.Email, $"{us.User.FirstName} {us.User.LastName}")).ToList();
-                    
-                    await shiftNotificationService.SendShiftNotificationsAsync(
-                        userNotificationData,
-                        instance.Id,
-                        instance.ScheduledStartTime,
-                        instance.ScheduledEndTime,
-                        instance.Shift?.Name ?? "Unknown Shift",
-                        NotificationType.ShiftEndingAlert);
+                    // Get users assigned to this shift
+                    var assignedUserShifts = await userShiftRepository.GetUsersAssignedToShiftAsync(instance.ShiftId);
+                    var activeUsers = assignedUserShifts.Where(us => !us.IsDeleted && us.User != null).ToList();
 
+                    if (activeUsers.Any())
+                    {
+                        var userNotificationData = activeUsers.Select(us => (us.User.Email, $"{us.User.FirstName} {us.User.LastName}")).ToList();
+                        
+                        await shiftNotificationService.SendShiftNotificationsAsync(
+                            userNotificationData,
+                            instance.Id,
+                            instance.ScheduledStartTime,
+                            instance.ScheduledEndTime,
+                            instance.Shift?.Name ?? "Unknown Shift",
+                            NotificationType.ShiftEndingAlert);
+
+                        _logger.LogInformation("Sent ending alert for shift instance {InstanceId} to {UserCount} users",
+                            instance.Id, activeUsers.Count);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error sending ending alert notifications for shift instance {InstanceId}", instance.Id);
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending ending alert notifications for shift instance {InstanceId}", instance.Id);
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CheckForShiftEndingAlerts");
         }
     }
 
@@ -311,13 +319,18 @@ public class ShiftInstanceBackgroundService : BackgroundService
     {
         try
         {
-            
             // Convert current UTC time to Nairobi time
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
             
             // Get all incomplete instances
-            var allIncompleteInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress)).ToList();
+            var allIncompleteInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress))
+                .ToList();
+            
+            if (!allIncompleteInstances.Any())
+            {
+                return; // Early return if no instances to check
+            }
             
             // Filter instances where the scheduled end time has passed in Nairobi time
             var instancesToCheck = allIncompleteInstances
@@ -330,10 +343,13 @@ public class ShiftInstanceBackgroundService : BackgroundService
                     return scheduledTimeInNairobi <= nairobiNow;
                 })
                 .ToList();
-                
+            
+            if (!instancesToCheck.Any())
+            {
+                return; // Early return if no instances need completion
+            }
 
             int completedCount = 0;
-            int skippedCount = 0;
 
             foreach (var instance in instancesToCheck)
             {
@@ -346,7 +362,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
                         await shiftInstanceRepository.UpdateAsync(instance);
                         completedCount++;
                     }
-                   
                 }
                 catch (Exception ex)
                 {
@@ -354,7 +369,10 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 }
             }
 
-         
+            if (completedCount > 0)
+            {
+                _logger.LogInformation("Marked {Count} shift instances as completed", completedCount);
+            }
         }
         catch (Exception ex)
         {
