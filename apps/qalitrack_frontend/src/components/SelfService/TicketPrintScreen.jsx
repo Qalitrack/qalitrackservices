@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import { useTheme } from "../Context/ThemeContext.jsx";
 
 export default function TicketPrintScreen({ ticketData, onComplete }) {
+  const { theme, isDark } = useTheme();
   const [printing, setPrinting] = useState(true);
   const [printSuccess, setPrintSuccess] = useState(false);
 
   useEffect(() => {
-    // Simulate printing process
     printThermalTicket();
   }, []);
 
@@ -14,13 +15,13 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
     try {
       setPrinting(true);
       
-      // Format ticket data for thermal printer
       const ticketContent = formatThermalTicket(ticketData);
       
       console.log("🖨️ Printing thermal ticket:");
       console.log(ticketContent);
       
-      // Send to thermal printer endpoint
+      // REAL MODE: Send to thermal printer endpoint
+      /*
       const response = await fetch("http://172.16.0.93:5000/api/Printer/thermal/print", {
         method: "POST",
         headers: {
@@ -38,33 +39,35 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
         setPrintSuccess(true);
       } else {
         console.error("❌ Print failed:", await response.text());
-        // Still show success for demo purposes
-        setPrintSuccess(true);
+        setPrintSuccess(true); // Show success for demo
       }
-
-      setPrinting(false);
+      */
+      
+      // SIMULATION: Auto-success after 2 seconds
+      setTimeout(() => {
+        setPrintSuccess(true);
+        setPrinting(false);
+      }, 2000);
       
       // Auto-proceed after showing ticket
       setTimeout(() => {
         onComplete();
-      }, 5000);
+      }, 7000);
       
     } catch (error) {
       console.error("❌ Print error:", error);
-      // Show success anyway for demo
       setPrintSuccess(true);
       setPrinting(false);
       
       setTimeout(() => {
         onComplete();
-      }, 5000);
+      }, 7000);
     }
   };
 
   const formatThermalTicket = (data) => {
     const lines = [];
     
-    // Header
     lines.push("================================");
     lines.push("      KTDA WEIGHBRIDGE");
     lines.push("   Tea Collection Ticket");
@@ -72,19 +75,16 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
     lines.push("================================");
     lines.push("");
     
-    // ID & Date
     lines.push(`ID: ${data.receiptNo || data.ticketID || 'WB-' + Date.now()}`);
-    lines.push(`Date: ${dayjs(data.weighTime).format('DD/MM/YYYY, HH:mm:ss')}`);
+    lines.push(`Date: ${dayjs(data.weighTime || new Date()).format('DD/MM/YYYY, HH:mm:ss')}`);
     lines.push("");
     
-    // Timing
     lines.push("TIMING");
-    lines.push(`Arrival: ${dayjs(data.arrivalTime).format('DD/MM/YYYY, HH:mm:ss')}`);
-    lines.push(`Departure: ${dayjs(data.weighTime).format('DD/MM/YYYY, HH:mm:ss')}`);
+    lines.push(`Arrival: ${dayjs(data.arrivalTime || new Date()).format('DD/MM/YYYY, HH:mm:ss')}`);
+    lines.push(`Departure: ${dayjs(data.weighTime || new Date()).format('DD/MM/YYYY, HH:mm:ss')}`);
     lines.push(`Duration: ${data.duration || 'N/A'}`);
     lines.push("");
     
-    // Vehicle & Driver
     lines.push("VEHICLE & DRIVER");
     lines.push(`Plate: ${data.noPlate || 'N/A'}`);
     lines.push(`Driver: ${data.driverName || 'N/A'}`);
@@ -93,36 +93,21 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
     }
     lines.push("");
     
-    // Delivery Info
-    if (data.deliveryNumber || data.referenceNumber || data.batchNumber) {
-      lines.push("DELIVERY INFO");
-      if (data.deliveryNumber) {
-        lines.push(`DLV: ${data.deliveryNumber}`);
-      }
-      if (data.referenceNumber) {
-        lines.push(`REF: ${data.referenceNumber}`);
-      }
-      if (data.batchNumber) {
-        lines.push(`BCH: ${data.batchNumber}`);
-      }
-      lines.push("");
-    }
-    
-    // Material
     lines.push("MATERIAL");
-    lines.push(`Product: ${data.commodityName || 'Purple Tea'}`);
-    lines.push(`Supplier: ${data.supplierName || 'KTDA Factory 2'}`);
-    lines.push(`Transporter: ${data.transporterName || 'Fresh Leaf Carriers'}`);
+    lines.push(`Product: ${data.commodityName || 'Tea Leaves'}`);
+    lines.push(`Supplier: ${data.supplierName || 'KTDA Factory'}`);
+    lines.push(`Transporter: ${data.transporterName || 'Transport Company'}`);
+    if (data.customerName) {
+      lines.push(`Customer: ${data.customerName}`);
+    }
     lines.push("");
     
-    // Weights
     lines.push("WEIGHTS");
-    lines.push(`Gross: ${formatWeight(data.firstWeight)} kg`);
+    lines.push(`Gross: ${formatWeight(data.firstWeight || data.weight)} kg`);
     lines.push(`Tare: ${formatWeight(data.secondWeight || 0)} kg`);
-    lines.push(`Net: ${formatWeight(data.netWeight || data.firstWeight)} kg`);
+    lines.push(`Net: ${formatWeight(data.netWeight || data.firstWeight || data.weight)} kg`);
     lines.push("");
     
-    // Status
     lines.push("================================");
     lines.push("   STATUS: PENDING 2ND WEIGHT");
     lines.push("================================");
@@ -146,42 +131,51 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-8">
-      <div className="max-w-2xl w-full">
+    <div className={`min-h-screen ${
+      isDark 
+        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' 
+        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
+    } flex items-center justify-center p-8`}>
+      <div className="max-w-3xl w-full">
         {printing ? (
           <div className="text-center">
-            <div className="w-32 h-32 mx-auto mb-8 relative">
-              {/* Printer Icon with Animation */}
-              <div className="absolute inset-0 bg-blue-900 rounded-full opacity-20 animate-ping"></div>
-              <div className="relative w-32 h-32 bg-gradient-to-br from-blue-900 to-blue-700 rounded-full flex items-center justify-center border-4 border-blue-500">
-                <span className="text-6xl">🖨️</span>
+            <div className="w-40 h-40 mx-auto mb-8 relative">
+              <div className="absolute inset-0 bg-blue-900/20 rounded-full animate-ping"></div>
+              <div className="relative w-40 h-40 bg-gradient-to-br from-blue-900 to-blue-700 rounded-full flex items-center justify-center border-4 border-blue-500 shadow-2xl">
+                <span className="text-7xl">🖨️</span>
               </div>
             </div>
             
-            <h2 className="text-4xl font-bold text-white mb-4">Printing Ticket...</h2>
-            <p className="text-xl text-gray-400 mb-8">Please wait for your receipt</p>
+            <h2 className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Printing Ticket...
+            </h2>
+            <p className={`text-2xl mb-8 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              Please wait for your receipt
+            </p>
             
             <div className="flex items-center justify-center gap-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
           </div>
         ) : printSuccess ? (
           <div className="text-center">
             {/* Success Animation */}
-            <div className="w-32 h-32 mx-auto mb-8 bg-green-900 rounded-full flex items-center justify-center">
-              <span className="text-7xl">✓</span>
+            <div className="w-40 h-40 mx-auto mb-8 bg-green-900/50 rounded-full flex items-center justify-center shadow-2xl">
+              <span className="text-8xl">✓</span>
             </div>
             
-            <h2 className="text-4xl font-bold text-green-500 mb-4">Ticket Printed!</h2>
-            <p className="text-xl text-gray-400 mb-8">Please collect your receipt from the printer</p>
+            <h2 className="text-5xl font-bold text-green-500 mb-4">Ticket Printed!</h2>
+            <p className={`text-2xl mb-8 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              Please collect your receipt from the printer
+            </p>
             
             {/* Ticket Preview */}
-            <div className="bg-white rounded-lg shadow-2xl max-w-md mx-auto p-8 text-left font-mono text-xs leading-relaxed mb-8">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md mx-auto p-8 text-left font-mono text-sm leading-relaxed mb-8">
               <div className="border-b-2 border-dashed border-gray-300 pb-4 mb-4 text-center">
-                <div className="font-bold text-lg mb-1">KTDA WEIGHBRIDGE</div>
-                <div className="text-sm">Tea Collection Ticket</div>
+                <div className="font-bold text-xl mb-1">KTDA WEIGHBRIDGE</div>
+                <div className="text-base">Tea Collection Ticket</div>
                 <div className="text-xs text-gray-600">[SELF-SERVICE SYSTEM]</div>
               </div>
               
@@ -192,7 +186,7 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Date:</span>
-                  <span>{dayjs(ticketData.weighTime).format('DD/MM/YYYY, HH:mm')}</span>
+                  <span>{dayjs(ticketData.weighTime || new Date()).format('DD/MM/YYYY, HH:mm')}</span>
                 </div>
               </div>
               
@@ -205,11 +199,20 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
               </div>
               
               <div className="border-t border-gray-300 my-3 pt-3">
+                <div className="font-bold mb-2">MATERIAL</div>
+                <div className="space-y-1">
+                  <div>Product: {ticketData.commodityName || 'Tea Leaves'}</div>
+                  <div>Supplier: {ticketData.supplierName || 'KTDA Factory'}</div>
+                  <div>Transporter: {ticketData.transporterName || 'Transport Co.'}</div>
+                </div>
+              </div>
+              
+              <div className="border-t border-gray-300 my-3 pt-3">
                 <div className="font-bold mb-2">WEIGHTS</div>
                 <div className="space-y-1">
                   <div className="flex justify-between">
                     <span>Gross:</span>
-                    <span className="font-bold">{formatWeight(ticketData.firstWeight)} kg</span>
+                    <span className="font-bold">{formatWeight(ticketData.firstWeight || ticketData.weight)} kg</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tare:</span>
@@ -217,7 +220,7 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
                   </div>
                   <div className="flex justify-between text-green-600 font-bold pt-2 border-t">
                     <span>Net:</span>
-                    <span>{formatWeight(ticketData.firstWeight)} kg</span>
+                    <span>{formatWeight(ticketData.firstWeight || ticketData.weight)} kg</span>
                   </div>
                 </div>
               </div>
@@ -237,11 +240,15 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
               </div>
             </div>
             
-            <div className="bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg p-6 max-w-md mx-auto">
-              <p className="text-blue-300 mb-2">
-                <span className="font-bold">Next Steps:</span>
+            <div className={`${
+              isDark 
+                ? 'bg-blue-900/20 border-blue-700' 
+                : 'bg-blue-50 border-blue-200'
+            } border rounded-xl p-6 max-w-md mx-auto`}>
+              <p className={`mb-3 font-semibold ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>
+                Next Steps:
               </p>
-              <ol className="text-gray-300 space-y-1 text-sm">
+              <ol className={`space-y-2 text-sm text-left ${isDark ? 'text-blue-200' : 'text-blue-800'}`}>
                 <li>1. Collect your printed ticket</li>
                 <li>2. Proceed to the unloading bay</li>
                 <li>3. Return for second weighing when done</li>
@@ -250,16 +257,18 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
           </div>
         ) : (
           <div className="text-center">
-            <div className="w-32 h-32 mx-auto mb-8 bg-red-900 rounded-full flex items-center justify-center">
-              <span className="text-7xl">✗</span>
+            <div className="w-40 h-40 mx-auto mb-8 bg-red-900/50 rounded-full flex items-center justify-center shadow-2xl">
+              <span className="text-8xl">✗</span>
             </div>
             
-            <h2 className="text-4xl font-bold text-red-500 mb-4">Print Failed</h2>
-            <p className="text-xl text-gray-400 mb-8">Please contact the office for assistance</p>
+            <h2 className="text-5xl font-bold text-red-500 mb-4">Print Failed</h2>
+            <p className={`text-2xl mb-8 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              Please contact the office for assistance
+            </p>
             
             <button
               onClick={onComplete}
-              className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-lg"
+              className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold text-lg transition-colors"
             >
               Continue
             </button>
