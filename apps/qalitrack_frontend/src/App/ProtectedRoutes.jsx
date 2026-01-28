@@ -3,13 +3,22 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import useAuth from '../api/helpers/auth'; // Adjust path as needed
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
-    const { isAuthenticated, getCurrentUser } = useAuth();
     const location = useLocation();
+    const { isAuthenticated, getCurrentUser } = useAuth();
+
+    // ✅ CRITICAL: Allow kiosk routes to bypass authentication
+    // This MUST be checked BEFORE any authentication checks
+    if (location.pathname.startsWith('/kiosk')) {
+        console.log('✅ Kiosk route detected - bypassing authentication');
+        return <Outlet />;
+    }
+
     const user = getCurrentUser();
     const isAuth = isAuthenticated();
 
     // If not authenticated, redirect to login
     if (!isAuth) {
+        console.log('❌ Not authenticated - redirecting to login');
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
@@ -19,6 +28,7 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
     const hasAccess = allowedRoles.length === 0 || allowedRoles.some((role) => userRoles.includes(role));
 
     if (!hasAccess) {
+        console.log('❌ Access denied - insufficient permissions');
         // Redirect based on user's primary role
         const primaryRole = userRoles[0];
 

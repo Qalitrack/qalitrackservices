@@ -1,4 +1,4 @@
-// App/routes.jsx - Simplified with single layout
+// App/routes.jsx - Updated with Self-Service Kiosk (FIXED)
 import React from 'react';
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
@@ -39,6 +39,9 @@ const SaccosPortal = lazy(() => import("../pages/Saccos.jsx"));
 const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
 const Transaction = lazy(() => import("../pages/Transaction.jsx"));
 
+// ✅ Self-Service Kiosk (public - no authentication required)
+const SelfServiceWeighing = lazy(() => import("../pages/SelfServiceWeighing.jsx"));
+
 // Root redirect component
 const RootRedirect = () => {
     const { isAuthenticated, getCurrentUser } = useAuth();
@@ -75,8 +78,21 @@ const NotFound = () => (
     </div>
 );
 
-// Routes configuration - ALL using MainLayout
+// ═══════════════════════════════════════════════════════════════════════════
+// Routes configuration
+// ═══════════════════════════════════════════════════════════════════════════
 export const routes = [
+    // ✅ CRITICAL: KIOSK ROUTE MUST BE FIRST
+    // This route is PUBLIC and should NOT require authentication
+    {
+        path: "/kiosk",
+        element: (
+            <div className="kiosk-fullscreen">
+                <SelfServiceWeighing />
+            </div>
+        )
+    },
+
     // Public routes
     {
         path: "/login",
@@ -89,7 +105,9 @@ export const routes = [
         element: <RootRedirect />
     },
 
-    // Operator routes
+    // ═══════════════════════════════════════════════════════════════════════
+    // PROTECTED ROUTES - Operator
+    // ═══════════════════════════════════════════════════════════════════════
     {
         path: "",
         element: <ProtectedRoute allowedRoles={["Operator", "Admin"]} />,
@@ -175,14 +193,16 @@ export const routes = [
         ]
     },
 
-    // Admin routes - NOW USING MainLayout
+    // ═══════════════════════════════════════════════════════════════════════
+    // PROTECTED ROUTES - Admin
+    // ═══════════════════════════════════════════════════════════════════════
     {
         path: "",
         element: <ProtectedRoute allowedRoles={["Admin"]} />,
         children: [
             {
                 path: "/admin",
-                element: <MainLayout />, // ← Changed from UserServiceLayout
+                element: <MainLayout />,
                 children: [
                     {
                         path: "dashboard",
@@ -287,9 +307,22 @@ export const routes = [
         ]
     },
 
-    // 404 fallback
+    // ═══════════════════════════════════════════════════════════════════════
+    // 404 fallback - MUST BE LAST
+    // ═══════════════════════════════════════════════════════════════════════
     {
         path: "*",
         element: <NotFound />
     }
 ];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ✅ CRITICAL CHANGES MADE:
+   
+   1. Moved kiosk route to FIRST position (before all other routes)
+   2. Wrapped SelfServiceWeighing in div with className="kiosk-fullscreen"
+   3. Kiosk route is NOT wrapped in ProtectedRoute
+   4. NotFound (404) route is LAST
+   
+   This ensures /kiosk is accessible without authentication.
+   ═══════════════════════════════════════════════════════════════════════════ */
