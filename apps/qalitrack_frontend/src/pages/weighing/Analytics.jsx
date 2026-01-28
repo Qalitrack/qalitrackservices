@@ -154,7 +154,7 @@ export default function Analytics() {
       </div>
 
       {/* SCROLLABLE CONTENT */}
-      <div className="p-4">
+      <div className="p-4 h-lvh">
         {/* COMPACT KPI CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
           {[
