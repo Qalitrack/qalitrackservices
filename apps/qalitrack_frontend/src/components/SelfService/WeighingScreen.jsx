@@ -1,3 +1,11 @@
+// ✅ FIXED: Public Self-Service Weighing Screen (No Authentication Required)
+// Changes:
+// 1. ✅ Removed fetchCurrentUser() call that triggers auth redirect
+// 2. ✅ Uses system/default operator for public kiosk
+// 3. ✅ Added "request" wrapper for payload (based on your curl)
+// 4. ✅ Better error handling
+// 5. ✅ Optional authentication support (if user is logged in)
+
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Input, Select, Button, Typography, message, Alert, Tag, Spin } from "antd";
 import { debounce } from "lodash";
@@ -11,7 +19,6 @@ import {
   fetchTransportersByName,
   fetchWeighbridges,
   addTransaction,
-  fetchCurrentUser,
 } from "../../store/weighingSlice";
 
 const { Option } = Select;
@@ -30,9 +37,12 @@ export default function WeighingScreen({
     products = [],
     suppliers = [],
     weighbridges = [],
-    currentUser,
+    currentUser, // ✅ Don't fetch, just use if available
     loading: globalLoading,
   } = useSelector((state) => state.weighing);
+
+  // ✅ Check if user is already logged in (optional)
+  const authUser = useSelector((state) => state.auth?.user);
 
   const [formData, setFormData] = useState({
     noPlate: vehicleData?.plateNumber || "KBU 510 G",
@@ -68,25 +78,37 @@ export default function WeighingScreen({
 
   const STABILITY_CYCLES = 5;
 
-  /* LOAD DATA */
+  /* ✅ LOAD DATA - WITHOUT FETCHING CURRENT USER */
   useEffect(() => {
     dispatch(fetchWeighbridges({ pageNumber: 1, pageSize: 50 }));
-    dispatch(fetchCurrentUser());
+    // ❌ REMOVED: dispatch(fetchCurrentUser()); 
+    // This was causing auth redirect!
   }, [dispatch]);
 
+  /* ✅ SET OPERATOR - Use logged-in user OR default to "Self-Service Kiosk" */
   useEffect(() => {
-    if (currentUser) {
+    const user = currentUser || authUser;
+    
+    if (user) {
+      // User is logged in - use their info
       setFormData((p) => ({
         ...p,
         operatorName:
-          currentUser.fullName ||
-          `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() ||
-          currentUser.username ||
+          user.fullName ||
+          `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+          user.username ||
           "Operator",
-        operatorID: currentUser.id || currentUser.userId || "system-operator",
+        operatorID: user.id || user.userId || null,
+      }));
+    } else {
+      // ✅ No user logged in - use default for public kiosk
+      setFormData((p) => ({
+        ...p,
+        operatorName: "Self-Service Kiosk",
+        operatorID: null, // Backend should handle this
       }));
     }
-  }, [currentUser]);
+  }, [currentUser, authUser]);
 
   /* SIMULATE WEIGHT */
   useEffect(() => {
@@ -157,42 +179,115 @@ export default function WeighingScreen({
 
   const handleCapture = async () => {
     if (!isStable || capturing) return;
+    
     setCapturing(true);
     setApiError(null);
 
+    console.log('');
+    console.log('🎯 ================== KIOSK WEIGHING START ==================');
+    console.log('📍 Timestamp:', new Date().toISOString());
+    console.log('⚖️ Weight:', totalWeight, 'kg');
+    console.log('🚗 Vehicle:', formData.noPlate);
+    console.log('');
+
     try {
-      const payload = {
+      // ✅ Validate required fields
+      if (!formData.noPlate?.trim()) {
+        throw new Error("Vehicle plate number is required");
+      }
+      if (!formData.weighBridgeID) {
+        throw new Error("Please select a weighbridge scale");
+      }
+      if (!formData.transporterID) {
+        throw new Error("Please select a transporter");
+      }
+
+      // ✅ Build transaction data
+      const transactionData = {
         noPlate: formData.noPlate.toUpperCase().trim(),
         driverName: formData.driverName || "",
         firstWeight: String(totalWeight),
-        transporterID: formData.transporterID,
+        transporterID: formData.transporterID || null,
         transporterName: formData.transporterName || "",
-        weighBridgeID: formData.weighBridgeID,
+        weighBridgeID: formData.weighBridgeID || null,
         weighBridgeName: formData.weighBridgeName || formData.scaleName || "",
         scaleName: formData.scaleName || "",
-        operatorID: formData.operatorID,
-        operatorName: formData.operatorName || "Operator",
-        commodityID: formData.commodityID,
+        operatorID: formData.operatorID || null,
+        operatorName: formData.operatorName || "Self-Service Kiosk",
+        commodityID: formData.commodityID || null,
         commodityName: formData.commodityName || "",
-        supplierID: formData.supplierID,
+        supplierID: formData.supplierID || null,
         supplierName: formData.supplierName || "",
         customerName: formData.customerName || "",
         originName: formData.originName || "",
         destinationName: formData.destinationName || "",
-        weighMode: formData.weighMode,
-        operation: formData.operation,
-        notes: formData.notes || "",
+        weighMode: formData.weighMode || "entry",
+        operation: formData.operation || "weighing",
+        notes: formData.notes || "Self-service kiosk transaction",
       };
 
-      await dispatch(addTransaction(payload)).unwrap();
-      message.success("Transaction saved");
+      // ✅ CRITICAL: Wrap in "request" object (as shown in your curl)
+      const payload = {
+        request: transactionData
+      };
+
+      console.log('📦 Transaction Data:');
+      console.log(JSON.stringify(transactionData, null, 2));
+      console.log('');
+      console.log('📤 Sending payload (wrapped):');
+      console.log(JSON.stringify(payload, null, 2));
+      console.log('');
+
+      const result = await dispatch(addTransaction(payload)).unwrap();
+      
+      console.log('✅ ========== TRANSACTION SAVED ==========');
+      console.log('📦 Response:', JSON.stringify(result, null, 2));
+      console.log('📍 Ticket ID:', result.ticketID || result.id);
+      console.log('📍 Receipt No:', result.receiptNo);
+      console.log('');
+      
+      message.success({
+        content: `Transaction saved! Receipt: ${result.receiptNo || 'Generated'}`,
+        duration: 5,
+      });
+      
+      // ✅ Reset form for next vehicle
+      setFormData((prev) => ({
+        ...prev,
+        noPlate: "",
+        driverName: "",
+        transporterID: null,
+        transporterName: "",
+        commodityID: null,
+        commodityName: "",
+        supplierID: null,
+        supplierName: "",
+        customerName: "",
+        originName: "",
+        destinationName: "",
+        notes: "",
+      }));
+
       onWeighingComplete?.();
       onTransactionCreated?.();
+      
     } catch (e) {
-      setApiError("Failed to save transaction");
-      message.error("Failed to save");
+      console.error('❌ ==================== CAPTURE FAILED ====================');
+      console.error('❌ Error:', e);
+      console.error('❌ Error Message:', e.message);
+      console.error('❌ Response:', e.response?.data);
+      console.log('');
+      
+      const errorMsg = e.message || e.response?.data?.message || "Failed to save transaction";
+      setApiError(errorMsg);
+      message.error({
+        content: errorMsg,
+        duration: 8,
+      });
     } finally {
       setCapturing(false);
+      console.log('🎯 ================== KIOSK WEIGHING END ==================');
+      console.log('');
     }
   };
 
@@ -208,7 +303,7 @@ export default function WeighingScreen({
         </div>
         <div className="flex items-center gap-4 text-sm">
           <Tag color="green">LIVE</Tag>
-          <span>{formData.operatorName || "Operator"}</span>
+          <span>{formData.operatorName || "Kiosk"}</span>
         </div>
       </header>
 
@@ -220,7 +315,7 @@ export default function WeighingScreen({
             ANPR NUMBER PLATE
           </h3>
           <div className="text-3xl font-bold text-center border py-4">
-            {formData.noPlate}
+            {formData.noPlate || "---"}
           </div>
           <div className="mt-4 h-32 bg-gray-200 flex items-center justify-center text-gray-500">
             Vehicle Image
@@ -233,7 +328,7 @@ export default function WeighingScreen({
             DRIVER DETAILS
           </h3>
           <div className="text-sm space-y-1">
-            <p><b>Name:</b> {formData.driverName}</p>
+            <p><b>Name:</b> {formData.driverName || "---"}</p>
             <p><b>License:</b> DL-94502</p>
             <p><b>ID:</b> 28000000</p>
             <p><b>Company:</b> Transport Ltd</p>
@@ -259,7 +354,9 @@ export default function WeighingScreen({
         <div className="col-span-12 bg-white rounded shadow p-4 grid grid-cols-6 gap-4">
           {/* Transporter */}
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Transporter *</label>
+            <label className="block text-xs text-gray-600 mb-1">
+              Transporter <span className="text-red-500">*</span>
+            </label>
             <Select 
               size="middle" 
               className="w-full" 
@@ -346,7 +443,9 @@ export default function WeighingScreen({
 
           {/* Scale Name */}
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Scale Name *</label>
+            <label className="block text-xs text-gray-600 mb-1">
+              Scale Name <span className="text-red-500">*</span>
+            </label>
             <Select 
               size="middle" 
               className="w-full" 
@@ -391,29 +490,22 @@ export default function WeighingScreen({
               <Option value="Outbound Product Dispatch">Outbound Dispatch</Option>
             </Select>
           </div>
-
-          {/* Notes */}
-          {/* <div className="col-span-6">
-            <label className="block text-xs text-gray-600 mb-1">Notes</label>
-            <Input.TextArea 
-              size="middle" 
-              rows={2} 
-              placeholder="Any remarks..." 
-              value={formData.notes}
-              onChange={(e) => handleChange("notes", e.target.value)}
-            />
-          </div> */}
         </div>
       </div>
 
       {/* FOOTER */}
       <div className="h-20 bg-white border-t flex justify-between items-center px-6">
-        <span className="text-sm">
-          Status:{" "}
-          <b className={isStable ? "text-green-600" : "text-amber-600"}>
-            {isStable ? "Ready" : "Waiting"}
-          </b>
-        </span>
+        <div className="text-sm space-x-4">
+          <span>
+            Status:{" "}
+            <b className={isStable ? "text-green-600" : "text-amber-600"}>
+              {isStable ? "Ready" : "Waiting"}
+            </b>
+          </span>
+          <span className="text-gray-500">
+            Weight: <b>{totalWeight.toLocaleString()} kg</b>
+          </span>
+        </div>
         <Button
           type="primary"
           size="large"
@@ -422,17 +514,20 @@ export default function WeighingScreen({
           onClick={handleCapture}
           className="bg-green-600 px-10"
         >
-          CAPTURE
+          {capturing ? "SAVING..." : "CAPTURE WEIGHT"}
         </Button>
       </div>
 
+      {/* ERROR ALERT */}
       {apiError && (
         <Alert
-          message="Error"
+          message="Transaction Failed"
           description={apiError}
           type="error"
           showIcon
-          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 max-w-lg"
+          closable
+          onClose={() => setApiError(null)}
+          className="fixed bottom-24 left-1/2 transform -translate-x-1/2 max-w-lg shadow-lg"
         />
       )}
     </div>
