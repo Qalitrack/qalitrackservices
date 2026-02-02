@@ -41,7 +41,7 @@ export default function Transactions() {
     weighbridge: '',
     weighMode: null,
     page: 1, 
-    pageSize: 15 
+    pageSize: 10 
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -152,7 +152,7 @@ export default function Transactions() {
   useEffect(() => { 
     const timeoutId = setTimeout(() => {
       loadTransactions();
-    }, filters.search ? 500 : 0); // Debounce search input
+    }, filters.search ? 500 : 0);
     
     return () => clearTimeout(timeoutId);
   }, [loadTransactions]);
@@ -208,21 +208,14 @@ export default function Transactions() {
     }
   };
 
-  // ✅ NEW: Calculate turnaround time between first and second weight (for completed transactions)
   const calculateTurnaroundTime = (firstWeightTime, secondWeightTime) => {
-    // Debug logging
-    console.log("Calculating turnaround time:", { firstWeightTime, secondWeightTime });
-    
     if (!firstWeightTime || !secondWeightTime) {
-      console.log("Missing time data - returning N/A");
       return { display: "N/A", minutes: 0 };
     }
     
     const first = dayjs(firstWeightTime);
     const second = dayjs(secondWeightTime);
     const diffMinutes = second.diff(first, 'minute');
-    
-    console.log("Time difference in minutes:", diffMinutes);
     
     if (diffMinutes < 1) {
       return { display: '< 1m', minutes: 0 };
@@ -238,7 +231,6 @@ export default function Transactions() {
     }
   };
 
-  // ✅ NEW: Calculate wait time from creation (for incomplete transactions)
   const calculateWaitTime = (createdAt) => {
     if (!createdAt) return { display: '-', minutes: 0 };
     
@@ -260,23 +252,19 @@ export default function Transactions() {
     }
   };
 
-  // ✅ NEW: Get color based on turnaround/wait time
   const getTimeColor = (minutes, isCompleted) => {
     if (isCompleted) {
-      // For completed transactions (turnaround time)
-      if (minutes < 30) return 'green';      // < 30 min: excellent
-      if (minutes < 60) return 'blue';       // 30-60 min: good
-      if (minutes < 120) return 'orange';    // 60-120 min: acceptable
-      return 'red';                          // > 120 min: slow
+      if (minutes < 30) return 'green';
+      if (minutes < 60) return 'blue';
+      if (minutes < 120) return 'orange';
+      return 'red';
     } else {
-      // For incomplete transactions (wait time)
-      if (minutes < 30) return 'green';      // < 30 min: good
-      if (minutes < 60) return 'orange';     // 30-60 min: warning
-      return 'red';                          // > 60 min: critical
+      if (minutes < 30) return 'green';
+      if (minutes < 60) return 'orange';
+      return 'red';
     }
   };
 
-  // Original calculateTurnaroundTime for display (keeping for backwards compatibility)
   const formatTurnaroundTimeSimple = (first, second) => {
     if (!first || !second) return "N/A";
     const diffMin = dayjs(second).diff(dayjs(first), 'minute');
@@ -286,11 +274,12 @@ export default function Transactions() {
   const generatePDF = (record, isColor) => {
     const doc = new jsPDF();
     const colors = isColor ? 
-      { header: [255, 152, 0], text: [33, 33, 33], light: [245, 245, 245], accent: [254, 243, 199] } :
-      { header: [240, 240, 240], text: [0, 0, 0], light: [240, 240, 240], accent: [220, 220, 220] };
+      { header: [70, 70, 70], text: [33, 33, 33], light: [245, 245, 245], accent: [220, 220, 220] } :
+      { header: [0, 0, 0], text: [0, 0, 0], light: [255, 255, 255], accent: [240, 240, 240] };
 
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
+    doc.setTextColor(...colors.text);
     doc.text("QALIBRATED SYSTEMS LTD", 105, 15, { align: "center" });
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
@@ -305,10 +294,11 @@ export default function Transactions() {
     doc.text("TICKET DETAILS", 105, y + 5, { align: "center" });
 
     y += 7;
+    doc.setTextColor(...colors.text);
     autoTable(doc, {
       startY: y,
       theme: "plain",
-      styles: { fontSize: 8.5, cellPadding: 1.5 },
+      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: colors.text },
       columnStyles: { 0: { fontStyle: "bold", cellWidth: 32 }, 1: { cellWidth: 58 }, 2: { fontStyle: "bold", cellWidth: 32 }, 3: { cellWidth: 58 } },
       body: [
         ["TICKET NO", `: ${record.receiptNo || 'N/A'}`, "REGISTRATION", `: ${record.noPlate || 'N/A'}`],
@@ -318,6 +308,7 @@ export default function Transactions() {
         ["SOURCE", `: ${record.originName || "N/A"}`, "DESTINATION", `: ${record.destinationName || "N/A"}`],
         ["CONTAINER", `: ${record.containerNo || "N/A"}`, "SEAL NO", `: ${record.sealNo || "N/A"}`],
         ["WEIGH MODE", `: ${record.weighMode || "N/A"}`, "OPERATION", `: ${record.operation || "N/A"}`],
+        ["WEIGHBRIDGE", `: ${record.weighBridgeName || "N/A"}`, "STATUS", `: ${record.status || "N/A"}`],
       ],
     });
 
@@ -328,21 +319,21 @@ export default function Transactions() {
     doc.text("WEIGHT SUMMARY", 105, y + 5, { align: "center" });
 
     y += 7;
+    doc.setTextColor(...colors.text);
     autoTable(doc, {
       startY: y,
       theme: "grid",
-      headStyles: { fillColor: colors.header, halign: "center" },
-      styles: { halign: "center", fontSize: 9 },
+      headStyles: { fillColor: colors.header, halign: "center", textColor: isColor ? [255, 255, 255] : [0, 0, 0] },
+      styles: { halign: "center", fontSize: 9, textColor: colors.text },
       head: [["MEASUREMENT", "WEIGHT", "OPERATOR", "TIMESTAMP"]],
       body: [
         ["FIRST WEIGHT", `${record.firstWeight || 0} Kg`, record.firstWeightOperator || record.operatorName || "N/A", record.firstWeightTime ? dayjs(record.firstWeightTime).format("DD-MM-YY HH:mm") : "N/A"],
         ["SECOND WEIGHT", `${record.secondWeight || 0} Kg`, record.secondWeightOperator || record.operatorName || "N/A", record.secondWeightTime ? dayjs(record.secondWeightTime).format("DD-MM-YY HH:mm") : "N/A"],
-        [{ content: "NET WEIGHT", styles: { fillColor: colors.light, fontStyle: "bold" } }, { content: `${record.netWeight || 0} Kg`, styles: { fillColor: colors.light, fontStyle: "bold" } }, "", ""],
-        [{ content: "TURNAROUND", styles: { fillColor: colors.accent } }, { content: formatTurnaroundTimeSimple(record.firstWeightTime, record.secondWeightTime), colSpan: 3, styles: { fillColor: colors.accent } }],
+        [{ content: "NET WEIGHT", styles: { fillColor: colors.light, fontStyle: "bold", textColor: colors.text } }, { content: `${record.netWeight || 0} Kg`, styles: { fillColor: colors.light, fontStyle: "bold", textColor: colors.text } }, "", ""],
+        [{ content: "TURNAROUND", styles: { fillColor: colors.accent, textColor: colors.text } }, { content: formatTurnaroundTimeSimple(record.firstWeightTime, record.secondWeightTime), colSpan: 3, styles: { fillColor: colors.accent, textColor: colors.text } }],
       ],
     });
 
-    // Add remarks/notes section
     if (record.remarks || record.notes) {
       y = doc.lastAutoTable.finalY + 5;
       doc.setFillColor(...colors.header);
@@ -351,7 +342,7 @@ export default function Transactions() {
       doc.text("REMARKS/NOTES", 105, y + 5, { align: "center" });
       
       y += 7;
-      doc.setTextColor(0, 0, 0);
+      doc.setTextColor(...colors.text);
       doc.setFontSize(9);
       const remarkText = record.remarks || record.notes || 'N/A';
       const splitRemarks = doc.splitTextToSize(remarkText, 170);
@@ -364,98 +355,82 @@ export default function Transactions() {
 
   const columns = [
     { 
-      title: 'Date & Time', 
+      title: 'Date/Time', 
       dataIndex: 'createdAt', 
-      width: 105, 
+      width: 80, 
       render: (d) => (
-        <div className="leading-tight">
-          <div className="text-[11px] font-semibold text-gray-800">{dayjs(d).format('DD MMM YYYY')}</div>
-          <div className="text-[10px] text-gray-500">{dayjs(d).format('HH:mm:ss')}</div>
+        <div className="text-[10px] leading-tight">
+          <div className="font-semibold text-gray-800">{dayjs(d).format('DD-MMM')}</div>
+          <div className="text-purple-600 font-medium">{dayjs(d).format('HH:mm')}</div>
         </div>
       ) 
     },
     { 
-      title: 'Receipt No.', 
+      title: 'Receipt', 
       dataIndex: 'receiptNo', 
-      width: 100, 
-      render: (t) => <span className="text-[11px] font-mono font-semibold text-amber-700">{t || '-'}</span> 
+      width: 75, 
+      render: (t) => <span className="text-[10px] font-mono font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">{t || '-'}</span> 
     },
     { 
-      title: 'Vehicle Reg.', 
+      title: 'Vehicle', 
       dataIndex: 'noPlate', 
-      width: 95, 
-      render: (t) => <div className="inline-block bg-gray-900 text-white px-2 py-1 rounded text-[11px] font-bold tracking-wide">{t || '-'}</div> 
+      width: 70, 
+      render: (t) => <div className="inline-block bg-gradient-to-r from-gray-800 to-black text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider shadow-sm">{t || '-'}</div> 
     },
     { 
       title: 'Driver', 
       dataIndex: 'driverName', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] font-medium text-gray-700">{t || '-'}</span> 
+      width: 85, 
+      render: (t) => <span className="text-[10px] text-gray-700 font-medium">{t || '-'}</span> 
     },
     { 
       title: 'Commodity', 
       dataIndex: 'commodityName', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t || '-'}</span> 
+      width: 90, 
+      render: (t) => <span className="text-[10px] text-emerald-700 font-medium">{t || '-'}</span> 
     },
     { 
       title: 'Supplier', 
       dataIndex: 'supplierName', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t || '-'}</span> 
+      width: 85, 
+      render: (t) => <span className="text-[10px] text-indigo-600">{t || '-'}</span> 
     },
     { 
       title: 'Transporter', 
       dataIndex: 'transporterName', 
-      width: 115, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t || '-'}</span> 
+      width: 90, 
+      render: (t) => <span className="text-[10px] text-cyan-600">{t || '-'}</span> 
     },
     { 
       title: 'Customer', 
       dataIndex: 'customerName', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t || '-'}</span> 
+      width: 85, 
+      render: (t) => <span className="text-[10px] text-rose-600">{t || '-'}</span> 
     },
     { 
       title: 'Origin', 
       dataIndex: 'originName', 
-      width: 100, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t || '-'}</span> 
+      width: 80, 
+      render: (t) => <span className="text-[10px] text-violet-600">{t || '-'}</span> 
     },
     { 
       title: 'Destination', 
       dataIndex: 'destinationName', 
-      width: 110, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t || '-'}</span> 
+      width: 90, 
+      render: (t) => <span className="text-[10px] text-fuchsia-600">{t || '-'}</span> 
     },
     { 
       title: 'Weighbridge', 
       dataIndex: 'weighBridgeName', 
-      width: 115, 
-      render: (t) => <span className="text-[11px] text-gray-600">{t || '-'}</span> 
-    },
-    { 
-      title: 'Scale', 
-      dataIndex: 'scaleName', 
       width: 95, 
-      render: (t) => <span className="text-[11px] text-gray-700 font-medium">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-teal-600">{t || '-'}</span> 
     },
     { 
       title: 'Mode', 
       dataIndex: 'weighMode', 
-      width: 90, 
+      width: 60, 
       render: (t) => (
-        <Tag color="blue" className="text-[10px] font-semibold px-2.5 py-0.5 rounded-md border-0 m-0 uppercase">
-          {t || 'N/A'}
-        </Tag>
-      )
-    },
-    { 
-      title: 'Operation', 
-      dataIndex: 'operation', 
-      width: 95, 
-      render: (t) => (
-        <Tag color="purple" className="text-[10px] font-semibold px-2.5 py-0.5 rounded-md border-0 m-0 uppercase">
+        <Tag color="purple" className="text-[9px] font-semibold px-2 py-0 m-0 uppercase rounded-full leading-tight">
           {t || 'N/A'}
         </Tag>
       )
@@ -463,79 +438,59 @@ export default function Transactions() {
     { 
       title: 'Operator', 
       dataIndex: 'operatorName', 
-      width: 120, 
+      width: 85, 
       render: (text, record) => {
         const operatorName = text || record.firstWeightOperator || 'N/A';
-        return (
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-[10px] font-bold shadow-sm">
-              {operatorName !== 'N/A' ? operatorName.charAt(0).toUpperCase() : '?'}
-            </div>
-            <span className="text-[11px] text-gray-700 font-medium">{operatorName}</span>
-          </div>
-        );
+        return <span className="text-[10px] text-gray-700 font-medium">{operatorName}</span>;
       }
     },
     { 
-      title: 'First Weight', 
+      title: '1st', 
       dataIndex: 'firstWeight', 
-      width: 100, 
+      width: 65, 
       align: 'right', 
       render: (w) => (
-        <div className="flex flex-col items-end leading-tight">
-          <span className="text-[11px] font-bold text-blue-600">{w ? `${parseFloat(w).toLocaleString()}` : '-'}</span>
-          <span className="text-[9px] text-gray-500 uppercase tracking-wide">kg</span>
-        </div>
+        <span className="text-[10px] font-bold text-blue-600">
+          {w ? `${parseFloat(w).toLocaleString()}` : '-'}
+        </span>
       )
     },
     { 
-      title: 'Second Weight', 
+      title: '2nd', 
       dataIndex: 'secondWeight', 
-      width: 100, 
+      width: 65, 
       align: 'right', 
       render: (w) => (
-        <div className="flex flex-col items-end leading-tight">
-          <span className="text-[11px] font-bold text-green-600">{w ? `${parseFloat(w).toLocaleString()}` : '-'}</span>
-          <span className="text-[9px] text-gray-500 uppercase tracking-wide">kg</span>
-        </div>
+        <span className="text-[10px] font-bold text-emerald-600">
+          {w ? `${parseFloat(w).toLocaleString()}` : '-'}
+        </span>
       )
     },
     { 
-      title: 'Net Weight', 
+      title: 'Net', 
       dataIndex: 'netWeight', 
-      width: 105, 
+      width: 70, 
       align: 'right', 
       render: (w) => (
         <div className="flex flex-col items-end leading-tight">
-          <span className="text-[12px] font-bold text-orange-600">{w ? `${parseFloat(w).toLocaleString()}` : '-'}</span>
-          <span className="text-[9px] text-gray-500 uppercase tracking-wide">kg</span>
+          <span className="text-[11px] font-extrabold text-amber-600">
+            {w ? `${parseFloat(w).toLocaleString()}` : '-'}
+          </span>
+          <span className="text-[8px] text-amber-500 uppercase font-semibold">kg</span>
         </div>
       )
     },
-    // ✅ UPDATED: Combined TAT/Wait column
     { 
-      title: <span className="flex items-center gap-1"><ClockCircleOutlined />Turnaround</span>, 
-      width: 100, 
+      title: <ClockCircleOutlined style={{fontSize: '10px'}} />, 
+      width: 55, 
       render: (_, record) => {
         const hasSecondWeight = record.secondWeight && parseFloat(record.secondWeight) > 0;
         const isCompleted = hasSecondWeight || record.status === 'Completed' || record.status === 'completed';
         
-        // Debug logging
-        console.log("TAT Column Record:", {
-          receiptNo: record.receiptNo,
-          isCompleted,
-          firstWeightTime: record.firstWeightTime,
-          secondWeightTime: record.secondWeightTime,
-          createdAt: record.createdAt,
-          allFields: Object.keys(record)
-        });
-        
         let timeData;
         if (isCompleted) {
-          // Show turnaround time for completed transactions
           timeData = calculateTurnaroundTime(record.firstWeightTime, record.secondWeightTime);
         } else {
-          // Show wait time for incomplete transactions
           timeData = calculateWaitTime(record.createdAt);
         }
         
@@ -547,7 +502,7 @@ export default function Transactions() {
         return (
           <Tag 
             color={color} 
-            className="text-[10px] font-bold px-2.5 py-1 rounded-md border-0 m-0"
+            className="text-[9px] font-bold px-2 py-0 m-0 rounded-full shadow-sm leading-tight"
             title={title}
           >
             {timeData.display}
@@ -558,365 +513,333 @@ export default function Transactions() {
     { 
       title: 'Status', 
       dataIndex: 'status', 
-      width: 110, 
+      width: 75, 
       fixed: 'right',
       render: (s, record) => {
-        // Determine actual status based on weights
         const hasSecondWeight = record.secondWeight && parseFloat(record.secondWeight) > 0;
         const isCompleted = hasSecondWeight || s === 'Completed' || s === 'completed';
         
         return (
           <Tag 
-            color={isCompleted ? '#10b981' : '#f59e0b'} 
-            className="text-[10px] font-bold px-3 py-1 rounded-md border-0 m-0 uppercase tracking-wide"
+            color={isCompleted ? 'success' : 'warning'} 
+            className="text-[9px] font-bold px-2 py-0.5 m-0 uppercase rounded-full shadow-sm leading-tight"
           >
-            {isCompleted ? 'COMPLETED' : 'IN PROGRESS'}
+            {isCompleted ? '✓' : '⏳'}
           </Tag>
         );
       } 
     },
     { 
-      title: 'Actions', 
-      width: 75, 
+      title: '', 
+      width: 55, 
       fixed: 'right', 
       render: (_, r) => (
         <Button 
           size="small" 
           type="text"
-          icon={<Eye size={14} />} 
+          icon={<Eye size={12} />} 
           onClick={() => openViewDrawer(r)} 
-          className="text-blue-600 hover:bg-blue-50 h-7 px-2.5 rounded-md font-medium"
+          className="text-amber-600 hover:bg-amber-50 hover:text-amber-700 h-6 px-1.5 text-[10px] font-semibold transition-all"
         >
-          View
         </Button>
       ) 
     },
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Modern Professional Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm px-6 py-4 flex items-center gap-4 shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    <div className="h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b-2 border-amber-500 px-4 py-2 flex items-center gap-2.5 shrink-0 shadow-lg">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg ring-2 ring-amber-400/50">
+            <svg className="w-4 h-4 text-black font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
           <div>
-            <div className="text-lg font-bold text-gray-900">Transactions Management</div>
-            <div className="text-xs text-gray-500 font-medium">
-              {Object.entries(filters).filter(([key, value]) => 
-                value && !['page', 'pageSize'].includes(key)
-              ).length > 0 ? (
-                <>
-                  <span className="font-semibold text-amber-600">{filteredTransactions.length}</span> filtered records from <span className="font-semibold">{total || 0}</span> total
-                </>
-              ) : (
-                <>{total || 0} total records • TAT = Turnaround Time</>
-              )}
+            <div className="text-sm font-bold text-white leading-none">Transactions</div>
+            <div className="text-[10px] text-amber-400 leading-none mt-1">
+              <span className="font-semibold">{filteredTransactions.length}</span> of <span className="font-semibold">{total || 0}</span>
             </div>
           </div>
         </div>
         
-        <div className="flex-1 flex gap-3 justify-end items-center">
+        <div className="flex-1 flex gap-2 justify-end items-center">
           <Input 
             allowClear 
-            placeholder="Search by receipt, vehicle, driver..." 
-            prefix={<Search size={16} className="text-gray-400" />} 
-            className="w-80 h-9 text-sm rounded-lg shadow-sm border-gray-300" 
+            placeholder="Search..." 
+            prefix={<Search size={14} className="text-gray-400" />} 
+            className="w-64 h-8 text-[11px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" 
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })} 
           />
           <Button 
-            icon={<Filter size={16} />} 
-            className={`h-9 text-sm rounded-lg font-medium ${showFilters ? 'bg-amber-50 text-amber-600 border-amber-300' : 'border-gray-300'}`}
+            icon={<Filter size={14} />} 
+            className={`h-8 text-[11px] font-medium ${showFilters ? 'bg-amber-500 text-black border-amber-500 hover:bg-amber-400' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
             onClick={() => setShowFilters(!showFilters)}
           >
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
+            Filters
           </Button>
           <Button 
             type="primary" 
             icon={<ReloadOutlined />}
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 border-0 h-9 text-sm rounded-lg shadow-md font-medium" 
-            onClick={() => {
-              loadTransactions();
-            }}
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 border-0 h-8 text-[11px] font-semibold text-black shadow-lg" 
+            onClick={loadTransactions}
             loading={loading}
           >
-            Refresh Data
+            Refresh
           </Button>
         </div>
       </div>
 
-      {/* Modern Filters Panel */}
+      {/* Filters Panel */}
       {showFilters && (
-        <div className="bg-gradient-to-br from-gray-50 via-slate-50 to-gray-50 border-b border-gray-200 px-6 py-4 shrink-0 shadow-sm">
-          <div className="grid grid-cols-4 gap-4 mb-4">
-            {/* Date Range Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Date Range</label>
+        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-emerald-50/20 border-b-2 border-amber-200 px-4 py-2.5 shrink-0 shadow-inner">
+          <div className="grid grid-cols-5 gap-2 mb-2">
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                Date Range
+              </label>
               <RangePicker 
-                className="w-full h-9 text-sm rounded-lg shadow-sm border-gray-300" 
+                className="w-full h-7 text-[11px] border-purple-300 focus:border-purple-500" 
                 value={filters.dateRange}
                 onChange={(d) => setFilters({ ...filters, dateRange: d, page: 1 })} 
-                size="middle"
-                format="DD-MM-YYYY"
-                placeholder={['Start Date', 'End Date']}
+                format="DD-MM-YY"
+                placeholder={['Start', 'End']}
               />
             </div>
             
-            {/* Status Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Status</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                Status
+              </label>
               <select 
-                className="w-full h-9 text-sm rounded-lg border border-gray-300 px-3 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-200 bg-white"
+                className="w-full h-7 text-[11px] rounded border border-emerald-300 px-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
                 value={filters.status || ''}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value || null, page: 1 })}
               >
-                <option value="">All Status</option>
+                <option value="">All</option>
                 <option value="completed">Completed</option>
                 <option value="inprogress">In Progress</option>
               </select>
             </div>
             
-            {/* Vehicle Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Vehicle Registration</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                Vehicle
+              </label>
               <Input 
-                placeholder="Enter vehicle plate..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Vehicle..."
+                className="h-7 text-[11px] border-blue-300 focus:border-blue-500"
                 value={filters.vehicle || ''}
                 onChange={(e) => setFilters({ ...filters, vehicle: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
             
-            {/* Driver Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Driver Name</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-pink-500 rounded-full"></span>
+                Driver
+              </label>
               <Input 
-                placeholder="Enter driver name..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Driver..."
+                className="h-7 text-[11px] border-pink-300 focus:border-pink-500"
                 value={filters.driver || ''}
                 onChange={(e) => setFilters({ ...filters, driver: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
-          </div>
-          
-          <div className="grid grid-cols-5 gap-4 mb-4">
-            {/* Commodity Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Commodity</label>
+            
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                Commodity
+              </label>
               <Input 
-                placeholder="Search commodity..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Commodity..."
+                className="h-7 text-[11px] border-amber-300 focus:border-amber-500"
                 value={filters.commodity || ''}
                 onChange={(e) => setFilters({ ...filters, commodity: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
-            
-            {/* Supplier Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Supplier</label>
+          </div>
+          
+          <div className="grid grid-cols-6 gap-2 mb-2">
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                Supplier
+              </label>
               <Input 
-                placeholder="Search supplier..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Supplier..."
+                className="h-7 text-[11px] border-indigo-300 focus:border-indigo-500"
                 value={filters.supplier || ''}
                 onChange={(e) => setFilters({ ...filters, supplier: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
             
-            {/* Transporter Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Transporter</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>
+                Transporter
+              </label>
               <Input 
-                placeholder="Search transporter..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Transporter..."
+                className="h-7 text-[11px] border-cyan-300 focus:border-cyan-500"
                 value={filters.transporter || ''}
                 onChange={(e) => setFilters({ ...filters, transporter: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
             
-            {/* Customer Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Customer</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                Customer
+              </label>
               <Input 
-                placeholder="Search customer..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Customer..."
+                className="h-7 text-[11px] border-rose-300 focus:border-rose-500"
                 value={filters.customer || ''}
                 onChange={(e) => setFilters({ ...filters, customer: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
             
-            {/* Operator Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Operator</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
+                Operator
+              </label>
               <Input 
-                placeholder="Search operator..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Operator..."
+                className="h-7 text-[11px] border-teal-300 focus:border-teal-500"
                 value={filters.operator || ''}
                 onChange={(e) => setFilters({ ...filters, operator: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
-          </div>
-          
-          <div className="grid grid-cols-4 gap-4">
-            {/* Origin Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Origin</label>
+            
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-violet-500 rounded-full"></span>
+                Origin
+              </label>
               <Input 
-                placeholder="Search origin..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Origin..."
+                className="h-7 text-[11px] border-violet-300 focus:border-violet-500"
                 value={filters.origin || ''}
                 onChange={(e) => setFilters({ ...filters, origin: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
             
-            {/* Destination Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Destination</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-fuchsia-500 rounded-full"></span>
+                Destination
+              </label>
               <Input 
-                placeholder="Search destination..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Destination..."
+                className="h-7 text-[11px] border-fuchsia-300 focus:border-fuchsia-500"
                 value={filters.destination || ''}
                 onChange={(e) => setFilters({ ...filters, destination: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
-            
-            {/* Weighbridge Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Weighbridge</label>
+          </div>
+          
+          <div className="grid grid-cols-6 gap-2">
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-lime-500 rounded-full"></span>
+                Weighbridge
+              </label>
               <Input 
-                placeholder="Search weighbridge..."
-                className="w-full h-9 text-sm rounded-lg border-gray-300"
+                placeholder="Weighbridge..."
+                className="h-7 text-[11px] border-lime-300 focus:border-lime-500"
                 value={filters.weighbridge || ''}
                 onChange={(e) => setFilters({ ...filters, weighbridge: e.target.value, page: 1 })}
                 allowClear
               />
             </div>
             
-            {/* Weigh Mode Filter */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Weigh Mode</label>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>
+                Mode
+              </label>
               <select 
-                className="w-full h-9 text-sm rounded-lg border border-gray-300 px-3 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-200 bg-white"
+                className="w-full h-7 text-[11px] rounded border border-orange-300 px-2 focus:border-orange-500 focus:ring-1 focus:ring-orange-200"
                 value={filters.weighMode || ''}
                 onChange={(e) => setFilters({ ...filters, weighMode: e.target.value || null, page: 1 })}
               >
-                <option value="">All Modes</option>
+                <option value="">All</option>
                 <option value="single">Single</option>
                 <option value="double">Double</option>
                 <option value="auto">Auto</option>
               </select>
             </div>
-          </div>
-          
-          {/* Filter Actions Bar */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-300">
-            <div className="flex items-center gap-3">
-              {/* Active Filters Count */}
+            
+            <div className="col-span-4 flex items-end justify-between">
+              <div className="flex gap-2 items-center">
+                {Object.entries(filters).filter(([key, value]) => 
+                  value && !['page', 'pageSize'].includes(key)
+                ).length > 0 && (
+                  <span className="text-[10px] text-amber-900 font-bold bg-gradient-to-r from-amber-100 to-amber-200 px-2.5 py-1 rounded-full border border-amber-300 shadow-sm">
+                    🎯 {Object.entries(filters).filter(([key, value]) => 
+                      value && !['page', 'pageSize'].includes(key)
+                    ).length} active
+                  </span>
+                )}
+              </div>
+              
               {Object.entries(filters).filter(([key, value]) => 
                 value && !['page', 'pageSize'].includes(key)
               ).length > 0 && (
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-amber-800 font-semibold bg-amber-100 px-3 py-1.5 rounded-lg shadow-sm border border-amber-200">
-                    {Object.entries(filters).filter(([key, value]) => 
-                      value && !['page', 'pageSize'].includes(key)
-                    ).length} Active Filters
-                  </span>
-                  
-                  {/* Show active filter tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {filters.dateRange && (
-                      <Tag 
-                        closable 
-                        onClose={() => setFilters({ ...filters, dateRange: null, page: 1 })}
-                        className="text-[11px] m-0 bg-blue-50 border-blue-300 px-2.5 py-1 rounded-md"
-                      >
-                        Date: {filters.dateRange[0].format('DD-MM')} - {filters.dateRange[1].format('DD-MM')}
-                      </Tag>
-                    )}
-                    {filters.status && (
-                      <Tag 
-                        closable 
-                        onClose={() => setFilters({ ...filters, status: null, page: 1 })}
-                        className="text-[11px] m-0 bg-green-50 border-green-300 px-2.5 py-1 rounded-md"
-                      >
-                        Status: {filters.status}
-                      </Tag>
-                    )}
-                    {filters.vehicle && (
-                      <Tag 
-                        closable 
-                        onClose={() => setFilters({ ...filters, vehicle: '', page: 1 })}
-                        className="text-[11px] m-0 bg-purple-50 border-purple-300 px-2.5 py-1 rounded-md"
-                      >
-                        Vehicle: {filters.vehicle}
-                      </Tag>
-                    )}
-                    {filters.driver && (
-                      <Tag 
-                        closable 
-                        onClose={() => setFilters({ ...filters, driver: '', page: 1 })}
-                        className="text-[11px] m-0 bg-pink-50 border-pink-300 px-2.5 py-1 rounded-md"
-                      >
-                        Driver: {filters.driver}
-                      </Tag>
-                    )}
-                  </div>
-                </div>
+                <Button 
+                  size="small"
+                  danger
+                  icon={<CloseOutlined />}
+                  onClick={() => {
+                    setFilters({ 
+                      search: "", 
+                      dateRange: null, 
+                      status: null,
+                      vehicle: '',
+                      driver: '',
+                      commodity: '',
+                      supplier: '',
+                      transporter: '',
+                      customer: '',
+                      operator: '',
+                      origin: '',
+                      destination: '',
+                      weighbridge: '',
+                      weighMode: null,
+                      page: 1, 
+                      pageSize: filters.pageSize 
+                    });
+                  }}
+                  className="h-7 text-[11px] font-semibold shadow-sm rounded-lg bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
+                >
+                  Clear
+                </Button>
               )}
             </div>
-            
-            {/* Clear All Button */}
-            {Object.entries(filters).filter(([key, value]) => 
-              value && !['page', 'pageSize'].includes(key)
-            ).length > 0 && (
-              <Button 
-                size="middle"
-                danger
-                icon={<CloseOutlined />}
-                onClick={() => {
-                  setFilters({ 
-                    search: "", 
-                    dateRange: null, 
-                    status: null,
-                    vehicle: '',
-                    driver: '',
-                    commodity: '',
-                    supplier: '',
-                    transporter: '',
-                    customer: '',
-                    operator: '',
-                    origin: '',
-                    destination: '',
-                    weighbridge: '',
-                    weighMode: null,
-                    page: 1, 
-                    pageSize: filters.pageSize 
-                  });
-                }}
-                className="h-9 text-sm font-semibold shadow-sm rounded-lg"
-              >
-                Clear All Filters
-              </Button>
-            )}
           </div>
         </div>
       )}
 
-      {/* Compact Table */}
-      <div className="flex-1 overflow-hidden px-4 pb-4 pt-3">
-        <div className="h-full bg-white rounded-lg border shadow-sm overflow-hidden">
+      {/* Table */}
+      <div className="flex-1 overflow-hidden px-2.5 pb-2.5 pt-1.5">
+        <div className="h-full bg-white rounded border border-gray-200 overflow-hidden">
           <Table 
             columns={columns} 
             dataSource={filteredTransactions} 
@@ -924,63 +847,83 @@ export default function Transactions() {
             loading={loading} 
             size="small" 
             className="compact-table" 
-            scroll={{ y: "calc(100vh - 180px)", x: 1800 }}
+            scroll={{ y: "calc(100vh - 130px)", x: 1600 }}
             pagination={{ 
               current: filters.page, 
               pageSize: filters.pageSize, 
               total: filteredTransactions.length, 
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total}`,
+              showTotal: (total) => `${total} records`,
               size: 'small',
-              className: 'compact-pagination',
+              pageSizeOptions: ['10', '20', '50', '100'],
               onChange: (p, ps) => setFilters({ ...filters, page: p, pageSize: ps }) 
             }} 
           />
         </div>
       </div>
 
-      {/* Side Drawer for Details */}
+      {/* Drawer */}
       <Drawer
-        title={
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-base">Ticket: {selectedRecord?.receiptNo}</span>
-            <Radio.Group value={printMode} onChange={(e) => setPrintMode(e.target.value)} size="small">
-              <Radio.Button value="color">Color</Radio.Button>
-              <Radio.Button value="bw">B&W</Radio.Button>
-            </Radio.Group>
-          </div>
-        }
+        title={<span className="text-sm font-semibold">Ticket: {selectedRecord?.receiptNo}</span>}
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={480}
+        width={450}
         footer={
-          <div className="flex gap-2 justify-end">
-            {!isEditing ? (
-              <>
-                <Button icon={<EditOutlined />} onClick={() => setIsEditing(true)}>Edit</Button>
-                <Button type="primary" icon={<Printer />} onClick={() => generatePDF(selectedRecord, printMode === 'color')}>
-                  Export PDF
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button icon={<CloseOutlined />} onClick={() => { setEditedRecord(selectedRecord); setIsEditing(false); }}>
-                  Cancel
-                </Button>
-                <Button type="primary" icon={<SaveOutlined />} loading={saving} onClick={handleSave} className="bg-green-600">
-                  Save Changes
-                </Button>
-              </>
-            )}
+          <div className="flex gap-2 justify-between items-center">
+            <div className="flex gap-2 items-center">
+              <span className="text-xs font-semibold text-gray-600">Print Mode:</span>
+              <Radio.Group 
+                size="small" 
+                value={printMode} 
+                onChange={(e) => setPrintMode(e.target.value)}
+                className="text-xs"
+              >
+                <Radio.Button value="color" className="text-xs">Color</Radio.Button>
+                <Radio.Button value="bw" className="text-xs">B&W</Radio.Button>
+              </Radio.Group>
+            </div>
+            <div className="flex gap-2">
+              {!isEditing ? (
+                <>
+                  <Button size="small" icon={<EditOutlined />} onClick={() => setIsEditing(true)} className="text-xs">
+                    Edit
+                  </Button>
+                  <Button 
+                    size="small" 
+                    type="primary" 
+                    icon={<Printer size={14} />} 
+                    onClick={() => generatePDF(selectedRecord, printMode === 'color')}
+                    className="text-xs"
+                  >
+                    Export PDF
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button size="small" icon={<CloseOutlined />} onClick={() => { setEditedRecord(selectedRecord); setIsEditing(false); }} className="text-xs">
+                    Cancel
+                  </Button>
+                  <Button size="small" type="primary" icon={<SaveOutlined />} loading={saving} onClick={handleSave} className="text-xs">
+                    Save
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         }
       >
         {selectedRecord && (
-          <div className="space-y-4">
-            {/* Basic Info Card */}
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
-              <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="space-y-3 text-xs">
+            {/* Basic Info */}
+            <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                  <span className="text-black text-sm font-bold">📋</span>
+                </div>
+                <span className="text-sm font-bold text-amber-900">BASIC INFORMATION</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
                 {[
                   { label: 'Receipt', field: 'receiptNo', editable: true },
                   { label: 'Vehicle', field: 'noPlate', editable: true },
@@ -988,11 +931,11 @@ export default function Transactions() {
                   { label: 'Commodity', field: 'commodityName', editable: true },
                   { label: 'Axle Type', field: 'axleType', editable: true },
                   { label: 'Weigh Mode', field: 'weighMode', editable: true },
-                  { label: 'Operation', field: 'operation', editable: true },
-                  { label: 'Scale', field: 'scaleName', editable: true },
+                  { label: 'Container', field: 'containerNo', editable: true },
+                  { label: 'Seal No', field: 'sealNo', editable: true },
                 ].map(({ label, field, editable }) => (
-                  <div key={field}>
-                    <div className="text-gray-600 font-medium mb-1">{label}</div>
+                  <div key={field} className="bg-white/70 backdrop-blur rounded px-2.5 py-2 border border-amber-200">
+                    <div className="text-amber-700 text-[10px] mb-1 font-bold uppercase tracking-wide">{label}</div>
                     {isEditing && editable ? (
                       <Input 
                         value={editedRecord[field]} 
@@ -1001,38 +944,71 @@ export default function Transactions() {
                         className="text-xs"
                       />
                     ) : (
-                      <div className="font-semibold text-gray-900">{selectedRecord[field] || 'N/A'}</div>
+                      <div className="font-bold text-gray-900 text-xs">{selectedRecord[field] || 'N/A'}</div>
                     )}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Transport Details */}
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-              <div className="text-xs font-bold text-blue-900 mb-3">TRANSPORT DETAILS</div>
-              <div className="space-y-2 text-xs">
+            {/* Parties */}
+            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 rounded-lg p-3 border-2 border-blue-300 shadow-md">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">🏢</span>
+                </div>
+                <span className="text-sm font-bold text-blue-900">PARTIES</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
                 {[
-                  { label: 'Transporter', field: 'transporterName' },
-                  { label: 'Supplier', field: 'supplierName' },
-                  { label: 'Customer', field: 'customerName' },
-                  { label: 'Origin', field: 'originName' },
-                  { label: 'Destination', field: 'destinationName' },
-                  { label: 'Container No', field: 'containerNo' },
-                  { label: 'Seal No', field: 'sealNo' },
-                  { label: 'Weighbridge', field: 'weighBridgeName' },
-                ].map(({ label, field }) => (
-                  <div key={field} className="flex justify-between">
-                    <span className="text-gray-600">{label}:</span>
-                    {isEditing ? (
+                  { label: 'Supplier', field: 'supplierName', editable: true },
+                  { label: 'Customer', field: 'customerName', editable: true },
+                  { label: 'Transporter', field: 'transporterName', editable: true },
+                  { label: 'Operator', field: 'operatorName', editable: false },
+                ].map(({ label, field, editable }) => (
+                  <div key={field} className="bg-white/70 backdrop-blur rounded px-2.5 py-2 border border-blue-200">
+                    <div className="text-blue-700 text-[10px] mb-1 font-bold uppercase tracking-wide">{label}</div>
+                    {isEditing && editable ? (
                       <Input 
                         value={editedRecord[field]} 
                         onChange={(e) => setEditedRecord({...editedRecord, [field]: e.target.value})} 
                         size="small"
-                        className="text-xs w-64"
+                        className="text-xs"
                       />
                     ) : (
-                      <span className="font-semibold text-gray-900">{selectedRecord[field] || 'N/A'}</span>
+                      <div className="font-bold text-gray-900 text-xs">{selectedRecord[field] || 'N/A'}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Locations */}
+            <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-violet-100 rounded-lg p-3 border-2 border-violet-300 shadow-md">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">📍</span>
+                </div>
+                <span className="text-sm font-bold text-violet-900">LOCATIONS</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { label: 'Origin', field: 'originName', editable: true },
+                  { label: 'Destination', field: 'destinationName', editable: true },
+                  { label: 'Weighbridge', field: 'weighBridgeName', editable: false },
+                  { label: 'Operation', field: 'operation', editable: false },
+                ].map(({ label, field, editable }) => (
+                  <div key={field} className="bg-white/70 backdrop-blur rounded px-2.5 py-2 border border-violet-200">
+                    <div className="text-violet-700 text-[10px] mb-1 font-bold uppercase tracking-wide">{label}</div>
+                    {isEditing && editable ? (
+                      <Input 
+                        value={editedRecord[field]} 
+                        onChange={(e) => setEditedRecord({...editedRecord, [field]: e.target.value})} 
+                        size="small"
+                        className="text-xs"
+                      />
+                    ) : (
+                      <div className="font-bold text-gray-900 text-xs">{selectedRecord[field] || 'N/A'}</div>
                     )}
                   </div>
                 ))}
@@ -1040,115 +1016,79 @@ export default function Transactions() {
             </div>
 
             {/* Weight Summary */}
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="text-xs font-bold text-green-900 mb-3">WEIGHT SUMMARY</div>
-              
-              {/* Weight and Time Grid */}
-              <div className="grid grid-cols-3 gap-2 text-xs mb-3">
-                {/* First Weight */}
-                <div className="bg-white rounded p-2">
-                  <div className="text-gray-600 mb-1 text-[10px]">First Weight</div>
-                  <div className="text-base font-bold text-blue-600">{selectedRecord.firstWeight || 0} kg</div>
-                  <div className="text-[9px] text-gray-500 mt-1">
-                    {selectedRecord.firstWeightOperator || selectedRecord.operatorName || 'N/A'}
-                  </div>
+            <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-100 rounded-lg p-3 border-2 border-emerald-300 shadow-md">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">⚖️</span>
                 </div>
-                
-                {/* Second Weight */}
-                <div className="bg-white rounded p-2">
-                  <div className="text-gray-600 mb-1 text-[10px]">Second Weight</div>
-                  <div className="text-base font-bold text-green-600">{selectedRecord.secondWeight || 0} kg</div>
-                  <div className="text-[9px] text-gray-500 mt-1">
-                    {selectedRecord.secondWeightOperator || selectedRecord.operatorName || 'N/A'}
-                  </div>
+                <span className="text-sm font-bold text-emerald-900">WEIGHT SUMMARY</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2.5 mb-3">
+                <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg p-2.5 border-2 border-blue-400 shadow-sm">
+                  <div className="text-[10px] text-blue-700 font-bold uppercase mb-1">1st Weight</div>
+                  <div className="text-base font-extrabold text-blue-900">{selectedRecord.firstWeight || 0}</div>
+                  <div className="text-[9px] text-blue-600 font-semibold">KILOGRAMS</div>
+                  <div className="text-[9px] text-blue-500 mt-1">{selectedRecord.firstWeightTime ? dayjs(selectedRecord.firstWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}</div>
                 </div>
-                
-                {/* Net Weight */}
-                <div className="bg-orange-50 rounded p-2 border-2 border-orange-300">
-                  <div className="text-orange-700 mb-1 text-[10px] font-semibold">Net Weight</div>
-                  <div className="text-base font-bold text-orange-600">{selectedRecord.netWeight || 0} kg</div>
-                  <div className="text-[9px] text-orange-600 mt-1 font-medium">Difference</div>
+                <div className="bg-gradient-to-br from-emerald-100 to-green-200 rounded-lg p-2.5 border-2 border-emerald-400 shadow-sm">
+                  <div className="text-[10px] text-emerald-700 font-bold uppercase mb-1">2nd Weight</div>
+                  <div className="text-base font-extrabold text-emerald-900">{selectedRecord.secondWeight || 0}</div>
+                  <div className="text-[9px] text-emerald-600 font-semibold">KILOGRAMS</div>
+                  <div className="text-[9px] text-emerald-500 mt-1">{selectedRecord.secondWeightTime ? dayjs(selectedRecord.secondWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}</div>
+                </div>
+                <div className="bg-gradient-to-br from-amber-200 via-amber-300 to-orange-300 rounded-lg p-2.5 border-2 border-amber-500 shadow-lg animate-pulse">
+                  <div className="text-[10px] text-amber-900 font-extrabold uppercase mb-1">Net Weight</div>
+                  <div className="text-lg font-black text-amber-950">{selectedRecord.netWeight || 0}</div>
+                  <div className="text-[9px] text-amber-800 font-bold">KILOGRAMS</div>
                 </div>
               </div>
-
-              {/* Time Grid */}
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                {/* First Weight Time */}
-                <div className="bg-blue-50 rounded p-2 border border-blue-200">
-                  <div className="text-blue-700 mb-1 text-[10px] font-semibold">1st Weight Time</div>
-                  <div className="text-xs font-bold text-blue-900">
-                    {selectedRecord.firstWeightTime ? dayjs(selectedRecord.firstWeightTime).format("DD-MM-YY") : 'N/A'}
-                  </div>
-                  <div className="text-sm font-bold text-blue-600">
-                    {selectedRecord.firstWeightTime ? dayjs(selectedRecord.firstWeightTime).format("HH:mm:ss") : 'N/A'}
-                  </div>
-                </div>
-                
-                {/* Second Weight Time */}
-                <div className="bg-green-50 rounded p-2 border border-green-200">
-                  <div className="text-green-700 mb-1 text-[10px] font-semibold">2nd Weight Time</div>
-                  <div className="text-xs font-bold text-green-900">
-                    {selectedRecord.secondWeightTime ? dayjs(selectedRecord.secondWeightTime).format("DD-MM-YY") : 'N/A'}
-                  </div>
-                  <div className="text-sm font-bold text-green-600">
-                    {selectedRecord.secondWeightTime ? dayjs(selectedRecord.secondWeightTime).format("HH:mm:ss") : 'N/A'}
-                  </div>
-                </div>
-                
-                {/* Turnaround Time (Difference) */}
-                <div className="bg-orange-50 rounded p-2 border-2 border-orange-300">
-                  <div className="text-orange-700 mb-1 text-[10px] font-semibold">Turnaround</div>
-                  <div className="text-lg font-bold text-orange-600 mt-2">
-                    {formatTurnaroundTimeSimple(selectedRecord.firstWeightTime, selectedRecord.secondWeightTime)}
-                  </div>
-                  <div className="text-[9px] text-orange-600 font-medium">Time Difference</div>
-                </div>
+              <div className="bg-white rounded-lg px-3 py-2.5 border-2 border-emerald-300 flex items-center justify-between">
+                <span className="text-[11px] text-emerald-800 font-bold">⏱️ TURNAROUND TIME:</span>
+                <span className="text-sm font-black text-emerald-900 bg-emerald-100 px-3 py-1 rounded-full">
+                  {formatTurnaroundTimeSimple(selectedRecord.firstWeightTime, selectedRecord.secondWeightTime)}
+                </span>
               </div>
             </div>
 
             {/* Status & Remarks */}
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <div className="space-y-3 text-xs">
-                <div>
-                  <div className="text-gray-600 font-medium mb-1">Status</div>
-                  {isEditing ? (
-                    <Input 
-                      value={editedRecord.status} 
-                      onChange={(e) => setEditedRecord({...editedRecord, status: e.target.value})} 
-                      size="small"
-                    />
-                  ) : (
-                    <Tag 
-                      color={
-                        (selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) || 
-                        selectedRecord.status === 'Completed' || 
-                        selectedRecord.status === 'completed' 
-                          ? '#10b981' 
-                          : '#f59e0b'
-                      } 
-                      className="font-bold text-sm px-3 py-1"
-                    >
-                      {(selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) || 
-                       selectedRecord.status === 'Completed' || 
-                       selectedRecord.status === 'completed'
-                        ? 'COMPLETED' 
-                        : 'IN PROGRESS'}
-                    </Tag>
-                  )}
+            <div className="bg-gradient-to-br from-gray-50 to-slate-100 rounded-lg p-3 border-2 border-gray-300 shadow-md">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">📝</span>
                 </div>
-                <div>
-                  <div className="text-gray-600 font-medium mb-1">Remarks / Notes</div>
-                  {isEditing ? (
-                    <Input.TextArea 
-                      value={editedRecord.remarks || editedRecord.notes} 
-                      onChange={(e) => setEditedRecord({...editedRecord, remarks: e.target.value, notes: e.target.value})} 
-                      rows={3}
-                      className="text-xs"
-                    />
-                  ) : (
-                    <div className="text-gray-900 bg-white p-2 rounded border">{selectedRecord.remarks || selectedRecord.notes || 'No remarks'}</div>
-                  )}
-                </div>
+                <span className="text-sm font-bold text-gray-900">STATUS & REMARKS</span>
+              </div>
+              <div className="mb-3">
+                <div className="text-gray-600 text-[10px] mb-1.5 font-bold uppercase">Status</div>
+                <Tag 
+                  color={
+                    (selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) || 
+                    selectedRecord.status === 'Completed' 
+                      ? 'success' 
+                      : 'warning'
+                  } 
+                  className="text-xs font-bold px-3 py-1 shadow-sm"
+                >
+                  {(selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) || 
+                   selectedRecord.status === 'Completed'
+                    ? '✅ COMPLETED' 
+                    : '⏳ IN PROGRESS'}
+                </Tag>
+              </div>
+              <div>
+                <div className="text-gray-600 text-[10px] mb-1.5 font-bold uppercase">Remarks / Notes</div>
+                {isEditing ? (
+                  <Input.TextArea 
+                    value={editedRecord.remarks || editedRecord.notes} 
+                    onChange={(e) => setEditedRecord({...editedRecord, remarks: e.target.value})} 
+                    rows={3}
+                    className="text-xs"
+                  />
+                ) : (
+                  <div className="text-gray-900 bg-white p-2.5 rounded-lg border-2 border-gray-300 text-xs font-medium">
+                    {selectedRecord.remarks || selectedRecord.notes || '💭 No remarks available'}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1157,73 +1097,68 @@ export default function Transactions() {
 
       <style>{`
         .compact-table .ant-table {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          font-size: 10px;
         }
         .compact-table .ant-table-thead > tr > th {
-          background: linear-gradient(to bottom, #f8fafc, #f1f5f9) !important;
-          border-bottom: 2px solid #cbd5e1 !important;
-          padding: 10px 12px !important;
-          font-weight: 600 !important;
-          font-size: 11px !important;
-          color: #475569 !important;
+          background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+          border-bottom: 2px solid #f59e0b !important;
+          padding: 4px 5px !important;
+          font-weight: 700 !important;
+          font-size: 10px !important;
+          color: #fbbf24 !important;
           text-transform: uppercase;
-          letter-spacing: 0.5px;
-          line-height: 1.4;
+          letter-spacing: 0.3px;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+          line-height: 1.3;
         }
         .compact-table .ant-table-tbody > tr > td {
-          padding: 10px 12px !important;
-          border-bottom: 1px solid #f1f5f9 !important;
-          line-height: 1.5;
-          background: white;
+          padding: 4px 5px !important;
+          border-bottom: 1px solid #f3f4f6 !important;
+          transition: all 0.15s ease;
+          line-height: 1.4;
         }
         .compact-table .ant-table-tbody > tr:hover > td {
-          background: #fafaf9 !important;
-          transition: background-color 0.2s ease;
+          background: linear-gradient(to right, #fffbeb, #fef3c7) !important;
         }
         .compact-table .ant-table-tbody > tr:nth-child(even) > td {
           background: #fafafa;
         }
         .compact-table .ant-table-tbody > tr:nth-child(even):hover > td {
-          background: #fafaf9 !important;
+          background: linear-gradient(to right, #fffbeb, #fef3c7) !important;
         }
-        .compact-pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 12px 0;
+        .compact-table .ant-pagination {
+          margin: 8px 0 !important;
         }
-        .compact-pagination .ant-pagination-item,
-        .compact-pagination .ant-pagination-prev,
-        .compact-pagination .ant-pagination-next {
-          min-width: 28px !important;
-          height: 28px !important;
-          line-height: 26px !important;
-          font-size: 12px !important;
-          border-radius: 6px;
-          border: 1px solid #e2e8f0;
-          font-weight: 500;
+        .compact-table .ant-pagination-item,
+        .compact-table .ant-pagination-prev,
+        .compact-table .ant-pagination-next {
+          min-width: 24px !important;
+          height: 24px !important;
+          line-height: 22px !important;
+          font-size: 11px !important;
+          border-radius: 5px !important;
+          transition: all 0.2s ease !important;
         }
-        .compact-pagination .ant-pagination-item-active {
-          background: linear-gradient(135deg, #f59e0b, #f97316);
-          border-color: #f59e0b;
-          box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+        .compact-table .ant-pagination-item-active {
+          background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+          border-color: #f59e0b !important;
+          box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4) !important;
         }
-        .compact-pagination .ant-pagination-item-active a {
-          color: white !important;
-          font-weight: 600;
+        .compact-table .ant-pagination-item-active a {
+          color: #000 !important;
+          font-weight: 700 !important;
         }
-        .compact-pagination .ant-pagination-item:hover {
-          border-color: #f59e0b;
+        .compact-table .ant-pagination-item:hover {
+          border-color: #fbbf24 !important;
           transform: translateY(-1px);
-          transition: all 0.2s ease;
         }
-        .compact-pagination .ant-select-selector {
-          height: 28px !important;
-          font-size: 12px !important;
-          border-radius: 6px !important;
+        .compact-table .ant-select-selector {
+          height: 24px !important;
+          padding: 0 8px !important;
         }
-        .compact-pagination .ant-pagination-options {
-          margin-left: 16px;
+        .compact-table .ant-select-selection-item {
+          line-height: 22px !important;
+          font-size: 11px !important;
         }
       `}</style>
     </div>

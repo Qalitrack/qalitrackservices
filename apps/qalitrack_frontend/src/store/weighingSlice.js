@@ -19,7 +19,6 @@ import {
     requestReweigh,
     getReweighRecords,
 } from "../api/Transaction/Transaction";
-
 // ─────────────────────────────────────────────────────────────────────────────
 // SIMULATED WEIGHT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -438,40 +437,98 @@ export const fetchTransactions = createAsyncThunk(
             console.log("📤 Fetching transactions with filters:", filters);
             const response = await getTransactions(filters);
             
-            // ✅ Log response structure
-            console.log("✅ Transactions API Response:", JSON.stringify(response, null, 2));
+            console.log("✅ Raw API Response:", JSON.stringify(response, null, 2));
+            console.log("✅ Response type:", typeof response);
+            console.log("✅ Is array:", Array.isArray(response));
             
-            // ✅ Extract items from various possible structures
+            // ✅ COMPREHENSIVE: Try ALL possible response structures
             let items = [];
             
-            if (response?.data?.items) {
+            // Structure 1: response.data.data.items
+            if (response?.data?.data?.items && Array.isArray(response.data.data.items)) {
+                items = response.data.data.items;
+                console.log("✅ Found items at: response.data.data.items");
+            }
+            // Structure 2: response.data.items
+            else if (response?.data?.items && Array.isArray(response.data.items)) {
                 items = response.data.items;
-            } else if (response?.items) {
+                console.log("✅ Found items at: response.data.items");
+            }
+            // Structure 3: response.items
+            else if (response?.items && Array.isArray(response.items)) {
                 items = response.items;
-            } else if (response?.data && Array.isArray(response.data)) {
+                console.log("✅ Found items at: response.items");
+            }
+            // Structure 4: response.data as array
+            else if (response?.data && Array.isArray(response.data)) {
                 items = response.data;
-            } else if (Array.isArray(response)) {
+                console.log("✅ Found items at: response.data (array)");
+            }
+            // Structure 5: response as array
+            else if (Array.isArray(response)) {
                 items = response;
+                console.log("✅ Found items at: response (array)");
+            }
+            // Structure 6: response.data.data as array (some APIs use this)
+            else if (response?.data?.data && Array.isArray(response.data.data)) {
+                items = response.data.data;
+                console.log("✅ Found items at: response.data.data (array)");
+            }
+            // Structure 7: Wrapped in result/results
+            else if (response?.result && Array.isArray(response.result)) {
+                items = response.result;
+                console.log("✅ Found items at: response.result");
+            }
+            else if (response?.results && Array.isArray(response.results)) {
+                items = response.results;
+                console.log("✅ Found items at: response.results");
+            }
+            // Structure 8: Check data.result
+            else if (response?.data?.result && Array.isArray(response.data.result)) {
+                items = response.data.result;
+                console.log("✅ Found items at: response.data.result");
+            }
+            else {
+                console.warn("⚠️ Could not find transaction array in response");
+                console.warn("⚠️ Response structure:", Object.keys(response || {}));
+                if (response?.data) {
+                    console.warn("⚠️ response.data structure:", Object.keys(response.data || {}));
+                }
+                items = [];
             }
             
             console.log(`✅ Extracted ${items.length} transactions`);
+            
+            // Log first transaction for debugging
+            if (items.length > 0) {
+                console.log("✅ First transaction sample:", items[0]);
+            }
+            
             return items;
         } catch (error) {
             console.error("❌ Failed to fetch transactions:", error);
+            console.error("❌ Error response:", error.response?.data);
             return rejectWithValue(error.message || "Failed to load transactions");
         }
     }
 );
 
+
 /**
  * ✅ FIXED: Create new transaction with better response extraction
+ */
+/**
+ * ✅ CORRECT VERSION - No wrapping in weighingSlice
+ * Let Transaction.js handle the wrapping
  */
 export const addTransaction = createAsyncThunk(
     "weighing/addTransaction",
     async (payload, { rejectWithValue }) => {
         try {
             console.log("📤 Creating transaction:", payload);
-            const response = await createTransaction(payload);
+            
+            // ✅ Send payload directly - Transaction.js will wrap it
+            const response = await createTransaction(payload);  // ← NO WRAPPING HERE
             
             // ✅ Log full response to debug structure
             console.log("✅ Transaction API Full Response:", JSON.stringify(response, null, 2));
@@ -500,6 +557,7 @@ export const addTransaction = createAsyncThunk(
         }
     }
 );
+
 
 /**
  * Update transaction - PUT /Transaction/{ticketId}
