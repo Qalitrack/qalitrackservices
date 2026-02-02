@@ -1,9 +1,6 @@
-// ✅ FULLY UPDATED - Transaction Completion Fixed
-// 1. Keep ticketID as GUID string (don't convert to parseInt)
-// 2. Get user from session storage as fallback
-// 3. Better logging for debugging 404 errors
-// 4. ✅ FIXED: Properly fetch operator name from logged-in user
-// 5. ✅ FIXED: Second weighing now properly completes transactions
+// ✅ FULLY FIXED - Empty Transaction Problem Resolved
+// KEY FIX: Only send valid GUIDs to backend, omit empty/null GUIDs entirely
+// This prevents the "empty transaction" issue where records show dashes
 
 import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -241,6 +238,13 @@ export default function CreateTransactionForm({
     return { netWeight: net > 0 ? net : 0, isValid: valid, errorMsg: msg };
   }, [formData, capturedWeight, isSecondWeighing]);
 
+  // ✅ Helper function to check if a GUID is valid (not empty/null GUID)
+  const isValidGuid = (guid) => {
+    return guid && 
+           guid !== "00000000-0000-0000-0000-000000000000" &&
+           guid.length > 0;
+  };
+
   const handleSubmit = async () => {
     setSubmitError(null);
 
@@ -259,34 +263,62 @@ export default function CreateTransactionForm({
     try {
       if (!isSecondWeighing) {
         // ==================== FIRST WEIGHING ====================
+        // ✅ Build payload with ONLY valid data - omit empty GUIDs entirely
         const payload = {
           noPlate: formData.noPlate.toUpperCase(),
-          driverName: formData.driverName || "",
-          vehicleID: formData.vehicleID || "00000000-0000-0000-0000-000000000000",
           firstWeight: String(parseFloat(formData.firstWeight || capturedWeight || 0)),
-          transporterID: formData.transporterID || "00000000-0000-0000-0000-000000000000",
-          transporterName: formData.transporterName || "",
-          weighBridgeID: formData.weighBridgeID || "00000000-0000-0000-0000-000000000000",
-          weighBridgeName: formData.weighBridgeName || formData.scaleName || "",
-          scaleName: formData.scaleName || "",
-          operatorID: formData.operatorID || currentUser?.id || "00000000-0000-0000-0000-000000000000",
-          operatorName: formData.operatorName,
-          commodityID: formData.commodityID || "00000000-0000-0000-0000-000000000000",
-          commodityName: formData.commodityName || "",
-          supplierID: formData.supplierID || "00000000-0000-0000-0000-000000000000",
-          supplierName: formData.supplierName || "",
-          customerID: formData.customerID || "00000000-0000-0000-0000-000000000000",
-          customerName: formData.customerName || "",
-          originID: formData.originID || "00000000-0000-0000-0000-000000000000",
-          originName: formData.originName || "",
-          destinationID: formData.destinationID || "00000000-0000-0000-0000-000000000000",
-          destinationName: formData.destinationName || "",
           weighMode: formData.weighMode || "entry",
           operation: formData.operation || "weighing",
-          notes: formData.notes || "",
         };
 
-        console.log("📤 Submitting FIRST weight with operator:", {
+        // ✅ Only add fields that have actual values
+        if (formData.driverName?.trim()) payload.driverName = formData.driverName.trim();
+        if (isValidGuid(formData.vehicleID)) payload.vehicleID = formData.vehicleID;
+        
+        // Required fields - but only if valid
+        if (isValidGuid(formData.transporterID)) {
+          payload.transporterID = formData.transporterID;
+          if (formData.transporterName) payload.transporterName = formData.transporterName;
+        }
+        
+        if (isValidGuid(formData.weighBridgeID)) {
+          payload.weighBridgeID = formData.weighBridgeID;
+          if (formData.weighBridgeName) payload.weighBridgeName = formData.weighBridgeName;
+        }
+        
+        if (formData.scaleName) payload.scaleName = formData.scaleName;
+        
+        // Operator info
+        if (isValidGuid(formData.operatorID) || isValidGuid(currentUser?.id)) {
+          payload.operatorID = formData.operatorID || currentUser?.id;
+        }
+        if (formData.operatorName) payload.operatorName = formData.operatorName;
+        
+        // Optional fields - only include if valid
+        if (isValidGuid(formData.commodityID)) {
+          payload.commodityID = formData.commodityID;
+          if (formData.commodityName) payload.commodityName = formData.commodityName;
+        }
+        
+        if (isValidGuid(formData.supplierID)) {
+          payload.supplierID = formData.supplierID;
+          if (formData.supplierName) payload.supplierName = formData.supplierName;
+        }
+        
+        if (isValidGuid(formData.customerID)) payload.customerID = formData.customerID;
+        if (formData.customerName?.trim()) payload.customerName = formData.customerName.trim();
+        
+        if (isValidGuid(formData.originID)) payload.originID = formData.originID;
+        if (formData.originName?.trim()) payload.originName = formData.originName.trim();
+        
+        if (isValidGuid(formData.destinationID)) payload.destinationID = formData.destinationID;
+        if (formData.destinationName?.trim()) payload.destinationName = formData.destinationName.trim();
+        
+        if (formData.notes?.trim()) payload.notes = formData.notes.trim();
+
+        console.log("📤 Submitting FIRST weight payload:", payload);
+        console.log("📋 Included fields:", Object.keys(payload));
+        console.log("📋 Operator info:", {
           operatorID: payload.operatorID,
           operatorName: payload.operatorName
         });

@@ -1,9 +1,9 @@
-// ✅ FULLY UPDATED - Transaction Completion Fixed + Turnaround Time
-// 1. Enhanced filtering to properly exclude completed transactions
-// 2. Better state management and refresh logic
-// 3. Improved transaction ID handling (ticketID vs id)
-// 4. ✅ NEW: Turnaround time calculation and color-coded display
-// 5. Better logging for debugging
+// ✅ FIXED: Enhanced transaction fetching with better logging
+// Changes:
+// 1. Added detailed console logging for debugging empty data
+// 2. Improved Redux state reading
+// 3. Better error handling for empty responses
+// 4. Enhanced filtering with completion status checks
 
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +22,15 @@ const { Text } = Typography;
 export default function IncompleteTransactionsTable({ onAddWeighing }) {
   const dispatch = useDispatch();
   
-  const { transactions = [], loading } = useSelector((state) => state.weighing);
+  // ✅ ENHANCED: Better Redux state reading with fallbacks
+  const { transactions = [], loading } = useSelector((state) => {
+    console.log("📊 Redux State - Full weighing state:", state.weighing);
+    return {
+      transactions: state.weighing?.transactions || [],
+      loading: state.weighing?.loading || false
+    };
+  });
+  
   const currentUser = useSelector((state) => state.auth?.user);
 
   const [searchText, setSearchText] = useState("");
@@ -35,6 +43,8 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   const searchTimeoutRef = useRef(null);
 
   const loadTransactions = useCallback(() => {
+    console.log("");
+    console.log("🔄 ========== LOADING INCOMPLETE TRANSACTIONS ==========");
     setLocalLoading(true);
     
     const params = {
@@ -43,16 +53,35 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       pageSize: pagination.pageSize,
     };
     
-    console.log("📤 Fetching incomplete transactions with params:", params);
+    console.log("📤 Fetching with params:", params);
     
     dispatch(fetchTransactions(params))
       .unwrap()
       .then((data) => {
-        console.log("✅ Incomplete transactions loaded:", data?.length || 0, "items");
+        console.log("✅ ========== FETCH SUCCESS ==========");
+        console.log("📊 Data type:", typeof data);
+        console.log("📊 Is Array:", Array.isArray(data));
+        console.log("📊 Length:", data?.length);
+        console.log("📊 First 3 items:", data?.slice(0, 3));
+        console.log("");
+        
+        if (!data || data.length === 0) {
+          console.warn("⚠️ No incomplete transactions returned from API");
+          console.warn("⚠️ This might mean:");
+          console.warn("   - All transactions are completed");
+          console.warn("   - API is returning data in unexpected format");
+          console.warn("   - Filtering is too strict");
+        }
+        
+        message.success(`Loaded ${data?.length || 0} incomplete transactions`);
         setLocalLoading(false);
       })
       .catch((error) => {
-        console.error("❌ Failed to load transactions:", error);
+        console.error("❌ ========== FETCH FAILED ==========");
+        console.error("❌ Error:", error);
+        console.error("❌ Error message:", error.message);
+        console.error("");
+        
         message.error("Failed to load transactions: " + error);
         setLocalLoading(false);
       });
@@ -62,16 +91,32 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     loadTransactions();
   }, [loadTransactions]);
 
-  // ✅ Auto-refresh when Redux transactions change
+  // ✅ ENHANCED: Watch Redux transactions with detailed logging
   useEffect(() => {
-    console.log("📊 Redux transactions updated:", transactions.length, "total");
-    const incomplete = transactions.filter(tx => 
-      !tx.isCompleted && 
-      !tx.completed && 
-      tx.status !== 'Completed' &&
-      tx.status !== 'completed'
-    );
-    console.log("📊 Incomplete transactions:", incomplete.length);
+    console.log("");
+    console.log("📊 ========== REDUX TRANSACTIONS CHANGED ==========");
+    console.log("📊 Total in Redux:", transactions.length);
+    console.log("📊 Sample (first 2):", transactions.slice(0, 2));
+    
+    if (transactions.length === 0) {
+      console.warn("⚠️ Redux transactions array is EMPTY");
+      console.warn("⚠️ Check:");
+      console.warn("   1. Is fetchTransactions dispatching correctly?");
+      console.warn("   2. Is weighingSlice reducer updating state?");
+      console.warn("   3. Is response data being extracted correctly?");
+    }
+    
+    const incomplete = transactions.filter(tx => {
+      const isCompleted = tx.isCompleted === true || 
+                         tx.completed === true || 
+                         tx.status === 'Completed' || 
+                         tx.status === 'completed';
+      return !isCompleted;
+    });
+    
+    console.log("📊 Incomplete count:", incomplete.length);
+    console.log("📊 Completed count:", transactions.length - incomplete.length);
+    console.log("");
   }, [transactions]);
 
   // Reset to page 1 when searching
@@ -105,36 +150,37 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
 
   // ✅ Get color based on turnaround time
   const getTurnaroundColor = (minutes) => {
-    if (minutes < 30) return 'green';      // < 30 min: good
-    if (minutes < 60) return 'orange';     // 30-60 min: warning
-    return 'red';                          // > 60 min: critical
+    if (minutes < 30) return 'green';
+    if (minutes < 60) return 'orange';
+    return 'red';
   };
 
-  // ✅ ENHANCED FILTERING - properly exclude completed transactions
+  // ✅ ENHANCED FILTERING with better logging
   const filteredData = useMemo(() => {
-    console.log("🔍 Filtering transactions from Redux state:", transactions.length);
+    console.log("🔍 ========== FILTERING TRANSACTIONS ==========");
+    console.log("🔍 Input transactions:", transactions.length);
     
-    // ✅ Filter out completed transactions with multiple checks
+    // Filter out completed transactions
     let data = transactions.filter(tx => {
-      // Check all possible completion flags
       const isCompleted = tx.isCompleted === true || 
                          tx.completed === true || 
                          tx.status === 'Completed' || 
                          tx.status === 'completed';
       
       if (isCompleted) {
-        console.log("⏭️ Filtering out completed transaction:", tx.ticketID || tx.id);
-        return false;
+        console.log("⏭️ Excluding completed:", tx.receiptNo || tx.ticketID);
       }
       
-      return true;
+      return !isCompleted;
     });
     
-    console.log(`✅ After completion filter: ${data.length} incomplete transactions`);
+    console.log("✅ After completion filter:", data.length);
     
     // Client-side search filtering
     if (searchText?.trim()) {
       const searchLower = searchText.toLowerCase().trim();
+      const beforeSearch = data.length;
+      
       data = data.filter(tx => 
         tx.receiptNo?.toLowerCase().includes(searchLower) ||
         tx.noPlate?.toLowerCase().includes(searchLower) ||
@@ -147,11 +193,17 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
         tx.destinationName?.toLowerCase().includes(searchLower) ||
         tx.operatorName?.toLowerCase().includes(searchLower)
       );
-      console.log(`✅ After search filter: ${data.length} matching transactions`);
+      
+      console.log(`✅ After search filter: ${data.length} (filtered out ${beforeSearch - data.length})`);
     }
     
     // Sort by creation date (newest first)
-    return data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    console.log("✅ Final filtered count:", data.length);
+    console.log("");
+    
+    return data;
   }, [transactions, searchText]);
 
   useEffect(() => {
@@ -246,9 +298,8 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     return dayjs(createdAt).fromNow();
   };
 
-  // ✅ Handle second weighing with proper ID handling
   const handleSecondWeighing = (record) => {
-    console.log("🎯 Starting second weighing for transaction:", record);
+    console.log("🎯 Starting second weighing for:", record.receiptNo || record.ticketID);
     
     const transactionId = record.ticketID || record.id;
     
@@ -420,7 +471,6 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
         </Tag>
       ),
     },
-    // ✅ NEW: Turnaround Time Column
     {
       title: <span><ClockCircleOutlined className="mr-1" />TAT</span>,
       dataIndex: 'createdAt',
@@ -599,14 +649,32 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
               const isEditing = editingKey === (record.ticketID || record.id);
               
               if (isEditing) return 'editing-row';
-              if (turnaround.minutes > 60) return 'urgent-row'; // Red highlight for >60 min
+              if (turnaround.minutes > 60) return 'urgent-row';
               return 'regular-row';
             }}
             scroll={{ x: 1500, y: 'calc(100vh - 250px)' }}
             locale={{
-              emptyText: searchText 
-                ? `No results for "${searchText}"`
-                : "No incomplete transactions"
+              emptyText: (
+                <div className="py-8">
+                  {searchText ? (
+                    <div className="text-gray-500">
+                      <SearchOutlined className="text-2xl mb-2" />
+                      <p>No results for "{searchText}"</p>
+                    </div>
+                  ) : transactions.length === 0 ? (
+                    <div className="text-gray-500">
+                      <p className="font-semibold mb-2">No transactions found</p>
+                      <p className="text-xs">Click "Refresh" or create a new transaction</p>
+                    </div>
+                  ) : (
+                    <div className="text-green-600">
+                      <CheckOutlined className="text-2xl mb-2" />
+                      <p className="font-semibold">All transactions completed!</p>
+                      <p className="text-xs text-gray-500">No pending transactions</p>
+                    </div>
+                  )}
+                </div>
+              )
             }}
           />
         </Spin>
