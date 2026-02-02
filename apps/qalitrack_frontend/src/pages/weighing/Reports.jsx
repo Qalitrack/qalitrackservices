@@ -23,7 +23,7 @@ export default function Reports() {
 
   // Pagination (TABLE ONLY)
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(4);
+  const [pageSize, setPageSize] = useState(3);
 
   // Filters
   const [filters, setFilters] = useState({
