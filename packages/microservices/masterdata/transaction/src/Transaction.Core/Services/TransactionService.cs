@@ -51,29 +51,43 @@ public class TransactionService : ITransactionService
         return transaction == null ? null : _mapper.Map<TransactionReadDto>(transaction);
     }
 
+    /// <summary>
+    /// Creates a new weighbridge transaction with auto-generated TicketID and ReceiptNo.
+    /// Receipt number format: QSL-YYYYMMDD-XXXXXX (e.g., QSL-20240202-000001)
+    /// </summary>
     public async Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto)
     {
         var utcNow = _timeService.UtcNow;
         
-        // Generate receipt number
+        // Auto-generate receipt number in format: QSL-YYYYMMDD-XXXXXX
+        // Example: QSL-20240202-000001
         var receiptNo = await _receiptNumberService.GenerateReceiptNumberAsync();
         
+        // Map DTO to entity
         var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
         
-        // Generate GUID for TicketID if not provided
+        // Auto-generate GUID for TicketID if not already set
         if (string.IsNullOrEmpty(transaction.TicketID))
         {
             transaction.TicketID = Guid.NewGuid().ToString();
         }
         
+        // Set auto-generated receipt number
         transaction.ReceiptNo = receiptNo;
+        
+        // Set timestamps
         transaction.CreatedAt = utcNow;
         transaction.UpdatedAt = utcNow;
-        transaction.Status = "Active";
         transaction.FirstWeightDate = utcNow;
         transaction.SecondWeightDate = utcNow;
         
+        // Set initial status
+        transaction.Status = "Active";
+        
+        // Save to database
         var createdTransaction = await _transactionRepository.CreateAsync(transaction);
+        
+        // Return mapped DTO with the auto-generated ReceiptNo
         return _mapper.Map<TransactionReadDto>(createdTransaction);
     }
 
@@ -87,7 +101,7 @@ public class TransactionService : ITransactionService
 
         var utcNow = _timeService.UtcNow;
         
-        // Only update non-null fields
+        // Only update non-null fields from the DTO
         if (dto.NoPlate != null) existingTransaction.NoPlate = dto.NoPlate;
         if (dto.DriverName != null) existingTransaction.DriverName = dto.DriverName;
         if (dto.VehicleID != null) existingTransaction.VehicleID = dto.VehicleID;
@@ -112,8 +126,11 @@ public class TransactionService : ITransactionService
         if (dto.OperatorName2nd != null) existingTransaction.OperatorName2nd = dto.OperatorName2nd;
         if (dto.ChangeDesc != null) existingTransaction.ChangeDesc = dto.ChangeDesc;
         
+        // Update timestamps
         existingTransaction.UpdatedAt = utcNow;
         existingTransaction.ChangeDate = utcNow;
+        
+        // NOTE: ReceiptNo is NEVER updated - it's a permanent identifier
         
         var updatedTransaction = await _transactionRepository.UpdateAsync(existingTransaction);
         return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
