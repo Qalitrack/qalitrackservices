@@ -166,15 +166,15 @@ export default function Analytics() {
         {/* KPI CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
           {[
-            ["Total Tickets", kpis.totalTx, "from-amber-500 to-amber-400"],
-            ["Completed", kpis.completed, "from-amber-500 to-amber-400"],
-            ["In Progress", kpis.inProgress, "from-amber-500 to-amber-400"],
-            ["Total Net (kg)", kpis.totalNetWeight.toLocaleString(), "from-amber-500 to-amber-400"],
-            ["Avg TAT (min)", kpis.avgTurnaround, "from-amber-500 to-amber-400"],
+            ["Total Tickets", kpis.totalTx, "from-amber-300 to-amber-100"],
+            ["Completed", kpis.completed, "from-amber-300 to-amber-100"],
+            ["In Progress", kpis.inProgress, "from-amber-300 to-amber-100"],
+            ["Total Net (kg)", kpis.totalNetWeight.toLocaleString(), "from-amber-300 to-amber-100"],
+            ["Avg TAT (min)", kpis.avgTurnaround, "from-amber-300 to-amber-100"],
           ].map(([label, value, gradient]) => (
             <div
               key={label}
-              className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md text-white transform transition-transform hover:scale-105`}
+              className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md text-amber-900 transform transition-transform hover:scale-105`}
             >
               <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide opacity-90">{label}</div>
               <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1">{value}</div>

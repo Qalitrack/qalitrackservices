@@ -1,13 +1,59 @@
 import { useMemo, useState } from "react"
 import ReportsTable from "../ReportsTable"
 import ReportsPagination from "../ReportsPagination"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, RotateCcw, FileDown, FileSpreadsheet } from "lucide-react"
 import dayjs from "dayjs"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
+import * as XLSX from "xlsx"
 
 export default function CommodityReport({ transactions = [], loading }) {
   const [selectedCommodity, setSelectedCommodity] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const PAGE_SIZE = 5
+
+  // Filters
+  const [filters, setFilters] = useState({
+    startDate: "",
+    endDate: "",
+    search: "",
+  })
+
+  // Export preview
+  const [showExportPreview, setShowExportPreview] = useState(false)
+  const [exportType, setExportType] = useState(null)
+
+  /* =========================
+     FILTERED TRANSACTIONS
+  ========================= */
+  const filteredTransactions = useMemo(() => {
+    let data = [...transactions]
+
+    if (filters.startDate) {
+      const start = new Date(`${filters.startDate}T00:00`)
+      data = data.filter((t) => new Date(t.createdAt) >= start)
+    }
+
+    if (filters.endDate) {
+      const end = new Date(`${filters.endDate}T23:59`)
+      data = data.filter((t) => new Date(t.createdAt) <= end)
+    }
+
+    if (filters.search) {
+      const q = filters.search.toLowerCase()
+      data = data.filter((t) =>
+        t.commodityName?.toLowerCase().includes(q) ||
+        t.destinationName?.toLowerCase().includes(q)
+      )
+    }
+
+    return data
+  }, [transactions, filters])
+
+  const clearFilters = () => {
+    setFilters({ startDate: "", endDate: "", search: "" })
+    setCurrentPage(1)
+  }
 
   /* =========================
      GROUP BY COMMODITY
@@ -15,7 +61,7 @@ export default function CommodityReport({ transactions = [], loading }) {
   const commoditySummary = useMemo(() => {
     const map = {}
 
-    transactions.forEach((t) => {
+    filteredTransactions.forEach((t) => {
       const name = t.commodityName || "Unknown Commodity"
 
       if (!map[name]) {
@@ -37,17 +83,68 @@ export default function CommodityReport({ transactions = [], loading }) {
       ...c,
       customers: Array.from(c.customers).join(", "),
     }))
-  }, [transactions])
+  }, [filteredTransactions])
 
   /* =========================
      KPIs (SUMMARY)
   ========================= */
   const totalCommodities = commoditySummary.length
   const totalTrips = commoditySummary.reduce((s, c) => s + c.trips, 0)
-  const totalWeight = commoditySummary.reduce(
-    (s, c) => s + c.totalNetWeight,
-    0
-  )
+  const totalWeight = commoditySummary.reduce((s, c) => s + c.totalNetWeight, 0)
+
+  /* =========================
+     EXPORT FUNCTIONS
+  ========================= */
+  const exportPDF = () => {
+    const doc = new jsPDF()
+    
+    doc.setFillColor(245, 158, 11)
+    doc.rect(0, 0, doc.internal.pageSize.getWidth(), 20, "F")
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(16)
+    doc.setFont("helvetica", "bold")
+    doc.text("COMMODITY REPORT", doc.internal.pageSize.getWidth() / 2, 10, { align: "center" })
+    doc.setFontSize(10)
+    doc.setFont("helvetica", "normal")
+    doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, doc.internal.pageSize.getWidth() / 2, 15, { align: "center" })
+
+    doc.setTextColor(0, 0, 0)
+    doc.setFontSize(9)
+    doc.text(`Total Commodities: ${totalCommodities}`, 14, 25)
+    doc.text(`Total Trips: ${totalTrips}`, 14, 30)
+    doc.text(`Total Weight: ${totalWeight.toLocaleString()} kg`, 14, 35)
+
+    autoTable(doc, {
+      startY: 40,
+      head: [["Commodity", "Trips", "Customers", "Net Weight (kg)"]],
+      body: commoditySummary.map((c) => [
+        c.commodityName,
+        c.trips,
+        c.customers,
+        c.totalNetWeight.toLocaleString(),
+      ]),
+      styles: { fontSize: 9, cellPadding: 2 },
+      headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0], fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [250, 250, 250] },
+    })
+
+    doc.save(`commodity-report-${dayjs().format('YYYY-MM-DD')}.pdf`)
+  }
+
+  const exportExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      commoditySummary.map((c) => ({
+        'Commodity': c.commodityName,
+        'Trips': c.trips,
+        'Customers': c.customers,
+        'Total Net Weight (kg)': c.totalNetWeight,
+      }))
+    )
+
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, "Commodities")
+    XLSX.writeFile(wb, `commodity-report-${dayjs().format('YYYY-MM-DD')}.xlsx`)
+  }
 
   /* =========================
      PAGINATED SUMMARY
@@ -60,7 +157,7 @@ export default function CommodityReport({ transactions = [], loading }) {
       commodityName: (
         <button
           onClick={() => setSelectedCommodity(c.commodityName)}
-          className="text-yellow-600 hover:underline font-medium"
+          className="text-amber-700 hover:underline font-medium"
         >
           {c.commodityName}
         </button>
@@ -77,11 +174,8 @@ export default function CommodityReport({ transactions = [], loading }) {
   const commodityTrips = useMemo(() => {
     if (!selectedCommodity) return []
 
-    return transactions
-      .filter(
-        (t) =>
-          (t.commodityName || "Unknown Commodity") === selectedCommodity
-      )
+    return filteredTransactions
+      .filter((t) => (t.commodityName || "Unknown Commodity") === selectedCommodity)
       .map((t) => ({
         id: t.id,
         date: dayjs(t.createdAt).format("DD MMM YYYY, HH:mm"),
@@ -91,7 +185,7 @@ export default function CommodityReport({ transactions = [], loading }) {
         driver: t.driverName || "-",
         netWeight: Number(t.netWeight || 0),
       }))
-  }, [transactions, selectedCommodity])
+  }, [filteredTransactions, selectedCommodity])
 
   /* =========================
      COMMODITY KPIs
@@ -104,24 +198,84 @@ export default function CommodityReport({ transactions = [], loading }) {
       trips: commodityTrips.length,
       totalNet,
       customers: customers.size,
-      avgNet:
-        commodityTrips.length > 0
-          ? Math.round(totalNet / commodityTrips.length)
-          : 0,
+      avgNet: commodityTrips.length > 0 ? Math.round(totalNet / commodityTrips.length) : 0,
     }
   }, [commodityTrips])
 
   return (
     <div className="bg-white border rounded-lg p-4 space-y-4">
+      {/* FILTERS */}
+      {!selectedCommodity && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">Start Date</label>
+              <input
+                type="date"
+                value={filters.startDate}
+                onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+                className="w-full border border-gray-300 px-2 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-300"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">End Date</label>
+              <input
+                type="date"
+                value={filters.endDate}
+                onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+                className="w-full border border-gray-300 px-2 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-300"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">Search</label>
+              <input
+                type="text"
+                placeholder="Search commodity or customer..."
+                value={filters.search}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                className="w-full border border-gray-300 px-2 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-300"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <button 
+              onClick={clearFilters} 
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium hover:bg-white transition-colors"
+            >
+              <RotateCcw size={14} />
+              Clear
+            </button>
+
+            <div className="ml-auto flex gap-2">
+              <button
+                onClick={() => { setExportType("pdf"); setShowExportPreview(true); }}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-xs font-medium hover:bg-amber-200"
+              >
+                <FileDown size={14} />
+                PDF
+              </button>
+
+              <button
+                onClick={() => { setExportType("excel"); setShowExportPreview(true); }}
+                className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 bg-white rounded-lg text-xs font-medium hover:bg-gray-50"
+              >
+                <FileSpreadsheet size={14} />
+                Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SUMMARY KPIs */}
       {!selectedCommodity && (
         <div className="grid grid-cols-3 gap-3">
           <CompactStat label="Commodities" value={totalCommodities} />
           <CompactStat label="Trips" value={totalTrips} />
-          <CompactStat
-            label="Net Weight"
-            value={totalWeight.toLocaleString()}
-          />
+          <CompactStat label="Net Weight" value={totalWeight.toLocaleString()} />
         </div>
       )}
 
@@ -131,12 +285,7 @@ export default function CommodityReport({ transactions = [], loading }) {
           <ReportsTable
             transactions={paginatedRows}
             loading={loading}
-            showColumns={[
-              "commodityName",
-              "trips",
-              "customers",
-              "netWeight",
-            ]}
+            showColumns={["commodityName", "trips", "customers", "netWeight"]}
             compact
           />
 
@@ -155,7 +304,7 @@ export default function CommodityReport({ transactions = [], loading }) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSelectedCommodity(null)}
-              className="flex items-center gap-1 text-xs border rounded px-2 py-1"
+              className="flex items-center gap-1 text-xs border rounded px-2 py-1 hover:bg-gray-50"
             >
               <ChevronLeft size={14} /> Back
             </button>
@@ -168,43 +317,34 @@ export default function CommodityReport({ transactions = [], loading }) {
           {/* COMMODITY KPIs */}
           <div className="grid grid-cols-4 gap-3">
             <CompactStat label="Trips" value={commodityTotals.trips} />
-            <CompactStat
-              label="Total Net"
-              value={commodityTotals.totalNet.toLocaleString()}
-            />
-            <CompactStat
-              label="Customers"
-              value={commodityTotals.customers}
-            />
-            <CompactStat
-              label="Avg Net"
-              value={commodityTotals.avgNet.toLocaleString()}
-            />
+            <CompactStat label="Total Net" value={commodityTotals.totalNet.toLocaleString()} />
+            <CompactStat label="Customers" value={commodityTotals.customers} />
+            <CompactStat label="Avg Net" value={commodityTotals.avgNet.toLocaleString()} />
           </div>
 
           {/* TRIPS TABLE */}
           <div className="border rounded-lg overflow-auto">
-            <table className="w-full text-sm min-w-[1200px]">
-              <thead className="bg-yellow-50">
+            <table className="w-full text-xs min-w-[1200px]">
+              <thead className="bg-amber-50">
                 <tr>
-                  <th className="p-2 text-left">Date</th>
-                  <th className="p-2 text-left">Vehicle</th>
-                  <th className="p-2 text-left">Supplier</th>
-                  <th className="p-2 text-left">Customer</th>
-                  <th className="p-2 text-left">Driver</th>
-                  <th className="p-2 text-right">Net Weight</th>
+                  <th className="p-2 text-left font-semibold border-b border-amber-200">Date</th>
+                  <th className="p-2 text-left font-semibold border-b border-amber-200">Vehicle</th>
+                  <th className="p-2 text-left font-semibold border-b border-amber-200">Supplier</th>
+                  <th className="p-2 text-left font-semibold border-b border-amber-200">Customer</th>
+                  <th className="p-2 text-left font-semibold border-b border-amber-200">Driver</th>
+                  <th className="p-2 text-right font-semibold border-b border-amber-200">Net Weight</th>
                 </tr>
               </thead>
 
               <tbody>
-                {commodityTrips.map((t) => (
-                  <tr key={t.id} className="border-t hover:bg-gray-50">
+                {commodityTrips.map((t, idx) => (
+                  <tr key={t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                     <td className="p-2">{t.date}</td>
                     <td className="p-2">{t.vehicle}</td>
                     <td className="p-2">{t.supplier}</td>
                     <td className="p-2">{t.customer}</td>
                     <td className="p-2">{t.driver}</td>
-                    <td className="p-2 text-right font-medium">
+                    <td className="p-2 text-right font-medium text-amber-800">
                       {t.netWeight.toLocaleString()}
                     </td>
                   </tr>
@@ -214,15 +354,75 @@ export default function CommodityReport({ transactions = [], loading }) {
           </div>
         </>
       )}
+
+      {/* EXPORT PREVIEW MODAL */}
+      {showExportPreview && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="p-4 border-b bg-amber-50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Export Preview</h2>
+                  <p className="text-xs text-gray-600 mt-1">
+                    <span className="font-semibold text-amber-700">{commoditySummary.length}</span> commodities
+                  </p>
+                </div>
+                <button onClick={() => setShowExportPreview(false)} className="text-gray-400 hover:text-gray-600">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-auto p-4">
+              <div className="border rounded-lg overflow-auto">
+                <table className="w-full text-xs">
+                  <thead className="bg-amber-50 sticky top-0">
+                    <tr>
+                      <th className="p-2 text-left font-semibold border-b border-amber-200">Commodity</th>
+                      <th className="p-2 text-left font-semibold border-b border-amber-200">Trips</th>
+                      <th className="p-2 text-left font-semibold border-b border-amber-200">Customers</th>
+                      <th className="p-2 text-right font-semibold border-b border-amber-200">Net Weight</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {commoditySummary.map((c, idx) => (
+                      <tr key={c.id} className={`border-t border-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                        <td className="p-2 font-medium">{c.commodityName}</td>
+                        <td className="p-2">{c.trips}</td>
+                        <td className="p-2">{c.customers}</td>
+                        <td className="p-2 text-right font-bold text-amber-800">{c.totalNetWeight.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="p-4 border-t bg-amber-50/50 flex justify-end gap-2">
+              <button onClick={() => setShowExportPreview(false)} className="px-4 py-2 border border-gray-300 rounded-lg text-xs font-medium hover:bg-white">
+                Cancel
+              </button>
+              <button
+                onClick={() => { exportType === "pdf" ? exportPDF() : exportExcel(); setShowExportPreview(false); }}
+                className="px-4 py-2 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-xs font-medium hover:bg-amber-200"
+              >
+                Download {exportType?.toUpperCase()}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 function CompactStat({ label, value }) {
   return (
-    <div className="bg-yellow-50 border rounded px-3 py-2">
-      <p className="text-[11px] text-gray-500 uppercase">{label}</p>
-      <p className="text-lg font-semibold leading-tight">{value}</p>
+    <div className="bg-amber-50 border border-amber-200 rounded px-3 py-2">
+      <p className="text-[10px] text-gray-700 uppercase font-semibold">{label}</p>
+      <p className="text-lg font-bold leading-tight text-amber-900">{value}</p>
     </div>
   )
 }
