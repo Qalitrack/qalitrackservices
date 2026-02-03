@@ -1,11 +1,14 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../../store/weighingSlice";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend
 } from "recharts";
+
+dayjs.extend(relativeTime);
 
 // Amber color palette with different shades
 const AMBER_COLORS = {
@@ -24,9 +27,21 @@ const PIE_COLORS = [AMBER_COLORS.medium, AMBER_COLORS.light];
 export default function Analytics() {
   const dispatch = useDispatch();
   const { transactions, loading } = useSelector((state) => state.weighing);
+  const [lastUpdated, setLastUpdated] = useState(dayjs());
 
+  // Auto-refresh every 30 seconds
   useEffect(() => {
+    // Initial load
     dispatch(fetchTransactions({ pageSize: 10000 }));
+    setLastUpdated(dayjs());
+
+    // Set up interval for auto-refresh
+    const interval = setInterval(() => {
+      dispatch(fetchTransactions({ pageSize: 10000 }));
+      setLastUpdated(dayjs());
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
   }, [dispatch]);
 
   const completedTx = useMemo(
@@ -51,6 +66,7 @@ export default function Analytics() {
       0
     );
 
+    // Calculate average TAT (same logic as Transactions.jsx)
     const avgTAT =
       completedTx.reduce((sum, t) => {
         if (!t.firstWeightTime || !t.secondWeightTime) return sum;
@@ -146,17 +162,38 @@ export default function Analytics() {
 
       {/* HEADER */}
       <div className="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-base sm:text-lg font-bold text-gray-900">Analytics Dashboard</h1>
+              <p className="text-xs text-gray-500 font-medium">
+                Real-time insights • Auto-refresh every 30s
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-base sm:text-lg font-bold text-gray-900">Analytics Dashboard</h1>
-            <p className="text-xs text-gray-500 font-medium hidden sm:block">
-              Real-time insights from weighbridge transactions
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="text-right hidden sm:block">
+              <div className="text-[10px] text-gray-500 font-medium">Last updated</div>
+              <div className="text-xs font-bold text-amber-700">{lastUpdated.fromNow()}</div>
+            </div>
+            <button
+              onClick={() => {
+                dispatch(fetchTransactions({ pageSize: 10000 }));
+                setLastUpdated(dayjs());
+              }}
+              disabled={loading}
+              className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-xs font-semibold text-amber-900 transition-all disabled:opacity-50"
+            >
+              <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
           </div>
         </div>
       </div>
@@ -166,15 +203,15 @@ export default function Analytics() {
         {/* KPI CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
           {[
-            ["Total Tickets", kpis.totalTx, "from-amber-300 to-amber-100"],
-            ["Completed", kpis.completed, "from-amber-300 to-amber-100"],
-            ["In Progress", kpis.inProgress, "from-amber-300 to-amber-100"],
-            ["Total Net (kg)", kpis.totalNetWeight.toLocaleString(), "from-amber-300 to-amber-100"],
-            ["Avg TAT (min)", kpis.avgTurnaround, "from-amber-300 to-amber-100"],
+            ["Total Tickets", kpis.totalTx, "from-amber-100 to-amber-50"],
+            ["Completed", kpis.completed, "from-amber-100 to-amber-50"],
+            ["In Progress", kpis.inProgress, "from-amber-100 to-amber-50"],
+            ["Total Net (kg)", kpis.totalNetWeight.toLocaleString(), "from-amber-100 to-amber-50"],
+            ["Avg TAT (min)", kpis.avgTurnaround, "from-amber-100 to-amber-50"],
           ].map(([label, value, gradient]) => (
             <div
               key={label}
-              className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md text-amber-900 transform transition-transform hover:scale-105`}
+              className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md border border-amber-200 text-amber-900 transform transition-transform hover:scale-105`}
             >
               <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide opacity-90">{label}</div>
               <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1">{value}</div>
