@@ -77,37 +77,27 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
         { key: "weighing-owners", label: "Owners", icon: <Users size={16} />, path: `${basePath}/weighing/owners`, roles: ['Admin', 'Operator'] },
         { key: "suppliers", label: "Suppliers", icon: <Satellite size={16} />, path: `${basePath}/suppliers`, roles: ['Admin', 'Operator'] },
         { key: "weighing-products", label: "Products", icon: <BarChart3 size={16} />, path: `${basePath}/weighing/products`, roles: ['Admin', 'Operator'] },
+        { key: "weighing-weighbridges", label: "Weighbridges", icon: <Scale size={16} />, path: `${basePath}/weighbridges`, roles: ['Admin'] },
+        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: `${basePath}/weighing/axle-config`, roles: ['Admin'] },
         { key: "weighing-saccos", label: "Saccos", icon: <User2 size={16} />, path: `${basePath}/saccos`, roles: ['Admin', 'Operator'] },
-        { key: "weighing-weighbridges", label: "Weighbridges", icon: <Scale size={16} />, path: `${basePath}/weighbridges`, roles: ['Admin', 'Operator'] },
-        { key: "weighing-axle-config", label: "Axle Configuration", icon: <List size={16} />, path: `${basePath}/weighing/axle-config`, roles: ['Admin', 'Operator'] },
       ],
     },
 
-    // Automation
-    { 
-      key: "automation", 
-      label: "Automation", 
-      icon: <Cog size={18} />, 
-      path: `${basePath}/automation`,
-      roles: ['Admin', 'Operator']
-    },
-
-    // Calibrations
-    { 
-      key: "calibrations", 
-      label: "Calibrations", 
-      icon: <Wrench size={18} />, 
-      path: `${basePath}/calibrations`,
-      roles: ['Admin', 'Operator']
-    },
 
     // Analytics
+    {
+      key: "user-management",
+      label: "User Management",
+      icon: <Users size={18} />,
+      path: `${basePath}/user-management`,
+      roles: ['Admin']
+    },
     { 
       key: "analytics", 
       label: "Analytics", 
       icon: <BarChart3 size={18} />, 
       path: `${basePath}/analytics`,
-      roles: ['Admin', 'Operator']
+      roles: ['Admin']
     },
 
     // Reports
@@ -116,7 +106,7 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
       label: "Reports", 
       icon: <FileText size={18} />, 
       path: `${basePath}/reports`,
-      roles: ['Admin', 'Operator']
+      roles: ['Admin']
     },
 
     // Shifts (Admin only)
@@ -174,9 +164,28 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
       label: "System", 
       icon: <Cog size={18} />, 
       path: `${basePath}/system`,
-      roles: ['Admin', 'Operator']
+      roles: ['Admin']
     },
+        // Automation
+    { 
+      key: "automation", 
+      label: "Automation", 
+      icon: <Cog size={18} />, 
+      path: `${basePath}/automation`,
+      roles: ['Admin']
+    },
+
+    // Calibrations
+    { 
+      key: "calibrations", 
+      label: "Calibrations", 
+      icon: <Wrench size={18} />, 
+      path: `${basePath}/calibrations`,
+      roles: ['Admin']
+    },
+
   ];
+  
 
   // Filter menu items based on user roles
   const filterMenuByRole = (items) => {
