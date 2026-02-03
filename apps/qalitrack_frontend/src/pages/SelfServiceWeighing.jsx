@@ -1,241 +1,230 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { message } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { ThemeProvider, ThemeToggle, useTheme } from "../components/Context/ThemeContext.jsx";
+// Re-wrap with ThemeProvider — the child screens (VehicleDetectionScreen, etc.)
+// call useTheme() internally so this context must exist.  ThemeProvider itself
+// has zero auth dependency; it only manages dark/light state.
+import { ThemeProvider, useTheme } from "../components/Context/ThemeContext.jsx";
 import VehicleDetectionScreen from "../components/SelfService/VehicleDetectionScreen";
 import DriverAuthScreen from "../components/SelfService/DriverAuthScreen";
 import WeighingScreen from "../components/SelfService/WeighingScreen";
 import TicketPrintScreen from "../components/SelfService/TicketPrintScreen";
 
-import {
-  fetchVehicleByPlate,
-  authenticateDriver,
-  createSelfServiceTransaction,
-  printThermalTicket,
-  startSession,
-  endSession,
-  setStage,
-  clearError,
-  selectCurrentStage,
-  selectVehicleData,
-  selectDriverData,
-  selectTransactionData,
-  selectTicketData,
-  selectError,
-  selectLoading,
-} from "../store/selfServiceSlice.js";
+/* ─────────────────────────────────────────────────────────────────────────
+   WHY no Redux / useSelector / useDispatch?
+   The Redux store Provider in this app sits inside (or alongside) the
+   authenticated app shell.  Any slice action can trigger a token-refresh
+   that redirects unauthenticated hits to /login.
+   All kiosk state lives in plain React useState — fully isolated.
+   ───────────────────────────────────────────────────────────────────── */
 
 const STAGES = {
-  VEHICLE_DETECTION: 'vehicle_detection',
-  DRIVER_AUTH: 'driver_auth',
-  WEIGHING: 'weighing',
-  TICKET_PRINT: 'ticket_print',
-  COMPLETE: 'complete'
+  VEHICLE_DETECTION: "vehicle_detection",
+  DRIVER_AUTH:       "driver_auth",
+  WEIGHING:          "weighing",
+  TICKET_PRINT:      "ticket_print",
+  COMPLETE:          "complete",
 };
 
-// Inner component that uses theme
-function SelfServiceWeighingInner() {
-  const dispatch = useDispatch();
-  const { theme, isDark } = useTheme();
-  
-  const currentStage = useSelector(selectCurrentStage);
-  const vehicleData = useSelector(selectVehicleData);
-  const driverData = useSelector(selectDriverData);
-  const transactionData = useSelector(selectTransactionData);
-  const ticketData = useSelector(selectTicketData);
-  const error = useSelector(selectError);
-  const loading = useSelector(selectLoading);
-
-  // Initialize session
-  useEffect(() => {
-    console.log("🎬 Initializing self-service kiosk...");
-    dispatch(startSession());
-    console.log("✅ Self-service kiosk initialized");
-
-    return () => {
-      console.log("🛑 Cleaning up self-service session");
-      dispatch(endSession());
-    };
-  }, [dispatch]);
-
-  // Debug: Log stage changes
-  useEffect(() => {
-    console.log(`📍 Current Stage: ${currentStage}`);
-  }, [currentStage]);
-
-  // Auto-reset after completion
-  useEffect(() => {
-    if (currentStage === STAGES.COMPLETE) {
-      console.log("✅ Transaction complete - auto-reset in 10 seconds");
-      const timer = setTimeout(() => {
-        handleReset();
-      }, 10000);
-      
-      return () => clearTimeout(timer);
+/* ── Error boundary — catches crashes in child screens so you get a
+      visible fallback instead of a blank white page ── */
+class KioskErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    console.error("🛑 Kiosk error boundary caught:", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center" style={{ background: "#fafafa" }}>
+          <div className="text-center max-w-md px-6 py-12 rounded-2xl shadow-lg" style={{ background: "#fff", border: "1px solid #e5e7eb" }}>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#fef2f2" }}>
+              <span className="text-3xl">⚠️</span>
+            </div>
+            <h2 className="text-xl font-bold mb-2" style={{ color: "#111827" }}>Kiosk Error</h2>
+            <p className="text-sm mb-1" style={{ color: "#6b7280" }}>Something went wrong. Check the browser console for details.</p>
+            <p className="text-xs mb-4 font-mono break-all" style={{ color: "#ef4444" }}>{this.state.error?.message}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-5 py-2 rounded-lg text-sm font-semibold text-white"
+              style={{ background: "linear-gradient(135deg, #d97706, #f59e0b)" }}
+            >
+              Reload Kiosk
+            </button>
+          </div>
+        </div>
+      );
     }
-  }, [currentStage]);
+    return this.props.children;
+  }
+}
 
-  const handleReset = () => {
-    console.log("🔄 Resetting kiosk session...");
-    dispatch(endSession());
-    dispatch(startSession());
-    console.log("✅ Session reset - ready for new vehicle");
-  };
+/* ── Inner component (needs theme context) ── */
+function KioskInner() {
+  const { isDark } = useTheme();
 
-  // Stage 1: Vehicle Detection
+  // fires once on mount — check browser console to confirm kiosk is rendering
+  useEffect(() => { console.log("🚀 KioskInner mounted successfully"); }, []);
+
+  const [currentStage, setCurrentStage]       = useState(STAGES.VEHICLE_DETECTION);
+  const [vehicleData, setVehicleData]         = useState(null);
+  const [driverData,  setDriverData]          = useState(null);
+  const [transactionData, setTransactionData] = useState(null);
+  const [loading, setLoading]                 = useState(false);
+  const [error, setError]                     = useState(null);
+
+  /* stage log */
+  useEffect(() => { console.log(`📍 Kiosk stage: ${currentStage}`); }, [currentStage]);
+
+  /* ── reset helper ── */
+  const handleReset = useCallback(() => {
+    console.log("🔄 Resetting kiosk…");
+    setCurrentStage(STAGES.VEHICLE_DETECTION);
+    setVehicleData(null);
+    setDriverData(null);
+    setTransactionData(null);
+    setError(null);
+  }, []);
+
+  /* auto-reset 10 s after COMPLETE */
+  useEffect(() => {
+    if (currentStage !== STAGES.COMPLETE) return;
+    console.log("✅ Auto-reset in 10 s…");
+    const t = setTimeout(handleReset, 10000);
+    return () => clearTimeout(t);
+  }, [currentStage, handleReset]);
+
+  /* ── Stage 1 ── */
   const handleVehicleDetected = async (detectionData) => {
     try {
-      console.log("🚗 Vehicle detected:", detectionData);
-      dispatch(clearError());
-      
-      // Create mock vehicle data
-      const mockVehicleData = {
-        id: "VEHICLE_" + Date.now(),
-        plateNumber: detectionData.plateNumber,
-        noPlate: detectionData.plateNumber,
-        rfidTag: detectionData.rfidTag,
-        vehicleType: "Truck",
-        transporterId: "TRANS_001",
-        transporterName: "Fresh Leaf Carriers Ltd",
-        commodityId: "COMM_001",
-        commodityName: "Purple Tea Leaves",
-        supplierId: "SUPP_001",
-        supplierName: "KTDA Factory 2",
-        customerId: "CUST_001",
-        customerName: "KTDA Tea Processing"
+      setError(null);
+      setLoading(true);
+
+      const mock = {
+        id:               "VEHICLE_" + Date.now(),
+        plateNumber:      detectionData.plateNumber,
+        noPlate:          detectionData.plateNumber,
+        rfidTag:          detectionData.rfidTag,
+        vehicleType:      "Truck",
+        transporterId:    "TRANS_001",
+        transporterName:  "Fresh Leaf Carriers Ltd",
+        commodityId:      "COMM_001",
+        commodityName:    "Purple Tea Leaves",
+        supplierId:       "SUPP_001",
+        supplierName:     "KTDA Factory 2",
+        customerId:       "CUST_001",
+        customerName:     "KTDA Tea Processing",
       };
 
-      console.log("✅ Mock vehicle data created:", mockVehicleData);
-      
-      // Dispatch fulfilled action to update Redux state
-      dispatch({
-        type: 'selfService/fetchVehicleByRegNumber/fulfilled',
-        payload: mockVehicleData
-      });
-      
+      setVehicleData(mock);
+      setLoading(false);
       message.success(`Vehicle ${detectionData.plateNumber} detected!`);
-      
-      console.log("🔄 Moving to driver authentication...");
-      dispatch(setStage(STAGES.DRIVER_AUTH));
-      
+      setCurrentStage(STAGES.DRIVER_AUTH);
     } catch (err) {
       console.error("❌ Vehicle detection failed:", err);
-      message.error("Vehicle not found in system. Please contact the office.");
+      setLoading(false);
+      setError("Vehicle not found in system. Please contact the office.");
+      message.error("Vehicle not found in system.");
     }
   };
 
-  // Stage 2: Driver Authentication
+  /* ── Stage 2 ── */
   const handleDriverAuthenticated = async (nfcResponse) => {
     try {
-      console.log("👤 Driver NFC scanned:", nfcResponse);
-      dispatch(clearError());
-      
-      // Use the verified driver data from NFC authentication
-      const driverData = nfcResponse.driverData || {
-        id: "DRIVER_" + Date.now(),
-        driverId: nfcResponse.driverId || "DRIVER_" + Date.now(),
-        fullName: nfcResponse.driverName || "John Kamau Mwangi",
-        name: nfcResponse.driverName?.split(' ').slice(0, 2).join(' ') || "John Kamau",
-        license: "DL-" + Math.floor(Math.random() * 1000000),
-        idNo: "28000000" + Math.floor(Math.random() * 1000),
-        nfcCardId: nfcResponse.cardId,
-        company: "Fresh Leaf Carriers Ltd",
-        phone: "+254 712 345 678",
-        email: "john.kamau@flc.co.ke"
+      setError(null);
+      setLoading(true);
+
+      const driver = nfcResponse.driverData || {
+        id:          "DRIVER_" + Date.now(),
+        driverId:    nfcResponse.driverId || "DRIVER_" + Date.now(),
+        fullName:    nfcResponse.driverName || "John Kamau Mwangi",
+        name:        nfcResponse.driverName?.split(" ").slice(0, 2).join(" ") || "John Kamau",
+        license:     "DL-" + Math.floor(Math.random() * 1000000),
+        idNo:        "28000000" + Math.floor(Math.random() * 1000),
+        nfcCardId:   nfcResponse.cardId,
+        company:     "Fresh Leaf Carriers Ltd",
+        phone:       "+254 712 345 678",
+        email:       "john.kamau@flc.co.ke",
       };
 
-      console.log("✅ Driver data verified:", driverData);
-      
-      // Dispatch fulfilled action to update Redux state
-      dispatch({
-        type: 'selfService/authenticateDriver/fulfilled',
-        payload: driverData
-      });
-      
-      message.success(`Welcome, ${driverData.fullName}!`);
-      
-      console.log("🔄 Moving to weighing screen...");
-      dispatch(setStage(STAGES.WEIGHING));
-      
+      setDriverData(driver);
+      setLoading(false);
+      message.success(`Welcome, ${driver.fullName}!`);
+      setCurrentStage(STAGES.WEIGHING);
     } catch (err) {
-      console.error("❌ Driver authentication failed:", err);
-      message.error("Driver card not recognized. Please contact the office.");
+      console.error("❌ Driver auth failed:", err);
+      setLoading(false);
+      setError("Driver card not recognized. Please contact the office.");
+      message.error("Driver card not recognized.");
     }
   };
 
-  // Stage 3: Weighing Complete
+  /* ── Stage 3 ── */
   const handleWeighingComplete = async (weighData) => {
     try {
-      console.log("⚖️ Weight captured:", weighData);
-      dispatch(clearError());
+      setError(null);
+      setLoading(true);
 
-      const transactionPayload = {
-        receiptNo: "TXN-" + Date.now(),
+      const txn = {
+        id:                "TXN_" + Date.now(),
+        transactionId:     "TXN_" + Date.now(),
+        ticketID:          "TXN_" + Date.now(),
+        receiptNo:         "TXN-" + Date.now(),
         expectedWeighings: 2,
-        noPlate: weighData.noPlate,
-        driverName: weighData.driverName,
-        vehicleId: vehicleData.id,
-        driverId: driverData.driverId || driverData.id,
-        commodityId: weighData.commodityID,
-        commodityName: weighData.commodityName,
-        transporterId: weighData.transporterID,
-        transporterName: weighData.transporterName,
-        supplierId: weighData.supplierID,
-        supplierName: weighData.supplierName,
-        customerId: weighData.customerID,
-        customerName: weighData.customerName,
-        originName: weighData.originName || "",
-        destinationName: weighData.destinationName || "",
-        operation: weighData.operation,
-        weighMode: weighData.weighMode,
-        firstWeight: weighData.weight || weighData.firstWeight,
-        secondWeight: null,
-        scaleName: weighData.scaleName,
-        weighBridgeId: weighData.weighBridgeId,
-        weighBridgeName: weighData.weighBridgeName,
-        operatorId: "KIOSK_AUTO",
-        operatorName: "Self-Service Kiosk",
-        isCompleted: false,
-        notes: weighData.notes || ""
+        noPlate:           weighData.noPlate,
+        driverName:        weighData.driverName,
+        vehicleId:         vehicleData?.id,
+        driverId:          driverData?.driverId || driverData?.id,
+        commodityId:       weighData.commodityID,
+        commodityName:     weighData.commodityName,
+        transporterId:     weighData.transporterID,
+        transporterName:   weighData.transporterName,
+        supplierId:        weighData.supplierID,
+        supplierName:      weighData.supplierName,
+        customerId:        weighData.customerID,
+        customerName:      weighData.customerName,
+        originName:        weighData.originName || "",
+        destinationName:   weighData.destinationName || "",
+        operation:         weighData.operation,
+        weighMode:         weighData.weighMode,
+        firstWeight:       weighData.weight || weighData.firstWeight,
+        secondWeight:      null,
+        scaleName:         weighData.scaleName,
+        weighBridgeId:     weighData.weighBridgeId,
+        weighBridgeName:   weighData.weighBridgeName,
+        operatorId:        "KIOSK_AUTO",
+        operatorName:      "Self-Service Kiosk",
+        isCompleted:       false,
+        notes:             weighData.notes || "",
+        createdAt:         new Date().toISOString(),
+        weighTime:         new Date().toISOString(),
+        status:            "Incomplete",
       };
 
-      console.log("📤 Creating transaction:", transactionPayload);
-
-      // Create mock transaction
-      const mockTransaction = {
-        ...transactionPayload,
-        id: "TXN_" + Date.now(),
-        transactionId: "TXN_" + Date.now(),
-        ticketID: "TXN_" + Date.now(),
-        createdAt: new Date().toISOString(),
-        weighTime: new Date().toISOString(),
-        status: "Incomplete"
-      };
-
-      // Dispatch fulfilled action
-      dispatch({
-        type: 'selfService/createTransaction/fulfilled',
-        payload: mockTransaction
-      });
-
+      setTransactionData(txn);
+      setLoading(false);
       message.success("Transaction created successfully!");
-      
-      console.log("🔄 Moving to ticket print...");
-      dispatch(setStage(STAGES.TICKET_PRINT));
-
+      setCurrentStage(STAGES.TICKET_PRINT);
     } catch (err) {
       console.error("❌ Transaction creation failed:", err);
-      message.error("Failed to create transaction. Please try again.");
+      setLoading(false);
+      setError("Failed to create transaction. Please try again.");
+      message.error("Failed to create transaction.");
     }
   };
 
-  // Stage 4: Print Complete
+  /* ── Stage 4 ── */
   const handlePrintComplete = () => {
-    console.log("🖨️ Ticket printing complete");
-    dispatch(setStage(STAGES.COMPLETE));
+    console.log("🖨️  Ticket printing complete");
+    setCurrentStage(STAGES.COMPLETE);
   };
 
-  // Render current stage
+  /* ── Render ── */
   const renderStage = () => {
     switch (currentStage) {
       case STAGES.VEHICLE_DETECTION:
@@ -246,68 +235,74 @@ function SelfServiceWeighingInner() {
             onReset={handleReset}
           />
         );
-
       case STAGES.DRIVER_AUTH:
         return (
           <DriverAuthScreen
             vehicleData={vehicleData}
             onDriverAuthenticated={handleDriverAuthenticated}
-            onBack={() => dispatch(setStage(STAGES.VEHICLE_DETECTION))}
+            onBack={() => setCurrentStage(STAGES.VEHICLE_DETECTION)}
             error={error}
           />
         );
-
       case STAGES.WEIGHING:
         return (
           <WeighingScreen
             vehicleData={vehicleData}
             driverData={driverData}
             onWeighingComplete={handleWeighingComplete}
-            onBack={() => dispatch(setStage(STAGES.DRIVER_AUTH))}
+            onBack={() => setCurrentStage(STAGES.DRIVER_AUTH)}
             error={error}
           />
         );
-
       case STAGES.TICKET_PRINT:
         return (
           <TicketPrintScreen
-            ticketData={ticketData || transactionData}
+            ticketData={transactionData}
             vehicleData={vehicleData}
             driverData={driverData}
             onComplete={handlePrintComplete}
           />
         );
-
       case STAGES.COMPLETE:
         return (
-          <div className={`min-h-screen ${
-            isDark 
-              ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' 
-              : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
-          } flex items-center justify-center`}>
-            <div className="text-center max-w-xl">
-              <div className="w-40 h-40 mx-auto mb-8 rounded-full bg-green-900/50 flex items-center justify-center shadow-2xl">
-                <span className="text-9xl">✓</span>
+          <div
+            className="min-h-screen flex items-center justify-center"
+            style={{ background: isDark
+              ? "linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%)"
+              : "linear-gradient(135deg, #fafafa 0%, #ffffff 50%, #f9fafb 100%)"
+            }}
+          >
+            <div className="text-center max-w-xl px-6">
+              {/* ✓ circle */}
+              <div
+                className="w-40 h-40 mx-auto mb-8 rounded-full flex items-center justify-center shadow-xl"
+                style={{ background: "linear-gradient(135deg, #d97706, #f59e0b)" }}
+              >
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
               </div>
-              <h1 className={`text-6xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+
+              <h1 className="text-6xl font-bold mb-4" style={{ color: isDark ? "#fff" : "#111827" }}>
                 Thank You!
               </h1>
-              <p className={`text-3xl mb-8 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className="text-2xl mb-3" style={{ color: isDark ? "#9ca3af" : "#6b7280" }}>
                 Transaction completed successfully
               </p>
-              <p className={`text-xl ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>
-                Resetting in 10 seconds...
+              <p className="text-lg" style={{ color: isDark ? "#6b7280" : "#9ca3af" }}>
+                Resetting in 10 seconds…
               </p>
+
               <button
                 onClick={handleReset}
-                className="mt-8 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold text-lg transition-colors"
+                className="mt-8 px-8 py-3.5 rounded-xl font-semibold text-lg text-white transition-all hover:shadow-lg"
+                style={{ background: "linear-gradient(135deg, #d97706, #f59e0b)", boxShadow: "0 3px 10px rgba(217,119,6,0.35)" }}
               >
                 Start New Transaction
               </button>
             </div>
           </div>
         );
-
       default:
         return null;
     }
@@ -315,24 +310,14 @@ function SelfServiceWeighingInner() {
 
   return (
     <div className="relative">
-      {/* Theme Toggle - Fixed position */}
-      <div className="fixed top-6 right-6 z-[10000]">
-        <ThemeToggle />
-      </div>
-
-      {/* Stage Content */}
       {renderStage()}
 
-      {/* Loading Overlay */}
+      {/* Loading overlay */}
       {loading && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
-          <div className={`${
-            isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-          } rounded-2xl p-10 text-center border-2 shadow-2xl`}>
-            <div className="w-20 h-20 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <p className={`text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Processing...
-            </p>
+        <div className="fixed inset-0 flex items-center justify-center" style={{ background:"rgba(0,0,0,0.45)", zIndex:9999 }}>
+          <div className="bg-white rounded-2xl p-10 text-center shadow-2xl border border-gray-100">
+            <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-5" />
+            <p className="text-xl font-semibold" style={{ color:"#111827" }}>Processing…</p>
           </div>
         </div>
       )}
@@ -340,11 +325,13 @@ function SelfServiceWeighingInner() {
   );
 }
 
-// Wrapper with ThemeProvider
+/* ── Public export — ThemeProvider + ErrorBoundary, no Redux, no auth ── */
 export default function SelfServiceWeighing() {
   return (
-    <ThemeProvider>
-      <SelfServiceWeighingInner />
-    </ThemeProvider>
+    <KioskErrorBoundary>
+      <ThemeProvider>
+        <KioskInner />
+      </ThemeProvider>
+    </KioskErrorBoundary>
   );
 }
