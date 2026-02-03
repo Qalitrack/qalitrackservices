@@ -16,9 +16,9 @@ export default function Vehicles() {
     color: "",
     model: "",
     status: "Active",
-    supplierId: "",
-    transporterId: "",
-    ownerId: "",
+    supplierName: "",
+    transporterName: "",
+    ownerName: "",
     axleConfigurationId: "",
   });
   const [editingVehicle, setEditingVehicle] = useState(null);
@@ -211,7 +211,7 @@ export default function Vehicles() {
             <div>
               <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                Supplier ID
+                Supplier 
               </label>
               <input
                 name="supplierId"
@@ -225,7 +225,7 @@ export default function Vehicles() {
             <div>
               <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>
-                Transporter ID
+                Transporter 
               </label>
               <input
                 name="transporterId"
@@ -239,7 +239,7 @@ export default function Vehicles() {
             <div>
               <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
-                Owner ID
+                Owner 
               </label>
               <input
                 name="ownerId"
@@ -253,7 +253,7 @@ export default function Vehicles() {
             <div>
               <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
-                Axle Config ID
+                Axle Config 
               </label>
               <input
                 name="axleConfigurationId"
